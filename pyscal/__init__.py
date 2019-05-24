@@ -39,6 +39,12 @@ Author: Håvard Berland, havb@statoil.com, September 2017
 
 """
 
+from .wateroil import WaterOil
+from .wateroilgas import WaterOilGas
+from .gasoil import GasOil
+from .scalrecommendation import SCALrecommendation
+
+
 # Number of different Sw values within [0,1] we allow
 # This is used to create integer indices of Sw, since Floating Point
 # indices are flaky in Pandas (and in general on computers)

@@ -5,6 +5,8 @@ import copy
 import numpy as np
 import pandas as pd
 
+from pyscal import SWINTEGERS
+
 class WaterOil(object):
     """A representation of two-phase properties for oil-water
 
