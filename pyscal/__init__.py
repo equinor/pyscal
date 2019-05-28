@@ -37,17 +37,4 @@ History matching relative permeability can be done in two ways:
 For multiple SATNUMs, use one SCALrecommendation object for each and
 loop over your SATNUMs. See example in the test functions at the
 bottom
-
-Author: Håvard Berland, havb@statoil.com, September 2017
-
 """
-
-# Number of different Sw values within [0,1] we allow
-# This is used to create integer indices of Sw, since Floating Point
-# indices are flaky in Pandas (and in general on computers)
-SWINTEGERS = 10000
-
-# Used as "a small number" for ensuring no floating point
-# comparisons/errors pop up.  You cannot have the h parameter less
-# than this when generating relperm tables
-epsilon = 1e-08
