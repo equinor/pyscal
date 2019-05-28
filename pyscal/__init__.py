@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-from .wateroil import WaterOil
-
 """A module for creating relative permeability input curves for
 Eclipse and Nexus, either directly from parametrizations or from a
 SCAL recommendation parameter set. Curves can be interpolated within a
@@ -38,3 +36,10 @@ For multiple SATNUMs, use one SCALrecommendation object for each and
 loop over your SATNUMs. See example in the test functions at the
 bottom
 """
+
+from .wateroil import WaterOil
+from .wateroilgas import WaterOilGas
+from .gasoil import GasOil
+from .scalrecommendation import SCALrecommendation
+
+
