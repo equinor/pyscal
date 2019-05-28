@@ -103,6 +103,11 @@ class WaterOil(object):
     def add_corey_water(self, nw=2, krwend=1, krwmax=1):
         """ Add krw data through the Corey parametrization,
         paying attention to the area above sorw"""
+        assert nw > 0
+        assert krwend < 2
+        assert krwend > 0
+        assert krwmax < 2
+        assert krwmax > 0
         self.table['krw'] = krwend * self.table.swn ** nw
         self.table.loc[self.table.sw > (1 - self.sorw + epsilon), 'krw'] \
             = max(krwmax, krwend)
@@ -139,6 +144,9 @@ class WaterOil(object):
     def add_corey_oil(self, now=2, kroend=1, kromax=1):
         """Add kro data through the Corey parametrization,
         paying attention to saturations above sorw and below swl"""
+        assert now > 0
+        assert kroend < 2
+        assert kromax < 2
         self.table['krow'] = kroend * self.table.son ** now
         self.table.loc[self.table.sw >= (1 - self.sorw), 'krow'] = 0
         self.table.loc[self.table.sw < self.swl, 'krow'] = kromax

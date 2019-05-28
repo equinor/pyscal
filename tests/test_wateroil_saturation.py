@@ -23,7 +23,8 @@ def check_table(df):
     assert df["sw"].is_monotonic
     assert (df["sw"] >= 0.0).all()
     assert df["swn"].is_monotonic
-    # assert df['son'].is_monotonic_decreasing
+    assert df["son"].is_monotonic_decreasing
+    assert df["swnpc"].is_monotonic
 
 
 @given(
