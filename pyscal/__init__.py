@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+
+from .wateroil import WaterOil
+
 """A module for creating relative permeability input curves for
 Eclipse and Nexus, either directly from parametrizations or from a
 SCAL recommendation parameter set. Curves can be interpolated within a

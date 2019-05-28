@@ -10,8 +10,5 @@ setup(
     license="LGPLv3",
     packages=["pyscal"],
     zip_safe=False,
-    entry_points={
-        "console_scripts": [
-        ]
-    },
+    entry_points={"console_scripts": []},
 )

@@ -1,7 +1,12 @@
+# -*- coding: utf-8 -*-
+
 import math
 import copy
 import numpy as np
 import pandas as pd
+
+from pyscal.constants import EPSILON as epsilon
+from pyscal.constants import SWINTEGERS
 
 class WaterOil(object):
     """A representation of two-phase properties for oil-water
@@ -12,6 +17,18 @@ class WaterOil(object):
     def __init__(self, swirr=0, swl=0.1, swcr=0.0, sorw=0.05, h=0.01, tag=""):
         """Sets up the saturation range. Swirr is only relevant
         for the capillary pressure, not for relperm data."""
+
+        assert swirr < 1.0 + epsilon
+        assert swirr > - epsilon
+        assert swl < 1.0 + epsilon
+        assert swl > - epsilon
+        assert swcr > - epsilon
+        assert swcr < 1.0 + epsilon
+        assert sorw > - epsilon
+        assert sorw < 1.0 + epsilon
+        assert h > epsilon
+        assert h < 1
+
         self.swirr = swirr
         self.swl = max(swl, swirr)  # Cannot allow swl < swirr. Warn?
         self.swcr = max(self.swl, swcr)  # Cannot allow swcr < swl. Warn?
@@ -156,7 +173,7 @@ class WaterOil(object):
             % (a, b, poro_ref, perm_ref, drho, g)
 
     def add_skjaeveland_pc(self, cw, co, aw, ao, swr=None, sor=None):
-        """Add capillary pressure from the Skjæveland correlation, 
+        """Add capillary pressure from the Skjæveland correlation,
 
         Doc: https://wiki.equinor.com/wiki/index.php/Res:The_Skjaeveland_correlation_for_capillary_pressure
 
@@ -234,7 +251,7 @@ class WaterOil(object):
 
         Docs: https://wiki.equinor.com/wiki/index.php/Res:The_LET_correlation_for_capillary_pressure
 
-        Note that Pc where Sw > 1 - sorw will appear linear because 
+        Note that Pc where Sw > 1 - sorw will appear linear because
         there are no saturation points in that interval.
         """
 
