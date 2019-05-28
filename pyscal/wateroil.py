@@ -28,6 +28,9 @@ class WaterOil(object):
         assert sorw < 1.0 + epsilon
         assert h > epsilon
         assert h < 1
+        assert swl < 1 - sorw
+        assert swcr < 1 - sorw
+        assert swirr < 1 - sorw
 
         self.swirr = swirr
         self.swl = max(swl, swirr)  # Cannot allow swl < swirr. Warn?

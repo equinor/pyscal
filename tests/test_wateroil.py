@@ -26,7 +26,14 @@ def check_table(df):
     # assert df['son'].is_monotonic_decreasing
 
 
-@given(st.floats(), st.floats(), st.floats(), st.floats(), st.floats(), st.text())
+@given(
+    st.floats(),
+    st.floats(),
+    st.floats(),
+    st.floats(),
+    st.floats(min_value=-0.1, max_value=2),
+    st.text(),
+)
 def test_wateroil_random(swirr, swl, swcr, sorw, h, tag):
     """Shoot wildly with arguments, the code should throw ValueError
     or AssertionError when input is invalid, but we don't want other crashes"""
@@ -51,12 +58,41 @@ def test_wateroil_swl(swl):
 
 
 @given(st.floats(min_value=0, max_value=1))
-def test_wateroil_sensible(swcr):
+def test_wateroil_swcr(swcr):
     wo = WaterOil(swcr=swcr)
     check_table(wo.table)
 
 
 @given(st.floats(min_value=0, max_value=1))
-def test_wateroil_sensible(sorw):
+def test_wateroil_sorw(sorw):
     wo = WaterOil(sorw=sorw)
     check_table(wo.table)
+
+
+# Test combination of 2 floats as parameters:
+@given(st.floats(min_value=0, max_value=1), st.floats(min_value=0, max_value=1))
+def test_wateroil_dual(p1, p2):
+    try:
+        wo = WaterOil(swl=p1, sorw=p2)
+        check_table(wo.table)
+        # Will fail when swl > 1 - sorw
+    except AssertionError:
+        pass
+
+    try:
+        wo = WaterOil(swl=p1, swirr=p2)
+        check_table(wo.table)
+    except AssertionError:
+        pass
+
+    try:
+        wo = WaterOil(swcr=p1, sorw=p2)
+        check_table(wo.table)
+    except AssertionError:
+        pass
+
+    try:
+        wo = WaterOil(swirr=p1, sorw=p2)
+        check_table(wo.table)
+    except AssertionError:
+        pass
