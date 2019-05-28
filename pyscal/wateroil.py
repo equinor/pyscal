@@ -14,7 +14,7 @@ class WaterOil(object):
     Can hold relative permeability data, and capillary pressure
     """
 
-    def __init__(self, swirr=0, swl=0.1, swcr=0.0, sorw=0.05, h=0.01, tag=""):
+    def __init__(self, swirr=0.0, swl=0.0, swcr=0.0, sorw=0.0, h=0.01, tag=""):
         """Sets up the saturation range. Swirr is only relevant
         for the capillary pressure, not for relperm data."""
 
