@@ -9,9 +9,25 @@ from pyscal.constants import EPSILON as epsilon
 from pyscal.constants import SWINTEGERS
 
 class WaterOil(object):
-    """A representation of two-phase properties for oil-water
+    """A representation of two-phase properties for oil-water.
 
-    Can hold relative permeability data, and capillary pressure
+    Can hold relative permeability data, and capillary pressure.
+   
+    Parametrizations for relative permeability:
+     * Corey
+     * LET
+
+    For capillary pressure:
+     * Simplified J-function
+
+    For object initialization, only saturation endpoints must be inputted,
+    and saturation resolution. An optional string can be added as a 'tag'
+    that can be used when outputting.
+    
+    Relative permeability and/or capillary pressure can be added through
+    parametrizations, or from a dataframe (will incur interpolation).
+
+    Can be dumped as include files for Eclipse/OPM and Nexus simulators.
     """
 
     def __init__(self, swirr=0.0, swl=0.0, swcr=0.0, sorw=0.0, h=0.01, tag=""):
@@ -77,8 +93,18 @@ class WaterOil(object):
         Calling function is responsible for checking if any data was
         actually added to the table.
 
-        The dataframe input can be constructed using e.g. swof2csv functionality
-
+        The python package ecl2df has a tool for converting Eclipse input
+        files to dataframes. 
+        
+        Args:
+            df: Pandas dataframe
+            swcolname: string
+            krwcolname: string
+            krowcolname: string
+            pccolname: string
+            krwcomment: string
+            krowcomment: string
+            pccomment: string
         """
         from scipy.interpolate import PchipInterpolator
         if swcolname not in df:
