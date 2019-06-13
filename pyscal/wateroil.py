@@ -97,9 +97,9 @@ class WaterOil(object):
         files to dataframes. 
         
         Args:
-            df: Pandas dataframe
-            swcolname: string
-            krwcolname: string
+            df: Pandas dataframe containing data
+            swcolname: string, column name with the saturation data in the dataframe.
+            krwcolname: string, name of the column with krw
             krowcolname: string
             pccolname: string
             krwcomment: string
@@ -127,8 +127,22 @@ class WaterOil(object):
             self.pccomment = "-- pc from tabular input" + pccomment + "\n"
 
     def add_corey_water(self, nw=2, krwend=1, krwmax=1):
-        """ Add krw data through the Corey parametrization,
-        paying attention to the area above sorw"""
+        """ Add krw data through the Corey parametrization
+
+        A column named 'krw' will be added. If it exists, it will
+        be replaced.
+           
+        It is assumed that there are no sw points between
+        sw=1-sorw and sw=1, which should give linear 
+        interpolations in simulators. The corey parameter
+        applies up to 1-sorw.
+
+        Args:
+            nw: float, Corey parameter for water.
+            krwend: float, value of krw at 1 - sorw.
+            krwmax: float, maximal value at Sw=1
+
+        """
         assert nw > 0
         assert krwend < 2
         assert krwend > 0
@@ -142,6 +156,20 @@ class WaterOil(object):
                           % (nw, krwend, krwmax)
 
     def add_LET_water(self, l=2, e=2, t=2, krwend=1, krwmax=1):
+        """Add krw data through LET parametrization
+
+        It is assumed that there are no sw points between
+        sw=1-sorw and sw=1, which should give linear 
+        interpolations in simulators. The LET parameters
+        apply up to 1-sorw.
+
+        Args:
+            l: float
+            e: float
+            t: float
+            krwend: float
+            krwmax: float
+        """
         self.table['krw'] = krwend * self.table.swn ** l \
                          / ((self.table.swn ** l) \
                             + e * (1 - self.table.swn) ** t)
@@ -158,6 +186,16 @@ class WaterOil(object):
             % (l, e, t, krwend, krwmax)
 
     def add_LET_oil(self, l=2, e=2, t=2, kroend=1, kromax=1):
+        """
+        Add kro data through LET parametrization
+
+        Args:
+            l: float
+            e: float
+            t: float
+            kroend: float
+            kromax: float
+        """
         self.table['krow'] = kroend * self.table.son ** l \
                           / ((self.table.son ** l) \
                              + e * (1 - self.table.son) ** t)
