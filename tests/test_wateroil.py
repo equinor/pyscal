@@ -32,13 +32,34 @@ def check_table(df):
 
 @given(st.floats(), st.floats())
 def test_wateroil_corey1(nw, now):
+    wo = WaterOil()
     try:
-        wo = WaterOil()
         wo.add_corey_oil(now=now)
-        assert "krow" in wo.table
         wo.add_corey_water(nw=nw)
-        assert "krw" in wo.table
-        assert isinstance(wo.krwcomment, str)
-        check_table(wo.table)
     except AssertionError:
-        pass
+        # This happens for "invalid" input
+        return
+
+    assert "krow" in wo.table
+    assert "krw" in wo.table
+    assert isinstance(wo.krwcomment, str)
+    check_table(wo.table)
+    swofstr = wo.SWOF()
+    assert len(swofstr) > 100
+
+@given(st.floats(), st.floats(), st.floats(), st.floats(), st.floats())
+def test_wateroil_let1(l, e, t, krwend, krwmax):
+    wo = WaterOil()
+    try:
+        wo.add_LET_oil(l, e, t, krwend, krwmax)
+        wo.add_LET_water(l, e, t, krwend, krwmax)
+    except AssertionError:
+        # This happens for negative values f.ex.
+        return
+    assert "krow" in wo.table
+    assert "krw" in wo.table
+    assert isinstance(wo.krwcomment, str)
+    check_table(wo.table)
+    swofstr = wo.SWOF()
+    assert len(swofstr) > 100
+
