@@ -7,12 +7,13 @@ import pandas as pd
 
 from pyscal.constants import EPSILON as epsilon
 from pyscal.constants import SWINTEGERS
+from pyscal.constants import MAX_EXPONENT
 
 class WaterOil(object):
     """A representation of two-phase properties for oil-water.
 
     Can hold relative permeability data, and capillary pressure.
-   
+
     Parametrizations for relative permeability:
      * Corey
      * LET
@@ -23,7 +24,7 @@ class WaterOil(object):
     For object initialization, only saturation endpoints must be inputted,
     and saturation resolution. An optional string can be added as a 'tag'
     that can be used when outputting.
-    
+
     Relative permeability and/or capillary pressure can be added through
     parametrizations, or from a dataframe (will incur interpolation).
 
@@ -94,8 +95,8 @@ class WaterOil(object):
         actually added to the table.
 
         The python package ecl2df has a tool for converting Eclipse input
-        files to dataframes. 
-        
+        files to dataframes.
+
         Args:
             df: Pandas dataframe containing data
             swcolname: string, column name with the saturation data in the dataframe.
@@ -131,9 +132,9 @@ class WaterOil(object):
 
         A column named 'krw' will be added. If it exists, it will
         be replaced.
-           
+
         It is assumed that there are no sw points between
-        sw=1-sorw and sw=1, which should give linear 
+        sw=1-sorw and sw=1, which should give linear
         interpolations in simulators. The corey parameter
         applies up to 1-sorw.
 
@@ -144,10 +145,9 @@ class WaterOil(object):
 
         """
         assert nw > 0
-        assert krwend < 2
-        assert krwend > 0
-        assert krwmax < 2
+        assert nw < MAX_EXPONENT
         assert krwmax > 0
+        assert krwend <= krwmax
         self.table['krw'] = krwend * self.table.swn ** nw
         self.table.loc[self.table.sw > (1 - self.sorw + epsilon), 'krw'] \
             = max(krwmax, krwend)
@@ -159,7 +159,7 @@ class WaterOil(object):
         """Add krw data through LET parametrization
 
         It is assumed that there are no sw points between
-        sw=1-sorw and sw=1, which should give linear 
+        sw=1-sorw and sw=1, which should give linear
         interpolations in simulators. The LET parameters
         apply up to 1-sorw.
 
@@ -170,6 +170,15 @@ class WaterOil(object):
             krwend: float
             krwmax: float
         """
+        assert l > 0
+        assert e > 0
+        assert t > 0
+        assert l < MAX_EXPONENT
+        assert e < MAX_EXPONENT
+        assert t < MAX_EXPONENT
+        assert krwmax > 0
+        assert krwend > 0
+        assert krwend <= krwmax
         self.table['krw'] = krwend * self.table.swn ** l \
                          / ((self.table.swn ** l) \
                             + e * (1 - self.table.swn) ** t)
@@ -196,6 +205,15 @@ class WaterOil(object):
             kroend: float
             kromax: float
         """
+        assert l > 0
+        assert l < MAX_EXPONENT
+        assert e > 0
+        assert e < MAX_EXPONENT
+        assert t > 0
+        assert t < MAX_EXPONENT
+        assert kroend > 0
+        assert kromax > 0
+        assert kroend <= kromax
         self.table['krow'] = kroend * self.table.son ** l \
                           / ((self.table.son ** l) \
                              + e * (1 - self.table.son) ** t)
@@ -209,8 +227,10 @@ class WaterOil(object):
         """Add kro data through the Corey parametrization,
         paying attention to saturations above sorw and below swl"""
         assert now > 0
-        assert kroend < 2
-        assert kromax < 2
+        assert now < MAX_EXPONENT
+        assert kroend > 0
+        assert kromax > 0
+        assert kroend <= kromax
         self.table['krow'] = kroend * self.table.son ** now
         self.table.loc[self.table.sw >= (1 - self.sorw), 'krow'] = 0
         self.table.loc[self.table.sw < self.swl, 'krow'] = kromax

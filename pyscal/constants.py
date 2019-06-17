@@ -8,3 +8,7 @@ SWINTEGERS = 10000
 # than this when generating relperm tables
 EPSILON = 1e-08
 
+# We should not allow arbitrarily big exponents in
+# relperm parametrizations. Code can use this constant
+# in input assertions
+MAX_EXPONENT = 100
