@@ -62,4 +62,3 @@ def test_wateroil_let1(l, e, t, krwend, krwmax):
     check_table(wo.table)
     swofstr = wo.SWOF()
     assert len(swofstr) > 100
-
