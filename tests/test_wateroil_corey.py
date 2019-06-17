@@ -17,6 +17,7 @@ from pyscal import WaterOil
 
 
 def check_table(df):
+    """Check sanity of important columns"""
     assert not df.empty
     assert not df.isnull().values.any()
     assert len(df["sw"].unique()) == len(df)
