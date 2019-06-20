@@ -147,6 +147,8 @@ class WaterOil(object):
         """
         assert nw > 0
         assert nw < MAX_EXPONENT
+        assert krwend <= 1.0
+        assert krwmax <= 1.0
         assert krwmax > 0
         assert krwend <= krwmax
         self.table['krw'] = krwend * self.table.swn ** nw
@@ -178,7 +180,9 @@ class WaterOil(object):
         assert e < MAX_EXPONENT
         assert t < MAX_EXPONENT
         assert krwmax > 0
+        assert krwmax <= 1.0
         assert krwend > 0
+        assert krwend <= 1.0
         assert krwend <= krwmax
         self.table['krw'] = krwend * self.table.swn ** l \
                          / ((self.table.swn ** l) \
@@ -213,7 +217,9 @@ class WaterOil(object):
         assert t > 0
         assert t < MAX_EXPONENT
         assert kroend > 0
+        assert kroend <= 1.0
         assert kromax > 0
+        assert kromax <= 1.0
         assert kroend <= kromax
         self.table['krow'] = kroend * self.table.son ** l \
                           / ((self.table.son ** l) \
@@ -230,7 +236,9 @@ class WaterOil(object):
         assert now > 0
         assert now < MAX_EXPONENT
         assert kroend > 0
+        assert kroend <= 1.0
         assert kromax > 0
+        assert kromax <= 1.0
         assert kroend <= kromax
         self.table['krow'] = kroend * self.table.son ** now
         self.table.loc[self.table.sw >= (1 - self.sorw), 'krow'] = 0
@@ -255,6 +263,10 @@ class WaterOil(object):
         drho has SI units kg/m³. Default value is 300
         g has SI units m/s², default value is 9.81
         """
+        assert g > 0
+        assert poro_ref > 0.0
+        assert poro_ref < 1.0
+        assert perm_ref > 0.0
         # drho = rwo_w - rho_o, in units g/cc
 
         # swnpc is a normalized saturation, but normalized with
