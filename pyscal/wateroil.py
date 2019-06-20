@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import math
-import copy
 import numpy as np
 import pandas as pd
 
 from pyscal.constants import EPSILON as epsilon
 from pyscal.constants import SWINTEGERS
 from pyscal.constants import MAX_EXPONENT
+
 
 class WaterOil(object):
     """A representation of two-phase properties for oil-water.
@@ -48,6 +48,7 @@ class WaterOil(object):
         assert swl < 1 - sorw
         assert swcr < 1 - sorw
         assert swirr < 1 - sorw
+        assert isinstance(tag, str)
 
         self.swirr = swirr
         self.swl = max(swl, swirr)  # Cannot allow swl < swirr. Warn?
