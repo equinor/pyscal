@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
-import math
-import copy
 import numpy as np
 import pandas as pd
+
+from pyscal.constants import EPSILON as epsilon
+from pyscal.constants import SWINTEGERS
+from pyscal.constants import MAX_EXPONENT
 
 
 class GasOil(object):
@@ -15,6 +17,11 @@ class GasOil(object):
     krgend can be anchored both to (1-swl-sorg) and to (1-swl). Default is
     to anchor to (1-swl-sorg). If the krgendanchor argument is something
     else than the string 'sorg', it will be anchored to (1-swl).
+
+    Parametrizations for relative permeability:
+     * Corey
+     * LET
+
     """
 
     def __init__(
@@ -27,6 +34,19 @@ class GasOil(object):
         tag="",
         krgendanchor="sorg",
     ):
+        assert h > epsilon
+        assert h < 1
+        assert swirr < 1.0 + epsilon
+        assert swirr > -epsilon
+        assert sgcr < 1
+        assert sgcr > -epsilon
+        assert swl > -epsilon
+        assert swl < 1
+        assert sorg > -epsilon
+        assert sorg < 1
+        assert isinstance(tag, str)
+        assert isinstance(krgendanchor, str)
+
         self.h = h
         swl = max(swl, swirr)  # Can't allow swl < swirr, should we warn user?
         self.swl = swl
@@ -148,14 +168,32 @@ class GasOil(object):
             self.table["pc"] = pchip(self.table.sg, extrapolate=False)
             self.pccomment = "-- pc from tabular input" + pccomment + "\n"
 
-    def add_corey_gas(self, ng=2, krgend=1, krgmax=1):
-        """ Add krg data through the Corey parametrization"""
+    def add_corey_gas(self, ng=2, krgend=1, krgmax=None):
+        """ Add krg data through the Corey parametrization
+
+        A column called 'krg' will be added. If it exists, it will
+        be replaced.
+
+        TODO: Document krgendanchor behaviour.
+
+        krgmax is only relevant if krgendanchor is 'sorg'
+        """
+        assert ng > epsilon
+        assert ng < MAX_EXPONENT
+        assert krgend > 0
+        assert krgend <= 1.0
+        if krgmax is not None:
+            assert krgmax > 0
+            assert krgmax <= 1.0
+            assert krgend <= krgmax
         self.table["krg"] = krgend * self.table.sgn ** ng
         self.table.loc[self.table.sg <= self.sgcr, "krg"] = 0
         # Warning: code duplicated from add_LET_gas():
         if self.krgendanchor == "sorg":
             # Linear curve between krgendcanchor and 1-swl if krgend
             # is anchored to sorg
+            if not krgmax:
+                krgmax = 1
             tmp = pd.DataFrame(self.table[["sg"]])
             tmp["sgendnorm"] = (tmp["sg"] - (1 - (self.sorg + self.swl))) / (self.sorg)
             tmp["krg"] = tmp["sgendnorm"] * krgmax + (1 - tmp["sgendnorm"]) * krgend
@@ -167,6 +205,8 @@ class GasOil(object):
                 self.table.sg > (1 - (self.swl + epsilon)), "krg"
             ] = krgend  # krgmax should not be used when we don't
             # anchor to sorg.
+            if krgmax is not None:
+                print("krgmax ignored when we anchor to sorg")
         self.krgcomment = "-- Corey krg, ng=%g, krgend=%g, krgmax=%g\n" % (
             ng,
             krgend,
@@ -174,11 +214,41 @@ class GasOil(object):
         )
 
     def add_corey_oil(self, nog=2, kroend=1):
+        """
+        Add kro data through the Corey parametrization
+
+        A column named 'kro' will be added, replaced if it exists.
+
+        All values above 1 - sorg - swl are set to zero.
+        """
+        assert nog > epsilon
+        assert nog < MAX_EXPONENT
+        assert kroend > 0
+
         self.table["krog"] = kroend * self.table.son ** nog
         self.table.loc[self.table.sg > 1 - self.sorg - self.swl - epsilon, "krog"] = 0
         self.krogcomment = "-- Corey krog, nog=%g, kroend=%g\n" % (nog, kroend)
 
-    def add_LET_gas(self, l=2, e=2, t=2, krgend=1, krgmax=1):
+    def add_LET_gas(self, l=2, e=2, t=2, krgend=1, krgmax=None):
+        """
+        Add gas relative permability data through the LET parametrization
+
+        A column called 'krg' will be added, replaced if it does not exist
+
+        Todo: Document krgendanchor behaviour.
+        """
+        assert l > epsilon
+        assert l < MAX_EXPONENT
+        assert e > epsilon
+        assert e < MAX_EXPONENT
+        assert t > epsilon
+        assert t < MAX_EXPONENT
+        assert krgend > 0
+        assert krgend <= 1.0
+        if krgmax is not None:
+            assert krgmax > 0
+            assert krgmax <= 1.0
+            assert krgend <= krgmax
         self.table["krg"] = (
             krgend
             * self.table.sgn ** l
@@ -188,6 +258,8 @@ class GasOil(object):
         if self.krgendanchor == "sorg":
             # Linear curve between krgendcanchor and 1-swl if krgend
             # is anchored to sorg
+            if not krgmax:
+                krgmax = 1
             tmp = pd.DataFrame(self.table[["sg"]])
             tmp["sgendnorm"] = (tmp["sg"] - (1 - (self.sorg + self.swl))) / (self.sorg)
             tmp["krg"] = tmp["sgendnorm"] * krgmax + (1 - tmp["sgendnorm"]) * krgend
@@ -199,6 +271,8 @@ class GasOil(object):
                 self.table.sg > (1 - (self.swl + epsilon)), "krg"
             ] = krgend  # krgmax should not be used when we don't
             # anchor to sorg.
+            if krgmax is not None:
+                print("krgmax ignored when anchoring to sorg")
         self.krgcomment = "-- LET krg, l=%g, e=%g, t=%g, krgend=%g, krgmax=%g\n" % (
             l,
             e,
@@ -208,6 +282,22 @@ class GasOil(object):
         )
 
     def add_LET_oil(self, l=2, e=2, t=2, kroend=1):
+        """Add oil (vs gas) relative permeability data through the Corey
+        parametrization.
+
+        A column named 'krog' will be added, replaced if it exists.
+
+        All values where sg > 1 - sorg - swl are set to zero.
+        """
+        assert l > epsilon
+        assert l < MAX_EXPONENT
+        assert e > epsilon
+        assert e < MAX_EXPONENT
+        assert t > epsilon
+        assert t < MAX_EXPONENT
+        assert kroend > 0
+        assert kroend <= 1.0
+
         self.table["krog"] = (
             kroend
             * self.table.son ** l
@@ -224,7 +314,13 @@ class GasOil(object):
     def selfcheck(self):
         """Check validities of the data in the table.
 
-        If you call SGOF/SLGOF, this function must not return False
+        This is to catch errors that are either physically wrong
+        or at least causes Eclipse 100 to stop.
+
+        Returns True if no errors are found, False if at least one
+        is found.
+
+        If you call SGOF/SLGOF, this function must not return False.
         """
         error = False
         if not (self.table.sg.diff().dropna() > -epsilon).all():
@@ -263,6 +359,23 @@ class GasOil(object):
             return True
 
     def SGOF(self, header=True, dataincommentrow=True):
+        """
+        Produce SGOF input for Eclipse reservoir simulator.
+
+        The columns sg, krg, krog and pc are outputted and
+        formatted accordingly.
+
+        Meta-information for the tabulated data are printed
+        as Eclipse comments.
+
+        Args:
+            header: boolean for whether the SGOF string should be emitted.
+                If you have multiple satnums, you should have True only
+                for the first (or False for all, and emit the SGOF yourself).
+                Defaults to True.
+            dataincommentrow: boolean for wheter metadata should be printed,
+                defaults to True.
+        """
         if not self.selfcheck():
             return
         string = ""
@@ -286,6 +399,22 @@ class GasOil(object):
         return string
 
     def SLGOF(self, header=True, dataincommentrow=True):
+        """Produce SLGOF input for Eclipse reservoir simulator.
+
+        The columns sl (liquid saturation), krg, krog and pc are
+        outputted and formatted accordingly.
+
+        Meta-information for the tabulated data are printed
+        as Eclipse comments.
+
+        Args:
+            header: boolean for whether the SLGOF string should be emitted.
+                If you have multiple satnums, you should have True only
+                for the first (or False for all, and emit the SGOF yourself).
+                Defaults to True.
+            dataincommentrow: boolean for wheter metadata should be printed,
+                defaults to True.
+        """
         if not self.selfcheck():
             return
         string = ""
@@ -311,6 +440,23 @@ class GasOil(object):
         return string
 
     def SGFN(self, header=True, dataincommentrow=True):
+        """
+        Produce SGFN input for Eclipse reservoir simulator.
+
+        The columns sg, krg, and pc are outputted and
+        formatted accordingly.
+
+        Meta-information for the tabulated data are printed
+        as Eclipse comments.
+
+        Args:
+            header: boolean for whether the SGOF string should be emitted.
+                If you have multiple satnums, you should have True only
+                for the first (or False for all, and emit the SGOF yourself).
+                Defaults to True.
+            dataincommentrow: boolean for wheter metadata should be printed,
+                defaults to True.
+        """
         string = ""
         if "pc" not in self.table.columns:
             self.table["pc"] = 0
@@ -332,7 +478,23 @@ class GasOil(object):
         return string
 
     def GOTABLE(self, header=True, dataincommentrow=True):
-        """Return a string for a Nexus GOTABLE"""
+        """
+        Produce GOTABLE input for the Nexus reservoir simulator.
+
+        The columns sg, krg, krog and pc are outputted and
+        formatted accordingly.
+
+        Meta-information for the tabulated data are printed
+        as Eclipse comments.
+
+        Args:
+            header: boolean for whether the SGOF string should be emitted.
+                If you have multiple satnums, you should have True only
+                for the first (or False for all, and emit the SGOF yourself).
+                Defaults to True.
+            dataincommentrow: boolean for wheter metadata should be printed,
+                defaults to True.
+        """
         string = ""
         if "pc" not in self.table.columns:
             self.table["pc"] = 0
