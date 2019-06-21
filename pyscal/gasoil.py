@@ -178,7 +178,7 @@ class GasOil(object):
 
         krgmax is only relevant if krgendanchor is 'sorg'
         """
-        assert ng > 0
+        assert ng > epsilon
         assert ng < MAX_EXPONENT
         assert krgend > 0
         assert krgend <= 1.0
@@ -221,7 +221,7 @@ class GasOil(object):
 
         All values above 1 - sorg - swl are set to zero.
         """
-        assert nog > 0
+        assert nog > epsilon
         assert nog < MAX_EXPONENT
         assert kroend > 0
 
@@ -237,11 +237,11 @@ class GasOil(object):
 
         Todo: Document krgendanchor behaviour.
         """
-        assert l > 0
+        assert l > epsilon
         assert l < MAX_EXPONENT
-        assert e > 0
+        assert e > epsilon
         assert e < MAX_EXPONENT
-        assert t > 0
+        assert t > epsilon
         assert t < MAX_EXPONENT
         assert krgend > 0
         assert krgend <= 1.0
@@ -289,11 +289,11 @@ class GasOil(object):
 
         All values where sg > 1 - sorg - swl are set to zero.
         """
-        assert l > 0
+        assert l > epsilon
         assert l < MAX_EXPONENT
-        assert e > 0
+        assert e > epsilon
         assert e < MAX_EXPONENT
-        assert t > 0
+        assert t > epsilon
         assert t < MAX_EXPONENT
         assert kroend > 0
         assert kroend <= 1.0
