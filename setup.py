@@ -1,9 +1,11 @@
+# coding: utf-8
+
 from setuptools import setup
 
 setup(
     name="pyscal",
     version="0.0.1",
-    description="Generate relperm include files for Eclipse 100",
+    description="Generate relative permeability include files for Eclipse reservoir simulator",
     url="http://github.com/equinor/pyscal",
     author="Håvard Berland",
     author_email="havb@equinor.com",
