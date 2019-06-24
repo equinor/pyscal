@@ -161,7 +161,7 @@ class WaterOil(object):
             krwmax: float, maximal value at Sw=1
 
         """
-        assert nw > 0
+        assert nw > epsilon
         assert nw < MAX_EXPONENT
         assert krwend <= 1.0
         assert krwmax <= 1.0
@@ -193,9 +193,9 @@ class WaterOil(object):
             krwend: float
             krwmax: float
         """
-        assert l > 0
-        assert e > 0
-        assert t > 0
+        assert l > epsilon
+        assert e > epsilon
+        assert t > epsilon
         assert l < MAX_EXPONENT
         assert e < MAX_EXPONENT
         assert t < MAX_EXPONENT
@@ -236,11 +236,11 @@ class WaterOil(object):
             kroend: float
             kromax: float
         """
-        assert l > 0
+        assert l > epsilon
         assert l < MAX_EXPONENT
-        assert e > 0
+        assert e > epsilon
         assert e < MAX_EXPONENT
-        assert t > 0
+        assert t > epsilon
         assert t < MAX_EXPONENT
         assert kroend > 0
         assert kroend <= 1.0
@@ -265,7 +265,7 @@ class WaterOil(object):
     def add_corey_oil(self, now=2, kroend=1, kromax=1):
         """Add kro data through the Corey parametrization,
         paying attention to saturations above sorw and below swl"""
-        assert now > 0
+        assert now > epsilon
         assert now < MAX_EXPONENT
         assert kroend > 0
         assert kroend <= 1.0
