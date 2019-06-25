@@ -1,4 +1,4 @@
-# pyscal [![Build Status](https://travis-ci.com/equinor/pyscal.svg?branch=master)](https://travis-ci.com/equinor/pyscal)
+# pyscal [![Build Status](https://travis-ci.com/equinor/pyscal.svg?branch=master)](https://travis-ci.com/equinor/pyscal) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/11d947d518bd41729dc104d24fce33cd)](https://www.codacy.com/app/berland/pyscal?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=equinor/pyscal&amp;utm_campaign=Badge_Grade)
 
 Python module for relative permeability/SCAL support in reservoir simulation
 
