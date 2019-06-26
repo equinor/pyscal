@@ -5,7 +5,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from hypothesis import given
+from hypothesis import given, settings
 import hypothesis.strategies as st
 
 from pyscal import WaterOil
@@ -66,6 +66,7 @@ def test_wateroil_sorw(sorw):
 
 
 # Test combination of 2 floats as parameters:
+@settings(deadline=1000)
 @given(st.floats(min_value=0, max_value=1), st.floats(min_value=0, max_value=1))
 def test_wateroil_dual(p1, p2):
     try:

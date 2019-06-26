@@ -1,12 +1,21 @@
 language: python
-
 python:
-  - "2.7"
-  - "3.6"
-
+- '2.7'
+- '3.6'
 install:
-  - pip install -r requirements.txt
-  - pip install .
-
+- pip install -r requirements.txt
+- pip install .
 script:
-  - pytest
+- pytest
+- make docsrun
+deploy:
+- provider: pages
+  skip_cleanup: true
+  local_dir: "./docs/_build/html"
+  github_token: "$GITHUB_TOKEN"
+  keep_history: true
+  on:
+    branch: master
+env:
+  matrix:
+  - secure: IEXmXYquc2wuwB3VJ7ko567HFSorrWAghVRJlOBuoviX0mCRXPxxrv4sc58LfUeOkWow6YzD2BI9XttZkE7XfiIaifKYNar4swIcQnN1m2OiewAQt9yv4iA9wJ3WJ/aqs3UpdNhpkMotWE4I5hZIdvFLQdkzcBJNv3iJFU50D1VARtFByknvMaLCN6X9HPVK23mMjXfE5bcYh2HO50oL97pZDs2JHQGWPeChhQwznykyT0Kte7tOAjRqikDfOLqQbY8Nmxvz7mIGfCJ3aDyMBfhMTVmWGr7lFYoJziZIR+X34yHvKMnEdqBfKl0stPL48Bf5nlKFOCABYbhmsOsu1MJ8fflkETSmixLxuWOBLcAUcDzAUbatyAZkEd4eBDQrjUDZrpXgb6VSLa0FSCtaax8akL/yP3QClYIeZDoYulelvUMCqvKku3JNyfCQ8AARpNJtyXRcSxmWGDMRc+s9jGrTiefZ4f+YK3pBIKDowwdaMnrOlELNkSeuYirHtxmx+UfZCPxpSOO4ZoW0Jc+S2kldDEMIA9pJm5ukZbyRATqw5eKfwSWVNVjajiyPEzCBMw1a/MhjiqfLTEeAHgLOFseJW4ofpEipGFKBTf+ZFGDvVviood6Zx6+Ax5c06tII2MvT8hG3jwrV7dPCLbkUdOYvoTU/gMn1Eo7mj5oL/gE=
