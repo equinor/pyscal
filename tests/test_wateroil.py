@@ -10,8 +10,6 @@ import hypothesis.strategies as st
 
 from pyscal import WaterOil
 
-# Avoid some erroneous Flaky-test-reports
-settings(deadline=1000)
 
 
 def check_table(df):
@@ -28,6 +26,7 @@ def check_table(df):
     assert df["krw"].is_monotonic
 
 
+@settings(deadline=1000)
 @given(st.floats(), st.floats())
 def test_wateroil_corey1(nw, now):
     wo = WaterOil()
@@ -46,6 +45,7 @@ def test_wateroil_corey1(nw, now):
     assert len(swofstr) > 100
 
 
+@settings(deadline=1000)
 @given(st.floats(), st.floats(), st.floats(), st.floats(), st.floats())
 def test_wateroil_let1(l, e, t, krwend, krwmax):
     wo = WaterOil()

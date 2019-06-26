@@ -12,10 +12,6 @@ import hypothesis.strategies as st
 from pyscal import GasOil
 
 
-# Avoid some erroneous Flaky-test-reports
-settings(deadline=1000)
-
-
 def check_table(df):
     """Check sanity of important columns"""
     assert not df.empty
@@ -30,7 +26,7 @@ def check_table(df):
     if "pc" in df:
         assert df["pc"].is_monotonic
 
-
+@settings(deadline=1000)
 @given(st.floats(), st.floats())
 def test_gasoil_corey1(ng, nog):
     go = GasOil()
@@ -48,7 +44,7 @@ def test_gasoil_corey1(ng, nog):
     sgofstr = go.SGOF()
     assert len(sgofstr) > 100
 
-
+@settings(deadline=1000)
 @given(st.floats(), st.floats(), st.floats(), st.floats(), st.floats())
 def test_gasoil_let1(l, e, t, krgend, krgmax):
     go = GasOil()
