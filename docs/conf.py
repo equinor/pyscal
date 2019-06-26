@@ -20,12 +20,12 @@ import os
 # directory, add these directories to sys.path here. If the directory is
 # relative to the documentation root, use os.path.abspath to make it
 # absolute, like shown here.
-sys.path.insert(0, os.path.abspath('../pyscal'))
+sys.path.insert(0, os.path.abspath('pyscal'))
 print(sys.path)
 
 # Get the project root dir, which is the parent dir of this
 cwd = os.getcwd()
-project_root = os.path.dirname(cwd) + 'pyscal'
+project_root = os.path.dirname(cwd) + '/pyscal'
 
 # Insert the project root dir as the first element in the PYTHONPATH.
 # This lets us ensure that the source package is imported, and that its

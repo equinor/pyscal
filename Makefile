@@ -33,7 +33,7 @@ APPLICATIONROOT := pyscal
 APPLICATION := pyscal 
 APPLICATIONPKG := pyscal 
 SRCAPPLICATION := pyscal
-TOPSRCAPPLICATION := . 
+TOPSRCAPPLICATION := pyscal 
 DOCSINSTALL := /project/sdpdocs/FMU/lib
 
 # A list of the applications
