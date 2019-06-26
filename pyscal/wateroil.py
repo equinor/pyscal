@@ -435,8 +435,8 @@ class WaterOil(object):
         self.table.loc[self.table.swn < epsilon, "pc"] = Pcmax
         self.pccomment = (
             "-- LET correlation for primary drainage Pc;\n"
-            + "-- Lp=%g, Ep=%g, Tp=%g, Lt=%g, Et=%g, Tt=%g, "
-            + "Pcmax=%g, Pct=%g\n" % (Lp, Ep, Tp, Lt, Et, Tt, Pcmax, Pct)
+            + "-- Lp=%g, Ep=%g, Tp=%g, Lt=%g, Et=%g, Tt=%g, Pcmax=%g, Pct=%g\n"
+            % (Lp, Ep, Tp, Lt, Et, Tt, Pcmax, Pct)
         )
 
     def add_LET_pc_imb(self, Ls, Es, Ts, Lf, Ef, Tf, Pcmax, Pcmin, Pct):
@@ -471,8 +471,7 @@ class WaterOil(object):
         self.table.loc[self.table.swnpco > 1 - epsilon, "pc"] = self.table.pc.min()
         self.pccomment = (
             "-- LET correlation for imbibition Pc;\n"
-            + "-- Ls=%g, Es=%g, Ts=%g, Lf=%g, Ef=%g, Tf=%g, "
-            + "Pcmax=%g, Pcmin=%g, Pct=%g\n"
+            + "-- Ls=%g, Es=%g, Ts=%g, Lf=%g, Ef=%g, Tf=%g, Pcmax=%g, Pcmin=%g, Pct=%g\n"
             % (Ls, Es, Ts, Lf, Ef, Tf, Pcmax, Pcmin, Pct)
         )
 
@@ -595,7 +594,7 @@ class WaterOil(object):
 
         if not ax:
             matplotlib.style.use("ggplot")
-            fig, useax = plt.subplots()
+            _, useax = plt.subplots()
         else:
             useax = ax
         self.table.plot(
@@ -622,7 +621,7 @@ class WaterOil(object):
 
         if not ax:
             matplotlib.style.use("ggplot")
-            fig, useax = plt.subplots()
+            _, useax = plt.subplots()
         else:
             useax = ax
         self.table.plot(

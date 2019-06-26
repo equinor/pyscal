@@ -8,8 +8,6 @@ from __future__ import print_function
 from hypothesis import given
 import hypothesis.strategies as st
 
-import pandas as pd
-
 from pyscal import GasOil
 
 

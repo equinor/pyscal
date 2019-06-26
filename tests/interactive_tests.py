@@ -126,7 +126,7 @@ def letspan():
     slimw = {x: sorted(LETw[x]) for x in LETw}
     slimo = {x: sorted(LETo[x]) for x in LETo}
 
-    fig, ax = plt.subplots()
+    _, ax = plt.subplots()
     for _ in range(100):
         swof = WaterOil(
             h=0.01, swl=0.16, sorw=random.uniform(slimw["sorw"][0], slimw["sorw"][1])
@@ -257,7 +257,7 @@ def testplot():
     swof.add_LET_oil(l=2, e=1, t=1.4, kroend=0.7, kromax=0.9)
 
     print(swof.table)
-    fig, ax = plt.subplots()
+    _, ax = plt.subplots()
     swof.plotkrwkrow(ax)
     plt.show()
 
@@ -301,7 +301,7 @@ def testgascurves():
     sgof.add_LET_oil(l=2, e=3, t=1.4, kroend=0.7)
 
     print(sgof.table)
-    fig, ax = plt.subplots()
+    _, ax = plt.subplots()
     sgof.plotkrgkrog(ax)
     # ax.set_yscale('log')
     print(sgof.SGOF())
