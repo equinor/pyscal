@@ -22,7 +22,8 @@ class SCALrecommendation(object):
 
     """
 
-    def defaultshandling(self, key, value, dicts):
+    @staticmethod
+    def defaultshandling(key, value, dicts):
         """Helper function for __init__ to fill out missing values in
         dicts with relperm parameter"""
         for dic in dicts:
@@ -55,14 +56,14 @@ class SCALrecommendation(object):
 
         if isinstance(low, dict) and isinstance(base, dict) and isinstance(high, dict):
 
-            self.defaultshandling("swirr", 0.0, [low, base, high])
-            self.defaultshandling("swcr", 0.0, [low, base, high])
-            self.defaultshandling("sorg", 0.0, [low, base, high])
-            self.defaultshandling("sgcr", 0.0, [low, base, high])
-            self.defaultshandling("kroend", 1.0, [low, base, high])
-            self.defaultshandling("krwmax", 1.0, [low, base, high])
-            self.defaultshandling("krgend", 1.0, [low, base, high])
-            self.defaultshandling("krgmax", 1.0, [low, base, high])
+            defaultshandling("swirr", 0.0, [low, base, high])
+            defaultshandling("swcr", 0.0, [low, base, high])
+            defaultshandling("sorg", 0.0, [low, base, high])
+            defaultshandling("sgcr", 0.0, [low, base, high])
+            defaultshandling("kroend", 1.0, [low, base, high])
+            defaultshandling("krwmax", 1.0, [low, base, high])
+            defaultshandling("krgend", 1.0, [low, base, high])
+            defaultshandling("krgmax", 1.0, [low, base, high])
 
             # Initialize saturation ranges for all curves
             self.low = WaterOilGas(
