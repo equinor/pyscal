@@ -88,8 +88,7 @@ high_sample_let = {
 
 @settings(max_examples=10, deadline=1000)
 @given(
-    st.floats(min_value=-1.1, max_value=1.1),
-    st.floats(min_value=-1.1, max_value=1.1)
+    st.floats(min_value=-1.1, max_value=1.1), st.floats(min_value=-1.1, max_value=1.1)
 )
 def test_interpolation(param_wo, param_go):
     rec = SCALrecommendation(
@@ -112,20 +111,37 @@ def test_interpolation(param_wo, param_go):
     assert len(interpolant.wateroil.SWOF()) > 100
     assert interpolant.threephaseconsistency() == ""
 
+
 def test_boundary_cases():
-     rec = SCALrecommendation(
+    rec = SCALrecommendation(
         low_sample_let, base_sample_let, high_sample_let, "foo", h=0.1
-     )
-     # Object reference equivalence is a little bit strict,
-     # because it would be perfectly fine if interpolate()
-     # retured copied objects. But we don't have an equivalence operator
-     # implemented.
-     assert rec.interpolate(0).wateroil == rec.base.wateroil
-     assert rec.interpolate(-1).wateroil == rec.low.wateroil
-     assert rec.interpolate(1).wateroil == rec.high.wateroil
-     assert rec.interpolate(0).gasoil == rec.base.gasoil
-     assert rec.interpolate(-1).gasoil == rec.low.gasoil
-     assert rec.interpolate(1).gasoil == rec.high.gasoil
+    )
+    # Object reference equivalence is a little bit strict,
+    # because it would be perfectly fine if interpolate()
+    # retured copied objects. But we don't have an equivalence operator
+    # implemented.
+    assert rec.interpolate(0).wateroil == rec.base.wateroil
+    assert rec.interpolate(-1).wateroil == rec.low.wateroil
+    assert rec.interpolate(1).wateroil == rec.high.wateroil
+    assert rec.interpolate(0).gasoil == rec.base.gasoil
+    assert rec.interpolate(-1).gasoil == rec.low.gasoil
+    assert rec.interpolate(1).gasoil == rec.high.gasoil
+
+    assert rec.interpolate(0, 1).wateroil == rec.base.wateroil
+    assert rec.interpolate(-1, 1).wateroil == rec.low.wateroil
+    assert rec.interpolate(1, 1).wateroil == rec.high.wateroil
+
+    assert rec.interpolate(0, 1).gasoil == rec.high.gasoil
+    assert rec.interpolate(-1, 1).gasoil == rec.high.gasoil
+    assert rec.interpolate(1, 1).gasoil == rec.high.gasoil
+
+    assert rec.interpolate(0, 0).gasoil == rec.base.gasoil
+    assert rec.interpolate(-1, 0).gasoil == rec.base.gasoil
+    assert rec.interpolate(1, 0).gasoil == rec.base.gasoil
+
+    assert rec.interpolate(0, -1).gasoil == rec.low.gasoil
+    assert rec.interpolate(-1, -1).gasoil == rec.low.gasoil
+    assert rec.interpolate(1, -1).gasoil == rec.low.gasoil
 
 
 def check_table_wo(df):
