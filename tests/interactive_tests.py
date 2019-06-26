@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Run this module from command line to run a few
 tests intended for human inspection
@@ -8,6 +9,8 @@ If you want to run individual tests, import this module in
 a Python session and run the functions manually.
 """
 
+from __future__ import absolute_import
+from __future__ import division
 from __future__ import print_function
 
 import numpy as np
@@ -15,15 +18,17 @@ import numpy as np
 from pyscal import WaterOil, WaterOilGas, GasOil, SCALrecommendation
 
 
-def interpolateplottest():
+from test_scalrecommendation import low_sample_corey, base_sample_corey, high_sample_corey, low_sample_let, base_sample_let, high_sample_let
+
+def interpolateplottest(low, base, high):
     """Demonstration of interpolation pointwise between LET curves"""
     import matplotlib.pyplot as plt
     import matplotlib
 
     matplotlib.style.use("ggplot")
 
-    rec = SCALrecommendation(lowsample(), basesample(), highsample(), "foo", h=0.001)
-    _, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2)
+    rec = SCALrecommendation(low, base, high, "foo", h=0.001)
+    fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2)
 
     # Choosing logarithmic spaced interpolation parameters
     # is not the same as interpolating in log(kr)-space
@@ -356,7 +361,7 @@ def main():
     print("--   * Red curves are between dotted and solid blue line")
     print("--   * Green curves are between solid blue and dashed")
     print("-- (close plot window to continue)")
-    interpolateplottest()
+    interpolateplottest(low_sample_let, base_sample_let, high_sample_let)
 
     print("")
     print("-- ***********************************************")

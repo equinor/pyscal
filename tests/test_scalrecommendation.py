@@ -8,6 +8,8 @@ from __future__ import print_function
 from hypothesis import given, settings
 import hypothesis.strategies as st
 
+import pytest
+
 from pyscal import SCALrecommendation
 
 # Example SCAL recommendation, low case
@@ -85,14 +87,115 @@ high_sample_let = {
     "kroend": 1,
 }
 
+low_sample_corey = {
+    "swirr": 0.25,
+    "sorw": 0.25,
+    "swl": 0.27,
+    "nw": 1,
+    "ng": 3,
+    "nog": 5,
+    "now": 5,
+    "sorg": 0.2,  # Todo: We do not capture if sorg + sgcr > 1 - swl
+    "sgcr": 0.35,
+    "kroend": 0.2,
+    "krwend": 0.4,
+}
+base_sample_corey = {
+    "swirr": 0.25,
+    "sorw": 0.25,
+    "swl": 0.27,
+    "nw": 3,
+    "ng": 2,
+    "nog": 3,
+    "now": 3.5,
+    "sorg": 0.1,
+    "sgcr": 0.15,
+    "kroend": 0.3,
+    "krwend": 0.24,
+}
+high_sample_corey = {
+    "swirr": 0.25,
+    "sorw": 0.25,
+    "swl": 0.27,
+    "nw": 4,
+    "ng": 1.4,
+    "nog": 2,
+    "now": 2,
+    "sorg": 0.05,
+    "sgcr": 0.05,
+    "kroend": 0.4,
+    "krwend": 0.13,
+}
+
+
+
+def test_example_let_cases():
+    rec = SCALrecommendation(
+        low_sample_let, base_sample_let, high_sample_let, "foo", h=0.1
+    )
+
+    check_table_wo(rec.low.wateroil.table)
+    check_table_wo(rec.base.wateroil.table)
+    check_table_wo(rec.high.wateroil.table)
+    check_table_go(rec.low.gasoil.table)
+    check_table_go(rec.base.gasoil.table)
+    check_table_go(rec.high.gasoil.table)
+    assert rec.low.threephaseconsistency() == ""
+    assert rec.base.threephaseconsistency() == ""
+    assert rec.high.threephaseconsistency() == ""
+
+def test_example_corey_cases():
+    rec = SCALrecommendation(
+        low_sample_corey, base_sample_corey, high_sample_corey, "foo", h=0.1
+    )
+    print()
+    print(rec.low.gasoil.table)
+    print(rec.base.gasoil.table)
+    check_table_wo(rec.low.wateroil.table)
+    check_table_wo(rec.base.wateroil.table)
+    check_table_wo(rec.high.wateroil.table)
+    check_table_go(rec.low.gasoil.table)
+    check_table_go(rec.base.gasoil.table)
+    check_table_go(rec.high.gasoil.table)
+    assert rec.low.threephaseconsistency() == ""
+    assert rec.base.threephaseconsistency() == ""
+    assert rec.high.threephaseconsistency() == ""
+
+
+
 
 @settings(max_examples=10, deadline=1000)
 @given(
     st.floats(min_value=-1.1, max_value=1.1), st.floats(min_value=-1.1, max_value=1.1)
 )
-def test_interpolation(param_wo, param_go):
+def test_interpolation_let(param_wo, param_go):
     rec = SCALrecommendation(
         low_sample_let, base_sample_let, high_sample_let, "foo", h=0.1
+    )
+    rec.add_simple_J()  # Add default pc curve
+
+    try:
+        interpolant = rec.interpolate(param_wo, param_go, h=0.1)
+    except AssertionError:
+        return
+
+    check_table_wo(interpolant.wateroil.table)
+    check_table_go(interpolant.gasoil.table)
+
+    assert len(interpolant.gasoil.SGOF()) > 100
+    assert len(interpolant.gasoil.SGFN()) > 100
+    assert len(interpolant.wateroil.SWFN()) > 100
+    assert len(interpolant.SOF3()) > 100
+    assert len(interpolant.wateroil.SWOF()) > 100
+    assert interpolant.threephaseconsistency() == ""
+
+@settings(max_examples=10, deadline=1000)
+@given(
+    st.floats(min_value=-1.1, max_value=1.1), st.floats(min_value=-1.1, max_value=1.1)
+)
+def test_interpolation_corey(param_wo, param_go):
+    rec = SCALrecommendation(
+        low_sample_corey, base_sample_corey, high_sample_corey, "foo", h=0.1
     )
     rec.add_simple_J()  # Add default pc curve
 
@@ -143,6 +246,10 @@ def test_boundary_cases():
     assert rec.interpolate(-1, -1).gasoil == rec.low.gasoil
     assert rec.interpolate(1, -1).gasoil == rec.low.gasoil
 
+
+def test_mangling_input():
+    with pytest.raises(ValueError):
+        rec = SCALrecommendation(dict(), dict(), dict(), "foo", h=0.1)
 
 def check_table_wo(df):
     """Check sanity of important columns"""
