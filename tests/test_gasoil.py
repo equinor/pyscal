@@ -15,6 +15,7 @@ from pyscal import GasOil
 # Avoid some erroneous Flaky-test-reports
 settings(deadline=1000)
 
+
 def check_table(df):
     """Check sanity of important columns"""
     assert not df.empty

@@ -13,6 +13,7 @@ from pyscal import WaterOil
 # Avoid some erroneous Flaky-test-reports
 settings(deadline=1000)
 
+
 def check_table(df):
     """Check sanity of important columns"""
     assert not df.empty
@@ -43,6 +44,7 @@ def test_wateroil_corey1(nw, now):
     check_table(wo.table)
     swofstr = wo.SWOF()
     assert len(swofstr) > 100
+
 
 @given(st.floats(), st.floats(), st.floats(), st.floats(), st.floats())
 def test_wateroil_let1(l, e, t, krwend, krwmax):

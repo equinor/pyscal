@@ -1,7 +1,12 @@
 # -*- coding: utf-8 -*-
+from __future__ import division, absolute_import
+from __future__ import print_function
 
 import numpy as np
 import pandas as pd
+
+from .wateroil import WaterOil
+from .gasoil import GasOil
 
 
 class WaterOilGas(object):
