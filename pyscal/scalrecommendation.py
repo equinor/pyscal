@@ -4,6 +4,10 @@ import copy
 import numpy as np
 import pandas as pd
 
+from pyscal.constants import SWINTEGERS
+
+from pyscal import WaterOilGas, WaterOil, GasOil
+
 
 class SCALrecommendation(object):
     """A SCAL recommendation consists of three OilWaterGas objects,
@@ -56,14 +60,14 @@ class SCALrecommendation(object):
 
         if isinstance(low, dict) and isinstance(base, dict) and isinstance(high, dict):
 
-            defaultshandling("swirr", 0.0, [low, base, high])
-            defaultshandling("swcr", 0.0, [low, base, high])
-            defaultshandling("sorg", 0.0, [low, base, high])
-            defaultshandling("sgcr", 0.0, [low, base, high])
-            defaultshandling("kroend", 1.0, [low, base, high])
-            defaultshandling("krwmax", 1.0, [low, base, high])
-            defaultshandling("krgend", 1.0, [low, base, high])
-            defaultshandling("krgmax", 1.0, [low, base, high])
+            self.defaultshandling("swirr", 0.0, [low, base, high])
+            self.defaultshandling("swcr", 0.0, [low, base, high])
+            self.defaultshandling("sorg", 0.0, [low, base, high])
+            self.defaultshandling("sgcr", 0.0, [low, base, high])
+            self.defaultshandling("kroend", 1.0, [low, base, high])
+            self.defaultshandling("krwmax", 1.0, [low, base, high])
+            self.defaultshandling("krgend", 1.0, [low, base, high])
+            self.defaultshandling("krgmax", 1.0, [low, base, high])
 
             # Initialize saturation ranges for all curves
             self.low = WaterOilGas(
@@ -225,6 +229,7 @@ class SCALrecommendation(object):
         if abs(parameter) > 1.0:
             print("ERROR: Interpolation parameter must be in [-1,1]")
             interpolant.wateroil = None
+            raise AssertionError
         elif np.isclose(parameter, 0.0):
             interpolant.wateroil = self.base.wateroil
         elif np.isclose(parameter, -1.0):
@@ -288,6 +293,7 @@ class SCALrecommendation(object):
         if abs(gasparameter) > 1.0:
             print("ERROR: Interpolation parameter must be in [-1,1]")
             interpolant.gasoil = None
+            raise AssertionError
         elif np.isclose(gasparameter, 0.0):
             interpolant.gasoil = self.base.gasoil
         elif np.isclose(gasparameter, -1.0):
