@@ -5,11 +5,13 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-from hypothesis import given
+from hypothesis import given, settings
 import hypothesis.strategies as st
 
 from pyscal import WaterOil
 
+# Avoid some erroneous Flaky-test-reports
+settings(deadline=1000)
 
 def check_table(df):
     """Check sanity of important columns"""
