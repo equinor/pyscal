@@ -2,6 +2,12 @@
 
 from setuptools import setup
 
+test_requirements = [
+    'hypothesis',
+    'pytest',
+]
+
+
 setup(
     name="pyscal",
     version="0.0.1",

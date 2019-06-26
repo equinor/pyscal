@@ -9,19 +9,42 @@ from pyscal.constants import MAX_EXPONENT
 
 
 class GasOil(object):
-    """Representing gas-oil two-phase properties
+    """Object to represent two-phase properties for gas and oil.
 
-    Very similar code to WaterOil, but with some subtle details
-    different for now warranting its own code (and no inheritance)
 
-    krgend can be anchored both to (1-swl-sorg) and to (1-swl). Default is
-    to anchor to (1-swl-sorg). If the krgendanchor argument is something
-    else than the string 'sorg', it will be anchored to (1-swl).
+    krgend can be anchored both to `1-swl-sorg` and to `1-swl`. Default is
+    to anchor to `1-swl-sorg`. If the krgendanchor argument is something
+    else than the string `sorg`, it will be anchored to `1-swl`.
 
-    Parametrizations for relative permeability:
+    Parametrizations available for relative permeability:
+
      * Corey
      * LET
 
+    or data can alternatively be read in from tabulated data
+    (as Pandas DataFrame).
+
+    No support (yet) to add capillary pressure.
+
+    Code duplication warning: Code is analogous to WaterOil, but with
+    some subtle details sufficiently different for now warranting its
+    own code (no easy inheritance)
+
+    Arguments:
+        swirr (float): Absolute minimal water saturation at infinite capillary
+            pressure.
+            Not in use currently, except for in informational headers and
+            for consistency checks.
+        swl (float): First water saturation point in water tables. In GasOil, it
+            is used to obtain the normalized oil and gas saturation.
+        sgcr (float): Critical gas saturation. Gas will not be mobile before the
+            gas saturation is above this value.
+        sorg (float): Residual oil saturation after gas flooding. At this oil
+            saturation, the oil has zero relative permeability.
+        krgendanchor (str): Set to `sorg` or something else, where to
+            anchor `krgend`.
+        h (float): Saturation step-length in the outputted table.
+        tag (str): Optional string identifier, only used in comments.
     """
 
     def __init__(
