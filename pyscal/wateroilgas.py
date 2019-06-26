@@ -1,7 +1,14 @@
 # -*- coding: utf-8 -*-
+from __future__ import division, absolute_import
+from __future__ import print_function
 
 import numpy as np
 import pandas as pd
+
+from pyscal.constants import SWINTEGERS
+
+from .wateroil import WaterOil
+from .gasoil import GasOil
 
 
 class WaterOilGas(object):
@@ -107,8 +114,8 @@ class WaterOilGas(object):
         """Perform consistency checks on produced curves, similar
         to what Eclipse does at startup
 
-        Returns None if no errors catched. Alternatively
-        an error description is returned.
+        Returns empty string if no errors catched. Alternatively
+        an error description string is returned.
 
         Possible variation of this function would be
         to throw Exceptions.
@@ -145,7 +152,7 @@ class WaterOilGas(object):
         if len(errors):
             return errors
         else:
-            return None
+            return ""
 
     def run_eclipse_test(self):
         """Start the Eclipse simulator on a minimal deck in order to

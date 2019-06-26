@@ -1,5 +1,5 @@
-Welcome to fmu-ensemble's documentation!
-========================================
+Documentation for pyscal
+========================
 
 Contents:
 
@@ -15,3 +15,4 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
