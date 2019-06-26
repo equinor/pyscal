@@ -10,3 +10,14 @@ install:
 
 script:
   - pytest
+  - make docsrun
+
+deploy:
+  - provider: pages
+    skip_cleanup: true
+    local_dir: ./docs/_build/html
+    github_token:
+      secure: "notyet"
+    keep_history: true
+    on:
+      branch: master
