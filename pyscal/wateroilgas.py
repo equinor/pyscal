@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import math
-import copy
 import numpy as np
 import pandas as pd
 
@@ -155,7 +153,6 @@ class WaterOilGas(object):
         import tempfile
         import os
         import subprocess
-        import re
 
         ecldeckbeforeprops = """RUNSPEC
 DIMENS

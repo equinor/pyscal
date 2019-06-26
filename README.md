@@ -2,24 +2,29 @@
 
 Python module for relative permeability/SCAL support in reservoir simulation
 
-### Feature overview
+## Feature overview
 
-* API to create relative permeability curves through correlations or tables
-* Similar for capillary pressure.
-* Consistency checks for three-phase setups, makes your oil-water tables and gas-oil tables compatible
-* Support for handling uncertainty, doing book-keeping for low, base and high cases, and the possiblity 
-  to interpolate between these cases using a number from -1 to +1. 
+  * API to create relative permeability curves through correlations or tables
+
+  * Similar for capillary pressure.
+
+  * Consistency checks for three-phase setups, makes your oil-water tables and gas-oil tables compatible
+
+  * Support for handling uncertainty, doing book-keeping for low, base and high cases, and the possiblity 
+    to interpolate between these cases using a number from -1 to +1. 
 
 ## Scripts
 
 There will eventually be some end-user scripts for this module
-* create_relperm.py - will read configation from Excel worksheets with parameters, and produce Eclipse include files
-* interpolate_relperm.py - reads low-base-high Eclipse include files, and interpolates between them
+
+  * create_relperm.py - will read configation from Excel worksheets with parameters, and produce Eclipse include files
+  * interpolate_relperm.py - reads low-base-high Eclipse include files, and interpolates between them
 
 ## Library usage
 
 Illustrative example of how to produce a SWOF include file for Eclipse 
 with a Corey relative permeability curve
+
 ```python
 from pyscal import WaterOil
 
@@ -51,4 +56,3 @@ SWOF
 1.0000000 1.0000000 0.0000000 0
 /
 ```
-

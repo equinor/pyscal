@@ -5,9 +5,6 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import os
-import sys
-import pytest
 from hypothesis import given
 import hypothesis.strategies as st
 

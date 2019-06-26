@@ -570,7 +570,7 @@ class GasOil(object):
 
         if not ax:
             matplotlib.style.use("ggplot")
-            fig, useax = matplotlib.pyplot.subplots()
+            _, useax = matplotlib.pyplot.subplots()
         else:
             useax = ax
         self.table.plot(
