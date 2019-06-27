@@ -5,8 +5,8 @@ Pyscal is meant to be used directly by end users by its Python
 API. Additionally there are end-user scripts where parameter
 collection are inputted through Excel worksheets.
 
-Basic example for a water-oil curve
------------------------------------
+A water-oil curve
+-----------------
 
 To generate SWOF input for Eclipse or flow (OPM) with certain
 saturation endpoints and certain relative permeability endpoints, you
@@ -66,7 +66,7 @@ Gas-oil curve
 For a corresponding gas-oil curve, the API is analogous,
 
 .. code-block:: python
-    
+
     from pyscal import GasOil
     go = GasOil(swl=0.05, sorg=0.04)
     go.add_corey_gas(ng=1.2)
@@ -105,3 +105,37 @@ it can also write a ``SOF3`` table.
 
 A method ``.selfcheck()`` can be run on the object to determine if there are any known consistency issues (which would
 crash a reservoir simulator) with the tabulated data.
+
+Interpolation in a SCAL recommendation
+--------------------------------------
+
+A SCAL recommendation in this context is nothing but a container
+of three `WaterOilGas` objects, representing a `low`, a `base` and a
+`high` case. The prime use case for this container is the ability
+to interpolate between the low and high case.
+
+An interpolation parameter at `-1` returns the low case, `0` returns the
+base case and `1` returns the high case. Optionally, a separate
+interpolation parameter can be used for the `GasOil` interpolation
+if they are believed to be independent.
+
+SCAL recommendations are initialized with dictionaries
+for each of the low, base and high curve sets. LET or Corey
+parameterizations are assumed and the parameters are picked
+from the dictionaries. The dictionaries are typically parsed
+from a row in a Excel worksheet (via Pandas).
+
+.. code-block:: python
+
+    from pyscal import SCALrecommendation
+
+    low = dict(...)
+    base = dict(...)
+    high = dict(...)
+    rec = SCALrecommendation(low, base, high, h=0.02)
+
+    interpolant = rec.interpolate(-0.4)
+
+    print(interpolant.SWOF())
+
+
