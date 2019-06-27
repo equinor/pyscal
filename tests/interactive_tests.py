@@ -1,7 +1,4 @@
-from __future__ import print_function
-
 """
-
 Run this module from command line to run a few
 tests intended for human inspection
 
@@ -9,8 +6,10 @@ tests intended for human inspection
 
 If you want to run individual tests, import this module in
 a Python session and run the functions manually.
-
 """
+
+from __future__ import print_function
+
 import numpy as np
 
 from pyscal import WaterOil, WaterOilGas, GasOil, SCALrecommendation
@@ -24,7 +23,7 @@ def interpolateplottest():
     matplotlib.style.use("ggplot")
 
     rec = SCALrecommendation(lowsample(), basesample(), highsample(), "foo", h=0.001)
-    fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2)
+    _, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2)
 
     # Choosing logarithmic spaced interpolation parameters
     # is not the same as interpolating in log(kr)-space
