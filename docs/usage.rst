@@ -1,14 +1,16 @@
 Usage
 =====
 
-Pyscal is meant to be used directly by end users by its Python API. Additinally there
-are end-user scripts where parameter collection are inputted through Excel worksheets.
+Pyscal is meant to be used directly by end users by its Python
+API. Additionally there are end-user scripts where parameter
+collection are inputted through Excel worksheets.
 
 Basic example
 -------------
 
-To generate SWOF input for Eclipse or flow (OPM) with certain saturation endpoints
-and certain relative permeability endpoints, you may run the following code:
+To generate SWOF input for Eclipse or flow (OPM) with certain
+saturation endpoints and certain relative permeability endpoints, you
+may run the following code:
 
 .. code-block:: python
 
@@ -19,10 +21,12 @@ and certain relative permeability endpoints, you may run the following code:
     wo.add_simple_J()
     print(wo.SWOF())
 
-which will print a table that can be included in an Eclipse simulation. There are more parameters
-to adjust, check the corresponding API. Instead of corey, you can find a corresponding function for
-a LET-parametrization, or perhaps another capillary pressure function. Also adjust the parameter `h` to
-obtain a finer resolution on the saturation scale.
+which will print a table that can be included in an Eclipse
+simulation. There are more parameters to adjust, check the
+corresponding API. Instead of corey, you can find a corresponding
+function for a LET-parametrization, or perhaps another capillary
+pressure function. Also adjust the parameter ``h`` to obtain a finer
+resolution on the saturation scale.
 
 The output from the code above:
 
@@ -52,5 +56,6 @@ The output from the code above:
     /
 
 
-Instead of `SWOF()`, you may ask for `SWFN()` or similar. Both family 1 and 2 of Eclipse keywords are supported. 
-For the Nexus simulator, you can use the function `WOTABLE()`
+Instead of ``SWOF()``, you may ask for ``SWFN()`` or similar. Both
+family 1 and 2 of Eclipse keywords are supported.  For the Nexus
+simulator, you can use the function ``WOTABLE()``

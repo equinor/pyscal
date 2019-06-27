@@ -15,3 +15,8 @@ Later, released versions will be available through pypi, then you may do
 
     pip install pyscal
  
+
+Internally in Equinor:
+----------------------
+
+pyscal is distributed through Komodo.
