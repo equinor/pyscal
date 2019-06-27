@@ -1,3 +1,7 @@
+from __future__ import print_function
+
+from pyscal import WaterOil, WaterOilGas, GasOil
+
 def interpolateplottest():
     """Demonstration of interpolation pointwise between LET curves"""
     import matplotlib.pyplot as plt
@@ -309,7 +313,7 @@ def testgascurves():
 
 
 def main():
-    swof = WaterOil(tag="Good sand, SATNUM 1", h=0.1)
+    swof = WaterOil(tag="Good sand, SATNUM 1", h=0.1, swl=0.1)
     swof.add_corey_water()
     swof.add_LET_water()
     swof.add_corey_oil()
