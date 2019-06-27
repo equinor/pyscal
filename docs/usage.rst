@@ -5,8 +5,8 @@ Pyscal is meant to be used directly by end users by its Python
 API. Additionally there are end-user scripts where parameter
 collection are inputted through Excel worksheets.
 
-Basic example
--------------
+Basic example for a water-oil curve
+-----------------------------------
 
 To generate SWOF input for Eclipse or flow (OPM) with certain
 saturation endpoints and certain relative permeability endpoints, you
@@ -59,3 +59,49 @@ The output from the code above:
 Instead of ``SWOF()``, you may ask for ``SWFN()`` or similar. Both
 family 1 and 2 of Eclipse keywords are supported.  For the Nexus
 simulator, you can use the function ``WOTABLE()``
+
+Gas-oil curve
+-------------
+
+For a corresponding gas-oil curve, the API is analogous,
+
+.. code-block:: python
+    
+    from pyscal import GasOil
+    go = GasOil(swl=0.05, sorg=0.04)
+    go.add_corey_gas(ng=1.2)
+    go.add_corey_oil(nog=1.9)
+    print(go.SGOF())
+
+If you want to use your SGOF data together with a SWOF, it makes sense
+to share some of the saturation endpoints, as there are compatibility constraints.
+For this reason, it is recommended to initialize both the WaterOil and GasOil objects
+trough a WaterOilGas object.
+
+Water-oil-gas
+-------------
+
+For three-phase, saturation endpoints must match to make sense in a reservoir simualation.
+The ``WaterOilGas`` object acts as a container for both a ``WaterOil`` object and a ``GasOil``
+object to aid in consistency. Saturation endpoints is only input once during initialization.
+
+Typical usage could be:
+
+.. code-block:: python
+
+    from pyscal import WaterOilGas
+
+    wog = WaterOilGas(swl=0.05, sorg=0.04, sorw=0.03)
+    wog.wateroil.add_corey_water()
+    wog.wateroil.add_corey_oil()
+    wog.gasoil.add_corey_gas()
+    wog.gasoil.add_corey_water()
+
+As seen in the example, the object members ``wateroil`` and ``gasoil`` are ``WaterOil`` and ``GasOil`` objects
+having been initialized by the ``WaterOilGas`` initialization.
+
+The ``WaterOilGas`` objects can write ``SWOF`` tables (which is directly delegated to the ``WaterOil`` object, but
+it can also write a ``SOF3`` table.
+
+A method ``.selfcheck()`` can be run on the object to determine if there are any known consistency issues (which would
+crash a reservoir simulator) with the tabulated data.
