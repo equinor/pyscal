@@ -1,0 +1,429 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pyscal.wateroilgas &mdash; pyscal git documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> pyscal
+          
+
+          
+            
+            <img src="../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                git
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html">pyscal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API for pyscal</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyscal</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>pyscal.wateroilgas</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyscal.wateroilgas</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">pyscal.constants</span> <span class="k">import</span> <span class="n">SWINTEGERS</span>
+
+<span class="kn">from</span> <span class="nn">.wateroil</span> <span class="k">import</span> <span class="n">WaterOil</span>
+<span class="kn">from</span> <span class="nn">.gasoil</span> <span class="k">import</span> <span class="n">GasOil</span>
+
+
+<div class="viewcode-block" id="WaterOilGas"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroilgas.WaterOilGas">[docs]</a><span class="k">class</span> <span class="nc">WaterOilGas</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;A representation of three-phase properties for oil-water-gas</span>
+
+<span class="sd">    Use one object for each satnum.</span>
+
+<span class="sd">    Holds one WaterOil object and one GasOil object, ensuring</span>
+<span class="sd">    consistent endpoints.</span>
+
+<span class="sd">    Access the class members &#39;wateroil&#39; and &#39;gasoil&#39; directly to add curves</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">swirr</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">swl</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">swcr</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">sorw</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">sorg</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sgcr</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Sets up saturation range for water (Sw) and gas (Sg)&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span> <span class="o">=</span> <span class="n">WaterOil</span><span class="p">(</span>
+            <span class="n">swirr</span><span class="o">=</span><span class="n">swirr</span><span class="p">,</span> <span class="n">swl</span><span class="o">=</span><span class="n">swl</span><span class="p">,</span> <span class="n">swcr</span><span class="o">=</span><span class="n">swcr</span><span class="p">,</span> <span class="n">sorw</span><span class="o">=</span><span class="n">sorw</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">tag</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span> <span class="o">=</span> <span class="n">GasOil</span><span class="p">(</span><span class="n">swirr</span><span class="o">=</span><span class="n">swirr</span><span class="p">,</span> <span class="n">sgcr</span><span class="o">=</span><span class="n">sgcr</span><span class="p">,</span> <span class="n">sorg</span><span class="o">=</span><span class="n">sorg</span><span class="p">,</span> <span class="n">swl</span><span class="o">=</span><span class="n">swl</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">)</span>
+
+<div class="viewcode-block" id="WaterOilGas.selfcheck"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroilgas.WaterOilGas.selfcheck">[docs]</a>    <span class="k">def</span> <span class="nf">selfcheck</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Run selfcheck on both wateroil and gasoil.</span>
+
+<span class="sd">        Returns true only if both passes&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">selfcheck</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">selfcheck</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="WaterOilGas.SWOF"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroilgas.WaterOilGas.SWOF">[docs]</a>    <span class="k">def</span> <span class="nf">SWOF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a SWOF string. Delegated to the wateroil object&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">SWOF</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="WaterOilGas.SGOF"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroilgas.WaterOilGas.SGOF">[docs]</a>    <span class="k">def</span> <span class="nf">SGOF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a SGOF string. Delegated to the gasoil object.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">SGOF</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="WaterOilGas.SLGOF"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroilgas.WaterOilGas.SLGOF">[docs]</a>    <span class="k">def</span> <span class="nf">SLGOF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a SLGOF string. Delegated to the gasoil object.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">SLGOF</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="WaterOilGas.SGFN"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroilgas.WaterOilGas.SGFN">[docs]</a>    <span class="k">def</span> <span class="nf">SGFN</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a SGFN string. Delegated to the gasoil object.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">SGFN</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="WaterOilGas.SWFN"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroilgas.WaterOilGas.SWFN">[docs]</a>    <span class="k">def</span> <span class="nf">SWFN</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a SWFN string. Delegated to the wateroil object.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">SWFN</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="WaterOilGas.SOF3"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroilgas.WaterOilGas.SOF3">[docs]</a>    <span class="k">def</span> <span class="nf">SOF3</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return a SOF3 string, combining data from the wateroil and</span>
+<span class="sd">        gasoil objects.</span>
+
+<span class="sd">        So - the oil saturation ranges from 0 to 1-swl. The saturation points</span>
+<span class="sd">        from the WaterOil object is used to generate these</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Copy of the wateroil data:</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;sw&quot;</span><span class="p">,</span> <span class="s2">&quot;krow&quot;</span><span class="p">]])</span>
+        <span class="n">table</span><span class="p">[</span><span class="s2">&quot;so&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Copy of the gasoil data:</span>
+        <span class="n">gastable</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;sg&quot;</span><span class="p">,</span> <span class="s2">&quot;krog&quot;</span><span class="p">]])</span>
+        <span class="n">gastable</span><span class="p">[</span><span class="s2">&quot;so&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">gastable</span><span class="p">[</span><span class="s2">&quot;sg&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">swl</span>
+
+        <span class="c1"># Merge WaterOil and GasOil on oil saturation, interpolate for</span>
+        <span class="c1"># missing data (potentially different sg- and sw-grids)</span>
+        <span class="n">sof3table</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">table</span><span class="p">,</span> <span class="n">gastable</span><span class="p">],</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;so&quot;</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;slinear&quot;</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;ffill&quot;</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;bfill&quot;</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+        <span class="p">)</span>
+        <span class="n">sof3table</span><span class="p">[</span><span class="s2">&quot;soint&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">round</span><span class="p">,</span> <span class="n">sof3table</span><span class="p">[</span><span class="s2">&quot;so&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">SWINTEGERS</span><span class="p">)))</span>
+        <span class="p">)</span>
+        <span class="n">sof3table</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="s2">&quot;soint&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># The &#39;so&#39; column has been calculated from floating point numbers</span>
+        <span class="c1"># and the zero value easily becomes a negative zero, circumvent this:</span>
+        <span class="n">zerorow</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">sof3table</span><span class="p">[</span><span class="s2">&quot;so&quot;</span><span class="p">],</span> <span class="mf">0.0</span><span class="p">)</span>
+        <span class="n">sof3table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">zerorow</span><span class="p">,</span> <span class="s2">&quot;so&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">sof3table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">zerorow</span><span class="p">,</span> <span class="s2">&quot;so&quot;</span><span class="p">])</span>
+
+        <span class="n">string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">header</span><span class="p">:</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;SOF3</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;-- &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">tag</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;-- &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">tag</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;-- So Krow Krog</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">if</span> <span class="n">dataincommentrow</span><span class="p">:</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">swcomment</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">sgcomment</span>
+
+        <span class="n">string</span> <span class="o">+=</span> <span class="n">sof3table</span><span class="p">[[</span><span class="s2">&quot;so&quot;</span><span class="p">,</span> <span class="s2">&quot;krow&quot;</span><span class="p">,</span> <span class="s2">&quot;krog&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span>
+            <span class="n">sep</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">float_format</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%1.5f</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;/</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="n">string</span></div>
+
+<div class="viewcode-block" id="WaterOilGas.threephaseconsistency"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroilgas.WaterOilGas.threephaseconsistency">[docs]</a>    <span class="k">def</span> <span class="nf">threephaseconsistency</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Perform consistency checks on produced curves, similar</span>
+<span class="sd">        to what Eclipse does at startup</span>
+
+<span class="sd">        Returns empty string if no errors catched. Alternatively</span>
+<span class="sd">        an error description string is returned.</span>
+
+<span class="sd">        Possible variation of this function would be</span>
+<span class="sd">        to throw Exceptions.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Eclipse errors:</span>
+
+        <span class="c1"># 1: Error in saturation table number 1 at the maximum oil</span>
+        <span class="c1"># saturation (0.9) krow and krog should both be equal the oil</span>
+        <span class="c1"># relative permeability for a system with oil and connate</span>
+        <span class="c1"># water only - but in this case they are different (krow=1.0</span>
+        <span class="c1"># and krog=0.93)</span>
+
+        <span class="n">errors</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krow&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krog&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="p">):</span>
+            <span class="n">errors</span> <span class="o">+=</span> <span class="s2">&quot;Error: max(krow) is not equal to max(krog)</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="c1"># 2: Inconsistent end points in saturation table 1 the maximum</span>
+        <span class="c1"># gas saturation (0.91) plus the connate water saturation</span>
+        <span class="c1"># (0.10) must not exceed 1.0</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sg&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="n">errors</span> <span class="o">+=</span> <span class="s2">&quot;Error: Max(sg) + Swl &gt; 1.0</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="c1"># 3: Warning: Consistency problem for gas phase endpoint (krgr &gt; krg)</span>
+        <span class="c1"># in grid cell (i, j, k) for saturation end-points krgr=1.0</span>
+        <span class="c1"># krg = 0.49.</span>
+
+        <span class="c1"># 4: Warning: Consistency problem for oil phase endpoint (sgu &gt; 1-swl)</span>
+        <span class="c1"># in grid cell (i, j, k) for saturation endpoints sgu=0.78,</span>
+        <span class="c1"># swl=0.45, (1-swl) = 0.55</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">errors</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">errors</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span></div>
+
+<div class="viewcode-block" id="WaterOilGas.run_eclipse_test"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroilgas.WaterOilGas.run_eclipse_test">[docs]</a>    <span class="k">def</span> <span class="nf">run_eclipse_test</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Start the Eclipse simulator on a minimal deck in order to</span>
+<span class="sd">        test the properties of the current WaterOilGas deck&quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">tempfile</span>
+        <span class="kn">import</span> <span class="nn">os</span>
+        <span class="kn">import</span> <span class="nn">subprocess</span>
+
+        <span class="n">ecldeckbeforeprops</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;RUNSPEC</span>
+<span class="s2">DIMENS</span>
+<span class="s2">  1 1 1 /</span>
+<span class="s2">OIL</span>
+<span class="s2">WATER</span>
+<span class="s2">GAS</span>
+<span class="s2">START</span>
+<span class="s2">  1 &#39;JAN&#39; 2100 /</span>
+<span class="s2">TABDIM</span>
+<span class="s2">   2* 10000 /</span>
+<span class="s2">GRID</span>
+<span class="s2">DX</span>
+<span class="s2">   10 /</span>
+<span class="s2">DY</span>
+<span class="s2">   10 /</span>
+<span class="s2">DZ</span>
+<span class="s2">   50 /</span>
+<span class="s2">TOPS</span>
+<span class="s2">   1000 /</span>
+<span class="s2">PORO</span>
+<span class="s2">   0.3 /</span>
+<span class="s2">PERMX</span>
+<span class="s2">   100 /</span>
+<span class="s2">PERMY</span>
+<span class="s2">   100 /</span>
+<span class="s2">PERMZ</span>
+<span class="s2">   100 /</span>
+
+<span class="s2">PROPS</span>
+<span class="s2">&quot;&quot;&quot;</span>
+        <span class="n">ecldeckafterprops</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">DENSITY</span>
+<span class="s2">  800 1000 1.2 /</span>
+<span class="s2">PVTW</span>
+<span class="s2">  1 1 0.0001 0.2 0.00001 /</span>
+<span class="s2">PVDO</span>
+<span class="s2">   100 1   1</span>
+<span class="s2">   150 0.9 1 /</span>
+<span class="s2">PVDG</span>
+<span class="s2">   100 1 1</span>
+<span class="s2">   150 0.9 1 /</span>
+<span class="s2">ROCK</span>
+<span class="s2">  100 0.0001 /</span>
+<span class="s2">SOLUTION</span>
+<span class="s2">EQUIL</span>
+<span class="s2">   1000    100     1040    0   1010      0 /&quot;&quot;&quot;</span>
+
+        <span class="c1"># Generate the finished Eclipse deck.</span>
+        <span class="n">ecldeck</span> <span class="o">=</span> <span class="n">ecldeckbeforeprops</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">SWOF</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">SGOF</span><span class="p">()</span> <span class="o">+</span> <span class="n">ecldeckafterprops</span>
+
+        <span class="n">tmpdir</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">()</span>
+        <span class="n">eclfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">,</span> <span class="s2">&quot;RELPERMTEST.DATA&quot;</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">eclfile</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">eclfileh</span><span class="p">:</span>
+            <span class="n">eclfileh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">ecldeck</span><span class="p">)</span>
+        <span class="n">ecloutput</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span>
+            <span class="p">[</span><span class="s2">&quot;/project/res/bin/runeclipse&quot;</span><span class="p">,</span> <span class="s2">&quot;-i&quot;</span><span class="p">,</span> <span class="n">eclfile</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">ecloutputlines</span> <span class="o">=</span> <span class="n">ecloutput</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ecloutputlines</span> <span class="k">if</span> <span class="s2">&quot;Error&quot;</span> <span class="ow">in</span> <span class="n">x</span> <span class="ow">or</span> <span class="s2">&quot;ERROR&quot;</span> <span class="ow">in</span> <span class="n">x</span><span class="p">])</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright Equinor
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+    
+
+  <style>
+    /* Sidebar header (and topbar for mobile) */
+    .wy-side-nav-search, .wy-nav-top {
+      background: #ff1243;
+    }
+    /* Sidebar */
+    .wy-nav-side {
+      background: #474747;
+    }
+  </style>
+
+
+</body>
+</html>

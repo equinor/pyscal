@@ -1,0 +1,642 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pyscal.scalrecommendation &mdash; pyscal git documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> pyscal
+          
+
+          
+            
+            <img src="../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                git
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html">pyscal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API for pyscal</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyscal</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>pyscal.scalrecommendation</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyscal.scalrecommendation</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="kn">import</span> <span class="nn">copy</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">pyscal.constants</span> <span class="k">import</span> <span class="n">SWINTEGERS</span>
+
+<span class="kn">from</span> <span class="nn">pyscal</span> <span class="k">import</span> <span class="n">WaterOilGas</span><span class="p">,</span> <span class="n">WaterOil</span><span class="p">,</span> <span class="n">GasOil</span>
+
+
+<div class="viewcode-block" id="SCALrecommendation"><a class="viewcode-back" href="../../pyscal.html#pyscal.scalrecommendation.SCALrecommendation">[docs]</a><span class="k">class</span> <span class="nc">SCALrecommendation</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A SCAL recommendation consists of three OilWaterGas objects,</span>
+<span class="sd">    tagged low, base and high.</span>
+
+<span class="sd">    For a continuum to exist within a SCAL recommendation, relperm</span>
+<span class="sd">    curves are interpolated pointwise in relperm-vs-saturation</span>
+<span class="sd">    space. Because the individual low, base and high curves might</span>
+<span class="sd">    cross, interpolation cannot be performed in the parameter space</span>
+<span class="sd">    (L, E, T, endpoints).</span>
+
+<span class="sd">    If endpoints do not vary, and T has opposite direction than L and</span>
+<span class="sd">    E going from low to h igh, interpolation in L, E and T-space is</span>
+<span class="sd">    possible without interpolated curves going outside the area</span>
+<span class="sd">    contained by low and high curves.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SCALrecommendation.defaultshandling"><a class="viewcode-back" href="../../pyscal.html#pyscal.scalrecommendation.SCALrecommendation.defaultshandling">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">defaultshandling</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">dicts</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Helper function for __init__ to fill out missing values in</span>
+<span class="sd">        dicts with relperm parameter&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">dic</span> <span class="ow">in</span> <span class="n">dicts</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dic</span><span class="p">:</span>
+                <span class="n">dic</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">low</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">high</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set up a SCAL recommendation curve set</span>
+
+<span class="sd">        You can choose to provide ready-made WaterOilGas objects, or</span>
+<span class="sd">        dictionaries with LET_properties for initialization.</span>
+
+<span class="sd">        If you have LET-properties in a dictionary, the low, base and</span>
+<span class="sd">        high objects must be of type dict must containing the</span>
+<span class="sd">        properties for each curve set, in the following keys:</span>
+
+<span class="sd">           Lw, Ew, Tw, Lo, Eo, To,</span>
+<span class="sd">           Lg, Eg, Tg, Log, Eog, Tog,</span>
+<span class="sd">           krwr</span>
+<span class="sd">           swirr, swl, sorw, sorg, sgcr</span>
+
+<span class="sd">        For oil-water only, you may omit the LET parameters for gas and oil-gas</span>
+
+<span class="sd">        If low, base and high are of type WaterOilGas objects, these</span>
+<span class="sd">        will be used as is.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">=</span> <span class="n">h</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tag</span> <span class="o">=</span> <span class="n">tag</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">low</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">high</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">defaultshandling</span><span class="p">(</span><span class="s2">&quot;swirr&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="p">[</span><span class="n">low</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">high</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">defaultshandling</span><span class="p">(</span><span class="s2">&quot;swcr&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="p">[</span><span class="n">low</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">high</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">defaultshandling</span><span class="p">(</span><span class="s2">&quot;sorg&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="p">[</span><span class="n">low</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">high</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">defaultshandling</span><span class="p">(</span><span class="s2">&quot;sgcr&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="p">[</span><span class="n">low</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">high</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">defaultshandling</span><span class="p">(</span><span class="s2">&quot;kroend&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">[</span><span class="n">low</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">high</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">defaultshandling</span><span class="p">(</span><span class="s2">&quot;krwmax&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">[</span><span class="n">low</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">high</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">defaultshandling</span><span class="p">(</span><span class="s2">&quot;krgend&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">[</span><span class="n">low</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">high</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">defaultshandling</span><span class="p">(</span><span class="s2">&quot;krgmax&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">[</span><span class="n">low</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">high</span><span class="p">])</span>
+
+            <span class="c1"># Initialize saturation ranges for all curves</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">low</span> <span class="o">=</span> <span class="n">WaterOilGas</span><span class="p">(</span>
+                <span class="n">swirr</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="s2">&quot;swirr&quot;</span><span class="p">],</span>
+                <span class="n">swl</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="s2">&quot;swl&quot;</span><span class="p">],</span>
+                <span class="n">sorw</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="s2">&quot;sorw&quot;</span><span class="p">],</span>
+                <span class="n">sorg</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="s2">&quot;sorg&quot;</span><span class="p">],</span>
+                <span class="n">sgcr</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="s2">&quot;sgcr&quot;</span><span class="p">],</span>
+                <span class="n">swcr</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="s2">&quot;swcr&quot;</span><span class="p">],</span>
+                <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">base</span> <span class="o">=</span> <span class="n">WaterOilGas</span><span class="p">(</span>
+                <span class="n">swirr</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="s2">&quot;swirr&quot;</span><span class="p">],</span>
+                <span class="n">swl</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="s2">&quot;swl&quot;</span><span class="p">],</span>
+                <span class="n">sorw</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="s2">&quot;sorw&quot;</span><span class="p">],</span>
+                <span class="n">sorg</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="s2">&quot;sorg&quot;</span><span class="p">],</span>
+                <span class="n">sgcr</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="s2">&quot;sgcr&quot;</span><span class="p">],</span>
+                <span class="n">swcr</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="s2">&quot;swcr&quot;</span><span class="p">],</span>
+                <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">high</span> <span class="o">=</span> <span class="n">WaterOilGas</span><span class="p">(</span>
+                <span class="n">swirr</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;swirr&quot;</span><span class="p">],</span>
+                <span class="n">swl</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;swl&quot;</span><span class="p">],</span>
+                <span class="n">sorw</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;sorw&quot;</span><span class="p">],</span>
+                <span class="n">sorg</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;sorg&quot;</span><span class="p">],</span>
+                <span class="n">sgcr</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;sgcr&quot;</span><span class="p">],</span>
+                <span class="n">swcr</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;swcr&quot;</span><span class="p">],</span>
+                <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Add water and oil curves</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">add_LET_water</span><span class="p">(</span>
+                <span class="n">l</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="s2">&quot;Lw&quot;</span><span class="p">],</span>
+                <span class="n">e</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="s2">&quot;Ew&quot;</span><span class="p">],</span>
+                <span class="n">t</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="s2">&quot;Tw&quot;</span><span class="p">],</span>
+                <span class="n">krwend</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="s2">&quot;krwend&quot;</span><span class="p">],</span>
+                <span class="n">krwmax</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="s2">&quot;krwmax&quot;</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">add_LET_water</span><span class="p">(</span>
+                <span class="n">l</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="s2">&quot;Lw&quot;</span><span class="p">],</span>
+                <span class="n">e</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="s2">&quot;Ew&quot;</span><span class="p">],</span>
+                <span class="n">t</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="s2">&quot;Tw&quot;</span><span class="p">],</span>
+                <span class="n">krwend</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="s2">&quot;krwend&quot;</span><span class="p">],</span>
+                <span class="n">krwmax</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="s2">&quot;krwmax&quot;</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">add_LET_water</span><span class="p">(</span>
+                <span class="n">l</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;Lw&quot;</span><span class="p">],</span>
+                <span class="n">e</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;Ew&quot;</span><span class="p">],</span>
+                <span class="n">t</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;Tw&quot;</span><span class="p">],</span>
+                <span class="n">krwend</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;krwend&quot;</span><span class="p">],</span>
+                <span class="n">krwmax</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;krwmax&quot;</span><span class="p">],</span>
+            <span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">add_LET_oil</span><span class="p">(</span>
+                <span class="n">l</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="s2">&quot;Lo&quot;</span><span class="p">],</span> <span class="n">e</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="s2">&quot;Eo&quot;</span><span class="p">],</span> <span class="n">t</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="s2">&quot;To&quot;</span><span class="p">],</span> <span class="n">kroend</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="s2">&quot;kroend&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">add_LET_oil</span><span class="p">(</span>
+                <span class="n">l</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="s2">&quot;Lo&quot;</span><span class="p">],</span> <span class="n">e</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="s2">&quot;Eo&quot;</span><span class="p">],</span> <span class="n">t</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="s2">&quot;To&quot;</span><span class="p">],</span> <span class="n">kroend</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="s2">&quot;kroend&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">add_LET_oil</span><span class="p">(</span>
+                <span class="n">l</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;Lo&quot;</span><span class="p">],</span> <span class="n">e</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;Eo&quot;</span><span class="p">],</span> <span class="n">t</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;To&quot;</span><span class="p">],</span> <span class="n">kroend</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;kroend&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Add gas and oil curves:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">add_LET_gas</span><span class="p">(</span>
+                <span class="n">l</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="s2">&quot;Lg&quot;</span><span class="p">],</span>
+                <span class="n">e</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="s2">&quot;Eg&quot;</span><span class="p">],</span>
+                <span class="n">t</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="s2">&quot;Tg&quot;</span><span class="p">],</span>
+                <span class="n">krgend</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="s2">&quot;krgend&quot;</span><span class="p">],</span>
+                <span class="n">krgmax</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="s2">&quot;krgmax&quot;</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">add_LET_gas</span><span class="p">(</span>
+                <span class="n">l</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="s2">&quot;Lg&quot;</span><span class="p">],</span>
+                <span class="n">e</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="s2">&quot;Eg&quot;</span><span class="p">],</span>
+                <span class="n">t</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="s2">&quot;Tg&quot;</span><span class="p">],</span>
+                <span class="n">krgend</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="s2">&quot;krgend&quot;</span><span class="p">],</span>
+                <span class="n">krgmax</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="s2">&quot;krgmax&quot;</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">add_LET_gas</span><span class="p">(</span>
+                <span class="n">l</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;Lg&quot;</span><span class="p">],</span>
+                <span class="n">e</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;Eg&quot;</span><span class="p">],</span>
+                <span class="n">t</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;Tg&quot;</span><span class="p">],</span>
+                <span class="n">krgend</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;krgend&quot;</span><span class="p">],</span>
+                <span class="n">krgmax</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;krgmax&quot;</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">add_LET_oil</span><span class="p">(</span>
+                <span class="n">l</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="s2">&quot;Log&quot;</span><span class="p">],</span> <span class="n">e</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="s2">&quot;Eog&quot;</span><span class="p">],</span> <span class="n">t</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="s2">&quot;Tog&quot;</span><span class="p">],</span> <span class="n">kroend</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="s2">&quot;kroend&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">add_LET_oil</span><span class="p">(</span>
+                <span class="n">l</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="s2">&quot;Log&quot;</span><span class="p">],</span> <span class="n">e</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="s2">&quot;Eog&quot;</span><span class="p">],</span> <span class="n">t</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="s2">&quot;Tog&quot;</span><span class="p">],</span> <span class="n">kroend</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="s2">&quot;kroend&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">add_LET_oil</span><span class="p">(</span>
+                <span class="n">l</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;Log&quot;</span><span class="p">],</span> <span class="n">e</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;Eog&quot;</span><span class="p">],</span> <span class="n">t</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;Tog&quot;</span><span class="p">],</span> <span class="n">kroend</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;kroend&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="nb">isinstance</span><span class="p">(</span><span class="n">low</span><span class="p">,</span> <span class="n">WaterOilGas</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">WaterOilGas</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">high</span><span class="p">,</span> <span class="n">WaterOilGas</span><span class="p">)</span>
+            <span class="p">):</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">low</span> <span class="o">=</span> <span class="n">low</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">base</span> <span class="o">=</span> <span class="n">base</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">high</span> <span class="o">=</span> <span class="n">high</span>
+
+    <span class="c1"># User should add capillary pressure explicitly by calling add**</span>
+    <span class="c1"># on the class objects, or run the following method to add the</span>
+    <span class="c1"># same to all curves:</span>
+<div class="viewcode-block" id="SCALrecommendation.add_simple_J"><a class="viewcode-back" href="../../pyscal.html#pyscal.scalrecommendation.SCALrecommendation.add_simple_J">[docs]</a>    <span class="k">def</span> <span class="nf">add_simple_J</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">b</span><span class="o">=-</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">poro_ref</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">perm_ref</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">drho</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">g</span><span class="o">=</span><span class="mf">9.81</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add (identical) simplified J-function to all water-oil</span>
+<span class="sd">        curves in the SCAL recommendation set&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">add_simple_J</span><span class="p">(</span>
+            <span class="n">a</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">poro_ref</span><span class="o">=</span><span class="n">poro_ref</span><span class="p">,</span> <span class="n">perm_ref</span><span class="o">=</span><span class="n">perm_ref</span><span class="p">,</span> <span class="n">drho</span><span class="o">=</span><span class="n">drho</span><span class="p">,</span> <span class="n">g</span><span class="o">=</span><span class="n">g</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">add_simple_J</span><span class="p">(</span>
+            <span class="n">a</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">poro_ref</span><span class="o">=</span><span class="n">poro_ref</span><span class="p">,</span> <span class="n">perm_ref</span><span class="o">=</span><span class="n">perm_ref</span><span class="p">,</span> <span class="n">drho</span><span class="o">=</span><span class="n">drho</span><span class="p">,</span> <span class="n">g</span><span class="o">=</span><span class="n">g</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">add_simple_J</span><span class="p">(</span>
+            <span class="n">a</span><span class="o">=</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="n">b</span><span class="p">,</span> <span class="n">poro_ref</span><span class="o">=</span><span class="n">poro_ref</span><span class="p">,</span> <span class="n">perm_ref</span><span class="o">=</span><span class="n">perm_ref</span><span class="p">,</span> <span class="n">drho</span><span class="o">=</span><span class="n">drho</span><span class="p">,</span> <span class="n">g</span><span class="o">=</span><span class="n">g</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="SCALrecommendation.interpolate"><a class="viewcode-back" href="../../pyscal.html#pyscal.scalrecommendation.SCALrecommendation.interpolate">[docs]</a>    <span class="k">def</span> <span class="nf">interpolate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">parameter2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">0.02</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Interpolate between low, base and high</span>
+<span class="sd">        parameter = -1 reproduces low curve</span>
+<span class="sd">        parameter = 0 reproduces base curve</span>
+<span class="sd">        parameter = 1 reproduces high curve</span>
+
+<span class="sd">        Interpolation is performed pointwise in the &quot;relperm&quot; direction</span>
+<span class="sd">        for each saturation point. During interpolation, endpoints are</span>
+<span class="sd">        hard to handle, and only swirr is attempted preserved.</span>
+
+<span class="sd">        Interpolation is linear in relperm-direction, and will thus not be</span>
+<span class="sd">        linear in log-relperm-direction</span>
+
+<span class="sd">        This method returns an WaterOilGasTable object which can be</span>
+<span class="sd">        realized into printed tables. No attempt is made to</span>
+<span class="sd">        parametrize the interpolant in L,E,T parameter space.</span>
+
+<span class="sd">        If a second parameter is supplied (&quot;parameter2&quot;) this is used</span>
+<span class="sd">        for the gas-oil interpolation. This enables the gas-oil</span>
+<span class="sd">        interpolant to be fully uncorrelated to the water-oil</span>
+<span class="sd">        interpolant. CHECK how this affects endpoints and Eclipse</span>
+<span class="sd">        consistency!!</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">parameter2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">gasparameter</span> <span class="o">=</span> <span class="n">parameter2</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">gasparameter</span> <span class="o">=</span> <span class="n">parameter</span>
+
+        <span class="c1"># Initialize wateroil and gasoil curves to be filled with</span>
+        <span class="c1"># interpolated curves:</span>
+        <span class="n">interpolant</span> <span class="o">=</span> <span class="n">WaterOilGas</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ERROR: Interpolation parameter must be in [-1,1]&quot;</span><span class="p">)</span>
+            <span class="n">interpolant</span><span class="o">.</span><span class="n">wateroil</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span>
+        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">):</span>
+            <span class="n">interpolant</span><span class="o">.</span><span class="n">wateroil</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">wateroil</span>
+        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">):</span>
+            <span class="n">interpolant</span><span class="o">.</span><span class="n">wateroil</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">wateroil</span>
+        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">):</span>
+            <span class="n">interpolant</span><span class="o">.</span><span class="n">wateroil</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">wateroil</span>
+        <span class="k">elif</span> <span class="n">parameter</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">curve1</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">wateroil</span><span class="p">)</span>
+            <span class="n">curve2</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">wateroil</span><span class="p">)</span>
+            <span class="n">param_transf</span> <span class="o">=</span> <span class="o">-</span><span class="n">parameter</span>  <span class="c1"># 0 gives base, 1 gives low.</span>
+            <span class="n">swl</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">curve1</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">param_transf</span><span class="p">)</span>
+                <span class="o">+</span> <span class="n">curve2</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">param_transf</span>
+            <span class="p">)</span>
+            <span class="n">interpolant</span><span class="o">.</span><span class="n">wateroil</span> <span class="o">=</span> <span class="n">WaterOil</span><span class="p">(</span>
+                <span class="n">swirr</span><span class="o">=</span><span class="n">swl</span><span class="p">,</span>
+                <span class="n">swl</span><span class="o">=</span><span class="n">swl</span><span class="p">,</span>
+                <span class="n">sorw</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tag</span> <span class="o">+</span> <span class="s2">&quot; interpolant at </span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">parameter</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__interpolator</span><span class="p">(</span>
+                <span class="n">interpolant</span><span class="o">.</span><span class="n">wateroil</span><span class="p">,</span>
+                <span class="n">curve1</span><span class="p">,</span>
+                <span class="n">curve2</span><span class="p">,</span>
+                <span class="n">param_transf</span><span class="p">,</span>
+                <span class="s2">&quot;sw&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;krw&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;krow&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;pc&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">parameter</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">curve1</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">wateroil</span><span class="p">)</span>
+            <span class="n">curve2</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">wateroil</span><span class="p">)</span>
+            <span class="n">param_transf</span> <span class="o">=</span> <span class="n">parameter</span>  <span class="c1"># 0 gives base, 1 gives high</span>
+            <span class="n">swl</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">curve1</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">param_transf</span><span class="p">)</span>
+                <span class="o">+</span> <span class="n">curve2</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">param_transf</span>
+            <span class="p">)</span>
+            <span class="n">interpolant</span><span class="o">.</span><span class="n">wateroil</span> <span class="o">=</span> <span class="n">WaterOil</span><span class="p">(</span>
+                <span class="n">swirr</span><span class="o">=</span><span class="n">swl</span><span class="p">,</span>
+                <span class="n">swl</span><span class="o">=</span><span class="n">swl</span><span class="p">,</span>
+                <span class="n">sorw</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tag</span> <span class="o">+</span> <span class="s2">&quot; interpolant at </span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">parameter</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__interpolator</span><span class="p">(</span>
+                <span class="n">interpolant</span><span class="o">.</span><span class="n">wateroil</span><span class="p">,</span>
+                <span class="n">curve1</span><span class="p">,</span>
+                <span class="n">curve2</span><span class="p">,</span>
+                <span class="n">param_transf</span><span class="p">,</span>
+                <span class="s2">&quot;sw&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;krw&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;krow&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;pc&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Gas-oil interpolation</span>
+        <span class="c1"># We need swl from the interpolated WaterOil object.</span>
+        <span class="n">swl</span> <span class="o">=</span> <span class="n">interpolant</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">swl</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">gasparameter</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ERROR: Interpolation parameter must be in [-1,1]&quot;</span><span class="p">)</span>
+            <span class="n">interpolant</span><span class="o">.</span><span class="n">gasoil</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span>
+        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">gasparameter</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">):</span>
+            <span class="n">interpolant</span><span class="o">.</span><span class="n">gasoil</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">gasoil</span>
+        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">gasparameter</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">):</span>
+            <span class="n">interpolant</span><span class="o">.</span><span class="n">gasoil</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">gasoil</span>
+        <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">gasparameter</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">):</span>
+            <span class="n">interpolant</span><span class="o">.</span><span class="n">gasoil</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">gasoil</span>
+        <span class="k">elif</span> <span class="n">gasparameter</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">curve1</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">gasoil</span><span class="p">)</span>
+            <span class="n">curve2</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">gasoil</span><span class="p">)</span>
+            <span class="n">gas_param_transf</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">gasparameter</span>  <span class="c1"># 0 gives base, 1 gives low.</span>
+            <span class="c1"># We have to use the extreme, not interpolated sgcr.</span>
+            <span class="n">sgcr</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">curve1</span><span class="o">.</span><span class="n">sgcr</span><span class="p">,</span> <span class="n">curve2</span><span class="o">.</span><span class="n">sgcr</span><span class="p">)</span>
+            <span class="n">interpolant</span><span class="o">.</span><span class="n">gasoil</span> <span class="o">=</span> <span class="n">GasOil</span><span class="p">(</span>
+                <span class="n">sgcr</span><span class="o">=</span><span class="n">sgcr</span><span class="p">,</span>
+                <span class="n">swl</span><span class="o">=</span><span class="n">swl</span><span class="p">,</span>
+                <span class="n">sorg</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tag</span> <span class="o">+</span> <span class="s2">&quot; interpolant at </span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">gasparameter</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__interpolator</span><span class="p">(</span>
+                <span class="n">interpolant</span><span class="o">.</span><span class="n">gasoil</span><span class="p">,</span>
+                <span class="n">curve1</span><span class="p">,</span>
+                <span class="n">curve2</span><span class="p">,</span>
+                <span class="n">gas_param_transf</span><span class="p">,</span>
+                <span class="s2">&quot;sg&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;krg&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;krog&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;pc&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">interpolant</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">resetsorg</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">gasparameter</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">curve1</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">gasoil</span><span class="p">)</span>
+            <span class="n">curve2</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">gasoil</span><span class="p">)</span>
+            <span class="n">gas_param_transf</span> <span class="o">=</span> <span class="n">gasparameter</span>  <span class="c1"># 0 gives base, 1 gives high</span>
+            <span class="c1"># We have to use the extreme, not interpolated sgcr.</span>
+            <span class="n">sgcr</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">curve1</span><span class="o">.</span><span class="n">sgcr</span><span class="p">,</span> <span class="n">curve2</span><span class="o">.</span><span class="n">sgcr</span><span class="p">)</span>
+            <span class="n">interpolant</span><span class="o">.</span><span class="n">gasoil</span> <span class="o">=</span> <span class="n">GasOil</span><span class="p">(</span>
+                <span class="n">sgcr</span><span class="o">=</span><span class="n">sgcr</span><span class="p">,</span>
+                <span class="n">swl</span><span class="o">=</span><span class="n">swl</span><span class="p">,</span>
+                <span class="n">sorg</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tag</span> <span class="o">+</span> <span class="s2">&quot; interpolant at </span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">gasparameter</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__interpolator</span><span class="p">(</span>
+                <span class="n">interpolant</span><span class="o">.</span><span class="n">gasoil</span><span class="p">,</span>
+                <span class="n">curve1</span><span class="p">,</span>
+                <span class="n">curve2</span><span class="p">,</span>
+                <span class="n">gas_param_transf</span><span class="p">,</span>
+                <span class="s2">&quot;sg&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;krg&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;krog&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;pc&quot;</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">interpolant</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">resetsorg</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">interpolant</span></div>
+
+    <span class="k">def</span> <span class="nf">__interpolator</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">tableobject</span><span class="p">,</span>
+        <span class="n">curve1</span><span class="p">,</span>
+        <span class="n">curve2</span><span class="p">,</span>
+        <span class="n">parameter</span><span class="p">,</span>
+        <span class="n">sat</span><span class="o">=</span><span class="s2">&quot;sw&quot;</span><span class="p">,</span>
+        <span class="n">kr1</span><span class="o">=</span><span class="s2">&quot;krw&quot;</span><span class="p">,</span>
+        <span class="n">kr2</span><span class="o">=</span><span class="s2">&quot;krow&quot;</span><span class="p">,</span>
+        <span class="n">pc</span><span class="o">=</span><span class="s2">&quot;pc&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Interpolates between two curves using one parameter between 0 and</span>
+<span class="sd">        1, does not care if it is water-oil or gas-oil.  First</span>
+<span class="sd">        argument is the wateroil or gasoil object it is to populate.</span>
+
+<span class="sd">        0 will return curve1</span>
+<span class="sd">        1 will return curve2</span>
+
+<span class="sd">        No return value, but modifies the object pointed to by first handle</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">curve1</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="n">kr1</span><span class="p">:</span> <span class="n">kr1</span> <span class="o">+</span> <span class="s2">&quot;_1&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">curve2</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="n">kr1</span><span class="p">:</span> <span class="n">kr1</span> <span class="o">+</span> <span class="s2">&quot;_2&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">curve1</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="n">kr2</span><span class="p">:</span> <span class="n">kr2</span> <span class="o">+</span> <span class="s2">&quot;_1&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">curve2</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="n">kr2</span><span class="p">:</span> <span class="n">kr2</span> <span class="o">+</span> <span class="s2">&quot;_2&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">curve1</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="n">pc</span><span class="p">:</span> <span class="n">pc</span> <span class="o">+</span> <span class="s2">&quot;_1&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">curve2</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="n">pc</span><span class="p">:</span> <span class="n">pc</span> <span class="o">+</span> <span class="s2">&quot;_2&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Result data container:</span>
+        <span class="n">satresult</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">tableobject</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">sat</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">sat</span><span class="p">])</span>
+
+        <span class="c1"># Merge swresult with curve1 and curve2, and interpolate all</span>
+        <span class="c1"># columns in sw:</span>
+        <span class="n">intdf</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">curve1</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="n">curve2</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="n">satresult</span><span class="p">],</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">sat</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;slinear&quot;</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;bfill&quot;</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;ffill&quot;</span><span class="p">)</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Normalized saturations does not make sense for the</span>
+        <span class="c1"># interpolant, remove:</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;swn&quot;</span><span class="p">,</span> <span class="s2">&quot;son&quot;</span><span class="p">,</span> <span class="s2">&quot;swnpc&quot;</span><span class="p">,</span> <span class="s2">&quot;H&quot;</span><span class="p">,</span> <span class="s2">&quot;J&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">intdf</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="k">del</span> <span class="n">intdf</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
+
+        <span class="n">intdf</span><span class="p">[</span><span class="n">kr1</span><span class="p">]</span> <span class="o">=</span> <span class="n">intdf</span><span class="p">[</span><span class="n">kr1</span> <span class="o">+</span> <span class="s2">&quot;_1&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">parameter</span><span class="p">)</span> <span class="o">+</span> <span class="n">intdf</span><span class="p">[</span><span class="n">kr1</span> <span class="o">+</span> <span class="s2">&quot;_2&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">parameter</span>
+        <span class="n">intdf</span><span class="p">[</span><span class="n">kr2</span><span class="p">]</span> <span class="o">=</span> <span class="n">intdf</span><span class="p">[</span><span class="n">kr2</span> <span class="o">+</span> <span class="s2">&quot;_1&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">parameter</span><span class="p">)</span> <span class="o">+</span> <span class="n">intdf</span><span class="p">[</span><span class="n">kr2</span> <span class="o">+</span> <span class="s2">&quot;_2&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">parameter</span>
+        <span class="k">if</span> <span class="n">pc</span> <span class="o">+</span> <span class="s2">&quot;_1&quot;</span> <span class="ow">in</span> <span class="n">curve1</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span> <span class="ow">and</span> <span class="n">pc</span> <span class="o">+</span> <span class="s2">&quot;_2&quot;</span> <span class="ow">in</span> <span class="n">curve2</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="n">intdf</span><span class="p">[</span><span class="n">pc</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">intdf</span><span class="p">[</span><span class="n">pc</span> <span class="o">+</span> <span class="s2">&quot;_1&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">parameter</span><span class="p">)</span> <span class="o">+</span> <span class="n">intdf</span><span class="p">[</span><span class="n">pc</span> <span class="o">+</span> <span class="s2">&quot;_2&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">parameter</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">intdf</span><span class="p">[</span><span class="n">pc</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># Slice out the resulting sw values and columns. Slicing on</span>
+        <span class="c1"># floating point indices is not robust so we need to slice on an</span>
+        <span class="c1"># integer version of the sw column</span>
+        <span class="n">tableobject</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;swint&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">round</span><span class="p">,</span> <span class="n">tableobject</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">sat</span><span class="p">]</span> <span class="o">*</span> <span class="n">SWINTEGERS</span><span class="p">)))</span>
+        <span class="p">)</span>
+        <span class="n">intdf</span><span class="p">[</span><span class="s2">&quot;swint&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">round</span><span class="p">,</span> <span class="n">intdf</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span> <span class="o">*</span> <span class="n">SWINTEGERS</span><span class="p">)))</span>
+        <span class="p">)</span>
+        <span class="n">intdf</span> <span class="o">=</span> <span class="n">intdf</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+        <span class="n">intdf</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="s2">&quot;swint&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">intdf</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;swint&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">intdf</span> <span class="o">=</span> <span class="n">intdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">tableobject</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;swint&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">]</span>
+        <span class="n">intdf</span> <span class="o">=</span> <span class="n">intdf</span><span class="p">[[</span><span class="n">sat</span><span class="p">,</span> <span class="n">kr1</span><span class="p">,</span> <span class="n">kr2</span><span class="p">,</span> <span class="n">pc</span><span class="p">]]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+
+        <span class="c1"># intdf[&#39;swint&#39;] = (intdf[&#39;sw&#39;] * SWINTEGERS).astype(int)</span>
+        <span class="c1"># intdf.drop_duplicates(&#39;swint&#39;, inplace=True)</span>
+
+        <span class="c1"># Populate the WaterOil object</span>
+        <span class="n">tableobject</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">kr1</span><span class="p">]</span> <span class="o">=</span> <span class="n">intdf</span><span class="p">[</span><span class="n">kr1</span><span class="p">]</span>
+        <span class="n">tableobject</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">kr2</span><span class="p">]</span> <span class="o">=</span> <span class="n">intdf</span><span class="p">[</span><span class="n">kr2</span><span class="p">]</span>
+        <span class="n">tableobject</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">pc</span><span class="p">]</span> <span class="o">=</span> <span class="n">intdf</span><span class="p">[</span><span class="n">pc</span><span class="p">]</span>
+        <span class="n">tableobject</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;ffill&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright Equinor
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+    
+
+  <style>
+    /* Sidebar header (and topbar for mobile) */
+    .wy-side-nav-search, .wy-nav-top {
+      background: #ff1243;
+    }
+    /* Sidebar */
+    .wy-nav-side {
+      background: #474747;
+    }
+  </style>
+
+
+</body>
+</html>
