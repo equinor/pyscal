@@ -4,7 +4,7 @@ Python module for relative permeability/SCAL support in reservoir simulation
 
 ## Documentation
 
-* [http://equinor.github.io/pyscal]
+* <http://equinor.github.io/pyscal>
 
 ## Feature overview
 
