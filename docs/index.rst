@@ -1,18 +1,20 @@
 Documentation for pyscal
 ========================
 
-Contents:
+Pyscal is a package for relative permeability/SCAL support in reservoir simulation.
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    readme
+   installation
+   usage
    modules
+   history
 
 Indices and tables
 ==================
 
 * :ref:`genindex`
 * :ref:`modindex`
-* :ref:`search`
 

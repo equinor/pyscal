@@ -1,8 +1,5 @@
-# pyscal
-
-======
-pyscal
-======
+Introduction to pyscal
+======================
 
 *pyscal* is a Python module for creating relative permeability input
 curves for Eclipse and Nexus, either directly from parametrizations or
