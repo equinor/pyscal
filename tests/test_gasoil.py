@@ -26,6 +26,20 @@ def check_table(df):
     if "pc" in df:
         assert df["pc"].is_monotonic
 
+
+def test_dict_init():
+    from test_scalrecommendation import base_sample_corey
+
+    go = GasOil(**base_sample_corey)
+    assert go.swl == base_sample_corey["swl"]
+    assert go.swirr == base_sample_corey["swirr"]
+    assert go.sorg == base_sample_corey["sorg"]
+
+    go.add_corey_oil(**base_sample_corey)
+    go.add_corey_gas(**base_sample_corey)
+    assert go.selfcheck()
+
+
 @settings(deadline=1000)
 @given(st.floats(), st.floats())
 def test_gasoil_corey1(ng, nog):
@@ -43,6 +57,7 @@ def test_gasoil_corey1(ng, nog):
     check_table(go.table)
     sgofstr = go.SGOF()
     assert len(sgofstr) > 100
+
 
 @settings(deadline=1000)
 @given(st.floats(), st.floats(), st.floats(), st.floats(), st.floats())

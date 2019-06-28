@@ -129,7 +129,6 @@ high_sample_corey = {
 }
 
 
-
 def test_example_let_cases():
     rec = SCALrecommendation(
         low_sample_let, base_sample_let, high_sample_let, "foo", h=0.1
@@ -144,6 +143,7 @@ def test_example_let_cases():
     assert rec.low.threephaseconsistency() == ""
     assert rec.base.threephaseconsistency() == ""
     assert rec.high.threephaseconsistency() == ""
+
 
 def test_example_corey_cases():
     rec = SCALrecommendation(
@@ -161,8 +161,6 @@ def test_example_corey_cases():
     assert rec.low.threephaseconsistency() == ""
     assert rec.base.threephaseconsistency() == ""
     assert rec.high.threephaseconsistency() == ""
-
-
 
 
 @settings(max_examples=10, deadline=1000)
@@ -190,10 +188,9 @@ def test_interpolation_let(param_wo, param_go):
     assert len(interpolant.wateroil.SWOF()) > 100
     assert interpolant.threephaseconsistency() == ""
 
+
 @settings(max_examples=10, deadline=1000)
-@given(
-    st.floats(min_value=-1.1, max_value=1.1)
-)
+@given(st.floats(min_value=-1.1, max_value=1.1))
 def test_interpolation_corey(param):
     #
     # NB: kroend is different in the different corey-cases - then
@@ -256,6 +253,7 @@ def test_boundary_cases():
 def test_mangling_input():
     with pytest.raises(ValueError):
         rec = SCALrecommendation(dict(), dict(), dict(), "foo", h=0.1)
+
 
 def check_table_wo(df):
     """Check sanity of important columns"""

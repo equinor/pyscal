@@ -18,7 +18,15 @@ import numpy as np
 from pyscal import WaterOil, WaterOilGas, GasOil, SCALrecommendation
 
 
-from test_scalrecommendation import low_sample_corey, base_sample_corey, high_sample_corey, low_sample_let, base_sample_let, high_sample_let
+from test_scalrecommendation import (
+    low_sample_corey,
+    base_sample_corey,
+    high_sample_corey,
+    low_sample_let,
+    base_sample_let,
+    high_sample_let,
+)
+
 
 def interpolateplottest(low, base, high):
     """Demonstration of interpolation pointwise between LET curves"""
