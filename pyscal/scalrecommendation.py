@@ -108,7 +108,7 @@ class SCALrecommendation(object):
 
             ###
             # Add curves for low case, automatically detect Corey or LET based on what data is available.
-            if 'Lw' in low and 'Ew' in low and 'Tw' in low:
+            if "Lw" in low and "Ew" in low and "Tw" in low:
                 self.low.wateroil.add_LET_water(
                     l=low["Lw"],
                     e=low["Ew"],
@@ -116,25 +116,33 @@ class SCALrecommendation(object):
                     krwend=low["krwend"],
                     krwmax=low["krwmax"],
                 )
-            elif 'nw' in low:
-                self.low.wateroil.add_corey_water(nw=low["nw"], krwend=low["krwend"], krwmax=low["krwmax"])
+            elif "nw" in low:
+                self.low.wateroil.add_corey_water(
+                    nw=low["nw"], krwend=low["krwend"], krwmax=low["krwmax"]
+                )
             else:
                 print("Error: Provide LET or Corey parameters for water in low case")
                 raise ValueError
 
             # Add oil in low case:
-            if 'Lo' in low and 'Eo' in low and 'To' in low:
+            if "Lo" in low and "Eo" in low and "To" in low:
                 self.low.wateroil.add_LET_oil(
-                    l=low["Lo"], e=low["Eo"], t=low["To"], kroend=low["kroend"], kromax=low["kromax"]
+                    l=low["Lo"],
+                    e=low["Eo"],
+                    t=low["To"],
+                    kroend=low["kroend"],
+                    kromax=low["kromax"],
                 )
-            elif 'now' in low:
-                self.low.wateroil.add_corey_oil(now=low["now"],  kroend=low["kroend"], kromax=low["kromax"])
+            elif "now" in low:
+                self.low.wateroil.add_corey_oil(
+                    now=low["now"], kroend=low["kroend"], kromax=low["kromax"]
+                )
             else:
                 print("Error: Provide LET or Corey parameters for oil in low case")
                 raise ValueError
 
             # Add gas in low case:
-            if 'Lg' in low and 'Eg' in low and 'Tg' in low:
+            if "Lg" in low and "Eg" in low and "Tg" in low:
                 self.low.gasoil.add_LET_gas(
                     l=low["Lg"],
                     e=low["Eg"],
@@ -142,25 +150,27 @@ class SCALrecommendation(object):
                     krgend=low["krgend"],
                     krgmax=low["krgmax"],
                 )
-            elif 'ng' in low:
-                self.low.gasoil.add_corey_gas(ng=low['ng'], krgend=low['krgend'], krgmax=low['krgmax'])
+            elif "ng" in low:
+                self.low.gasoil.add_corey_gas(
+                    ng=low["ng"], krgend=low["krgend"], krgmax=low["krgmax"]
+                )
             else:
                 print("Error: Provide LET or Corey parameters for oil in low case")
                 raise ValueError
 
             # Add oil in low case:
-            if 'Log' in low and 'Eog' in low and 'Tog' in low:
+            if "Log" in low and "Eog" in low and "Tog" in low:
                 self.low.gasoil.add_LET_oil(
                     l=low["Log"], e=low["Eog"], t=low["Tog"], kroend=low["kroend"]
                 )
-            elif 'nog' in low:
+            elif "nog" in low:
                 self.low.gasoil.add_corey_oil(nog=low["nog"], kroend=low["kroend"])
             else:
                 print("Error: Provide LET or Corey parameters for oil in low case")
                 raise ValueError
             ###
             # Add curves for BASE case, automatically detect Corey or LET based on what data is available.
-            if 'Lw' in base and 'Ew' in base and 'Tw' in base:
+            if "Lw" in base and "Ew" in base and "Tw" in base:
                 self.base.wateroil.add_LET_water(
                     l=base["Lw"],
                     e=base["Ew"],
@@ -168,25 +178,33 @@ class SCALrecommendation(object):
                     krwend=base["krwend"],
                     krwmax=base["krwmax"],
                 )
-            elif 'nw' in base:
-                self.base.wateroil.add_corey_water(nw=base["nw"], krwend=base["krwend"], krwmax=base["krwmax"])
+            elif "nw" in base:
+                self.base.wateroil.add_corey_water(
+                    nw=base["nw"], krwend=base["krwend"], krwmax=base["krwmax"]
+                )
             else:
                 print("Error: Provide LET or Corey parameters for water in base case")
                 raise ValueError
 
             # Add oil in base case:
-            if 'Lo' in base and 'Eo' in base and 'To' in base:
+            if "Lo" in base and "Eo" in base and "To" in base:
                 self.base.wateroil.add_LET_oil(
-                    l=base["Lo"], e=base["Eo"], t=base["To"], kroend=base["kroend"], kromax=base["kromax"]
+                    l=base["Lo"],
+                    e=base["Eo"],
+                    t=base["To"],
+                    kroend=base["kroend"],
+                    kromax=base["kromax"],
                 )
-            elif 'now' in base:
-                self.base.wateroil.add_corey_oil(now=base["now"],  kroend=base["kroend"], kromax=base["kromax"])
+            elif "now" in base:
+                self.base.wateroil.add_corey_oil(
+                    now=base["now"], kroend=base["kroend"], kromax=base["kromax"]
+                )
             else:
                 print("Error: Provide LET or Corey parameters for oil in base case")
                 raise ValueError
 
             # Add gas in base case:
-            if 'Lg' in base and 'Eg' in base and 'Tg' in base:
+            if "Lg" in base and "Eg" in base and "Tg" in base:
                 self.base.gasoil.add_LET_gas(
                     l=base["Lg"],
                     e=base["Eg"],
@@ -194,27 +212,28 @@ class SCALrecommendation(object):
                     krgend=base["krgend"],
                     krgmax=base["krgmax"],
                 )
-            elif 'ng' in base:
-                self.base.gasoil.add_corey_gas(ng=base['ng'], krgend=base['krgend'], krgmax=base['krgmax'])
+            elif "ng" in base:
+                self.base.gasoil.add_corey_gas(
+                    ng=base["ng"], krgend=base["krgend"], krgmax=base["krgmax"]
+                )
             else:
                 print("Error: Provide LET or Corey parameters for oil in base case")
                 raise ValueError
 
             # Add oil in base case:
-            if 'Log' in base and 'Eog' in base and 'Tog' in base:
+            if "Log" in base and "Eog" in base and "Tog" in base:
                 self.base.gasoil.add_LET_oil(
                     l=base["Log"], e=base["Eog"], t=base["Tog"], kroend=base["kroend"]
                 )
-            elif 'nog' in base:
+            elif "nog" in base:
                 self.base.gasoil.add_corey_oil(nog=base["nog"], kroend=base["kroend"])
             else:
                 print("Error: Provide LET or Corey parameters for oil in base case")
                 raise ValueError
 
-
             ###
             # Add curves for HIGH case, automatically detect Corey or LET based on what data is available.
-            if 'Lw' in high and 'Ew' in high and 'Tw' in high:
+            if "Lw" in high and "Ew" in high and "Tw" in high:
                 self.high.wateroil.add_LET_water(
                     l=high["Lw"],
                     e=high["Ew"],
@@ -222,25 +241,33 @@ class SCALrecommendation(object):
                     krwend=high["krwend"],
                     krwmax=high["krwmax"],
                 )
-            elif 'nw' in high:
-                self.high.wateroil.add_corey_water(nw=high["nw"], krwend=high["krwend"], krwmax=high["krwmax"])
+            elif "nw" in high:
+                self.high.wateroil.add_corey_water(
+                    nw=high["nw"], krwend=high["krwend"], krwmax=high["krwmax"]
+                )
             else:
                 print("Error: Provide LET or Corey parameters for water in high case")
                 raise ValueError
 
             # Add oil in high case:
-            if 'Lo' in high and 'Eo' in high and 'To' in high:
+            if "Lo" in high and "Eo" in high and "To" in high:
                 self.high.wateroil.add_LET_oil(
-                    l=high["Lo"], e=high["Eo"], t=high["To"], kroend=high["kroend"], kromax=high["kromax"]
+                    l=high["Lo"],
+                    e=high["Eo"],
+                    t=high["To"],
+                    kroend=high["kroend"],
+                    kromax=high["kromax"],
                 )
-            elif 'now' in high:
-                self.high.wateroil.add_corey_oil(now=high["now"],  kroend=high["kroend"], kromax=high["kromax"])
+            elif "now" in high:
+                self.high.wateroil.add_corey_oil(
+                    now=high["now"], kroend=high["kroend"], kromax=high["kromax"]
+                )
             else:
                 print("Error: Provide LET or Corey parameters for oil in high case")
                 raise ValueError
 
             # Add gas in high case:
-            if 'Lg' in high and 'Eg' in high and 'Tg' in high:
+            if "Lg" in high and "Eg" in high and "Tg" in high:
                 self.high.gasoil.add_LET_gas(
                     l=high["Lg"],
                     e=high["Eg"],
@@ -248,24 +275,24 @@ class SCALrecommendation(object):
                     krgend=high["krgend"],
                     krgmax=high["krgmax"],
                 )
-            elif 'ng' in high:
-                self.high.gasoil.add_corey_gas(ng=high['ng'], krgend=high['krgend'], krgmax=high['krgmax'])
+            elif "ng" in high:
+                self.high.gasoil.add_corey_gas(
+                    ng=high["ng"], krgend=high["krgend"], krgmax=high["krgmax"]
+                )
             else:
                 print("Error: Provide LET or Corey parameters for oil in high case")
                 raise ValueError
 
             # Add oil in high case:
-            if 'Log' in high and 'Eog' in high and 'Tog' in high:
+            if "Log" in high and "Eog" in high and "Tog" in high:
                 self.high.gasoil.add_LET_oil(
                     l=high["Log"], e=high["Eog"], t=high["Tog"], kroend=high["kroend"]
                 )
-            elif 'nog' in high:
+            elif "nog" in high:
                 self.high.gasoil.add_corey_oil(nog=high["nog"], kroend=high["kroend"])
             else:
                 print("Error: Provide LET or Corey parameters for oil in high case")
                 raise ValueError
-
-
 
         else:
             # In case the caller has constructed the WaterOilGas objects itself.

@@ -58,6 +58,7 @@ class GasOil(object):
         sorg=0.04,
         tag="",
         krgendanchor="sorg",
+        **kwargs
     ):
         assert h > epsilon
         assert h < 1
@@ -193,7 +194,7 @@ class GasOil(object):
             self.table["pc"] = pchip(self.table.sg, extrapolate=False)
             self.pccomment = "-- pc from tabular input" + pccomment + "\n"
 
-    def add_corey_gas(self, ng=2, krgend=1, krgmax=None):
+    def add_corey_gas(self, ng=2, krgend=1, krgmax=None, **kwargs):
         """ Add krg data through the Corey parametrization
 
         A column called 'krg' will be added. If it exists, it will
@@ -238,7 +239,7 @@ class GasOil(object):
             krgmax,
         )
 
-    def add_corey_oil(self, nog=2, kroend=1):
+    def add_corey_oil(self, nog=2, kroend=1, **kwargs):
         """
         Add kro data through the Corey parametrization
 
@@ -254,7 +255,7 @@ class GasOil(object):
         self.table.loc[self.table.sg > 1 - self.sorg - self.swl - epsilon, "krog"] = 0
         self.krogcomment = "-- Corey krog, nog=%g, kroend=%g\n" % (nog, kroend)
 
-    def add_LET_gas(self, l=2, e=2, t=2, krgend=1, krgmax=None):
+    def add_LET_gas(self, l=2, e=2, t=2, krgend=1, krgmax=None, **kwargs):
         """
         Add gas relative permability data through the LET parametrization
 
@@ -306,7 +307,7 @@ class GasOil(object):
             krgmax,
         )
 
-    def add_LET_oil(self, l=2, e=2, t=2, kroend=1):
+    def add_LET_oil(self, l=2, e=2, t=2, kroend=1, **kwargs):
         """Add oil (vs gas) relative permeability data through the Corey
         parametrization.
 

@@ -33,7 +33,10 @@ class WaterOil(object):
     Can be dumped as include files for Eclipse/OPM and Nexus simulators.
     """
 
-    def __init__(self, swirr=0.0, swl=0.0, swcr=0.0, sorw=0.0, h=0.01, tag=""):
+    def __init__(
+        self, swirr=0.0, swl=0.0, swcr=0.0, sorw=0.0, h=0.01, tag="", **kwargs
+    ):
+        # def __init__(*argv):
         """Sets up the saturation range. Swirr is only relevant
         for the capillary pressure, not for relperm data."""
 
@@ -146,7 +149,7 @@ class WaterOil(object):
             self.table["pc"] = pchip(self.table.sw)
             self.pccomment = "-- pc from tabular input" + pccomment + "\n"
 
-    def add_corey_water(self, nw=2, krwend=1, krwmax=1):
+    def add_corey_water(self, nw=2, krwend=1, krwmax=1, **kwargs):
         """ Add krw data through the Corey parametrization
 
         A column named 'krw' will be added. If it exists, it will
@@ -180,7 +183,7 @@ class WaterOil(object):
             krwmax,
         )
 
-    def add_LET_water(self, l=2, e=2, t=2, krwend=1, krwmax=1):
+    def add_LET_water(self, l=2, e=2, t=2, krwend=1, krwmax=1, **kwargs):
         """Add krw data through LET parametrization
 
         It is assumed that there are no sw points between
@@ -227,7 +230,7 @@ class WaterOil(object):
             krwmax,
         )
 
-    def add_LET_oil(self, l=2, e=2, t=2, kroend=1, kromax=1):
+    def add_LET_oil(self, l=2, e=2, t=2, kroend=1, kromax=1, **kwargs):
         """
         Add kro data through LET parametrization
 
@@ -264,7 +267,7 @@ class WaterOil(object):
             kromax,
         )
 
-    def add_corey_oil(self, now=2, kroend=1, kromax=1):
+    def add_corey_oil(self, now=2, kroend=1, kromax=1, **kwargs):
         """Add kro data through the Corey parametrization,
         paying attention to saturations above sorw and below swl"""
         assert now > epsilon
@@ -283,7 +286,9 @@ class WaterOil(object):
             kromax,
         )
 
-    def add_simple_J(self, a=5, b=-1.5, poro_ref=0.25, perm_ref=100, drho=300, g=9.81):
+    def add_simple_J(
+        self, a=5, b=-1.5, poro_ref=0.25, perm_ref=100, drho=300, g=9.81, **kwargs
+    ):
         """Add capillary pressure function from a simplified J-function
 
         This is the 'inverse' or 'RMS' version of the a and b, the formula
@@ -333,7 +338,7 @@ class WaterOil(object):
             % (a, b, poro_ref, perm_ref, drho, g)
         )
 
-    def add_skjaeveland_pc(self, cw, co, aw, ao, swr=None, sor=None):
+    def add_skjaeveland_pc(self, cw, co, aw, ao, swr=None, sor=None, **kwargs):
         """Add capillary pressure from the Skjæveland correlation,
 
         Doc: https://wiki.equinor.com/wiki/index.php/Res:The_Skjaeveland_correlation_for_capillary_pressure

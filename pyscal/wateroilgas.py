@@ -24,7 +24,16 @@ class WaterOilGas(object):
     """
 
     def __init__(
-        self, swirr=0, swl=0.1, swcr=0.0, sorw=0.05, sorg=0, sgcr=0, h=0.01, tag=""
+        self,
+        swirr=0,
+        swl=0.1,
+        swcr=0.0,
+        sorw=0.05,
+        sorg=0,
+        sgcr=0,
+        h=0.01,
+        tag="",
+        **kwargs
     ):
         """Sets up saturation range for water (Sw) and gas (Sg)"""
         self.wateroil = WaterOil(
@@ -169,7 +178,7 @@ WATER
 GAS
 START
   1 'JAN' 2100 /
-TABDIM
+TABDIMS
    2* 10000 /
 GRID
 DX
