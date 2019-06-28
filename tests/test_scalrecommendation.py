@@ -100,6 +100,7 @@ low_sample_corey = {
     "kroend": 0.2,
     "krwend": 0.4,
 }
+
 base_sample_corey = {
     "swirr": 0.25,
     "sorw": 0.25,
@@ -191,16 +192,21 @@ def test_interpolation_let(param_wo, param_go):
 
 @settings(max_examples=10, deadline=1000)
 @given(
-    st.floats(min_value=-1.1, max_value=1.1), st.floats(min_value=-1.1, max_value=1.1)
+    st.floats(min_value=-1.1, max_value=1.1)
 )
-def test_interpolation_corey(param_wo, param_go):
+def test_interpolation_corey(param):
+    #
+    # NB: kroend is different in the different corey-cases - then
+    #     interpolation with different parameter for wateroil and gasoil
+    #     will lead to inconsistent three-phase endpoint (krog /= krog @maxSo)
+    #
     rec = SCALrecommendation(
         low_sample_corey, base_sample_corey, high_sample_corey, "foo", h=0.1
     )
     rec.add_simple_J()  # Add default pc curve
 
     try:
-        interpolant = rec.interpolate(param_wo, param_go, h=0.1)
+        interpolant = rec.interpolate(param, h=0.1)
     except AssertionError:
         return
 
