@@ -423,6 +423,18 @@ class GasOil(object):
         string += "/\n"
         return string
 
+    def slgof_df(self):
+        """Slice out an SLGOF table.
+
+        This is a used by the SLGOF() function, it is
+        extracted as a single function to facilitate testing."""
+        if "pc" not in self.table.columns:
+            # Only happens when the SLGOF function is skipped (test code)
+            self.table["pc"] = 0
+        return self.table[
+            self.table.sg <= 1 - self.sorg - self.swl + epsilon
+        ].sort_values("sl")[["sl", "krg", "krog", "pc"]]
+
     def SLGOF(self, header=True, dataincommentrow=True):
         """Produce SLGOF input for Eclipse reservoir simulator.
 
@@ -456,10 +468,8 @@ class GasOil(object):
             string += self.krogcomment
             string += "-- krg = krog @ sw=%1.5f\n" % self.crosspoint()
             string += self.pccomment
-        string += (
-            self.table[self.table.sg <= 1 - self.sorg - self.swl + epsilon]
-            .sort_values("sl")[["sl", "krg", "krog", "pc"]]
-            .to_csv(sep=" ", float_format="%1.7f", header=None, index=False)
+        string += self.slgof_table().to_csv(
+            sep=" ", float_format="%1.7f", header=None, index=False
         )
         string += "/\n"
         return string
