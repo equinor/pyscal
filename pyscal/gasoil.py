@@ -468,7 +468,7 @@ class GasOil(object):
             string += self.krogcomment
             string += "-- krg = krog @ sw=%1.5f\n" % self.crosspoint()
             string += self.pccomment
-        string += self.slgof_table().to_csv(
+        string += self.slgof_df().to_csv(
             sep=" ", float_format="%1.7f", header=None, index=False
         )
         string += "/\n"
