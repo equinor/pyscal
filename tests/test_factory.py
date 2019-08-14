@@ -62,3 +62,24 @@ def test_factory_wateroil():
     assert isinstance(wo, WaterOil)
     assert "krw" not in wo.table
     assert "krow" not in wo.table
+
+    # Add capillary pressure
+    wo = factory.create_water_oil(
+        dict(swl=0.1, nw=1, now=1, a=2, b=-1, poro_ref=0.2, perm_ref=100, drho=200)
+    )
+    assert "pc" in wo.table
+    assert wo.table["pc"].max() > 0.0
+    assert "Simplified J" in wo.pccomment
+
+    # Test that the optional gravity g is picked up:
+    wo = factory.create_water_oil(
+        dict(swl=0.1, nw=1, now=1, a=2, b=-1, poro_ref=0.2, perm_ref=100, drho=200, g=0)
+    )
+    assert "pc" in wo.table
+    assert wo.table["pc"].max() == 0.0
+
+    # One pc param missing:
+    wo = factory.create_water_oil(
+        dict(swl=0.1, nw=1, now=1, a=2, b=-1, perm_ref=100, drho=200, g=0)
+    )
+    assert "pc" not in wo.table

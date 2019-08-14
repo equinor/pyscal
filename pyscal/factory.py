@@ -23,6 +23,7 @@ WO_COREY_OIL = ["now"]
 WO_LET_WATER = ["Lw", "Ew", "Tw"]  # Will translated to l, e and t in code below.
 WO_LET_OIL = ["Low", "Eow", "Tow"]
 WO_OIL_ENDPOINTS = ["kromax", "kroend"]
+WO_SIMPLE_J = ["a", "b", "poro_ref", "perm_ref", "drho"]  # "g" is optional
 
 
 class PyscalFactory(object):
@@ -96,7 +97,7 @@ class PyscalFactory(object):
         params_corey_oil = slicedict(params, WO_COREY_OIL + WO_OIL_ENDPOINTS)
         params_let_oil = slicedict(params, WO_LET_OIL + WO_OIL_ENDPOINTS)
         if set(WO_COREY_OIL).issubset(set(params_corey_oil)):
-            wateroil.add_corey_water(**params_corey_oil)
+            wateroil.add_corey_oil(**params_corey_oil)
             logging.info(
                 "Added Corey water to WaterOil object from parameters %s",
                 str(params_corey_oil.keys()),
@@ -113,6 +114,15 @@ class PyscalFactory(object):
         else:
             logging.warning(
                 "Missing or ambiguous parameters for oil curve in WaterOil object"
+            )
+
+        # Capillary pressure:
+        params_simple_j = slicedict(params, WO_SIMPLE_J + ["g"])
+        if set(WO_SIMPLE_J).issubset(set(params_simple_j)):
+            wateroil.add_simple_J(**params_simple_j)
+        else:
+            logging.warning(
+                "Missing or ambiguous parameters for capillary pressure in WaterOil object"
             )
 
         return wateroil
