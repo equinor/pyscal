@@ -16,7 +16,7 @@ def slicedict(dct, keys):
 # in incoming dictionary determines the codepaths. These must
 # again match the API of the functions downstream in e.g. WaterOil, except
 # for LET parameters, where the API is simplified to 'l', 'e' and 't'.
-WO_ENDPOINTS = ["swirr", "swl", "swcr", "sorw"]
+WO_INIT = ["swirr", "swl", "swcr", "sorw", "h", "tag"]
 WO_COREY_WATER = ["nw"]
 WO_WATER_ENDPOINTS = ["krwmax", "krwend"]
 WO_COREY_OIL = ["now"]
@@ -25,13 +25,15 @@ WO_LET_OIL = ["Low", "Eow", "Tow"]
 WO_OIL_ENDPOINTS = ["kromax", "kroend"]
 WO_SIMPLE_J = ["a", "b", "poro_ref", "perm_ref", "drho"]  # "g" is optional
 
-GO_ENDPOINTS = ["swirr", "sgcr", "sorg", "swl", "krgendanchor"]
+GO_INIT = ["swirr", "sgcr", "sorg", "swl", "krgendanchor", "h", "tag"]
 GO_COREY_GAS = ["ng"]
 GO_GAS_ENDPOINTS = ["krgend", "krgmax"]
 GO_COREY_OIL = ["nog"]
 GO_OIL_ENDPOINTS = ["kroend"]
 GO_LET_GAS = ["Lg", "Eg", "Tg"]
 GO_LET_OIL = ["Log", "Eog", "Tog"]
+
+WOG_INIT = ["swirr", "swl", "swcr", "sorw", "sorg", "sgcr", "h", "tag"]
 
 
 class PyscalFactory(object):
@@ -55,7 +57,7 @@ class PyscalFactory(object):
     def create_water_oil(params=None):
         """Create a WaterOil object from a dictionary of parameters.
 
-        Parametrization (Corey/LET) is inferred from presence
+        Parameterization (Corey/LET) is inferred from presence
         of certain parameters in the dictionary.
 
         Don't rely on behaviour of you supply both Corey and LET at
@@ -73,10 +75,8 @@ class PyscalFactory(object):
 
         usedparams = set()
         # No requirements to the base objects, defaults are ok.
-        wateroil = WaterOil(**slicedict(params, WO_ENDPOINTS + ["h", "tag"]))
-        usedparams = usedparams.union(
-            set(slicedict(params, WO_ENDPOINTS + ["h", "tag"]).keys())
-        )
+        wateroil = WaterOil(**slicedict(params, WO_INIT))
+        usedparams = usedparams.union(set(slicedict(params, WO_INIT).keys()))
         logging.info(
             "Initialized WaterOil object from parameters %s", str(list(usedparams))
         )
@@ -144,7 +144,7 @@ class PyscalFactory(object):
     def create_gas_oil(params=None):
         """Create a GasOil object from a dictionary of parameters.
 
-        Parametrization (Corey/LET) is inferred from presence
+        Parameterization (Corey/LET) is inferred from presence
         of certain parameters in the dictionary.
 
         Don't rely on behaviour of you supply both Corey and LET at
@@ -162,10 +162,8 @@ class PyscalFactory(object):
 
         usedparams = set()
         # No requirements to the base objects, defaults are ok.
-        gasoil = GasOil(**slicedict(params, GO_ENDPOINTS + ["h", "tag"]))
-        usedparams = usedparams.union(
-            set(slicedict(params, GO_ENDPOINTS + ["h", "tag"]).keys())
-        )
+        gasoil = GasOil(**slicedict(params, GO_INIT))
+        usedparams = usedparams.union(set(slicedict(params, GO_INIT).keys()))
         logging.info(
             "Initialized GasOil object from parameters %s", str(list(usedparams))
         )
@@ -220,25 +218,47 @@ class PyscalFactory(object):
 
         return gasoil
 
-    def create_water_oil_gas(self, params):
-        """foo"""
-        wateroilgas = WaterOilGas()
+    @staticmethod
+    def create_water_oil_gas(params=None):
+        """Create a WaterOilGas object from a dictionary of parameters
+
+        Parameterization (Corey/LET) is inferred from presence
+        of certain parameters in the dictionary.
+        """
+        if not params:
+            params = dict()
+        if not isinstance(params, dict):
+            raise TypeError("Parameter to create_water_oil_gas must be a dictionary")
+        wateroil = PyscalFactory.create_water_oil(params)
+        gasoil = PyscalFactory.create_gas_oil(params)
+        wog_init_params = slicedict(params, WOG_INIT)
+        wateroilgas = WaterOilGas(**wog_init_params)
+        # The wateroilgas __init__ has already created WaterOil and GasOil objects
+        # but we overwrite the references with newly created ones, this factory function
+        # must then guarantee that they are compatible.
+        wateroilgas.wateroil = wateroil
+        wateroilgas.gasoil = gasoil
+
         return wateroilgas
 
-    def create_scal_recommendation(self, params):
+    @staticmethod
+    def create_scal_recommendation(params):
         """foo"""
-        # Allow YAML-object?
-        wateroil_low = WaterOilGas(params["low"])
-        wateroil_base = WaterOilGas(params["base"])
-        wateroil_high = WaterOilGas(params["high"])
+        raise NotImplementedError
+        # wateroil_low = WaterOilGas(params["low"])
+        # wateroil_base = WaterOilGas(params["base"])
+        # wateroil_high = WaterOilGas(params["high"])
         # Should we search for 'h' in the incoming dict?
-        h_dict = dict(h=0.02)
-        scal = SCALrecommendation(wateroil_low, wateroil_base, wateroil_high, **h_dict)
-        return scal
+        # h_dict = dict(h=0.02)
+        # scal = SCALrecommendation(wateroil_low, wateroil_base, wateroil_high, **h_dict)
+        #return scal
 
-    def create_scal_recommendation_list(self, yamlobject):
+    @staticmethod
+    def create_scal_recommendation_list(yamlobject):
         """Reserved"""
+        raise NotImplementedError
 
+    @staticmethod
     def create_wog_list(self):
         """Reserved for future implementation"""
-        pass
+        raise NotImplementedError

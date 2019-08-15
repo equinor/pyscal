@@ -11,7 +11,7 @@ import pandas as pd
 
 import pytest
 
-from pyscal import WaterOil, GasOil, PyscalFactory
+from pyscal import WaterOil, GasOil, WaterOilGas, PyscalFactory
 
 
 def test_factory_wateroil():
@@ -25,7 +25,8 @@ def test_factory_wateroil():
     assert isinstance(wo, WaterOil)
 
     with pytest.raises(TypeError):
-        factory.create_water_oil(swirr=0.01)  # Must be a dictionary
+        # (it must be a dictionary)
+        factory.create_water_oil(swirr=0.01)  # noqa
 
     wo = factory.create_water_oil(dict(tag="Good sand"))
     assert wo.tag == "Good sand"
@@ -111,7 +112,8 @@ def test_factory_gasoil():
     assert isinstance(go, GasOil)
 
     with pytest.raises(TypeError):
-        factory.create_gas_oil(swirr=0.01)  # Must be a dictionary
+        # (this must be a dictionary)
+        factory.create_gas_oil(swirr=0.01)  # noqa
 
     go = factory.create_gas_oil(dict(tag="Good sand"))
     assert go.tag == "Good sand"
@@ -144,6 +146,23 @@ def test_factory_gasoil():
     assert "LET krog" in sgof
 
 
+def test_factory_wateroilgas():
+    logging.getLogger().setLevel("INFO")
+
+    factory = PyscalFactory()
+
+    wog = factory.create_water_oil_gas()
+    assert isinstance(wog, WaterOilGas)
+
+    wog = factory.create_water_oil_gas(dict(nw=2, now=3, ng=1, nog=2.5))
+    swof = wog.SWOF()
+    sgof = wog.SGOF()
+    assert "Corey krg" in sgof
+    assert "Corey krog" in sgof
+    assert "Corey krw" in swof
+    assert "Corey krow" in swof
+
+
 def test_xls_factory():
     """Test/demonstrate how to go from data in an excel row to pyscal objects"""
 
@@ -157,8 +176,11 @@ def test_xls_factory():
 
     scalinput = pd.read_excel(xlsxfile).set_index(["SATNUM", "CASE"])
 
-    satnum1 = PyscalFactory.create_water_oil(dict(scalinput.loc[1, "low"]))
+    satnum1 = PyscalFactory.create_water_oil_gas(dict(scalinput.loc[1, "low"]))
     swof1 = satnum1.SWOF()
     assert "LET krw" in swof1
     assert "LET krow" in swof1
     assert "Simplified J" in swof1
+    sgof1 = satnum1.SGOF()
+    assert "LET krg" in sgof1
+    assert "LET krog" in sgof1
