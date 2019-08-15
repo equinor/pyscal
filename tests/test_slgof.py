@@ -8,9 +8,8 @@ from __future__ import print_function
 from hypothesis import given, settings
 import hypothesis.strategies as st
 
-import numpy as np
-
 from pyscal import WaterOilGas
+from pyscal.constants import EPSILON as epsilon
 
 
 def check_table(df):
@@ -28,8 +27,11 @@ def check_table(df):
 
 
 @settings(deadline=1000)
-@given(st.floats(min_value=0.0, max_value=0.3), st.floats(min_value=0.0, max_value=0.3),
-        st.floats(min_value=0.0, max_value=0.2))
+@given(
+    st.floats(min_value=0.0, max_value=0.3),
+    st.floats(min_value=0.0, max_value=0.3),
+    st.floats(min_value=0.0, max_value=0.2),
+)
 def test_slgof(swl, sorg, sgcr):
     wog = WaterOilGas(swl=swl, sorg=sorg, sgcr=sgcr, h=0.05)
     wog.wateroil.add_corey_water()
@@ -48,6 +50,10 @@ def test_slgof(swl, sorg, sgcr):
     check_table(slgof)
 
     # Requirements from E100 manual:
-    assert np.isclose(slgof["sl"].values[0], swl + sorg)
-    assert np.isclose(slgof["krg"].values[-1], 0)
-    assert np.isclose(slgof["krog"].values[0], 0)
+    assert slgof["sl"].values[0] - (swl + sorg) < epsilon
+    assert slgof["krg"].values[-1] < epsilon
+    assert slgof["krog"].values[0] < epsilon
+
+    slgof_str = wog.SLGOF()
+    assert isinstance(slgof_str, str)
+    assert len(slgof_str)
