@@ -44,7 +44,7 @@ class PyscalFactory(object):
     """
 
     @staticmethod
-    def create_water_oil(params):
+    def create_water_oil(params=None):
         """Create a WaterOil object from a dictionary of parameters.
 
         Parametrization (Corey/LET) is inferred from presence
@@ -58,11 +58,16 @@ class PyscalFactory(object):
         situations, so we require e.g. 'Lw' (which will be
         translated to 'l')
         """
+        if not params:
+            params = dict()
+        if not isinstance(params, dict):
+            raise TypeError("Parameter to create_water_oil must be a dictionary")
+
         usedparams = set()
         # No requirements to the base objects, defaults are ok.
-        wateroil = WaterOil(**slicedict(params, WO_ENDPOINTS + ["h"]))
+        wateroil = WaterOil(**slicedict(params, WO_ENDPOINTS + ["h", "tag"]))
         usedparams = usedparams.union(
-            set(slicedict(params, WO_ENDPOINTS + ["h"]).keys())
+            set(slicedict(params, WO_ENDPOINTS + ["h", "tag"]).keys())
         )
         logging.info(
             "Initialized WaterOil object from parameters %s", str(list(usedparams))

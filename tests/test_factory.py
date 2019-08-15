@@ -6,6 +6,8 @@ from __future__ import print_function
 
 import logging
 
+import pytest
+
 from pyscal import WaterOil, PyscalFactory
 
 
@@ -15,6 +17,16 @@ def test_factory_wateroil():
     logging.getLogger().setLevel("INFO")
 
     factory = PyscalFactory()
+
+    wo = factory.create_water_oil()
+    assert isinstance(wo, WaterOil)
+
+    with pytest.raises(TypeError):
+        factory.create_water_oil(swirr=0.01)  # Must be a dictionary
+
+    wo = factory.create_water_oil(dict(tag="Good sand"))
+    assert wo.tag == "Good sand"
+
     wo = factory.create_water_oil(dict(swirr=0.01, swl=0.1, bogus="foobar"))
     assert isinstance(wo, WaterOil)
     assert wo.swirr == 0.01
