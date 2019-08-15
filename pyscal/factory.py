@@ -25,6 +25,14 @@ WO_LET_OIL = ["Low", "Eow", "Tow"]
 WO_OIL_ENDPOINTS = ["kromax", "kroend"]
 WO_SIMPLE_J = ["a", "b", "poro_ref", "perm_ref", "drho"]  # "g" is optional
 
+GO_ENDPOINTS = ["swirr", "sgcr", "sorg", "swl", "krgendanchor"]
+GO_COREY_GAS = ["ng"]
+GO_GAS_ENDPOINTS = ["krgend", "krgmax"]
+GO_COREY_OIL = ["nog"]
+GO_OIL_ENDPOINTS = ["kroend"]
+GO_LET_GAS = ["Lg", "Eg", "Tg"]
+GO_LET_OIL = ["Log", "Eog", "Tog"]
+
 
 class PyscalFactory(object):
     """Class for implementing the factory pattern for Pyscal objects
@@ -55,7 +63,7 @@ class PyscalFactory(object):
 
         NB: the add_LET_* methods have the names 'l', 'e' and 't'
         in their signatures, which is not precise enough in this
-        situations, so we require e.g. 'Lw' (which will be
+        context, so we require e.g. 'Lw' and 'Low' (which both will be
         translated to 'l')
         """
         if not params:
@@ -132,9 +140,84 @@ class PyscalFactory(object):
 
         return wateroil
 
-    def create_gas_oil(self, params):
-        """foo"""
-        gasoil = GasOil()
+    @staticmethod
+    def create_gas_oil(params=None):
+        """Create a GasOil object from a dictionary of parameters.
+
+        Parametrization (Corey/LET) is inferred from presence
+        of certain parameters in the dictionary.
+
+        Don't rely on behaviour of you supply both Corey and LET at
+        the same time.
+
+        NB: the add_LET_* methods have the names 'l', 'e' and 't'
+        in their signatures, which is not precise enough in this
+        context, so we require e.g. 'Lg' and 'Log' (which both will be
+        translated to 'l')
+        """
+        if not params:
+            params = dict()
+        if not isinstance(params, dict):
+            raise TypeError("Parameter to create_gas_oil must be a dictionary")
+
+        usedparams = set()
+        # No requirements to the base objects, defaults are ok.
+        gasoil = GasOil(**slicedict(params, GO_ENDPOINTS + ["h", "tag"]))
+        usedparams = usedparams.union(
+            set(slicedict(params, GO_ENDPOINTS + ["h", "tag"]).keys())
+        )
+        logging.info(
+            "Initialized GasOil object from parameters %s", str(list(usedparams))
+        )
+
+        # Gas curve
+        params_corey_gas = slicedict(params, GO_COREY_GAS + GO_GAS_ENDPOINTS)
+        params_let_gas = slicedict(params, GO_LET_GAS + GO_GAS_ENDPOINTS)
+        if set(GO_COREY_GAS).issubset(set(params_corey_gas)):
+            gasoil.add_corey_gas(**params_corey_gas)
+            usedparams = usedparams.union(set(params_corey_gas.keys()))
+            logging.info(
+                "Added Corey gas to GasOil object from parameters %s",
+                str(params_corey_gas.keys()),
+            )
+        elif set(GO_LET_GAS).issubset(set(params_let_gas)):
+            params_let_gas["l"] = params_let_gas.pop("Lg")
+            params_let_gas["e"] = params_let_gas.pop("Eg")
+            params_let_gas["t"] = params_let_gas.pop("Tg")
+            gasoil.add_LET_gas(**params_let_gas)
+            usedparams = usedparams.union(set(params_let_gas.keys()))
+            logging.info(
+                "Added LET gas to GasOil object from parameters %s",
+                str(params_let_gas.keys()),
+            )
+        else:
+            logging.warning(
+                "Missing or ambiguous parameters for gas curve in GasOil object"
+            )
+
+        # Oil curve:
+        params_corey_oil = slicedict(params, GO_COREY_OIL + GO_OIL_ENDPOINTS)
+        params_let_oil = slicedict(params, GO_LET_OIL + GO_OIL_ENDPOINTS)
+        if set(GO_COREY_OIL).issubset(set(params_corey_oil)):
+            gasoil.add_corey_oil(**params_corey_oil)
+            logging.info(
+                "Added Corey gas to GasOil object from parameters %s",
+                str(params_corey_oil.keys()),
+            )
+        elif set(GO_LET_OIL).issubset(set(params_let_oil)):
+            params_let_oil["l"] = params_let_oil.pop("Log")
+            params_let_oil["e"] = params_let_oil.pop("Eog")
+            params_let_oil["t"] = params_let_oil.pop("Tog")
+            gasoil.add_LET_oil(**params_let_oil)
+            logging.info(
+                "Added LET gas to GasOil object from parameters %s",
+                str(params_let_oil.keys()),
+            )
+        else:
+            logging.warning(
+                "Missing or ambiguous parameters for oil curve in GasOil object"
+            )
+
         return gasoil
 
     def create_water_oil_gas(self, params):

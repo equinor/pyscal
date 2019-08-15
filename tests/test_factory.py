@@ -11,7 +11,7 @@ import pandas as pd
 
 import pytest
 
-from pyscal import WaterOil, PyscalFactory
+from pyscal import WaterOil, GasOil, PyscalFactory
 
 
 def test_factory_wateroil():
@@ -98,6 +98,50 @@ def test_factory_wateroil():
         dict(swl=0.1, nw=1, now=1, a=2, b=-1, perm_ref=100, drho=200, g=0)
     )
     assert "pc" not in wo.table
+
+
+def test_factory_gasoil():
+    """Test that we can create curves from dictionaries of parameters"""
+
+    logging.getLogger().setLevel("INFO")
+
+    factory = PyscalFactory()
+
+    go = factory.create_gas_oil()
+    assert isinstance(go, GasOil)
+
+    with pytest.raises(TypeError):
+        factory.create_gas_oil(swirr=0.01)  # Must be a dictionary
+
+    go = factory.create_gas_oil(dict(tag="Good sand"))
+    assert go.tag == "Good sand"
+
+    go = factory.create_gas_oil(dict(swirr=0.01, swl=0.1, sgcr=0.05))
+    assert isinstance(go, GasOil)
+    assert go.sgcr == 0.05
+    assert go.swl == 0.1
+    assert go.swirr == 0.01
+
+    go = factory.create_gas_oil(dict(ng=1.1, nog=2))
+    sgof = go.SGOF()
+    assert "Corey krg" in sgof
+    assert "Corey krog" in sgof
+    assert "Zero capillary pressure" in sgof
+
+    go = factory.create_gas_oil(dict(ng=1.2, nog=2, krgend=0.8, krgmax=0.9, kroend=0.6))
+    sgof = go.SGOF()
+    assert "kroend=0.6" in sgof
+    assert "krgend=0.8" in sgof
+
+    go = factory.create_gas_oil(dict(ng=1.3, Log=2, Eog=2, Tog=2))
+    sgof = go.SGOF()
+    assert "Corey krg" in sgof
+    assert "LET krog" in sgof
+
+    go = factory.create_gas_oil(dict(Lg=1, Eg=1, Tg=1, Log=2, Eog=2, Tog=2))
+    sgof = go.SGOF()
+    assert "LET krg" in sgof
+    assert "LET krog" in sgof
 
 
 def test_xls_factory():
