@@ -4,7 +4,10 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import os
 import logging
+
+import pandas as pd
 
 import pytest
 
@@ -95,3 +98,23 @@ def test_factory_wateroil():
         dict(swl=0.1, nw=1, now=1, a=2, b=-1, perm_ref=100, drho=200, g=0)
     )
     assert "pc" not in wo.table
+
+
+def test_xls_factory():
+    """Test/demonstrate how to go from data in an excel row to pyscal objects"""
+
+    if "__file__" in globals():
+        # Easen up copying test code into interactive sessions
+        testdir = os.path.dirname(os.path.abspath(__file__))
+    else:
+        testdir = os.path.abspath(".")
+
+    xlsxfile = testdir + "/data/scal-pc-input-example.xlsx"
+
+    scalinput = pd.read_excel(xlsxfile).set_index(["SATNUM", "CASE"])
+
+    satnum1 = PyscalFactory.create_water_oil(dict(scalinput.loc[1, "low"]))
+    swof1 = satnum1.SWOF()
+    assert "LET krw" in swof1
+    assert "LET krow" in swof1
+    assert "Simplified J" in swof1
