@@ -79,13 +79,15 @@ class GasOil(object):
             raise Exception(
                 "No saturation range left " + "after endpoints, check input"
             )
-        if np.isclose(sorg, 0.0):
-            krgendanchor = ""  # not meaningful to anchor to sorg if sorg is zero
         if krgendanchor in ["sorg", ""]:
             self.krgendanchor = krgendanchor
         else:
             print("Unknown krgendanchor %s, ignored" % str(krgendanchor))
             self.krgendanchor = ""
+        if np.isclose(sorg, 0.0) and self.krgendanchor == "sorg":
+            # This is too much info..
+            # print("info: krgendanchor set to sorg, ignored as sorg is 0.0.")
+            self.krgendanchor = ""  # This is critical to avoid bugs due to numerics.
 
         sg = (
             [0]
@@ -108,11 +110,12 @@ class GasOil(object):
         else:
             self.table["sgn"] = (self.table.sg - sgcr) / (1 - swl - sgcr)
         self.table["son"] = (1 - self.table.sg - sorg - swl) / (1 - sorg - swl)
-        self.sgcomment = "-- swirr=%g, sgcr=%g, swl=%g, sorg=%g\n" % (
+        self.sgcomment = "-- swirr=%g, sgcr=%g, swl=%g, sorg=%g, krgendanchor=%s\n" % (
             self.swirr,
             self.sgcr,
             self.swl,
             self.sorg,
+            self.krgendanchor,
         )
         self.krgcomment = ""
         self.krogcomment = ""
@@ -124,11 +127,9 @@ class GasOil(object):
             self.sorg = (
                 1 - self.swl - self.table[np.isclose(self.table.krog, 0.0)].min()["sg"]
             )
-            self.sgcomment = "-- swirr=%g, sgcr=%g, swl=%g, sorg=%g\n" % (
-                self.swirr,
-                self.sgcr,
-                self.swl,
-                self.sorg,
+            self.sgcomment = (
+                "-- swirr=%g, sgcr=%g, swl=%g, sorg=%g\n, krgendanchor=%s"
+                % (self.swirr, self.sgcr, self.swl, self.sorg, self.krgendanchor)
             )
 
     def add_gasoil_fromtable(
