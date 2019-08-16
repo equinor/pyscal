@@ -44,20 +44,16 @@ class GasOil(object):
         sorg (float): Residual oil saturation after gas flooding. At this oil
             saturation, the oil has zero relative permeability.
         krgendanchor (str): Set to `sorg` or something else, where to
-            anchor `krgend`.
+            anchor `krgend`. If `sorg`, then the normalized gas
+            saturation will be equal to 1 at `1 - swl - sgcr - sorg`,
+            if not, it will be 1 at `1 - swl - sgcr`. If `sorg` is zero
+            it does not matter.
         h (float): Saturation step-length in the outputted table.
         tag (str): Optional string identifier, only used in comments.
     """
 
     def __init__(
-        self,
-        swirr=0,
-        sgcr=0.05,
-        h=0.01,
-        swl=0.05,
-        sorg=0.04,
-        tag="",
-        krgendanchor="sorg",
+        self, swirr=0, sgcr=0.0, h=0.01, swl=0.0, sorg=0.0, tag="", krgendanchor="sorg"
     ):
         assert h > epsilon
         assert h < 1
@@ -85,7 +81,12 @@ class GasOil(object):
             )
         if np.isclose(sorg, 0.0):
             krgendanchor = ""  # not meaningful to anchor to sorg if sorg is zero
-        self.krgendanchor = krgendanchor
+        if krgendanchor in ["sorg", ""]:
+            self.krgendanchor = krgendanchor
+        else:
+            print("Unknown krgendanchor %s, ignored" % str(krgendanchor))
+            self.krgendanchor = ""
+
         sg = (
             [0]
             + [sgcr]
@@ -199,7 +200,9 @@ class GasOil(object):
         A column called 'krg' will be added. If it exists, it will
         be replaced.
 
-        TODO: Document krgendanchor behaviour.
+        If krgendanchor is set to `sorg` (default), then the normalized
+        gas saturation `sgn` (which is what is raised to the power of `ng`)
+        is 1 at `1 - swl - sgcr - sorg`. If not, it is 1 at `1 - swl - sgcr`.
 
         krgmax is only relevant if krgendanchor is 'sorg'
         """
@@ -232,6 +235,8 @@ class GasOil(object):
             # anchor to sorg.
             if krgmax is not None:
                 print("krgmax ignored when we anchor to sorg")
+        if not krgmax:
+            krgmax = 1
         self.krgcomment = "-- Corey krg, ng=%g, krgend=%g, krgmax=%g\n" % (
             ng,
             krgend,
@@ -260,7 +265,9 @@ class GasOil(object):
 
         A column called 'krg' will be added, replaced if it does not exist
 
-        Todo: Document krgendanchor behaviour.
+        If krgendanchor is set to `sorg` (default), then the normalized
+        gas saturation `sgn` (which is what is raised to the power of `ng`)
+        is 1 at `1 - swl - sgcr - sorg`. If not, it is 1 at `1 - swl - sgcr`
         """
         assert l > epsilon
         assert l < MAX_EXPONENT
@@ -298,6 +305,8 @@ class GasOil(object):
             # anchor to sorg.
             if krgmax is not None:
                 print("krgmax ignored when anchoring to sorg")
+        if not krgmax:
+            krgmax = 1
         self.krgcomment = "-- LET krg, l=%g, e=%g, t=%g, krgend=%g, krgmax=%g\n" % (
             l,
             e,
@@ -468,7 +477,7 @@ class GasOil(object):
             string += self.krogcomment
             string += "-- krg = krog @ sw=%1.5f\n" % self.crosspoint()
             string += self.pccomment
-        string += self.slgof_table().to_csv(
+        string += self.slgof_df().to_csv(
             sep=" ", float_format="%1.7f", header=None, index=False
         )
         string += "/\n"

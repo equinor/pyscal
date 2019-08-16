@@ -26,6 +26,20 @@ def check_table(df):
     if "pc" in df:
         assert df["pc"].is_monotonic
 
+def test_gasoil_init():
+    gasoil = GasOil()
+    assert isinstance(gasoil, GasOil)
+
+    gasoil = GasOil(swirr=0.1)
+    assert gasoil.swirr == 0.1
+
+    gasoil = GasOil(tag="foobar")
+    assert gasoil.tag == "foobar"
+
+    # This will print a warning, but will be the same as ""
+    gasoil = GasOil(krgendanchor="bogus")
+    assert isinstance(gasoil, GasOil)
+
 @settings(deadline=1000)
 @given(st.floats(), st.floats())
 def test_gasoil_corey1(ng, nog):
