@@ -22,6 +22,7 @@ WO_WATER_ENDPOINTS = ["krwmax", "krwend"]
 WO_COREY_OIL = ["now"]
 WO_LET_WATER = ["Lw", "Ew", "Tw"]  # Will translated to l, e and t in code below.
 WO_LET_OIL = ["Low", "Eow", "Tow"]
+WO_LET_OIL_ALT = ["Lo", "Eo", "To"]  # Alternative parameter names.
 WO_OIL_ENDPOINTS = ["kromax", "kroend"]
 WO_SIMPLE_J = ["a", "b", "poro_ref", "perm_ref", "drho"]  # "g" is optional
 
@@ -108,7 +109,9 @@ class PyscalFactory(object):
 
         # Oil curve:
         params_corey_oil = slicedict(params, WO_COREY_OIL + WO_OIL_ENDPOINTS)
-        params_let_oil = slicedict(params, WO_LET_OIL + WO_OIL_ENDPOINTS)
+        params_let_oil = slicedict(
+            params, WO_LET_OIL + WO_LET_OIL_ALT + WO_OIL_ENDPOINTS
+        )
         if set(WO_COREY_OIL).issubset(set(params_corey_oil)):
             wateroil.add_corey_oil(**params_corey_oil)
             logging.info(
@@ -119,6 +122,15 @@ class PyscalFactory(object):
             params_let_oil["l"] = params_let_oil.pop("Low")
             params_let_oil["e"] = params_let_oil.pop("Eow")
             params_let_oil["t"] = params_let_oil.pop("Tow")
+            wateroil.add_LET_oil(**params_let_oil)
+            logging.info(
+                "Added LET water to WaterOil object from parameters %s",
+                str(params_let_oil.keys()),
+            )
+        elif set(WO_LET_OIL_ALT).issubset(set(params_let_oil)):
+            params_let_oil["l"] = params_let_oil.pop("Lo")
+            params_let_oil["e"] = params_let_oil.pop("Eo")
+            params_let_oil["t"] = params_let_oil.pop("To")
             wateroil.add_LET_oil(**params_let_oil)
             logging.info(
                 "Added LET water to WaterOil object from parameters %s",
@@ -242,23 +254,46 @@ class PyscalFactory(object):
         return wateroilgas
 
     @staticmethod
-    def create_scal_recommendation(params):
-        """foo"""
-        raise NotImplementedError
-        # wateroil_low = WaterOilGas(params["low"])
-        # wateroil_base = WaterOilGas(params["base"])
-        # wateroil_high = WaterOilGas(params["high"])
-        # Should we search for 'h' in the incoming dict?
-        # h_dict = dict(h=0.02)
-        # scal = SCALrecommendation(wateroil_low, wateroil_base, wateroil_high, **h_dict)
-        #return scal
+    def create_scal_recommendation(params, tag="", h=None):
+        """
+        Set up a SCAL recommendation curve set from input as a
+        dictionary of dictionary.
+
+        The keys in in the dictionary *must* be "low", "base" and "high".
+
+        The value for "low" must be a new dictionary with saturation
+        endpoints and LET/Corey parameters;
+
+           Lw, Ew, Tw, Low, Eow, Tow,
+           Lg, Eg, Tg, Log, Eog, Tog,
+           nw, now, ng, nog
+           swirr, swl, sorw, sorg, sgcr
+
+        For oil-water only, you may omit the LET parameters for gas and oil-gas
+        """
+        if not isinstance(params, dict):
+            raise ValueError("Input must be a dictionary (of dictionaries)")
+        if "low" not in params:
+            raise ValueError('"low" case not supplied')
+        if "base" not in params:
+            raise ValueError('"base" case not supplied')
+        if "high" not in params:
+            raise ValueError('"high" case not supplied')
+        if not all([isinstance(x, dict) for x in params.values()]):
+            raise ValueError("All values in parameter dict must be dictionaries")
+
+        wateroil_low = PyscalFactory.create_water_oil_gas(params["low"])
+        wateroil_base = PyscalFactory.create_water_oil_gas(params["base"])
+        wateroil_high = PyscalFactory.create_water_oil_gas(params["high"])
+        scal = SCALrecommendation(wateroil_low, wateroil_base, wateroil_high, tag, h)
+        return scal
 
     @staticmethod
-    def create_scal_recommendation_list(yamlobject):
+    def create_scal_recommendation_list():
         """Reserved"""
         raise NotImplementedError
 
     @staticmethod
-    def create_wog_list(self):
+    def create_wog_list():
         """Reserved for future implementation"""
         raise NotImplementedError

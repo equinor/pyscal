@@ -8,7 +8,7 @@ from __future__ import print_function
 from hypothesis import given, settings
 import hypothesis.strategies as st
 
-from pyscal import SCALrecommendation
+from pyscal import PyscalFactory
 
 # Example SCAL recommendation, low case
 low_sample_let = {
@@ -86,13 +86,15 @@ high_sample_let = {
 }
 
 
-@settings(max_examples=10, deadline=1000)
+@settings(max_examples=10, deadline=2000)
 @given(
     st.floats(min_value=-1.1, max_value=1.1), st.floats(min_value=-1.1, max_value=1.1)
 )
 def test_interpolation(param_wo, param_go):
-    rec = SCALrecommendation(
-        low_sample_let, base_sample_let, high_sample_let, "foo", h=0.1
+    rec = PyscalFactory.create_scal_recommendation(
+        {"low": low_sample_let, "base": base_sample_let, "high": high_sample_let},
+        "foo",
+        h=0.1,
     )
     rec.add_simple_J()  # Add default pc curve
 
@@ -113,9 +115,12 @@ def test_interpolation(param_wo, param_go):
 
 
 def test_boundary_cases():
-    rec = SCALrecommendation(
-        low_sample_let, base_sample_let, high_sample_let, "foo", h=0.1
+    rec = PyscalFactory.create_scal_recommendation(
+        {"low": low_sample_let, "base": base_sample_let, "high": high_sample_let},
+        "foo",
+        h=0.1,
     )
+
     # Object reference equivalence is a little bit strict,
     # because it would be perfectly fine if interpolate()
     # retured copied objects. But we don't have an equivalence operator

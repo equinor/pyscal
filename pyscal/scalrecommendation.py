@@ -24,14 +24,6 @@ class SCALrecommendation(object):
 
     """
 
-    @staticmethod
-    def defaultshandling(key, value, dicts):
-        """Helper function for __init__ to fill out missing values in
-        dicts with relperm parameter"""
-        for dic in dicts:
-            if key not in dic:
-                dic[key] = value
-
     def __init__(self, low, base, high, tag, h=0.01):
         """Set up a SCAL recommendation curve set
 
@@ -44,7 +36,6 @@ class SCALrecommendation(object):
 
            Lw, Ew, Tw, Lo, Eo, To,
            Lg, Eg, Tg, Log, Eog, Tog,
-           krwr
            swirr, swl, sorw, sorg, sgcr
 
         For oil-water only, you may omit the LET parameters for gas and oil-gas
@@ -56,123 +47,21 @@ class SCALrecommendation(object):
         self.h = h
         self.tag = tag
 
-        if isinstance(low, dict) and isinstance(base, dict) and isinstance(high, dict):
+        # Help users from pyscals predecessor, or users of pyscal 0.1.x
+        if isinstance(low, dict):
+            raise ValueError("Use PyscalFactory to create SCAL recommendation objects from dictionaries")
 
-            self.defaultshandling("swirr", 0.0, [low, base, high])
-            self.defaultshandling("swcr", 0.0, [low, base, high])
-            self.defaultshandling("sorg", 0.0, [low, base, high])
-            self.defaultshandling("sgcr", 0.0, [low, base, high])
-            self.defaultshandling("kroend", 1.0, [low, base, high])
-            self.defaultshandling("krwmax", 1.0, [low, base, high])
-            self.defaultshandling("krgend", 1.0, [low, base, high])
-            self.defaultshandling("krgmax", 1.0, [low, base, high])
+        if (
+            isinstance(low, WaterOilGas)
+            and isinstance(base, WaterOilGas)
+            and isinstance(high, WaterOilGas)
+        ):
 
-            # Initialize saturation ranges for all curves
-            self.low = WaterOilGas(
-                swirr=low["swirr"],
-                swl=low["swl"],
-                sorw=low["sorw"],
-                sorg=low["sorg"],
-                sgcr=low["sgcr"],
-                swcr=low["swcr"],
-                h=h,
-                tag=tag,
-            )
-            self.base = WaterOilGas(
-                swirr=base["swirr"],
-                swl=base["swl"],
-                sorw=base["sorw"],
-                sorg=base["sorg"],
-                sgcr=base["sgcr"],
-                swcr=base["swcr"],
-                h=h,
-                tag=tag,
-            )
-            self.high = WaterOilGas(
-                swirr=high["swirr"],
-                swl=high["swl"],
-                sorw=high["sorw"],
-                sorg=high["sorg"],
-                sgcr=high["sgcr"],
-                swcr=high["swcr"],
-                h=h,
-                tag=tag,
-            )
-
-            # Add water and oil curves
-            self.low.wateroil.add_LET_water(
-                l=low["Lw"],
-                e=low["Ew"],
-                t=low["Tw"],
-                krwend=low["krwend"],
-                krwmax=low["krwmax"],
-            )
-            self.base.wateroil.add_LET_water(
-                l=base["Lw"],
-                e=base["Ew"],
-                t=base["Tw"],
-                krwend=base["krwend"],
-                krwmax=base["krwmax"],
-            )
-            self.high.wateroil.add_LET_water(
-                l=high["Lw"],
-                e=high["Ew"],
-                t=high["Tw"],
-                krwend=high["krwend"],
-                krwmax=high["krwmax"],
-            )
-
-            self.low.wateroil.add_LET_oil(
-                l=low["Lo"], e=low["Eo"], t=low["To"], kroend=low["kroend"]
-            )
-            self.base.wateroil.add_LET_oil(
-                l=base["Lo"], e=base["Eo"], t=base["To"], kroend=base["kroend"]
-            )
-            self.high.wateroil.add_LET_oil(
-                l=high["Lo"], e=high["Eo"], t=high["To"], kroend=high["kroend"]
-            )
-
-            # Add gas and oil curves:
-            self.low.gasoil.add_LET_gas(
-                l=low["Lg"],
-                e=low["Eg"],
-                t=low["Tg"],
-                krgend=low["krgend"],
-                krgmax=low["krgmax"],
-            )
-            self.base.gasoil.add_LET_gas(
-                l=base["Lg"],
-                e=base["Eg"],
-                t=base["Tg"],
-                krgend=base["krgend"],
-                krgmax=base["krgmax"],
-            )
-            self.high.gasoil.add_LET_gas(
-                l=high["Lg"],
-                e=high["Eg"],
-                t=high["Tg"],
-                krgend=high["krgend"],
-                krgmax=high["krgmax"],
-            )
-            self.low.gasoil.add_LET_oil(
-                l=low["Log"], e=low["Eog"], t=low["Tog"], kroend=low["kroend"]
-            )
-            self.base.gasoil.add_LET_oil(
-                l=base["Log"], e=base["Eog"], t=base["Tog"], kroend=base["kroend"]
-            )
-            self.high.gasoil.add_LET_oil(
-                l=high["Log"], e=high["Eog"], t=high["Tog"], kroend=high["kroend"]
-            )
+            self.low = low
+            self.base = base
+            self.high = high
         else:
-            if (
-                isinstance(low, WaterOilGas)
-                and isinstance(base, WaterOilGas)
-                and isinstance(high, WaterOilGas)
-            ):
-
-                self.low = low
-                self.base = base
-                self.high = high
+            raise ValueError
 
     # User should add capillary pressure explicitly by calling add**
     # on the class objects, or run the following method to add the

@@ -176,11 +176,32 @@ def test_xls_factory():
 
     scalinput = pd.read_excel(xlsxfile).set_index(["SATNUM", "CASE"])
 
-    satnum1 = PyscalFactory.create_water_oil_gas(dict(scalinput.loc[1, "low"]))
-    swof1 = satnum1.SWOF()
-    assert "LET krw" in swof1
-    assert "LET krow" in swof1
-    assert "Simplified J" in swof1
-    sgof1 = satnum1.SGOF()
-    assert "LET krg" in sgof1
-    assert "LET krog" in sgof1
+    for ((satnum, _), params) in scalinput.iterrows():
+        wog = PyscalFactory.create_water_oil_gas(params.to_dict())
+        swof = wog.SWOF()
+        assert "LET krw" in swof
+        assert "LET krow" in swof
+        assert "Simplified J" in swof
+        sgof = wog.SGOF()
+        assert "LET krg" in sgof
+        assert "LET krog" in sgof
+
+
+def test_xls_scalrecommendation():
+    """Test making SCAL recommendations from xls data"""
+
+    if "__file__" in globals():
+        # Easen up copying test code into interactive sessions
+        testdir = os.path.dirname(os.path.abspath(__file__))
+    else:
+        testdir = os.path.abspath(".")
+
+    xlsxfile = testdir + "/data/scal-pc-input-example.xlsx"
+    scalinput = pd.read_excel(xlsxfile).set_index(["SATNUM", "CASE"])
+    print(scalinput)
+    for satnum in scalinput.index.levels[0].values:
+        dictofdict = scalinput.loc[satnum, :].to_dict(orient="index")
+        print(dictofdict)
+        scalrec = PyscalFactory.create_scal_recommendation(dictofdict)
+        print(scalrec.interpolate(-0.5).SWOF())
+        scalrec.interpolate(+0.5)
