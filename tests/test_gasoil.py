@@ -83,6 +83,7 @@ def test_gasoil_krgendanchor():
         < 1.0
     )
     assert gasoil.table[np.isclose(gasoil.table["sg"], 1.0)]["krg"].values[0] == 1.0
+    assert gasoil.selfcheck()
 
     # Test once more for LET curves:
     gasoil = GasOil(krgendanchor="sorg", sorg=0.2, h=0.1)
@@ -101,6 +102,7 @@ def test_gasoil_krgendanchor():
     assert gasoil.sorg
     gasoil.add_LET_gas(1, 1, 1)
     gasoil.add_LET_oil(1, 1, 1)
+    assert gasoil.selfcheck()
 
     # kg should be < 1 at 1 - sorg due to krgendanchor being ""
     assert (

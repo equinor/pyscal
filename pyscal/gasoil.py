@@ -362,14 +362,14 @@ class GasOil(object):
             print("Error: sg data not strictly increasing")
             error = True
         if not (self.table.krg.diff().dropna() >= -epsilon).all():
-            print("Error: krg data not monotonely decreaseing")
+            print("Error: krg data not monotonically decreasing")
             error = True
 
         if (
             "krog" in self.table.columns
             and not (self.table.krog.diff().dropna() <= epsilon).all()
         ):
-            print("Error: krog data not monotonely increasing")
+            print("Error: krog data not monotonically increasing")
             error = True
         if not np.isclose(min(self.table.krg), 0.0):
             print("Error: krg must start at zero")
