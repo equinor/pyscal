@@ -487,13 +487,13 @@ class WaterOil(object):
             print("Error: sw data not strictly increasing")
             error = True
         if not (self.table.krw.diff().dropna().round(10) >= -epsilon).all():
-            print("Error: krw data not monotonely increasing")
+            print("Error: krw data not monotonically increasing")
             error = True
         if (
             "krow" in self.table.columns
             and not (self.table.krow.diff().dropna().round(10) <= epsilon).all()
         ):
-            print("Error: krow data not monotonely decreasing")
+            print("Error: krow data not monotonically decreasing")
             error = True
         if "pc" in self.table.columns and self.table.pc[0] > -epsilon:
             if not (self.table.pc.diff().dropna().round(10) < epsilon).all():
