@@ -439,7 +439,11 @@ class GasOil(object):
             # Only happens when the SLGOF function is skipped (test code)
             self.table["pc"] = 0
         slgof = (
-            self.table[self.table.sg <= 1 - self.sorg - self.swl + epsilon]
+            # the duplicates dropping with respect to SWINTEGERS easily trips this selection
+            # that is why we include it in the criteria here:
+            self.table[
+                self.table["sg"] <= 1 - self.sorg - self.swl + 1.0 / float(SWINTEGERS)
+            ]
             .sort_values("sl")[["sl", "krg", "krog", "pc"]]
             .reset_index(drop=True)
         )
@@ -452,12 +456,15 @@ class GasOil(object):
         # so we modify it if it close. If it is not close, we do not dare to fix
         # it, to ensure we don't cover bugs.
         slgof_sl_mismatch = abs(slgof["sl"].values[0] - (self.sorg + self.swl))
-        if slgof_sl_mismatch > epsilon:  # < 2 * 1.0 / float(SWINTEGERS):
+        if slgof_sl_mismatch > epsilon:
             if slgof_sl_mismatch < 2 * 1.0 / float(SWINTEGERS):
+                # Repair the table in-place:
                 slgof.loc[0, "sl"] = self.sorg + self.swl
             else:
+                # Give up repairing the table:
                 print("BUG: SLGOF does not start at the correct value. Please report.")
-                raise Exception
+                print("slgof_sl_mismatch: %f" % slgof_sl_mismatch)
+                print(slgof.head())
         return slgof
 
     def SLGOF(self, header=True, dataincommentrow=True):
