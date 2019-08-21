@@ -300,13 +300,11 @@ class WaterOil(object):
         g has SI units m/s², default value is 9.81
         """
         assert g >= 0
-        assert a < MAX_EXPONENT
-        assert a > -MAX_EXPONENT
         assert b < MAX_EXPONENT
         assert b > -MAX_EXPONENT
         assert poro_ref >= 0.0
         assert poro_ref <= 1.0
-        assert perm_ref >= 0.0
+        assert perm_ref > 0.0
 
         if self.swl < epsilon:
             raise ValueError(
