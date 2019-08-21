@@ -79,6 +79,7 @@ def test_gasoil_slgof():
     assert np.isclose(slgof["sl"].values[-1], 1.0)
     check_table(slgof)
 
+
 @settings(deadline=2000)  # This is slow for small h
 @given(
     st.floats(min_value=0.0, max_value=0.3),
