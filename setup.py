@@ -1,16 +1,15 @@
 # coding: utf-8
 
 from setuptools import setup
+import versioneer
 
-test_requirements = [
-    'hypothesis',
-    'pytest',
-]
+test_requirements = ["hypothesis", "pytest"]
 
 
 setup(
     name="pyscal",
-    version="0.0.1",
+    version=versioneer.get_version(),
+    cmdclass=versioneer.get_cmdclass(),
     description="Generate relative permeability include files for Eclipse reservoir simulator",
     url="http://github.com/equinor/pyscal",
     author="Håvard Berland",

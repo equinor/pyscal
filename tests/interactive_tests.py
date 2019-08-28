@@ -1,3 +1,20 @@
+"""
+Run this module from command line to run a few
+tests intended for human inspection
+
+ $ python interactive_tests.py
+
+If you want to run individual tests, import this module in
+a Python session and run the functions manually.
+"""
+
+from __future__ import print_function
+
+import numpy as np
+
+from pyscal import WaterOil, WaterOilGas, GasOil, SCALrecommendation
+
+
 def interpolateplottest():
     """Demonstration of interpolation pointwise between LET curves"""
     import matplotlib.pyplot as plt
@@ -6,7 +23,7 @@ def interpolateplottest():
     matplotlib.style.use("ggplot")
 
     rec = SCALrecommendation(lowsample(), basesample(), highsample(), "foo", h=0.001)
-    fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2)
+    _, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2)
 
     # Choosing logarithmic spaced interpolation parameters
     # is not the same as interpolating in log(kr)-space
@@ -256,7 +273,8 @@ def testplot():
     swof.add_LET_water(l=2, e=1, t=1.4, krwend=0.7, krwmax=0.9)
     swof.add_LET_oil(l=2, e=1, t=1.4, kroend=0.7, kromax=0.9)
 
-    print(swof.table)
+    # Print the first 7 lines of SWOF:
+    print("\n".join(swof.SWOF().split("\n")[0:8]))
     _, ax = plt.subplots()
     swof.plotkrwkrow(ax)
     plt.show()
@@ -309,7 +327,9 @@ def testgascurves():
 
 
 def main():
-    swof = WaterOil(tag="Good sand, SATNUM 1", h=0.1)
+    print("-- **********************************")
+    print("-- Manual check of output")
+    swof = WaterOil(tag="Good sand, SATNUM 1", h=0.1, swl=0.1)
     swof.add_corey_water()
     swof.add_LET_water()
     swof.add_corey_oil()
@@ -321,6 +341,30 @@ def main():
     sgof.add_corey_gas()
     sgof.add_corey_oil()
     print(sgof.SGOF())
+
+    print("")
+    print("-- ***************************************")
+    print("-- Test of one Corey curve set")
+    print("-- Check that all the defined endpoints are correct")
+    print("-- (close plot window to continue)")
+    testplot()
+
+    print("")
+    print("-- ******************************************")
+    print("-- Manual visual check of interpolation in LET-space")
+    print("--  Check:")
+    print("--   * Red curves are between dotted and solid blue line")
+    print("--   * Green curves are between solid blue and dashed")
+    print("-- (close plot window to continue)")
+    interpolateplottest()
+
+    print("")
+    print("-- ***********************************************")
+    print("-- Span of LET curves when LET parameters are varied")
+    print("-- within the bounds of the parameters of the red curves")
+    print("-- Blue dim curves are allowed to go outside the red boundary curves")
+    print("-- (close plot window to continue)")
+    letspan()
 
 
 if __name__ == "__main__":

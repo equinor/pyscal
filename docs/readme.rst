@@ -1,10 +1,7 @@
-# pyscal
+Introduction to pyscal
+======================
 
-======
-pyscal
-======
-
-*pyscal* is a Python module for creating relative permeability input
+*pyscal* is a Python module for creating `relative permeability`_ input
 curves for Eclipse and Nexus, either directly from parametrizations or
 from a SCAL recommendation parameter set. Curves can be interpolated
 within a SCAL recommendation. History match can be done directly on
@@ -34,5 +31,6 @@ History matching relative permeability can be done in two ways:
    supposedly difficult if you use LET.
 
 For multiple SATNUMs, use one SCALrecommendation object for each and
-loop over your SATNUMs. See example in the test functions at the
-bottom
+loop over your SATNUMs.
+
+.. _relative permeability: http://en.wikipedia.org/wiki/Relative_permeability
