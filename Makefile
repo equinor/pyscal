@@ -125,6 +125,7 @@ docsrun: clean ## generate Sphinx HTML documentation, including API docs
 	sphinx-apidoc -H "API for pyscal" -o docs ${TOPSRCAPPLICATION}
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
+	touch docs/_build/html/.nojekyll
 
 
 docs: docsrun ## generate and display Sphinx HTML documentation...
