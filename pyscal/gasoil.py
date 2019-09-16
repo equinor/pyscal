@@ -104,7 +104,7 @@ class GasOil(object):
         self.table.sort_values(by="sg", inplace=True)
         self.table.reset_index(inplace=True)
         self.table = self.table[["sg"]]
-        self.table["sl"] = 1 - self.table["sg"] - swl
+        self.table["sl"] = 1 - self.table["sg"]
         if krgendanchor == "sorg":
             # Normalized sg (sgn) is 0 at sgcr, and 1 at 1-swl-sorg
             self.table["sgn"] = (self.table["sg"] - sgcr) / (1 - swl - sgcr - sorg)
@@ -112,7 +112,7 @@ class GasOil(object):
             self.table["sgn"] = (self.table["sg"] - sgcr) / (1 - swl - sgcr)
 
         # Normalized oil saturation should be 0 at 1-sorg, and 1 at swl+sgcr
-        self.table["son"] = (self.table["sl"] - sorg) / (1 - sorg - swl - sgcr)
+        self.table["son"] = (self.table["sl"] - sorg - swl) / (1 - sorg - swl - sgcr)
         self.sgcomment = (
             '-- swirr=%g, sgcr=%g, swl=%g, sorg=%g, krgendanchor="%s"\n'
             % (self.swirr, self.sgcr, self.swl, self.sorg, self.krgendanchor)
