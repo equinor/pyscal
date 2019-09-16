@@ -112,6 +112,19 @@ def test_gasoil_krgendanchor():
     assert gasoil.table[np.isclose(gasoil.table["sg"], 1.0)]["krg"].values[0] == 1.0
 
 
+def test_kromaxend():
+    gasoil = GasOil(swirr=0.01, sgcr=0.01, h=0.01, swl=0.1, sorg=0.05)
+    gasoil.add_LET_gas()
+    gasoil.add_LET_oil(2, 2, 2)
+    assert gasoil.table["krog"].max() == 1
+    gasoil.add_LET_oil(2, 2, 2, 0.5, 0.9)
+    assert gasoil.table["krog"].max() == 0.9
+
+    # Second krog-value should be kroend, values in between will be linearly
+    # interpolated in Eclipse
+    assert gasoil.table.sort_values("krog")[-2:-1]["krog"].values[0] == 0.5
+
+
 @settings(deadline=1000)
 @given(st.floats(), st.floats())
 def test_gasoil_corey1(ng, nog):

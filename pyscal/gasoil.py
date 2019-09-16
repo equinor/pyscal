@@ -104,12 +104,15 @@ class GasOil(object):
         self.table.sort_values(by="sg", inplace=True)
         self.table.reset_index(inplace=True)
         self.table = self.table[["sg"]]
-        self.table["sl"] = 1 - self.table["sg"]
+        self.table["sl"] = 1 - self.table["sg"] - swl
         if krgendanchor == "sorg":
-            self.table["sgn"] = (self.table.sg - sgcr) / (1 - swl - sgcr - sorg)
+            # Normalized sg (sgn) is 0 at sgcr, and 1 at 1-swl-sorg
+            self.table["sgn"] = (self.table["sg"] - sgcr) / (1 - swl - sgcr - sorg)
         else:
-            self.table["sgn"] = (self.table.sg - sgcr) / (1 - swl - sgcr)
-        self.table["son"] = (1 - self.table.sg - sorg - swl) / (1 - sorg - swl)
+            self.table["sgn"] = (self.table["sg"] - sgcr) / (1 - swl - sgcr)
+
+        # Normalized oil saturation should be 0 at 1-sorg, and 1 at swl+sgcr
+        self.table["son"] = (self.table["sl"] - sorg) / (1 - sorg - swl - sgcr)
         self.sgcomment = (
             '-- swirr=%g, sgcr=%g, swl=%g, sorg=%g, krgendanchor="%s"\n'
             % (self.swirr, self.sgcr, self.swl, self.sorg, self.krgendanchor)
@@ -241,7 +244,7 @@ class GasOil(object):
             krgmax,
         )
 
-    def add_corey_oil(self, nog=2, kroend=1):
+    def add_corey_oil(self, nog=2, kroend=1, kromax=1):
         """
         Add kro data through the Corey parametrization
 
@@ -252,10 +255,17 @@ class GasOil(object):
         assert nog > epsilon
         assert nog < MAX_EXPONENT
         assert kroend > 0
+        assert kromax > 0
 
         self.table["krog"] = kroend * self.table.son ** nog
-        self.table.loc[self.table.sg > 1 - self.sorg - self.swl - epsilon, "krog"] = 0
-        self.krogcomment = "-- Corey krog, nog=%g, kroend=%g\n" % (nog, kroend)
+
+        # Special handling of the part close to sg=1, set to zero.
+        self.table.loc[self.table["sg"] > 1 - self.sorg - self.swl - epsilon, "krog"] = 0
+
+        # Set kromax at sg=0
+        self.table.loc[self.table["sg"] < epsilon, "krog"] = kromax
+
+        self.krogcomment = "-- Corey krog, nog=%g, kroend=%g, kromax=%g\n" % (nog, kroend, kromax)
 
     def add_LET_gas(self, l=2, e=2, t=2, krgend=1, krgmax=None):
         """
@@ -313,13 +323,20 @@ class GasOil(object):
             krgmax,
         )
 
-    def add_LET_oil(self, l=2, e=2, t=2, kroend=1):
+    def add_LET_oil(self, l=2, e=2, t=2, kroend=1, kromax=1):
         """Add oil (vs gas) relative permeability data through the Corey
         parametrization.
 
         A column named 'krog' will be added, replaced if it exists.
 
         All values where sg > 1 - sorg - swl are set to zero.
+
+        Arguments:
+            l (float): L parameter
+            e (float): E parameter
+            t (float): T parameter
+            kroend (float): The value at gas saturation sgcr
+            kromax (float): The value at gas saturation equal to 1.
         """
         assert l > epsilon
         assert l < MAX_EXPONENT
@@ -328,19 +345,25 @@ class GasOil(object):
         assert t > epsilon
         assert t < MAX_EXPONENT
         assert kroend > 0
-        assert kroend <= 1.0
+        assert kromax > 0
 
+        # LET shape for the interval [sgcr, 1 - swl - sorg]
         self.table["krog"] = (
             kroend
-            * self.table.son ** l
-            / ((self.table.son ** l) + e * (1 - self.table.son) ** t)
+            * self.table["son"] ** l
+            / ((self.table["son"] ** l) + e * (1 - self.table["son"]) ** t)
         )
-        self.table.loc[self.table.sg > 1 - self.sorg - self.swl - epsilon, "krog"] = 0
-        self.krogcomment = "-- LET krog, l=%g, e=%g, t=%g, kroend=%g\n" % (
+        # Special handling of the part close to sg=1, set to zero.
+        self.table.loc[self.table["sg"] > 1 - self.sorg - self.swl - epsilon, "krog"] = 0
+
+        # Set kromax at sg=0
+        self.table.loc[self.table['sg'] < epsilon, 'krog'] = kromax
+        self.krogcomment = "-- LET krog, l=%g, e=%g, t=%g, kroend=%g, kromax=%g\n" % (
             l,
             e,
             t,
             kroend,
+            kromax,
         )
 
     def selfcheck(self):
