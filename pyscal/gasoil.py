@@ -260,12 +260,18 @@ class GasOil(object):
         self.table["krog"] = kroend * self.table.son ** nog
 
         # Special handling of the part close to sg=1, set to zero.
-        self.table.loc[self.table["sg"] > 1 - self.sorg - self.swl - epsilon, "krog"] = 0
+        self.table.loc[
+            self.table["sg"] > 1 - self.sorg - self.swl - epsilon, "krog"
+        ] = 0
 
         # Set kromax at sg=0
         self.table.loc[self.table["sg"] < epsilon, "krog"] = kromax
 
-        self.krogcomment = "-- Corey krog, nog=%g, kroend=%g, kromax=%g\n" % (nog, kroend, kromax)
+        self.krogcomment = "-- Corey krog, nog=%g, kroend=%g, kromax=%g\n" % (
+            nog,
+            kroend,
+            kromax,
+        )
 
     def add_LET_gas(self, l=2, e=2, t=2, krgend=1, krgmax=None):
         """
@@ -354,10 +360,12 @@ class GasOil(object):
             / ((self.table["son"] ** l) + e * (1 - self.table["son"]) ** t)
         )
         # Special handling of the part close to sg=1, set to zero.
-        self.table.loc[self.table["sg"] > 1 - self.sorg - self.swl - epsilon, "krog"] = 0
+        self.table.loc[
+            self.table["sg"] > 1 - self.sorg - self.swl - epsilon, "krog"
+        ] = 0
 
         # Set kromax at sg=0
-        self.table.loc[self.table['sg'] < epsilon, 'krog'] = kromax
+        self.table.loc[self.table["sg"] < epsilon, "krog"] = kromax
         self.krogcomment = "-- LET krog, l=%g, e=%g, t=%g, kroend=%g, kromax=%g\n" % (
             l,
             e,
