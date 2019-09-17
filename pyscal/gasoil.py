@@ -248,14 +248,24 @@ class GasOil(object):
         """
         Add kro data through the Corey parametrization
 
-        A column named 'kro' will be added, replaced if it exists.
+        A column named 'kro' will be added to the internal DataFrame,
+        replaced if it exists.
 
         All values above 1 - sorg - swl are set to zero.
+
+        Arguments:
+            nog (float): Corey exponent for oil
+            kroend (float): Value for krog at normalized oil saturation 1
+            kromax (float): Value for krog at gas saturation 0.
+
+        Returns:
+            None (modifies internal class state)
         """
         assert nog > epsilon
         assert nog < MAX_EXPONENT
         assert kroend > 0
         assert kromax > 0
+        assert kroend <= kromax
 
         self.table["krog"] = kroend * self.table.son ** nog
 
@@ -282,6 +292,16 @@ class GasOil(object):
         If krgendanchor is set to `sorg` (default), then the normalized
         gas saturation `sgn` (which is what is raised to the power of `ng`)
         is 1 at `1 - swl - sgcr - sorg`. If not, it is 1 at `1 - swl - sgcr`
+
+        Arguments:
+            l (float): L parameter in LET
+            e (float): E parameter in LET
+            t (float): T parameter in LET
+            krgend (float): Value of krg at normalized gas saturation 1
+            krgmax (float): Value of krg at gas saturation 1
+
+        Returns:
+            None (modifies internal state)
         """
         assert l > epsilon
         assert l < MAX_EXPONENT
