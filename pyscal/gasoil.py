@@ -106,10 +106,13 @@ class GasOil(object):
         self.table = self.table[["sg"]]
         self.table["sl"] = 1 - self.table["sg"]
         if krgendanchor == "sorg":
-            self.table["sgn"] = (self.table.sg - sgcr) / (1 - swl - sgcr - sorg)
+            # Normalized sg (sgn) is 0 at sgcr, and 1 at 1-swl-sorg
+            self.table["sgn"] = (self.table["sg"] - sgcr) / (1 - swl - sgcr - sorg)
         else:
-            self.table["sgn"] = (self.table.sg - sgcr) / (1 - swl - sgcr)
-        self.table["son"] = (1 - self.table.sg - sorg - swl) / (1 - sorg - swl)
+            self.table["sgn"] = (self.table["sg"] - sgcr) / (1 - swl - sgcr)
+
+        # Normalized oil saturation should be 0 at 1-sorg, and 1 at swl+sgcr
+        self.table["son"] = (self.table["sl"] - sorg - swl) / (1 - sorg - swl - sgcr)
         self.sgcomment = (
             '-- swirr=%g, sgcr=%g, swl=%g, sorg=%g, krgendanchor="%s"\n'
             % (self.swirr, self.sgcr, self.swl, self.sorg, self.krgendanchor)
@@ -241,21 +244,41 @@ class GasOil(object):
             krgmax,
         )
 
-    def add_corey_oil(self, nog=2, kroend=1):
+    def add_corey_oil(self, nog=2, kroend=1, kromax=1):
         """
         Add kro data through the Corey parametrization
 
-        A column named 'kro' will be added, replaced if it exists.
+        A column named 'kro' will be added to the internal DataFrame,
+        replaced if it exists.
 
         All values above 1 - sorg - swl are set to zero.
+
+        Arguments:
+            nog (float): Corey exponent for oil
+            kroend (float): Value for krog at normalized oil saturation 1
+            kromax (float): Value for krog at gas saturation 0.
+
+        Returns:
+            None (modifies internal class state)
         """
-        assert nog > epsilon
-        assert nog < MAX_EXPONENT
-        assert kroend > 0
+        assert epsilon < nog < MAX_EXPONENT
+        assert 0 < kroend <= kromax
 
         self.table["krog"] = kroend * self.table.son ** nog
-        self.table.loc[self.table.sg > 1 - self.sorg - self.swl - epsilon, "krog"] = 0
-        self.krogcomment = "-- Corey krog, nog=%g, kroend=%g\n" % (nog, kroend)
+
+        # Special handling of the part close to sg=1, set to zero.
+        self.table.loc[
+            self.table["sg"] > 1 - self.sorg - self.swl - epsilon, "krog"
+        ] = 0
+
+        # Set kromax at sg=0
+        self.table.loc[self.table["sg"] < epsilon, "krog"] = kromax
+
+        self.krogcomment = "-- Corey krog, nog=%g, kroend=%g, kromax=%g\n" % (
+            nog,
+            kroend,
+            kromax,
+        )
 
     def add_LET_gas(self, l=2, e=2, t=2, krgend=1, krgmax=None):
         """
@@ -266,6 +289,16 @@ class GasOil(object):
         If krgendanchor is set to `sorg` (default), then the normalized
         gas saturation `sgn` (which is what is raised to the power of `ng`)
         is 1 at `1 - swl - sgcr - sorg`. If not, it is 1 at `1 - swl - sgcr`
+
+        Arguments:
+            l (float): L parameter in LET
+            e (float): E parameter in LET
+            t (float): T parameter in LET
+            krgend (float): Value of krg at normalized gas saturation 1
+            krgmax (float): Value of krg at gas saturation 1
+
+        Returns:
+            None (modifies internal state)
         """
         assert l > epsilon
         assert l < MAX_EXPONENT
@@ -313,34 +346,45 @@ class GasOil(object):
             krgmax,
         )
 
-    def add_LET_oil(self, l=2, e=2, t=2, kroend=1):
+    def add_LET_oil(self, l=2, e=2, t=2, kroend=1, kromax=1):
         """Add oil (vs gas) relative permeability data through the Corey
         parametrization.
 
         A column named 'krog' will be added, replaced if it exists.
 
         All values where sg > 1 - sorg - swl are set to zero.
-        """
-        assert l > epsilon
-        assert l < MAX_EXPONENT
-        assert e > epsilon
-        assert e < MAX_EXPONENT
-        assert t > epsilon
-        assert t < MAX_EXPONENT
-        assert kroend > 0
-        assert kroend <= 1.0
 
+        Arguments:
+            l (float): L parameter
+            e (float): E parameter
+            t (float): T parameter
+            kroend (float): The value at gas saturation sgcr
+            kromax (float): The value at gas saturation equal to 1.
+        """
+        assert epsilon < l < MAX_EXPONENT
+        assert epsilon < e < MAX_EXPONENT
+        assert epsilon < t < MAX_EXPONENT
+        assert 0 < kroend <= kromax
+
+        # LET shape for the interval [sgcr, 1 - swl - sorg]
         self.table["krog"] = (
             kroend
-            * self.table.son ** l
-            / ((self.table.son ** l) + e * (1 - self.table.son) ** t)
+            * self.table["son"] ** l
+            / ((self.table["son"] ** l) + e * (1 - self.table["son"]) ** t)
         )
-        self.table.loc[self.table.sg > 1 - self.sorg - self.swl - epsilon, "krog"] = 0
-        self.krogcomment = "-- LET krog, l=%g, e=%g, t=%g, kroend=%g\n" % (
+        # Special handling of the part close to sg=1, set to zero.
+        self.table.loc[
+            self.table["sg"] > 1 - self.sorg - self.swl - epsilon, "krog"
+        ] = 0
+
+        # Set kromax at sg=0
+        self.table.loc[self.table["sg"] < epsilon, "krog"] = kromax
+        self.krogcomment = "-- LET krog, l=%g, e=%g, t=%g, kroend=%g, kromax=%g\n" % (
             l,
             e,
             t,
             kroend,
+            kromax,
         )
 
     def selfcheck(self):

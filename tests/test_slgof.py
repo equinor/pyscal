@@ -11,7 +11,7 @@ import hypothesis.strategies as st
 import numpy as np
 
 from pyscal import WaterOilGas, GasOil
-from pyscal.constants import SWINTEGERS
+from pyscal.constants import SWINTEGERS, EPSILON
 
 
 def check_table(df):
@@ -22,7 +22,8 @@ def check_table(df):
     assert df["sl"].is_monotonic
     assert (df["sl"] >= 0.0).all()
     assert (df["sl"] <= 1.0).all()
-    assert df["krog"].is_monotonic_increasing
+    # Increasing, but not monotonically for slgof
+    assert (df["krog"].diff().dropna() > -EPSILON).all()
     assert df["krg"].is_monotonic_decreasing
     if "pc" in df:
         assert df["pc"].is_monotonic_decreasing

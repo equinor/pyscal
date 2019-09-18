@@ -11,7 +11,6 @@ import hypothesis.strategies as st
 from pyscal import WaterOil
 
 
-
 def check_table(df):
     """Check sanity of important columns"""
     assert not df.empty
