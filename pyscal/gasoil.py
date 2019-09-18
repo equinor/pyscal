@@ -261,11 +261,8 @@ class GasOil(object):
         Returns:
             None (modifies internal class state)
         """
-        assert nog > epsilon
-        assert nog < MAX_EXPONENT
-        assert kroend > 0
-        assert kromax > 0
-        assert kroend <= kromax
+        assert epsilon < nog < MAX_EXPONENT
+        assert 0 < kroend <= kromax
 
         self.table["krog"] = kroend * self.table.son ** nog
 
@@ -364,14 +361,10 @@ class GasOil(object):
             kroend (float): The value at gas saturation sgcr
             kromax (float): The value at gas saturation equal to 1.
         """
-        assert l > epsilon
-        assert l < MAX_EXPONENT
-        assert e > epsilon
-        assert e < MAX_EXPONENT
-        assert t > epsilon
-        assert t < MAX_EXPONENT
-        assert kroend > 0
-        assert kromax > 0
+        assert epsilon < l < MAX_EXPONENT
+        assert epsilon < e < MAX_EXPONENT
+        assert epsilon < t < MAX_EXPONENT
+        assert 0 < kroend <= kromax
 
         # LET shape for the interval [sgcr, 1 - swl - sorg]
         self.table["krog"] = (
