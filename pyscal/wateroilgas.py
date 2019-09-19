@@ -17,16 +17,26 @@ class WaterOilGas(object):
 
     Use one object for each satnum.
 
-    Holds one WaterOil object and one GasOil object, ensuring
-    consistent endpoints.
+    One WaterOil and one GasOil object will be created, with
+    compatible saturation ranges. Access the class members 'wateroil'
+    and 'gasoil' directly to add curves.
 
-    Access the class members 'wateroil' and 'gasoil' directly to add curves
-    """
+    All arguments can be defaulted, and all are zero except h.
+
+    Args:
+        swirr (float): Irreducible water saturation for capillary pressure
+        swl (float): First water saturation point in outputted tables.
+        swcr (float): Critical water saturation, water is immobile below this
+        sorw (float): Residual oil saturation
+        sgcr (float): Critical gas saturation, gas is immobile below this
+        h (float): Saturation intervals in generated tables.
+        tag (str): Optional text that will be included as comments.
+   """
 
     def __init__(
-        self, swirr=0, swl=0.1, swcr=0.0, sorw=0.05, sorg=0, sgcr=0, h=0.01, tag=""
+        self, swirr=0, swl=0.0, swcr=0.0, sorw=0.00, sorg=0, sgcr=0, h=0.01, tag=""
     ):
-        """Sets up saturation range for water (Sw) and gas (Sg)"""
+        """Sets up the saturation range for three phases"""
         self.wateroil = WaterOil(
             swirr=swirr, swl=swl, swcr=swcr, sorw=sorw, h=h, tag=tag
         )

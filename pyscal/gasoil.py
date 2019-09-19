@@ -55,16 +55,11 @@ class GasOil(object):
     def __init__(
         self, swirr=0, sgcr=0.0, h=0.01, swl=0.0, sorg=0.0, tag="", krgendanchor="sorg"
     ):
-        assert h > epsilon
-        assert h < 1
-        assert swirr < 1.0 + epsilon
-        assert swirr > -epsilon
-        assert sgcr < 1
-        assert sgcr > -epsilon
-        assert swl > -epsilon
-        assert swl < 1
-        assert sorg > -epsilon
-        assert sorg < 1
+        assert epsilon < h <= 1
+        assert -epsilon < swirr < 1.0 + epsilon
+        assert -epsilon < sgcr < 1
+        assert -epsilon < swl < 1
+        assert -epsilon < sorg < 1
         assert isinstance(tag, str)
         assert isinstance(krgendanchor, str)
 
@@ -207,14 +202,10 @@ class GasOil(object):
 
         krgmax is only relevant if krgendanchor is 'sorg'
         """
-        assert ng > epsilon
-        assert ng < MAX_EXPONENT
-        assert krgend > 0
-        assert krgend <= 1.0
+        assert epsilon < ng < MAX_EXPONENT
+        assert 0 < krgend <= 1.0
         if krgmax is not None:
-            assert krgmax > 0
-            assert krgmax <= 1.0
-            assert krgend <= krgmax
+            assert 0 < krgend <= krgmax <= 1.0
         self.table["krg"] = krgend * self.table.sgn ** ng
         self.table.loc[self.table.sg <= self.sgcr, "krg"] = 0
         # Warning: code duplicated from add_LET_gas():
@@ -300,18 +291,12 @@ class GasOil(object):
         Returns:
             None (modifies internal state)
         """
-        assert l > epsilon
-        assert l < MAX_EXPONENT
-        assert e > epsilon
-        assert e < MAX_EXPONENT
-        assert t > epsilon
-        assert t < MAX_EXPONENT
-        assert krgend > 0
-        assert krgend <= 1.0
+        assert epsilon < l < MAX_EXPONENT
+        assert epsilon < e < MAX_EXPONENT
+        assert epsilon < t < MAX_EXPONENT
+        assert 0 < krgend <= 1.0
         if krgmax is not None:
-            assert krgmax > 0
-            assert krgmax <= 1.0
-            assert krgend <= krgmax
+            assert 0 < krgend <= krgmax <= 1.0
         self.table["krg"] = (
             krgend
             * self.table.sgn ** l
@@ -359,7 +344,7 @@ class GasOil(object):
             e (float): E parameter
             t (float): T parameter
             kroend (float): The value at gas saturation sgcr
-            kromax (float): The value at gas saturation equal to 1.
+            kromax (float): The value at gas saturation equal to 0.
         """
         assert epsilon < l < MAX_EXPONENT
         assert epsilon < e < MAX_EXPONENT

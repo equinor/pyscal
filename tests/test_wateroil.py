@@ -5,6 +5,8 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import numpy as np
+
 from hypothesis import given, settings
 import hypothesis.strategies as st
 
@@ -60,3 +62,27 @@ def test_wateroil_let1(l, e, t, krwend, krwmax):
     check_table(wo.table)
     swofstr = wo.SWOF()
     assert len(swofstr) > 100
+
+
+def test_wateroil_linear():
+    wo = WaterOil(h=1)
+    wo.add_corey_water()
+    wo.add_corey_oil()
+    swofstr = wo.SWOF(header=False)
+    check_table(wo.table)
+    assert isinstance(swofstr, str)
+    assert swofstr
+    assert len(wo.table) == 2
+    assert np.isclose(wo.crosspoint(), 0.5)
+
+    # What if there is no space for our choice of h?
+    # We should be able to initialize nonetheless
+    # (a warning could be given)
+    wo = WaterOil(swl=0.1, h=1)
+    wo.add_corey_water()
+    wo.add_corey_oil()
+    check_table(wo.table)
+    assert len(wo.table) == 2
+    assert np.isclose(wo.table['sw'].min(), 0.1)
+    assert np.isclose(wo.table['sw'].max(), 1.0)
+    assert np.isclose(wo.crosspoint(), 0.55)
