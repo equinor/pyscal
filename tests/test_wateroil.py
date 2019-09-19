@@ -60,3 +60,14 @@ def test_wateroil_let1(l, e, t, krwend, krwmax):
     check_table(wo.table)
     swofstr = wo.SWOF()
     assert len(swofstr) > 100
+
+
+def test_wateroil_linear():
+    wo = WaterOil(h=1)
+    wo.add_corey_water()
+    wo.add_corey_oil()
+    swofstr = wo.SWOF(header=False)
+    check_table(wo.table)
+    assert isinstance(swofstr, str)
+    assert swofstr
+    assert len(wo.table) == 2

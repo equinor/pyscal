@@ -56,7 +56,7 @@ class GasOil(object):
         self, swirr=0, sgcr=0.0, h=0.01, swl=0.0, sorg=0.0, tag="", krgendanchor="sorg"
     ):
         assert h > epsilon
-        assert h < 1
+        assert h <= 1
         assert swirr < 1.0 + epsilon
         assert swirr > -epsilon
         assert sgcr < 1
