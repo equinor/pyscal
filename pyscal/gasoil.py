@@ -344,7 +344,7 @@ class GasOil(object):
             e (float): E parameter
             t (float): T parameter
             kroend (float): The value at gas saturation sgcr
-            kromax (float): The value at gas saturation equal to 1.
+            kromax (float): The value at gas saturation equal to 0.
         """
         assert epsilon < l < MAX_EXPONENT
         assert epsilon < e < MAX_EXPONENT
