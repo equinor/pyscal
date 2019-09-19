@@ -57,6 +57,20 @@ def test_gasoil_init():
     assert isinstance(gasoil, GasOil)
     assert gasoil.krgendanchor == ""
 
+    # Test with h=1
+    go = GasOil(h=1)
+    go.add_corey_gas()
+    go.add_corey_oil()
+    assert np.isclose(go.crosspoint(), 0.5)
+    assert len(go.table) == 2
+
+    go = GasOil(swl=0.1, h=1)
+    go.add_corey_gas()
+    go.add_corey_oil()
+    assert len(go.table) == 2
+    assert np.isclose(go.crosspoint(), 0.45)
+    assert np.isclose(go.table['sg'].min(), 0)
+    assert np.isclose(go.table['sg'].max(), 0.9)
 
 def test_gasoil_krgendanchor():
     """Test behaviour of the krgendanchor"""
