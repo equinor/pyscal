@@ -37,16 +37,11 @@ class WaterOil(object):
         """Sets up the saturation range. Swirr is only relevant
         for the capillary pressure, not for relperm data."""
 
-        assert swirr < 1.0 + epsilon
-        assert swirr > -epsilon
-        assert swl < 1.0 + epsilon
-        assert swl > -epsilon
-        assert swcr > -epsilon
-        assert swcr < 1.0 + epsilon
-        assert sorw > -epsilon
-        assert sorw < 1.0 + epsilon
-        assert h > epsilon
-        assert h <= 1
+        assert -epsilon < swirr < 1.0 + epsilon
+        assert -epsilon < swl < 1.0 + epsilon
+        assert -epsilon < swcr < 1.0 + epsilon
+        assert -epsilon < sorw < 1.0 + epsilon
+        assert epsilon < h <= 1
         assert swl < 1 - sorw
         assert swcr < 1 - sorw
         assert swirr < 1 - sorw
@@ -163,12 +158,8 @@ class WaterOil(object):
             krwmax: float, maximal value at Sw=1
 
         """
-        assert nw > epsilon
-        assert nw < MAX_EXPONENT
-        assert krwend <= 1.0
-        assert krwmax <= 1.0
-        assert krwmax > 0
-        assert krwend <= krwmax
+        assert epsilon < nw < MAX_EXPONENT
+        assert 0 < krwend <= krwmax <= 1.0
         self.table["krw"] = krwend * self.table.swn ** nw
         self.table.loc[self.table.sw > (1 - self.sorw + epsilon), "krw"] = max(
             krwmax, krwend
@@ -195,17 +186,10 @@ class WaterOil(object):
             krwend: float
             krwmax: float
         """
-        assert l > epsilon
-        assert e > epsilon
-        assert t > epsilon
-        assert l < MAX_EXPONENT
-        assert e < MAX_EXPONENT
-        assert t < MAX_EXPONENT
-        assert krwmax > 0
-        assert krwmax <= 1.0
-        assert krwend > 0
-        assert krwend <= 1.0
-        assert krwend <= krwmax
+        assert epsilon < l < MAX_EXPONENT
+        assert epsilon < e < MAX_EXPONENT
+        assert epsilon < t < MAX_EXPONENT
+        assert 0 < krwend <= krwmax <= 1.0
         self.table["krw"] = (
             krwend
             * self.table.swn ** l
@@ -238,17 +222,11 @@ class WaterOil(object):
             kroend: float
             kromax: float
         """
-        assert l > epsilon
-        assert l < MAX_EXPONENT
-        assert e > epsilon
-        assert e < MAX_EXPONENT
-        assert t > epsilon
-        assert t < MAX_EXPONENT
-        assert kroend > 0
-        assert kroend <= 1.0
-        assert kromax > 0
-        assert kromax <= 1.0
-        assert kroend <= kromax
+        assert epsilon < l < MAX_EXPONENT
+        assert epsilon < e < MAX_EXPONENT
+        assert epsilon < t < MAX_EXPONENT
+        assert 0 < kroend <= kromax <= 1.0
+
         self.table["krow"] = (
             kroend
             * self.table.son ** l
@@ -267,13 +245,9 @@ class WaterOil(object):
     def add_corey_oil(self, now=2, kroend=1, kromax=1):
         """Add kro data through the Corey parametrization,
         paying attention to saturations above sorw and below swl"""
-        assert now > epsilon
-        assert now < MAX_EXPONENT
-        assert kroend > 0
-        assert kroend <= 1.0
-        assert kromax > 0
-        assert kromax <= 1.0
-        assert kroend <= kromax
+        assert epsilon < now < MAX_EXPONENT
+        assert 0 < kroend <= kromax <= 1.0
+
         self.table["krow"] = kroend * self.table.son ** now
         self.table.loc[self.table.sw >= (1 - self.sorw), "krow"] = 0
         self.table.loc[self.table.sw < self.swl, "krow"] = kromax
@@ -302,8 +276,7 @@ class WaterOil(object):
         assert g >= 0
         assert b < MAX_EXPONENT
         assert b > -MAX_EXPONENT
-        assert poro_ref >= 0.0
-        assert poro_ref <= 1.0
+        assert 0.0 <= poro_ref <= 1.0
         assert perm_ref > 0.0
 
         if self.swl < epsilon:
