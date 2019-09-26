@@ -69,8 +69,9 @@ def test_gasoil_init():
     go.add_corey_oil()
     assert len(go.table) == 2
     assert np.isclose(go.crosspoint(), 0.45)
-    assert np.isclose(go.table['sg'].min(), 0)
-    assert np.isclose(go.table['sg'].max(), 0.9)
+    assert np.isclose(go.table["sg"].min(), 0)
+    assert np.isclose(go.table["sg"].max(), 0.9)
+
 
 def test_gasoil_krgendanchor():
     """Test behaviour of the krgendanchor"""
