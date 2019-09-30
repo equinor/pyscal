@@ -60,7 +60,8 @@ class GasOil(object):
         assert -epsilon < sgcr < 1
         assert -epsilon < swl < 1
         assert -epsilon < sorg < 1
-        assert isinstance(tag, str)
+        if not isinstance(tag, str):
+            tag = ""
         assert isinstance(krgendanchor, str)
 
         self.h = h
@@ -96,6 +97,22 @@ class GasOil(object):
             map(int, list(map(round, self.table["sg"] * SWINTEGERS)))
         )
         self.table.drop_duplicates("sgint", inplace=True)
+        # Now sg=1-sorg-swl might be accidentally dropped, so make sure we
+        # have it by replacing the closest value by 1 - sorg exactly
+        sorgindex = (
+            (self.table["sg"] - (1 - self.sorg - self.swl)).abs().sort_values().index[0]
+        )
+        self.table.loc[sorgindex, "sg"] = 1 - self.sorg - self.swl
+
+        # Same for sg=sgcr
+        sgcrindex = (self.table["sg"] - (self.sgcr)).abs().sort_values().index[0]
+        self.table.loc[sgcrindex, "sg"] = self.sgcr
+
+        # If sg=1-swl was dropped, then sorg was close to zero:
+        if not np.isclose(self.table["sg"].max(), 1 - self.swl):
+            # Add it as an extra row:
+            self.table.loc[len(self.table) + 1, "sg"] = 1 - self.swl
+
         self.table.sort_values(by="sg", inplace=True)
         self.table.reset_index(inplace=True)
         self.table = self.table[["sg"]]

@@ -10,6 +10,7 @@ import numpy as np
 from hypothesis import given, settings
 import hypothesis.strategies as st
 
+from test_wateroil import float_df_checker
 
 from pyscal import GasOil
 
@@ -71,6 +72,43 @@ def test_gasoil_init():
     assert np.isclose(go.crosspoint(), 0.45)
     assert np.isclose(go.table["sg"].min(), 0)
     assert np.isclose(go.table["sg"].max(), 0.9)
+
+
+@settings(max_examples=500)
+@given(
+    st.floats(min_value=0, max_value=0.15),  # swl
+    st.floats(min_value=0, max_value=0.3),  # sgcr
+    st.floats(min_value=0, max_value=0.05),  # sorg
+    st.floats(min_value=0.0001, max_value=0.2),  # h
+    st.text(),
+)
+def test_gasoil_normalization(swl, sgcr, sorg, h, tag):
+    """Check that normalization (sgn and son) is correct
+    for all possible saturation endpoints"""
+    go = GasOil(
+        swirr=0.0, swl=swl, sgcr=sgcr, sorg=sorg, h=h, krgendanchor="sorg", tag=tag
+    )
+    assert not go.table.empty
+    assert not go.table.isnull().values.any()
+
+    # Check that son is 1 at sgcr
+    assert float_df_checker(go.table, "sg", go.sgcr, "son", 1)
+
+    # Check that son is 0 at sorg with this krgendanchor
+    assert float_df_checker(go.table, "sg", 1 - go.sorg - go.swl, "son", 0)
+
+    # Check that sgn is 0 at sgcr
+    assert float_df_checker(go.table, "sg", go.sgcr, "sgn", 0)
+
+    # Check that sgn is 1 at sorg
+    assert float_df_checker(go.table, "sg", 1 - go.sorg - go.swl, "sgn", 1)
+
+    # Redo with different krgendanchor
+    go = GasOil(
+        swirr=0.0, swl=swl, sgcr=sgcr, sorg=sorg, h=h, krgendanchor="", tag=tag
+    )
+    assert float_df_checker(go.table, "sg", 1 - go.swl, "sgn", 1)
+    assert float_df_checker(go.table, "sg", go.sgcr, "sgn", 0)
 
 
 def test_gasoil_krgendanchor():
