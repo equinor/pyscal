@@ -173,9 +173,9 @@ class WaterOil(object):
         applies up to 1-sorw.
 
         Args:
-            nw: float, Corey parameter for water.
-            krwend: float, value of krw at 1 - sorw.
-            krwmax: float, maximal value at Sw=1
+            nw (float): Corey parameter for water.
+            krwend (float): value of krw at 1 - sorw.
+            krwmax (float): maximal value at Sw=1
 
         """
         assert epsilon < nw < MAX_EXPONENT
@@ -214,11 +214,11 @@ class WaterOil(object):
         apply up to 1-sorw.
 
         Args:
-            l: float
-            e: float
-            t: float
-            krwend: float
-            krwmax: float
+            l (float): LET parameter
+            e (float): LET parameter
+            t (float): LET parameter
+            krwend (float): value of krw at 1 - sorw
+            krwmax (float): maximal value at Sw=1
         """
         assert epsilon < l < MAX_EXPONENT
         assert epsilon < e < MAX_EXPONENT
@@ -244,11 +244,12 @@ class WaterOil(object):
         Add kro data through LET parametrization
 
         Args:
-            l: float
-            e: float
-            t: float
-            kroend: float
-            kromax: float
+            l (float): LET parameter
+            e (float): LET parameter
+            t (float): LET parameter
+            kroend (float): value of kro at swcr
+            kromax (float): maximal value of kro at sw=swl
+
         Returns:
             None (modifies object)
         """
@@ -307,7 +308,6 @@ class WaterOil(object):
         Returns:
             None (modifies object)
         """
-
         assert epsilon < now < MAX_EXPONENT
         assert 0 < kroend <= kromax <= 1.0
 
