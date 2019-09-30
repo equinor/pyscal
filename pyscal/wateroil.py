@@ -74,7 +74,7 @@ class WaterOil(object):
         # If sw=1 was dropped, then sorw was close to zero:
         if not np.isclose(self.table["sw"].max(), 1.0):
             # Add it as an extra row:
-            self.table.loc[len(self.table), "sw"] = 1.0
+            self.table.loc[len(self.table) + 1, "sw"] = 1.0
 
         self.table.sort_values(by="sw", inplace=True)
         self.table.reset_index(inplace=True)
