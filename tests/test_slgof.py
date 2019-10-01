@@ -29,7 +29,7 @@ def check_table(df):
         assert df["pc"].is_monotonic_decreasing
 
 
-@settings(max_examples=1000, deadline=1000)
+@settings(deadline=1000)
 @given(
     st.floats(min_value=0.0, max_value=0.3),
     st.floats(min_value=0.0, max_value=0.3),

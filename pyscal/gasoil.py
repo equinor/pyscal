@@ -271,6 +271,8 @@ class GasOil(object):
 
         All values above 1 - sorg - swl are set to zero.
 
+        kromax is ignored if sgcr is close to zero
+
         Arguments:
             nog (float): Corey exponent for oil
             kroend (float): Value for krog at normalized oil saturation 1
@@ -290,7 +292,10 @@ class GasOil(object):
         ] = 0
 
         # Set kromax at sg=0
-        self.table.loc[self.table["sg"] < epsilon, "krog"] = kromax
+        if self.sgcr > self.swl + 1.0 / SWINTEGERS:
+            self.table.loc[self.table["sg"] < epsilon, "krog"] = kromax
+        else:
+            self.table.loc[self.table["sg"] < epsilon, "krog"] = kroend
 
         self.krogcomment = "-- Corey krog, nog=%g, kroend=%g, kromax=%g\n" % (
             nog,
@@ -366,6 +371,8 @@ class GasOil(object):
 
         All values where sg > 1 - sorg - swl are set to zero.
 
+        kromax is ignored if sgcr is close to zero
+
         Arguments:
             l (float): L parameter
             e (float): E parameter
@@ -390,7 +397,11 @@ class GasOil(object):
         ] = 0
 
         # Set kromax at sg=0
-        self.table.loc[self.table["sg"] < epsilon, "krog"] = kromax
+        if self.sgcr > self.swl + 1.0 / SWINTEGERS:
+            self.table.loc[self.table["sg"] < epsilon, "krog"] = kromax
+        else:
+            self.table.loc[self.table["sg"] < epsilon, "krog"] = kroend
+
         self.krogcomment = "-- LET krog, l=%g, e=%g, t=%g, kroend=%g, kromax=%g\n" % (
             l,
             e,
