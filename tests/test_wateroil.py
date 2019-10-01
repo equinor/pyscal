@@ -14,6 +14,17 @@ from pyscal import WaterOil
 from pyscal.constants import SWINTEGERS
 
 
+def series_decreasing(series):
+    """Weaker than pd.Series.is_monotonic_decreasing,
+    allows constant parts"""
+    return (series.diff().dropna() < 1e-8).all()
+
+
+def series_increasing(series):
+    """Weaker than pd.Series.is_monotonic_increasing"""
+    return (series.diff().dropna() > -1e-8).all()
+
+
 def check_table(df):
     """Check sanity of important columns"""
     assert not df.empty
@@ -24,8 +35,9 @@ def check_table(df):
     assert df["swn"].is_monotonic
     assert df["son"].is_monotonic_decreasing
     assert df["swnpc"].is_monotonic
-    assert df["krow"].is_monotonic_decreasing
-    assert df["krw"].is_monotonic
+    assert series_decreasing(df["krow"])
+    assert series_increasing(df["krw"])
+    assert np.isclose(df["krw"].iloc[0], 0.0)
 
 
 @settings(deadline=1000)
@@ -132,10 +144,12 @@ def check_endpoints(wo, krwend, krwmax, kroend, kromax):
         assert float_df_checker(wo.table, "son", 1.0, "krow", kroend)
     # krow at sorw should be zero:
     assert float_df_checker(wo.table, "son", 0.0, "krow", 0.0)
-    if wo.swcr > wo.swl + swtol:
+    if wo.swcr > wo.swl + max(wo.h, swtol):
         # krow at swl should be kromax:
         assert float_df_checker(wo.table, "sw", wo.swl, "krow", kromax)
-    # Behaviour of kroend/max when swcr == swl is currently undefined!
+    else:
+        # kromax not used when swcr is close to swl.
+        assert np.isclose(wo.table["krow"].max(), kroend)
 
     # Check endpoints for water curve: (np.isclose is only reliable around 1)
     assert float_df_checker(wo.table, "swn", 0.0, "krw", 0.0)
@@ -145,6 +159,8 @@ def check_endpoints(wo, krwend, krwmax, kroend, kromax):
         # (hard to get it right when sorw is less than h and close to zero)
         assert float_df_checker(wo.table, "sw", 1 - wo.sorw, "krw", krwend)
         assert np.isclose(wo.table["krw"].max(), krwmax)
+    else:
+        assert np.isclose(wo.table["krw"].max(), krwend)
 
 
 def test_wateroil_linear():
