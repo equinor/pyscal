@@ -15,14 +15,17 @@ from test_wateroil import float_df_checker
 from pyscal import GasOil
 from pyscal.constants import SWINTEGERS
 
+
 def series_decreasing(series):
     """Weaker than pd.Series.is_monotonic_decreasing,
     allows constant parts"""
     return (series.diff().dropna() < 1e-8).all()
 
+
 def series_increasing(series):
     """Weaker than pd.Series.is_monotonic_increasing"""
     return (series.diff().dropna() > -1e-8).all()
+
 
 def check_table(df):
     """Check sanity of important columns"""
@@ -83,7 +86,6 @@ def test_gasoil_init():
     assert np.isclose(go.table["sg"].max(), 0.9)
 
 
-@settings(max_examples=500)
 @given(
     st.floats(min_value=0, max_value=0.15),  # swl
     st.floats(min_value=0, max_value=0.3),  # sgcr
@@ -113,14 +115,12 @@ def test_gasoil_normalization(swl, sgcr, sorg, h, tag):
     assert float_df_checker(go.table, "sg", 1 - go.sorg - go.swl, "sgn", 1)
 
     # Redo with different krgendanchor
-    go = GasOil(
-        swirr=0.0, swl=swl, sgcr=sgcr, sorg=sorg, h=h, krgendanchor="", tag=tag
-    )
+    go = GasOil(swirr=0.0, swl=swl, sgcr=sgcr, sorg=sorg, h=h, krgendanchor="", tag=tag)
     assert float_df_checker(go.table, "sg", 1 - go.swl, "sgn", 1)
     assert float_df_checker(go.table, "sg", go.sgcr, "sgn", 0)
 
 
-@settings(max_examples=500, deadline=500)
+@settings(deadline=500)
 @given(
     st.floats(min_value=0, max_value=0.3),  # swl
     st.floats(min_value=0, max_value=0.3),  # sgcr
@@ -133,7 +133,7 @@ def test_gasoil_normalization(swl, sgcr, sorg, h, tag):
 )
 def test_gasoil_krendmax(swl, sgcr, sorg, kroend, kromax, krgend, krgmax, h):
     try:
-        go = GasOil(swl=swl, sgcr=sgcr, sorg=sorg, h=h, tag='')
+        go = GasOil(swl=swl, sgcr=sgcr, sorg=sorg, h=h, tag="")
     except AssertionError:
         return
     kroend = min(kroend, kromax)
@@ -145,7 +145,7 @@ def test_gasoil_krendmax(swl, sgcr, sorg, kroend, kromax, krgend, krgmax, h):
     check_endpoints(go, krgend, krgmax, kroend, kromax)
 
     # Redo with krgendanchor not defaulted
-    go = GasOil(swl=swl, sgcr=sgcr, sorg=sorg, h=h, krgendanchor='', tag='')
+    go = GasOil(swl=swl, sgcr=sgcr, sorg=sorg, h=h, krgendanchor="", tag="")
     go.add_corey_oil(kroend=kroend, kromax=kromax)
     go.add_corey_gas(krgend=krgend, krgmax=krgmax)
     check_table(go.table)
@@ -153,12 +153,13 @@ def test_gasoil_krendmax(swl, sgcr, sorg, kroend, kromax, krgend, krgmax, h):
     check_endpoints(go, krgend, krgmax, kroend, kromax)
 
     # Redo with LET:
-    go = GasOil(swl=swl, sgcr=sgcr, sorg=sorg, h=h, tag='')
+    go = GasOil(swl=swl, sgcr=sgcr, sorg=sorg, h=h, tag="")
     go.add_LET_oil(kroend=kroend, kromax=kromax)
     go.add_LET_gas(krgend=krgend, krgmax=krgmax)
     check_table(go.table)
     assert go.selfcheck()
     check_endpoints(go, krgend, krgmax, kroend, kromax)
+
 
 def check_endpoints(go, krgend, krgmax, kroend, kromax):
     swtol = 1 / SWINTEGERS
@@ -174,13 +175,16 @@ def check_endpoints(go, krgend, krgmax, kroend, kromax):
         assert float_df_checker(go.table, "sg", 0, "krog", kromax)
         assert float_df_checker(go.table, "sg", go.sgcr, "krog", kroend)
 
-    assert float_df_checker(go.table, "sgn", 0., "krg", 0)
+    assert float_df_checker(go.table, "sgn", 0.0, "krg", 0)
     assert float_df_checker(go.table, "sg", go.sgcr, "krg", 0)
 
-    if go.sorg > swtol and go.sorg > go.h:
+    # If krgendanchor == "sorg" then krgmax is irrelevant.
+    if go.sorg > swtol and go.sorg > go.h and go.krgendanchor == "sorg":
         assert float_df_checker(go.table, "sgn", 1.0, "krg", krgend)
-        if go.krgendanchor != "sorg":
-            assert np.isclose(go.table["krg"].max(), krgmax)
+        assert np.isclose(go.table["krg"].max(), krgmax)
+    if go.krgendanchor != "sorg":
+        assert np.isclose(go.table["krg"].max(), krgend)
+
 
 def test_gasoil_krgendanchor():
     """Test behaviour of the krgendanchor"""

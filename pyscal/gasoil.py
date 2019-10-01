@@ -68,7 +68,12 @@ class GasOil(object):
         swl = max(swl, swirr)  # Can't allow swl < swirr, should we warn user?
         self.swl = swl
         self.swirr = swirr
+        if not np.isclose(sorg, 0.0) and sorg < 1.0 / SWINTEGERS:
+            # Too small but nonzero sorg gives too many numerical issues.
+            print("sorg was close to zero, set to zero")
+            sorg = 0.0
         self.sorg = sorg
+
         self.sgcr = sgcr
         self.tag = tag
         if not 1 - sorg - swl > 0:
@@ -82,7 +87,6 @@ class GasOil(object):
             self.krgendanchor = ""
         if np.isclose(sorg, 0.0) and self.krgendanchor == "sorg":
             # This is too much info..
-            # print("info: krgendanchor set to sorg, ignored as sorg is 0.0.")
             self.krgendanchor = ""  # This is critical to avoid bugs due to numerics.
 
         sg = (
@@ -109,8 +113,10 @@ class GasOil(object):
         self.table.loc[sgcrindex, "sg"] = self.sgcr
         if sgcrindex == 0 and sgcr > 0.0:
             # Need to conserve sg=0
-            zero_row = pd.DataFrame({'sg': 0}, index=[0])
-            self.table = pd.concat([zero_row, self.table], sort=False).reset_index(drop=True)
+            zero_row = pd.DataFrame({"sg": 0}, index=[0])
+            self.table = pd.concat([zero_row, self.table], sort=False).reset_index(
+                drop=True
+            )
 
         # If sg=1-swl was dropped, then sorg was close to zero:
         if not np.isclose(self.table["sg"].max(), 1 - self.swl):
