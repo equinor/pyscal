@@ -29,7 +29,7 @@ def check_table(df):
         assert df["pc"].is_monotonic_decreasing
 
 
-@settings(deadline=1000)
+@settings(max_examples=1000, deadline=1000)
 @given(
     st.floats(min_value=0.0, max_value=0.3),
     st.floats(min_value=0.0, max_value=0.3),
@@ -53,7 +53,7 @@ def test_slgof(swl, sorg, sgcr):
     check_table(slgof)
 
     # Requirements from E100 manual:
-    assert np.isclose(slgof["sl"].values[0], swl + sorg)
+    assert np.isclose(slgof["sl"].values[0], wog.gasoil.swl + wog.gasoil.sorg)
     assert np.isclose(slgof["krg"].values[-1], 0)
     assert np.isclose(slgof["krog"].values[0], 0)
 
