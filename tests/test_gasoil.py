@@ -13,7 +13,16 @@ import hypothesis.strategies as st
 from test_wateroil import float_df_checker
 
 from pyscal import GasOil
+from pyscal.constants import SWINTEGERS
 
+def series_decreasing(series):
+    """Weaker than pd.Series.is_monotonic_decreasing,
+    allows constant parts"""
+    return (series.diff().dropna() < 1e-8).all()
+
+def series_increasing(series):
+    """Weaker than pd.Series.is_monotonic_increasing"""
+    return (series.diff().dropna() > -1e-8).all()
 
 def check_table(df):
     """Check sanity of important columns"""
@@ -24,8 +33,8 @@ def check_table(df):
     assert (df["sg"] >= 0.0).all()
     assert df["sgn"].is_monotonic
     assert df["son"].is_monotonic_decreasing
-    assert df["krog"].is_monotonic_decreasing
-    assert df["krg"].is_monotonic
+    assert series_decreasing(df["krog"])
+    assert series_increasing(df["krg"])
     if "pc" in df:
         assert df["pc"].is_monotonic
 
@@ -110,6 +119,67 @@ def test_gasoil_normalization(swl, sgcr, sorg, h, tag):
     assert float_df_checker(go.table, "sg", 1 - go.swl, "sgn", 1)
     assert float_df_checker(go.table, "sg", go.sgcr, "sgn", 0)
 
+
+@settings(max_examples=500, deadline=500)
+@given(
+    st.floats(min_value=0, max_value=0.3),  # swl
+    st.floats(min_value=0, max_value=0.3),  # sgcr
+    st.floats(min_value=0, max_value=0.3),  # sorg
+    st.floats(min_value=0.1, max_value=1),  # kroend
+    st.floats(min_value=0.1, max_value=1),  # kromax
+    st.floats(min_value=0.1, max_value=1),  # krgend
+    st.floats(min_value=0.1, max_value=1),  # krgmax
+    st.floats(min_value=0.0001, max_value=1),  # h
+)
+def test_gasoil_krendmax(swl, sgcr, sorg, kroend, kromax, krgend, krgmax, h):
+    try:
+        go = GasOil(swl=swl, sgcr=sgcr, sorg=sorg, h=h, tag='')
+    except AssertionError:
+        return
+    kroend = min(kroend, kromax)
+    krgend = min(krgend, krgmax)
+    go.add_corey_oil(kroend=kroend, kromax=kromax)
+    go.add_corey_gas(krgend=krgend, krgmax=krgmax)
+    check_table(go.table)
+    assert go.selfcheck()
+    check_endpoints(go, krgend, krgmax, kroend, kromax)
+
+    # Redo with krgendanchor not defaulted
+    go = GasOil(swl=swl, sgcr=sgcr, sorg=sorg, h=h, krgendanchor='', tag='')
+    go.add_corey_oil(kroend=kroend, kromax=kromax)
+    go.add_corey_gas(krgend=krgend, krgmax=krgmax)
+    check_table(go.table)
+    assert go.selfcheck()
+    check_endpoints(go, krgend, krgmax, kroend, kromax)
+
+    # Redo with LET:
+    go = GasOil(swl=swl, sgcr=sgcr, sorg=sorg, h=h, tag='')
+    go.add_LET_oil(kroend=kroend, kromax=kromax)
+    go.add_LET_gas(krgend=krgend, krgmax=krgmax)
+    check_table(go.table)
+    assert go.selfcheck()
+    check_endpoints(go, krgend, krgmax, kroend, kromax)
+
+def check_endpoints(go, krgend, krgmax, kroend, kromax):
+    swtol = 1 / SWINTEGERS
+
+    # Check endpoints for oil curve:
+    # krog at sgcr should be kroend
+    if go.sgcr > go.swl + swtol:
+        assert float_df_checker(go.table, "son", 1.0, "krog", kroend)
+    # krog at son=0 (1-sorg-swl or 1 - swl) should be zero:
+    assert float_df_checker(go.table, "son", 0.0, "krog", 0)
+
+    if go.sgcr > go.swl + swtol:
+        assert float_df_checker(go.table, "sg", 0, "krog", kromax)
+        assert float_df_checker(go.table, "sg", go.sgcr, "krog", kroend)
+
+    assert float_df_checker(go.table, "sgn", 0., "krg", 0)
+    assert float_df_checker(go.table, "sg", go.sgcr, "krg", 0)
+
+    if go.sorg > swtol and go.sorg > go.h:
+        assert float_df_checker(go.table, "sgn", 1.0, "krg", krgend)
+        assert np.isclose(go.table["krg"].max(), krgmax)
 
 def test_gasoil_krgendanchor():
     """Test behaviour of the krgendanchor"""
