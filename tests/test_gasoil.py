@@ -179,7 +179,8 @@ def check_endpoints(go, krgend, krgmax, kroend, kromax):
 
     if go.sorg > swtol and go.sorg > go.h:
         assert float_df_checker(go.table, "sgn", 1.0, "krg", krgend)
-        assert np.isclose(go.table["krg"].max(), krgmax)
+        if go.krgendanchor != "sorg":
+            assert np.isclose(go.table["krg"].max(), krgmax)
 
 def test_gasoil_krgendanchor():
     """Test behaviour of the krgendanchor"""
