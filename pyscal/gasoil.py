@@ -217,6 +217,45 @@ class GasOil(object):
             self.table["pc"] = pchip(self.table.sg, extrapolate=False)
             self.pccomment = "-- pc from tabular input" + pccomment + "\n"
 
+    def _handle_endpoints_linearpart_gas(self, krgend, krgmax=None):
+        """Internal utility function to handle krg
+        around endpoints.
+        """
+        self.table.loc[self.table.sg <= self.sgcr, "krg"] = 0
+
+        if self.krgendanchor == "sorg":
+            # Linear curve between krgendcanchor and 1-swl if krgend
+            # is anchored to sorg
+            if not krgmax:
+                krgmax = 1
+            tmp = pd.DataFrame(self.table[["sg"]])
+            tmp["sgendnorm"] = (tmp["sg"] - (1 - (self.sorg + self.swl))) / (self.sorg)
+            tmp["krg"] = tmp["sgendnorm"] * krgmax + (1 - tmp["sgendnorm"]) * krgend
+            self.table.loc[
+                self.table.sg >= (1 - (self.sorg + self.swl + epsilon)), "krg"
+            ] = tmp.loc[tmp.sg >= (1 - (self.sorg + self.swl + epsilon)), "krg"]
+        else:
+            self.table.loc[
+                self.table.sg > (1 - (self.swl + epsilon)), "krg"
+            ] = krgend  # krgmax should not be used when we don't
+            # anchor to sorg.
+
+    def _handle_endpoints_linearpart_oil(self, kroend, kromax):
+        """Internal utility function to handle kro
+        around endpoints.
+        """
+
+        # Special handling of the part close to sg=1, set to zero.
+        self.table.loc[
+            self.table["sg"] > 1 - self.sorg - self.swl - epsilon, "krog"
+        ] = 0
+
+        # Set kromax at sg=0, but only if sgcr is sufficiently larger than swl.
+        if self.sgcr > self.swl + 1.0 / SWINTEGERS:
+            self.table.loc[self.table["sg"] < epsilon, "krog"] = kromax
+        else:
+            self.table.loc[self.table["sg"] < epsilon, "krog"] = kroend
+
     def add_corey_gas(self, ng=2, krgend=1, krgmax=None):
         """ Add krg data through the Corey parametrization
 
@@ -234,26 +273,9 @@ class GasOil(object):
         if krgmax is not None:
             assert 0 < krgend <= krgmax <= 1.0
         self.table["krg"] = krgend * self.table.sgn ** ng
-        self.table.loc[self.table.sg <= self.sgcr, "krg"] = 0
-        # Warning: code duplicated from add_LET_gas():
-        if self.krgendanchor == "sorg":
-            # Linear curve between krgendcanchor and 1-swl if krgend
-            # is anchored to sorg
-            if not krgmax:
-                krgmax = 1
-            tmp = pd.DataFrame(self.table[["sg"]])
-            tmp["sgendnorm"] = (tmp["sg"] - (1 - (self.sorg + self.swl))) / (self.sorg)
-            tmp["krg"] = tmp["sgendnorm"] * krgmax + (1 - tmp["sgendnorm"]) * krgend
-            self.table.loc[
-                self.table.sg >= (1 - (self.sorg + self.swl + epsilon)), "krg"
-            ] = tmp.loc[tmp.sg >= (1 - (self.sorg + self.swl + epsilon)), "krg"]
-        else:
-            self.table.loc[
-                self.table.sg > (1 - (self.swl + epsilon)), "krg"
-            ] = krgend  # krgmax should not be used when we don't
-            # anchor to sorg.
-            if krgmax is not None:
-                print("krgmax ignored when we anchor to sorg")
+
+        self._handle_endpoints_linearpart_gas(krgend, krgmax)
+
         if not krgmax:
             krgmax = 1
         self.krgcomment = "-- Corey krg, ng=%g, krgend=%g, krgmax=%g\n" % (
@@ -286,16 +308,7 @@ class GasOil(object):
 
         self.table["krog"] = kroend * self.table.son ** nog
 
-        # Special handling of the part close to sg=1, set to zero.
-        self.table.loc[
-            self.table["sg"] > 1 - self.sorg - self.swl - epsilon, "krog"
-        ] = 0
-
-        # Set kromax at sg=0
-        if self.sgcr > self.swl + 1.0 / SWINTEGERS:
-            self.table.loc[self.table["sg"] < epsilon, "krog"] = kromax
-        else:
-            self.table.loc[self.table["sg"] < epsilon, "krog"] = kroend
+        self._handle_endpoints_linearpart_oil(kroend, kromax)
 
         self.krogcomment = "-- Corey krog, nog=%g, kroend=%g, kromax=%g\n" % (
             nog,
@@ -334,25 +347,9 @@ class GasOil(object):
             * self.table.sgn ** l
             / ((self.table.sgn ** l) + e * (1 - self.table.sgn) ** t)
         )
-        self.table.loc[self.table.sg < self.sgcr - epsilon, "krg"] = 0
-        if self.krgendanchor == "sorg":
-            # Linear curve between krgendcanchor and 1-swl if krgend
-            # is anchored to sorg
-            if not krgmax:
-                krgmax = 1
-            tmp = pd.DataFrame(self.table[["sg"]])
-            tmp["sgendnorm"] = (tmp["sg"] - (1 - (self.sorg + self.swl))) / (self.sorg)
-            tmp["krg"] = tmp["sgendnorm"] * krgmax + (1 - tmp["sgendnorm"]) * krgend
-            self.table.loc[
-                self.table.sg >= (1 - (self.sorg + self.swl + epsilon)), "krg"
-            ] = tmp.loc[tmp.sg >= (1 - (self.sorg + self.swl + epsilon)), "krg"]
-        else:
-            self.table.loc[
-                self.table.sg > (1 - (self.swl + epsilon)), "krg"
-            ] = krgend  # krgmax should not be used when we don't
-            # anchor to sorg.
-            if krgmax is not None:
-                print("krgmax ignored when anchoring to sorg")
+
+        self._handle_endpoints_linearpart_gas(krgend, krgmax)
+
         if not krgmax:
             krgmax = 1
         self.krgcomment = "-- LET krg, l=%g, e=%g, t=%g, krgend=%g, krgmax=%g\n" % (
@@ -391,16 +388,8 @@ class GasOil(object):
             * self.table["son"] ** l
             / ((self.table["son"] ** l) + e * (1 - self.table["son"]) ** t)
         )
-        # Special handling of the part close to sg=1, set to zero.
-        self.table.loc[
-            self.table["sg"] > 1 - self.sorg - self.swl - epsilon, "krog"
-        ] = 0
 
-        # Set kromax at sg=0
-        if self.sgcr > self.swl + 1.0 / SWINTEGERS:
-            self.table.loc[self.table["sg"] < epsilon, "krog"] = kromax
-        else:
-            self.table.loc[self.table["sg"] < epsilon, "krog"] = kroend
+        self._handle_endpoints_linearpart_oil(kroend, kromax)
 
         self.krogcomment = "-- LET krog, l=%g, e=%g, t=%g, kroend=%g, kromax=%g\n" % (
             l,
