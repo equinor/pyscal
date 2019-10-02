@@ -155,7 +155,7 @@ def check_endpoints(wo, krwend, krwmax, kroend, kromax):
     assert float_df_checker(wo.table, "swn", 0.0, "krw", 0.0)
     assert float_df_checker(wo.table, "sw", wo.swcr, "krw", 0)
 
-    if wo.sorw > swtol and wo.sorw > wo.h:
+    if wo.sorw > swtol:
         # (hard to get it right when sorw is less than h and close to zero)
         assert float_df_checker(wo.table, "sw", 1 - wo.sorw, "krw", krwend)
         assert np.isclose(wo.table["krw"].max(), krwmax)
