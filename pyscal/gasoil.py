@@ -13,11 +13,6 @@ from pyscal.constants import MAX_EXPONENT
 class GasOil(object):
     """Object to represent two-phase properties for gas and oil.
 
-
-    krgend can be anchored both to `1-swl-sorg` and to `1-swl`. Default is
-    to anchor to `1-swl-sorg`. If the krgendanchor argument is something
-    else than the string `sorg`, it will be anchored to `1-swl`.
-
     Parametrizations available for relative permeability:
 
      * Corey
@@ -27,6 +22,10 @@ class GasOil(object):
     (as Pandas DataFrame).
 
     No support (yet) to add capillary pressure.
+
+    krgend can be anchored both to `1-swl-sorg` and to `1-swl`. Default is
+    to anchor to `1-swl-sorg`. If the krgendanchor argument is something
+    else than the string `sorg`, it will be anchored to `1-swl`.
 
     Code duplication warning: Code is analogous to WaterOil, but with
     some subtle details sufficiently different for now warranting its

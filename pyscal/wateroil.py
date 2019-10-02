@@ -182,7 +182,7 @@ class WaterOil(object):
         Args:
             nw (float): Corey parameter for water.
             krwend (float): value of krw at 1 - sorw.
-            krwmax (float): maximal value at Sw=1
+            krwmax (float): maximal value at Sw=1. Default 1
 
         """
         assert epsilon < nw < MAX_EXPONENT
@@ -215,7 +215,7 @@ class WaterOil(object):
         # need to excplicitly insert linearly interpolated values.
         if self.sorw > 1.0 / SWINTEGERS:
             if not krwmax:
-                print("ERROR: You must supply krwmax when sorw is nonzero")
+                krwmax = 1.0
             self.table.loc[self.table["sw"] > (1 - self.sorw - epsilon), "krw"] = krwmax
         else:
             if krwmax:
@@ -238,7 +238,7 @@ class WaterOil(object):
             self.table.loc[self.table["sw"] <= self.swl + epsilon, "krow"] = kroend
         else:
             if not kromax:
-                print("ERROR: You must supply kromax when swcr is larger than swl")
+                kromax = 1
             self.table.loc[self.table["sw"] <= self.swl + epsilon, "krow"] = kromax
             interp_krow = (
                 self.table[["sw", "krow"]]
@@ -266,7 +266,7 @@ class WaterOil(object):
             e (float): LET parameter
             t (float): LET parameter
             krwend (float): value of krw at 1 - sorw
-            krwmax (float): maximal value at Sw=1
+            krwmax (float): maximal value at Sw=1. Default 1
         """
         assert epsilon < l < MAX_EXPONENT
         assert epsilon < e < MAX_EXPONENT
@@ -304,7 +304,7 @@ class WaterOil(object):
             e (float): LET parameter
             t (float): LET parameter
             kroend (float): value of kro at swcr
-            kromax (float): maximal value of kro at sw=swl
+            kromax (float): maximal value of kro at sw=swl. Default 1
 
         Returns:
             None (modifies object)
