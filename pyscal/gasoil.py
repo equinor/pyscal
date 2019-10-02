@@ -234,10 +234,9 @@ class GasOil(object):
                 self.table.sg >= (1 - (self.sorg + self.swl + epsilon)), "krg"
             ] = tmp.loc[tmp.sg >= (1 - (self.sorg + self.swl + epsilon)), "krg"]
         else:
-            self.table.loc[
-                self.table.sg > (1 - (self.swl + epsilon)), "krg"
-            ] = krgend  # krgmax should not be used when we don't
-            # anchor to sorg.
+            self.table.loc[self.table.sg > (1 - (self.swl + epsilon)), "krg"] = krgend
+            if krgmax:
+                print("Warning: krgmax ignored when not anchoring to sorg")
 
     def _handle_endpoints_linearpart_oil(self, kroend, kromax):
         """Internal utility function to handle kro
@@ -251,8 +250,12 @@ class GasOil(object):
 
         # Set kromax at sg=0, but only if sgcr is sufficiently larger than swl.
         if self.sgcr > self.swl + 1.0 / SWINTEGERS:
+            if not kromax:
+                kromax = 1
             self.table.loc[self.table["sg"] < epsilon, "krog"] = kromax
         else:
+            if kromax:
+                print("Warning: kromax ignored when sgcr is close to swl")
             self.table.loc[self.table["sg"] < epsilon, "krog"] = kroend
 
     def add_corey_gas(self, ng=2, krgend=1, krgmax=None):
@@ -283,7 +286,7 @@ class GasOil(object):
             krgmax,
         )
 
-    def add_corey_oil(self, nog=2, kroend=1, kromax=1):
+    def add_corey_oil(self, nog=2, kroend=1, kromax=None):
         """
         Add kro data through the Corey parametrization
 
@@ -303,12 +306,17 @@ class GasOil(object):
             None (modifies internal class state)
         """
         assert epsilon < nog < MAX_EXPONENT
-        assert 0 < kroend <= kromax
+        if kromax:
+            assert 0 < kroend <= kromax <= 1.0
+        else:
+            assert 0 < kroend <= 1.0
 
         self.table["krog"] = kroend * self.table.son ** nog
 
         self._handle_endpoints_linearpart_oil(kroend, kromax)
 
+        if not kromax:
+            kromax = 1
         self.krogcomment = "-- Corey krog, nog=%g, kroend=%g, kromax=%g\n" % (
             nog,
             kroend,
@@ -338,9 +346,11 @@ class GasOil(object):
         assert epsilon < l < MAX_EXPONENT
         assert epsilon < e < MAX_EXPONENT
         assert epsilon < t < MAX_EXPONENT
-        assert 0 < krgend <= 1.0
-        if krgmax is not None:
+        if krgmax:
             assert 0 < krgend <= krgmax <= 1.0
+        else:
+            assert 0 < krgend <= 1.0
+
         self.table["krg"] = (
             krgend
             * self.table.sgn ** l
@@ -359,7 +369,7 @@ class GasOil(object):
             krgmax,
         )
 
-    def add_LET_oil(self, l=2, e=2, t=2, kroend=1, kromax=1):
+    def add_LET_oil(self, l=2, e=2, t=2, kroend=1, kromax=None):
         """Add oil (vs gas) relative permeability data through the Corey
         parametrization.
 
@@ -379,7 +389,10 @@ class GasOil(object):
         assert epsilon < l < MAX_EXPONENT
         assert epsilon < e < MAX_EXPONENT
         assert epsilon < t < MAX_EXPONENT
-        assert 0 < kroend <= kromax
+        if kromax:
+            assert 0 < kroend <= kromax <= 1.0
+        else:
+            assert 0 < kroend <= 1.0
 
         # LET shape for the interval [sgcr, 1 - swl - sorg]
         self.table["krog"] = (
@@ -390,6 +403,8 @@ class GasOil(object):
 
         self._handle_endpoints_linearpart_oil(kroend, kromax)
 
+        if not kromax:
+            kromax = 1
         self.krogcomment = "-- LET krog, l=%g, e=%g, t=%g, kroend=%g, kromax=%g\n" % (
             l,
             e,
