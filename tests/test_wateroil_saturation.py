@@ -5,8 +5,6 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import numpy as np
-
 from hypothesis import given, settings
 import hypothesis.strategies as st
 
@@ -39,7 +37,7 @@ def test_wateroil_random(swirr, swl, swcr, sorw, h, tag):
     """Shoot wildly with arguments, the code should throw ValueError
     or AssertionError when input is invalid, but we don't want other crashes"""
     try:
-        wo = WaterOil(swirr=swirr, swl=swl, swcr=swcr, sorw=sorw, h=h, tag=tag)
+        WaterOil(swirr=swirr, swl=swl, swcr=swcr, sorw=sorw, h=h, tag=tag)
     except AssertionError:
         pass
 
@@ -58,15 +56,6 @@ def test_wateroil_normalization(swirr, swl, swcr, sorw, h, tag):
     wo = WaterOil(swirr=swirr, swl=swl, swcr=swcr, sorw=sorw, h=h, tag=tag)
     assert not wo.table.empty
     assert not wo.table.isnull().values.any()
-
-    # Check normalized saturations, these are critical for
-    # relperm parametrizations:
-    # NB: np.isclose is only reliable around 1, therefore 1 is added to tests
-    # where we are probably testing closeness to zero..
-
-    # This tolerance is fine-tuned, in order for the tests to pick
-    # the correct rows from the floating point dataframes.
-    swtol = 0.01 / SWINTEGERS  # number must be less than 0.5
 
     # Check that son is 1 at swcr:
     assert float_df_checker(wo.table, "sw", wo.swcr, "son", 1)
