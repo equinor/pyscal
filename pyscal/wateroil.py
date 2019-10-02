@@ -106,6 +106,10 @@ class WaterOil(object):
         self.krowcomment = ""
         self.pccomment = ""
 
+        logging.info(
+            "Initialized WaterOil with %s saturation points", str(len(self.table))
+        )
+
     def add_oilwater_fromtable(
         self,
         df,
@@ -145,9 +149,10 @@ class WaterOil(object):
         from scipy.interpolate import PchipInterpolator
 
         if swcolname not in df:
-            raise Exception(
+            logging.critical(
                 swcolname + " not found in dataframe, can't read table data"
             )
+            raise ValueError
         if krwcolname in df:
             pchip = PchipInterpolator(
                 df[swcolname].astype(float), df[krwcolname].astype(float)
@@ -598,6 +603,7 @@ class WaterOil(object):
         if error:
             return False
         else:
+            logging.info("WaterOil object is checked to be valid")
             return True
 
     def SWOF(self, header=True, dataincommentrow=True):

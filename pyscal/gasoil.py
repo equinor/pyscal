@@ -143,6 +143,10 @@ class GasOil(object):
         self.krogcomment = ""
         self.pccomment = ""
 
+        logging.info(
+            "Initialized GasOil with %s saturation points", str(len(self.table))
+        )
+
     def resetsorg(self):
         """Recalculate sorg in case it has table data has been manipulated"""
         if "krog" in self.table.columns:
@@ -184,9 +188,10 @@ class GasOil(object):
         from scipy.interpolate import PchipInterpolator
 
         if sgcolname not in df:
-            raise Exception(
+            logging.critical(
                 sgcolname + " not found in dataframe, " + "can't read table data"
             )
+            raise ValueError
         swlfrominput = 1 - df[sgcolname].max()
         if abs(swlfrominput - self.swl) < epsilon:
             logging.warning(
@@ -459,6 +464,7 @@ class GasOil(object):
         if error:
             return False
         else:
+            logging.info("GasOil object is checked to be valid")
             return True
 
     def SGOF(self, header=True, dataincommentrow=True):
