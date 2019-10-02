@@ -3,6 +3,7 @@ from __future__ import division, absolute_import
 from __future__ import print_function
 
 import math
+import logging
 import numpy as np
 import pandas as pd
 
@@ -219,7 +220,7 @@ class WaterOil(object):
             self.table.loc[self.table["sw"] > (1 - self.sorw - epsilon), "krw"] = krwmax
         else:
             if krwmax:
-                print("Warning: krwmax ignored when sorw is zero")
+                logging.warning("krwmax ignored when sorw is zero")
             self.table.loc[self.table["sw"] > (1 - self.sorw - epsilon), "krw"] = krwend
         self.table.loc[np.isclose(self.table["sw"], 1 - self.sorw), "krw"] = krwend
         self.table.loc[self.table.sw < self.swcr, "krw"] = 0
@@ -234,7 +235,7 @@ class WaterOil(object):
         self.table.loc[self.table["son"] > 1.0 + epsilon, "krow"] = np.nan
         if self.swcr < self.swl + self.h:
             if kromax:
-                print("Warning: kromax ignored when swcr is close to swl")
+                logging.warning("kromax ignored when swcr is close to swl")
             self.table.loc[self.table["sw"] <= self.swl + epsilon, "krow"] = kroend
         else:
             if not kromax:
@@ -249,7 +250,6 @@ class WaterOil(object):
 
         # Avoid machine accuracy problems around swcr (monotonicity):
         self.table.loc[self.table["krow"] > kromax, "krow"] = kromax
-
 
     def add_LET_water(self, l=2, e=2, t=2, krwend=1, krwmax=None):
         """Add krw data through LET parametrization
@@ -394,13 +394,14 @@ class WaterOil(object):
         assert perm_ref > 0.0
 
         if self.swl < epsilon:
-            raise ValueError(
+            logging.error(
                 "swl must larger than zero to avoid infinite capillary pressure"
             )
+            raise ValueError
 
         if b > 0:
-            print(
-                "Warning: positive b will give increasing capillary pressure with saturation"
+            logging.warning(
+                "positive b will give increasing capillary pressure with saturation"
             )
 
         # drho = rwo_w - rho_o, in units g/cc
@@ -436,16 +437,16 @@ class WaterOil(object):
         """
         inputerror = False
         if cw < 0:
-            print("cw must be larger or equal to zero")
+            logging.error("cw must be larger or equal to zero")
             inputerror = True
         if co > 0:
-            print("co must be less than zero")
+            logging.error("co must be less than zero")
             inputerror = True
         if aw <= 0:
-            print("aw must be larger than zero")
+            logging.error("aw must be larger than zero")
             inputerror = True
         if ao <= 0:
-            print("ao must be larger than zero")
+            logging.error("ao must be larger than zero")
             inputerror = True
 
         if swr == None:
@@ -454,13 +455,13 @@ class WaterOil(object):
             sor = self.sorw
 
         if swr >= 1 - sor:
-            print("swr (swirr) must be less than 1 - sor")
+            logging.error("swr (swirr) must be less than 1 - sor")
             inputerror = True
         if swr < 0 or swr > 1:
-            print("swr must be contained in [0,1]")
+            logging.error("swr must be contained in [0,1]")
             inputerror = True
         if sor < 0 or sor > 1:
-            print("sor must be contained in [0,1]")
+            logging.error("sor must be contained in [0,1]")
             inputerror = True
         if inputerror:
             return False
@@ -569,30 +570,30 @@ class WaterOil(object):
         """
         error = False
         if not (self.table.sw.diff().dropna().round(10) > -epsilon).all():
-            print("Error: sw data not strictly increasing")
+            logging.error("sw data not strictly increasing")
             error = True
         if not (self.table.krw.diff().dropna().round(10) >= -epsilon).all():
-            print("Error: krw data not monotonically increasing")
+            logging.error("krw data not monotonically increasing")
             error = True
         if (
             "krow" in self.table.columns
             and not (self.table.krow.diff().dropna().round(10) <= epsilon).all()
         ):
-            print("Error: krow data not monotonically decreasing")
+            logging.error("krow data not monotonically decreasing")
             error = True
         if "pc" in self.table.columns and self.table.pc[0] > -epsilon:
             if not (self.table.pc.diff().dropna().round(10) < epsilon).all():
-                print("Error: pc data not strictly decreasing")
+                logging.error("pc data not strictly decreasing")
                 error = True
         if "pc" in self.table.columns and np.isinf(self.table.pc.max()):
-            print("Error: pc goes to infinity. Maybe swirr=swl?")
+            logging.error("pc goes to infinity. Maybe swirr=swl?")
             error = True
         for col in list(set(["sw", "krw", "krow"]) & set(self.table.columns)):
             if not (
                 (round(min(self.table[col]), 10) >= -epsilon)
                 and (round(max(self.table[col]), 10) <= 1 + epsilon)
             ):
-                print("Error: %s data should be contained in [0,1]" % col)
+                logging.error("%s data should be contained in [0,1]", col)
                 error = True
         if error:
             return False

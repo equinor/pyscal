@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import copy
+import logging
 import numpy as np
 import pandas as pd
 
@@ -227,7 +228,7 @@ class SCALrecommendation(object):
         interpolant = WaterOilGas()
 
         if abs(parameter) > 1.0:
-            print("ERROR: Interpolation parameter must be in [-1,1]")
+            logging.error("Interpolation parameter must be in [-1,1]")
             interpolant.wateroil = None
             raise AssertionError
         elif np.isclose(parameter, 0.0):
@@ -291,7 +292,7 @@ class SCALrecommendation(object):
         # We need swl from the interpolated WaterOil object.
         swl = interpolant.wateroil.swl
         if abs(gasparameter) > 1.0:
-            print("ERROR: Interpolation parameter must be in [-1,1]")
+            logging.error("Interpolation parameter must be in [-1,1]")
             interpolant.gasoil = None
             raise AssertionError
         elif np.isclose(gasparameter, 0.0):
