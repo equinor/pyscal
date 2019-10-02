@@ -13,11 +13,6 @@ from pyscal.constants import MAX_EXPONENT
 class GasOil(object):
     """Object to represent two-phase properties for gas and oil.
 
-
-    krgend can be anchored both to `1-swl-sorg` and to `1-swl`. Default is
-    to anchor to `1-swl-sorg`. If the krgendanchor argument is something
-    else than the string `sorg`, it will be anchored to `1-swl`.
-
     Parametrizations available for relative permeability:
 
      * Corey
@@ -27,6 +22,10 @@ class GasOil(object):
     (as Pandas DataFrame).
 
     No support (yet) to add capillary pressure.
+
+    krgend can be anchored both to `1-swl-sorg` and to `1-swl`. Default is
+    to anchor to `1-swl-sorg`. If the krgendanchor argument is something
+    else than the string `sorg`, it will be anchored to `1-swl`.
 
     Code duplication warning: Code is analogous to WaterOil, but with
     some subtle details sufficiently different for now warranting its
@@ -60,14 +59,20 @@ class GasOil(object):
         assert -epsilon < sgcr < 1
         assert -epsilon < swl < 1
         assert -epsilon < sorg < 1
-        assert isinstance(tag, str)
+        if not isinstance(tag, str):
+            tag = ""
         assert isinstance(krgendanchor, str)
 
         self.h = h
         swl = max(swl, swirr)  # Can't allow swl < swirr, should we warn user?
         self.swl = swl
         self.swirr = swirr
+        if not np.isclose(sorg, 0.0) and sorg < 1.0 / SWINTEGERS:
+            # Too small but nonzero sorg gives too many numerical issues.
+            print("sorg was close to zero, set to zero")
+            sorg = 0.0
         self.sorg = sorg
+
         self.sgcr = sgcr
         self.tag = tag
         if not 1 - sorg - swl > 0:
@@ -81,7 +86,6 @@ class GasOil(object):
             self.krgendanchor = ""
         if np.isclose(sorg, 0.0) and self.krgendanchor == "sorg":
             # This is too much info..
-            # print("info: krgendanchor set to sorg, ignored as sorg is 0.0.")
             self.krgendanchor = ""  # This is critical to avoid bugs due to numerics.
 
         sg = (
@@ -96,6 +100,28 @@ class GasOil(object):
             map(int, list(map(round, self.table["sg"] * SWINTEGERS)))
         )
         self.table.drop_duplicates("sgint", inplace=True)
+        # Now sg=1-sorg-swl might be accidentally dropped, so make sure we
+        # have it by replacing the closest value by 1 - sorg exactly
+        sorgindex = (
+            (self.table["sg"] - (1 - self.sorg - self.swl)).abs().sort_values().index[0]
+        )
+        self.table.loc[sorgindex, "sg"] = 1 - self.sorg - self.swl
+
+        # Same for sg=sgcr
+        sgcrindex = (self.table["sg"] - (self.sgcr)).abs().sort_values().index[0]
+        self.table.loc[sgcrindex, "sg"] = self.sgcr
+        if sgcrindex == 0 and sgcr > 0.0:
+            # Need to conserve sg=0
+            zero_row = pd.DataFrame({"sg": 0}, index=[0])
+            self.table = pd.concat([zero_row, self.table], sort=False).reset_index(
+                drop=True
+            )
+
+        # If sg=1-swl was dropped, then sorg was close to zero:
+        if not np.isclose(self.table["sg"].max(), 1 - self.swl):
+            # Add it as an extra row:
+            self.table.loc[len(self.table) + 1, "sg"] = 1 - self.swl
+
         self.table.sort_values(by="sg", inplace=True)
         self.table.reset_index(inplace=True)
         self.table = self.table[["sg"]]
@@ -190,6 +216,48 @@ class GasOil(object):
             self.table["pc"] = pchip(self.table.sg, extrapolate=False)
             self.pccomment = "-- pc from tabular input" + pccomment + "\n"
 
+    def _handle_endpoints_linearpart_gas(self, krgend, krgmax=None):
+        """Internal utility function to handle krg
+        around endpoints.
+        """
+        self.table.loc[self.table.sg <= self.sgcr, "krg"] = 0
+
+        if self.krgendanchor == "sorg":
+            # Linear curve between krgendcanchor and 1-swl if krgend
+            # is anchored to sorg
+            if not krgmax:
+                krgmax = 1
+            tmp = pd.DataFrame(self.table[["sg"]])
+            tmp["sgendnorm"] = (tmp["sg"] - (1 - (self.sorg + self.swl))) / (self.sorg)
+            tmp["krg"] = tmp["sgendnorm"] * krgmax + (1 - tmp["sgendnorm"]) * krgend
+            self.table.loc[
+                self.table.sg >= (1 - (self.sorg + self.swl + epsilon)), "krg"
+            ] = tmp.loc[tmp.sg >= (1 - (self.sorg + self.swl + epsilon)), "krg"]
+        else:
+            self.table.loc[self.table.sg > (1 - (self.swl + epsilon)), "krg"] = krgend
+            if krgmax:
+                print("Warning: krgmax ignored when not anchoring to sorg")
+
+    def _handle_endpoints_linearpart_oil(self, kroend, kromax):
+        """Internal utility function to handle kro
+        around endpoints.
+        """
+
+        # Special handling of the part close to sg=1, set to zero.
+        self.table.loc[
+            self.table["sg"] > 1 - self.sorg - self.swl - epsilon, "krog"
+        ] = 0
+
+        # Set kromax at sg=0, but only if sgcr is sufficiently larger than swl.
+        if self.sgcr > self.swl + 1.0 / SWINTEGERS:
+            if not kromax:
+                kromax = 1
+            self.table.loc[self.table["sg"] < epsilon, "krog"] = kromax
+        else:
+            if kromax:
+                print("Warning: kromax ignored when sgcr is close to swl")
+            self.table.loc[self.table["sg"] < epsilon, "krog"] = kroend
+
     def add_corey_gas(self, ng=2, krgend=1, krgmax=None):
         """ Add krg data through the Corey parametrization
 
@@ -207,26 +275,9 @@ class GasOil(object):
         if krgmax is not None:
             assert 0 < krgend <= krgmax <= 1.0
         self.table["krg"] = krgend * self.table.sgn ** ng
-        self.table.loc[self.table.sg <= self.sgcr, "krg"] = 0
-        # Warning: code duplicated from add_LET_gas():
-        if self.krgendanchor == "sorg":
-            # Linear curve between krgendcanchor and 1-swl if krgend
-            # is anchored to sorg
-            if not krgmax:
-                krgmax = 1
-            tmp = pd.DataFrame(self.table[["sg"]])
-            tmp["sgendnorm"] = (tmp["sg"] - (1 - (self.sorg + self.swl))) / (self.sorg)
-            tmp["krg"] = tmp["sgendnorm"] * krgmax + (1 - tmp["sgendnorm"]) * krgend
-            self.table.loc[
-                self.table.sg >= (1 - (self.sorg + self.swl + epsilon)), "krg"
-            ] = tmp.loc[tmp.sg >= (1 - (self.sorg + self.swl + epsilon)), "krg"]
-        else:
-            self.table.loc[
-                self.table.sg > (1 - (self.swl + epsilon)), "krg"
-            ] = krgend  # krgmax should not be used when we don't
-            # anchor to sorg.
-            if krgmax is not None:
-                print("krgmax ignored when we anchor to sorg")
+
+        self._handle_endpoints_linearpart_gas(krgend, krgmax)
+
         if not krgmax:
             krgmax = 1
         self.krgcomment = "-- Corey krg, ng=%g, krgend=%g, krgmax=%g\n" % (
@@ -235,7 +286,7 @@ class GasOil(object):
             krgmax,
         )
 
-    def add_corey_oil(self, nog=2, kroend=1, kromax=1):
+    def add_corey_oil(self, nog=2, kroend=1, kromax=None):
         """
         Add kro data through the Corey parametrization
 
@@ -243,6 +294,8 @@ class GasOil(object):
         replaced if it exists.
 
         All values above 1 - sorg - swl are set to zero.
+
+        kromax is ignored if sgcr is close to zero
 
         Arguments:
             nog (float): Corey exponent for oil
@@ -253,18 +306,17 @@ class GasOil(object):
             None (modifies internal class state)
         """
         assert epsilon < nog < MAX_EXPONENT
-        assert 0 < kroend <= kromax
+        if kromax:
+            assert 0 < kroend <= kromax <= 1.0
+        else:
+            assert 0 < kroend <= 1.0
 
         self.table["krog"] = kroend * self.table.son ** nog
 
-        # Special handling of the part close to sg=1, set to zero.
-        self.table.loc[
-            self.table["sg"] > 1 - self.sorg - self.swl - epsilon, "krog"
-        ] = 0
+        self._handle_endpoints_linearpart_oil(kroend, kromax)
 
-        # Set kromax at sg=0
-        self.table.loc[self.table["sg"] < epsilon, "krog"] = kromax
-
+        if not kromax:
+            kromax = 1
         self.krogcomment = "-- Corey krog, nog=%g, kroend=%g, kromax=%g\n" % (
             nog,
             kroend,
@@ -294,33 +346,19 @@ class GasOil(object):
         assert epsilon < l < MAX_EXPONENT
         assert epsilon < e < MAX_EXPONENT
         assert epsilon < t < MAX_EXPONENT
-        assert 0 < krgend <= 1.0
-        if krgmax is not None:
+        if krgmax:
             assert 0 < krgend <= krgmax <= 1.0
+        else:
+            assert 0 < krgend <= 1.0
+
         self.table["krg"] = (
             krgend
             * self.table.sgn ** l
             / ((self.table.sgn ** l) + e * (1 - self.table.sgn) ** t)
         )
-        self.table.loc[self.table.sg < self.sgcr - epsilon, "krg"] = 0
-        if self.krgendanchor == "sorg":
-            # Linear curve between krgendcanchor and 1-swl if krgend
-            # is anchored to sorg
-            if not krgmax:
-                krgmax = 1
-            tmp = pd.DataFrame(self.table[["sg"]])
-            tmp["sgendnorm"] = (tmp["sg"] - (1 - (self.sorg + self.swl))) / (self.sorg)
-            tmp["krg"] = tmp["sgendnorm"] * krgmax + (1 - tmp["sgendnorm"]) * krgend
-            self.table.loc[
-                self.table.sg >= (1 - (self.sorg + self.swl + epsilon)), "krg"
-            ] = tmp.loc[tmp.sg >= (1 - (self.sorg + self.swl + epsilon)), "krg"]
-        else:
-            self.table.loc[
-                self.table.sg > (1 - (self.swl + epsilon)), "krg"
-            ] = krgend  # krgmax should not be used when we don't
-            # anchor to sorg.
-            if krgmax is not None:
-                print("krgmax ignored when anchoring to sorg")
+
+        self._handle_endpoints_linearpart_gas(krgend, krgmax)
+
         if not krgmax:
             krgmax = 1
         self.krgcomment = "-- LET krg, l=%g, e=%g, t=%g, krgend=%g, krgmax=%g\n" % (
@@ -331,13 +369,15 @@ class GasOil(object):
             krgmax,
         )
 
-    def add_LET_oil(self, l=2, e=2, t=2, kroend=1, kromax=1):
+    def add_LET_oil(self, l=2, e=2, t=2, kroend=1, kromax=None):
         """Add oil (vs gas) relative permeability data through the Corey
         parametrization.
 
         A column named 'krog' will be added, replaced if it exists.
 
         All values where sg > 1 - sorg - swl are set to zero.
+
+        kromax is ignored if sgcr is close to zero
 
         Arguments:
             l (float): L parameter
@@ -349,7 +389,10 @@ class GasOil(object):
         assert epsilon < l < MAX_EXPONENT
         assert epsilon < e < MAX_EXPONENT
         assert epsilon < t < MAX_EXPONENT
-        assert 0 < kroend <= kromax
+        if kromax:
+            assert 0 < kroend <= kromax <= 1.0
+        else:
+            assert 0 < kroend <= 1.0
 
         # LET shape for the interval [sgcr, 1 - swl - sorg]
         self.table["krog"] = (
@@ -357,13 +400,11 @@ class GasOil(object):
             * self.table["son"] ** l
             / ((self.table["son"] ** l) + e * (1 - self.table["son"]) ** t)
         )
-        # Special handling of the part close to sg=1, set to zero.
-        self.table.loc[
-            self.table["sg"] > 1 - self.sorg - self.swl - epsilon, "krog"
-        ] = 0
 
-        # Set kromax at sg=0
-        self.table.loc[self.table["sg"] < epsilon, "krog"] = kromax
+        self._handle_endpoints_linearpart_oil(kroend, kromax)
+
+        if not kromax:
+            kromax = 1
         self.krogcomment = "-- LET krog, l=%g, e=%g, t=%g, kroend=%g, kromax=%g\n" % (
             l,
             e,

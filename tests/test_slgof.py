@@ -53,7 +53,7 @@ def test_slgof(swl, sorg, sgcr):
     check_table(slgof)
 
     # Requirements from E100 manual:
-    assert np.isclose(slgof["sl"].values[0], swl + sorg)
+    assert np.isclose(slgof["sl"].values[0], wog.gasoil.swl + wog.gasoil.sorg)
     assert np.isclose(slgof["krg"].values[-1], 0)
     assert np.isclose(slgof["krog"].values[0], 0)
 

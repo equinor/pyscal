@@ -45,27 +45,52 @@ class WaterOil(object):
         assert swl < 1 - sorw
         assert swcr < 1 - sorw
         assert swirr < 1 - sorw
-        assert isinstance(tag, str)
-
+        if not isinstance(tag, str):
+            tag = ""
         self.swirr = swirr
         self.swl = max(swl, swirr)  # Cannot allow swl < swirr. Warn?
+        if not np.isclose(sorw, 0) and sorw < 1 / SWINTEGERS:
+            # Give up handling sorw very close to zero
+            sorw = 0.0
+        if self.swl < swcr < self.swl + 1 / SWINTEGERS + epsilon:
+            # Give up handling swcr so close to swl
+            swcr = self.swl
         self.swcr = max(self.swl, swcr)  # Cannot allow swcr < swl. Warn?
         self.sorw = sorw
         self.h = h
         self.tag = tag
         sw = list(np.arange(self.swl, 1 - sorw, h)) + [self.swcr] + [1 - sorw] + [1]
         self.table = pd.DataFrame(sw, columns=["sw"])
+        # Ensure that we do not have sw values that are too close
+        # to each other, determined rougly by the distance 1/10000
         self.table["swint"] = list(
             map(int, list(map(round, self.table["sw"] * SWINTEGERS)))
         )
         self.table.drop_duplicates("swint", inplace=True)
+        # Now, sw=1-sorw might be accidentaly dropped, so make sure we
+        # have it by replacing the closest value by 1-sorw exactly
+        sorwindex = (self.table["sw"] - (1 - self.sorw)).abs().sort_values().index[0]
+        self.table.loc[sorwindex, "sw"] = 1 - self.sorw
+
+        # Same for sw=swcr:
+        swcrindex = (self.table["sw"] - (self.swcr)).abs().sort_values().index[0]
+        self.table.loc[swcrindex, "sw"] = self.swcr
+
+        # If sw=1 was dropped, then sorw was close to zero:
+        if not np.isclose(self.table["sw"].max(), 1.0):
+            # Add it as an extra row:
+            self.table.loc[len(self.table) + 1, "sw"] = 1.0
+
         self.table.sort_values(by="sw", inplace=True)
         self.table.reset_index(inplace=True)
         self.table = self.table[["sw"]]  # Drop the swint column
-        self.table["swn"] = (self.table.sw - self.swcr) / (
-            1 - self.swcr - sorw
-        )  # Normalize
-        self.table["son"] = (1 - self.table.sw - sorw) / (1 - swl - sorw)  # Normalized
+
+        # Normalize for krw:
+        self.table["swn"] = (self.table.sw - self.swcr) / (1 - self.swcr - self.sorw)
+        # Normalize for krow:
+        self.table["son"] = (1 - self.table.sw - self.sorw) / (
+            1 - self.sorw - self.swcr
+        )
 
         # Different normalization for Sw used for capillary pressure
         self.table["swnpc"] = (self.table.sw - swirr) / (1 - swirr)
@@ -141,7 +166,7 @@ class WaterOil(object):
             self.table["pc"] = pchip(self.table.sw)
             self.pccomment = "-- pc from tabular input" + pccomment + "\n"
 
-    def add_corey_water(self, nw=2, krwend=1, krwmax=1):
+    def add_corey_water(self, nw=2, krwend=1, krwmax=None):
         """ Add krw data through the Corey parametrization
 
         A column named 'krw' will be added. If it exists, it will
@@ -152,26 +177,81 @@ class WaterOil(object):
         interpolations in simulators. The corey parameter
         applies up to 1-sorw.
 
+        krwmax will be ignored if sorw is close to zero
+
         Args:
-            nw: float, Corey parameter for water.
-            krwend: float, value of krw at 1 - sorw.
-            krwmax: float, maximal value at Sw=1
+            nw (float): Corey parameter for water.
+            krwend (float): value of krw at 1 - sorw.
+            krwmax (float): maximal value at Sw=1. Default 1
 
         """
         assert epsilon < nw < MAX_EXPONENT
-        assert 0 < krwend <= krwmax <= 1.0
+        if krwmax:
+            assert 0 < krwend <= krwmax <= 1.0
+        else:
+            assert 0 < krwend <= 1.0
+
         self.table["krw"] = krwend * self.table.swn ** nw
-        self.table.loc[self.table.sw > (1 - self.sorw + epsilon), "krw"] = max(
-            krwmax, krwend
-        )
-        self.table.loc[self.table.sw < self.swcr, "krw"] = 0
+
+        self._handle_endpoints_linearpart_water(krwend, krwmax)
+
+        if not krwmax:
+            krwmax = 1
         self.krwcomment = "-- Corey krw, nw=%g, krwend=%g, krwmax=%g\n" % (
             nw,
             krwend,
             krwmax,
         )
 
-    def add_LET_water(self, l=2, e=2, t=2, krwend=1, krwmax=1):
+    def _handle_endpoints_linearpart_water(self, krwend, krwmax=None):
+        """Internal utility function to handle krw
+        around endpoints.
+
+        """
+        # Avoid machine accuracy problems around sorw (monotonicity):
+        self.table.loc[self.table["krw"] > krwmax, "krw"] = krwmax
+
+        # We assume there is no points between 1 - sorw and 1, so no
+        # need to excplicitly insert linearly interpolated values.
+        if self.sorw > 1.0 / SWINTEGERS:
+            if not krwmax:
+                krwmax = 1.0
+            self.table.loc[self.table["sw"] > (1 - self.sorw - epsilon), "krw"] = krwmax
+        else:
+            if krwmax:
+                print("Warning: krwmax ignored when sorw is zero")
+            self.table.loc[self.table["sw"] > (1 - self.sorw - epsilon), "krw"] = krwend
+        self.table.loc[np.isclose(self.table["sw"], 1 - self.sorw), "krw"] = krwend
+        self.table.loc[self.table.sw < self.swcr, "krw"] = 0
+
+    def _handle_endpoints_linearpart_oil(self, kroend, kromax=None):
+        """Internal utility function to handle krow
+        around endpoints.
+
+        Ensures we obey the endpoints, and linearity where needed"""
+
+        # Linear curve between swl and swcr:
+        self.table.loc[self.table["son"] > 1.0 + epsilon, "krow"] = np.nan
+        if self.swcr < self.swl + self.h:
+            if kromax:
+                print("Warning: kromax ignored when swcr is close to swl")
+            self.table.loc[self.table["sw"] <= self.swl + epsilon, "krow"] = kroend
+        else:
+            if not kromax:
+                kromax = 1
+            self.table.loc[self.table["sw"] <= self.swl + epsilon, "krow"] = kromax
+            interp_krow = (
+                self.table[["sw", "krow"]]
+                .set_index("sw")
+                .interpolate(method="index")["krow"]
+            )
+            self.table.loc[:, "krow"] = interp_krow.values
+
+        # Avoid machine accuracy problems around swcr (monotonicity):
+        self.table.loc[self.table["krow"] > kromax, "krow"] = kromax
+
+
+    def add_LET_water(self, l=2, e=2, t=2, krwend=1, krwmax=None):
         """Add krw data through LET parametrization
 
         It is assumed that there are no sw points between
@@ -179,30 +259,32 @@ class WaterOil(object):
         interpolations in simulators. The LET parameters
         apply up to 1-sorw.
 
+        krwmax will be ignored if sorw is close to zero.
+
         Args:
-            l: float
-            e: float
-            t: float
-            krwend: float
-            krwmax: float
+            l (float): LET parameter
+            e (float): LET parameter
+            t (float): LET parameter
+            krwend (float): value of krw at 1 - sorw
+            krwmax (float): maximal value at Sw=1. Default 1
         """
         assert epsilon < l < MAX_EXPONENT
         assert epsilon < e < MAX_EXPONENT
         assert epsilon < t < MAX_EXPONENT
-        assert 0 < krwend <= krwmax <= 1.0
+        if krwmax:
+            assert 0 < krwend <= krwmax <= 1.0
+        else:
+            assert 0 < krwend <= 1.0
+
         self.table["krw"] = (
             krwend
             * self.table.swn ** l
             / ((self.table.swn ** l) + e * (1 - self.table.swn) ** t)
         )
-        # Be careful here, because we want only Sw points at 1-sorw and 1
-        # between those values there should be no Sw, because we want
-        # linear interpolation in that range.
-        self.table.loc[self.table.sw > (1 - self.sorw - epsilon), "krw"] = max(
-            krwmax, krwend
-        )
-        self.table.loc[np.isclose(self.table.sw, 1 - self.sorw), "krw"] = krwend
-        self.table.loc[self.table.sw < self.swcr, "krw"] = 0
+        self._handle_endpoints_linearpart_water(krwend, krwmax)
+
+        if not krwmax:
+            krwmax = 1
         self.krwcomment = "-- LET krw, l=%g, e=%g, t=%g, krwend=%g, krwmax=%g\n" % (
             l,
             e,
@@ -211,21 +293,29 @@ class WaterOil(object):
             krwmax,
         )
 
-    def add_LET_oil(self, l=2, e=2, t=2, kroend=1, kromax=1):
+    def add_LET_oil(self, l=2, e=2, t=2, kroend=1, kromax=None):
         """
         Add kro data through LET parametrization
 
+        kromax will be ignored if swcr is close to swl.
+
         Args:
-            l: float
-            e: float
-            t: float
-            kroend: float
-            kromax: float
+            l (float): LET parameter
+            e (float): LET parameter
+            t (float): LET parameter
+            kroend (float): value of kro at swcr
+            kromax (float): maximal value of kro at sw=swl. Default 1
+
+        Returns:
+            None (modifies object)
         """
         assert epsilon < l < MAX_EXPONENT
         assert epsilon < e < MAX_EXPONENT
         assert epsilon < t < MAX_EXPONENT
-        assert 0 < kroend <= kromax <= 1.0
+        if kromax:
+            assert 0 < kroend <= kromax <= 1.0
+        else:
+            assert 0 < kroend <= 1.0
 
         self.table["krow"] = (
             kroend
@@ -233,7 +323,11 @@ class WaterOil(object):
             / ((self.table.son ** l) + e * (1 - self.table.son) ** t)
         )
         self.table.loc[self.table.sw >= (1 - self.sorw), "krow"] = 0
-        self.table.loc[self.table.sw < self.swl, "krow"] = kromax
+
+        self._handle_endpoints_linearpart_oil(kroend, kromax)
+
+        if not kromax:
+            kromax = 1
         self.krowcomment = "-- LET krow, l=%g, e=%g, t=%g, kroend=%g, kromax=%g\n" % (
             l,
             e,
@@ -242,15 +336,35 @@ class WaterOil(object):
             kromax,
         )
 
-    def add_corey_oil(self, now=2, kroend=1, kromax=1):
-        """Add kro data through the Corey parametrization,
-        paying attention to saturations above sorw and below swl"""
+    def add_corey_oil(self, now=2, kroend=1, kromax=None):
+        """Add kro data through the Corey parametrization
+
+        Corey applies to the interval between swcr and 1 - sorw
+
+        Curve is linear between swl and swcr, zero above 1 - sorw.
+
+        kromax will be ignored if swcr is close to swl.
+
+        Args:
+            now (float): Corey exponent
+            kroend (float): kro value at swcr
+            kromax (float): kro value at swl
+        Returns:
+            None (modifies object)
+        """
         assert epsilon < now < MAX_EXPONENT
-        assert 0 < kroend <= kromax <= 1.0
+        if kromax:
+            assert 0 < kroend <= kromax <= 1.0
+        else:
+            assert 0 < kroend <= 1.0
 
         self.table["krow"] = kroend * self.table.son ** now
         self.table.loc[self.table.sw >= (1 - self.sorw), "krow"] = 0
-        self.table.loc[self.table.sw < self.swl, "krow"] = kromax
+
+        self._handle_endpoints_linearpart_oil(kroend, kromax)
+
+        if not kromax:
+            kromax = 1
         self.krowcomment = "-- Corey krow, now=%g, kroend=%g, kromax=%g\n" % (
             now,
             kroend,
