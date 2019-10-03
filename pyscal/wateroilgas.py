@@ -2,6 +2,7 @@
 from __future__ import division, absolute_import
 from __future__ import print_function
 
+import logging
 import numpy as np
 import pandas as pd
 
@@ -229,4 +230,4 @@ EQUIL
             ["/project/res/bin/runeclipse", "-i", eclfile]
         )
         ecloutputlines = ecloutput.split("\n")
-        print([x for x in ecloutputlines if "Error" in x or "ERROR" in x])
+        logging.error([x for x in ecloutputlines if "Error" in x or "ERROR" in x])
