@@ -101,6 +101,14 @@ def test_factory_wateroil():
     assert "pc" not in wo.table
 
 
+def test_ambiguity():
+    factory = PyscalFactory()
+    wo = factory.create_water_oil(dict(swl=0.1, nw=10, Lw=1, Ew=1, Tw=1, h=0.1, no=2))
+    # Corey is picked here.
+    assert 'Corey' in wo.krwcomment
+    assert 'krw' in wo.table
+
+
 def test_factory_gasoil():
     """Test that we can create curves from dictionaries of parameters"""
 
@@ -144,6 +152,7 @@ def test_factory_gasoil():
     sgof = go.SGOF()
     assert "LET krg" in sgof
     assert "LET krog" in sgof
+
 
 
 def test_factory_wateroilgas():
