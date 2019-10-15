@@ -84,17 +84,17 @@ def test_simple_J_random(a, b, poro_ref, perm_ref, drho, g):
     check_table(wo.table)
 
 
-def test_petroph_pc():
+def test_normalized_J():
     wo = WaterOil(swirr=0.1, h=0.1)
     with pytest.raises(ValueError):
-        wo.add_petrophysical_pc(a=0.5, b=-0.2, poro=0.2, perm=10, sigma_costau=30)
+        wo.add_normalized_J(a=0.5, b=-0.2, poro=0.2, perm=10, sigma_costau=30)
 
     wo = WaterOil(swirr=0, swl=0.1, h=0.1)
-    wo.add_petrophysical_pc(a=0.5, b=-0.2, poro=0.2, perm=10, sigma_costau=30)
+    wo.add_normalized_J(a=0.5, b=-0.2, poro=0.2, perm=10, sigma_costau=30)
     check_table(wo.table)
 
     # Sample numerical tests taken from a prior implementation:
-    wo.add_petrophysical_pc(a=0.22, b=-0.5, perm=100, poro=0.2, sigma_costau=30)
+    wo.add_normalized_J(a=0.22, b=-0.5, perm=100, poro=0.2, sigma_costau=30)
     float_df_checker(wo.table, "sw", 0.1, "pc", 2.039969)
     float_df_checker(wo.table, "sw", 0.6, "pc", 0.056666)
     float_df_checker(wo.table, "sw", 1.0, "pc", 0.02040)
@@ -109,7 +109,7 @@ def test_petroph_pc():
     st.floats(min_value=0.0001, max_value=1000000000),  # perm
     st.floats(min_value=0, max_value=100000),  # sigma_costau
 )
-def test_petroph_pc_random(swirr, swl, a, b, poro, perm, sigma_costau):
+def test_norm_J_pc_random(swirr, swl, a, b, poro, perm, sigma_costau):
     """Test many possibilities of Pc-parameters.
 
     Outside of the tested range, there are many combination of parameters
@@ -118,9 +118,7 @@ def test_petroph_pc_random(swirr, swl, a, b, poro, perm, sigma_costau):
     swl = swirr + swl  # No point in getting too many AssertionErrors
     wo = WaterOil(swirr=swirr, swl=swl, h=0.01)
     try:
-        wo.add_petrophysical_pc(
-            a=a, b=b, perm=perm, poro=poro, sigma_costau=sigma_costau
-        )
+        wo.add_normalized_J(a=a, b=b, perm=perm, poro=poro, sigma_costau=sigma_costau)
     except (AssertionError, ValueError):  # when poro is < 0 f.ex.
         return
     check_table(wo.table)

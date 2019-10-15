@@ -424,9 +424,9 @@ class WaterOil(object):
             % (a, b, poro_ref, perm_ref, drho, g)
         )
 
-    def add_petrophysical_pc(self, a, b, poro, perm, sigma_costau):
+    def add_normalized_J(self, a, b, poro, perm, sigma_costau):
         """
-        Add capillary pressure in bars through standard petrophysical expression
+        Add capillary pressure in atm through a normalized J-function.
 
         .. math::
 
@@ -440,7 +440,7 @@ class WaterOil(object):
             a (float): a parameter
             b (float): b exponent (typically negative)
             poro (float): Porosity value, fraction between 0 and 1
-            perm (float): Permeability in mD
+            perm (float): Permeability value in mD
             sigma_costau (float): Interfacial tension in mN/m (typical value 30 mN/m)
 
         Returns:
@@ -472,16 +472,16 @@ class WaterOil(object):
             )
 
         # 1 atm is equivalent to 101325 pascal = 1.01325 bar
-        atm_to_bar = 1 / 101325
+        pascal_to_atm = 1.0 / 101325.0  # = 9.86923267e-6
 
         perm_D = perm / 1000
         perm_sq_meters = perm_D * 9.869233e-13
         tmp = (self.table["swnpc"] / a) ** (1.0 / b)
         tmp = tmp / math.sqrt(perm_sq_meters / poro)
         tmp = tmp * sigma_costau / 1000  # Converting mN/m to N/m
-        self.table["pc"] = tmp * atm_to_bar
+        self.table["pc"] = tmp * pascal_to_atm
         self.pccomment = (
-            "-- Standard petrophysical capillary pressure, in bars\n"
+            "-- Capillary pressure from normalized J-function, in atm\n"
             + "-- a=%g, b=%g, poro=%g, perm=%g mD, sigma_costau=%g mN/m\n"
             % (a, b, poro, perm, sigma_costau)
         )
