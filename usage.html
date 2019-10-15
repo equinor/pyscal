@@ -1,0 +1,348 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Usage &mdash; pyscal git documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script type="text/javascript" src="_static/jquery.js"></script>
+        <script type="text/javascript" src="_static/underscore.js"></script>
+        <script type="text/javascript" src="_static/doctools.js"></script>
+        <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="API for pyscal" href="modules.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home"> pyscal
+          
+
+          
+            
+            <img src="_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                git
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="readme.html">Introduction to pyscal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Usage</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#a-water-oil-curve">A water-oil curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gas-oil-curve">Gas-oil curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#water-oil-gas">Water-oil-gas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#interpolation-in-a-scal-recommendation">Interpolation in a SCAL recommendation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="modules.html">API for pyscal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">History</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyscal</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Usage</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/usage.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="usage">
+<h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
+<p>Pyscal is meant to be used directly by end users by its Python
+API. Additionally there are end-user scripts where parameter
+collection are inputted through Excel worksheets.</p>
+<div class="section" id="a-water-oil-curve">
+<h2>A water-oil curve<a class="headerlink" href="#a-water-oil-curve" title="Permalink to this headline">¶</a></h2>
+<p>To generate SWOF input for Eclipse or flow (OPM) with certain
+saturation endpoints and certain relative permeability endpoints, you
+may run the following code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">WaterOil</span>
+<span class="n">wo</span> <span class="o">=</span> <span class="n">WaterOil</span><span class="p">(</span><span class="n">swl</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">sorw</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+<span class="n">wo</span><span class="o">.</span><span class="n">add_corey_water</span><span class="p">(</span><span class="n">nw</span><span class="o">=</span><span class="mf">2.1</span><span class="p">,</span> <span class="n">krwend</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
+<span class="n">wo</span><span class="o">.</span><span class="n">add_corey_oil</span><span class="p">(</span><span class="n">now</span><span class="o">=</span><span class="mf">2.5</span><span class="p">,</span> <span class="n">kroend</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
+<span class="n">wo</span><span class="o">.</span><span class="n">add_simple_J</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="n">wo</span><span class="o">.</span><span class="n">SWOF</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>which will print a table that can be included in an Eclipse
+simulation. There are more parameters to adjust, check the
+corresponding API. Instead of corey, you can find a corresponding
+function for a LET-parametrization, or perhaps another capillary
+pressure function. Also adjust the parameter <code class="docutils literal notranslate"><span class="pre">h</span></code> to obtain a finer
+resolution on the saturation scale.</p>
+<p>The output from the code above:</p>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">SWOF</span>
+<span class="go">--</span>
+<span class="go">-- Sw Krw Krow Pc</span>
+<span class="go">-- swirr=0 swl=0.05 swcr=0.05 sorw=0.03</span>
+<span class="go">-- Corey krw, nw=2.1, krwend=0.6, krwmax=1</span>
+<span class="go">-- Corey krow, now=2.5, kroend=0.9, kromax=1</span>
+<span class="go">-- krw = krow @ sw=0.52365</span>
+<span class="go">-- Simplified J function for Pc;</span>
+<span class="go">--   a=5, b=-1.5, poro_ref=0.25, perm_ref=100 mD, drho=300 kg/m³, g=9.81 m/s²</span>
+<span class="go">0.0500000 0.0000000 0.9000000 0.6580748</span>
+<span class="go">0.1500000 0.0056780 0.6750059 0.1266466</span>
+<span class="go">0.2500000 0.0243422 0.4876455 0.0588600</span>
+<span class="go">0.3500000 0.0570363 0.3355461 0.0355327</span>
+<span class="go">0.4500000 0.1043573 0.2161630 0.0243731</span>
+<span class="go">0.5500000 0.1667377 0.1267349 0.0180379</span>
+<span class="go">0.6500000 0.2445200 0.0642167 0.0140398</span>
+<span class="go">0.7500000 0.3379891 0.0251669 0.0113276</span>
+<span class="go">0.8500000 0.4473895 0.0055300 0.0093886</span>
+<span class="go">0.9500000 0.5729360 0.0000627 0.0079459</span>
+<span class="go">0.9700000 0.6000000 0.0000000 0.0077015</span>
+<span class="go">1.0000000 1.0000000 0.0000000 0.0073575</span>
+<span class="go">/</span>
+</pre></div>
+</div>
+<p>Instead of <code class="docutils literal notranslate"><span class="pre">SWOF()</span></code>, you may ask for <code class="docutils literal notranslate"><span class="pre">SWFN()</span></code> or similar. Both
+family 1 and 2 of Eclipse keywords are supported.  For the Nexus
+simulator, you can use the function <code class="docutils literal notranslate"><span class="pre">WOTABLE()</span></code></p>
+</div>
+<div class="section" id="gas-oil-curve">
+<h2>Gas-oil curve<a class="headerlink" href="#gas-oil-curve" title="Permalink to this headline">¶</a></h2>
+<p>For a corresponding gas-oil curve, the API is analogous,</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">GasOil</span>
+<span class="n">go</span> <span class="o">=</span> <span class="n">GasOil</span><span class="p">(</span><span class="n">swl</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">sorg</span><span class="o">=</span><span class="mf">0.04</span><span class="p">)</span>
+<span class="n">go</span><span class="o">.</span><span class="n">add_corey_gas</span><span class="p">(</span><span class="n">ng</span><span class="o">=</span><span class="mf">1.2</span><span class="p">)</span>
+<span class="n">go</span><span class="o">.</span><span class="n">add_corey_oil</span><span class="p">(</span><span class="n">nog</span><span class="o">=</span><span class="mf">1.9</span><span class="p">)</span>
+<span class="k">print</span><span class="p">(</span><span class="n">go</span><span class="o">.</span><span class="n">SGOF</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>If you want to use your SGOF data together with a SWOF, it makes sense
+to share some of the saturation endpoints, as there are compatibility constraints.
+For this reason, it is recommended to initialize both the WaterOil and GasOil objects
+trough a WaterOilGas object.</p>
+</div>
+<div class="section" id="water-oil-gas">
+<h2>Water-oil-gas<a class="headerlink" href="#water-oil-gas" title="Permalink to this headline">¶</a></h2>
+<p>For three-phase, saturation endpoints must match to make sense in a reservoir simualation.
+The <code class="docutils literal notranslate"><span class="pre">WaterOilGas</span></code> object acts as a container for both a <code class="docutils literal notranslate"><span class="pre">WaterOil</span></code> object and a <code class="docutils literal notranslate"><span class="pre">GasOil</span></code>
+object to aid in consistency. Saturation endpoints is only input once during initialization.</p>
+<p>Typical usage could be:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">WaterOilGas</span>
+
+<span class="n">wog</span> <span class="o">=</span> <span class="n">WaterOilGas</span><span class="p">(</span><span class="n">swl</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">sorg</span><span class="o">=</span><span class="mf">0.04</span><span class="p">,</span> <span class="n">sorw</span><span class="o">=</span><span class="mf">0.03</span><span class="p">)</span>
+<span class="n">wog</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">add_corey_water</span><span class="p">()</span>
+<span class="n">wog</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">add_corey_oil</span><span class="p">()</span>
+<span class="n">wog</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">add_corey_gas</span><span class="p">()</span>
+<span class="n">wog</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">add_corey_water</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>As seen in the example, the object members <code class="docutils literal notranslate"><span class="pre">wateroil</span></code> and <code class="docutils literal notranslate"><span class="pre">gasoil</span></code> are <code class="docutils literal notranslate"><span class="pre">WaterOil</span></code> and <code class="docutils literal notranslate"><span class="pre">GasOil</span></code> objects
+having been initialized by the <code class="docutils literal notranslate"><span class="pre">WaterOilGas</span></code> initialization.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">WaterOilGas</span></code> objects can write <code class="docutils literal notranslate"><span class="pre">SWOF</span></code> tables (which is directly delegated to the <code class="docutils literal notranslate"><span class="pre">WaterOil</span></code> object, but
+it can also write a <code class="docutils literal notranslate"><span class="pre">SOF3</span></code> table.</p>
+<p>A method <code class="docutils literal notranslate"><span class="pre">.selfcheck()</span></code> can be run on the object to determine if there are any known consistency issues (which would
+crash a reservoir simulator) with the tabulated data.</p>
+</div>
+<div class="section" id="interpolation-in-a-scal-recommendation">
+<h2>Interpolation in a SCAL recommendation<a class="headerlink" href="#interpolation-in-a-scal-recommendation" title="Permalink to this headline">¶</a></h2>
+<p>A SCAL recommendation in this context is nothing but a container
+of three <cite>WaterOilGas</cite> objects, representing a <cite>low</cite>, a <cite>base</cite> and a
+<cite>high</cite> case. The prime use case for this container is the ability
+to interpolate between the low and high case.</p>
+<p>An interpolation parameter at <cite>-1</cite> returns the low case, <cite>0</cite> returns the
+base case and <cite>1</cite> returns the high case. Optionally, a separate
+interpolation parameter can be used for the <cite>GasOil</cite> interpolation
+if they are believed to be independent.</p>
+<p>SCAL recommendations are initialized with dictionaries
+for each of the low, base and high curve sets. LET or Corey
+parameterizations are assumed and the parameters are picked
+from the dictionaries. The dictionaries are typically parsed
+from a row in a Excel worksheet (via Pandas).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">SCALrecommendation</span>
+
+<span class="n">low</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="n">base</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="n">high</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+<span class="n">rec</span> <span class="o">=</span> <span class="n">SCALrecommendation</span><span class="p">(</span><span class="n">low</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">high</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
+
+<span class="n">interpolant</span> <span class="o">=</span> <span class="n">rec</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="o">-</span><span class="mf">0.4</span><span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">interpolant</span><span class="o">.</span><span class="n">SWOF</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="modules.html" class="btn btn-neutral float-right" title="API for pyscal" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright Equinor
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+    
+
+  <style>
+    /* Sidebar header (and topbar for mobile) */
+    .wy-side-nav-search, .wy-nav-top {
+      background: #ff1243;
+    }
+    /* Sidebar */
+    .wy-nav-side {
+      background: #474747;
+    }
+  </style>
+
+
+</body>
+</html>

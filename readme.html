@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal &mdash; pyscal git documentation</title>
+  <title>Introduction to pyscal &mdash; pyscal git documentation</title>
   
 
   
@@ -25,6 +25,7 @@
         <script type="text/javascript" src="_static/underscore.js"></script>
         <script type="text/javascript" src="_static/doctools.js"></script>
         <script type="text/javascript" src="_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -35,7 +36,7 @@
   <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="API for pyscal" href="modules.html" />
+    <link rel="next" title="Installation" href="installation.html" />
     <link rel="prev" title="Documentation for pyscal" href="index.html" /> 
 </head>
 
@@ -88,8 +89,11 @@
             
             
               <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">pyscal</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction to pyscal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">API for pyscal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="history.html">History</a></li>
 </ul>
 
             
@@ -135,7 +139,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>pyscal</li>
+      <li>Introduction to pyscal</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -154,10 +158,9 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <p># pyscal</p>
-<div class="section" id="pyscal">
-<h1>pyscal<a class="headerlink" href="#pyscal" title="Permalink to this headline">¶</a></h1>
-<p><em>pyscal</em> is a Python module for creating relative permeability input
+  <div class="section" id="introduction-to-pyscal">
+<h1>Introduction to pyscal<a class="headerlink" href="#introduction-to-pyscal" title="Permalink to this headline">¶</a></h1>
+<p><em>pyscal</em> is a Python module for creating <a class="reference external" href="http://en.wikipedia.org/wiki/Relative_permeability">relative permeability</a> input
 curves for Eclipse and Nexus, either directly from parametrizations or
 from a SCAL recommendation parameter set. Curves can be interpolated
 within a SCAL recommendation. History match can be done directly on
@@ -168,27 +171,25 @@ parsed from tabulated data.</p>
 <p>Output is in SWOF/SGOF for Eclipse, and WOTABLE/GOTABLE for Nexus</p>
 <p>Errors in the tables are catched and reported, similiar to Eclipse
 error checking.</p>
-<dl class="docutils">
-<dt>Classes:</dt>
-<dd><ul class="first last simple">
-<li>SCALrecommendation (container for three OilWaterGas objects)</li>
-<li>OilWaterGas (holds one WaterOil and one GasOil object)</li>
-<li>WaterOil (representing krw and krow for one facies/satnum)</li>
-<li>GasOil (representing krg and krog for one facies/satnum)</li>
+<dl class="simple">
+<dt>Classes:</dt><dd><ul class="simple">
+<li><p>SCALrecommendation (container for three OilWaterGas objects)</p></li>
+<li><p>OilWaterGas (holds one WaterOil and one GasOil object)</p></li>
+<li><p>WaterOil (representing krw and krow for one facies/satnum)</p></li>
+<li><p>GasOil (representing krg and krog for one facies/satnum)</p></li>
 </ul>
 </dd>
 </dl>
 <p>History matching relative permeability can be done in two ways:</p>
 <ol class="arabic simple">
-<li>Interpolation between low/base/high in a SCALrecommendation object,
+<li><p>Interpolation between low/base/high in a SCALrecommendation object,
 you may choose correlated parameter for wateroil and oilgas
-if you prefer.</li>
-<li>Direct matching on parameters that goes into WaterOil/GasOil,
-supposedly difficult if you use LET.</li>
+if you prefer.</p></li>
+<li><p>Direct matching on parameters that goes into WaterOil/GasOil,
+supposedly difficult if you use LET.</p></li>
 </ol>
 <p>For multiple SATNUMs, use one SCALrecommendation object for each and
-loop over your SATNUMs. See example in the test functions at the
-bottom</p>
+loop over your SATNUMs.</p>
 </div>
 
 
@@ -199,7 +200,7 @@ bottom</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="modules.html" class="btn btn-neutral float-right" title="API for pyscal" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="index.html" class="btn btn-neutral float-left" title="Documentation for pyscal" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

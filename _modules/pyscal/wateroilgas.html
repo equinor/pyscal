@@ -25,6 +25,7 @@
         <script type="text/javascript" src="../../_static/underscore.js"></script>
         <script type="text/javascript" src="../../_static/doctools.js"></script>
         <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -86,8 +87,11 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../readme.html">pyscal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html">Introduction to pyscal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules.html">API for pyscal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a></li>
 </ul>
 
             
@@ -155,6 +159,7 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">absolute_import</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
 
+<span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
@@ -170,16 +175,26 @@
 
 <span class="sd">    Use one object for each satnum.</span>
 
-<span class="sd">    Holds one WaterOil object and one GasOil object, ensuring</span>
-<span class="sd">    consistent endpoints.</span>
+<span class="sd">    One WaterOil and one GasOil object will be created, with</span>
+<span class="sd">    compatible saturation ranges. Access the class members &#39;wateroil&#39;</span>
+<span class="sd">    and &#39;gasoil&#39; directly to add curves.</span>
 
-<span class="sd">    Access the class members &#39;wateroil&#39; and &#39;gasoil&#39; directly to add curves</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    All arguments can be defaulted, and all are zero except h.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        swirr (float): Irreducible water saturation for capillary pressure</span>
+<span class="sd">        swl (float): First water saturation point in outputted tables.</span>
+<span class="sd">        swcr (float): Critical water saturation, water is immobile below this</span>
+<span class="sd">        sorw (float): Residual oil saturation</span>
+<span class="sd">        sgcr (float): Critical gas saturation, gas is immobile below this</span>
+<span class="sd">        h (float): Saturation intervals in generated tables.</span>
+<span class="sd">        tag (str): Optional text that will be included as comments.</span>
+<span class="sd">   &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">swirr</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">swl</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">swcr</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">sorw</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">sorg</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sgcr</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">swirr</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">swl</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">swcr</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">sorw</span><span class="o">=</span><span class="mf">0.00</span><span class="p">,</span> <span class="n">sorg</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sgcr</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Sets up saturation range for water (Sw) and gas (Sg)&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Sets up the saturation range for three phases&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span> <span class="o">=</span> <span class="n">WaterOil</span><span class="p">(</span>
             <span class="n">swirr</span><span class="o">=</span><span class="n">swirr</span><span class="p">,</span> <span class="n">swl</span><span class="o">=</span><span class="n">swl</span><span class="p">,</span> <span class="n">swcr</span><span class="o">=</span><span class="n">swcr</span><span class="p">,</span> <span class="n">sorw</span><span class="o">=</span><span class="n">sorw</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">tag</span>
         <span class="p">)</span>
@@ -372,7 +387,7 @@
             <span class="p">[</span><span class="s2">&quot;/project/res/bin/runeclipse&quot;</span><span class="p">,</span> <span class="s2">&quot;-i&quot;</span><span class="p">,</span> <span class="n">eclfile</span><span class="p">]</span>
         <span class="p">)</span>
         <span class="n">ecloutputlines</span> <span class="o">=</span> <span class="n">ecloutput</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ecloutputlines</span> <span class="k">if</span> <span class="s2">&quot;Error&quot;</span> <span class="ow">in</span> <span class="n">x</span> <span class="ow">or</span> <span class="s2">&quot;ERROR&quot;</span> <span class="ow">in</span> <span class="n">x</span><span class="p">])</span></div></div>
+        <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ecloutputlines</span> <span class="k">if</span> <span class="s2">&quot;Error&quot;</span> <span class="ow">in</span> <span class="n">x</span> <span class="ow">or</span> <span class="s2">&quot;ERROR&quot;</span> <span class="ow">in</span> <span class="n">x</span><span class="p">])</span></div></div>
 </pre></div>
 
            </div>

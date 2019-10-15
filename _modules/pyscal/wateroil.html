@@ -25,6 +25,7 @@
         <script type="text/javascript" src="../../_static/underscore.js"></script>
         <script type="text/javascript" src="../../_static/doctools.js"></script>
         <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
     <script type="text/javascript" src="../../_static/js/theme.js"></script>
 
@@ -86,8 +87,11 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../readme.html">pyscal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../readme.html">Introduction to pyscal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules.html">API for pyscal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a></li>
 </ul>
 
             
@@ -156,6 +160,7 @@
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
 
 <span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
@@ -190,40 +195,60 @@
         <span class="sd">&quot;&quot;&quot;Sets up the saturation range. Swirr is only relevant</span>
 <span class="sd">        for the capillary pressure, not for relperm data.&quot;&quot;&quot;</span>
 
-        <span class="k">assert</span> <span class="n">swirr</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">epsilon</span>
-        <span class="k">assert</span> <span class="n">swirr</span> <span class="o">&gt;</span> <span class="o">-</span><span class="n">epsilon</span>
-        <span class="k">assert</span> <span class="n">swl</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">epsilon</span>
-        <span class="k">assert</span> <span class="n">swl</span> <span class="o">&gt;</span> <span class="o">-</span><span class="n">epsilon</span>
-        <span class="k">assert</span> <span class="n">swcr</span> <span class="o">&gt;</span> <span class="o">-</span><span class="n">epsilon</span>
-        <span class="k">assert</span> <span class="n">swcr</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">epsilon</span>
-        <span class="k">assert</span> <span class="n">sorw</span> <span class="o">&gt;</span> <span class="o">-</span><span class="n">epsilon</span>
-        <span class="k">assert</span> <span class="n">sorw</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">epsilon</span>
-        <span class="k">assert</span> <span class="n">h</span> <span class="o">&gt;</span> <span class="n">epsilon</span>
-        <span class="k">assert</span> <span class="n">h</span> <span class="o">&lt;</span> <span class="mi">1</span>
+        <span class="k">assert</span> <span class="o">-</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">swirr</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">epsilon</span>
+        <span class="k">assert</span> <span class="o">-</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">swl</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">epsilon</span>
+        <span class="k">assert</span> <span class="o">-</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">swcr</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">epsilon</span>
+        <span class="k">assert</span> <span class="o">-</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">sorw</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">epsilon</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">h</span> <span class="o">&lt;=</span> <span class="mi">1</span>
         <span class="k">assert</span> <span class="n">swl</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span>
         <span class="k">assert</span> <span class="n">swcr</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span>
         <span class="k">assert</span> <span class="n">swirr</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span>
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
-
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">tag</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">swirr</span> <span class="o">=</span> <span class="n">swirr</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">swl</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">swl</span><span class="p">,</span> <span class="n">swirr</span><span class="p">)</span>  <span class="c1"># Cannot allow swl &lt; swirr. Warn?</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">sorw</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="n">sorw</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">SWINTEGERS</span><span class="p">:</span>
+            <span class="c1"># Give up handling sorw very close to zero</span>
+            <span class="n">sorw</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span> <span class="o">&lt;</span> <span class="n">swcr</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">SWINTEGERS</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">:</span>
+            <span class="c1"># Give up handling swcr so close to swl</span>
+            <span class="n">swcr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">swcr</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">swl</span><span class="p">,</span> <span class="n">swcr</span><span class="p">)</span>  <span class="c1"># Cannot allow swcr &lt; swl. Warn?</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span> <span class="o">=</span> <span class="n">sorw</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">=</span> <span class="n">h</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tag</span> <span class="o">=</span> <span class="n">tag</span>
         <span class="n">sw</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">swl</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span><span class="p">,</span> <span class="n">h</span><span class="p">))</span> <span class="o">+</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">swcr</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sw</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">])</span>
+        <span class="c1"># Ensure that we do not have sw values that are too close</span>
+        <span class="c1"># to each other, determined rougly by the distance 1/10000</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;swint&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
             <span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">round</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">SWINTEGERS</span><span class="p">)))</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="s2">&quot;swint&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># Now, sw=1-sorw might be accidentaly dropped, so make sure we</span>
+        <span class="c1"># have it by replacing the closest value by 1-sorw exactly</span>
+        <span class="n">sorwindex</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span><span class="p">))</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">sort_values</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sorwindex</span><span class="p">,</span> <span class="s2">&quot;sw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span>
+
+        <span class="c1"># Same for sw=swcr:</span>
+        <span class="n">swcrindex</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">swcr</span><span class="p">))</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">sort_values</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">swcrindex</span><span class="p">,</span> <span class="s2">&quot;sw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">swcr</span>
+
+        <span class="c1"># If sw=1 was dropped, then sorw was close to zero:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="mf">1.0</span><span class="p">):</span>
+            <span class="c1"># Add it as an extra row:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;sw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s2">&quot;sw&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;sw&quot;</span><span class="p">]]</span>  <span class="c1"># Drop the swint column</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;swn&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">sw</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">swcr</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span>
-            <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">swcr</span> <span class="o">-</span> <span class="n">sorw</span>
-        <span class="p">)</span>  <span class="c1"># Normalize</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;son&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">sw</span> <span class="o">-</span> <span class="n">sorw</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">swl</span> <span class="o">-</span> <span class="n">sorw</span><span class="p">)</span>  <span class="c1"># Normalized</span>
+
+        <span class="c1"># Normalize for krw:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;swn&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">sw</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">swcr</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">swcr</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span><span class="p">)</span>
+        <span class="c1"># Normalize for krow:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;son&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">sw</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span>
+            <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">swcr</span>
+        <span class="p">)</span>
 
         <span class="c1"># Different normalization for Sw used for capillary pressure</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;swnpc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">sw</span> <span class="o">-</span> <span class="n">swirr</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">swirr</span><span class="p">)</span>
@@ -237,6 +262,10 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">krwcomment</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">krowcomment</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pccomment</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+        <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">&quot;Initialized WaterOil with </span><span class="si">%s</span><span class="s2"> saturation points&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">))</span>
+        <span class="p">)</span>
 
 <div class="viewcode-block" id="WaterOil.add_oilwater_fromtable"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.add_oilwater_fromtable">[docs]</a>    <span class="k">def</span> <span class="nf">add_oilwater_fromtable</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -277,9 +306,10 @@
         <span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="k">import</span> <span class="n">PchipInterpolator</span>
 
         <span class="k">if</span> <span class="n">swcolname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span>
                 <span class="n">swcolname</span> <span class="o">+</span> <span class="s2">&quot; not found in dataframe, can&#39;t read table data&quot;</span>
             <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span>
         <span class="k">if</span> <span class="n">krwcolname</span> <span class="ow">in</span> <span class="n">df</span><span class="p">:</span>
             <span class="n">pchip</span> <span class="o">=</span> <span class="n">PchipInterpolator</span><span class="p">(</span>
                 <span class="n">df</span><span class="p">[</span><span class="n">swcolname</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span> <span class="n">df</span><span class="p">[</span><span class="n">krwcolname</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
@@ -299,7 +329,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pchip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">sw</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pccomment</span> <span class="o">=</span> <span class="s2">&quot;-- pc from tabular input&quot;</span> <span class="o">+</span> <span class="n">pccomment</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span></div>
 
-<div class="viewcode-block" id="WaterOil.add_corey_water"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.add_corey_water">[docs]</a>    <span class="k">def</span> <span class="nf">add_corey_water</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">krwend</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">krwmax</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="WaterOil.add_corey_water"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.add_corey_water">[docs]</a>    <span class="k">def</span> <span class="nf">add_corey_water</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">krwend</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">krwmax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Add krw data through the Corey parametrization</span>
 
 <span class="sd">        A column named &#39;krw&#39; will be added. If it exists, it will</span>
@@ -310,30 +340,80 @@
 <span class="sd">        interpolations in simulators. The corey parameter</span>
 <span class="sd">        applies up to 1-sorw.</span>
 
+<span class="sd">        krwmax will be ignored if sorw is close to zero</span>
+
 <span class="sd">        Args:</span>
-<span class="sd">            nw: float, Corey parameter for water.</span>
-<span class="sd">            krwend: float, value of krw at 1 - sorw.</span>
-<span class="sd">            krwmax: float, maximal value at Sw=1</span>
+<span class="sd">            nw (float): Corey parameter for water.</span>
+<span class="sd">            krwend (float): value of krw at 1 - sorw.</span>
+<span class="sd">            krwmax (float): maximal value at Sw=1. Default 1</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="n">nw</span> <span class="o">&gt;</span> <span class="n">epsilon</span>
-        <span class="k">assert</span> <span class="n">nw</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
-        <span class="k">assert</span> <span class="n">krwend</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
-        <span class="k">assert</span> <span class="n">krwmax</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
-        <span class="k">assert</span> <span class="n">krwmax</span> <span class="o">&gt;</span> <span class="mi">0</span>
-        <span class="k">assert</span> <span class="n">krwend</span> <span class="o">&lt;=</span> <span class="n">krwmax</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">nw</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
+        <span class="k">if</span> <span class="n">krwmax</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">krwend</span> <span class="o">&lt;=</span> <span class="n">krwmax</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">krwend</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">krwend</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">swn</span> <span class="o">**</span> <span class="n">nw</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">sw</span> <span class="o">&gt;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">),</span> <span class="s2">&quot;krw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
-            <span class="n">krwmax</span><span class="p">,</span> <span class="n">krwend</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">sw</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">swcr</span><span class="p">,</span> <span class="s2">&quot;krw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_handle_endpoints_linearpart_water</span><span class="p">(</span><span class="n">krwend</span><span class="p">,</span> <span class="n">krwmax</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">krwmax</span><span class="p">:</span>
+            <span class="n">krwmax</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">krwcomment</span> <span class="o">=</span> <span class="s2">&quot;-- Corey krw, nw=</span><span class="si">%g</span><span class="s2">, krwend=</span><span class="si">%g</span><span class="s2">, krwmax=</span><span class="si">%g</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
             <span class="n">nw</span><span class="p">,</span>
             <span class="n">krwend</span><span class="p">,</span>
             <span class="n">krwmax</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="WaterOil.add_LET_water"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.add_LET_water">[docs]</a>    <span class="k">def</span> <span class="nf">add_LET_water</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">krwend</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">krwmax</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_handle_endpoints_linearpart_water</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">krwend</span><span class="p">,</span> <span class="n">krwmax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Internal utility function to handle krw</span>
+<span class="sd">        around endpoints.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Avoid machine accuracy problems around sorw (monotonicity):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krw&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">krwmax</span><span class="p">,</span> <span class="s2">&quot;krw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">krwmax</span>
+
+        <span class="c1"># We assume there is no points between 1 - sorw and 1, so no</span>
+        <span class="c1"># need to excplicitly insert linearly interpolated values.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span> <span class="o">&gt;</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">SWINTEGERS</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">krwmax</span><span class="p">:</span>
+                <span class="n">krwmax</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span> <span class="o">-</span> <span class="n">epsilon</span><span class="p">),</span> <span class="s2">&quot;krw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">krwmax</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">krwmax</span><span class="p">:</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;krwmax ignored when sorw is zero&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span> <span class="o">-</span> <span class="n">epsilon</span><span class="p">),</span> <span class="s2">&quot;krw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">krwend</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">],</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span><span class="p">),</span> <span class="s2">&quot;krw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">krwend</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">sw</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">swcr</span><span class="p">,</span> <span class="s2">&quot;krw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span> <span class="nf">_handle_endpoints_linearpart_oil</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kroend</span><span class="p">,</span> <span class="n">kromax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Internal utility function to handle krow</span>
+<span class="sd">        around endpoints.</span>
+
+<span class="sd">        Ensures we obey the endpoints, and linearity where needed&quot;&quot;&quot;</span>
+
+        <span class="c1"># Linear curve between swl and swcr:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;son&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">,</span> <span class="s2">&quot;krow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">swcr</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">kromax</span><span class="p">:</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;kromax ignored when swcr is close to swl&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">,</span> <span class="s2">&quot;krow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kroend</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">kromax</span><span class="p">:</span>
+                <span class="n">kromax</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">,</span> <span class="s2">&quot;krow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kromax</span>
+            <span class="n">interp_krow</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;sw&quot;</span><span class="p">,</span> <span class="s2">&quot;krow&quot;</span><span class="p">]]</span>
+                <span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;sw&quot;</span><span class="p">)</span>
+                <span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">)[</span><span class="s2">&quot;krow&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;krow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">interp_krow</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="c1"># Avoid machine accuracy problems around swcr (monotonicity):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krow&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">kromax</span><span class="p">,</span> <span class="s2">&quot;krow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kromax</span>
+
+<div class="viewcode-block" id="WaterOil.add_LET_water"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.add_LET_water">[docs]</a>    <span class="k">def</span> <span class="nf">add_LET_water</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">krwend</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">krwmax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add krw data through LET parametrization</span>
 
 <span class="sd">        It is assumed that there are no sw points between</span>
@@ -341,37 +421,32 @@
 <span class="sd">        interpolations in simulators. The LET parameters</span>
 <span class="sd">        apply up to 1-sorw.</span>
 
+<span class="sd">        krwmax will be ignored if sorw is close to zero.</span>
+
 <span class="sd">        Args:</span>
-<span class="sd">            l: float</span>
-<span class="sd">            e: float</span>
-<span class="sd">            t: float</span>
-<span class="sd">            krwend: float</span>
-<span class="sd">            krwmax: float</span>
+<span class="sd">            l (float): LET parameter</span>
+<span class="sd">            e (float): LET parameter</span>
+<span class="sd">            t (float): LET parameter</span>
+<span class="sd">            krwend (float): value of krw at 1 - sorw</span>
+<span class="sd">            krwmax (float): maximal value at Sw=1. Default 1</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="n">l</span> <span class="o">&gt;</span> <span class="n">epsilon</span>
-        <span class="k">assert</span> <span class="n">e</span> <span class="o">&gt;</span> <span class="n">epsilon</span>
-        <span class="k">assert</span> <span class="n">t</span> <span class="o">&gt;</span> <span class="n">epsilon</span>
-        <span class="k">assert</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
-        <span class="k">assert</span> <span class="n">e</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
-        <span class="k">assert</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
-        <span class="k">assert</span> <span class="n">krwmax</span> <span class="o">&gt;</span> <span class="mi">0</span>
-        <span class="k">assert</span> <span class="n">krwmax</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
-        <span class="k">assert</span> <span class="n">krwend</span> <span class="o">&gt;</span> <span class="mi">0</span>
-        <span class="k">assert</span> <span class="n">krwend</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
-        <span class="k">assert</span> <span class="n">krwend</span> <span class="o">&lt;=</span> <span class="n">krwmax</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">e</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
+        <span class="k">if</span> <span class="n">krwmax</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">krwend</span> <span class="o">&lt;=</span> <span class="n">krwmax</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">krwend</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">krwend</span>
             <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">swn</span> <span class="o">**</span> <span class="n">l</span>
             <span class="o">/</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">swn</span> <span class="o">**</span> <span class="n">l</span><span class="p">)</span> <span class="o">+</span> <span class="n">e</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">swn</span><span class="p">)</span> <span class="o">**</span> <span class="n">t</span><span class="p">)</span>
         <span class="p">)</span>
-        <span class="c1"># Be careful here, because we want only Sw points at 1-sorw and 1</span>
-        <span class="c1"># between those values there should be no Sw, because we want</span>
-        <span class="c1"># linear interpolation in that range.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">sw</span> <span class="o">&gt;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span> <span class="o">-</span> <span class="n">epsilon</span><span class="p">),</span> <span class="s2">&quot;krw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span>
-            <span class="n">krwmax</span><span class="p">,</span> <span class="n">krwend</span>
-        <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">sw</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span><span class="p">),</span> <span class="s2">&quot;krw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">krwend</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">sw</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">swcr</span><span class="p">,</span> <span class="s2">&quot;krw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_handle_endpoints_linearpart_water</span><span class="p">(</span><span class="n">krwend</span><span class="p">,</span> <span class="n">krwmax</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">krwmax</span><span class="p">:</span>
+            <span class="n">krwmax</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">krwcomment</span> <span class="o">=</span> <span class="s2">&quot;-- LET krw, l=</span><span class="si">%g</span><span class="s2">, e=</span><span class="si">%g</span><span class="s2">, t=</span><span class="si">%g</span><span class="s2">, krwend=</span><span class="si">%g</span><span class="s2">, krwmax=</span><span class="si">%g</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
             <span class="n">l</span><span class="p">,</span>
             <span class="n">e</span><span class="p">,</span>
@@ -380,35 +455,41 @@
             <span class="n">krwmax</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="WaterOil.add_LET_oil"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.add_LET_oil">[docs]</a>    <span class="k">def</span> <span class="nf">add_LET_oil</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">kroend</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">kromax</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="WaterOil.add_LET_oil"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.add_LET_oil">[docs]</a>    <span class="k">def</span> <span class="nf">add_LET_oil</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">kroend</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">kromax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add kro data through LET parametrization</span>
 
+<span class="sd">        kromax will be ignored if swcr is close to swl.</span>
+
 <span class="sd">        Args:</span>
-<span class="sd">            l: float</span>
-<span class="sd">            e: float</span>
-<span class="sd">            t: float</span>
-<span class="sd">            kroend: float</span>
-<span class="sd">            kromax: float</span>
+<span class="sd">            l (float): LET parameter</span>
+<span class="sd">            e (float): LET parameter</span>
+<span class="sd">            t (float): LET parameter</span>
+<span class="sd">            kroend (float): value of kro at swcr</span>
+<span class="sd">            kromax (float): maximal value of kro at sw=swl. Default 1</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None (modifies object)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="n">l</span> <span class="o">&gt;</span> <span class="n">epsilon</span>
-        <span class="k">assert</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
-        <span class="k">assert</span> <span class="n">e</span> <span class="o">&gt;</span> <span class="n">epsilon</span>
-        <span class="k">assert</span> <span class="n">e</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
-        <span class="k">assert</span> <span class="n">t</span> <span class="o">&gt;</span> <span class="n">epsilon</span>
-        <span class="k">assert</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
-        <span class="k">assert</span> <span class="n">kroend</span> <span class="o">&gt;</span> <span class="mi">0</span>
-        <span class="k">assert</span> <span class="n">kroend</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
-        <span class="k">assert</span> <span class="n">kromax</span> <span class="o">&gt;</span> <span class="mi">0</span>
-        <span class="k">assert</span> <span class="n">kromax</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
-        <span class="k">assert</span> <span class="n">kroend</span> <span class="o">&lt;=</span> <span class="n">kromax</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">e</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
+        <span class="k">if</span> <span class="n">kromax</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">kroend</span> <span class="o">&lt;=</span> <span class="n">kromax</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">kroend</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">kroend</span>
             <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">son</span> <span class="o">**</span> <span class="n">l</span>
             <span class="o">/</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">son</span> <span class="o">**</span> <span class="n">l</span><span class="p">)</span> <span class="o">+</span> <span class="n">e</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">son</span><span class="p">)</span> <span class="o">**</span> <span class="n">t</span><span class="p">)</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">sw</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span><span class="p">),</span> <span class="s2">&quot;krow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">sw</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span><span class="p">,</span> <span class="s2">&quot;krow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kromax</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_handle_endpoints_linearpart_oil</span><span class="p">(</span><span class="n">kroend</span><span class="p">,</span> <span class="n">kromax</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">kromax</span><span class="p">:</span>
+            <span class="n">kromax</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">krowcomment</span> <span class="o">=</span> <span class="s2">&quot;-- LET krow, l=</span><span class="si">%g</span><span class="s2">, e=</span><span class="si">%g</span><span class="s2">, t=</span><span class="si">%g</span><span class="s2">, kroend=</span><span class="si">%g</span><span class="s2">, kromax=</span><span class="si">%g</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
             <span class="n">l</span><span class="p">,</span>
             <span class="n">e</span><span class="p">,</span>
@@ -417,19 +498,35 @@
             <span class="n">kromax</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="WaterOil.add_corey_oil"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.add_corey_oil">[docs]</a>    <span class="k">def</span> <span class="nf">add_corey_oil</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">now</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">kroend</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">kromax</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Add kro data through the Corey parametrization,</span>
-<span class="sd">        paying attention to saturations above sorw and below swl&quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="n">now</span> <span class="o">&gt;</span> <span class="n">epsilon</span>
-        <span class="k">assert</span> <span class="n">now</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
-        <span class="k">assert</span> <span class="n">kroend</span> <span class="o">&gt;</span> <span class="mi">0</span>
-        <span class="k">assert</span> <span class="n">kroend</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
-        <span class="k">assert</span> <span class="n">kromax</span> <span class="o">&gt;</span> <span class="mi">0</span>
-        <span class="k">assert</span> <span class="n">kromax</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
-        <span class="k">assert</span> <span class="n">kroend</span> <span class="o">&lt;=</span> <span class="n">kromax</span>
+<div class="viewcode-block" id="WaterOil.add_corey_oil"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.add_corey_oil">[docs]</a>    <span class="k">def</span> <span class="nf">add_corey_oil</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">now</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">kroend</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">kromax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Add kro data through the Corey parametrization</span>
+
+<span class="sd">        Corey applies to the interval between swcr and 1 - sorw</span>
+
+<span class="sd">        Curve is linear between swl and swcr, zero above 1 - sorw.</span>
+
+<span class="sd">        kromax will be ignored if swcr is close to swl.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            now (float): Corey exponent</span>
+<span class="sd">            kroend (float): kro value at swcr</span>
+<span class="sd">            kromax (float): kro value at swl</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            None (modifies object)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">now</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
+        <span class="k">if</span> <span class="n">kromax</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">kroend</span> <span class="o">&lt;=</span> <span class="n">kromax</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">kroend</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kroend</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">son</span> <span class="o">**</span> <span class="n">now</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">sw</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span><span class="p">),</span> <span class="s2">&quot;krow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">sw</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span><span class="p">,</span> <span class="s2">&quot;krow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kromax</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_handle_endpoints_linearpart_oil</span><span class="p">(</span><span class="n">kroend</span><span class="p">,</span> <span class="n">kromax</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">kromax</span><span class="p">:</span>
+            <span class="n">kromax</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">krowcomment</span> <span class="o">=</span> <span class="s2">&quot;-- Corey krow, now=</span><span class="si">%g</span><span class="s2">, kroend=</span><span class="si">%g</span><span class="s2">, kromax=</span><span class="si">%g</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
             <span class="n">now</span><span class="p">,</span>
             <span class="n">kroend</span><span class="p">,</span>
@@ -453,22 +550,20 @@
 <span class="sd">        g has SI units m/s², default value is 9.81</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="n">g</span> <span class="o">&gt;=</span> <span class="mi">0</span>
-        <span class="k">assert</span> <span class="n">a</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
-        <span class="k">assert</span> <span class="n">a</span> <span class="o">&gt;</span> <span class="o">-</span><span class="n">MAX_EXPONENT</span>
         <span class="k">assert</span> <span class="n">b</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
         <span class="k">assert</span> <span class="n">b</span> <span class="o">&gt;</span> <span class="o">-</span><span class="n">MAX_EXPONENT</span>
-        <span class="k">assert</span> <span class="n">poro_ref</span> <span class="o">&gt;=</span> <span class="mf">0.0</span>
-        <span class="k">assert</span> <span class="n">poro_ref</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
-        <span class="k">assert</span> <span class="n">perm_ref</span> <span class="o">&gt;=</span> <span class="mf">0.0</span>
+        <span class="k">assert</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">poro_ref</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
+        <span class="k">assert</span> <span class="n">perm_ref</span> <span class="o">&gt;</span> <span class="mf">0.0</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
                 <span class="s2">&quot;swl must larger than zero to avoid infinite capillary pressure&quot;</span>
             <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span>
 
         <span class="k">if</span> <span class="n">b</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span>
-                <span class="s2">&quot;Warning: positive b will give increasing capillary pressure with saturation&quot;</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;positive b will give increasing capillary pressure with saturation&quot;</span>
             <span class="p">)</span>
 
         <span class="c1"># drho = rwo_w - rho_o, in units g/cc</span>
@@ -484,6 +579,69 @@
             <span class="s2">&quot;-- Simplified J function for Pc; </span><span class="se">\n</span><span class="s2">--   &quot;</span>
             <span class="o">+</span> <span class="s2">&quot;a=</span><span class="si">%g</span><span class="s2">, b=</span><span class="si">%g</span><span class="s2">, poro_ref=</span><span class="si">%g</span><span class="s2">, perm_ref=</span><span class="si">%g</span><span class="s2"> mD, drho=</span><span class="si">%g</span><span class="s2"> kg/m³, g=</span><span class="si">%g</span><span class="s2"> m/s²</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="o">%</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">poro_ref</span><span class="p">,</span> <span class="n">perm_ref</span><span class="p">,</span> <span class="n">drho</span><span class="p">,</span> <span class="n">g</span><span class="p">)</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="WaterOil.add_normalized_J"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.add_normalized_J">[docs]</a>    <span class="k">def</span> <span class="nf">add_normalized_J</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">poro</span><span class="p">,</span> <span class="n">perm</span><span class="p">,</span> <span class="n">sigma_costau</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add capillary pressure in bar through a normalized J-function.</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            p_c = \\frac{\left(\\frac{S_w}{a}\\right)^{\\frac{1}{b}}</span>
+<span class="sd">            \sigma \cos \\tau}{\sqrt{\\frac{k}{\phi}}}</span>
+
+<span class="sd">        The Sw saturation used in the formula is normalized with respect</span>
+<span class="sd">        to the swirr parameter.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            a (float): a parameter</span>
+<span class="sd">            b (float): b exponent (typically negative)</span>
+<span class="sd">            poro (float): Porosity value, fraction between 0 and 1</span>
+<span class="sd">            perm (float): Permeability value in mD</span>
+<span class="sd">            sigma_costau (float): Interfacial tension in mN/m (typical value 30 mN/m)</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            None. Modifies pc column in self.table, using bar as pressure unit.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="nb">abs</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="nb">abs</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">poro</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">perm</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sigma_costau</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">b</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">swirr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span><span class="p">):</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;swl must be set larger than swirr to avoid infinite p_c&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;swl must be larger than swirr&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.01</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;b exponent is very small, risk of infinite capillary pressure&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.01</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;a parameter is very small, risk of infinite capillary pressure&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;a parameter is very high, risk of infinite capillary pressure&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># 1 atm is equivalent to 101325 pascal = 1.01325 bar</span>
+        <span class="c1"># pascal_to_atm = 1.0 / 101325.0  # = 9.86923267e-6</span>
+        <span class="n">pascal_to_bar</span> <span class="o">=</span> <span class="mf">1e-5</span>
+
+        <span class="n">perm_D</span> <span class="o">=</span> <span class="n">perm</span> <span class="o">/</span> <span class="mi">1000</span>
+        <span class="n">perm_sq_meters</span> <span class="o">=</span> <span class="n">perm_D</span> <span class="o">*</span> <span class="mf">9.869233e-13</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;swnpc&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">a</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">b</span><span class="p">)</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="n">tmp</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">perm_sq_meters</span> <span class="o">/</span> <span class="n">poro</span><span class="p">)</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="n">tmp</span> <span class="o">*</span> <span class="n">sigma_costau</span> <span class="o">/</span> <span class="mi">1000</span>  <span class="c1"># Converting mN/m to N/m</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span> <span class="o">*</span> <span class="n">pascal_to_bar</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pccomment</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;-- Capillary pressure from normalized J-function, in bar</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="o">+</span> <span class="s2">&quot;-- a=</span><span class="si">%g</span><span class="s2">, b=</span><span class="si">%g</span><span class="s2">, poro=</span><span class="si">%g</span><span class="s2">, perm=</span><span class="si">%g</span><span class="s2"> mD, sigma_costau=</span><span class="si">%g</span><span class="s2"> mN/m</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="o">%</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">poro</span><span class="p">,</span> <span class="n">perm</span><span class="p">,</span> <span class="n">sigma_costau</span><span class="p">)</span>
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="WaterOil.add_skjaeveland_pc"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.add_skjaeveland_pc">[docs]</a>    <span class="k">def</span> <span class="nf">add_skjaeveland_pc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cw</span><span class="p">,</span> <span class="n">co</span><span class="p">,</span> <span class="n">aw</span><span class="p">,</span> <span class="n">ao</span><span class="p">,</span> <span class="n">swr</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sor</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -504,16 +662,16 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">inputerror</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="n">cw</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;cw must be larger or equal to zero&quot;</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;cw must be larger or equal to zero&quot;</span><span class="p">)</span>
             <span class="n">inputerror</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="n">co</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;co must be less than zero&quot;</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;co must be less than zero&quot;</span><span class="p">)</span>
             <span class="n">inputerror</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="n">aw</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;aw must be larger than zero&quot;</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;aw must be larger than zero&quot;</span><span class="p">)</span>
             <span class="n">inputerror</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="n">ao</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ao must be larger than zero&quot;</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;ao must be larger than zero&quot;</span><span class="p">)</span>
             <span class="n">inputerror</span> <span class="o">=</span> <span class="kc">True</span>
 
         <span class="k">if</span> <span class="n">swr</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
@@ -522,13 +680,13 @@
             <span class="n">sor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span>
 
         <span class="k">if</span> <span class="n">swr</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sor</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;swr (swirr) must be less than 1 - sor&quot;</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;swr (swirr) must be less than 1 - sor&quot;</span><span class="p">)</span>
             <span class="n">inputerror</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="n">swr</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">swr</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;swr must be contained in [0,1]&quot;</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;swr must be contained in [0,1]&quot;</span><span class="p">)</span>
             <span class="n">inputerror</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="n">sor</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">sor</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;sor must be contained in [0,1]&quot;</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;sor must be contained in [0,1]&quot;</span><span class="p">)</span>
             <span class="n">inputerror</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="n">inputerror</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
@@ -637,34 +795,35 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">error</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">sw</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">&gt;</span> <span class="o">-</span><span class="n">epsilon</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error: sw data not strictly increasing&quot;</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;sw data not strictly increasing&quot;</span><span class="p">)</span>
             <span class="n">error</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">krw</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="n">epsilon</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error: krw data not monotonely increasing&quot;</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;krw data not monotonically increasing&quot;</span><span class="p">)</span>
             <span class="n">error</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="p">(</span>
             <span class="s2">&quot;krow&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span>
             <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">krow</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">epsilon</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
         <span class="p">):</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error: krow data not monotonely decreasing&quot;</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;krow data not monotonically decreasing&quot;</span><span class="p">)</span>
             <span class="n">error</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="s2">&quot;pc&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">pc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="o">-</span><span class="n">epsilon</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">pc</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error: pc data not strictly decreasing&quot;</span><span class="p">)</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;pc data not strictly decreasing&quot;</span><span class="p">)</span>
                 <span class="n">error</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="s2">&quot;pc&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">pc</span><span class="o">.</span><span class="n">max</span><span class="p">()):</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error: pc goes to infinity. Maybe swirr=swl?&quot;</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;pc goes to infinity. Maybe swirr=swl?&quot;</span><span class="p">)</span>
             <span class="n">error</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="s2">&quot;sw&quot;</span><span class="p">,</span> <span class="s2">&quot;krw&quot;</span><span class="p">,</span> <span class="s2">&quot;krow&quot;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">)):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
                 <span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">col</span><span class="p">]),</span> <span class="mi">10</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="n">epsilon</span><span class="p">)</span>
                 <span class="ow">and</span> <span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">col</span><span class="p">]),</span> <span class="mi">10</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">)</span>
             <span class="p">):</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error: </span><span class="si">%s</span><span class="s2"> data should be contained in [0,1]&quot;</span> <span class="o">%</span> <span class="n">col</span><span class="p">)</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> data should be contained in [0,1]&quot;</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span>
                 <span class="n">error</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="n">error</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">False</span>
         <span class="k">else</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;WaterOil object is checked to be valid&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">True</span></div>
 
 <div class="viewcode-block" id="WaterOil.SWOF"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.SWOF">[docs]</a>    <span class="k">def</span> <span class="nf">SWOF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
