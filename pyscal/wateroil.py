@@ -426,7 +426,7 @@ class WaterOil(object):
 
     def add_normalized_J(self, a, b, poro, perm, sigma_costau):
         """
-        Add capillary pressure in atm through a normalized J-function.
+        Add capillary pressure in bar through a normalized J-function.
 
         .. math::
 
@@ -472,16 +472,17 @@ class WaterOil(object):
             )
 
         # 1 atm is equivalent to 101325 pascal = 1.01325 bar
-        pascal_to_atm = 1.0 / 101325.0  # = 9.86923267e-6
+        # pascal_to_atm = 1.0 / 101325.0  # = 9.86923267e-6
+        pascal_to_bar = 1e-5
 
         perm_D = perm / 1000
         perm_sq_meters = perm_D * 9.869233e-13
         tmp = (self.table["swnpc"] / a) ** (1.0 / b)
         tmp = tmp / math.sqrt(perm_sq_meters / poro)
         tmp = tmp * sigma_costau / 1000  # Converting mN/m to N/m
-        self.table["pc"] = tmp * pascal_to_atm
+        self.table["pc"] = tmp * pascal_to_bar
         self.pccomment = (
-            "-- Capillary pressure from normalized J-function, in atm\n"
+            "-- Capillary pressure from normalized J-function, in bar\n"
             + "-- a=%g, b=%g, poro=%g, perm=%g mD, sigma_costau=%g mN/m\n"
             % (a, b, poro, perm, sigma_costau)
         )

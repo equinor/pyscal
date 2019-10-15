@@ -93,11 +93,13 @@ def test_normalized_J():
     wo.add_normalized_J(a=0.5, b=-0.2, poro=0.2, perm=10, sigma_costau=30)
     check_table(wo.table)
 
-    # Sample numerical tests taken from a prior implementation:
+    # Sample numerical tests taken from a prior implementation
+    # NB: Prior implementation created Pc in atm, we create in bar
+    bar_to_atm = 1.0 / 1.01325
     wo.add_normalized_J(a=0.22, b=-0.5, perm=100, poro=0.2, sigma_costau=30)
-    float_df_checker(wo.table, "sw", 0.1, "pc", 2.039969)
-    float_df_checker(wo.table, "sw", 0.6, "pc", 0.056666)
-    float_df_checker(wo.table, "sw", 1.0, "pc", 0.02040)
+    float_df_checker(wo.table, "sw", 0.1, "pc", 2.039969 * bar_to_atm)
+    float_df_checker(wo.table, "sw", 0.6, "pc", 0.056666 * bar_to_atm)
+    float_df_checker(wo.table, "sw", 1.0, "pc", 0.02040 * bar_to_atm)
 
 
 @given(
