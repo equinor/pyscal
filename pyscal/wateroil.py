@@ -424,6 +424,69 @@ class WaterOil(object):
             % (a, b, poro_ref, perm_ref, drho, g)
         )
 
+    def add_normalized_J(self, a, b, poro, perm, sigma_costau):
+        """
+        Add capillary pressure in bar through a normalized J-function.
+
+        .. math::
+
+            p_c = \\frac{\left(\\frac{S_w}{a}\\right)^{\\frac{1}{b}}
+            \sigma \cos \\tau}{\sqrt{\\frac{k}{\phi}}}
+
+        The Sw saturation used in the formula is normalized with respect
+        to the swirr parameter.
+
+        Args:
+            a (float): a parameter
+            b (float): b exponent (typically negative)
+            poro (float): Porosity value, fraction between 0 and 1
+            perm (float): Permeability value in mD
+            sigma_costau (float): Interfacial tension in mN/m (typical value 30 mN/m)
+
+        Returns:
+            None. Modifies pc column in self.table, using bar as pressure unit.
+        """
+        assert epsilon < abs(a) < MAX_EXPONENT
+        assert epsilon < abs(b) < MAX_EXPONENT
+        assert epsilon < poro <= 1.0
+        assert epsilon < perm
+        assert isinstance(sigma_costau, (int, float))
+
+        if b < 0 and np.isclose(self.swirr, self.swl):
+            logging.error("swl must be set larger than swirr to avoid infinite p_c")
+            raise ValueError("swl must be larger than swirr")
+
+        if abs(b) < 0.01:
+            logging.warning(
+                "b exponent is very small, risk of infinite capillary pressure"
+            )
+
+        if abs(a) < 0.01:
+            logging.warning(
+                "a parameter is very small, risk of infinite capillary pressure"
+            )
+
+        if abs(a) > 5:
+            logging.warning(
+                "a parameter is very high, risk of infinite capillary pressure"
+            )
+
+        # 1 atm is equivalent to 101325 pascal = 1.01325 bar
+        # pascal_to_atm = 1.0 / 101325.0  # = 9.86923267e-6
+        pascal_to_bar = 1e-5
+
+        perm_D = perm / 1000
+        perm_sq_meters = perm_D * 9.869233e-13
+        tmp = (self.table["swnpc"] / a) ** (1.0 / b)
+        tmp = tmp / math.sqrt(perm_sq_meters / poro)
+        tmp = tmp * sigma_costau / 1000  # Converting mN/m to N/m
+        self.table["pc"] = tmp * pascal_to_bar
+        self.pccomment = (
+            "-- Capillary pressure from normalized J-function, in bar\n"
+            + "-- a=%g, b=%g, poro=%g, perm=%g mD, sigma_costau=%g mN/m\n"
+            % (a, b, poro, perm, sigma_costau)
+        )
+
     def add_skjaeveland_pc(self, cw, co, aw, ao, swr=None, sor=None):
         """Add capillary pressure from the Skjæveland correlation,
 

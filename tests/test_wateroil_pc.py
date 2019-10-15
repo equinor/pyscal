@@ -5,11 +5,21 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import pytest
+
 from hypothesis import given, settings
 import hypothesis.strategies as st
 
 from pyscal import WaterOil
 from pyscal.constants import EPSILON, MAX_EXPONENT
+
+from test_wateroil import float_df_checker
+
+
+def series_decreasing(series):
+    """Weaker than pd.Series.is_monotonic_decreasing,
+    allows constant parts"""
+    return (series.diff().dropna() < 1e-8).all()
 
 
 def check_table(df):
@@ -21,7 +31,7 @@ def check_table(df):
     assert df["swn"].is_monotonic
     assert df["son"].is_monotonic_decreasing
     assert df["swnpc"].is_monotonic
-    assert df["pc"].is_monotonic_decreasing
+    assert series_decreasing(df["pc"])
 
 
 def test_simple_J():
@@ -71,4 +81,46 @@ def test_simple_J_random(a, b, poro_ref, perm_ref, drho, g):
     """
     wo = WaterOil(swl=0.01)
     wo.add_simple_J(a=a, b=b, poro_ref=poro_ref, perm_ref=perm_ref, drho=drho, g=g)
+    check_table(wo.table)
+
+
+def test_normalized_J():
+    wo = WaterOil(swirr=0.1, h=0.1)
+    with pytest.raises(ValueError):
+        wo.add_normalized_J(a=0.5, b=-0.2, poro=0.2, perm=10, sigma_costau=30)
+
+    wo = WaterOil(swirr=0, swl=0.1, h=0.1)
+    wo.add_normalized_J(a=0.5, b=-0.2, poro=0.2, perm=10, sigma_costau=30)
+    check_table(wo.table)
+
+    # Sample numerical tests taken from a prior implementation
+    # NB: Prior implementation created Pc in atm, we create in bar
+    bar_to_atm = 1.0 / 1.01325
+    wo.add_normalized_J(a=0.22, b=-0.5, perm=100, poro=0.2, sigma_costau=30)
+    float_df_checker(wo.table, "sw", 0.1, "pc", 2.039969 * bar_to_atm)
+    float_df_checker(wo.table, "sw", 0.6, "pc", 0.056666 * bar_to_atm)
+    float_df_checker(wo.table, "sw", 1.0, "pc", 0.02040 * bar_to_atm)
+
+
+@given(
+    st.floats(min_value=0, max_value=0.1),  # swirr
+    st.floats(min_value=0.01, max_value=0.1),  # swl - swirr
+    st.floats(min_value=0.01, max_value=5),  # a
+    st.floats(min_value=-0.9 * MAX_EXPONENT, max_value=-0.01),  # b
+    st.floats(min_value=-1, max_value=1.5),  # poro
+    st.floats(min_value=0.0001, max_value=1000000000),  # perm
+    st.floats(min_value=0, max_value=100000),  # sigma_costau
+)
+def test_norm_J_pc_random(swirr, swl, a, b, poro, perm, sigma_costau):
+    """Test many possibilities of Pc-parameters.
+
+    Outside of the tested range, there are many combination of parameters
+    that can give infinite capillary pressure"""
+
+    swl = swirr + swl  # No point in getting too many AssertionErrors
+    wo = WaterOil(swirr=swirr, swl=swl, h=0.01)
+    try:
+        wo.add_normalized_J(a=a, b=b, perm=perm, poro=poro, sigma_costau=sigma_costau)
+    except (AssertionError, ValueError):  # when poro is < 0 f.ex.
+        return
     check_table(wo.table)
