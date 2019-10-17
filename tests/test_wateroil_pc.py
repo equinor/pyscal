@@ -7,11 +7,11 @@ from __future__ import print_function
 
 import pytest
 
-from hypothesis import given, settings
+from hypothesis import given
 import hypothesis.strategies as st
 
 from pyscal import WaterOil
-from pyscal.constants import EPSILON, MAX_EXPONENT
+from pyscal.constants import MAX_EXPONENT
 
 from test_wateroil import float_df_checker
 

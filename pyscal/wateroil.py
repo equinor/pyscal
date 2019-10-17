@@ -160,6 +160,9 @@ class WaterOil(object):
         if krwcolname in df:
             if not np.isclose(df[swcolname].min(), self.table["sw"].min()):
                 raise ValueError("Incompatible swl")
+            # Verify that incoming data is increasing (or level):
+            if not (df[krwcolname].diff().dropna() > -epsilon).all():
+                raise ValueError("Incoming krw not increasing")
             pchip = PchipInterpolator(
                 df[swcolname].astype(float), df[krwcolname].astype(float)
             )
@@ -168,7 +171,8 @@ class WaterOil(object):
         if krowcolname in df:
             if not np.isclose(df[swcolname].min(), self.table["sw"].min()):
                 raise ValueError("Incompatible swl")
-
+            if not (df[krowcolname].diff().dropna() < epsilon).all():
+                raise ValueError("Incoming krow not decreasing")
             pchip = PchipInterpolator(
                 df[swcolname].astype(float), df[krowcolname].astype(float)
             )
@@ -180,6 +184,10 @@ class WaterOil(object):
                 raise ValueError("Too large swl for pc interpolation")
             if df[swcolname].max() < self.table["sw"].max():
                 raise ValueError("max(sw) of incoming data not large enough")
+            # If nonzero, then it must be decreasing:
+            if df[pccolname].abs().sum() > 0:
+                if not (df[pccolname].diff().dropna() < 0.0).all():
+                    raise ValueError("Incoming pc not decreasing")
             pchip = PchipInterpolator(
                 df[swcolname].astype(float), df[pccolname].astype(float)
             )

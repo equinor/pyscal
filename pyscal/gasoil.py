@@ -205,6 +205,8 @@ class GasOil(object):
             )
             logging.warning("         Do not trust the result near the endpoint.")
         if krgcolname in df:
+            if not (df[krgcolname].diff().dropna() > -epsilon).all():
+                raise ValueError("Incoming krg not increasing")
             pchip = PchipInterpolator(
                 df[sgcolname].astype(float), df[krgcolname].astype(float)
             )
@@ -214,6 +216,8 @@ class GasOil(object):
             self.table["krg"].fillna(method="bfill", inplace=True)
             self.krgcomment = "-- krg from tabular input" + krgcomment + "\n"
         if krogcolname in df:
+            if not (df[krogcolname].diff().dropna() < epsilon).all():
+                raise ValueError("Incoming krogcolname not decreasing")
             pchip = PchipInterpolator(
                 df[sgcolname].astype(float), df[krogcolname].astype(float)
             )
@@ -227,6 +231,8 @@ class GasOil(object):
                 raise ValueError("Too large sgcr for pcog interpolation")
             if df[sgcolname].max() < self.table["sg"].max():
                 raise ValueError("Too large swl for pcog interpolation")
+            if not (df[pccolname].diff().dropna() < 0.0).all():
+                raise ValueError("Incoming pc not decreasing")
             pchip = PchipInterpolator(
                 df[sgcolname].astype(float), df[pccolname].astype(float)
             )
