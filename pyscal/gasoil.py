@@ -158,7 +158,11 @@ class GasOil(object):
                 % (self.swirr, self.sgcr, self.swl, self.sorg, self.krgendanchor)
             )
 
-    def add_gasoil_fromtable(
+    def add_gasoil_fromtable(self, *args, **kwargs):
+        logging.warning("add_gasoil_fromtable() is deprecated, use add_fromtable()")
+        self.add_fromtable(*args, **kwargs)
+
+    def add_fromtable(
         self,
         df,
         sgcolname="Sg",
@@ -192,6 +196,8 @@ class GasOil(object):
                 sgcolname + " not found in dataframe, " + "can't read table data"
             )
             raise ValueError
+        if df[sgcolname].min() > 0.0:
+            raise ValueError("sg must start at zero")
         swlfrominput = 1 - df[sgcolname].max()
         if abs(swlfrominput - self.swl) < epsilon:
             logging.warning(
@@ -216,6 +222,11 @@ class GasOil(object):
             self.table["krog"].fillna(method="bfill", inplace=True)
             self.krogcomment = "-- krog from tabular input" + krogcomment + "\n"
         if pccolname in df:
+            # Incoming dataframe must cover the range:
+            if df[sgcolname].min() > self.table["sg"].min():
+                raise ValueError("Too large sgcr for pcog interpolation")
+            if df[sgcolname].max() < self.table["sg"].max():
+                raise ValueError("Too large swl for pcog interpolation")
             pchip = PchipInterpolator(
                 df[sgcolname].astype(float), df[pccolname].astype(float)
             )
