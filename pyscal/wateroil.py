@@ -184,6 +184,12 @@ class WaterOil(object):
                 raise ValueError("Too large swl for pc interpolation")
             if df[swcolname].max() < self.table["sw"].max():
                 raise ValueError("max(sw) of incoming data not large enough")
+            if np.isinf(df[pccolname]).any():
+                logging.warning(
+                    "Infinity pc values detected. Will be dropped. Risk of extrapolation"
+                )
+            df = df.replace([np.inf, -np.inf], np.nan)
+            df.dropna(subset=[pccolname], how="all", inplace=True)
             # If nonzero, then it must be decreasing:
             if df[pccolname].abs().sum() > 0:
                 if not (df[pccolname].diff().dropna() < 0.0).all():
@@ -192,6 +198,8 @@ class WaterOil(object):
                 df[swcolname].astype(float), df[pccolname].astype(float)
             )
             self.table["pc"] = pchip(self.table["sw"])
+            if np.isnan(self.table["pc"]).any() or np.isinf(self.table["pc"]).any():
+                raise ValueError("inf/nan in interpolated data, check input")
             self.pccomment = "-- pc from tabular input" + pccomment + "\n"
 
     def add_corey_water(self, nw=2, krwend=1, krwmax=None):

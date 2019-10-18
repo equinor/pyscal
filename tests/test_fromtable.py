@@ -162,10 +162,32 @@ def test_ow_invalidcurves():
     pc2 = pd.DataFrame(
         columns=["Sw", "pc"], data=[[0.15, 1], [0.4, 0.4], [0.6, 0.6], [1, 0]]
     )
-    wo = WaterOil(swl=krow2["Sw"].min(), h=0.1)
+    wo = WaterOil(swl=pc2["Sw"].min(), h=0.1)
     with pytest.raises(ValueError):
         # Should get notified that pc is not monotonous
         wo.add_fromtable(pc2, pccolname="pc")
+
+    pc3 = pd.DataFrame(
+        columns=["Sw", "pc"],
+        data=[[0, np.inf], [0.1, 1], [0.4, 0.4], [0.6, 0.2], [1, 0]],
+    )
+    wo = WaterOil(swl=pc3["Sw"].min(), h=0.1)
+    # Will get warning that infinite numbers are ignored.
+    # In this case the extrapolation is quite bad.
+    wo.add_fromtable(pc3, pccolname="pc")
+
+    # But when we later set swl larger, then we should
+    # not bother about the infinity:
+    wo = WaterOil(swl=0.1, h=0.1)
+    wo.add_fromtable(pc3, pccolname="pc")
+    assert np.isclose(wo.table["pc"].max(), pc3.iloc[1:]["pc"].max())
+
+    # Choosing endpoint slightly to the left of 0.1 incurs
+    # extrapolation. A warning will be given
+    wo = WaterOil(swl=0.05, h=0.1)
+    wo.add_fromtable(pc3, pccolname="pc")
+    # Inequality due to extrapolation:
+    assert wo.table["pc"].max() > pc3.iloc[1:]["pc"].max()
 
 
 def test_go_invalidcurves():

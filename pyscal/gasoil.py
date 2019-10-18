@@ -237,6 +237,8 @@ class GasOil(object):
                 df[sgcolname].astype(float), df[pccolname].astype(float)
             )
             self.table["pc"] = pchip(self.table.sg, extrapolate=False)
+            if np.isnan(self.table["pc"]).any() or np.isinf(self.table["pc"]).any():
+                raise ValueError("inf/nan in interpolated data, check input")
             self.pccomment = "-- pc from tabular input" + pccomment + "\n"
 
     def _handle_endpoints_linearpart_gas(self, krgend, krgmax=None):
