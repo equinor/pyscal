@@ -38,6 +38,10 @@ def check_table(df):
     assert series_decreasing(df["krow"])
     assert series_increasing(df["krw"])
     assert np.isclose(df["krw"].iloc[0], 0.0)
+    assert (0 <= df["krw"]).all()
+    assert (df["krw"] <= 1.0).all()
+    assert (0 <= df["krow"]).all()
+    assert (df["krow"] <= 1.0).all()
 
 
 @settings(deadline=1000)
@@ -77,7 +81,7 @@ def test_wateroil_let1(l, e, t, krwend, krwmax):
     assert len(swofstr) > 100
 
 
-@settings(max_examples=1000)
+@settings(max_examples=1000, deadline=500)
 @given(
     st.floats(min_value=0, max_value=0.3),
     st.floats(min_value=0, max_value=0.3),

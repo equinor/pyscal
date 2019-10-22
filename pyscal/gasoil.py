@@ -163,7 +163,11 @@ class GasOil(object):
                 % (self.swirr, self.sgcr, self.swl, self.sorg, self.krgendanchor)
             )
 
-    def add_gasoil_fromtable(
+    def add_gasoil_fromtable(self, *args, **kwargs):
+        logging.warning("add_gasoil_fromtable() is deprecated, use add_fromtable()")
+        self.add_fromtable(*args, **kwargs)
+
+    def add_fromtable(
         self,
         df,
         sgcolname="Sg",
@@ -197,6 +201,8 @@ class GasOil(object):
                 sgcolname + " not found in dataframe, " + "can't read table data"
             )
             raise ValueError
+        if df[sgcolname].min() > 0.0:
+            raise ValueError("sg must start at zero")
         swlfrominput = 1 - df[sgcolname].max()
         if abs(swlfrominput - self.swl) < epsilon:
             logging.warning(
@@ -204,6 +210,8 @@ class GasOil(object):
             )
             logging.warning("         Do not trust the result near the endpoint.")
         if krgcolname in df:
+            if not (df[krgcolname].diff().dropna() > -epsilon).all():
+                raise ValueError("Incoming krg not increasing")
             pchip = PchipInterpolator(
                 df[sgcolname].astype(float), df[krgcolname].astype(float)
             )
@@ -213,6 +221,8 @@ class GasOil(object):
             self.table["krg"].fillna(method="bfill", inplace=True)
             self.krgcomment = "-- krg from tabular input" + krgcomment + "\n"
         if krogcolname in df:
+            if not (df[krogcolname].diff().dropna() < epsilon).all():
+                raise ValueError("Incoming krogcolname not decreasing")
             pchip = PchipInterpolator(
                 df[sgcolname].astype(float), df[krogcolname].astype(float)
             )
@@ -221,10 +231,19 @@ class GasOil(object):
             self.table["krog"].fillna(method="bfill", inplace=True)
             self.krogcomment = "-- krog from tabular input" + krogcomment + "\n"
         if pccolname in df:
+            # Incoming dataframe must cover the range:
+            if df[sgcolname].min() > self.table["sg"].min():
+                raise ValueError("Too large sgcr for pcog interpolation")
+            if df[sgcolname].max() < self.table["sg"].max():
+                raise ValueError("Too large swl for pcog interpolation")
+            if not (df[pccolname].diff().dropna() < 0.0).all():
+                raise ValueError("Incoming pc not decreasing")
             pchip = PchipInterpolator(
                 df[sgcolname].astype(float), df[pccolname].astype(float)
             )
             self.table["pc"] = pchip(self.table.sg, extrapolate=False)
+            if np.isnan(self.table["pc"]).any() or np.isinf(self.table["pc"]).any():
+                raise ValueError("inf/nan in interpolated data, check input")
             self.pccomment = "-- pc from tabular input" + pccomment + "\n"
 
     def _handle_endpoints_linearpart_gas(self, krgend, krgmax=None):

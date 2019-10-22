@@ -110,7 +110,11 @@ class WaterOil(object):
             "Initialized WaterOil with %s saturation points", str(len(self.table))
         )
 
-    def add_oilwater_fromtable(
+    def add_oilwater_fromtable(self, *args, **kwargs):
+        logging.warning("add_oilwater_fromtable() is deprecated, use add_fromtable()")
+        self.add_fromtable(*args, **kwargs)
+
+    def add_fromtable(
         self,
         df,
         swcolname="Sw",
@@ -154,22 +158,48 @@ class WaterOil(object):
             )
             raise ValueError
         if krwcolname in df:
+            if not np.isclose(df[swcolname].min(), self.table["sw"].min()):
+                raise ValueError("Incompatible swl")
+            # Verify that incoming data is increasing (or level):
+            if not (df[krwcolname].diff().dropna() > -epsilon).all():
+                raise ValueError("Incoming krw not increasing")
             pchip = PchipInterpolator(
                 df[swcolname].astype(float), df[krwcolname].astype(float)
             )
-            self.table["krw"] = pchip(self.table.sw)
+            self.table["krw"] = pchip(self.table["sw"])
             self.krwcomment = "-- krw from tabular input" + krwcomment + "\n"
         if krowcolname in df:
+            if not np.isclose(df[swcolname].min(), self.table["sw"].min()):
+                raise ValueError("Incompatible swl")
+            if not (df[krowcolname].diff().dropna() < epsilon).all():
+                raise ValueError("Incoming krow not decreasing")
             pchip = PchipInterpolator(
                 df[swcolname].astype(float), df[krowcolname].astype(float)
             )
             self.table["krow"] = pchip(self.table.sw)
             self.krowcomment = "-- krow from tabular input" + krowcomment + "\n"
         if pccolname in df:
+            # Incoming dataframe must cover the range:
+            if df[swcolname].min() > self.table["sw"].min():
+                raise ValueError("Too large swl for pc interpolation")
+            if df[swcolname].max() < self.table["sw"].max():
+                raise ValueError("max(sw) of incoming data not large enough")
+            if np.isinf(df[pccolname]).any():
+                logging.warning(
+                    "Infinity pc values detected. Will be dropped. Risk of extrapolation"
+                )
+            df = df.replace([np.inf, -np.inf], np.nan)
+            df.dropna(subset=[pccolname], how="all", inplace=True)
+            # If nonzero, then it must be decreasing:
+            if df[pccolname].abs().sum() > 0:
+                if not (df[pccolname].diff().dropna() < 0.0).all():
+                    raise ValueError("Incoming pc not decreasing")
             pchip = PchipInterpolator(
                 df[swcolname].astype(float), df[pccolname].astype(float)
             )
-            self.table["pc"] = pchip(self.table.sw)
+            self.table["pc"] = pchip(self.table["sw"])
+            if np.isnan(self.table["pc"]).any() or np.isinf(self.table["pc"]).any():
+                raise ValueError("inf/nan in interpolated data, check input")
             self.pccomment = "-- pc from tabular input" + pccomment + "\n"
 
     def add_corey_water(self, nw=2, krwend=1, krwmax=None):
