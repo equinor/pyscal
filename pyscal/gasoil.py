@@ -122,6 +122,11 @@ class GasOil(object):
         if not np.isclose(self.table["sg"].max(), 1 - self.swl):
             # Add it as an extra row:
             self.table.loc[len(self.table) + 1, "sg"] = 1 - self.swl
+        # Ensure the value closest to 1-swl is actually 1-swl:
+        swl_right_index = (
+            (self.table["sg"] - (1 - self.swl)).abs().sort_values().index[0]
+        )
+        self.table.loc[swl_right_index, "sg"] = 1 - self.swl
 
         self.table.sort_values(by="sg", inplace=True)
         self.table.reset_index(inplace=True)
