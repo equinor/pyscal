@@ -27,6 +27,7 @@ WO_LET_OIL = ["low", "eow", "tow"]
 WO_LET_OIL_ALT = ["lo", "eo", "to"]  # Alternative parameter names.
 WO_OIL_ENDPOINTS = ["kromax", "kroend"]
 WO_SIMPLE_J = ["a", "b", "poro_ref", "perm_ref", "drho"]  # "g" is optional
+WO_NORM_J = ["a", "b", "poro", "perm", "sigma_costau"]
 
 GO_INIT = ["swirr", "sgcr", "sorg", "swl", "krgendanchor", "h", "tag"]
 GO_COREY_GAS = ["ng"]
@@ -148,13 +149,15 @@ class PyscalFactory(object):
 
         # Capillary pressure:
         params_simple_j = slicedict(params, WO_SIMPLE_J + ["g"])
+        params_norm_j = slicedict(params, WO_NORM_J)
         if set(WO_SIMPLE_J).issubset(set(params_simple_j)):
             wateroil.add_simple_J(**params_simple_j)
+        elif set(WO_NORM_J).issubset(set(params_norm_j)):
+            wateroil.add_normalized_J(**params_norm_j)
         else:
             logging.warning(
                 "Missing or ambiguous parameters for capillary pressure in WaterOil object"
             )
-
         return wateroil
 
     @staticmethod

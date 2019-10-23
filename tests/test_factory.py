@@ -194,6 +194,7 @@ def test_xls_factory():
     scalinput = pd.read_excel(xlsxfile).set_index(["SATNUM", "CASE"])
 
     for ((satnum, _), params) in scalinput.iterrows():
+        assert satnum
         wog = PyscalFactory.create_water_oil_gas(params.to_dict())
         swof = wog.SWOF()
         assert "LET krw" in swof
@@ -222,3 +223,88 @@ def test_xls_scalrecommendation():
         scalrec = PyscalFactory.create_scal_recommendation(dictofdict)
         print(scalrec.interpolate(-0.5).SWOF())
         scalrec.interpolate(+0.5)
+
+
+def parse_gensatfuncline(conf_line):
+    """Utility function that emulates how gensatfunc could parse
+    its configuration lines in a pyscalfactory compatible fashion
+
+    Args:
+        conf_line (str): gensatfunc config line
+    Returns:
+        dict
+    """
+
+    # This is how the config line should be interpreted in terms of
+    # pyscal parameters. Note that we are case insensitive in the
+    # factory class
+    line_syntax = [
+        "CMD",
+        "Lw",
+        "Ew",
+        "Tw",
+        "Lo",
+        "Eo",
+        "To",
+        "Sorw",
+        "Swl",
+        "krwend",
+        "steps",
+        "perm",
+        "poro",
+        "a",
+        "b",
+        "sigma_costau",
+    ]
+
+    if len(conf_line.split()) > len(line_syntax):
+        raise ValueError("Too many items on gensatfunc confline")
+
+    params = {}
+    for (idx, value) in enumerate(conf_line.split()):
+        if idx > 0:  # Avoid the CMD
+            params[line_syntax[idx]] = float(value)
+
+    # The 'steps' is not supported in pyscal, convert it:
+    if "steps" in params:
+        params["h"] = 1.0 / params["steps"]
+
+    if "krwend" not in params:  # Last mandatory item
+        raise ValueError("Too few items on gensatfunc confline")
+
+    return params
+
+
+def test_gensatfunc():
+    """Test how the external tool gen_satfunc could use
+    the factory functionality"""
+
+    factory = PyscalFactory()
+
+    # Example config line for gen_satfunc:
+    conf_line_pc = "RELPERM 4 2 1 3 2 1 0.15 0.10 0.5 20 100 0.2 0.22 -0.5 30"
+
+    wo = factory.create_water_oil(parse_gensatfuncline(conf_line_pc))
+    swof = wo.SWOF()
+    assert "0.17580" in swof  # krw at sw=0.65
+    assert "0.0127" in swof  # krow at sw=0.65
+    assert "Capillary pressure from normalized J-function" in swof
+    assert "2.0669" in swof  # pc at swl
+
+    conf_line_min = "RELPERM 1 2 3 1 2 3 0.1 0.15 0.5 20"
+    wo = factory.create_water_oil(parse_gensatfuncline(conf_line_min))
+    swof = wo.SWOF()
+    assert "Zero capillary pressure" in swof
+
+    conf_line_few = "RELPERM 1 2 3 1 2 3"
+    with pytest.raises(ValueError):
+        parse_gensatfuncline(conf_line_few)
+
+    # sigma_costau is missing here:
+    conf_line_almost_pc = "RELPERM 4 2 1 3 2 1 0.15 0.10 0.5 20 100 0.2 0.22 -0.5"
+    wo = factory.create_water_oil(parse_gensatfuncline(conf_line_almost_pc))
+    swof = wo.SWOF()
+    # The factory will not recognize the normalized J-function
+    # when costau is missing. Any error message would be the responsibility
+    # of the parser
+    assert "Zero capillary pressure" in swof
