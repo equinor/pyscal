@@ -55,6 +55,12 @@ class PyscalFactory(object):
         wo.add_corey_oil(now=2)
         # is equivalent to:
         wo = factory.create_water_oil(dict(sorw=0.05, nw=3, now=2))
+
+    Parameter names to factory functions are case *insensitive*, while
+    the add_*() parameters are not. This is becase the add_*() parameters
+    are meant as a Python API, while the factory class is there to aid
+    users when input is written in a different context, like an Excel
+    spreadsheet.
     """
 
     @staticmethod
@@ -66,6 +72,9 @@ class PyscalFactory(object):
 
         Don't rely on behaviour of you supply both Corey and LET at
         the same time.
+
+        Parameter names in the dictionary are case insensitive. You
+        can use Swirr, swirr, sWirR, swiRR etc.
 
         NB: the add_LET_* methods have the names 'l', 'e' and 't'
         in their signatures, which is not precise enough in this
@@ -156,7 +165,11 @@ class PyscalFactory(object):
             wateroil.add_normalized_J(**params_norm_j)
         else:
             logging.warning(
-                "Missing or ambiguous parameters for capillary pressure in WaterOil object"
+                "Missing or ambiguous parameters for capillary pressure in WaterOil object. Using zero."
+            )
+        if not wateroil.selfcheck():
+            raise ValueError(
+                ("Incomplete WaterOil object, some parameters " "missing to factory")
             )
         return wateroil
 
@@ -238,6 +251,10 @@ class PyscalFactory(object):
             logging.warning(
                 "Missing or ambiguous parameters for oil curve in GasOil object"
             )
+        if not gasoil.selfcheck():
+            raise ValueError(
+                ("Incomplete GasOil object, some parameters " "missing to factory")
+            )
 
         return gasoil
 
@@ -265,7 +282,10 @@ class PyscalFactory(object):
         # must then guarantee that they are compatible.
         wateroilgas.wateroil = wateroil
         wateroilgas.gasoil = gasoil
-
+        if not wateroilgas.selfcheck():
+            raise ValueError(
+                ("Incomplete WaterOilGas object, " "some parameters missing to factory")
+            )
         return wateroilgas
 
     @staticmethod
@@ -277,7 +297,8 @@ class PyscalFactory(object):
         The keys in in the dictionary *must* be "low", "base" and "high".
 
         The value for "low" must be a new dictionary with saturation
-        endpoints and LET/Corey parameters;
+        endpoints and LET/Corey parameters, as you would feed it to
+        the create_water_oil_gas() factory function;
 
            Lw, Ew, Tw, Low, Eow, Tow,
            Lg, Eg, Tg, Log, Eog, Tog,
@@ -288,6 +309,10 @@ class PyscalFactory(object):
         """
         if not isinstance(params, dict):
             raise ValueError("Input must be a dictionary (of dictionaries)")
+
+        # For case insensitiveness, all keys are converted to lower case:
+        params = {key.lower(): value for (key, value) in params.items()}
+
         if "low" not in params:
             raise ValueError('"low" case not supplied')
         if "base" not in params:
@@ -297,13 +322,23 @@ class PyscalFactory(object):
         if not all([isinstance(x, dict) for x in params.values()]):
             raise ValueError("All values in parameter dict must be dictionaries")
 
-        # For case insensitiveness, all keys are converted to lower case:
-        params = {key.lower(): value for (key, value) in params.items()}
+        errored = False
+        wog_low = PyscalFactory.create_water_oil_gas(params["low"])
+        if not wog_low.selfcheck():
+            logging.error("Incomplete parameter set for low case")
+            errored = True
+        wog_base = PyscalFactory.create_water_oil_gas(params["base"])
+        if not wog_base.selfcheck():
+            logging.error("Incomplete parameter set for base case")
+            errored = True
+        wog_high = PyscalFactory.create_water_oil_gas(params["high"])
+        if not wog_high.selfcheck():
+            logging.error("Incomplete parameter set for high case")
+            errored = True
+        if errored:
+            raise ValueError("Incomplete SCAL recommendation")
 
-        wateroil_low = PyscalFactory.create_water_oil_gas(params["low"])
-        wateroil_base = PyscalFactory.create_water_oil_gas(params["base"])
-        wateroil_high = PyscalFactory.create_water_oil_gas(params["high"])
-        scal = SCALrecommendation(wateroil_low, wateroil_base, wateroil_high, tag, h)
+        scal = SCALrecommendation(wog_low, wog_base, wog_high, tag, h)
         return scal
 
     @staticmethod

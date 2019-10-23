@@ -11,7 +11,7 @@ import pandas as pd
 
 import pytest
 
-from pyscal import WaterOil, GasOil, WaterOilGas, PyscalFactory
+from pyscal import WaterOil, GasOil, PyscalFactory
 
 
 def test_factory_wateroil():
@@ -21,30 +21,35 @@ def test_factory_wateroil():
 
     factory = PyscalFactory()
 
-    wo = factory.create_water_oil()
-    assert isinstance(wo, WaterOil)
+    # Factory refuses to create incomplete defaulted objects.
+    with pytest.raises(ValueError):
+        factory.create_water_oil()
 
     with pytest.raises(TypeError):
         # (it must be a dictionary)
         factory.create_water_oil(swirr=0.01)  # noqa
 
-    wo = factory.create_water_oil(dict(tag="Good sand"))
-    assert wo.tag == "Good sand"
-
-    wo = factory.create_water_oil(dict(swirr=0.01, swl=0.1, bogus="foobar"))
+    wo = factory.create_water_oil(
+        dict(
+            swirr=0.01,
+            swl=0.1,
+            bogus="foobar",
+            tag="Good sand",
+            nw=3,
+            now=2,
+            krwend=0.2,
+            krwmax=0.5,
+        )
+    )
     assert isinstance(wo, WaterOil)
     assert wo.swirr == 0.01
     assert wo.swl == 0.1
-    assert "krw" not in wo.table  # A zero column would be okay though.
-
-    # (static functions)
-    wo = PyscalFactory.create_water_oil(dict(nw=3, krwend=0.2, krwmax=0.5))
-    assert isinstance(wo, WaterOil)
+    assert wo.tag == "Good sand"
     assert "krw" in wo.table
     assert "Corey" in wo.krwcomment
     assert wo.table["krw"].max() == 0.2  # Because sorw==0 by default
 
-    wo = factory.create_water_oil(dict(nw=3, sorw=0.1, krwend=0.2, krwmax=0.5))
+    wo = factory.create_water_oil(dict(nw=3, now=2, sorw=0.1, krwend=0.2, krwmax=0.5))
     assert isinstance(wo, WaterOil)
     assert "krw" in wo.table
     assert "Corey" in wo.krwcomment
@@ -52,11 +57,11 @@ def test_factory_wateroil():
 
     # Ambiguous works, but we don't guarantee that this results
     # in LET or Corey.
-    wo = factory.create_water_oil(dict(nw=3, Lw=2, Ew=2, Tw=2))
+    wo = factory.create_water_oil(dict(nw=3, Lw=2, Ew=2, Tw=2, now=3))
     assert "krw" in wo.table
     assert "Corey" in wo.krwcomment or "LET" in wo.krwcomment
 
-    wo = factory.create_water_oil(dict(Lw=2, Ew=2, Tw=2, krwend=1))
+    wo = factory.create_water_oil(dict(Lw=2, Ew=2, Tw=2, krwend=1, now=4))
     assert isinstance(wo, WaterOil)
     assert "krw" in wo.table
     assert wo.table["krw"].max() == 1.0
@@ -72,12 +77,6 @@ def test_factory_wateroil():
     assert wo.table["krow"].max() == 1
     assert "LET" in wo.krwcomment
     assert "LET" in wo.krowcomment
-
-    # Some missing parameters, will give warnings.
-    wo = factory.create_water_oil(dict(Lw=2, Tw=2, Low=3, Eow=3))
-    assert isinstance(wo, WaterOil)
-    assert "krw" not in wo.table
-    assert "krow" not in wo.table
 
     # Add capillary pressure
     wo = factory.create_water_oil(
@@ -103,7 +102,9 @@ def test_factory_wateroil():
 
 def test_ambiguity():
     factory = PyscalFactory()
-    wo = factory.create_water_oil(dict(swl=0.1, nw=10, Lw=1, Ew=1, Tw=1, h=0.1, no=2))
+    wo = factory.create_water_oil(
+        dict(swl=0.1, nw=10, Lw=1, Ew=1, Tw=1, now=2, h=0.1, no=2)
+    )
     # Corey is picked here.
     assert "Corey" in wo.krwcomment
     assert "krw" in wo.table
@@ -116,23 +117,18 @@ def test_factory_gasoil():
 
     factory = PyscalFactory()
 
-    go = factory.create_gas_oil()
-    assert isinstance(go, GasOil)
-
     with pytest.raises(TypeError):
         # (this must be a dictionary)
         factory.create_gas_oil(swirr=0.01)  # noqa
 
-    go = factory.create_gas_oil(dict(tag="Good sand"))
-    assert go.tag == "Good sand"
-
-    go = factory.create_gas_oil(dict(swirr=0.01, swl=0.1, sgcr=0.05))
+    go = factory.create_gas_oil(
+        dict(swirr=0.01, swl=0.1, sgcr=0.05, tag="Good sand", ng=1, nog=2)
+    )
     assert isinstance(go, GasOil)
     assert go.sgcr == 0.05
     assert go.swl == 0.1
     assert go.swirr == 0.01
-
-    go = factory.create_gas_oil(dict(ng=1.1, nog=2))
+    assert go.tag == "Good sand"
     sgof = go.SGOF()
     assert "Corey krg" in sgof
     assert "Corey krog" in sgof
@@ -159,9 +155,6 @@ def test_factory_wateroilgas():
 
     factory = PyscalFactory()
 
-    wog = factory.create_water_oil_gas()
-    assert isinstance(wog, WaterOilGas)
-
     wog = factory.create_water_oil_gas(dict(nw=2, now=3, ng=1, nog=2.5))
     swof = wog.SWOF()
     sgof = wog.SGOF()
@@ -178,6 +171,10 @@ def test_factory_wateroilgas():
     assert "Corey krog" in sgof
     assert "Corey krw" in swof
     assert "Corey krow" in swof
+
+    # Mangling data:
+    with pytest.raises(ValueError):
+        factory.create_water_oil_gas(dict(nw=2, now=3, ng=1))
 
 
 def test_xls_factory():
@@ -203,6 +200,31 @@ def test_xls_factory():
         sgof = wog.SGOF()
         assert "LET krg" in sgof
         assert "LET krog" in sgof
+
+
+def test_scalrecommendation():
+    """Testing making SCAL rec from dict of dict"""
+
+    factory = PyscalFactory()
+
+    scal_input = {
+        "low": {"nw": 2, "now": 4, "ng": 1, "nog": 2},
+        "BASE": {"nw": 3, "NOW": 3, "ng": 1, "nog": 2},
+        "high": {"nw": 4, "now": 2, "ng": 1, "nog": 3},
+    }
+    scal = factory.create_scal_recommendation(scal_input)
+    # (not supported yet to make WaterOil only..)
+    scal.interpolate(-0.5).SWOF()
+
+    incomplete1 = scal_input.copy()
+    del incomplete1["BASE"]
+    with pytest.raises(ValueError):
+        factory.create_scal_recommendation(incomplete1)
+
+    incomplete2 = scal_input.copy()
+    del incomplete2["low"]["now"]
+    with pytest.raises(ValueError):
+        factory.create_scal_recommendation(incomplete2)
 
 
 def test_xls_scalrecommendation():
