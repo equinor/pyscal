@@ -105,8 +105,8 @@ def test_ambiguity():
     factory = PyscalFactory()
     wo = factory.create_water_oil(dict(swl=0.1, nw=10, Lw=1, Ew=1, Tw=1, h=0.1, no=2))
     # Corey is picked here.
-    assert 'Corey' in wo.krwcomment
-    assert 'krw' in wo.table
+    assert "Corey" in wo.krwcomment
+    assert "krw" in wo.table
 
 
 def test_factory_gasoil():
@@ -154,7 +154,6 @@ def test_factory_gasoil():
     assert "LET krog" in sgof
 
 
-
 def test_factory_wateroilgas():
     logging.getLogger().setLevel("INFO")
 
@@ -164,6 +163,15 @@ def test_factory_wateroilgas():
     assert isinstance(wog, WaterOilGas)
 
     wog = factory.create_water_oil_gas(dict(nw=2, now=3, ng=1, nog=2.5))
+    swof = wog.SWOF()
+    sgof = wog.SGOF()
+    assert "Corey krg" in sgof
+    assert "Corey krog" in sgof
+    assert "Corey krw" in swof
+    assert "Corey krow" in swof
+
+    # Some users will mess up lower vs upper case:
+    wog = factory.create_water_oil_gas(dict(NW=2, NOW=3, NG=1, nog=2.5))
     swof = wog.SWOF()
     sgof = wog.SGOF()
     assert "Corey krg" in sgof

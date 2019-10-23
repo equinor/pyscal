@@ -16,13 +16,15 @@ def slicedict(dct, keys):
 # in incoming dictionary determines the codepaths. These must
 # again match the API of the functions downstream in e.g. WaterOil, except
 # for LET parameters, where the API is simplified to 'l', 'e' and 't'.
+# We are case *insensitive* in this factory class, so everything here should
+# be lower case
 WO_INIT = ["swirr", "swl", "swcr", "sorw", "h", "tag"]
 WO_COREY_WATER = ["nw"]
 WO_WATER_ENDPOINTS = ["krwmax", "krwend"]
 WO_COREY_OIL = ["now"]
-WO_LET_WATER = ["Lw", "Ew", "Tw"]  # Will translated to l, e and t in code below.
-WO_LET_OIL = ["Low", "Eow", "Tow"]
-WO_LET_OIL_ALT = ["Lo", "Eo", "To"]  # Alternative parameter names.
+WO_LET_WATER = ["lw", "ew", "tw"]  # Will translated to l, e and t in code below.
+WO_LET_OIL = ["low", "eow", "tow"]
+WO_LET_OIL_ALT = ["lo", "eo", "to"]  # Alternative parameter names.
 WO_OIL_ENDPOINTS = ["kromax", "kroend"]
 WO_SIMPLE_J = ["a", "b", "poro_ref", "perm_ref", "drho"]  # "g" is optional
 
@@ -31,8 +33,8 @@ GO_COREY_GAS = ["ng"]
 GO_GAS_ENDPOINTS = ["krgend", "krgmax"]
 GO_COREY_OIL = ["nog"]
 GO_OIL_ENDPOINTS = ["kroend"]
-GO_LET_GAS = ["Lg", "Eg", "Tg"]
-GO_LET_OIL = ["Log", "Eog", "Tog"]
+GO_LET_GAS = ["lg", "eg", "tg"]
+GO_LET_OIL = ["log", "eog", "tog"]
 
 WOG_INIT = ["swirr", "swl", "swcr", "sorw", "sorg", "sgcr", "h", "tag"]
 
@@ -74,6 +76,9 @@ class PyscalFactory(object):
         if not isinstance(params, dict):
             raise TypeError("Parameter to create_water_oil must be a dictionary")
 
+        # For case insensitiveness, all keys are converted to lower case:
+        params = {key.lower(): value for (key, value) in params.items()}
+
         usedparams = set()
         # No requirements to the base objects, defaults are ok.
         wateroil = WaterOil(**slicedict(params, WO_INIT))
@@ -93,9 +98,9 @@ class PyscalFactory(object):
                 str(params_corey_water.keys()),
             )
         elif set(WO_LET_WATER).issubset(set(params_let_water)):
-            params_let_water["l"] = params_let_water.pop("Lw")
-            params_let_water["e"] = params_let_water.pop("Ew")
-            params_let_water["t"] = params_let_water.pop("Tw")
+            params_let_water["l"] = params_let_water.pop("lw")
+            params_let_water["e"] = params_let_water.pop("ew")
+            params_let_water["t"] = params_let_water.pop("tw")
             wateroil.add_LET_water(**params_let_water)
             usedparams = usedparams.union(set(params_let_water.keys()))
             logging.info(
@@ -119,18 +124,18 @@ class PyscalFactory(object):
                 str(params_corey_oil.keys()),
             )
         elif set(WO_LET_OIL).issubset(set(params_let_oil)):
-            params_let_oil["l"] = params_let_oil.pop("Low")
-            params_let_oil["e"] = params_let_oil.pop("Eow")
-            params_let_oil["t"] = params_let_oil.pop("Tow")
+            params_let_oil["l"] = params_let_oil.pop("low")
+            params_let_oil["e"] = params_let_oil.pop("eow")
+            params_let_oil["t"] = params_let_oil.pop("tow")
             wateroil.add_LET_oil(**params_let_oil)
             logging.info(
                 "Added LET water to WaterOil object from parameters %s",
                 str(params_let_oil.keys()),
             )
         elif set(WO_LET_OIL_ALT).issubset(set(params_let_oil)):
-            params_let_oil["l"] = params_let_oil.pop("Lo")
-            params_let_oil["e"] = params_let_oil.pop("Eo")
-            params_let_oil["t"] = params_let_oil.pop("To")
+            params_let_oil["l"] = params_let_oil.pop("lo")
+            params_let_oil["e"] = params_let_oil.pop("eo")
+            params_let_oil["t"] = params_let_oil.pop("to")
             wateroil.add_LET_oil(**params_let_oil)
             logging.info(
                 "Added LET water to WaterOil object from parameters %s",
@@ -172,6 +177,9 @@ class PyscalFactory(object):
         if not isinstance(params, dict):
             raise TypeError("Parameter to create_gas_oil must be a dictionary")
 
+        # For case insensitiveness, all keys are converted to lower case:
+        params = {key.lower(): value for (key, value) in params.items()}
+
         usedparams = set()
         # No requirements to the base objects, defaults are ok.
         gasoil = GasOil(**slicedict(params, GO_INIT))
@@ -191,9 +199,9 @@ class PyscalFactory(object):
                 str(params_corey_gas.keys()),
             )
         elif set(GO_LET_GAS).issubset(set(params_let_gas)):
-            params_let_gas["l"] = params_let_gas.pop("Lg")
-            params_let_gas["e"] = params_let_gas.pop("Eg")
-            params_let_gas["t"] = params_let_gas.pop("Tg")
+            params_let_gas["l"] = params_let_gas.pop("lg")
+            params_let_gas["e"] = params_let_gas.pop("eg")
+            params_let_gas["t"] = params_let_gas.pop("tg")
             gasoil.add_LET_gas(**params_let_gas)
             usedparams = usedparams.union(set(params_let_gas.keys()))
             logging.info(
@@ -215,9 +223,9 @@ class PyscalFactory(object):
                 str(params_corey_oil.keys()),
             )
         elif set(GO_LET_OIL).issubset(set(params_let_oil)):
-            params_let_oil["l"] = params_let_oil.pop("Log")
-            params_let_oil["e"] = params_let_oil.pop("Eog")
-            params_let_oil["t"] = params_let_oil.pop("Tog")
+            params_let_oil["l"] = params_let_oil.pop("log")
+            params_let_oil["e"] = params_let_oil.pop("eog")
+            params_let_oil["t"] = params_let_oil.pop("tog")
             gasoil.add_LET_oil(**params_let_oil)
             logging.info(
                 "Added LET gas to GasOil object from parameters %s",
@@ -241,6 +249,10 @@ class PyscalFactory(object):
             params = dict()
         if not isinstance(params, dict):
             raise TypeError("Parameter to create_water_oil_gas must be a dictionary")
+
+        # For case insensitiveness, all keys are converted to lower case:
+        params = {key.lower(): value for (key, value) in params.items()}
+
         wateroil = PyscalFactory.create_water_oil(params)
         gasoil = PyscalFactory.create_gas_oil(params)
         wog_init_params = slicedict(params, WOG_INIT)
@@ -281,6 +293,9 @@ class PyscalFactory(object):
             raise ValueError('"high" case not supplied')
         if not all([isinstance(x, dict) for x in params.values()]):
             raise ValueError("All values in parameter dict must be dictionaries")
+
+        # For case insensitiveness, all keys are converted to lower case:
+        params = {key.lower(): value for (key, value) in params.items()}
 
         wateroil_low = PyscalFactory.create_water_oil_gas(params["low"])
         wateroil_base = PyscalFactory.create_water_oil_gas(params["base"])
