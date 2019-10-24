@@ -155,16 +155,13 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pyscal.scalrecommendation</h1><div class="highlight"><pre>
-<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span></span><span class="kn">import</span> <span class="nn">copy</span>
 
-<span class="kn">import</span> <span class="nn">copy</span>
 <span class="kn">import</span> <span class="nn">logging</span>
+
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
-<span class="kn">from</span> <span class="nn">pyscal.constants</span> <span class="k">import</span> <span class="n">SWINTEGERS</span>
-
-<span class="kn">from</span> <span class="nn">pyscal</span> <span class="k">import</span> <span class="n">WaterOilGas</span><span class="p">,</span> <span class="n">WaterOil</span><span class="p">,</span> <span class="n">GasOil</span>
+<span class="kn">from</span> <span class="nn">pyscal</span> <span class="k">import</span> <span class="n">WaterOilGas</span><span class="p">,</span> <span class="n">WaterOil</span><span class="p">,</span> <span class="n">GasOil</span><span class="p">,</span> <span class="n">interpolator</span>
 
 
 <div class="viewcode-block" id="SCALrecommendation"><a class="viewcode-back" href="../../pyscal.html#pyscal.scalrecommendation.SCALrecommendation">[docs]</a><span class="k">class</span> <span class="nc">SCALrecommendation</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -409,7 +406,7 @@
                 <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span>
                 <span class="n">tag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tag</span> <span class="o">+</span> <span class="s2">&quot; interpolant at </span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">parameter</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__interpolator</span><span class="p">(</span>
+            <span class="n">interpolator</span><span class="p">(</span>
                 <span class="n">interpolant</span><span class="o">.</span><span class="n">wateroil</span><span class="p">,</span>
                 <span class="n">curve1</span><span class="p">,</span>
                 <span class="n">curve2</span><span class="p">,</span>
@@ -434,7 +431,7 @@
                 <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span>
                 <span class="n">tag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tag</span> <span class="o">+</span> <span class="s2">&quot; interpolant at </span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">parameter</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__interpolator</span><span class="p">(</span>
+            <span class="n">interpolator</span><span class="p">(</span>
                 <span class="n">interpolant</span><span class="o">.</span><span class="n">wateroil</span><span class="p">,</span>
                 <span class="n">curve1</span><span class="p">,</span>
                 <span class="n">curve2</span><span class="p">,</span>
@@ -471,7 +468,7 @@
                 <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span>
                 <span class="n">tag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tag</span> <span class="o">+</span> <span class="s2">&quot; interpolant at </span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">gasparameter</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__interpolator</span><span class="p">(</span>
+            <span class="n">interpolator</span><span class="p">(</span>
                 <span class="n">interpolant</span><span class="o">.</span><span class="n">gasoil</span><span class="p">,</span>
                 <span class="n">curve1</span><span class="p">,</span>
                 <span class="n">curve2</span><span class="p">,</span>
@@ -495,7 +492,7 @@
                 <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span>
                 <span class="n">tag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tag</span> <span class="o">+</span> <span class="s2">&quot; interpolant at </span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">gasparameter</span><span class="p">,</span>
             <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__interpolator</span><span class="p">(</span>
+            <span class="n">interpolator</span><span class="p">(</span>
                 <span class="n">interpolant</span><span class="o">.</span><span class="n">gasoil</span><span class="p">,</span>
                 <span class="n">curve1</span><span class="p">,</span>
                 <span class="n">curve2</span><span class="p">,</span>
@@ -507,90 +504,7 @@
             <span class="p">)</span>
             <span class="n">interpolant</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">resetsorg</span><span class="p">()</span>
 
-        <span class="k">return</span> <span class="n">interpolant</span></div>
-
-    <span class="k">def</span> <span class="nf">__interpolator</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span>
-        <span class="n">tableobject</span><span class="p">,</span>
-        <span class="n">curve1</span><span class="p">,</span>
-        <span class="n">curve2</span><span class="p">,</span>
-        <span class="n">parameter</span><span class="p">,</span>
-        <span class="n">sat</span><span class="o">=</span><span class="s2">&quot;sw&quot;</span><span class="p">,</span>
-        <span class="n">kr1</span><span class="o">=</span><span class="s2">&quot;krw&quot;</span><span class="p">,</span>
-        <span class="n">kr2</span><span class="o">=</span><span class="s2">&quot;krow&quot;</span><span class="p">,</span>
-        <span class="n">pc</span><span class="o">=</span><span class="s2">&quot;pc&quot;</span><span class="p">,</span>
-    <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Interpolates between two curves using one parameter between 0 and</span>
-<span class="sd">        1, does not care if it is water-oil or gas-oil.  First</span>
-<span class="sd">        argument is the wateroil or gasoil object it is to populate.</span>
-
-<span class="sd">        0 will return curve1</span>
-<span class="sd">        1 will return curve2</span>
-
-<span class="sd">        No return value, but modifies the object pointed to by first handle</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="n">curve1</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="n">kr1</span><span class="p">:</span> <span class="n">kr1</span> <span class="o">+</span> <span class="s2">&quot;_1&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">curve2</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="n">kr1</span><span class="p">:</span> <span class="n">kr1</span> <span class="o">+</span> <span class="s2">&quot;_2&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">curve1</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="n">kr2</span><span class="p">:</span> <span class="n">kr2</span> <span class="o">+</span> <span class="s2">&quot;_1&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">curve2</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="n">kr2</span><span class="p">:</span> <span class="n">kr2</span> <span class="o">+</span> <span class="s2">&quot;_2&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">curve1</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="n">pc</span><span class="p">:</span> <span class="n">pc</span> <span class="o">+</span> <span class="s2">&quot;_1&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">curve2</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="n">pc</span><span class="p">:</span> <span class="n">pc</span> <span class="o">+</span> <span class="s2">&quot;_2&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-        <span class="c1"># Result data container:</span>
-        <span class="n">satresult</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">tableobject</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">sat</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">sat</span><span class="p">])</span>
-
-        <span class="c1"># Merge swresult with curve1 and curve2, and interpolate all</span>
-        <span class="c1"># columns in sw:</span>
-        <span class="n">intdf</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">curve1</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="n">curve2</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="n">satresult</span><span class="p">],</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">sat</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
-            <span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;slinear&quot;</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;bfill&quot;</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;ffill&quot;</span><span class="p">)</span>
-        <span class="p">)</span>
-
-        <span class="c1"># Normalized saturations does not make sense for the</span>
-        <span class="c1"># interpolant, remove:</span>
-        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;swn&quot;</span><span class="p">,</span> <span class="s2">&quot;son&quot;</span><span class="p">,</span> <span class="s2">&quot;swnpc&quot;</span><span class="p">,</span> <span class="s2">&quot;H&quot;</span><span class="p">,</span> <span class="s2">&quot;J&quot;</span><span class="p">]:</span>
-            <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">intdf</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-                <span class="k">del</span> <span class="n">intdf</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
-
-        <span class="n">intdf</span><span class="p">[</span><span class="n">kr1</span><span class="p">]</span> <span class="o">=</span> <span class="n">intdf</span><span class="p">[</span><span class="n">kr1</span> <span class="o">+</span> <span class="s2">&quot;_1&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">parameter</span><span class="p">)</span> <span class="o">+</span> <span class="n">intdf</span><span class="p">[</span><span class="n">kr1</span> <span class="o">+</span> <span class="s2">&quot;_2&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">parameter</span>
-        <span class="n">intdf</span><span class="p">[</span><span class="n">kr2</span><span class="p">]</span> <span class="o">=</span> <span class="n">intdf</span><span class="p">[</span><span class="n">kr2</span> <span class="o">+</span> <span class="s2">&quot;_1&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">parameter</span><span class="p">)</span> <span class="o">+</span> <span class="n">intdf</span><span class="p">[</span><span class="n">kr2</span> <span class="o">+</span> <span class="s2">&quot;_2&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">parameter</span>
-        <span class="k">if</span> <span class="n">pc</span> <span class="o">+</span> <span class="s2">&quot;_1&quot;</span> <span class="ow">in</span> <span class="n">curve1</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span> <span class="ow">and</span> <span class="n">pc</span> <span class="o">+</span> <span class="s2">&quot;_2&quot;</span> <span class="ow">in</span> <span class="n">curve2</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-            <span class="n">intdf</span><span class="p">[</span><span class="n">pc</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">intdf</span><span class="p">[</span><span class="n">pc</span> <span class="o">+</span> <span class="s2">&quot;_1&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">parameter</span><span class="p">)</span> <span class="o">+</span> <span class="n">intdf</span><span class="p">[</span><span class="n">pc</span> <span class="o">+</span> <span class="s2">&quot;_2&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">parameter</span>
-            <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">intdf</span><span class="p">[</span><span class="n">pc</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-
-        <span class="c1"># Slice out the resulting sw values and columns. Slicing on</span>
-        <span class="c1"># floating point indices is not robust so we need to slice on an</span>
-        <span class="c1"># integer version of the sw column</span>
-        <span class="n">tableobject</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;swint&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
-            <span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">round</span><span class="p">,</span> <span class="n">tableobject</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">sat</span><span class="p">]</span> <span class="o">*</span> <span class="n">SWINTEGERS</span><span class="p">)))</span>
-        <span class="p">)</span>
-        <span class="n">intdf</span><span class="p">[</span><span class="s2">&quot;swint&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
-            <span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">round</span><span class="p">,</span> <span class="n">intdf</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span> <span class="o">*</span> <span class="n">SWINTEGERS</span><span class="p">)))</span>
-        <span class="p">)</span>
-        <span class="n">intdf</span> <span class="o">=</span> <span class="n">intdf</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
-        <span class="n">intdf</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="s2">&quot;swint&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">intdf</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;swint&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">intdf</span> <span class="o">=</span> <span class="n">intdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">tableobject</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;swint&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">]</span>
-        <span class="n">intdf</span> <span class="o">=</span> <span class="n">intdf</span><span class="p">[[</span><span class="n">sat</span><span class="p">,</span> <span class="n">kr1</span><span class="p">,</span> <span class="n">kr2</span><span class="p">,</span> <span class="n">pc</span><span class="p">]]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
-
-        <span class="c1"># intdf[&#39;swint&#39;] = (intdf[&#39;sw&#39;] * SWINTEGERS).astype(int)</span>
-        <span class="c1"># intdf.drop_duplicates(&#39;swint&#39;, inplace=True)</span>
-
-        <span class="c1"># Populate the WaterOil object</span>
-        <span class="n">tableobject</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">kr1</span><span class="p">]</span> <span class="o">=</span> <span class="n">intdf</span><span class="p">[</span><span class="n">kr1</span><span class="p">]</span>
-        <span class="n">tableobject</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">kr2</span><span class="p">]</span> <span class="o">=</span> <span class="n">intdf</span><span class="p">[</span><span class="n">kr2</span><span class="p">]</span>
-        <span class="n">tableobject</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">pc</span><span class="p">]</span> <span class="o">=</span> <span class="n">intdf</span><span class="p">[</span><span class="n">pc</span><span class="p">]</span>
-        <span class="n">tableobject</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;ffill&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">return</span></div>
+        <span class="k">return</span> <span class="n">interpolant</span></div></div>
 </pre></div>
 
            </div>

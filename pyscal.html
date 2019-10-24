@@ -98,6 +98,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#module-pyscal.constants">pyscal.constants module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pyscal.gasoil">pyscal.gasoil module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pyscal.scalrecommendation">pyscal.scalrecommendation module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pyscal.utils">pyscal.utils module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pyscal.wateroil">pyscal.wateroil module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pyscal.wateroilgas">pyscal.wateroilgas module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pyscal">Module contents</a></li>
@@ -524,6 +525,38 @@ interpolant. CHECK how this affects endpoints and Eclipse
 consistency!!</p>
 </dd></dl>
 
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyscal.utils">
+<span id="pyscal-utils-module"></span><h2>pyscal.utils module<a class="headerlink" href="#module-pyscal.utils" title="Permalink to this headline">¶</a></h2>
+<p>Utility function for pyscal</p>
+<dl class="function">
+<dt id="pyscal.utils.interpolator">
+<code class="sig-prename descclassname">pyscal.utils.</code><code class="sig-name descname">interpolator</code><span class="sig-paren">(</span><em class="sig-param">tableobject</em>, <em class="sig-param">curve1</em>, <em class="sig-param">curve2</em>, <em class="sig-param">parameter</em>, <em class="sig-param">sat='sw'</em>, <em class="sig-param">kr1='krw'</em>, <em class="sig-param">kr2='krow'</em>, <em class="sig-param">pc='pc'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils.html#interpolator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.utils.interpolator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interpolates between two curves.</p>
+<p>The interpolation parameter is 0 through 1,
+irrespective of phases or low-base/base-high/low-high.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tabjeobject</strong> (<a class="reference internal" href="#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><em>WaterOil</em></a><em> or </em><a class="reference internal" href="#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><em>GasOil</em></a>) – A partially setup object where
+relperm and pc columns are to be filled with numbers.</p></li>
+<li><p><strong>curve1</strong> (<a class="reference internal" href="#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><em>WaterOil</em></a><em> or </em><a class="reference internal" href="#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><em>GasOil</em></a>) – “Low” case of interpolation (relates
+to interpolation parameter 0). Must be copies, as they
+will be modified.</p></li>
+<li><p><strong>curve2</strong> – Ditto, relates to interpolation parameter 1</p></li>
+<li><p><strong>parameter</strong> (<em>float</em>) – Between 0 and 1, what you want to interpolate to.</p></li>
+<li><p><strong>sat</strong> (<em>str</em>) – Name of the saturation column, typically ‘sw’ or ‘sg’</p></li>
+<li><p><strong>kr1</strong> (<em>str</em>) – Name of the first relperm column (‘krw’ or ‘krg’)</p></li>
+<li><p><strong>kr2</strong> (<em>str</em>) – Name of the second relperm column (‘krow’ or ‘krog’)</p></li>
+<li><p><strong>pc</strong> (<em>str</em>) – Name of the capillary pressure column (‘pc’)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None, but modifies the first argument.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
