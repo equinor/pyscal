@@ -8,15 +8,26 @@ from pyscal.constants import SWINTEGERS
 def interpolator(
     tableobject, curve1, curve2, parameter, sat="sw", kr1="krw", kr2="krow", pc="pc"
 ):
-    """Interpolates between two curves using one parameter between 0 and
-    1, does not care if it is water-oil or gas-oil.  First
-    argument is the wateroil or gasoil object it is to populate.
+    """Interpolates between two curves.
 
-    0 will return curve1
-    1 will return curve2
+    The interpolation parameter is 0 through 1,
+    irrespective of phases or low-base/base-high/low-high.
 
-    No return value, but modifies the object pointed to by first handle
+    Args:
+        tabjeobject (WaterOil or GasOil): A partially setup object where
+            relperm and pc columns are to be filled with numbers.
+        curve1 (WaterOil or GasOil): "Low" case of interpolation (relates
+            to interpolation parameter 0). Must be copies, as they
+            will be modified.
+        curve2: Ditto, relates to interpolation parameter 1
+        parameter (float): Between 0 and 1, what you want to interpolate to.
+        sat (str): Name of the saturation column, typically 'sw' or 'sg'
+        kr1 (str): Name of the first relperm column ('krw' or 'krg')
+        kr2 (str): Name of the second relperm column ('krow' or 'krog')
+        pc (str): Name of the capillary pressure column ('pc')
 
+    Returns:
+        None, but modifies the first argument.
     """
 
     curve1.table.rename(columns={kr1: kr1 + "_1"}, inplace=True)
