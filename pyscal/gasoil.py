@@ -236,8 +236,16 @@ class GasOil(object):
                 raise ValueError("Too large sgcr for pcog interpolation")
             if df[sgcolname].max() < self.table["sg"].max():
                 raise ValueError("Too large swl for pcog interpolation")
-            if not (df[pccolname].diff().dropna() < 0.0).all():
-                raise ValueError("Incoming pc not decreasing")
+            if np.isinf(df[pccolname]).any():
+                logging.warning(
+                    "Infinity pc values detected. Will be dropped, risk of extrapolation"
+                )
+            df = df.replace([np.inf, -np.inf], np.nan)
+            df.dropna(subset=[pccolname], how="all", inplace=True)
+            # If nonzero, then it must be decreasing:
+            if df[pccolname].abs().sum() > 0:
+                if not (df[pccolname].diff().dropna() < 0.0).all():
+                    raise ValueError("Incoming pc not decreasing")
             pchip = PchipInterpolator(
                 df[sgcolname].astype(float), df[pccolname].astype(float)
             )
