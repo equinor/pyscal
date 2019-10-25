@@ -1,10 +1,10 @@
-import copy
+"""SCALrecommendation, container for low, base and high WaterOilGas objects"""
 
 import logging
 
 import numpy as np
 
-from pyscal import WaterOilGas, WaterOil, GasOil, interpolator
+from pyscal import WaterOilGas, utils
 
 
 class SCALrecommendation(object):
@@ -184,16 +184,16 @@ class SCALrecommendation(object):
         parameter = 0 reproduces base curve
         parameter = 1 reproduces high curve
 
-        Interpolation is performed pointwise in the "relperm" direction
-        for each saturation point. During interpolation, endpoints are
-        hard to handle, and only swirr is attempted preserved.
+        Endpoints are located for input curves, and interpolated
+        individually. Interpolation for the nonlinear part
+        is done on a normalized interval between the endpoints
 
         Interpolation is linear in relperm-direction, and will thus not be
         linear in log-relperm-direction
 
         This method returns an WaterOilGasTable object which can be
         realized into printed tables. No attempt is made to
-        parametrize the interpolant in L,E,T parameter space.
+        parametrize the interpolant in L,E,T parameter space, or Corey-space.
 
         If a second parameter is supplied ("parameter2") this is used
         for the gas-oil interpolation. This enables the gas-oil
@@ -214,8 +214,7 @@ class SCALrecommendation(object):
 
         if abs(parameter) > 1.0:
             logging.error("Interpolation parameter must be in [-1,1]")
-            interpolant.wateroil = None
-            raise AssertionError
+            assert abs(parameter) <= 1.0
         elif np.isclose(parameter, 0.0):
             interpolant.wateroil = self.base.wateroil
         elif np.isclose(parameter, -1.0):
@@ -223,63 +222,18 @@ class SCALrecommendation(object):
         elif np.isclose(parameter, 1.0):
             interpolant.wateroil = self.high.wateroil
         elif parameter < 0.0:
-            curve1 = copy.deepcopy(self.base.wateroil)
-            curve2 = copy.deepcopy(self.low.wateroil)
-            param_transf = -parameter  # 0 gives base, 1 gives low.
-            swl = (
-                curve1.table["sw"][0] * (1 - param_transf)
-                + curve2.table["sw"][0] * param_transf
-            )
-            interpolant.wateroil = WaterOil(
-                swirr=swl,
-                swl=swl,
-                sorw=0.0,
-                h=h,
-                tag=self.tag + " interpolant at %g" % parameter,
-            )
-            interpolator(
-                interpolant.wateroil,
-                curve1,
-                curve2,
-                param_transf,
-                "sw",
-                "krw",
-                "krow",
-                "pc",
+            interpolant.wateroil = utils.interpolate_wo(
+                self.base.wateroil, self.low.wateroil, -parameter
             )
         elif parameter > 0.0:
-            curve1 = copy.deepcopy(self.base.wateroil)
-            curve2 = copy.deepcopy(self.high.wateroil)
-            param_transf = parameter  # 0 gives base, 1 gives high
-            swl = (
-                curve1.table["sw"][0] * (1 - param_transf)
-                + curve2.table["sw"][0] * param_transf
-            )
-            interpolant.wateroil = WaterOil(
-                swirr=swl,
-                swl=swl,
-                sorw=0.0,
-                h=h,
-                tag=self.tag + " interpolant at %g" % parameter,
-            )
-            interpolator(
-                interpolant.wateroil,
-                curve1,
-                curve2,
-                param_transf,
-                "sw",
-                "krw",
-                "krow",
-                "pc",
+            interpolant.wateroil = utils.interpolate_wo(
+                self.base.wateroil, self.high.wateroil, parameter
             )
 
         # Gas-oil interpolation
-        # We need swl from the interpolated WaterOil object.
-        swl = interpolant.wateroil.swl
         if abs(gasparameter) > 1.0:
             logging.error("Interpolation parameter must be in [-1,1]")
-            interpolant.gasoil = None
-            raise AssertionError
+            assert abs(gasparameter) <= 1.0
         elif np.isclose(gasparameter, 0.0):
             interpolant.gasoil = self.base.gasoil
         elif np.isclose(gasparameter, -1.0):
@@ -287,54 +241,13 @@ class SCALrecommendation(object):
         elif np.isclose(gasparameter, 1.0):
             interpolant.gasoil = self.high.gasoil
         elif gasparameter < 0.0:
-            curve1 = copy.deepcopy(self.base.gasoil)
-            curve2 = copy.deepcopy(self.low.gasoil)
-            gas_param_transf = -1 * gasparameter  # 0 gives base, 1 gives low.
-            # We have to use the extreme, not interpolated sgcr.
-            sgcr = min(curve1.sgcr, curve2.sgcr)
-            interpolant.gasoil = GasOil(
-                sgcr=sgcr,
-                swl=swl,
-                sorg=0.0,
-                h=h,
-                tag=self.tag + " interpolant at %g" % gasparameter,
+            interpolant.gasoil = utils.interpolate_go(
+                self.base.gasoil, self.low.gasoil, -gasparameter, h=h
             )
-            interpolator(
-                interpolant.gasoil,
-                curve1,
-                curve2,
-                gas_param_transf,
-                "sg",
-                "krg",
-                "krog",
-                "pc",
-            )
-            interpolant.gasoil.resetsorg()
         elif gasparameter > 0.0:
-            curve1 = copy.deepcopy(self.base.gasoil)
-            curve2 = copy.deepcopy(self.high.gasoil)
-            gas_param_transf = gasparameter  # 0 gives base, 1 gives high
-            # We have to use the extreme, not interpolated sgcr.
-            sgcr = min(curve1.sgcr, curve2.sgcr)
-            interpolant.gasoil = GasOil(
-                sgcr=sgcr,
-                swl=swl,
-                sorg=0.0,
-                h=h,
-                tag=self.tag + " interpolant at %g" % gasparameter,
+            interpolant.gasoil = utils.interpolate_go(
+                self.base.gasoil, self.high.gasoil, gasparameter, h=h
             )
-            interpolator(
-                interpolant.gasoil,
-                curve1,
-                curve2,
-                gas_param_transf,
-                "sg",
-                "krg",
-                "krog",
-                "pc",
-            )
-            interpolant.gasoil.resetsorg()
-
         return interpolant
 
     @staticmethod

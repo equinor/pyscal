@@ -21,7 +21,7 @@ from test_gasoil import check_table as check_go_table
 from test_wateroil import check_table as check_wo_table
 
 
-def test_ow_fromtable_simple():
+def test_wo_fromtable_simple():
     df1 = pd.DataFrame(
         columns=["SW", "KRW", "KROW", "PC"], data=[[0, 0, 1, 2], [1, 1, 0, 0]]
     )
@@ -59,7 +59,7 @@ def test_go_fromtable_simple():
     check_go_table(go.table)
 
 
-def test_ow_fromtable_multiindex():
+def test_wo_fromtable_multiindex():
     """Test that we accept multiindex dataframes,
     (but a warning will be issued)"""
     # Test an example dataframe that easily gets sent in from ecl2df.satfunc:
@@ -120,7 +120,7 @@ def test_go_fromtable_problems():
     go.add_fromtable(df2, krgcolname="KRG", krogcolname="KROG")
 
 
-def test_ow_singlecolumns():
+def test_wo_singlecolumns():
     krw = pd.DataFrame(columns=["Sw", "krw"], data=[[0.15, 0], [0.89, 1], [1, 1]])
     krow = pd.DataFrame(columns=["Sw", "krow"], data=[[0.15, 1], [0.89, 0], [1, 0]])
     pc = pd.DataFrame(columns=["Sw", "pcow"], data=[[0.15, 3], [0.89, 0.1], [1, 0]])
@@ -162,7 +162,7 @@ def test_ow_singlecolumns():
     assert wo.table["pc"].sum() == 0
 
 
-def test_ow_invalidcurves():
+def test_wo_invalidcurves():
     # Sw data not ordered:
     krw1 = pd.DataFrame(columns=["Sw", "krw"], data=[[0.15, 0], [0.1, 1], [1, 1]])
     wo = WaterOil(swl=krw1["Sw"].min(), h=0.1)
@@ -248,7 +248,7 @@ def test_go_invalidcurves():
         go.add_fromtable(pc2, pccolname="pc")
 
 
-def test_ow_fromtable_problems():
+def test_wo_fromtable_problems():
     # Implicit swl and sorw in the input, how do we handle that?
     df1 = pd.DataFrame(
         columns=["Sw", "krw", "krow", "pcow"],
@@ -275,7 +275,7 @@ def test_ow_fromtable_problems():
 
 @settings(deadline=2000)
 @given(st.floats(min_value=1e-5, max_value=1))
-def test_ow_fromtable_h(h):
+def test_wo_fromtable_h(h):
     df1 = pd.DataFrame(
         columns=["Sw", "krw", "krow", "pcow"],
         data=[[0.15, 0, 1, 3], [0.89, 1, 0, 0.1], [1, 1, 0, 0]],
