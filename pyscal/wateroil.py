@@ -604,24 +604,31 @@ class WaterOil(object):
         Note that Pc where Sw > 1 - sorw will appear linear because
         there are no saturation points in that interval.
         """  # noqa
+        assert epsilon < Lp < MAX_EXPONENT
+        assert epsilon < Ep < MAX_EXPONENT
+        assert epsilon < Tp < MAX_EXPONENT
+        assert epsilon < Lt < MAX_EXPONENT
+        assert epsilon < Et < MAX_EXPONENT
+        assert epsilon < Tt < MAX_EXPONENT
+        assert Pct <= Pcmax
 
         # The "forced part"
-        self.table["Ffpcow"] = (1 - self.table.swnpc) ** Lp / (
-            (1 - self.table.swnpc) ** Lp + Ep * self.table.swnpc ** Tp
+        self.table["Ffpcow"] = (1 - self.table["swnpc"]) ** Lp / (
+            (1 - self.table["swnpc"]) ** Lp + Ep * self.table["swnpc"] ** Tp
         )
 
         # The gradual rise part:
-        self.table["Ftpcow"] = self.table.swnpc ** Lt / (
-            self.table.swnpc ** Lt + Et * (1 - self.table.swnpc) ** Tt
+        self.table["Ftpcow"] = self.table["swnpc"] ** Lt / (
+            self.table["swnpc"] ** Lt + Et * (1 - self.table["swnpc"]) ** Tt
         )
 
         # Putting it together:
         self.table["pc"] = (
-            (Pcmax - Pct) * self.table.Ffpcow - Pct * self.table.Ftpcow + Pct
+            (Pcmax - Pct) * self.table["Ffpcow"] - Pct * self.table["Ftpcow"] + Pct
         )
 
         # Special handling of the interval [0,swirr]
-        self.table.loc[self.table.swn < epsilon, "pc"] = Pcmax
+        self.table.loc[self.table["swn"] < epsilon, "pc"] = Pcmax
         self.pccomment = (
             "-- LET correlation for primary drainage Pc;\n"
             + "-- Lp=%g, Ep=%g, Tp=%g, Lt=%g, Et=%g, Tt=%g, Pcmax=%g, Pct=%g\n"
@@ -633,6 +640,13 @@ class WaterOil(object):
 
         Docs: https://wiki.equinor.com/wiki/index.php/Res:The_LET_correlation_for_capillary_pressure
         """  # noqa
+        assert epsilon < Ls < MAX_EXPONENT
+        assert epsilon < Es < MAX_EXPONENT
+        assert epsilon < Ts < MAX_EXPONENT
+        assert epsilon < Lf < MAX_EXPONENT
+        assert epsilon < Ef < MAX_EXPONENT
+        assert epsilon < Tf < MAX_EXPONENT
+        assert Pcmin <= Pct <= Pcmax
 
         # Normalized water saturation including sorw
         self.table["swnpco"] = (self.table.sw - self.swirr) / (
@@ -640,24 +654,26 @@ class WaterOil(object):
         )
 
         # The "forced part"
-        self.table["Fficow"] = (1 - self.table.swnpco) ** Ls / (
-            (1 - self.table.swnpco) ** Ls + Es * self.table.swnpco ** Ts
+        self.table["Fficow"] = self.table["swnpco"] ** Lf / (
+            self.table["swnpco"] ** Lf + Ef * (1 - self.table["swnpco"]) ** Tf
         )
 
-        # The gradual rise part:
-        self.table["Fticow"] = self.table.swnpco ** Lf / (
-            self.table.swnpco ** Lf + Ef * (1 - self.table.swnpco) ** Tf
+        # The spontaneous part:
+        self.table["Fsicow"] = (1 - self.table["swnpco"]) ** Ls / (
+            (1 - self.table["swnpco"]) ** Ls + Es * self.table["swnpco"] ** Ts
         )
 
         # Putting it together:
         self.table["pc"] = (
-            (Pcmax + Pct) * self.table.Fficow - (Pcmin - Pct) * self.table.Fticow - Pct
+            (Pcmax - Pct) * self.table["Fsicow"]
+            + (Pcmin - Pct) * self.table["Fficow"]
+            + Pct
         )
 
         # Special handling of the interval [0,swirr]
-        self.table.loc[self.table.swnpco < epsilon, "pc"] = Pcmax
+        self.table.loc[self.table["swnpco"] < epsilon, "pc"] = Pcmax
         # and [1-sorw,1]
-        self.table.loc[self.table.swnpco > 1 - epsilon, "pc"] = self.table.pc.min()
+        self.table.loc[self.table["swnpco"] > 1 - epsilon, "pc"] = Pcmin
         self.pccomment = (
             "-- LET correlation for imbibition Pc;\n -- "
             + "Ls=%g, Es=%g, Ts=%g, Lf=%g, Ef=%g, Tf=%g, Pcmax=%g, Pcmin=%g, Pct=%g\n"
