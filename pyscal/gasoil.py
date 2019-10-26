@@ -238,7 +238,10 @@ class GasOil(object):
                 raise ValueError("Too large swl for pcog interpolation")
             if np.isinf(df[pccolname]).any():
                 logging.warning(
-                    "Infinity pc values detected. Will be dropped, risk of extrapolation"
+                    (
+                        "Infinity pc values detected. Will be dropped, "
+                        "risk of extrapolation"
+                    )
                 )
             df = df.replace([np.inf, -np.inf], np.nan)
             df.dropna(subset=[pccolname], how="all", inplace=True)
@@ -562,7 +565,8 @@ class GasOil(object):
             if slgof_sl_mismatch < 2 * 1.0 / float(SWINTEGERS):
                 # Repair the table in-place:
                 slgof.loc[0, "sl"] = self.sorg + self.swl
-                # After modification, we can get duplicate sl values, so drop duplicates:
+                # After modification, we can get duplicate sl values,
+                # so drop duplicates:
                 slgof["slint"] = list(
                     map(int, list(map(round, slgof["sl"] * SWINTEGERS)))
                 )
@@ -572,7 +576,7 @@ class GasOil(object):
                 logging.critical(
                     "SLGOF does not start at the correct value. Please report as bug."
                 )
-                logging.error("slgof_sl_mismatch: %f", slgof_sl_mismatcher)
+                logging.error("slgof_sl_mismatch: %f", slgof_sl_mismatch)
                 logging.error(str(slgof.head()))
         return slgof
 

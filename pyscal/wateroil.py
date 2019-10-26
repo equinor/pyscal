@@ -186,7 +186,10 @@ class WaterOil(object):
                 raise ValueError("max(sw) of incoming data not large enough")
             if np.isinf(df[pccolname]).any():
                 logging.warning(
-                    "Infinity pc values detected. Will be dropped. Risk of extrapolation"
+                    (
+                        "Infinity pc values detected. Will be dropped. "
+                        "Risk of extrapolation"
+                    )
                 )
             df = df.replace([np.inf, -np.inf], np.nan)
             df.dropna(subset=[pccolname], how="all", inplace=True)
@@ -421,7 +424,7 @@ class WaterOil(object):
         perm_ref is in milliDarcy
         drho has SI units kg/m³. Default value is 300
         g has SI units m/s², default value is 9.81
-        """
+        """  # noqa
         assert g >= 0
         assert b < MAX_EXPONENT
         assert b > -MAX_EXPONENT
@@ -475,7 +478,7 @@ class WaterOil(object):
 
         Returns:
             None. Modifies pc column in self.table, using bar as pressure unit.
-        """
+        """  # noqa
         assert epsilon < abs(a) < MAX_EXPONENT
         assert epsilon < abs(b) < MAX_EXPONENT
         assert epsilon < poro <= 1.0
@@ -532,7 +535,7 @@ class WaterOil(object):
         Modifies or adds self.table.pc if succesful.
         Returns false if error occured.
 
-        """
+        """  # noqa
         inputerror = False
         if cw < 0:
             logging.error("cw must be larger or equal to zero")
@@ -547,9 +550,9 @@ class WaterOil(object):
             logging.error("ao must be larger than zero")
             inputerror = True
 
-        if swr == None:
+        if swr is None:
             swr = self.swirr
-        if sor == None:
+        if sor is None:
             sor = self.sorw
 
         if swr >= 1 - sor:
@@ -600,7 +603,7 @@ class WaterOil(object):
 
         Note that Pc where Sw > 1 - sorw will appear linear because
         there are no saturation points in that interval.
-        """
+        """  # noqa
 
         # The "forced part"
         self.table["Ffpcow"] = (1 - self.table.swnpc) ** Lp / (
@@ -629,7 +632,7 @@ class WaterOil(object):
         """Add an imbition LET capillary pressure curve.
 
         Docs: https://wiki.equinor.com/wiki/index.php/Res:The_LET_correlation_for_capillary_pressure
-        """
+        """  # noqa
 
         # Normalized water saturation including sorw
         self.table["swnpco"] = (self.table.sw - self.swirr) / (
@@ -656,8 +659,8 @@ class WaterOil(object):
         # and [1-sorw,1]
         self.table.loc[self.table.swnpco > 1 - epsilon, "pc"] = self.table.pc.min()
         self.pccomment = (
-            "-- LET correlation for imbibition Pc;\n"
-            + "-- Ls=%g, Es=%g, Ts=%g, Lf=%g, Ef=%g, Tf=%g, Pcmax=%g, Pcmin=%g, Pct=%g\n"
+            "-- LET correlation for imbibition Pc;\n -- "
+            + "Ls=%g, Es=%g, Ts=%g, Lf=%g, Ef=%g, Tf=%g, Pcmax=%g, Pcmin=%g, Pct=%g\n"
             % (Ls, Es, Ts, Lf, Ef, Tf, Pcmax, Pcmin, Pct)
         )
 
