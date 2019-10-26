@@ -343,7 +343,10 @@
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;max(sw) of incoming data not large enough&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">pccolname</span><span class="p">])</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
                 <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                    <span class="s2">&quot;Infinity pc values detected. Will be dropped. Risk of extrapolation&quot;</span>
+                    <span class="p">(</span>
+                        <span class="s2">&quot;Infinity pc values detected. Will be dropped. &quot;</span>
+                        <span class="s2">&quot;Risk of extrapolation&quot;</span>
+                    <span class="p">)</span>
                 <span class="p">)</span>
             <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">replace</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
             <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="n">pccolname</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -578,7 +581,7 @@
 <span class="sd">        perm_ref is in milliDarcy</span>
 <span class="sd">        drho has SI units kg/m³. Default value is 300</span>
 <span class="sd">        g has SI units m/s², default value is 9.81</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>  <span class="c1"># noqa</span>
         <span class="k">assert</span> <span class="n">g</span> <span class="o">&gt;=</span> <span class="mi">0</span>
         <span class="k">assert</span> <span class="n">b</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
         <span class="k">assert</span> <span class="n">b</span> <span class="o">&gt;</span> <span class="o">-</span><span class="n">MAX_EXPONENT</span>
@@ -632,7 +635,7 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            None. Modifies pc column in self.table, using bar as pressure unit.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>  <span class="c1"># noqa</span>
         <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="nb">abs</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
         <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="nb">abs</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
         <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">poro</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
@@ -689,7 +692,7 @@
 <span class="sd">        Modifies or adds self.table.pc if succesful.</span>
 <span class="sd">        Returns false if error occured.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>  <span class="c1"># noqa</span>
         <span class="n">inputerror</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="n">cw</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;cw must be larger or equal to zero&quot;</span><span class="p">)</span>
@@ -704,9 +707,9 @@
             <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;ao must be larger than zero&quot;</span><span class="p">)</span>
             <span class="n">inputerror</span> <span class="o">=</span> <span class="kc">True</span>
 
-        <span class="k">if</span> <span class="n">swr</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">swr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">swr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">swirr</span>
-        <span class="k">if</span> <span class="n">sor</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">sor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">sor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span>
 
         <span class="k">if</span> <span class="n">swr</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sor</span><span class="p">:</span>
@@ -757,7 +760,7 @@
 
 <span class="sd">        Note that Pc where Sw &gt; 1 - sorw will appear linear because</span>
 <span class="sd">        there are no saturation points in that interval.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>  <span class="c1"># noqa</span>
 
         <span class="c1"># The &quot;forced part&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;Ffpcow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">swnpc</span><span class="p">)</span> <span class="o">**</span> <span class="n">Lp</span> <span class="o">/</span> <span class="p">(</span>
@@ -786,7 +789,7 @@
         <span class="sd">&quot;&quot;&quot;Add an imbition LET capillary pressure curve.</span>
 
 <span class="sd">        Docs: https://wiki.equinor.com/wiki/index.php/Res:The_LET_correlation_for_capillary_pressure</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>  <span class="c1"># noqa</span>
 
         <span class="c1"># Normalized water saturation including sorw</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;swnpco&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">sw</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">swirr</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span>
@@ -813,8 +816,8 @@
         <span class="c1"># and [1-sorw,1]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">swnpco</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">epsilon</span><span class="p">,</span> <span class="s2">&quot;pc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">pc</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pccomment</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s2">&quot;-- LET correlation for imbibition Pc;</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="o">+</span> <span class="s2">&quot;-- Ls=</span><span class="si">%g</span><span class="s2">, Es=</span><span class="si">%g</span><span class="s2">, Ts=</span><span class="si">%g</span><span class="s2">, Lf=</span><span class="si">%g</span><span class="s2">, Ef=</span><span class="si">%g</span><span class="s2">, Tf=</span><span class="si">%g</span><span class="s2">, Pcmax=</span><span class="si">%g</span><span class="s2">, Pcmin=</span><span class="si">%g</span><span class="s2">, Pct=</span><span class="si">%g</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;-- LET correlation for imbibition Pc;</span><span class="se">\n</span><span class="s2"> -- &quot;</span>
+            <span class="o">+</span> <span class="s2">&quot;Ls=</span><span class="si">%g</span><span class="s2">, Es=</span><span class="si">%g</span><span class="s2">, Ts=</span><span class="si">%g</span><span class="s2">, Lf=</span><span class="si">%g</span><span class="s2">, Ef=</span><span class="si">%g</span><span class="s2">, Tf=</span><span class="si">%g</span><span class="s2">, Pcmax=</span><span class="si">%g</span><span class="s2">, Pcmin=</span><span class="si">%g</span><span class="s2">, Pct=</span><span class="si">%g</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="o">%</span> <span class="p">(</span><span class="n">Ls</span><span class="p">,</span> <span class="n">Es</span><span class="p">,</span> <span class="n">Ts</span><span class="p">,</span> <span class="n">Lf</span><span class="p">,</span> <span class="n">Ef</span><span class="p">,</span> <span class="n">Tf</span><span class="p">,</span> <span class="n">Pcmax</span><span class="p">,</span> <span class="n">Pcmin</span><span class="p">,</span> <span class="n">Pct</span><span class="p">)</span>
         <span class="p">)</span></div>
 

@@ -395,7 +395,10 @@
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Too large swl for pcog interpolation&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">pccolname</span><span class="p">])</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
                 <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                    <span class="s2">&quot;Infinity pc values detected. Will be dropped, risk of extrapolation&quot;</span>
+                    <span class="p">(</span>
+                        <span class="s2">&quot;Infinity pc values detected. Will be dropped, &quot;</span>
+                        <span class="s2">&quot;risk of extrapolation&quot;</span>
+                    <span class="p">)</span>
                 <span class="p">)</span>
             <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">replace</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
             <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="n">pccolname</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -719,7 +722,8 @@
             <span class="k">if</span> <span class="n">slgof_sl_mismatch</span> <span class="o">&lt;</span> <span class="mi">2</span> <span class="o">*</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">SWINTEGERS</span><span class="p">):</span>
                 <span class="c1"># Repair the table in-place:</span>
                 <span class="n">slgof</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;sl&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorg</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span>
-                <span class="c1"># After modification, we can get duplicate sl values, so drop duplicates:</span>
+                <span class="c1"># After modification, we can get duplicate sl values,</span>
+                <span class="c1"># so drop duplicates:</span>
                 <span class="n">slgof</span><span class="p">[</span><span class="s2">&quot;slint&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
                     <span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">round</span><span class="p">,</span> <span class="n">slgof</span><span class="p">[</span><span class="s2">&quot;sl&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">SWINTEGERS</span><span class="p">)))</span>
                 <span class="p">)</span>
@@ -729,7 +733,7 @@
                 <span class="n">logging</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span>
                     <span class="s2">&quot;SLGOF does not start at the correct value. Please report as bug.&quot;</span>
                 <span class="p">)</span>
-                <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;slgof_sl_mismatch: </span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">slgof_sl_mismatcher</span><span class="p">)</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;slgof_sl_mismatch: </span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">slgof_sl_mismatch</span><span class="p">)</span>
                 <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">slgof</span><span class="o">.</span><span class="n">head</span><span class="p">()))</span>
         <span class="k">return</span> <span class="n">slgof</span></div>
 
