@@ -5,6 +5,8 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import numpy as np
+
 import pytest
 
 from hypothesis import given
@@ -124,3 +126,42 @@ def test_norm_J_pc_random(swirr, swl, a, b, poro, perm, sigma_costau):
     except (AssertionError, ValueError):  # when poro is < 0 f.ex.
         return
     check_table(wo.table)
+
+
+def test_LET_pc_pd():
+    wo = WaterOil(swirr=0.1)
+    wo.add_LET_pc_pd(Lp=1, Ep=1, Tp=1, Lt=1, Et=1, Tt=1, Pcmax=10, Pct=5)
+    assert np.isclose(wo.table["pc"].max(), 10)
+    assert np.isclose(wo.table["pc"].min(), 0)
+    # (everything is linear)
+
+    wo.add_LET_pc_pd(Lp=10, Ep=10, Tp=10, Lt=10, Et=10, Tt=10, Pcmax=10, Pct=5)
+    assert np.isclose(wo.table["pc"].max(), 10)
+    assert np.isclose(wo.table["pc"].min(), 0)
+    # On a plot, you can see a kink at Pc=5.
+    # wo.plotpc()
+
+    wo = WaterOil(swirr=0.1, sorw=0.4)
+    wo.add_LET_pc_pd(Lp=10, Ep=10, Tp=10, Lt=10, Et=10, Tt=10, Pcmax=5, Pct=2)
+    assert np.isclose(wo.table["pc"].max(), 5)
+    assert np.isclose(wo.table["pc"].min(), 0)
+    # On plot: hard-to-see kink at Pc=2. Linear curve from sw=0.6 to 1 due to sorw.
+    assert len(wo.table[(wo.table["sw"] >= 0.6) & (wo.table["sw"] <= 1)]) == 2
+    # wo.plotpc()
+
+
+def test_LET_pc_imb():
+    wo = WaterOil(swirr=0.1)
+    wo.add_LET_pc_imb(Ls=1, Es=1, Ts=1, Lf=1, Ef=1, Tf=1, Pcmax=10, Pcmin=-10, Pct=3)
+    assert np.isclose(wo.table["pc"].max(), 10)
+    assert np.isclose(wo.table["pc"].min(), -10)
+
+    wo = WaterOil(swirr=0.1)
+    wo.add_LET_pc_imb(Ls=5, Es=5, Ts=5, Lf=5, Ef=5, Tf=5, Pcmax=5, Pcmin=1, Pct=4)
+    assert np.isclose(wo.table["pc"].max(), 5)
+    assert np.isclose(wo.table["pc"].min(), 1)
+
+    wo = WaterOil(swirr=0.1, sorw=0.3)
+    wo.add_LET_pc_imb(Ls=5, Es=5, Ts=5, Lf=5, Ef=5, Tf=5, Pcmax=5, Pcmin=1, Pct=4)
+    assert np.isclose(wo.table["pc"].max(), 5)
+    assert np.isclose(wo.table["pc"].min(), 1)
