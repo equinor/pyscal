@@ -3,6 +3,7 @@
 import pandas as pd
 
 from pyscal.constants import SWINTEGERS
+from pyscal.constants import EPSILON as epsilon
 
 
 def interpolator(
@@ -86,3 +87,69 @@ def interpolator(
     tableobject.table[pc] = intdf[pc]
     tableobject.table.fillna(method="ffill", inplace=True)
     return
+
+
+def estimate_diffjumppoint(table, xcol=None, ycol=None, side="right"):
+    """Estimate the point where the y-data jumps from being linear
+    in x to being nonlinear, or where it shift from one linear domain
+    to another (for a piecewise linear function)
+
+    If xcol is sw, and ycol is krw, and side is 'right', this
+    will typically estimate sorw for you. If side is 'left' it will
+    give you swcr.
+
+    Args:
+        table (pd.DataFrame): A Dataframe with x and y data
+        xcol (string): The name of the column in table containing x-data. If\
+            None (default) the first column in table will be used.
+        ycol (string): The name of the column in table containing y-data.
+            If None (default) the second column in the table will be used.
+        side (string): Must be 'left' or 'right'. Decided whether to look from
+            the right side of the x-interval or from the left side for the
+            linear domain.
+    Returns:
+        float: The x value where the start-linear domain ends.
+    """
+
+    if not xcol:
+        xcol = table.columns[0]
+    if not ycol:
+        ycol = table.columns[1]
+    assert isinstance(ycol, str)
+    assert isinstance(xcol, str)
+    if not side:
+        raise ValueError("side cannot be None, use left or right")
+    side = side.lower()
+    assert side in ["left", "right"]
+
+    # Compute the derivative:
+    table["_deriv"] = table[ycol].diff() / table[xcol].diff()
+    # The first becomes NaN, extrapolate from the second row:
+    table.loc[0, "_deriv"] = table["_deriv"].iloc[1]
+
+    # Pick the derivative at the first or last segment:
+    iloc = {"left": 0, "right": -1}
+    lin_a = table["_deriv"].iloc[iloc[side]]
+
+    # Make a linear extrapolation from the last segment, starting at max x
+    table["_linear"] = (table[xcol] - table[xcol].iloc[iloc[side]]) * lin_a + table[
+        ycol
+    ].iloc[iloc[side]]
+    assert table["_linear"].values[iloc[side]] == table[ycol].values[iloc[side]]
+
+    # Compute how much krw deviates from the linear krw:
+    table["_lindev"] = (table[ycol] - table["_linear"]).abs()
+
+    # Use the cumulative sum to determine the onset of non-zero deviation
+    # starting from sw=1:
+    table["_lindevcumsum"] = table["_lindev"].cumsum()
+
+    if side == "right":
+        maxcumsum = table["_lindevcumsum"].max()
+        linearpart = table[(table["_lindevcumsum"] - maxcumsum).abs() < epsilon]
+        return linearpart.iloc[1][xcol]
+    else:
+        linearpart = table[(table["_lindevcumsum"] < epsilon)]
+        if len(linearpart) == 1:
+            linearpart = table[(table["_lindevcumsum"].shift(1) < epsilon)]
+        return linearpart.iloc[-1][xcol]
