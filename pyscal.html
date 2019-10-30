@@ -346,6 +346,63 @@ parametrization.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="pyscal.gasoil.GasOil.estimate_sorg">
+<code class="sig-name descname">estimate_sorg</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gasoil.html#GasOil.estimate_sorg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gasoil.GasOil.estimate_sorg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimate sorg of the current krg or krog data.</p>
+<p>sorg is estimated by searching for a linear part in krg downwards from sg=1-swl.
+In practice it is impossible to infer sorg = 0, since we are limited by
+h, and the last segment from sg=1-swl-h to sg=1-swl can always be assumed linear.</p>
+<p>If krgend is anchored to sorg, krg data is used to infer sorg. If not,
+krg cannot be used for this, and krog is used. sorg might be overestimated
+when krog is used if it very close to zero before reaching sorw.</p>
+<p>If the curve is linear everywhere, sorg will be returned as sgcr + h</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>None</strong> – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The estimated sorg.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyscal.gasoil.GasOil.estimate_sgcr">
+<code class="sig-name descname">estimate_sgcr</code><span class="sig-paren">(</span><em class="sig-param">curve='krog'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gasoil.html#GasOil.estimate_sgcr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gasoil.GasOil.estimate_sgcr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimate sgcr of the current krog data.</p>
+<p>sgcr is estimated by searching for a linear part in krog upwards from sg=0.
+In practice it is impossible to infer sgcr = 0, since we are limited by
+h, and we always have to assume that the first segment is linear.</p>
+<p>If the curve is linear everywhere, sgcr will be returned as the right endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>curve</strong> (<em>str</em>) – Column name to use for search for linearity. Default is krog,
+if all of that is linear, you may try krg instead.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The estimated sgcr.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyscal.gasoil.GasOil.crosspoint">
+<code class="sig-name descname">crosspoint</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gasoil.html#GasOil.crosspoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gasoil.GasOil.crosspoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Locate and return the saturation point where krg = krog</p>
+<p>Accuracy of this crosspoint depends on the resolution chosen
+when initializing the saturation range (it uses linear
+interpolation to solve for the zero)</p>
+<p>Warning: Code duplication from WaterOil, with
+column names changed only</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="pyscal.gasoil.GasOil.selfcheck">
 <code class="sig-name descname">selfcheck</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gasoil.html#GasOil.selfcheck"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gasoil.GasOil.selfcheck" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check validities of the data in the table.</p>
@@ -453,17 +510,6 @@ defaults to True.</p></li>
 </dd></dl>
 
 <dl class="method">
-<dt id="pyscal.gasoil.GasOil.crosspoint">
-<code class="sig-name descname">crosspoint</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gasoil.html#GasOil.crosspoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gasoil.GasOil.crosspoint" title="Permalink to this definition">¶</a></dt>
-<dd><p>Locate and return the saturation point where krg = krog</p>
-<p>Accuracy of this crosspoint depends on the resolution chosen
-when initializing the saturation range (it uses linear
-interpolation to solve for the zero)</p>
-<p>Warning: Code duplication from WaterOil, with
-column names changed only</p>
-</dd></dl>
-
-<dl class="method">
 <dt id="pyscal.gasoil.GasOil.plotkrgkrog">
 <code class="sig-name descname">plotkrgkrog</code><span class="sig-paren">(</span><em class="sig-param">ax=None</em>, <em class="sig-param">color='blue'</em>, <em class="sig-param">alpha=1</em>, <em class="sig-param">label=None</em>, <em class="sig-param">linewidth=1</em>, <em class="sig-param">linestyle='-'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gasoil.html#GasOil.plotkrgkrog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gasoil.GasOil.plotkrgkrog" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot krg and krog on a supplied matplotlib axis</p>
@@ -559,6 +605,36 @@ will be modified.</p></li>
 </dl>
 </dd></dl>
 
+<dl class="function">
+<dt id="pyscal.utils.estimate_diffjumppoint">
+<code class="sig-prename descclassname">pyscal.utils.</code><code class="sig-name descname">estimate_diffjumppoint</code><span class="sig-paren">(</span><em class="sig-param">table</em>, <em class="sig-param">xcol=None</em>, <em class="sig-param">ycol=None</em>, <em class="sig-param">side='right'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils.html#estimate_diffjumppoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.utils.estimate_diffjumppoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimate the point where the y-data jumps from being linear
+in x to being nonlinear, or where it shift from one linear domain
+to another (for a piecewise linear function)</p>
+<p>If xcol is sw, and ycol is krw, and side is ‘right’, this
+will typically estimate sorw for you. If side is ‘left’ it will
+give you swcr.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> (<em>pd.DataFrame</em>) – A Dataframe with x and y data</p></li>
+<li><p><strong>xcol</strong> (<em>string</em>) – The name of the column in table containing x-data. If            None (default) the first column in table will be used.</p></li>
+<li><p><strong>ycol</strong> (<em>string</em>) – The name of the column in table containing y-data.
+If None (default) the second column in the table will be used.</p></li>
+<li><p><strong>side</strong> (<em>string</em>) – Must be ‘left’ or ‘right’. Decided whether to look from
+the right side of the x-interval or from the left side for the
+linear domain.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The x value where the start-linear domain ends.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
 </div>
 <div class="section" id="module-pyscal.wateroil">
 <span id="pyscal-wateroil-module"></span><h2>pyscal.wateroil module<a class="headerlink" href="#module-pyscal.wateroil" title="Permalink to this headline">¶</a></h2>
@@ -592,7 +668,7 @@ parametrizations, or from a dataframe (will incur interpolation).</p>
 
 <dl class="method">
 <dt id="pyscal.wateroil.WaterOil.add_fromtable">
-<code class="sig-name descname">add_fromtable</code><span class="sig-paren">(</span><em class="sig-param">df</em>, <em class="sig-param">swcolname='Sw'</em>, <em class="sig-param">krwcolname='krw'</em>, <em class="sig-param">krowcolname='krow'</em>, <em class="sig-param">pccolname='pcow'</em>, <em class="sig-param">krwcomment=''</em>, <em class="sig-param">krowcomment=''</em>, <em class="sig-param">pccomment=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.add_fromtable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.add_fromtable" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_fromtable</code><span class="sig-paren">(</span><em class="sig-param">df</em>, <em class="sig-param">swcolname='Sw'</em>, <em class="sig-param">krwcolname='krw'</em>, <em class="sig-param">krowcolname='krow'</em>, <em class="sig-param">pccolname='pcow'</em>, <em class="sig-param">krwcomment=''</em>, <em class="sig-param">krowcomment=''</em>, <em class="sig-param">pccomment=''</em>, <em class="sig-param">sorw=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.add_fromtable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.add_fromtable" title="Permalink to this definition">¶</a></dt>
 <dd><p>Interpolate relpermdata from a dataframe.</p>
 <p>The saturation range with endpoints must be set up beforehand,
 and must be compatible with the tabular input. The tabular
@@ -601,19 +677,25 @@ input will be interpolated to the initialized Sw-table</p>
 function twice</p>
 <p>Calling function is responsible for checking if any data was
 actually added to the table.</p>
+<p>The relpermdata will be interpolated using a monotone cubic
+interpolator below 1-sorw, and linearly above 1-sorw. Capillary
+pressure data will be interpolated monotone cubicly over the
+entire saturation interval</p>
 <p>The python package ecl2df has a tool for converting Eclipse input
 files to dataframes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> – Pandas dataframe containing data</p></li>
-<li><p><strong>swcolname</strong> – string, column name with the saturation data in the dataframe.</p></li>
-<li><p><strong>krwcolname</strong> – string, name of the column with krw</p></li>
-<li><p><strong>krowcolname</strong> – string</p></li>
-<li><p><strong>pccolname</strong> – string</p></li>
-<li><p><strong>krwcomment</strong> – string</p></li>
-<li><p><strong>krowcomment</strong> – string</p></li>
-<li><p><strong>pccomment</strong> – string</p></li>
+<li><p><strong>df</strong> (<em>pd.DataFrame</em>) – containing data</p></li>
+<li><p><strong>swcolname</strong> (<em>string</em>) – column name with the saturation data in the dataframe df</p></li>
+<li><p><strong>krwcolname</strong> (<em>string</em>) – name of column in df with krw</p></li>
+<li><p><strong>krowcolname</strong> (<em>string</em>) – name of column in df with krow</p></li>
+<li><p><strong>pccolname</strong> (<em>string</em>) – name of column in df with capillary pressure data</p></li>
+<li><p><strong>krwcomment</strong> (<em>string</em>) – Inserted into comment</p></li>
+<li><p><strong>krowcomment</strong> (<em>string</em>) – Inserted into comment</p></li>
+<li><p><strong>pccomment</strong> (<em>str</em>) – Inserted into comment</p></li>
+<li><p><strong>sorw</strong> (<em>float</em>) – Explicit sorw. If None, it will be estimated from
+the numbers in krw (or krow)</p></li>
 </ul>
 </dd>
 </dl>
@@ -778,6 +860,67 @@ there are no saturation points in that interval.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="pyscal.wateroil.WaterOil.estimate_sorw">
+<code class="sig-name descname">estimate_sorw</code><span class="sig-paren">(</span><em class="sig-param">curve='krw'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.estimate_sorw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.estimate_sorw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimate sorw of the current krw data.</p>
+<p>This is mostly relevant when add_fromtable() has been used.
+sorw is estimated by searching for a linear part in krw downwards from sw=1.
+In practice it is impossible to infer sorw = 0, since we are limited by
+h, and the last segment from sw=1-h to sw=1 can always be assumed linear.
+Expect sorw = h if the real sorw = 0, but do not depend that it might
+not return zero in the future (one could argue that sorw = h should be
+specially treated to mean sorw = 0)</p>
+<p>If the curve is linear everywhere, sorw will be returned as swl + h</p>
+<p>krow is not used, and should probably not be, as it can be very close to
+zero before approaching sorw.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>curve</strong> (<em>str</em>) – Colum name of column to use, default is krw.
+If this is all linear, but krow is not, you might be better off
+with krow</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The estimated sorw.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyscal.wateroil.WaterOil.estimate_swcr">
+<code class="sig-name descname">estimate_swcr</code><span class="sig-paren">(</span><em class="sig-param">curve='krow'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.estimate_swcr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.estimate_swcr" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimate swcr of the current krw data.</p>
+<p>swcr is estimated by searching for a linear part in krw upwards from sw=swl.
+In practice it is impossible to infer swcr = 0, since we are limited by
+h, and the first segment is assumed linear anyways.</p>
+<p>If the curve is linear everywhere, swcr can end up at the right end
+of your saturation interval.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>curve</strong> (<em>str</em>) – Colum name of column to use, default is krow.
+If this is all linear, but krw is not, you might be better off
+with krw</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The estimated sgcr.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyscal.wateroil.WaterOil.crosspoint">
+<code class="sig-name descname">crosspoint</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.crosspoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.crosspoint" title="Permalink to this definition">¶</a></dt>
+<dd><p>Locate and return the saturation point where krw = krow</p>
+<p>Accuracy of this crosspoint depends on the resolution chosen
+when initializing the saturation range</p>
+</dd></dl>
+
+<dl class="method">
 <dt id="pyscal.wateroil.WaterOil.selfcheck">
 <code class="sig-name descname">selfcheck</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.selfcheck"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.selfcheck" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check validities of the data in the table.</p>
@@ -810,14 +953,6 @@ there are no saturation points in that interval.</p>
 <dt id="pyscal.wateroil.WaterOil.plotkrwkrow">
 <code class="sig-name descname">plotkrwkrow</code><span class="sig-paren">(</span><em class="sig-param">ax=None</em>, <em class="sig-param">color='blue'</em>, <em class="sig-param">alpha=1</em>, <em class="sig-param">label=None</em>, <em class="sig-param">linewidth=1</em>, <em class="sig-param">linestyle='-'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.plotkrwkrow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.plotkrwkrow" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot krw and krow on a supplied matplotlib axis</p>
-</dd></dl>
-
-<dl class="method">
-<dt id="pyscal.wateroil.WaterOil.crosspoint">
-<code class="sig-name descname">crosspoint</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.crosspoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.crosspoint" title="Permalink to this definition">¶</a></dt>
-<dd><p>Locate and return the saturation point where krw = krow</p>
-<p>Accuracy of this crosspoint depends on the resolution chosen
-when initializing the saturation range</p>
 </dd></dl>
 
 </dd></dl>

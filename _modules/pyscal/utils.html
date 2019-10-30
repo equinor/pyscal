@@ -160,6 +160,7 @@
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 <span class="kn">from</span> <span class="nn">pyscal.constants</span> <span class="k">import</span> <span class="n">SWINTEGERS</span>
+<span class="kn">from</span> <span class="nn">pyscal.constants</span> <span class="k">import</span> <span class="n">EPSILON</span> <span class="k">as</span> <span class="n">epsilon</span>
 
 
 <div class="viewcode-block" id="interpolator"><a class="viewcode-back" href="../../pyscal.html#pyscal.utils.interpolator">[docs]</a><span class="k">def</span> <span class="nf">interpolator</span><span class="p">(</span>
@@ -243,6 +244,72 @@
     <span class="n">tableobject</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">pc</span><span class="p">]</span> <span class="o">=</span> <span class="n">intdf</span><span class="p">[</span><span class="n">pc</span><span class="p">]</span>
     <span class="n">tableobject</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;ffill&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">return</span></div>
+
+
+<div class="viewcode-block" id="estimate_diffjumppoint"><a class="viewcode-back" href="../../pyscal.html#pyscal.utils.estimate_diffjumppoint">[docs]</a><span class="k">def</span> <span class="nf">estimate_diffjumppoint</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Estimate the point where the y-data jumps from being linear</span>
+<span class="sd">    in x to being nonlinear, or where it shift from one linear domain</span>
+<span class="sd">    to another (for a piecewise linear function)</span>
+
+<span class="sd">    If xcol is sw, and ycol is krw, and side is &#39;right&#39;, this</span>
+<span class="sd">    will typically estimate sorw for you. If side is &#39;left&#39; it will</span>
+<span class="sd">    give you swcr.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        table (pd.DataFrame): A Dataframe with x and y data</span>
+<span class="sd">        xcol (string): The name of the column in table containing x-data. If\</span>
+<span class="sd">            None (default) the first column in table will be used.</span>
+<span class="sd">        ycol (string): The name of the column in table containing y-data.</span>
+<span class="sd">            If None (default) the second column in the table will be used.</span>
+<span class="sd">        side (string): Must be &#39;left&#39; or &#39;right&#39;. Decided whether to look from</span>
+<span class="sd">            the right side of the x-interval or from the left side for the</span>
+<span class="sd">            linear domain.</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        float: The x value where the start-linear domain ends.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">xcol</span><span class="p">:</span>
+        <span class="n">xcol</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ycol</span><span class="p">:</span>
+        <span class="n">ycol</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ycol</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">xcol</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">side</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;side cannot be None, use left or right&quot;</span><span class="p">)</span>
+    <span class="n">side</span> <span class="o">=</span> <span class="n">side</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">assert</span> <span class="n">side</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">]</span>
+
+    <span class="c1"># Compute the derivative:</span>
+    <span class="n">table</span><span class="p">[</span><span class="s2">&quot;_deriv&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="n">ycol</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span> <span class="o">/</span> <span class="n">table</span><span class="p">[</span><span class="n">xcol</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span>
+    <span class="c1"># The first becomes NaN, extrapolate from the second row:</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;_deriv&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;_deriv&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1"># Pick the derivative at the first or last segment:</span>
+    <span class="n">iloc</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;left&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">}</span>
+    <span class="n">lin_a</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;_deriv&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">iloc</span><span class="p">[</span><span class="n">side</span><span class="p">]]</span>
+
+    <span class="c1"># Make a linear extrapolation from the last segment, starting at max x</span>
+    <span class="n">table</span><span class="p">[</span><span class="s2">&quot;_linear&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="n">xcol</span><span class="p">]</span> <span class="o">-</span> <span class="n">table</span><span class="p">[</span><span class="n">xcol</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">iloc</span><span class="p">[</span><span class="n">side</span><span class="p">]])</span> <span class="o">*</span> <span class="n">lin_a</span> <span class="o">+</span> <span class="n">table</span><span class="p">[</span>
+        <span class="n">ycol</span>
+    <span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">iloc</span><span class="p">[</span><span class="n">side</span><span class="p">]]</span>
+    <span class="k">assert</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;_linear&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">iloc</span><span class="p">[</span><span class="n">side</span><span class="p">]]</span> <span class="o">==</span> <span class="n">table</span><span class="p">[</span><span class="n">ycol</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">iloc</span><span class="p">[</span><span class="n">side</span><span class="p">]]</span>
+
+    <span class="c1"># Compute how much krw deviates from the linear krw:</span>
+    <span class="n">table</span><span class="p">[</span><span class="s2">&quot;_lindev&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="n">ycol</span><span class="p">]</span> <span class="o">-</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;_linear&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span>
+
+    <span class="c1"># Use the cumulative sum to determine the onset of non-zero deviation</span>
+    <span class="c1"># starting from sw=1:</span>
+    <span class="n">table</span><span class="p">[</span><span class="s2">&quot;_lindevcumsum&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;_lindev&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">side</span> <span class="o">==</span> <span class="s2">&quot;right&quot;</span><span class="p">:</span>
+        <span class="n">maxcumsum</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;_lindevcumsum&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="n">linearpart</span> <span class="o">=</span> <span class="n">table</span><span class="p">[(</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;_lindevcumsum&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">maxcumsum</span><span class="p">)</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">linearpart</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">xcol</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">linearpart</span> <span class="o">=</span> <span class="n">table</span><span class="p">[(</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;_lindevcumsum&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">linearpart</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">linearpart</span> <span class="o">=</span> <span class="n">table</span><span class="p">[(</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;_lindevcumsum&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">linearpart</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">xcol</span><span class="p">]</span></div>
 </pre></div>
 
            </div>

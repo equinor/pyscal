@@ -167,6 +167,7 @@
 <span class="kn">from</span> <span class="nn">pyscal.constants</span> <span class="k">import</span> <span class="n">EPSILON</span> <span class="k">as</span> <span class="n">epsilon</span>
 <span class="kn">from</span> <span class="nn">pyscal.constants</span> <span class="k">import</span> <span class="n">SWINTEGERS</span>
 <span class="kn">from</span> <span class="nn">pyscal.constants</span> <span class="k">import</span> <span class="n">MAX_EXPONENT</span>
+<span class="kn">from</span> <span class="nn">pyscal</span> <span class="k">import</span> <span class="n">utils</span>
 
 
 <div class="viewcode-block" id="WaterOil"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil">[docs]</a><span class="k">class</span> <span class="nc">WaterOil</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -281,6 +282,7 @@
         <span class="n">krwcomment</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
         <span class="n">krowcomment</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
         <span class="n">pccomment</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">sorw</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Interpolate relpermdata from a dataframe.</span>
 
@@ -294,46 +296,114 @@
 <span class="sd">        Calling function is responsible for checking if any data was</span>
 <span class="sd">        actually added to the table.</span>
 
+<span class="sd">        The relpermdata will be interpolated using a monotone cubic</span>
+<span class="sd">        interpolator below 1-sorw, and linearly above 1-sorw. Capillary</span>
+<span class="sd">        pressure data will be interpolated monotone cubicly over the</span>
+<span class="sd">        entire saturation interval</span>
+
 <span class="sd">        The python package ecl2df has a tool for converting Eclipse input</span>
 <span class="sd">        files to dataframes.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            df: Pandas dataframe containing data</span>
-<span class="sd">            swcolname: string, column name with the saturation data in the dataframe.</span>
-<span class="sd">            krwcolname: string, name of the column with krw</span>
-<span class="sd">            krowcolname: string</span>
-<span class="sd">            pccolname: string</span>
-<span class="sd">            krwcomment: string</span>
-<span class="sd">            krowcomment: string</span>
-<span class="sd">            pccomment: string</span>
+<span class="sd">            df (pd.DataFrame): containing data</span>
+<span class="sd">            swcolname (string): column name with the saturation data in the dataframe df</span>
+<span class="sd">            krwcolname (string): name of column in df with krw</span>
+<span class="sd">            krowcolname (string): name of column in df with krow</span>
+<span class="sd">            pccolname (string): name of column in df with capillary pressure data</span>
+<span class="sd">            krwcomment (string): Inserted into comment</span>
+<span class="sd">            krowcomment (string): Inserted into comment</span>
+<span class="sd">            pccomment (str): Inserted into comment</span>
+<span class="sd">            sorw (float): Explicit sorw. If None, it will be estimated from</span>
+<span class="sd">                the numbers in krw (or krow)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="k">import</span> <span class="n">PchipInterpolator</span>
+        <span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="k">import</span> <span class="n">PchipInterpolator</span><span class="p">,</span> <span class="n">interp1d</span>
 
         <span class="k">if</span> <span class="n">swcolname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="p">:</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span>
                 <span class="n">swcolname</span> <span class="o">+</span> <span class="s2">&quot; not found in dataframe, can&#39;t read table data&quot;</span>
             <span class="p">)</span>
             <span class="k">raise</span> <span class="ne">ValueError</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">swcolname</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;sw data not sorted&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">krwcolname</span> <span class="ow">in</span> <span class="n">df</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">sorw</span><span class="p">:</span>
+                <span class="n">sorw</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">swcolname</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">utils</span><span class="o">.</span><span class="n">estimate_diffjumppoint</span><span class="p">(</span>
+                    <span class="n">df</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="n">swcolname</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="n">krwcolname</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">&quot;right&quot;</span>
+                <span class="p">)</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Estimated sorw in tabular data to </span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">sorw</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="o">-</span><span class="n">epsilon</span> <span class="o">&lt;=</span> <span class="n">sorw</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">epsilon</span>
+            <span class="n">linearpart</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">swcolname</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span>
+            <span class="n">nonlinearpart</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">swcolname</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span>  <span class="c1"># (overlapping at sorw)</span>
+            <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">linearpart</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">linearpart</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="kc">False</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">linearpart</span><span class="p">))</span>
+                <span class="n">nonlinearpart</span> <span class="o">=</span> <span class="o">~</span><span class="n">linearpart</span>
+                <span class="n">sorw</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">nonlinearpart</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">nonlinearpart</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="kc">False</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">nonlinearpart</span><span class="p">))</span>
+                <span class="n">linearpart</span> <span class="o">=</span> <span class="o">~</span><span class="n">nonlinearpart</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">swcolname</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()):</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Incompatible swl&quot;</span><span class="p">)</span>
             <span class="c1"># Verify that incoming data is increasing (or level):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">krwcolname</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span> <span class="o">&gt;</span> <span class="o">-</span><span class="n">epsilon</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Incoming krw not increasing&quot;</span><span class="p">)</span>
-            <span class="n">pchip</span> <span class="o">=</span> <span class="n">PchipInterpolator</span><span class="p">(</span>
-                <span class="n">df</span><span class="p">[</span><span class="n">swcolname</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span> <span class="n">df</span><span class="p">[</span><span class="n">krwcolname</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
-            <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pchip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">])</span>
+            <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">nonlinearpart</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">pchip</span> <span class="o">=</span> <span class="n">PchipInterpolator</span><span class="p">(</span>
+                    <span class="n">df</span><span class="p">[</span><span class="n">nonlinearpart</span><span class="p">][</span><span class="n">swcolname</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span>
+                    <span class="n">df</span><span class="p">[</span><span class="n">nonlinearpart</span><span class="p">][</span><span class="n">krwcolname</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span><span class="p">,</span> <span class="s2">&quot;krw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pchip</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span><span class="p">,</span> <span class="s2">&quot;sw&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">linearpart</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">linearinterpolator</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span>
+                    <span class="n">df</span><span class="p">[</span><span class="n">linearpart</span><span class="p">][</span><span class="n">swcolname</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span>
+                    <span class="n">df</span><span class="p">[</span><span class="n">linearpart</span><span class="p">][</span><span class="n">krwcolname</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span><span class="p">,</span> <span class="s2">&quot;krw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">linearinterpolator</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span><span class="p">,</span> <span class="s2">&quot;sw&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span> <span class="o">=</span> <span class="n">sorw</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">krwcomment</span> <span class="o">=</span> <span class="s2">&quot;-- krw from tabular input&quot;</span> <span class="o">+</span> <span class="n">krwcomment</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
         <span class="k">if</span> <span class="n">krowcolname</span> <span class="ow">in</span> <span class="n">df</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">sorw</span><span class="p">:</span>
+                <span class="n">sorw</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">swcolname</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">utils</span><span class="o">.</span><span class="n">estimate_diffjumppoint</span><span class="p">(</span>
+                    <span class="n">df</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="n">swcolname</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="n">krowcolname</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">&quot;right&quot;</span>
+                <span class="p">)</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Estimated sorw in tabular data from krow to </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">sorw</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="o">-</span><span class="n">epsilon</span> <span class="o">&lt;=</span> <span class="n">sorw</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">epsilon</span>
+            <span class="n">linearpart</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">swcolname</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span>
+            <span class="n">nonlinearpart</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="n">swcolname</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span>  <span class="c1"># (overlapping at sorw)</span>
+            <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">linearpart</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">linearpart</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="kc">False</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">linearpart</span><span class="p">))</span>
+                <span class="n">nonlinearpart</span> <span class="o">=</span> <span class="o">~</span><span class="n">linearpart</span>
+                <span class="n">sorw</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">nonlinearpart</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">nonlinearpart</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="kc">False</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">nonlinearpart</span><span class="p">))</span>
+                <span class="n">linearpart</span> <span class="o">=</span> <span class="o">~</span><span class="n">nonlinearpart</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">swcolname</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()):</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Incompatible swl&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">krowcolname</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Incoming krow not decreasing&quot;</span><span class="p">)</span>
-            <span class="n">pchip</span> <span class="o">=</span> <span class="n">PchipInterpolator</span><span class="p">(</span>
-                <span class="n">df</span><span class="p">[</span><span class="n">swcolname</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span> <span class="n">df</span><span class="p">[</span><span class="n">krowcolname</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
-            <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pchip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">sw</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">nonlinearpart</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">pchip</span> <span class="o">=</span> <span class="n">PchipInterpolator</span><span class="p">(</span>
+                    <span class="n">df</span><span class="p">[</span><span class="n">nonlinearpart</span><span class="p">][</span><span class="n">swcolname</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span>
+                    <span class="n">df</span><span class="p">[</span><span class="n">nonlinearpart</span><span class="p">][</span><span class="n">krowcolname</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span><span class="p">,</span> <span class="s2">&quot;krow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pchip</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span><span class="p">,</span> <span class="s2">&quot;sw&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">linearpart</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">linearinterpolator</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span>
+                    <span class="n">df</span><span class="p">[</span><span class="n">linearpart</span><span class="p">][</span><span class="n">swcolname</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span>
+                    <span class="n">df</span><span class="p">[</span><span class="n">linearpart</span><span class="p">][</span><span class="n">krowcolname</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span><span class="p">,</span> <span class="s2">&quot;krow&quot;</span>
+                <span class="p">]</span> <span class="o">=</span> <span class="n">linearinterpolator</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span><span class="p">,</span> <span class="s2">&quot;sw&quot;</span><span class="p">]</span>
+                <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span> <span class="o">=</span> <span class="n">sorw</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">krowcomment</span> <span class="o">=</span> <span class="s2">&quot;-- krow from tabular input&quot;</span> <span class="o">+</span> <span class="n">krowcomment</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">if</span> <span class="n">pccolname</span> <span class="ow">in</span> <span class="n">df</span><span class="p">:</span>
             <span class="c1"># Incoming dataframe must cover the range:</span>
@@ -837,6 +907,80 @@
             <span class="o">%</span> <span class="p">(</span><span class="n">Ls</span><span class="p">,</span> <span class="n">Es</span><span class="p">,</span> <span class="n">Ts</span><span class="p">,</span> <span class="n">Lf</span><span class="p">,</span> <span class="n">Ef</span><span class="p">,</span> <span class="n">Tf</span><span class="p">,</span> <span class="n">Pcmax</span><span class="p">,</span> <span class="n">Pcmin</span><span class="p">,</span> <span class="n">Pct</span><span class="p">)</span>
         <span class="p">)</span></div>
 
+<div class="viewcode-block" id="WaterOil.estimate_sorw"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.estimate_sorw">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_sorw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">curve</span><span class="o">=</span><span class="s2">&quot;krw&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Estimate sorw of the current krw data.</span>
+
+<span class="sd">        This is mostly relevant when add_fromtable() has been used.</span>
+<span class="sd">        sorw is estimated by searching for a linear part in krw downwards from sw=1.</span>
+<span class="sd">        In practice it is impossible to infer sorw = 0, since we are limited by</span>
+<span class="sd">        h, and the last segment from sw=1-h to sw=1 can always be assumed linear.</span>
+<span class="sd">        Expect sorw = h if the real sorw = 0, but do not depend that it might</span>
+<span class="sd">        not return zero in the future (one could argue that sorw = h should be</span>
+<span class="sd">        specially treated to mean sorw = 0)</span>
+
+<span class="sd">        If the curve is linear everywhere, sorw will be returned as swl + h</span>
+
+<span class="sd">        krow is not used, and should probably not be, as it can be very close to</span>
+<span class="sd">        zero before approaching sorw.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            curve (str): Colum name of column to use, default is krw.</span>
+<span class="sd">                If this is all linear, but krow is not, you might be better off</span>
+<span class="sd">                with krow</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            float: The estimated sorw.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">curve</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">curve</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">utils</span><span class="o">.</span><span class="n">estimate_diffjumppoint</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="s2">&quot;sw&quot;</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="n">curve</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">&quot;right&quot;</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="WaterOil.estimate_swcr"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.estimate_swcr">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_swcr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">curve</span><span class="o">=</span><span class="s2">&quot;krow&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Estimate swcr of the current krw data.</span>
+
+<span class="sd">        swcr is estimated by searching for a linear part in krw upwards from sw=swl.</span>
+<span class="sd">        In practice it is impossible to infer swcr = 0, since we are limited by</span>
+<span class="sd">        h, and the first segment is assumed linear anyways.</span>
+
+<span class="sd">        If the curve is linear everywhere, swcr can end up at the right end</span>
+<span class="sd">        of your saturation interval.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            curve (str): Colum name of column to use, default is krow.</span>
+<span class="sd">                If this is all linear, but krw is not, you might be better off</span>
+<span class="sd">                with krw</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            float: The estimated sgcr.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">curve</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">curve</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">estimate_diffjumppoint</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="s2">&quot;sw&quot;</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="n">curve</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span>
+        <span class="p">)</span></div>
+
+<div class="viewcode-block" id="WaterOil.crosspoint"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.crosspoint">[docs]</a>    <span class="k">def</span> <span class="nf">crosspoint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Locate and return the saturation point where krw = krow</span>
+
+<span class="sd">        Accuracy of this crosspoint depends on the resolution chosen</span>
+<span class="sd">        when initializing the saturation range</span>
+<span class="sd">       &quot;&quot;&quot;</span>
+
+        <span class="c1"># Make a copy for calculations</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;sw&quot;</span><span class="p">,</span> <span class="s2">&quot;krw&quot;</span><span class="p">,</span> <span class="s2">&quot;krow&quot;</span><span class="p">]])</span>
+        <span class="n">tmp</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;krwminuskrow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">[</span><span class="s2">&quot;krw&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">tmp</span><span class="p">[</span><span class="s2">&quot;krow&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Add a zero value for the difference column, and interpolate</span>
+        <span class="c1"># the sg column to the zero value</span>
+        <span class="n">zerodf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">tmp</span><span class="p">)],</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;krwminuskrow&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">})</span>
+        <span class="n">tmp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">tmp</span><span class="p">,</span> <span class="n">zerodf</span><span class="p">],</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># When Pandas is upgraded for all users:</span>
+        <span class="c1"># tmp = pd.concat([tmp, zerodf], sort=True)</span>
+        <span class="n">tmp</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;krwminuskrow&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">tmp</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;slinear&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">tmp</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">tmp</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)]</span><span class="o">.</span><span class="n">sw</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
 <div class="viewcode-block" id="WaterOil.selfcheck"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.selfcheck">[docs]</a>    <span class="k">def</span> <span class="nf">selfcheck</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Check validities of the data in the table.</span>
 
@@ -1008,29 +1152,7 @@
             <span class="n">linestyle</span><span class="o">=</span><span class="n">linestyle</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">ax</span><span class="p">:</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
-
-<div class="viewcode-block" id="WaterOil.crosspoint"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.crosspoint">[docs]</a>    <span class="k">def</span> <span class="nf">crosspoint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Locate and return the saturation point where krw = krow</span>
-
-<span class="sd">        Accuracy of this crosspoint depends on the resolution chosen</span>
-<span class="sd">        when initializing the saturation range</span>
-<span class="sd">       &quot;&quot;&quot;</span>
-
-        <span class="c1"># Make a copy for calculations</span>
-        <span class="n">tmp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;sw&quot;</span><span class="p">,</span> <span class="s2">&quot;krw&quot;</span><span class="p">,</span> <span class="s2">&quot;krow&quot;</span><span class="p">]])</span>
-        <span class="n">tmp</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;krwminuskrow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">[</span><span class="s2">&quot;krw&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">tmp</span><span class="p">[</span><span class="s2">&quot;krow&quot;</span><span class="p">]</span>
-
-        <span class="c1"># Add a zero value for the difference column, and interpolate</span>
-        <span class="c1"># the sg column to the zero value</span>
-        <span class="n">zerodf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">tmp</span><span class="p">)],</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;krwminuskrow&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">})</span>
-        <span class="n">tmp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">tmp</span><span class="p">,</span> <span class="n">zerodf</span><span class="p">],</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="c1"># When Pandas is upgraded for all users:</span>
-        <span class="c1"># tmp = pd.concat([tmp, zerodf], sort=True)</span>
-        <span class="n">tmp</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;krwminuskrow&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">tmp</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;slinear&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">tmp</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">tmp</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)]</span><span class="o">.</span><span class="n">sw</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div></div>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div></div>
 </pre></div>
 
            </div>
