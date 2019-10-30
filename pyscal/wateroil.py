@@ -10,6 +10,7 @@ import pandas as pd
 from pyscal.constants import EPSILON as epsilon
 from pyscal.constants import SWINTEGERS
 from pyscal.constants import MAX_EXPONENT
+from pyscal import utils
 
 
 class WaterOil(object):
@@ -124,6 +125,7 @@ class WaterOil(object):
         krwcomment="",
         krowcomment="",
         pccomment="",
+        sorw=None,
     ):
         """Interpolate relpermdata from a dataframe.
 
@@ -137,46 +139,114 @@ class WaterOil(object):
         Calling function is responsible for checking if any data was
         actually added to the table.
 
+        The relpermdata will be interpolated using a monotone cubic
+        interpolator below 1-sorw, and linearly above 1-sorw. Capillary
+        pressure data will be interpolated monotone cubicly over the
+        entire saturation interval
+
         The python package ecl2df has a tool for converting Eclipse input
         files to dataframes.
 
         Args:
-            df: Pandas dataframe containing data
-            swcolname: string, column name with the saturation data in the dataframe.
-            krwcolname: string, name of the column with krw
-            krowcolname: string
-            pccolname: string
-            krwcomment: string
-            krowcomment: string
-            pccomment: string
+            df (pd.DataFrame): containing data
+            swcolname (string): column name with the saturation data in the dataframe df
+            krwcolname (string): name of column in df with krw
+            krowcolname (string): name of column in df with krow
+            pccolname (string): name of column in df with capillary pressure data
+            krwcomment (string): Inserted into comment
+            krowcomment (string): Inserted into comment
+            pccomment (str): Inserted into comment
+            sorw (float): Explicit sorw. If None, it will be estimated from
+                the numbers in krw (or krow)
         """
-        from scipy.interpolate import PchipInterpolator
+        from scipy.interpolate import PchipInterpolator, interp1d
 
         if swcolname not in df:
             logging.critical(
                 swcolname + " not found in dataframe, can't read table data"
             )
             raise ValueError
+        if (df[swcolname].diff() < 0).any():
+            raise ValueError("sw data not sorted")
         if krwcolname in df:
+            if not sorw:
+                sorw = df[swcolname].max() - utils.estimate_diffjumppoint(
+                    df, xcol=swcolname, ycol=krwcolname, side="right"
+                )
+                logging.info("Estimated sorw in tabular data to %f", sorw)
+            assert -epsilon <= sorw <= 1 + epsilon
+            linearpart = df[swcolname] >= 1 - sorw
+            nonlinearpart = df[swcolname] <= 1 - sorw  # (overlapping at sorw)
+            if sum(linearpart) < 2:
+                linearpart = pd.Series([False] * len(linearpart))
+                nonlinearpart = ~linearpart
+                sorw = 0
+            if sum(nonlinearpart) < 2:
+                nonlinearpart = pd.Series([False] * len(nonlinearpart))
+                linearpart = ~nonlinearpart
             if not np.isclose(df[swcolname].min(), self.table["sw"].min()):
                 raise ValueError("Incompatible swl")
             # Verify that incoming data is increasing (or level):
             if not (df[krwcolname].diff().dropna() > -epsilon).all():
                 raise ValueError("Incoming krw not increasing")
-            pchip = PchipInterpolator(
-                df[swcolname].astype(float), df[krwcolname].astype(float)
-            )
-            self.table["krw"] = pchip(self.table["sw"])
+            if sum(nonlinearpart) >= 2:
+                pchip = PchipInterpolator(
+                    df[nonlinearpart][swcolname].astype(float),
+                    df[nonlinearpart][krwcolname].astype(float),
+                )
+                self.table.loc[self.table["sw"] <= 1 - sorw, "krw"] = pchip(
+                    self.table.loc[self.table["sw"] <= 1 - sorw, "sw"]
+                )
+            if sum(linearpart) >= 2:
+                linearinterpolator = interp1d(
+                    df[linearpart][swcolname].astype(float),
+                    df[linearpart][krwcolname].astype(float),
+                )
+                self.table.loc[self.table["sw"] > 1 - sorw, "krw"] = linearinterpolator(
+                    self.table.loc[self.table["sw"] > 1 - sorw, "sw"]
+                )
+            self.sorw = sorw
             self.krwcomment = "-- krw from tabular input" + krwcomment + "\n"
+
         if krowcolname in df:
+            if not sorw:
+                sorw = df[swcolname].max() - utils.estimate_diffjumppoint(
+                    df, xcol=swcolname, ycol=krowcolname, side="right"
+                )
+                logging.info("Estimated sorw in tabular data from krow to %s", sorw)
+            assert -epsilon <= sorw <= 1 + epsilon
+            linearpart = df[swcolname] >= 1 - sorw
+            nonlinearpart = df[swcolname] <= 1 - sorw  # (overlapping at sorw)
+            if sum(linearpart) < 2:
+                linearpart = pd.Series([False] * len(linearpart))
+                nonlinearpart = ~linearpart
+                sorw = 0
+            if sum(nonlinearpart) < 2:
+                nonlinearpart = pd.Series([False] * len(nonlinearpart))
+                linearpart = ~nonlinearpart
             if not np.isclose(df[swcolname].min(), self.table["sw"].min()):
                 raise ValueError("Incompatible swl")
             if not (df[krowcolname].diff().dropna() < epsilon).all():
                 raise ValueError("Incoming krow not decreasing")
-            pchip = PchipInterpolator(
-                df[swcolname].astype(float), df[krowcolname].astype(float)
-            )
-            self.table["krow"] = pchip(self.table.sw)
+            if sum(nonlinearpart) >= 2:
+                pchip = PchipInterpolator(
+                    df[nonlinearpart][swcolname].astype(float),
+                    df[nonlinearpart][krowcolname].astype(float),
+                )
+                self.table.loc[self.table["sw"] <= 1 - sorw, "krow"] = pchip(
+                    self.table.loc[self.table["sw"] <= 1 - sorw, "sw"]
+                )
+            if sum(linearpart) >= 2:
+                linearinterpolator = interp1d(
+                    df[linearpart][swcolname].astype(float),
+                    df[linearpart][krowcolname].astype(float),
+                )
+                self.table.loc[
+                    self.table["sw"] > 1 - sorw, "krow"
+                ] = linearinterpolator(
+                    self.table.loc[self.table["sw"] > 1 - sorw, "sw"]
+                )
+            self.sorw = sorw
             self.krowcomment = "-- krow from tabular input" + krowcomment + "\n"
         if pccolname in df:
             # Incoming dataframe must cover the range:
@@ -680,6 +750,80 @@ class WaterOil(object):
             % (Ls, Es, Ts, Lf, Ef, Tf, Pcmax, Pcmin, Pct)
         )
 
+    def estimate_sorw(self, curve="krw"):
+        """Estimate sorw of the current krw data.
+
+        This is mostly relevant when add_fromtable() has been used.
+        sorw is estimated by searching for a linear part in krw downwards from sw=1.
+        In practice it is impossible to infer sorw = 0, since we are limited by
+        h, and the last segment from sw=1-h to sw=1 can always be assumed linear.
+        Expect sorw = h if the real sorw = 0, but do not depend that it might
+        not return zero in the future (one could argue that sorw = h should be
+        specially treated to mean sorw = 0)
+
+        If the curve is linear everywhere, sorw will be returned as swl + h
+
+        krow is not used, and should probably not be, as it can be very close to
+        zero before approaching sorw.
+
+        Args:
+            curve (str): Colum name of column to use, default is krw.
+                If this is all linear, but krow is not, you might be better off
+                with krow
+        Returns:
+            float: The estimated sorw.
+        """
+        assert curve in self.table
+        assert self.table[curve].sum() > 0
+        return self.table["sw"].max() - utils.estimate_diffjumppoint(
+            self.table, xcol="sw", ycol=curve, side="right"
+        )
+
+    def estimate_swcr(self, curve="krow"):
+        """Estimate swcr of the current krw data.
+
+        swcr is estimated by searching for a linear part in krw upwards from sw=swl.
+        In practice it is impossible to infer swcr = 0, since we are limited by
+        h, and the first segment is assumed linear anyways.
+
+        If the curve is linear everywhere, swcr can end up at the right end
+        of your saturation interval.
+
+        Args:
+            curve (str): Colum name of column to use, default is krow.
+                If this is all linear, but krw is not, you might be better off
+                with krw
+        Returns:
+            float: The estimated sgcr.
+        """
+        assert curve in self.table
+        assert self.table[curve].sum() > 0
+        return utils.estimate_diffjumppoint(
+            self.table, xcol="sw", ycol=curve, side="left"
+        )
+
+    def crosspoint(self):
+        """Locate and return the saturation point where krw = krow
+
+        Accuracy of this crosspoint depends on the resolution chosen
+        when initializing the saturation range
+       """
+
+        # Make a copy for calculations
+        tmp = pd.DataFrame(self.table[["sw", "krw", "krow"]])
+        tmp.loc[:, "krwminuskrow"] = tmp["krw"] - tmp["krow"]
+
+        # Add a zero value for the difference column, and interpolate
+        # the sg column to the zero value
+        zerodf = pd.DataFrame(index=[len(tmp)], data={"krwminuskrow": 0.0})
+        tmp = pd.concat([tmp, zerodf], sort=True)
+        # When Pandas is upgraded for all users:
+        # tmp = pd.concat([tmp, zerodf], sort=True)
+        tmp.set_index("krwminuskrow", inplace=True)
+        tmp.interpolate(method="slinear", inplace=True)
+
+        return tmp[np.isclose(tmp.index, 0.0)].sw.values[0]
+
     def selfcheck(self):
         """Check validities of the data in the table.
 
@@ -852,25 +996,3 @@ class WaterOil(object):
         )
         if not ax:
             plt.show()
-
-    def crosspoint(self):
-        """Locate and return the saturation point where krw = krow
-
-        Accuracy of this crosspoint depends on the resolution chosen
-        when initializing the saturation range
-       """
-
-        # Make a copy for calculations
-        tmp = pd.DataFrame(self.table[["sw", "krw", "krow"]])
-        tmp.loc[:, "krwminuskrow"] = tmp["krw"] - tmp["krow"]
-
-        # Add a zero value for the difference column, and interpolate
-        # the sg column to the zero value
-        zerodf = pd.DataFrame(index=[len(tmp)], data={"krwminuskrow": 0.0})
-        tmp = pd.concat([tmp, zerodf], sort=True)
-        # When Pandas is upgraded for all users:
-        # tmp = pd.concat([tmp, zerodf], sort=True)
-        tmp.set_index("krwminuskrow", inplace=True)
-        tmp.interpolate(method="slinear", inplace=True)
-
-        return tmp[np.isclose(tmp.index, 0.0)].sw.values[0]
