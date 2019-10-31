@@ -48,7 +48,7 @@ def test_slgof(swl, sorg, sgcr):
     assert "krg" in slgof
     assert "krog" in slgof
     assert len(slgof)
-    print(slgof)
+
     check_table(slgof)
 
     # Requirements from E100 manual:
