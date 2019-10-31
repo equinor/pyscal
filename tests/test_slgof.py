@@ -18,7 +18,6 @@ def check_table(df):
     """Check sanity of important columns"""
     assert not df.empty
     assert not df.isnull().values.any()
-    assert len(df["sl"].unique()) == len(df)
     assert df["sl"].is_monotonic
     assert (df["sl"] >= 0.0).all()
     assert (df["sl"] <= 1.0).all()

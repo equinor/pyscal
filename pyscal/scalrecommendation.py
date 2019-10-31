@@ -27,36 +27,36 @@ class SCALrecommendation(object):
     @staticmethod
     def defaultshandling(key, value, dicts):
         """Helper function for __init__ to fill out missing values in
-        dicts with relperm parameter"""
+        dicts with relperm parameter
+
+        This function IS DEPRECATED and will be removed
+        when __init__ no longer supports dicts as arguments.
+        """
         for dic in dicts:
             if key not in dic:
                 dic[key] = value
 
     def __init__(self, low, base, high, tag, h=0.01):
-        """Set up a SCAL recommendation curve set
+        """Set up a SCAL recommendation curve set from WaterOilGas objects
 
-        You can choose to provide ready-made WaterOilGas objects, or
-        dictionaries with LET_properties for initialization.
-
-        If you have LET-properties in a dictionary, the low, base and
-        high objects must be of type dict must containing the
-        properties for each curve set, in the following keys:
-
-           Lw, Ew, Tw, Lo, Eo, To,
-           Lg, Eg, Tg, Log, Eog, Tog,
-           krwr
-           swirr, swl, sorw, sorg, sgcr
-
-        For oil-water only, you may omit the LET parameters for gas and oil-gas
-
-        If low, base and high are of type WaterOilGas objects, these
-        will be used as is.
+        Arguments:
+            low (WaterOilGas): low case
+            base (WaterOilGas): base case
+            high (WaterOilGas): high case
         """
 
         self.h = h
         self.tag = tag
 
         if isinstance(low, dict) and isinstance(base, dict) and isinstance(high, dict):
+
+            logging.warning(
+                (
+                    "Making SCALrecommendation from dicts is deprecated "
+                    "and will not be supported in future versions\n"
+                    "Use WaterOilGas objects instead"
+                )
+            )
 
             self.defaultshandling("swirr", 0.0, [low, base, high])
             self.defaultshandling("swcr", 0.0, [low, base, high])
@@ -163,16 +163,17 @@ class SCALrecommendation(object):
             self.high.gasoil.add_LET_oil(
                 l=high["Log"], e=high["Eog"], t=high["Tog"], kroend=high["kroend"]
             )
-        else:
-            if (
-                isinstance(low, WaterOilGas)
-                and isinstance(base, WaterOilGas)
-                and isinstance(high, WaterOilGas)
-            ):
+        elif (
+            isinstance(low, WaterOilGas)
+            and isinstance(base, WaterOilGas)
+            and isinstance(high, WaterOilGas)
+        ):
 
-                self.low = low
-                self.base = base
-                self.high = high
+            self.low = low
+            self.base = base
+            self.high = high
+        else:
+            raise ValueError("Wrong arguments to SCALrecommendation")
 
     # User should add capillary pressure explicitly by calling add**
     # on the class objects, or run the following method to add the

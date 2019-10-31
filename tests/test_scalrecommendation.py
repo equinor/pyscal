@@ -8,7 +8,7 @@ from __future__ import print_function
 from hypothesis import given, settings
 import hypothesis.strategies as st
 
-from pyscal import SCALrecommendation
+from pyscal import SCALrecommendation, PyscalFactory
 
 # Example SCAL recommendation, low case
 low_sample_let = {
@@ -86,11 +86,13 @@ high_sample_let = {
 }
 
 
-@settings(max_examples=10, deadline=1000)
+@settings(max_examples=10, deadline=1500)
 @given(
     st.floats(min_value=-1.1, max_value=1.1), st.floats(min_value=-1.1, max_value=1.1)
 )
-def test_interpolation(param_wo, param_go):
+def test_interpolation_deprecated(param_wo, param_go):
+    """Testing deprecated functionality. Remove
+    this test function when SCALrecommendation class is updated"""
     rec = SCALrecommendation(
         low_sample_let, base_sample_let, high_sample_let, "foo", h=0.1
     )
@@ -112,9 +114,39 @@ def test_interpolation(param_wo, param_go):
     assert interpolant.threephaseconsistency() == ""
 
 
+@settings(max_examples=10, deadline=1500)
+@given(
+    st.floats(min_value=-1.1, max_value=1.1), st.floats(min_value=-1.1, max_value=1.1)
+)
+def test_interpolation(param_wo, param_go):
+    rec = PyscalFactory.create_scal_recommendation(
+        {"low": low_sample_let, "base": base_sample_let, "high": high_sample_let},
+        "foo",
+        h=0.1,
+    )
+    rec.add_simple_J()  # Add default pc curve
+
+    try:
+        interpolant = rec.interpolate(param_wo, param_go, h=0.1)
+    except AssertionError:
+        return
+
+    check_table_wo(interpolant.wateroil.table)
+    check_table_go(interpolant.gasoil.table)
+
+    assert len(interpolant.gasoil.SGOF()) > 100
+    assert len(interpolant.gasoil.SGFN()) > 100
+    assert len(interpolant.wateroil.SWFN()) > 100
+    assert len(interpolant.SOF3()) > 100
+    assert len(interpolant.wateroil.SWOF()) > 100
+    assert interpolant.threephaseconsistency() == ""
+
+
 def test_boundary_cases():
-    rec = SCALrecommendation(
-        low_sample_let, base_sample_let, high_sample_let, "foo", h=0.1
+    rec = PyscalFactory.create_scal_recommendation(
+        {"low": low_sample_let, "base": base_sample_let, "high": high_sample_let},
+        "foo",
+        h=0.1,
     )
     # Object reference equivalence is a little bit strict,
     # because it would be perfectly fine if interpolate()

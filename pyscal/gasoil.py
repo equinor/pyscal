@@ -545,27 +545,36 @@ class GasOil(object):
         If you call SGOF/SLGOF, this function must not return False.
         """
         error = False
-        if not (self.table.sg.diff().dropna() > -epsilon).all():
+        if not "krg" in self.table:
+            logging.error("krg data missing")
+            error = True
+        if not "krog" in self.table:
+            logging.error("krog data missing")
+            error = True
+        if not (self.table["sg"].diff().dropna() > -epsilon).all():
             logging.error("sg data not strictly increasing")
             error = True
-        if not (self.table.krg.diff().dropna() >= -epsilon).all():
+        if (
+            "krg" in self.table
+            and not (self.table["krg"].diff().dropna() >= -epsilon).all()
+        ):
             logging.error("krg data not monotonically decreasing")
             error = True
 
         if (
-            "krog" in self.table.columns
-            and not (self.table.krog.diff().dropna() <= epsilon).all()
+            "krog" in self.table
+            and not (self.table["krog"].diff().dropna() <= epsilon).all()
         ):
             logging.error("krog data not monotonically increasing")
             error = True
-        if not np.isclose(min(self.table.krg), 0.0):
+        if "krg" in self.table and not np.isclose(min(self.table["krg"]), 0.0):
             logging.error("krg must start at zero")
             error = True
-        if "pc" in self.table.columns and self.table.pc[0] > 0:
-            if not (self.table.pc.diff().dropna() < epsilon).all():
+        if "pc" in self.table and self.table["pc"][0] > 0:
+            if not (self.table["pc"].diff().dropna() < epsilon).all():
                 logging.error("pc data for gas-oil not strictly deceasing")
                 error = True
-        if "pc" in self.table.columns and np.isinf(self.table.pc.max()):
+        if "pc" in self.table and np.isinf(self.table["pc"].max()):
             logging.error("pc goes to infinity for gas-oil. ")
             error = True
         for col in list(set(["sg", "krg", "krog"]) & set(self.table.columns)):
@@ -602,7 +611,7 @@ class GasOil(object):
         if not self.selfcheck():
             return
         string = ""
-        if "pc" not in self.table.columns:
+        if "pc" not in self.table:
             self.table["pc"] = 0
             self.pccomment = "-- Zero capillary pressure\n"
         if header:
@@ -679,7 +688,7 @@ class GasOil(object):
         if not self.selfcheck():
             return
         string = ""
-        if "pc" not in self.table.columns:
+        if "pc" not in self.table:
             self.table["pc"] = 0
             self.pccomment = "-- Zero capillary pressure\n"
         if header:

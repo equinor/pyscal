@@ -827,26 +827,40 @@ class WaterOil(object):
     def selfcheck(self):
         """Check validities of the data in the table.
 
+        An unfinished object will return False.
+
         If you call SWOF, this function must not return False
+
+        This function should not throw an exception, but capture
+        the error and give an error.
         """
         error = False
-        if not (self.table.sw.diff().dropna().round(10) > -epsilon).all():
+        if "krw" not in self.table:
+            logging.error("krw data not found")
+            error = True
+        if "krow" not in self.table:
+            logging.error("krow data not found")
+            error = True
+        if not (self.table["sw"].diff().dropna().round(10) > -epsilon).all():
             logging.error("sw data not strictly increasing")
             error = True
-        if not (self.table.krw.diff().dropna().round(10) >= -epsilon).all():
+        if (
+            "krw" in self.table
+            and not (self.table["krw"].diff().dropna().round(10) >= -epsilon).all()
+        ):
             logging.error("krw data not monotonically increasing")
             error = True
         if (
             "krow" in self.table.columns
-            and not (self.table.krow.diff().dropna().round(10) <= epsilon).all()
+            and not (self.table["krow"].diff().dropna().round(10) <= epsilon).all()
         ):
             logging.error("krow data not monotonically decreasing")
             error = True
-        if "pc" in self.table.columns and self.table.pc[0] > -epsilon:
-            if not (self.table.pc.diff().dropna().round(10) < epsilon).all():
+        if "pc" in self.table.columns and self.table["pc"][0] > -epsilon:
+            if not (self.table["pc"].diff().dropna().round(10) < epsilon).all():
                 logging.error("pc data not strictly decreasing")
                 error = True
-        if "pc" in self.table.columns and np.isinf(self.table.pc.max()):
+        if "pc" in self.table.columns and np.isinf(self.table["pc"].max()):
             logging.error("pc goes to infinity. Maybe swirr=swl?")
             error = True
         for col in list(set(["sw", "krw", "krow"]) & set(self.table.columns)):
