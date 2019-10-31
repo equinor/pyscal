@@ -184,36 +184,36 @@
 <div class="viewcode-block" id="SCALrecommendation.defaultshandling"><a class="viewcode-back" href="../../pyscal.html#pyscal.scalrecommendation.SCALrecommendation.defaultshandling">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">defaultshandling</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">dicts</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Helper function for __init__ to fill out missing values in</span>
-<span class="sd">        dicts with relperm parameter&quot;&quot;&quot;</span>
+<span class="sd">        dicts with relperm parameter</span>
+
+<span class="sd">        This function IS DEPRECATED and will be removed</span>
+<span class="sd">        when __init__ no longer supports dicts as arguments.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">for</span> <span class="n">dic</span> <span class="ow">in</span> <span class="n">dicts</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dic</span><span class="p">:</span>
                 <span class="n">dic</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">low</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">high</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Set up a SCAL recommendation curve set</span>
+        <span class="sd">&quot;&quot;&quot;Set up a SCAL recommendation curve set from WaterOilGas objects</span>
 
-<span class="sd">        You can choose to provide ready-made WaterOilGas objects, or</span>
-<span class="sd">        dictionaries with LET_properties for initialization.</span>
-
-<span class="sd">        If you have LET-properties in a dictionary, the low, base and</span>
-<span class="sd">        high objects must be of type dict must containing the</span>
-<span class="sd">        properties for each curve set, in the following keys:</span>
-
-<span class="sd">           Lw, Ew, Tw, Lo, Eo, To,</span>
-<span class="sd">           Lg, Eg, Tg, Log, Eog, Tog,</span>
-<span class="sd">           krwr</span>
-<span class="sd">           swirr, swl, sorw, sorg, sgcr</span>
-
-<span class="sd">        For oil-water only, you may omit the LET parameters for gas and oil-gas</span>
-
-<span class="sd">        If low, base and high are of type WaterOilGas objects, these</span>
-<span class="sd">        will be used as is.</span>
+<span class="sd">        Arguments:</span>
+<span class="sd">            low (WaterOilGas): low case</span>
+<span class="sd">            base (WaterOilGas): base case</span>
+<span class="sd">            high (WaterOilGas): high case</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">=</span> <span class="n">h</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tag</span> <span class="o">=</span> <span class="n">tag</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">low</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">high</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+
+            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="p">(</span>
+                    <span class="s2">&quot;Making SCALrecommendation from dicts is deprecated &quot;</span>
+                    <span class="s2">&quot;and will not be supported in future versions</span><span class="se">\n</span><span class="s2">&quot;</span>
+                    <span class="s2">&quot;Use WaterOilGas objects instead&quot;</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">defaultshandling</span><span class="p">(</span><span class="s2">&quot;swirr&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="p">[</span><span class="n">low</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">high</span><span class="p">])</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">defaultshandling</span><span class="p">(</span><span class="s2">&quot;swcr&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="p">[</span><span class="n">low</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">high</span><span class="p">])</span>
@@ -320,16 +320,17 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">add_LET_oil</span><span class="p">(</span>
                 <span class="n">l</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;Log&quot;</span><span class="p">],</span> <span class="n">e</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;Eog&quot;</span><span class="p">],</span> <span class="n">t</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;Tog&quot;</span><span class="p">],</span> <span class="n">kroend</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;kroend&quot;</span><span class="p">]</span>
             <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="p">(</span>
-                <span class="nb">isinstance</span><span class="p">(</span><span class="n">low</span><span class="p">,</span> <span class="n">WaterOilGas</span><span class="p">)</span>
-                <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">WaterOilGas</span><span class="p">)</span>
-                <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">high</span><span class="p">,</span> <span class="n">WaterOilGas</span><span class="p">)</span>
-            <span class="p">):</span>
+        <span class="k">elif</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">low</span><span class="p">,</span> <span class="n">WaterOilGas</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">base</span><span class="p">,</span> <span class="n">WaterOilGas</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">high</span><span class="p">,</span> <span class="n">WaterOilGas</span><span class="p">)</span>
+        <span class="p">):</span>
 
-                <span class="bp">self</span><span class="o">.</span><span class="n">low</span> <span class="o">=</span> <span class="n">low</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">base</span> <span class="o">=</span> <span class="n">base</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">high</span> <span class="o">=</span> <span class="n">high</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">low</span> <span class="o">=</span> <span class="n">low</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">base</span> <span class="o">=</span> <span class="n">base</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">high</span> <span class="o">=</span> <span class="n">high</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Wrong arguments to SCALrecommendation&quot;</span><span class="p">)</span>
 
     <span class="c1"># User should add capillary pressure explicitly by calling add**</span>
     <span class="c1"># on the class objects, or run the following method to add the</span>

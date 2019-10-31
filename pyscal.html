@@ -96,6 +96,7 @@
 <li class="toctree-l2 current"><a class="current reference internal" href="#">pyscal package</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pyscal.constants">pyscal.constants module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pyscal.factory">pyscal.factory module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pyscal.gasoil">pyscal.gasoil module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pyscal.scalrecommendation">pyscal.scalrecommendation module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pyscal.utils">pyscal.utils module</a></li>
@@ -193,6 +194,107 @@ Used to avoid numerical instabilities. It could probably be much
 higher than the chosen number in most circumstances, but such high
 numbers should not be relevant for relative permeability</p></li>
 </ul>
+</div>
+<div class="section" id="module-pyscal.factory">
+<span id="pyscal-factory-module"></span><h2>pyscal.factory module<a class="headerlink" href="#module-pyscal.factory" title="Permalink to this headline">¶</a></h2>
+<p>Factory functions for creating various pyscal objects</p>
+<dl class="function">
+<dt id="pyscal.factory.slicedict">
+<code class="sig-prename descclassname">pyscal.factory.</code><code class="sig-name descname">slicedict</code><span class="sig-paren">(</span><em class="sig-param">dct</em>, <em class="sig-param">keys</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#slicedict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.slicedict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Slice a dictionary for a set of keys.
+Keys not existing will be ignored.</p>
+</dd></dl>
+
+<dl class="class">
+<dt id="pyscal.factory.PyscalFactory">
+<em class="property">class </em><code class="sig-prename descclassname">pyscal.factory.</code><code class="sig-name descname">PyscalFactory</code><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Class for implementing the factory pattern for Pyscal objects</p>
+<p>The factory functions herein can take multiple parameter sets,
+determine what kind of parametrization to be used, and set up
+the full objects based on these parameters, instead of
+explicitly having to call the API for each task.</p>
+<p class="rubric">Example</p>
+<p>wo = WaterOil(sorw=0.05)
+wo.add_corey_water(nw=3)
+wo.add_corey_oil(now=2)
+# is equivalent to:
+wo = factory.create_water_oil(dict(sorw=0.05, nw=3, now=2))</p>
+<p>Parameter names to factory functions are case <em>insensitive</em>, while
+the add_*() parameters are not. This is becase the add_*() parameters
+are meant as a Python API, while the factory class is there to aid
+users when input is written in a different context, like an Excel
+spreadsheet.</p>
+<dl class="method">
+<dt id="pyscal.factory.PyscalFactory.create_water_oil">
+<em class="property">static </em><code class="sig-name descname">create_water_oil</code><span class="sig-paren">(</span><em class="sig-param">params=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_water_oil"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_water_oil" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a WaterOil object from a dictionary of parameters.</p>
+<p>Parameterization (Corey/LET) is inferred from presence
+of certain parameters in the dictionary.</p>
+<p>Don’t rely on behaviour of you supply both Corey and LET at
+the same time.</p>
+<p>Parameter names in the dictionary are case insensitive. You
+can use Swirr, swirr, sWirR, swiRR etc.</p>
+<p>NB: the add_LET_* methods have the names ‘l’, ‘e’ and ‘t’
+in their signatures, which is not precise enough in this
+context, so we require e.g. ‘Lw’ and ‘Low’ (which both will be
+translated to ‘l’)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyscal.factory.PyscalFactory.create_gas_oil">
+<em class="property">static </em><code class="sig-name descname">create_gas_oil</code><span class="sig-paren">(</span><em class="sig-param">params=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_gas_oil"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_gas_oil" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a GasOil object from a dictionary of parameters.</p>
+<p>Parameterization (Corey/LET) is inferred from presence
+of certain parameters in the dictionary.</p>
+<p>Don’t rely on behaviour of you supply both Corey and LET at
+the same time.</p>
+<p>NB: the add_LET_* methods have the names ‘l’, ‘e’ and ‘t’
+in their signatures, which is not precise enough in this
+context, so we require e.g. ‘Lg’ and ‘Log’ (which both will be
+translated to ‘l’)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyscal.factory.PyscalFactory.create_water_oil_gas">
+<em class="property">static </em><code class="sig-name descname">create_water_oil_gas</code><span class="sig-paren">(</span><em class="sig-param">params=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_water_oil_gas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_water_oil_gas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a WaterOilGas object from a dictionary of parameters</p>
+<p>Parameterization (Corey/LET) is inferred from presence
+of certain parameters in the dictionary.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyscal.factory.PyscalFactory.create_scal_recommendation">
+<em class="property">static </em><code class="sig-name descname">create_scal_recommendation</code><span class="sig-paren">(</span><em class="sig-param">params</em>, <em class="sig-param">tag=''</em>, <em class="sig-param">h=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_scal_recommendation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_scal_recommendation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set up a SCAL recommendation curve set from input as a
+dictionary of dictionary.</p>
+<p>The keys in in the dictionary <em>must</em> be “low”, “base” and “high”.</p>
+<p>The value for “low” must be a new dictionary with saturation
+endpoints and LET/Corey parameters, as you would feed it to
+the create_water_oil_gas() factory function;</p>
+<blockquote>
+<div><p>Lw, Ew, Tw, Low, Eow, Tow,
+Lg, Eg, Tg, Log, Eog, Tog,
+nw, now, ng, nog
+swirr, swl, sorw, sorg, sgcr</p>
+</div></blockquote>
+<p>For oil-water only, you may omit the LET parameters for gas and oil-gas</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyscal.factory.PyscalFactory.create_scal_recommendation_list">
+<em class="property">static </em><code class="sig-name descname">create_scal_recommendation_list</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_scal_recommendation_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_scal_recommendation_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reserved</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyscal.factory.PyscalFactory.create_wog_list">
+<em class="property">static </em><code class="sig-name descname">create_wog_list</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_wog_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_wog_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reserved for future implementation</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 <div class="section" id="module-pyscal.gasoil">
 <span id="pyscal-gasoil-module"></span><h2>pyscal.gasoil module<a class="headerlink" href="#module-pyscal.gasoil" title="Permalink to this headline">¶</a></h2>
@@ -540,6 +642,8 @@ contained by low and high curves.</p>
 <em class="property">static </em><code class="sig-name descname">defaultshandling</code><span class="sig-paren">(</span><em class="sig-param">key</em>, <em class="sig-param">value</em>, <em class="sig-param">dicts</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/scalrecommendation.html#SCALrecommendation.defaultshandling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.scalrecommendation.SCALrecommendation.defaultshandling" title="Permalink to this definition">¶</a></dt>
 <dd><p>Helper function for __init__ to fill out missing values in
 dicts with relperm parameter</p>
+<p>This function IS DEPRECATED and will be removed
+when __init__ no longer supports dicts as arguments.</p>
 </dd></dl>
 
 <dl class="method">
@@ -924,7 +1028,10 @@ when initializing the saturation range</p>
 <dt id="pyscal.wateroil.WaterOil.selfcheck">
 <code class="sig-name descname">selfcheck</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.selfcheck"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.selfcheck" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check validities of the data in the table.</p>
+<p>An unfinished object will return False.</p>
 <p>If you call SWOF, this function must not return False</p>
+<p>This function should not throw an exception, but capture
+the error and give an error.</p>
 </dd></dl>
 
 <dl class="method">
