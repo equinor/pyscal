@@ -6,6 +6,8 @@ import logging
 import numpy as np
 import pandas as pd
 
+from pyscal import utils
+
 from pyscal.constants import EPSILON as epsilon
 from pyscal.constants import SWINTEGERS
 from pyscal.constants import MAX_EXPONENT
@@ -236,8 +238,19 @@ class GasOil(object):
                 raise ValueError("Too large sgcr for pcog interpolation")
             if df[sgcolname].max() < self.table["sg"].max():
                 raise ValueError("Too large swl for pcog interpolation")
-            if not (df[pccolname].diff().dropna() < 0.0).all():
-                raise ValueError("Incoming pc not decreasing")
+            if np.isinf(df[pccolname]).any():
+                logging.warning(
+                    (
+                        "Infinity pc values detected. Will be dropped, "
+                        "risk of extrapolation"
+                    )
+                )
+            df = df.replace([np.inf, -np.inf], np.nan)
+            df.dropna(subset=[pccolname], how="all", inplace=True)
+            # If nonzero, then it must be decreasing:
+            if df[pccolname].abs().sum() > 0:
+                if not (df[pccolname].diff().dropna() < 0.0).all():
+                    raise ValueError("Incoming pc not decreasing")
             pchip = PchipInterpolator(
                 df[sgcolname].astype(float), df[pccolname].astype(float)
             )
@@ -443,6 +456,83 @@ class GasOil(object):
             kromax,
         )
 
+    def estimate_sorg(self):
+        """Estimate sorg of the current krg or krog data.
+
+        sorg is estimated by searching for a linear part in krg downwards from sg=1-swl.
+        In practice it is impossible to infer sorg = 0, since we are limited by
+        h, and the last segment from sg=1-swl-h to sg=1-swl can always be assumed linear.
+
+        If krgend is anchored to sorg, krg data is used to infer sorg. If not,
+        krg cannot be used for this, and krog is used. sorg might be overestimated
+        when krog is used if it very close to zero before reaching sorw.
+
+        If the curve is linear everywhere, sorg will be returned as sgcr + h
+
+        Args:
+            None
+        Returns:
+            float: The estimated sorg.
+        """
+        if self.krgendanchor == "sorg":
+            assert "krg" in self.table
+            assert self.table["krg"].sum() > 0
+            return self.table["sg"].max() - utils.estimate_diffjumppoint(
+                self.table, xcol="sg", ycol="krg", side="right"
+            )
+        else:
+            assert "krog" in self.table
+            assert self.table["krog"].sum() > 0
+            return self.table["sg"].max() - utils.estimate_diffjumppoint(
+                self.table, xcol="sg", ycol="krog", side="right"
+            )
+
+    def estimate_sgcr(self, curve="krog"):
+        """Estimate sgcr of the current krog data.
+
+        sgcr is estimated by searching for a linear part in krog upwards from sg=0.
+        In practice it is impossible to infer sgcr = 0, since we are limited by
+        h, and we always have to assume that the first segment is linear.
+
+        If the curve is linear everywhere, sgcr will be returned as the right endpoint.
+
+        Args:
+            curve (str): Column name to use for search for linearity. Default is krog,
+                if all of that is linear, you may try krg instead.
+        Returns:
+            float: The estimated sgcr.
+        """
+        assert curve in self.table
+        assert self.table[curve].sum() > 0
+        return utils.estimate_diffjumppoint(
+            self.table, xcol="sg", ycol=curve, side="left"
+        )
+
+    def crosspoint(self):
+        """Locate and return the saturation point where krg = krog
+
+        Accuracy of this crosspoint depends on the resolution chosen
+        when initializing the saturation range (it uses linear
+        interpolation to solve for the zero)
+
+        Warning: Code duplication from WaterOil, with
+        column names changed only
+        """
+
+        # Make a copy for calculations
+        tmp = pd.DataFrame(self.table[["sg", "krg", "krog"]])
+        tmp.loc[:, "krgminuskrog"] = tmp["krg"] - tmp["krog"]
+
+        # Add a zero value for the difference column, and interpolate
+        # the sw column to the zero value
+        zerodf = pd.DataFrame(index=[len(tmp)], data={"krgminuskrog": 0.0})
+        tmp = pd.concat([tmp, zerodf], sort=True)
+
+        tmp.set_index("krgminuskrog", inplace=True)
+        tmp.interpolate(method="slinear", inplace=True)
+
+        return tmp[np.isclose(tmp.index, 0.0)].sg.values[0]
+
     def selfcheck(self):
         """Check validities of the data in the table.
 
@@ -563,7 +653,8 @@ class GasOil(object):
             if slgof_sl_mismatch < 2 * 1.0 / float(SWINTEGERS):
                 # Repair the table in-place:
                 slgof.loc[0, "sl"] = self.sorg + self.swl
-                # After modification, we can get duplicate sl values, so drop duplicates:
+                # After modification, we can get duplicate sl values,
+                # so drop duplicates:
                 slgof["slint"] = list(
                     map(int, list(map(round, slgof["sl"] * SWINTEGERS)))
                 )
@@ -573,7 +664,7 @@ class GasOil(object):
                 logging.critical(
                     "SLGOF does not start at the correct value. Please report as bug."
                 )
-                logging.error("slgof_sl_mismatch: %f", slgof_sl_mismatcher)
+                logging.error("slgof_sl_mismatch: %f", slgof_sl_mismatch)
                 logging.error(str(slgof.head()))
         return slgof
 
@@ -689,31 +780,6 @@ class GasOil(object):
             sep=" ", float_format="%1.7f", header=None, index=False
         )
         return string
-
-    def crosspoint(self):
-        """Locate and return the saturation point where krg = krog
-
-        Accuracy of this crosspoint depends on the resolution chosen
-        when initializing the saturation range (it uses linear
-        interpolation to solve for the zero)
-
-        Warning: Code duplication from WaterOil, with
-        column names changed only
-        """
-
-        # Make a copy for calculations
-        tmp = pd.DataFrame(self.table[["sg", "krg", "krog"]])
-        tmp.loc[:, "krgminuskrog"] = tmp["krg"] - tmp["krog"]
-
-        # Add a zero value for the difference column, and interpolate
-        # the sw column to the zero value
-        zerodf = pd.DataFrame(index=[len(tmp)], data={"krgminuskrog": 0.0})
-        tmp = pd.concat([tmp, zerodf], sort=True)
-
-        tmp.set_index("krgminuskrog", inplace=True)
-        tmp.interpolate(method="slinear", inplace=True)
-
-        return tmp[np.isclose(tmp.index, 0.0)].sg.values[0]
 
     def plotkrgkrog(
         self, ax=None, color="blue", alpha=1, label=None, linewidth=1, linestyle="-"
