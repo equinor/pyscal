@@ -86,7 +86,7 @@ high_sample_let = {
 }
 
 
-@settings(max_examples=10, deadline=1000)
+@settings(max_examples=10, deadline=1500)
 @given(
     st.floats(min_value=-1.1, max_value=1.1), st.floats(min_value=-1.1, max_value=1.1)
 )
@@ -114,7 +114,7 @@ def test_interpolation_deprecated(param_wo, param_go):
     assert interpolant.threephaseconsistency() == ""
 
 
-@settings(max_examples=10, deadline=1000)
+@settings(max_examples=10, deadline=1500)
 @given(
     st.floats(min_value=-1.1, max_value=1.1), st.floats(min_value=-1.1, max_value=1.1)
 )
