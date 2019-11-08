@@ -1,6 +1,7 @@
 """Utility function for pyscal
 """
 import pandas as pd
+import six
 
 from pyscal.constants import SWINTEGERS
 from pyscal.constants import EPSILON as epsilon
@@ -115,8 +116,8 @@ def estimate_diffjumppoint(table, xcol=None, ycol=None, side="right"):
         xcol = table.columns[0]
     if not ycol:
         ycol = table.columns[1]
-    assert isinstance(ycol, str)
-    assert isinstance(xcol, str)
+    assert isinstance(ycol, six.string_types)
+    assert isinstance(xcol, six.string_types)
     if not side:
         raise ValueError("side cannot be None, use left or right")
     side = side.lower()

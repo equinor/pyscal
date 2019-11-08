@@ -5,6 +5,7 @@ from __future__ import print_function
 import logging
 import numpy as np
 import pandas as pd
+import six
 
 from pyscal import utils
 
@@ -62,9 +63,9 @@ class GasOil(object):
         assert -epsilon < sgcr < 1
         assert -epsilon < swl < 1
         assert -epsilon < sorg < 1
-        if not isinstance(tag, str):
+        if not isinstance(tag, six.string_types):
             tag = ""
-        assert isinstance(krgendanchor, str)
+        assert isinstance(krgendanchor, six.string_types)
 
         self.h = h
         swl = max(swl, swirr)  # Can't allow swl < swirr, should we warn user?

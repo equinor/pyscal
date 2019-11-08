@@ -6,6 +6,7 @@ import math
 import logging
 import numpy as np
 import pandas as pd
+import six
 
 from pyscal.constants import EPSILON as epsilon
 from pyscal.constants import SWINTEGERS
@@ -47,7 +48,7 @@ class WaterOil(object):
         assert swl < 1 - sorw
         assert swcr < 1 - sorw
         assert swirr < 1 - sorw
-        if not isinstance(tag, str):
+        if not isinstance(tag, six.string_types):
             tag = ""
         self.swirr = swirr
         self.swl = max(swl, swirr)  # Cannot allow swl < swirr. Warn?
