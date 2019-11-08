@@ -59,6 +59,32 @@ def test_go_fromtable_simple():
     check_go_table(go.table)
 
 
+def test_ow_fromtable_multiindex():
+    """Test that we accept multiindex dataframes,
+    (but a warning will be issued)"""
+    # Test an example dataframe that easily gets sent in from ecl2df.satfunc:
+    df1 = pd.DataFrame(
+        columns=["KEYWORD", "SATNUM", "SW", "KRW", "KROW", "PC"],
+        data=[
+            ["SWOF", 1, 0, 0, 1, 2],
+            ["SWOF", 1, 0.5, 0.5, 0.5, 1],
+            ["SWOF", 1, 1, 1, 0, 0],
+        ],
+    ).set_index(["KEYWORD", "SATNUM"])
+
+    # Check that we have a MultiIndex:
+    assert len(df1.index.names) == 2
+
+    wo = WaterOil(h=0.1)
+    wo.add_fromtable(
+        df1, swcolname="SW", krwcolname="KRW", krowcolname="KROW", pccolname="PC"
+    )
+    assert "krw" in wo.table.columns
+    assert "krow" in wo.table.columns
+    assert "pc" in wo.table.columns
+    check_wo_table(wo.table)
+
+
 def test_go_fromtable_problems():
     df1 = pd.DataFrame(
         columns=["Sg", "KRG", "KROG", "PCOG"], data=[[0.1, 0, 1, 2], [0.9, 1, 0, 0]]
