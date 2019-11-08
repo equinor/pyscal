@@ -163,6 +163,7 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">six</span>
 
 <span class="kn">from</span> <span class="nn">pyscal.constants</span> <span class="k">import</span> <span class="n">EPSILON</span> <span class="k">as</span> <span class="n">epsilon</span>
 <span class="kn">from</span> <span class="nn">pyscal.constants</span> <span class="k">import</span> <span class="n">SWINTEGERS</span>
@@ -204,7 +205,7 @@
         <span class="k">assert</span> <span class="n">swl</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span>
         <span class="k">assert</span> <span class="n">swcr</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span>
         <span class="k">assert</span> <span class="n">swirr</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">):</span>
             <span class="n">tag</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">swirr</span> <span class="o">=</span> <span class="n">swirr</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">swl</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">swl</span><span class="p">,</span> <span class="n">swirr</span><span class="p">)</span>  <span class="c1"># Cannot allow swl &lt; swirr. Warn?</span>
