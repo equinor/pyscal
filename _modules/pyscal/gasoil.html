@@ -356,6 +356,13 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="k">import</span> <span class="n">PchipInterpolator</span>
 
+        <span class="c1"># Avoid having to deal with multi-indices:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;add_fromtable() did a reset_index(), consider not supplying MultiIndex&quot;</span>
+            <span class="p">)</span>
+            <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+
         <span class="k">if</span> <span class="n">sgcolname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">df</span><span class="p">:</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span>
                 <span class="n">sgcolname</span> <span class="o">+</span> <span class="s2">&quot; not found in dataframe, &quot;</span> <span class="o">+</span> <span class="s2">&quot;can&#39;t read table data&quot;</span>
