@@ -162,6 +162,13 @@ class WaterOil(object):
         """
         from scipy.interpolate import PchipInterpolator, interp1d
 
+        # Avoid having to deal with multi-indices:
+        if len(df.index.names) > 1:
+            logging.warning(
+                "add_fromtable() did a reset_index(), consider not supplying MultiIndex"
+            )
+            df = df.reset_index()
+
         if swcolname not in df:
             logging.critical(
                 swcolname + " not found in dataframe, can't read table data"
