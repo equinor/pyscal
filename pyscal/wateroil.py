@@ -34,12 +34,18 @@ class WaterOil(object):
     parametrizations, or from a dataframe (will incur interpolation).
 
     Can be dumped as include files for Eclipse/OPM and Nexus simulators.
+
+    Args:
+        fast (bool): Set to True if in order to skip some integrity checks
+            and nice-to-have features. Not needed to set for normal pyscal
+            runs, as speed is seldom crucial. Default False
     """
 
-    def __init__(self, swirr=0.0, swl=0.0, swcr=0.0, sorw=0.0, h=0.01, tag=""):
+    def __init__(
+        self, swirr=0.0, swl=0.0, swcr=0.0, sorw=0.0, h=0.01, tag="", fast=False
+    ):
         """Sets up the saturation range. Swirr is only relevant
         for the capillary pressure, not for relperm data."""
-
         assert -epsilon < swirr < 1.0 + epsilon
         assert -epsilon < swl < 1.0 + epsilon
         assert -epsilon < swcr < 1.0 + epsilon
@@ -62,29 +68,33 @@ class WaterOil(object):
         self.sorw = sorw
         self.h = h
         self.tag = tag
+        self.fast = fast
         sw = list(np.arange(self.swl, 1 - sorw, h)) + [self.swcr] + [1 - sorw] + [1]
         self.table = pd.DataFrame(sw, columns=["sw"])
+
         # Ensure that we do not have sw values that are too close
         # to each other, determined rougly by the distance 1/10000
         self.table["swint"] = list(
             map(int, list(map(round, self.table["sw"] * SWINTEGERS)))
         )
         self.table.drop_duplicates("swint", inplace=True)
-        # Now, sw=1-sorw might be accidentaly dropped, so make sure we
-        # have it by replacing the closest value by 1-sorw exactly
-        sorwindex = (self.table["sw"] - (1 - self.sorw)).abs().sort_values().index[0]
-        self.table.loc[sorwindex, "sw"] = 1 - self.sorw
 
-        # Same for sw=swcr:
-        swcrindex = (self.table["sw"] - (self.swcr)).abs().sort_values().index[0]
-        self.table.loc[swcrindex, "sw"] = self.swcr
+        if not self.fast:
+            # Now, sw=1-sorw might be accidentaly dropped, so make sure we
+            # have it by replacing the closest value by 1-sorw exactly
+            sorwindex = (self.table["sw"] - (1 - self.sorw)).abs().sort_values().index[0]
+            self.table.loc[sorwindex, "sw"] = 1 - self.sorw
 
-        # If sw=1 was dropped, then sorw was close to zero:
-        if not np.isclose(self.table["sw"].max(), 1.0):
-            # Add it as an extra row:
-            self.table.loc[len(self.table) + 1, "sw"] = 1.0
+            # Same for sw=swcr:
+            swcrindex = (self.table["sw"] - (self.swcr)).abs().sort_values().index[0]
+            self.table.loc[swcrindex, "sw"] = self.swcr
 
-        self.table.sort_values(by="sw", inplace=True)
+            # If sw=1 was dropped, then sorw was close to zero:
+            if not np.isclose(self.table["sw"].max(), 1.0):
+                # Add it as an extra row:
+                self.table.loc[len(self.table) + 1, "sw"] = 1.0
+
+            self.table.sort_values(by="sw", inplace=True)
         self.table.reset_index(inplace=True)
         self.table = self.table[["sw"]]  # Drop the swint column
 
@@ -885,7 +895,24 @@ class WaterOil(object):
             return True
 
     def SWOF(self, header=True, dataincommentrow=True):
-        if not self.selfcheck():
+        """
+        Produce SWOF input for Eclipse reservoir simulator.
+
+        The columns sw, krw, krow and pc are outputted and
+        formatted accordingly.
+
+        Meta-information for the tabulated data are printed
+        as Eclipse comments.
+
+        Args:
+            header (bool): Indicate whether the SWOF string should
+                be emitted. If you have multiple SATNUMs, you should
+                set this to True only for the first (or False for all,
+                and emit the SWOF yourself). Default True
+            dataincommentrow (bool): Wheter metadata should
+                be printed. Defualt True
+        """
+        if not self.fast and not self.selfcheck():
             return
         string = ""
         if "pc" not in self.table.columns:
@@ -899,7 +926,8 @@ class WaterOil(object):
             string += self.swcomment
             string += self.krwcomment
             string += self.krowcomment
-            string += "-- krw = krow @ sw=%1.5f\n" % self.crosspoint()
+            if not self.fast:
+                string += "-- krw = krow @ sw=%1.5f\n" % self.crosspoint()
             string += self.pccomment
         string += self.table[["sw", "krw", "krow", "pc"]].to_csv(
             sep=" ", float_format="%1.7f", header=None, index=False
@@ -921,7 +949,7 @@ class WaterOil(object):
         if dataincommentrow:
             string += self.swcomment
             string += self.krwcomment
-            if "krow" in self.table.columns:
+            if "krow" in self.table.columns and not self.fast:
                 string += "-- krw = krow @ sw=%1.5f\n" % self.crosspoint()
             string += self.pccomment
         string += self.table[["sw", "krw", "pc"]].to_csv(
@@ -943,7 +971,8 @@ class WaterOil(object):
             string += self.swcomment.replace("--", "!")
             string += self.krwcomment.replace("--", "!")
             string += self.krowcomment.replace("--", "!")
-            string += "! krw = krow @ sw=%1.5f\n" % self.crosspoint()
+            if not self.fast:
+                string += "! krw = krow @ sw=%1.5f\n" % self.crosspoint()
             string += self.pccomment.replace("--", "!")
         string += self.table[["sw", "krw", "krow", "pc"]].to_csv(
             sep=" ", float_format="%1.7f", header=None, index=False
