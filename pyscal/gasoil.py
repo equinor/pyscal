@@ -53,10 +53,21 @@ class GasOil(object):
             it does not matter.
         h (float): Saturation step-length in the outputted table.
         tag (str): Optional string identifier, only used in comments.
+        fast (bool): Set to true to prioritize speed over robustness. Not guaranteed
+            to give you include files that Eclipse does not crash on - you are essentially
+            on your own. Default false.
     """
 
     def __init__(
-        self, swirr=0, sgcr=0.0, h=0.01, swl=0.0, sorg=0.0, tag="", krgendanchor="sorg"
+        self,
+        swirr=0,
+        sgcr=0.0,
+        h=0.01,
+        swl=0.0,
+        sorg=0.0,
+        tag="",
+        krgendanchor="sorg",
+        fast=False,
     ):
         assert epsilon < h <= 1
         assert -epsilon < swirr < 1.0 + epsilon
@@ -88,6 +99,9 @@ class GasOil(object):
         else:
             logging.warning("Unknown krgendanchor %s, ignored", str(krgendanchor))
             self.krgendanchor = ""
+
+        self.fast = fast
+
         if np.isclose(sorg, 0.0) and self.krgendanchor == "sorg":
             # This is too much info..
             self.krgendanchor = ""  # This is critical to avoid bugs due to numerics.
@@ -104,34 +118,39 @@ class GasOil(object):
             map(int, list(map(round, self.table["sg"] * SWINTEGERS)))
         )
         self.table.drop_duplicates("sgint", inplace=True)
-        # Now sg=1-sorg-swl might be accidentally dropped, so make sure we
-        # have it by replacing the closest value by 1 - sorg exactly
-        sorgindex = (
-            (self.table["sg"] - (1 - self.sorg - self.swl)).abs().sort_values().index[0]
-        )
-        self.table.loc[sorgindex, "sg"] = 1 - self.sorg - self.swl
 
-        # Same for sg=sgcr
-        sgcrindex = (self.table["sg"] - (self.sgcr)).abs().sort_values().index[0]
-        self.table.loc[sgcrindex, "sg"] = self.sgcr
-        if sgcrindex == 0 and sgcr > 0.0:
-            # Need to conserve sg=0
-            zero_row = pd.DataFrame({"sg": 0}, index=[0])
-            self.table = pd.concat([zero_row, self.table], sort=False).reset_index(
-                drop=True
+        if not self.fast:
+            # Now sg=1-sorg-swl might be accidentally dropped, so make sure we
+            # have it by replacing the closest value by 1 - sorg exactly
+            sorgindex = (
+                (self.table["sg"] - (1 - self.sorg - self.swl))
+                .abs()
+                .sort_values()
+                .index[0]
             )
+            self.table.loc[sorgindex, "sg"] = 1 - self.sorg - self.swl
 
-        # If sg=1-swl was dropped, then sorg was close to zero:
-        if not np.isclose(self.table["sg"].max(), 1 - self.swl):
-            # Add it as an extra row:
-            self.table.loc[len(self.table) + 1, "sg"] = 1 - self.swl
-        # Ensure the value closest to 1-swl is actually 1-swl:
-        swl_right_index = (
-            (self.table["sg"] - (1 - self.swl)).abs().sort_values().index[0]
-        )
-        self.table.loc[swl_right_index, "sg"] = 1 - self.swl
+            # Same for sg=sgcr
+            sgcrindex = (self.table["sg"] - (self.sgcr)).abs().sort_values().index[0]
+            self.table.loc[sgcrindex, "sg"] = self.sgcr
+            if sgcrindex == 0 and sgcr > 0.0:
+                # Need to conserve sg=0
+                zero_row = pd.DataFrame({"sg": 0}, index=[0])
+                self.table = pd.concat([zero_row, self.table], sort=False).reset_index(
+                    drop=True
+                )
 
-        self.table.sort_values(by="sg", inplace=True)
+            # If sg=1-swl was dropped, then sorg was close to zero:
+            if not np.isclose(self.table["sg"].max(), 1 - self.swl):
+                # Add it as an extra row:
+                self.table.loc[len(self.table) + 1, "sg"] = 1 - self.swl
+            # Ensure the value closest to 1-swl is actually 1-swl:
+            swl_right_index = (
+                (self.table["sg"] - (1 - self.swl)).abs().sort_values().index[0]
+            )
+            self.table.loc[swl_right_index, "sg"] = 1 - self.swl
+
+            self.table.sort_values(by="sg", inplace=True)
         self.table.reset_index(inplace=True)
         self.table = self.table[["sg"]]
         self.table["sl"] = 1 - self.table["sg"]
@@ -609,14 +628,14 @@ class GasOil(object):
         as Eclipse comments.
 
         Args:
-            header: boolean for whether the SGOF string should be emitted.
+            header (bool): Whether the SGOF string should be emitted.
                 If you have multiple satnums, you should have True only
                 for the first (or False for all, and emit the SGOF yourself).
                 Defaults to True.
-            dataincommentrow: boolean for wheter metadata should be printed,
+            dataincommentrow (bool): Whether metadata should be printed,
                 defaults to True.
         """
-        if not self.selfcheck():
+        if not self.fast and not self.selfcheck():
             return
         string = ""
         if "pc" not in self.table:
@@ -630,7 +649,8 @@ class GasOil(object):
             string += self.sgcomment
             string += self.krgcomment
             string += self.krogcomment
-            string += "-- krg = krog @ sw=%1.5f\n" % self.crosspoint()
+            if not self.fast:
+                string += "-- krg = krog @ sw=%1.5f\n" % self.crosspoint()
             string += self.pccomment
         string += self.table[["sg", "krg", "krog", "pc"]].to_csv(
             sep=" ", float_format="%1.7f", header=None, index=False

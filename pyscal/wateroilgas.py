@@ -32,16 +32,30 @@ class WaterOilGas(object):
         sgcr (float): Critical gas saturation, gas is immobile below this
         h (float): Saturation intervals in generated tables.
         tag (str): Optional text that will be included as comments.
+        fast (bool): Set to True if you prefer speed over robustness. Not recommended,
+            pyscal will not guarantee valid output in this mode.
    """
 
     def __init__(
-        self, swirr=0, swl=0.0, swcr=0.0, sorw=0.00, sorg=0, sgcr=0, h=0.01, tag=""
+        self,
+        swirr=0,
+        swl=0.0,
+        swcr=0.0,
+        sorw=0.00,
+        sorg=0,
+        sgcr=0,
+        h=0.01,
+        tag="",
+        fast=False,
     ):
         """Sets up the saturation range for three phases"""
+        self.fast = fast
         self.wateroil = WaterOil(
-            swirr=swirr, swl=swl, swcr=swcr, sorw=sorw, h=h, tag=tag
+            swirr=swirr, swl=swl, swcr=swcr, sorw=sorw, h=h, tag=tag, fast=fast
         )
-        self.gasoil = GasOil(swirr=swirr, sgcr=sgcr, sorg=sorg, swl=swl, h=h, tag=tag)
+        self.gasoil = GasOil(
+            swirr=swirr, sgcr=sgcr, sorg=sorg, swl=swl, h=h, tag=tag, fast=fast
+        )
 
     def selfcheck(self):
         """Run selfcheck on both wateroil and gasoil.
