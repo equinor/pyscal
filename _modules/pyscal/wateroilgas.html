@@ -156,17 +156,17 @@
             
   <h1>Source code for pyscal.wateroilgas</h1><div class="highlight"><pre>
 <span></span><span class="c1"># -*- coding: utf-8 -*-</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">absolute_import</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
-<span class="kn">from</span> <span class="nn">pyscal.constants</span> <span class="k">import</span> <span class="n">SWINTEGERS</span>
+<span class="kn">from</span> <span class="nn">pyscal.constants</span> <span class="kn">import</span> <span class="n">SWINTEGERS</span>
 
-<span class="kn">from</span> <span class="nn">.wateroil</span> <span class="k">import</span> <span class="n">WaterOil</span>
-<span class="kn">from</span> <span class="nn">.gasoil</span> <span class="k">import</span> <span class="n">GasOil</span>
+<span class="kn">from</span> <span class="nn">.wateroil</span> <span class="kn">import</span> <span class="n">WaterOil</span>
+<span class="kn">from</span> <span class="nn">.gasoil</span> <span class="kn">import</span> <span class="n">GasOil</span>
 
 
 <div class="viewcode-block" id="WaterOilGas"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroilgas.WaterOilGas">[docs]</a><span class="k">class</span> <span class="nc">WaterOilGas</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -189,16 +189,30 @@
 <span class="sd">        sgcr (float): Critical gas saturation, gas is immobile below this</span>
 <span class="sd">        h (float): Saturation intervals in generated tables.</span>
 <span class="sd">        tag (str): Optional text that will be included as comments.</span>
+<span class="sd">        fast (bool): Set to True if you prefer speed over robustness. Not recommended,</span>
+<span class="sd">            pyscal will not guarantee valid output in this mode.</span>
 <span class="sd">   &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">swirr</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">swl</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">swcr</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">sorw</span><span class="o">=</span><span class="mf">0.00</span><span class="p">,</span> <span class="n">sorg</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sgcr</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">swirr</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">swl</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">swcr</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">sorw</span><span class="o">=</span><span class="mf">0.00</span><span class="p">,</span>
+        <span class="n">sorg</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">sgcr</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">h</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+        <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Sets up the saturation range for three phases&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fast</span> <span class="o">=</span> <span class="n">fast</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span> <span class="o">=</span> <span class="n">WaterOil</span><span class="p">(</span>
-            <span class="n">swirr</span><span class="o">=</span><span class="n">swirr</span><span class="p">,</span> <span class="n">swl</span><span class="o">=</span><span class="n">swl</span><span class="p">,</span> <span class="n">swcr</span><span class="o">=</span><span class="n">swcr</span><span class="p">,</span> <span class="n">sorw</span><span class="o">=</span><span class="n">sorw</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">tag</span>
+            <span class="n">swirr</span><span class="o">=</span><span class="n">swirr</span><span class="p">,</span> <span class="n">swl</span><span class="o">=</span><span class="n">swl</span><span class="p">,</span> <span class="n">swcr</span><span class="o">=</span><span class="n">swcr</span><span class="p">,</span> <span class="n">sorw</span><span class="o">=</span><span class="n">sorw</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span> <span class="o">=</span> <span class="n">GasOil</span><span class="p">(</span><span class="n">swirr</span><span class="o">=</span><span class="n">swirr</span><span class="p">,</span> <span class="n">sgcr</span><span class="o">=</span><span class="n">sgcr</span><span class="p">,</span> <span class="n">sorg</span><span class="o">=</span><span class="n">sorg</span><span class="p">,</span> <span class="n">swl</span><span class="o">=</span><span class="n">swl</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span> <span class="o">=</span> <span class="n">GasOil</span><span class="p">(</span>
+            <span class="n">swirr</span><span class="o">=</span><span class="n">swirr</span><span class="p">,</span> <span class="n">sgcr</span><span class="o">=</span><span class="n">sgcr</span><span class="p">,</span> <span class="n">sorg</span><span class="o">=</span><span class="n">sorg</span><span class="p">,</span> <span class="n">swl</span><span class="o">=</span><span class="n">swl</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span>
+        <span class="p">)</span>
 
 <div class="viewcode-block" id="WaterOilGas.selfcheck"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroilgas.WaterOilGas.selfcheck">[docs]</a>    <span class="k">def</span> <span class="nf">selfcheck</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Run selfcheck on both wateroil and gasoil.</span>
