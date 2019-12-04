@@ -142,7 +142,7 @@ def test_sorw_hypo(h, sorw, nw):
     est_sorw = wo.estimate_sorw()
     est_error = abs(sorw - est_sorw)
     assert not np.isnan(est_sorw)
-    error_requirement = h + 100 * epsilon
+    error_requirement = h + 1000 * epsilon
 
     if abs(1 - nw) < 0.1:
         # When the Corey curve is almost linear, we don't
