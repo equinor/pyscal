@@ -80,22 +80,21 @@ class WaterOil(object):
         )
         self.table.drop_duplicates("swint", inplace=True)
 
-        if not self.fast:
-            # Now, sw=1-sorw might be accidentaly dropped, so make sure we
-            # have it by replacing the closest value by 1-sorw exactly
-            sorwindex = (self.table["sw"] - (1 - self.sorw)).abs().sort_values().index[0]
-            self.table.loc[sorwindex, "sw"] = 1 - self.sorw
+        # Now, sw=1-sorw might be accidentaly dropped, so make sure we
+        # have it by replacing the closest value by 1-sorw exactly
+        sorwindex = (self.table["sw"] - (1 - self.sorw)).abs().sort_values().index[0]
+        self.table.loc[sorwindex, "sw"] = 1 - self.sorw
 
-            # Same for sw=swcr:
-            swcrindex = (self.table["sw"] - (self.swcr)).abs().sort_values().index[0]
-            self.table.loc[swcrindex, "sw"] = self.swcr
+        # Same for sw=swcr:
+        swcrindex = (self.table["sw"] - (self.swcr)).abs().sort_values().index[0]
+        self.table.loc[swcrindex, "sw"] = self.swcr
 
-            # If sw=1 was dropped, then sorw was close to zero:
-            if not np.isclose(self.table["sw"].max(), 1.0):
-                # Add it as an extra row:
-                self.table.loc[len(self.table) + 1, "sw"] = 1.0
+        # If sw=1 was dropped, then sorw was close to zero:
+        if not np.isclose(self.table["sw"].max(), 1.0):
+            # Add it as an extra row:
+            self.table.loc[len(self.table) + 1, "sw"] = 1.0
 
-            self.table.sort_values(by="sw", inplace=True)
+        self.table.sort_values(by="sw", inplace=True)
         self.table.reset_index(inplace=True)
         self.table = self.table[["sw"]]  # Drop the swint column
 
