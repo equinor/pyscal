@@ -130,10 +130,11 @@ def test_gasoil_normalization(swl, sgcr, sorg, h, tag):
     st.floats(min_value=0.1, max_value=1),  # krgend
     st.floats(min_value=0.1, max_value=1),  # krgmax
     st.floats(min_value=0.0001, max_value=1),  # h
+    st.booleans(),  # fast mode
 )
-def test_gasoil_krendmax(swl, sgcr, sorg, kroend, kromax, krgend, krgmax, h):
+def test_gasoil_krendmax(swl, sgcr, sorg, kroend, kromax, krgend, krgmax, h, fast):
     try:
-        go = GasOil(swl=swl, sgcr=sgcr, sorg=sorg, h=h, tag="")
+        go = GasOil(swl=swl, sgcr=sgcr, sorg=sorg, h=h, tag="", fast=fast)
     except AssertionError:
         return
     kroend = min(kroend, kromax)

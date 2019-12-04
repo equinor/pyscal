@@ -91,10 +91,11 @@ def test_wateroil_let1(l, e, t, krwend, krwmax):
     st.floats(min_value=0.1, max_value=1),
     st.floats(min_value=0.1, max_value=1),
     st.floats(min_value=0.0001, max_value=1),
+    st.booleans(),
 )
-def test_wateroil_krendmax(swl, swcr, sorw, kroend, kromax, krwend, krwmax, h):
+def test_wateroil_krendmax(swl, swcr, sorw, kroend, kromax, krwend, krwmax, h, fast):
     try:
-        wo = WaterOil(swl=swl, swcr=swcr, sorw=sorw, h=h)
+        wo = WaterOil(swl=swl, swcr=swcr, sorw=sorw, h=h, fast=fast)
     except AssertionError:
         return
     kroend = min(kroend, kromax)
