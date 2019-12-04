@@ -70,6 +70,7 @@ class WaterOil(object):
         self.tag = tag
         self.fast = fast
         sw = list(np.arange(self.swl, 1 - sorw, h)) + [self.swcr] + [1 - sorw] + [1]
+        sw.sort()  # Using default timsort on nearly sorted data.
         self.table = pd.DataFrame(sw, columns=["sw"])
 
         # Ensure that we do not have sw values that are too close

@@ -113,6 +113,7 @@ class GasOil(object):
             + [1 - sorg - swl]
             + [1 - swl]
         )
+        sg.sort()
         self.table = pd.DataFrame(sg, columns=["sg"])
         self.table["sgint"] = list(
             map(int, list(map(round, self.table["sg"] * SWINTEGERS)))
