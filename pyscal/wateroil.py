@@ -93,8 +93,8 @@ class WaterOil(object):
         if not np.isclose(self.table["sw"].max(), 1.0):
             # Add it as an extra row:
             self.table.loc[len(self.table) + 1, "sw"] = 1.0
+            self.table.sort_values(by="sw", inplace=True)
 
-        self.table.sort_values(by="sw", inplace=True)
         self.table.reset_index(inplace=True)
         self.table = self.table[["sw"]]  # Drop the swint column
 

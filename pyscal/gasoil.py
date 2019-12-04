@@ -53,11 +53,10 @@ class GasOil(object):
             it does not matter.
         h (float): Saturation step-length in the outputted table.
         tag (str): Optional string identifier, only used in comments.
-        fast (bool): Set to true to prioritize speed over robustness. Not guaranteed
-            to give you include files that Eclipse does not crash on - you are essentially
-            on your own. Default false.
+        fast (bool): Set to True if in order to skip some integrity checks
+            and nice-to-have features. Not needed to set for normal pyscal
+            runs, as speed is seldom crucial. Default False
     """
-
     def __init__(
         self,
         swirr=0,
@@ -144,13 +143,13 @@ class GasOil(object):
         if not np.isclose(self.table["sg"].max(), 1 - self.swl):
             # Add it as an extra row:
             self.table.loc[len(self.table) + 1, "sg"] = 1 - self.swl
-        # Ensure the value closest to 1-swl is actually 1-swl:
+            self.table.sort_values(by="sg", inplace=True)
+         # Ensure the value closest to 1-swl is actually 1-swl:
         swl_right_index = (
             (self.table["sg"] - (1 - self.swl)).abs().sort_values().index[0]
         )
         self.table.loc[swl_right_index, "sg"] = 1 - self.swl
 
-        self.table.sort_values(by="sg", inplace=True)
         self.table.reset_index(inplace=True)
         self.table = self.table[["sg"]]
         self.table["sl"] = 1 - self.table["sg"]
