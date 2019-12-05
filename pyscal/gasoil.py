@@ -317,15 +317,15 @@ class GasOil(object):
             self.table["sg"] > 1 - self.sorg - self.swl - epsilon, "krog"
         ] = 0
 
-        # Set kromax at sg=0, but only if sgcr is sufficiently larger than swl.
-        if self.sgcr > self.swl + 1.0 / SWINTEGERS:
+        # Set kromax at sg=0, but only if sgcr is sufficiently larger than 0.
+        if self.sgcr > 1.0 / SWINTEGERS:
             if not kromax:
                 kromax = 1
-            self.table.loc[self.table["sg"] < epsilon, "krog"] = kromax
+            self.table.loc[self.table["sg"] < 1.0 / SWINTEGERS, "krog"] = kromax
         else:
             if kromax:
-                logging.warning("kromax ignored when sgcr is close to swl")
-            self.table.loc[self.table["sg"] < epsilon, "krog"] = kroend
+                logging.warning("kromax ignored when sgcr is close to zero")
+            self.table.loc[self.table["sg"] < 1.0 / SWINTEGERS, "krog"] = kroend
 
     def add_corey_gas(self, ng=2, krgend=1, krgmax=None):
         """ Add krg data through the Corey parametrization

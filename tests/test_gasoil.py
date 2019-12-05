@@ -167,12 +167,12 @@ def check_endpoints(go, krgend, krgmax, kroend, kromax):
 
     # Check endpoints for oil curve:
     # krog at sgcr should be kroend
-    if go.sgcr > go.swl + swtol:
+    if go.sgcr > swtol:
         assert float_df_checker(go.table, "son", 1.0, "krog", kroend)
     # krog at son=0 (1-sorg-swl or 1 - swl) should be zero:
     assert float_df_checker(go.table, "son", 0.0, "krog", 0)
 
-    if go.sgcr > go.swl + swtol:
+    if go.sgcr > swtol:
         assert float_df_checker(go.table, "sg", 0, "krog", kromax)
         assert float_df_checker(go.table, "sg", go.sgcr, "krog", kroend)
     else:
@@ -285,16 +285,16 @@ def test_kromaxend():
     gasoil.add_LET_gas()
     gasoil.add_LET_oil(2, 2, 2)
     assert gasoil.table["krog"].max() == 1
-    gasoil.add_LET_oil(2, 2, 2, 0.5, 0.9)
-    assert gasoil.table["krog"].max() == 0.5
+    gasoil.add_LET_oil(2, 2, 2, kroend=0.5, kromax=0.9)
+    assert gasoil.table["krog"].max() == 0.9
     # Second krog-value should be kroend, values in between will be linearly
     # interpolated in Eclipse
     assert gasoil.table.sort_values("krog")[-2:-1]["krog"].values[0] == 0.5
 
     gasoil.add_corey_oil(2)
     assert gasoil.table["krog"].max() == 1
-    gasoil.add_corey_oil(2, 0.5, 0.9)
-    assert gasoil.table["krog"].max() == 0.5
+    gasoil.add_corey_oil(nog=2, kroend=0.5, kromax=0.9)
+    assert gasoil.table["krog"].max() == 0.9
     assert gasoil.table.sort_values("krog")[-2:-1]["krog"].values[0] == 0.5
 
 
