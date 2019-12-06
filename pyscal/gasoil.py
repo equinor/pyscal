@@ -285,9 +285,26 @@ class GasOil(object):
                 raise ValueError("inf/nan in interpolated data, check input")
             self.pccomment = "-- pc from tabular input" + pccomment + "\n"
 
-    def _handle_endpoints_linearpart_gas(self, krgend, krgmax=None):
-        """Internal utility function to handle krg
-        around endpoints.
+    def set_endpoints_linearpart_krg(self, krgend, krgmax=None):
+        """Set linear parts of krg outside endpoints.
+
+        Curve will be linear from [1 - swl - sorg, 1 - swl]
+        (from krgend to krgmax) and zero in [0, sgcr]. Except special
+        handling for krgendanchor:
+
+        If krgendanchor is set to `sorg` (default), then the normalized
+        gas saturation `sgn` (which is what is raised to the power of `ng`)
+        is 1 at `1 - swl - sgcr - sorg`. If not, it is 1 at `1 - swl - sgcr`.
+
+        krgmax is only relevant if krgendanchor is 'sorg'
+
+        This function is used by add_corey/LET_gas(), and perhaps by other
+        utility functions. It should not be necessary for end-users.
+
+        Args:
+            krgend (float): krg at 1 - swl - sgcr - sorg. Checkme.
+            krgmax (float): krg at Sg=1-swl. Default 1.
+
         """
         self.table.loc[self.table.sg <= self.sgcr, "krg"] = 0
 
@@ -307,11 +324,21 @@ class GasOil(object):
             if krgmax:
                 logging.warning("krgmax ignored when not anchoring to sorg")
 
-    def _handle_endpoints_linearpart_oil(self, kroend, kromax):
-        """Internal utility function to handle kro
-        around endpoints.
-        """
+    def set_endpoints_linearpart_krog(self, kroend, kromax):
+        """Set linear parts of krog outside endpoints.
 
+        Zero for sg above 1 - sorg - swl.
+
+        Linear from kromax to kroend from sg in [0, sgcr]
+
+        This function is used by add_corey/LET_oil(), and perhaps by other
+        utility functions. It should not be necessary for end-users.
+
+        Args:
+            kroend (float): krog at sg=sgcr
+            kromax (float): krog at Sg=0. Default 1.
+
+        """
         # Special handling of the part close to sg=1, set to zero.
         self.table.loc[
             self.table["sg"] > 1 - self.sorg - self.swl - epsilon, "krog"
@@ -345,7 +372,7 @@ class GasOil(object):
             assert 0 < krgend <= krgmax <= 1.0
         self.table["krg"] = krgend * self.table.sgn ** ng
 
-        self._handle_endpoints_linearpart_gas(krgend, krgmax)
+        self.set_endpoints_linearpart_krg(krgend, krgmax)
 
         if not krgmax:
             krgmax = 1
@@ -382,7 +409,7 @@ class GasOil(object):
 
         self.table["krog"] = kroend * self.table.son ** nog
 
-        self._handle_endpoints_linearpart_oil(kroend, kromax)
+        self.set_endpoints_linearpart_krog(kroend, kromax)
 
         if not kromax:
             kromax = 1
@@ -426,7 +453,7 @@ class GasOil(object):
             / ((self.table.sgn ** l) + e * (1 - self.table.sgn) ** t)
         )
 
-        self._handle_endpoints_linearpart_gas(krgend, krgmax)
+        self.set_endpoints_linearpart_krg(krgend, krgmax)
 
         if not krgmax:
             krgmax = 1
@@ -470,7 +497,7 @@ class GasOil(object):
             / ((self.table["son"] ** l) + e * (1 - self.table["son"]) ** t)
         )
 
-        self._handle_endpoints_linearpart_oil(kroend, kromax)
+        self.set_endpoints_linearpart_krog(kroend, kromax)
 
         if not kromax:
             kromax = 1
