@@ -372,6 +372,47 @@ actually added to the table.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="pyscal.gasoil.GasOil.set_endpoints_linearpart_krg">
+<code class="sig-name descname">set_endpoints_linearpart_krg</code><span class="sig-paren">(</span><em class="sig-param">krgend</em>, <em class="sig-param">krgmax=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gasoil.html#GasOil.set_endpoints_linearpart_krg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gasoil.GasOil.set_endpoints_linearpart_krg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set linear parts of krg outside endpoints.</p>
+<p>Curve will be linear from [1 - swl - sorg, 1 - swl]
+(from krgend to krgmax) and zero in [0, sgcr]. Except special
+handling for krgendanchor:</p>
+<p>If krgendanchor is set to <cite>sorg</cite> (default), then the normalized
+gas saturation <cite>sgn</cite> (which is what is raised to the power of <cite>ng</cite>)
+is 1 at <cite>1 - swl - sgcr - sorg</cite>. If not, it is 1 at <cite>1 - swl - sgcr</cite>.</p>
+<p>krgmax is only relevant if krgendanchor is ‘sorg’</p>
+<p>This function is used by add_corey/LET_gas(), and perhaps by other
+utility functions. It should not be necessary for end-users.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>krgend</strong> (<em>float</em>) – krg at 1 - swl - sgcr - sorg. Checkme.</p></li>
+<li><p><strong>krgmax</strong> (<em>float</em>) – krg at Sg=1-swl. Default 1.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyscal.gasoil.GasOil.set_endpoints_linearpart_krog">
+<code class="sig-name descname">set_endpoints_linearpart_krog</code><span class="sig-paren">(</span><em class="sig-param">kroend</em>, <em class="sig-param">kromax</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gasoil.html#GasOil.set_endpoints_linearpart_krog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gasoil.GasOil.set_endpoints_linearpart_krog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set linear parts of krog outside endpoints.</p>
+<p>Zero for sg above 1 - sorg - swl.</p>
+<p>Linear from kromax to kroend from sg in [0, sgcr]</p>
+<p>This function is used by add_corey/LET_oil(), and perhaps by other
+utility functions. It should not be necessary for end-users.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>kroend</strong> (<em>float</em>) – krog at sg=sgcr</p></li>
+<li><p><strong>kromax</strong> (<em>float</em>) – krog at Sg=0. Default 1.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="pyscal.gasoil.GasOil.add_corey_gas">
 <code class="sig-name descname">add_corey_gas</code><span class="sig-paren">(</span><em class="sig-param">ng=2</em>, <em class="sig-param">krgend=1</em>, <em class="sig-param">krgmax=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gasoil.html#GasOil.add_corey_gas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gasoil.GasOil.add_corey_gas" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add krg data through the Corey parametrization</p>
@@ -838,6 +879,42 @@ applies up to 1-sorw.</p>
 </dd></dl>
 
 <dl class="method">
+<dt id="pyscal.wateroil.WaterOil.set_endpoints_linearpart_krw">
+<code class="sig-name descname">set_endpoints_linearpart_krw</code><span class="sig-paren">(</span><em class="sig-param">krwend</em>, <em class="sig-param">krwmax=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.set_endpoints_linearpart_krw"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.set_endpoints_linearpart_krw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set linear parts of krw outside endpoints.</p>
+<p>Curve will be linear from [1 - sorw, 1] (from krwmax to krwend)
+and zero in [swl, swcr]</p>
+<p>This function is used by add_corey_water(), and perhaps by other
+utility functions. It should not be necessary for end-users.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>krwend</strong> (<em>float</em>) – krw at 1 - sorwr</p></li>
+<li><p><strong>krwmax</strong> (<em>float</em>) – krw at Sw=1. Default 1.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyscal.wateroil.WaterOil.set_endpoints_linearpart_krow">
+<code class="sig-name descname">set_endpoints_linearpart_krow</code><span class="sig-paren">(</span><em class="sig-param">kroend</em>, <em class="sig-param">kromax=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.set_endpoints_linearpart_krow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.set_endpoints_linearpart_krow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set linear parts of krow outside endpoints</p>
+<p>Curve will be linear in [swl, swcr] (from kromax to kroend)
+and zero in [1 - sorw, 1]</p>
+<p>This function is used by add_corey_water(), and perhaps by other
+utility functions. It should not be necessary for end-users.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>kroend</strong> (<em>float</em>) – value of kro at swcr</p></li>
+<li><p><strong>kromax</strong> (<em>float</em>) – maximal value of kro at sw=swl. Default 1</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
 <dt id="pyscal.wateroil.WaterOil.add_LET_water">
 <code class="sig-name descname">add_LET_water</code><span class="sig-paren">(</span><em class="sig-param">l=2</em>, <em class="sig-param">e=2</em>, <em class="sig-param">t=2</em>, <em class="sig-param">krwend=1</em>, <em class="sig-param">krwmax=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.add_LET_water"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.add_LET_water" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add krw data through LET parametrization</p>
@@ -1079,14 +1156,16 @@ be printed. Defualt True</p></li>
 
 <dl class="method">
 <dt id="pyscal.wateroil.WaterOil.plotpc">
-<code class="sig-name descname">plotpc</code><span class="sig-paren">(</span><em class="sig-param">ax=None</em>, <em class="sig-param">color='blue'</em>, <em class="sig-param">alpha=1</em>, <em class="sig-param">label=None</em>, <em class="sig-param">linewidth=1</em>, <em class="sig-param">linestyle='-'</em>, <em class="sig-param">logscale=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.plotpc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.plotpc" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plotpc</code><span class="sig-paren">(</span><em class="sig-param">ax=None</em>, <em class="sig-param">color='blue'</em>, <em class="sig-param">alpha=1</em>, <em class="sig-param">label=None</em>, <em class="sig-param">linewidth=1</em>, <em class="sig-param">linestyle='-'</em>, <em class="sig-param">logyscale=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.plotpc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.plotpc" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot capillary pressure (pc) a supplied matplotlib axis</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="pyscal.wateroil.WaterOil.plotkrwkrow">
-<code class="sig-name descname">plotkrwkrow</code><span class="sig-paren">(</span><em class="sig-param">ax=None</em>, <em class="sig-param">color='blue'</em>, <em class="sig-param">alpha=1</em>, <em class="sig-param">label=None</em>, <em class="sig-param">linewidth=1</em>, <em class="sig-param">linestyle='-'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.plotkrwkrow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.plotkrwkrow" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot krw and krow on a supplied matplotlib axis</p>
+<code class="sig-name descname">plotkrwkrow</code><span class="sig-paren">(</span><em class="sig-param">ax=None</em>, <em class="sig-param">color='blue'</em>, <em class="sig-param">alpha=1</em>, <em class="sig-param">label=None</em>, <em class="sig-param">linewidth=1</em>, <em class="sig-param">linestyle='-'</em>, <em class="sig-param">logyscale=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.plotkrwkrow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.plotkrwkrow" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot krw and krow</p>
+<p>If the argument ‘ax’ is not supplied, a new plot
+window will be made. If supplied, it will draw on the specified axis.</p>
 </dd></dl>
 
 </dd></dl>

@@ -442,9 +442,26 @@
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;inf/nan in interpolated data, check input&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pccomment</span> <span class="o">=</span> <span class="s2">&quot;-- pc from tabular input&quot;</span> <span class="o">+</span> <span class="n">pccomment</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span></div>
 
-    <span class="k">def</span> <span class="nf">_handle_endpoints_linearpart_gas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">krgend</span><span class="p">,</span> <span class="n">krgmax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Internal utility function to handle krg</span>
-<span class="sd">        around endpoints.</span>
+<div class="viewcode-block" id="GasOil.set_endpoints_linearpart_krg"><a class="viewcode-back" href="../../pyscal.html#pyscal.gasoil.GasOil.set_endpoints_linearpart_krg">[docs]</a>    <span class="k">def</span> <span class="nf">set_endpoints_linearpart_krg</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">krgend</span><span class="p">,</span> <span class="n">krgmax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set linear parts of krg outside endpoints.</span>
+
+<span class="sd">        Curve will be linear from [1 - swl - sorg, 1 - swl]</span>
+<span class="sd">        (from krgend to krgmax) and zero in [0, sgcr]. Except special</span>
+<span class="sd">        handling for krgendanchor:</span>
+
+<span class="sd">        If krgendanchor is set to `sorg` (default), then the normalized</span>
+<span class="sd">        gas saturation `sgn` (which is what is raised to the power of `ng`)</span>
+<span class="sd">        is 1 at `1 - swl - sgcr - sorg`. If not, it is 1 at `1 - swl - sgcr`.</span>
+
+<span class="sd">        krgmax is only relevant if krgendanchor is &#39;sorg&#39;</span>
+
+<span class="sd">        This function is used by add_corey/LET_gas(), and perhaps by other</span>
+<span class="sd">        utility functions. It should not be necessary for end-users.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            krgend (float): krg at 1 - swl - sgcr - sorg. Checkme.</span>
+<span class="sd">            krgmax (float): krg at Sg=1-swl. Default 1.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">sg</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sgcr</span><span class="p">,</span> <span class="s2">&quot;krg&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
@@ -462,13 +479,23 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">sg</span> <span class="o">&gt;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">swl</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">)),</span> <span class="s2">&quot;krg&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">krgend</span>
             <span class="k">if</span> <span class="n">krgmax</span><span class="p">:</span>
-                <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;krgmax ignored when not anchoring to sorg&quot;</span><span class="p">)</span>
+                <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;krgmax ignored when not anchoring to sorg&quot;</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="nf">_handle_endpoints_linearpart_oil</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kroend</span><span class="p">,</span> <span class="n">kromax</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Internal utility function to handle kro</span>
-<span class="sd">        around endpoints.</span>
+<div class="viewcode-block" id="GasOil.set_endpoints_linearpart_krog"><a class="viewcode-back" href="../../pyscal.html#pyscal.gasoil.GasOil.set_endpoints_linearpart_krog">[docs]</a>    <span class="k">def</span> <span class="nf">set_endpoints_linearpart_krog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kroend</span><span class="p">,</span> <span class="n">kromax</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set linear parts of krog outside endpoints.</span>
+
+<span class="sd">        Zero for sg above 1 - sorg - swl.</span>
+
+<span class="sd">        Linear from kromax to kroend from sg in [0, sgcr]</span>
+
+<span class="sd">        This function is used by add_corey/LET_oil(), and perhaps by other</span>
+<span class="sd">        utility functions. It should not be necessary for end-users.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            kroend (float): krog at sg=sgcr</span>
+<span class="sd">            kromax (float): krog at Sg=0. Default 1.</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
-
         <span class="c1"># Special handling of the part close to sg=1, set to zero.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sg&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorg</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span> <span class="o">-</span> <span class="n">epsilon</span><span class="p">,</span> <span class="s2">&quot;krog&quot;</span>
@@ -482,7 +509,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">kromax</span><span class="p">:</span>
                 <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;kromax ignored when sgcr is close to zero&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sg&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">SWINTEGERS</span><span class="p">,</span> <span class="s2">&quot;krog&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kroend</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sg&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">SWINTEGERS</span><span class="p">,</span> <span class="s2">&quot;krog&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kroend</span></div>
 
 <div class="viewcode-block" id="GasOil.add_corey_gas"><a class="viewcode-back" href="../../pyscal.html#pyscal.gasoil.GasOil.add_corey_gas">[docs]</a>    <span class="k">def</span> <span class="nf">add_corey_gas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ng</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">krgend</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">krgmax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Add krg data through the Corey parametrization</span>
@@ -502,7 +529,7 @@
             <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">krgend</span> <span class="o">&lt;=</span> <span class="n">krgmax</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krg&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">krgend</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">sgn</span> <span class="o">**</span> <span class="n">ng</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_handle_endpoints_linearpart_gas</span><span class="p">(</span><span class="n">krgend</span><span class="p">,</span> <span class="n">krgmax</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_endpoints_linearpart_krg</span><span class="p">(</span><span class="n">krgend</span><span class="p">,</span> <span class="n">krgmax</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">krgmax</span><span class="p">:</span>
             <span class="n">krgmax</span> <span class="o">=</span> <span class="mi">1</span>
@@ -539,7 +566,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krog&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kroend</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">son</span> <span class="o">**</span> <span class="n">nog</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_handle_endpoints_linearpart_oil</span><span class="p">(</span><span class="n">kroend</span><span class="p">,</span> <span class="n">kromax</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_endpoints_linearpart_krog</span><span class="p">(</span><span class="n">kroend</span><span class="p">,</span> <span class="n">kromax</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">kromax</span><span class="p">:</span>
             <span class="n">kromax</span> <span class="o">=</span> <span class="mi">1</span>
@@ -583,7 +610,7 @@
             <span class="o">/</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">sgn</span> <span class="o">**</span> <span class="n">l</span><span class="p">)</span> <span class="o">+</span> <span class="n">e</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">sgn</span><span class="p">)</span> <span class="o">**</span> <span class="n">t</span><span class="p">)</span>
         <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_handle_endpoints_linearpart_gas</span><span class="p">(</span><span class="n">krgend</span><span class="p">,</span> <span class="n">krgmax</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_endpoints_linearpart_krg</span><span class="p">(</span><span class="n">krgend</span><span class="p">,</span> <span class="n">krgmax</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">krgmax</span><span class="p">:</span>
             <span class="n">krgmax</span> <span class="o">=</span> <span class="mi">1</span>
@@ -627,7 +654,7 @@
             <span class="o">/</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;son&quot;</span><span class="p">]</span> <span class="o">**</span> <span class="n">l</span><span class="p">)</span> <span class="o">+</span> <span class="n">e</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;son&quot;</span><span class="p">])</span> <span class="o">**</span> <span class="n">t</span><span class="p">)</span>
         <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">_handle_endpoints_linearpart_oil</span><span class="p">(</span><span class="n">kroend</span><span class="p">,</span> <span class="n">kromax</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_endpoints_linearpart_krog</span><span class="p">(</span><span class="n">kroend</span><span class="p">,</span> <span class="n">kromax</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">kromax</span><span class="p">:</span>
             <span class="n">kromax</span> <span class="o">=</span> <span class="mi">1</span>
