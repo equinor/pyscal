@@ -42,7 +42,7 @@ def test_wateroil_random(swirr, swl, swcr, sorw, h, tag):
         pass
 
 
-@settings(max_examples=500)
+@settings(max_examples=200)
 @given(
     st.floats(min_value=0, max_value=0.1),
     st.floats(min_value=0, max_value=0.15),
