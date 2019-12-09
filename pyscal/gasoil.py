@@ -185,6 +185,7 @@ class GasOil(object):
             )
 
     def add_gasoil_fromtable(self, *args, **kwargs):
+        """Deprecated. Use ``add_fromtable()``"""
         logging.warning("add_gasoil_fromtable() is deprecated, use add_fromtable()")
         self.add_fromtable(*args, **kwargs)
 
@@ -204,16 +205,12 @@ class GasOil(object):
         The saturation range with endpoints must be set up beforehand,
         and must be compatible with the tabular input. The tabular
         input will be interpolated to the initialized Sg-table.
-        IMPORTANT: Set sgcr and swl to sensible values.
 
         If you have krg and krog in different dataframes, call this
         function twice
 
         Calling function is responsible for checking if any data was
         actually added to the table.
-
-        The dataframe input can be constructed using e.g. swof2csv functionality
-
         """
         from scipy.interpolate import PchipInterpolator
 

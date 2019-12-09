@@ -86,7 +86,7 @@ high_sample_let = {
 }
 
 
-@settings(max_examples=10, deadline=1500)
+@settings(max_examples=10, deadline=3000)
 @given(
     st.floats(min_value=-1.1, max_value=1.1), st.floats(min_value=-1.1, max_value=1.1)
 )
@@ -112,6 +112,18 @@ def test_interpolation_deprecated(param_wo, param_go):
     assert len(interpolant.SOF3()) > 100
     assert len(interpolant.wateroil.SWOF()) > 100
     assert interpolant.threephaseconsistency() == ""
+
+
+def test_make_scalrecommendation():
+    """Test that we can make scal recommendation objects
+    from three WaterOilGas objects"""
+    low = PyscalFactory.create_water_oil_gas(low_sample_let)
+    base = PyscalFactory.create_water_oil_gas(base_sample_let)
+    high = PyscalFactory.create_water_oil_gas(high_sample_let)
+    rec = SCALrecommendation(low, base, high)
+    interpolant = rec.interpolate(-0.5)
+    check_table_wo(interpolant.wateroil.table)
+    check_table_go(interpolant.gasoil.table)
 
 
 @settings(max_examples=10, deadline=1500)

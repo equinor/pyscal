@@ -36,6 +36,16 @@ class WaterOil(object):
     Can be dumped as include files for Eclipse/OPM and Nexus simulators.
 
     Args:
+        swirr (float): Absolute minimal water saturation at infinite capillary
+            pressure.
+        swl (float): First water saturation point in generated table. Used
+            for normalized saturations.
+        swcr (float): Critical water saturation. Water will not be mobile before the
+            water saturation is above this value.
+        sorw (float): Residual oil saturation after water flooding. At this oil
+            saturation, the oil has zero relative permeability.
+        h (float): Saturation step-length in the outputted table.
+        tag (str): Optional string identifier, only used in comments.
         fast (bool): Set to True if in order to skip some integrity checks
             and nice-to-have features. Not needed to set for normal pyscal
             runs, as speed is seldom crucial. Default False
@@ -123,6 +133,7 @@ class WaterOil(object):
         )
 
     def add_oilwater_fromtable(self, *args, **kwargs):
+        """Deprecated, use ``add_fromtable()``"""
         logging.warning("add_oilwater_fromtable() is deprecated, use add_fromtable()")
         self.add_fromtable(*args, **kwargs)
 
