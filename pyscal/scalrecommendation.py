@@ -11,38 +11,25 @@ class SCALrecommendation(object):
     """A SCAL recommendation consists of three OilWaterGas objects,
     tagged low, base and high.
 
-    For a continuum to exist within a SCAL recommendation, relperm
-    curves are interpolated pointwise in relperm-vs-saturation
-    space. Because the individual low, base and high curves might
-    cross, interpolation cannot be performed in the parameter space
-    (L, E, T, endpoints).
+    This container exists in order to to interpolation from -1 (low),
+    through 0 (base) and to 1 (high).
 
-    If endpoints do not vary, and T has opposite direction than L and
-    E going from low to h igh, interpolation in L, E and T-space is
-    possible without interpolated curves going outside the area
-    contained by low and high curves.
-
+    Args:
+        low (WaterOilGas): An object representing the low case
+        base (WaterOilGas): An object representing the base case
+        high (WaterOilGas): An object representing the high case
+        tag (str): A string that describes the recommendation. Optional.
     """
 
-    @staticmethod
-    def defaultshandling(key, value, dicts):
-        """Helper function for __init__ to fill out missing values in
-        dicts with relperm parameter
-
-        This function IS DEPRECATED and will be removed
-        when __init__ no longer supports dicts as arguments.
-        """
-        for dic in dicts:
-            if key not in dic:
-                dic[key] = value
-
-    def __init__(self, low, base, high, tag, h=0.01):
+    def __init__(self, low, base, high, tag="", h=0.01):
         """Set up a SCAL recommendation curve set from WaterOilGas objects
 
         Arguments:
             low (WaterOilGas): low case
             base (WaterOilGas): base case
             high (WaterOilGas): high case
+            tag (str): Describes the recommendtion. This string will be used
+                as tag strings for the interpolants.
         """
 
         self.h = h
@@ -349,3 +336,15 @@ class SCALrecommendation(object):
             interpolant.gasoil.resetsorg()
 
         return interpolant
+
+    @staticmethod
+    def defaultshandling(key, value, dicts):
+        """Helper function for __init__ to fill out missing values in
+        dicts with relperm parameter
+
+        This function IS DEPRECATED and will be removed
+        when __init__ no longer supports dicts as arguments.
+        """
+        for dic in dicts:
+            if key not in dic:
+                dic[key] = value
