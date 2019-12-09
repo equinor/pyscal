@@ -1,9 +1,9 @@
 Usage
 =====
 
-Pyscal is meant to be used directly by end users by its Python
-API. Additionally there are end-user scripts where parameter
-collection are inputted through Excel worksheets.
+``pyscal`` is a Python API, meaning that end users can use it in 
+Python scripts or interactive Python sessions. Scripts can be built on 
+top of pyscal that read input from text files, CSV files or Excel worksheets.
 
 A water-oil curve
 -----------------
@@ -23,12 +23,12 @@ may run the following code:
 
 which will print a table that can be included in an Eclipse
 simulation. There are more parameters to adjust, check the
-corresponding API. Instead of corey, you can find a corresponding
+corresponding API. Instead of Corey, you can find a corresponding
 function for a LET-parametrization, or perhaps another capillary
 pressure function. Also adjust the parameter ``h`` to obtain a finer
 resolution on the saturation scale.
 
-The output from the code above:
+The output from the code above is:
 
 .. code-block:: console
 
@@ -60,6 +60,26 @@ Instead of ``SWOF()``, you may ask for ``SWFN()`` or similar. Both
 family 1 and 2 of Eclipse keywords are supported.  For the Nexus
 simulator, you can use the function ``WOTABLE()``
 
+Alternatively, it is possible to send all parameters for a SWOF curve
+as a dictionary, through use of the ``PyscalFactory`` class. The
+equivalent to the code lines above (except for capillary pressure) is then:
+
+.. code-block:: python
+
+    from pyscal import PyscalFactory
+    params = dict(swl=0.05, sorw=0.03, h=0.1, nw=2.1, krwend=0.6, now=2.5, kroend=0.9, h=0.05)
+    wo = PyscalFactory.create_water_oil(params)
+    print(wo.SWOF())
+
+Note that parameter names to factory functions are case *insensitive*, while
+the ``add_*()`` parameters are not. This is becase the ``add_*()`` parameters
+are meant as a Python API, while the factory class is there to aid
+users when input is written in a different context, like an Excel
+spreadsheet.
+
+For visual inspection, there is a function ``.plotkrwkrow()`` which will 
+make a simple plot of the relative permeability curves using matplotlib.
+
 Gas-oil curve
 -------------
 
@@ -75,8 +95,14 @@ For a corresponding gas-oil curve, the API is analogous,
 
 If you want to use your SGOF data together with a SWOF, it makes sense
 to share some of the saturation endpoints, as there are compatibility constraints.
-For this reason, it is recommended to initialize both the WaterOil and GasOil objects
-trough a WaterOilGas object.
+For this reason, it is recommended to initialize both the ``WaterOil`` and ``GasOil``
+objects trough a ``WaterOilGas`` object.
+
+There is a corresponding ``PyscalFactory.create_gas_oil()`` support function with 
+dictionary as argument.
+
+For plotting, ``GasOil`` object has a function ``.plotkrgkrog()``.
+
 
 Water-oil-gas
 -------------
@@ -100,11 +126,13 @@ Typical usage could be:
 As seen in the example, the object members ``wateroil`` and ``gasoil`` are ``WaterOil`` and ``GasOil`` objects
 having been initialized by the ``WaterOilGas`` initialization.
 
+Alternatively, there is a 
 The ``WaterOilGas`` objects can write ``SWOF`` tables (which is directly delegated to the ``WaterOil`` object, but
 it can also write a ``SOF3`` table.
 
 A method ``.selfcheck()`` can be run on the object to determine if there are any known consistency issues (which would
 crash a reservoir simulator) with the tabulated data.
+
 
 Interpolation in a SCAL recommendation
 --------------------------------------
@@ -119,7 +147,10 @@ base case and `1` returns the high case. Optionally, a separate
 interpolation parameter can be used for the `GasOil` interpolation
 if they are believed to be independent.
 
-SCAL recommendations are initialized with dictionaries
+SCAL recommendations are initialized from three distinct
+``WaterOilGas`` objects, which are then recommended constructed using
+the corresponding factory method. 
+
 for each of the low, base and high curve sets. LET or Corey
 parameterizations are assumed and the parameters are picked
 from the dictionaries. The dictionaries are typically parsed
@@ -127,12 +158,12 @@ from a row in a Excel worksheet (via Pandas).
 
 .. code-block:: python
 
-    from pyscal import SCALrecommendation
+    from pyscal import SCALrecommendation, PyscalFactory
 
-    low = dict(...)
-    base = dict(...)
-    high = dict(...)
-    rec = SCALrecommendation(low, base, high, h=0.02)
+    low = PyscalFactory.create_water_oil_gas(dict(nw=1, now=1, ng=1, nog=1, tag='low'))
+    base = PyscalFactory.create_water_oil_gas(dict(nw=2, now=2, ng=2, nog=3, tag='base'))
+    high = PyscalFactory.create_water_oil_gas(dict(nw=3, now=3, ng=3, nog=3, tag='high'))
+    rec = SCALrecommendation(low, base, high)
 
     interpolant = rec.interpolate(-0.4)
 

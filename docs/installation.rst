@@ -1,7 +1,14 @@
 Installation
 ============
 
-To install the latest git-version, preferably in a virtual environment, issue
+To install the latest release from PyPI, use ``pip`` inside a virtual environment 
+
+.. code-block:: console
+
+    pip install pyscal
+
+
+For contributing to pyscal and access to latest bleeding code, do
 
 .. code-block:: console
 
@@ -9,12 +16,6 @@ To install the latest git-version, preferably in a virtual environment, issue
     pushd pyscal
     pip install .
 
-Later, released versions will be available through pypi, then you may do
-
-.. code-block:: console
-
-    pip install pyscal
- 
 
 Internally in Equinor
 ~~~~~~~~~~~~~~~~~~~~~

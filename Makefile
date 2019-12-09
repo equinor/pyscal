@@ -119,7 +119,7 @@ develop:  ## make a development link to src
 	pip install -e .
 
 docsrun: clean ## generate Sphinx HTML documentation, including API docs
-	rm -f docs/${APPLICATIONROOT}*.rst
+	rm -f docs/pyscal.rst
 	rm -f docs/modules.rst
 	rm -fr docs/_build
 	sphinx-apidoc -H "API for pyscal" -o docs ${TOPSRCAPPLICATION}

@@ -2,35 +2,42 @@ Introduction to pyscal
 ======================
 
 *pyscal* is a Python module for creating `relative permeability`_ input
-curves for Eclipse and Nexus, either directly from parametrizations or
-from a SCAL recommendation parameter set. Curves can be interpolated
-within a SCAL recommendation. History match can be done directly on
-curve parameters, or on interpolation parameters.
+curves for Eclipse, Flow (OPM) and Nexus, either directly from parametrizations (Corey
+or LET) or from a SCAL recommendation parameter set.  
 
-Both LET and Corey are supported. One table can have LET for krw and
-Corey for kro if so is wished. Relative permeability data can also be
-parsed from tabulated data.
+Alternatively, interpolated curves can be generated, that are within
+a set of other curves, for example from a SCAL recommendation from low
+to high. This enables history match both directly on
+curve parameters (Corey/LET), or on interpolation parameters.
 
-Output is in SWOF/SGOF for Eclipse, and WOTABLE/GOTABLE for Nexus
+Relative permeability data can also be parsed from tabulated data and
+then used for interpolation.
 
-Errors in the tables are catched and reported, similiar to Eclipse
-error checking.
+Capillary pressure is supported through a selected number of parametrizations.
 
-Classes:
- * SCALrecommendation (container for three OilWaterGas objects)
- * OilWaterGas (holds one WaterOil and one GasOil object)
- * WaterOil (representing krw and krow for one facies/satnum)
- * GasOil (representing krg and krog for one facies/satnum)
+Objects:
+~~~~~~~~
 
-History matching relative permeability can be done in two ways:
+``WaterOil``
+  represents the data for water-oil relative permeability and
+  capillary pressure. Essentially the data for SWOF plus metadata.
 
-1. Interpolation between low/base/high in a SCALrecommendation object,
-   you may choose correlated parameter for wateroil and oilgas
-   if you prefer.
-2. Direct matching on parameters that goes into WaterOil/GasOil,
-   supposedly difficult if you use LET.
+``GasOil``
+  ditto for gas-oil relative permeability
 
-For multiple SATNUMs, use one SCALrecommendation object for each and
-loop over your SATNUMs.
+``WaterOilGas``
+  container object for one ``WaterOil`` and one ``GasOil``. Useful
+  for making SOF3 output, and for ensuring endpoint consistency
+  in three-phase simulations.
+
+``SCALrecommendation``
+  container object for three OilWaterGas objects which are tagged
+  as low, base and high. Useful for interpolating between low and high, 
+  going from -1 (low) through 0 (base) to 1 (high).
+
+``PyscalFactory``
+  Contains convenience functions for initializing the above objects from
+  Python dictionaries. 
+
 
 .. _relative permeability: http://en.wikipedia.org/wiki/Relative_permeability

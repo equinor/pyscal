@@ -1,4 +1,4 @@
-"""Factory functions for creating various pyscal objects"""
+"""Factory functions for creating the pyscal objects"""
 
 import logging
 
@@ -48,13 +48,13 @@ class PyscalFactory(object):
     the full objects based on these parameters, instead of
     explicitly having to call the API for each task.
 
-    Example:
+    Example::
 
-        wo = WaterOil(sorw=0.05)
-        wo.add_corey_water(nw=3)
-        wo.add_corey_oil(now=2)
-        # is equivalent to:
-        wo = factory.create_water_oil(dict(sorw=0.05, nw=3, now=2))
+      wo = WaterOil(sorw=0.05)
+      wo.add_corey_water(nw=3)
+      wo.add_corey_oil(now=2)
+      # is equivalent to:
+      wo = factory.create_water_oil(dict(sorw=0.05, nw=3, now=2))
 
     Parameter names to factory functions are case *insensitive*, while
     the add_*() parameters are not. This is becase the add_*() parameters
@@ -80,6 +80,12 @@ class PyscalFactory(object):
         in their signatures, which is not precise enough in this
         context, so we require e.g. 'Lw' and 'Low' (which both will be
         translated to 'l')
+
+        Recognized parameters:
+          swirr, swl, swcr, sorw, h, tag, nw, now, krwmax, krwend,
+          lw, ew, tw, low, eow, tow, lo, eo, to, kromax, kroend,
+          a, b, poro_ref, perm_ref, drho,
+          a, b, poro, perm, sigma_costau
         """
         if not params:
             params = dict()
@@ -187,6 +193,12 @@ class PyscalFactory(object):
         in their signatures, which is not precise enough in this
         context, so we require e.g. 'Lg' and 'Log' (which both will be
         translated to 'l')
+
+        Recognized parameters:
+          swirr, sgcr, "sorg, swl, krgendanchor, h, tag,
+          ng, krgend, krgmax, nog, kroend,
+          lg, eg, tg, log, eog, tog
+
         """
         if not params:
             params = dict()
@@ -264,6 +276,9 @@ class PyscalFactory(object):
 
         Parameterization (Corey/LET) is inferred from presence
         of certain parameters in the dictionary.
+
+        Check create_water_oil() and create_gas_oil() for lists
+        of supported parameters (case insensitive)
         """
         if not params:
             params = dict()
@@ -300,9 +315,10 @@ class PyscalFactory(object):
         endpoints and LET/Corey parameters, as you would feed it to
         the create_water_oil_gas() factory function;
 
+        Recognized parameters:
            Lw, Ew, Tw, Low, Eow, Tow,
            Lg, Eg, Tg, Log, Eog, Tog,
-           nw, now, ng, nog
+           nw, now, ng, nog,
            swirr, swl, sorw, sorg, sgcr
 
         For oil-water only, you may omit the LET parameters for gas and oil-gas
@@ -343,7 +359,7 @@ class PyscalFactory(object):
 
     @staticmethod
     def create_scal_recommendation_list():
-        """Reserved"""
+        """Reserved for future implementation"""
         raise NotImplementedError
 
     @staticmethod
