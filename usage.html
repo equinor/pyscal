@@ -166,9 +166,9 @@
             
   <div class="section" id="usage">
 <h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
-<p>Pyscal is meant to be used directly by end users by its Python
-API. Additionally there are end-user scripts where parameter
-collection are inputted through Excel worksheets.</p>
+<p><code class="docutils literal notranslate"><span class="pre">pyscal</span></code> is a Python API, meaning that end users can use it in
+Python scripts or interactive Python sessions. Scripts can be built on
+top of pyscal that read input from text files, CSV files or Excel worksheets.</p>
 <div class="section" id="a-water-oil-curve">
 <h2>A water-oil curve<a class="headerlink" href="#a-water-oil-curve" title="Permalink to this headline">¶</a></h2>
 <p>To generate SWOF input for Eclipse or flow (OPM) with certain
@@ -184,11 +184,11 @@ may run the following code:</p>
 </div>
 <p>which will print a table that can be included in an Eclipse
 simulation. There are more parameters to adjust, check the
-corresponding API. Instead of corey, you can find a corresponding
+corresponding API. Instead of Corey, you can find a corresponding
 function for a LET-parametrization, or perhaps another capillary
 pressure function. Also adjust the parameter <code class="docutils literal notranslate"><span class="pre">h</span></code> to obtain a finer
 resolution on the saturation scale.</p>
-<p>The output from the code above:</p>
+<p>The output from the code above is:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">SWOF</span>
 <span class="go">--</span>
 <span class="go">-- Sw Krw Krow Pc</span>
@@ -216,6 +216,22 @@ resolution on the saturation scale.</p>
 <p>Instead of <code class="docutils literal notranslate"><span class="pre">SWOF()</span></code>, you may ask for <code class="docutils literal notranslate"><span class="pre">SWFN()</span></code> or similar. Both
 family 1 and 2 of Eclipse keywords are supported.  For the Nexus
 simulator, you can use the function <code class="docutils literal notranslate"><span class="pre">WOTABLE()</span></code></p>
+<p>Alternatively, it is possible to send all parameters for a SWOF curve
+as a dictionary, through use of the <code class="docutils literal notranslate"><span class="pre">PyscalFactory</span></code> class. The
+equivalent to the code lines above (except for capillary pressure) is then:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">PyscalFactory</span>
+<span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">swl</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">sorw</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">nw</span><span class="o">=</span><span class="mf">2.1</span><span class="p">,</span> <span class="n">krwend</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">now</span><span class="o">=</span><span class="mf">2.5</span><span class="p">,</span> <span class="n">kroend</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+<span class="n">wo</span> <span class="o">=</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_water_oil</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">wo</span><span class="o">.</span><span class="n">SWOF</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>Note that parameter names to factory functions are case <em>insensitive</em>, while
+the <code class="docutils literal notranslate"><span class="pre">add_*()</span></code> parameters are not. This is becase the <code class="docutils literal notranslate"><span class="pre">add_*()</span></code> parameters
+are meant as a Python API, while the factory class is there to aid
+users when input is written in a different context, like an Excel
+spreadsheet.</p>
+<p>For visual inspection, there is a function <code class="docutils literal notranslate"><span class="pre">.plotkrwkrow()</span></code> which will
+make a simple plot of the relative permeability curves using matplotlib.</p>
 </div>
 <div class="section" id="gas-oil-curve">
 <h2>Gas-oil curve<a class="headerlink" href="#gas-oil-curve" title="Permalink to this headline">¶</a></h2>
@@ -229,8 +245,11 @@ simulator, you can use the function <code class="docutils literal notranslate"><
 </div>
 <p>If you want to use your SGOF data together with a SWOF, it makes sense
 to share some of the saturation endpoints, as there are compatibility constraints.
-For this reason, it is recommended to initialize both the WaterOil and GasOil objects
-trough a WaterOilGas object.</p>
+For this reason, it is recommended to initialize both the <code class="docutils literal notranslate"><span class="pre">WaterOil</span></code> and <code class="docutils literal notranslate"><span class="pre">GasOil</span></code>
+objects trough a <code class="docutils literal notranslate"><span class="pre">WaterOilGas</span></code> object.</p>
+<p>There is a corresponding <code class="docutils literal notranslate"><span class="pre">PyscalFactory.create_gas_oil()</span></code> support function with
+dictionary as argument.</p>
+<p>For plotting, <code class="docutils literal notranslate"><span class="pre">GasOil</span></code> object has a function <code class="docutils literal notranslate"><span class="pre">.plotkrgkrog()</span></code>.</p>
 </div>
 <div class="section" id="water-oil-gas">
 <h2>Water-oil-gas<a class="headerlink" href="#water-oil-gas" title="Permalink to this headline">¶</a></h2>
@@ -249,7 +268,8 @@ object to aid in consistency. Saturation endpoints is only input once during ini
 </div>
 <p>As seen in the example, the object members <code class="docutils literal notranslate"><span class="pre">wateroil</span></code> and <code class="docutils literal notranslate"><span class="pre">gasoil</span></code> are <code class="docutils literal notranslate"><span class="pre">WaterOil</span></code> and <code class="docutils literal notranslate"><span class="pre">GasOil</span></code> objects
 having been initialized by the <code class="docutils literal notranslate"><span class="pre">WaterOilGas</span></code> initialization.</p>
-<p>The <code class="docutils literal notranslate"><span class="pre">WaterOilGas</span></code> objects can write <code class="docutils literal notranslate"><span class="pre">SWOF</span></code> tables (which is directly delegated to the <code class="docutils literal notranslate"><span class="pre">WaterOil</span></code> object, but
+<p>Alternatively, there is a
+The <code class="docutils literal notranslate"><span class="pre">WaterOilGas</span></code> objects can write <code class="docutils literal notranslate"><span class="pre">SWOF</span></code> tables (which is directly delegated to the <code class="docutils literal notranslate"><span class="pre">WaterOil</span></code> object, but
 it can also write a <code class="docutils literal notranslate"><span class="pre">SOF3</span></code> table.</p>
 <p>A method <code class="docutils literal notranslate"><span class="pre">.selfcheck()</span></code> can be run on the object to determine if there are any known consistency issues (which would
 crash a reservoir simulator) with the tabulated data.</p>
@@ -257,24 +277,22 @@ crash a reservoir simulator) with the tabulated data.</p>
 <div class="section" id="interpolation-in-a-scal-recommendation">
 <h2>Interpolation in a SCAL recommendation<a class="headerlink" href="#interpolation-in-a-scal-recommendation" title="Permalink to this headline">¶</a></h2>
 <p>A SCAL recommendation in this context is nothing but a container
-of three <cite>WaterOilGas</cite> objects, representing a <cite>low</cite>, a <cite>base</cite> and a
+of three <code class="docutils literal notranslate"><span class="pre">WaterOilGas</span></code> objects, representing a <cite>low</cite>, a <cite>base</cite> and a
 <cite>high</cite> case. The prime use case for this container is the ability
 to interpolate between the low and high case.</p>
 <p>An interpolation parameter at <cite>-1</cite> returns the low case, <cite>0</cite> returns the
 base case and <cite>1</cite> returns the high case. Optionally, a separate
-interpolation parameter can be used for the <cite>GasOil</cite> interpolation
+interpolation parameter can be used for the <code class="docutils literal notranslate"><span class="pre">GasOil</span></code> interpolation
 if they are believed to be independent.</p>
-<p>SCAL recommendations are initialized with dictionaries
-for each of the low, base and high curve sets. LET or Corey
-parameterizations are assumed and the parameters are picked
-from the dictionaries. The dictionaries are typically parsed
-from a row in a Excel worksheet (via Pandas).</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">SCALrecommendation</span>
+<p>SCAL recommendations are initialized from three distinct
+<code class="docutils literal notranslate"><span class="pre">WaterOilGas</span></code> objects, which are then recommended constructed using
+the corresponding factory method.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">SCALrecommendation</span><span class="p">,</span> <span class="n">PyscalFactory</span>
 
-<span class="n">low</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
-<span class="n">base</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
-<span class="n">high</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
-<span class="n">rec</span> <span class="o">=</span> <span class="n">SCALrecommendation</span><span class="p">(</span><span class="n">low</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">high</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
+<span class="n">low</span> <span class="o">=</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_water_oil_gas</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">nw</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">now</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ng</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">nog</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s1">&#39;low&#39;</span><span class="p">))</span>
+<span class="n">base</span> <span class="o">=</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_water_oil_gas</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">nw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">now</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ng</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">nog</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s1">&#39;base&#39;</span><span class="p">))</span>
+<span class="n">high</span> <span class="o">=</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_water_oil_gas</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">nw</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">now</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">ng</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">nog</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s1">&#39;high&#39;</span><span class="p">))</span>
+<span class="n">rec</span> <span class="o">=</span> <span class="n">SCALrecommendation</span><span class="p">(</span><span class="n">low</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">high</span><span class="p">)</span>
 
 <span class="n">interpolant</span> <span class="o">=</span> <span class="n">rec</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="o">-</span><span class="mf">0.4</span><span class="p">)</span>
 

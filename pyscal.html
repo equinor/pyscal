@@ -197,7 +197,7 @@ numbers should not be relevant for relative permeability</p></li>
 </div>
 <div class="section" id="module-pyscal.factory">
 <span id="pyscal-factory-module"></span><h2>pyscal.factory module<a class="headerlink" href="#module-pyscal.factory" title="Permalink to this headline">¶</a></h2>
-<p>Factory functions for creating various pyscal objects</p>
+<p>Factory functions for creating the pyscal objects</p>
 <dl class="function">
 <dt id="pyscal.factory.slicedict">
 <code class="sig-prename descclassname">pyscal.factory.</code><code class="sig-name descname">slicedict</code><span class="sig-paren">(</span><em class="sig-param">dct</em>, <em class="sig-param">keys</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#slicedict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.slicedict" title="Permalink to this definition">¶</a></dt>
@@ -214,12 +214,14 @@ Keys not existing will be ignored.</p>
 determine what kind of parametrization to be used, and set up
 the full objects based on these parameters, instead of
 explicitly having to call the API for each task.</p>
-<p class="rubric">Example</p>
-<p>wo = WaterOil(sorw=0.05)
-wo.add_corey_water(nw=3)
-wo.add_corey_oil(now=2)
-# is equivalent to:
-wo = factory.create_water_oil(dict(sorw=0.05, nw=3, now=2))</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">wo</span> <span class="o">=</span> <span class="n">WaterOil</span><span class="p">(</span><span class="n">sorw</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
+<span class="n">wo</span><span class="o">.</span><span class="n">add_corey_water</span><span class="p">(</span><span class="n">nw</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">wo</span><span class="o">.</span><span class="n">add_corey_oil</span><span class="p">(</span><span class="n">now</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="c1"># is equivalent to:</span>
+<span class="n">wo</span> <span class="o">=</span> <span class="n">factory</span><span class="o">.</span><span class="n">create_water_oil</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">sorw</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">nw</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">now</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
 <p>Parameter names to factory functions are case <em>insensitive</em>, while
 the add_*() parameters are not. This is becase the add_*() parameters
 are meant as a Python API, while the factory class is there to aid
@@ -239,6 +241,13 @@ can use Swirr, swirr, sWirR, swiRR etc.</p>
 in their signatures, which is not precise enough in this
 context, so we require e.g. ‘Lw’ and ‘Low’ (which both will be
 translated to ‘l’)</p>
+<dl class="simple">
+<dt>Recognized parameters:</dt><dd><p>swirr, swl, swcr, sorw, h, tag, nw, now, krwmax, krwend,
+lw, ew, tw, low, eow, tow, lo, eo, to, kromax, kroend,
+a, b, poro_ref, perm_ref, drho,
+a, b, poro, perm, sigma_costau</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -253,6 +262,12 @@ the same time.</p>
 in their signatures, which is not precise enough in this
 context, so we require e.g. ‘Lg’ and ‘Log’ (which both will be
 translated to ‘l’)</p>
+<dl class="simple">
+<dt>Recognized parameters:</dt><dd><p>swirr, sgcr, “sorg, swl, krgendanchor, h, tag,
+ng, krgend, krgmax, nog, kroend,
+lg, eg, tg, log, eog, tog</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -261,6 +276,8 @@ translated to ‘l’)</p>
 <dd><p>Create a WaterOilGas object from a dictionary of parameters</p>
 <p>Parameterization (Corey/LET) is inferred from presence
 of certain parameters in the dictionary.</p>
+<p>Check create_water_oil() and create_gas_oil() for lists
+of supported parameters (case insensitive)</p>
 </dd></dl>
 
 <dl class="method">
@@ -272,19 +289,20 @@ dictionary of dictionary.</p>
 <p>The value for “low” must be a new dictionary with saturation
 endpoints and LET/Corey parameters, as you would feed it to
 the create_water_oil_gas() factory function;</p>
-<blockquote>
-<div><p>Lw, Ew, Tw, Low, Eow, Tow,
+<dl class="simple">
+<dt>Recognized parameters:</dt><dd><p>Lw, Ew, Tw, Low, Eow, Tow,
 Lg, Eg, Tg, Log, Eog, Tog,
-nw, now, ng, nog
+nw, now, ng, nog,
 swirr, swl, sorw, sorg, sgcr</p>
-</div></blockquote>
+</dd>
+</dl>
 <p>For oil-water only, you may omit the LET parameters for gas and oil-gas</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="pyscal.factory.PyscalFactory.create_scal_recommendation_list">
 <em class="property">static </em><code class="sig-name descname">create_scal_recommendation_list</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_scal_recommendation_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_scal_recommendation_list" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reserved</p>
+<dd><p>Reserved for future implementation</p>
 </dd></dl>
 
 <dl class="method">
@@ -354,7 +372,8 @@ runs, as speed is seldom crucial. Default False</p></li>
 <dl class="method">
 <dt id="pyscal.gasoil.GasOil.add_gasoil_fromtable">
 <code class="sig-name descname">add_gasoil_fromtable</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gasoil.html#GasOil.add_gasoil_fromtable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gasoil.GasOil.add_gasoil_fromtable" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Deprecated. Use <code class="docutils literal notranslate"><span class="pre">add_fromtable()</span></code></p>
+</dd></dl>
 
 <dl class="method">
 <dt id="pyscal.gasoil.GasOil.add_fromtable">
@@ -362,13 +381,11 @@ runs, as speed is seldom crucial. Default False</p></li>
 <dd><p>Interpolate relpermdata from a dataframe.</p>
 <p>The saturation range with endpoints must be set up beforehand,
 and must be compatible with the tabular input. The tabular
-input will be interpolated to the initialized Sg-table.
-IMPORTANT: Set sgcr and swl to sensible values.</p>
+input will be interpolated to the initialized Sg-table.</p>
 <p>If you have krg and krog in different dataframes, call this
 function twice</p>
 <p>Calling function is responsible for checking if any data was
 actually added to the table.</p>
-<p>The dataframe input can be constructed using e.g. swof2csv functionality</p>
 </dd></dl>
 
 <dl class="method">
@@ -668,28 +685,22 @@ defaults to True.</p></li>
 <span id="pyscal-scalrecommendation-module"></span><h2>pyscal.scalrecommendation module<a class="headerlink" href="#module-pyscal.scalrecommendation" title="Permalink to this headline">¶</a></h2>
 <dl class="class">
 <dt id="pyscal.scalrecommendation.SCALrecommendation">
-<em class="property">class </em><code class="sig-prename descclassname">pyscal.scalrecommendation.</code><code class="sig-name descname">SCALrecommendation</code><span class="sig-paren">(</span><em class="sig-param">low</em>, <em class="sig-param">base</em>, <em class="sig-param">high</em>, <em class="sig-param">tag</em>, <em class="sig-param">h=0.01</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/scalrecommendation.html#SCALrecommendation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.scalrecommendation.SCALrecommendation" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pyscal.scalrecommendation.</code><code class="sig-name descname">SCALrecommendation</code><span class="sig-paren">(</span><em class="sig-param">low</em>, <em class="sig-param">base</em>, <em class="sig-param">high</em>, <em class="sig-param">tag=''</em>, <em class="sig-param">h=0.01</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/scalrecommendation.html#SCALrecommendation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.scalrecommendation.SCALrecommendation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A SCAL recommendation consists of three OilWaterGas objects,
 tagged low, base and high.</p>
-<p>For a continuum to exist within a SCAL recommendation, relperm
-curves are interpolated pointwise in relperm-vs-saturation
-space. Because the individual low, base and high curves might
-cross, interpolation cannot be performed in the parameter space
-(L, E, T, endpoints).</p>
-<p>If endpoints do not vary, and T has opposite direction than L and
-E going from low to h igh, interpolation in L, E and T-space is
-possible without interpolated curves going outside the area
-contained by low and high curves.</p>
-<dl class="method">
-<dt id="pyscal.scalrecommendation.SCALrecommendation.defaultshandling">
-<em class="property">static </em><code class="sig-name descname">defaultshandling</code><span class="sig-paren">(</span><em class="sig-param">key</em>, <em class="sig-param">value</em>, <em class="sig-param">dicts</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/scalrecommendation.html#SCALrecommendation.defaultshandling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.scalrecommendation.SCALrecommendation.defaultshandling" title="Permalink to this definition">¶</a></dt>
-<dd><p>Helper function for __init__ to fill out missing values in
-dicts with relperm parameter</p>
-<p>This function IS DEPRECATED and will be removed
-when __init__ no longer supports dicts as arguments.</p>
-</dd></dl>
-
+<p>This container exists in order to to interpolation from -1 (low),
+through 0 (base) and to 1 (high).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>low</strong> (<a class="reference internal" href="#pyscal.wateroilgas.WaterOilGas" title="pyscal.wateroilgas.WaterOilGas"><em>WaterOilGas</em></a>) – An object representing the low case</p></li>
+<li><p><strong>base</strong> (<a class="reference internal" href="#pyscal.wateroilgas.WaterOilGas" title="pyscal.wateroilgas.WaterOilGas"><em>WaterOilGas</em></a>) – An object representing the base case</p></li>
+<li><p><strong>high</strong> (<a class="reference internal" href="#pyscal.wateroilgas.WaterOilGas" title="pyscal.wateroilgas.WaterOilGas"><em>WaterOilGas</em></a>) – An object representing the high case</p></li>
+<li><p><strong>tag</strong> (<em>str</em>) – A string that describes the recommendation. Optional.</p></li>
+</ul>
+</dd>
+</dl>
 <dl class="method">
 <dt id="pyscal.scalrecommendation.SCALrecommendation.add_simple_J">
 <code class="sig-name descname">add_simple_J</code><span class="sig-paren">(</span><em class="sig-param">a=5</em>, <em class="sig-param">b=-1.5</em>, <em class="sig-param">poro_ref=0.25</em>, <em class="sig-param">perm_ref=100</em>, <em class="sig-param">drho=300</em>, <em class="sig-param">g=9.81</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/scalrecommendation.html#SCALrecommendation.add_simple_J"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.scalrecommendation.SCALrecommendation.add_simple_J" title="Permalink to this definition">¶</a></dt>
@@ -717,6 +728,15 @@ for the gas-oil interpolation. This enables the gas-oil
 interpolant to be fully uncorrelated to the water-oil
 interpolant. CHECK how this affects endpoints and Eclipse
 consistency!!</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyscal.scalrecommendation.SCALrecommendation.defaultshandling">
+<em class="property">static </em><code class="sig-name descname">defaultshandling</code><span class="sig-paren">(</span><em class="sig-param">key</em>, <em class="sig-param">value</em>, <em class="sig-param">dicts</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/scalrecommendation.html#SCALrecommendation.defaultshandling"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.scalrecommendation.SCALrecommendation.defaultshandling" title="Permalink to this definition">¶</a></dt>
+<dd><p>Helper function for __init__ to fill out missing values in
+dicts with relperm parameter</p>
+<p>This function IS DEPRECATED and will be removed
+when __init__ no longer supports dicts as arguments.</p>
 </dd></dl>
 
 </dd></dl>
@@ -811,15 +831,28 @@ parametrizations, or from a dataframe (will incur interpolation).</p>
 <p>Can be dumped as include files for Eclipse/OPM and Nexus simulators.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>fast</strong> (<em>bool</em>) – Set to True if in order to skip some integrity checks
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>swirr</strong> (<em>float</em>) – Absolute minimal water saturation at infinite capillary
+pressure.</p></li>
+<li><p><strong>swl</strong> (<em>float</em>) – First water saturation point in generated table. Used
+for normalized saturations.</p></li>
+<li><p><strong>swcr</strong> (<em>float</em>) – Critical water saturation. Water will not be mobile before the
+water saturation is above this value.</p></li>
+<li><p><strong>sorw</strong> (<em>float</em>) – Residual oil saturation after water flooding. At this oil
+saturation, the oil has zero relative permeability.</p></li>
+<li><p><strong>h</strong> (<em>float</em>) – Saturation step-length in the outputted table.</p></li>
+<li><p><strong>tag</strong> (<em>str</em>) – Optional string identifier, only used in comments.</p></li>
+<li><p><strong>fast</strong> (<em>bool</em>) – Set to True if in order to skip some integrity checks
 and nice-to-have features. Not needed to set for normal pyscal
-runs, as speed is seldom crucial. Default False</p>
+runs, as speed is seldom crucial. Default False</p></li>
+</ul>
 </dd>
 </dl>
 <dl class="method">
 <dt id="pyscal.wateroil.WaterOil.add_oilwater_fromtable">
 <code class="sig-name descname">add_oilwater_fromtable</code><span class="sig-paren">(</span><em class="sig-param">*args</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.add_oilwater_fromtable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.add_oilwater_fromtable" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Deprecated, use <code class="docutils literal notranslate"><span class="pre">add_fromtable()</span></code></p>
+</dd></dl>
 
 <dl class="method">
 <dt id="pyscal.wateroil.WaterOil.add_fromtable">

@@ -168,38 +168,25 @@
     <span class="sd">&quot;&quot;&quot;A SCAL recommendation consists of three OilWaterGas objects,</span>
 <span class="sd">    tagged low, base and high.</span>
 
-<span class="sd">    For a continuum to exist within a SCAL recommendation, relperm</span>
-<span class="sd">    curves are interpolated pointwise in relperm-vs-saturation</span>
-<span class="sd">    space. Because the individual low, base and high curves might</span>
-<span class="sd">    cross, interpolation cannot be performed in the parameter space</span>
-<span class="sd">    (L, E, T, endpoints).</span>
+<span class="sd">    This container exists in order to to interpolation from -1 (low),</span>
+<span class="sd">    through 0 (base) and to 1 (high).</span>
 
-<span class="sd">    If endpoints do not vary, and T has opposite direction than L and</span>
-<span class="sd">    E going from low to h igh, interpolation in L, E and T-space is</span>
-<span class="sd">    possible without interpolated curves going outside the area</span>
-<span class="sd">    contained by low and high curves.</span>
-
+<span class="sd">    Args:</span>
+<span class="sd">        low (WaterOilGas): An object representing the low case</span>
+<span class="sd">        base (WaterOilGas): An object representing the base case</span>
+<span class="sd">        high (WaterOilGas): An object representing the high case</span>
+<span class="sd">        tag (str): A string that describes the recommendation. Optional.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="SCALrecommendation.defaultshandling"><a class="viewcode-back" href="../../pyscal.html#pyscal.scalrecommendation.SCALrecommendation.defaultshandling">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">defaultshandling</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">dicts</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Helper function for __init__ to fill out missing values in</span>
-<span class="sd">        dicts with relperm parameter</span>
-
-<span class="sd">        This function IS DEPRECATED and will be removed</span>
-<span class="sd">        when __init__ no longer supports dicts as arguments.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">for</span> <span class="n">dic</span> <span class="ow">in</span> <span class="n">dicts</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dic</span><span class="p">:</span>
-                <span class="n">dic</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div>
-
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">low</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">high</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">low</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">high</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set up a SCAL recommendation curve set from WaterOilGas objects</span>
 
 <span class="sd">        Arguments:</span>
 <span class="sd">            low (WaterOilGas): low case</span>
 <span class="sd">            base (WaterOilGas): base case</span>
 <span class="sd">            high (WaterOilGas): high case</span>
+<span class="sd">            tag (str): Describes the recommendtion. This string will be used</span>
+<span class="sd">                as tag strings for the interpolants.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">=</span> <span class="n">h</span>
@@ -505,7 +492,19 @@
             <span class="p">)</span>
             <span class="n">interpolant</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">resetsorg</span><span class="p">()</span>
 
-        <span class="k">return</span> <span class="n">interpolant</span></div></div>
+        <span class="k">return</span> <span class="n">interpolant</span></div>
+
+<div class="viewcode-block" id="SCALrecommendation.defaultshandling"><a class="viewcode-back" href="../../pyscal.html#pyscal.scalrecommendation.SCALrecommendation.defaultshandling">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">defaultshandling</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">dicts</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Helper function for __init__ to fill out missing values in</span>
+<span class="sd">        dicts with relperm parameter</span>
+
+<span class="sd">        This function IS DEPRECATED and will be removed</span>
+<span class="sd">        when __init__ no longer supports dicts as arguments.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">dic</span> <span class="ow">in</span> <span class="n">dicts</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dic</span><span class="p">:</span>
+                <span class="n">dic</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div></div>
 </pre></div>
 
            </div>

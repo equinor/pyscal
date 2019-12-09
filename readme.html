@@ -89,7 +89,10 @@
             
             
               <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction to pyscal</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction to pyscal</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#objects">Objects:</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">API for pyscal</a></li>
@@ -161,35 +164,36 @@
   <div class="section" id="introduction-to-pyscal">
 <h1>Introduction to pyscal<a class="headerlink" href="#introduction-to-pyscal" title="Permalink to this headline">¶</a></h1>
 <p><em>pyscal</em> is a Python module for creating <a class="reference external" href="http://en.wikipedia.org/wiki/Relative_permeability">relative permeability</a> input
-curves for Eclipse and Nexus, either directly from parametrizations or
-from a SCAL recommendation parameter set. Curves can be interpolated
-within a SCAL recommendation. History match can be done directly on
-curve parameters, or on interpolation parameters.</p>
-<p>Both LET and Corey are supported. One table can have LET for krw and
-Corey for kro if so is wished. Relative permeability data can also be
-parsed from tabulated data.</p>
-<p>Output is in SWOF/SGOF for Eclipse, and WOTABLE/GOTABLE for Nexus</p>
-<p>Errors in the tables are catched and reported, similiar to Eclipse
-error checking.</p>
+curves for Eclipse, Flow (OPM) and Nexus, either directly from parametrizations (Corey
+or LET) or from a SCAL recommendation parameter set.</p>
+<p>Alternatively, interpolated curves can be generated, that are within
+a set of other curves, for example from a SCAL recommendation from low
+to high. This enables history match both directly on
+curve parameters (Corey/LET), or on interpolation parameters.</p>
+<p>Relative permeability data can also be parsed from tabulated data and
+then used for interpolation.</p>
+<p>Capillary pressure is supported through a selected number of parametrizations.</p>
+<div class="section" id="objects">
+<h2>Objects:<a class="headerlink" href="#objects" title="Permalink to this headline">¶</a></h2>
 <dl class="simple">
-<dt>Classes:</dt><dd><ul class="simple">
-<li><p>SCALrecommendation (container for three OilWaterGas objects)</p></li>
-<li><p>OilWaterGas (holds one WaterOil and one GasOil object)</p></li>
-<li><p>WaterOil (representing krw and krow for one facies/satnum)</p></li>
-<li><p>GasOil (representing krg and krog for one facies/satnum)</p></li>
-</ul>
+<dt>WaterOil</dt><dd><p>represents the data for water-oil relative permeability and
+capillary pressure. Essentially the data for SWOF plus metadata.</p>
+</dd>
+<dt>GasOil</dt><dd><p>ditto for gas-oil relative permeability</p>
+</dd>
+<dt>WaterOilGas</dt><dd><p>container object for one <code class="docutils literal notranslate"><span class="pre">WaterOil</span></code> and one <code class="docutils literal notranslate"><span class="pre">GasOil</span></code>. Useful
+for making SOF3 output, and for ensuring endpoint consistency
+in three-phase simulations.</p>
+</dd>
+<dt>SCALrecommendation</dt><dd><p>container object for three <code class="docutils literal notranslate"><span class="pre">WaterOilGas</span></code> objects which are tagged
+as low, base and high. Useful for interpolating between low and high,
+going from -1 (low) through 0 (base) to 1 (high).</p>
+</dd>
+<dt>PyscalFactory</dt><dd><p>Contains convenience functions for initializing the above objects from
+Python dictionaries.</p>
 </dd>
 </dl>
-<p>History matching relative permeability can be done in two ways:</p>
-<ol class="arabic simple">
-<li><p>Interpolation between low/base/high in a SCALrecommendation object,
-you may choose correlated parameter for wateroil and oilgas
-if you prefer.</p></li>
-<li><p>Direct matching on parameters that goes into WaterOil/GasOil,
-supposedly difficult if you use LET.</p></li>
-</ol>
-<p>For multiple SATNUMs, use one SCALrecommendation object for each and
-loop over your SATNUMs.</p>
+</div>
 </div>
 
 

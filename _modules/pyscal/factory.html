@@ -155,7 +155,7 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pyscal.factory</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Factory functions for creating various pyscal objects&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Factory functions for creating the pyscal objects&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
 
@@ -205,13 +205,13 @@
 <span class="sd">    the full objects based on these parameters, instead of</span>
 <span class="sd">    explicitly having to call the API for each task.</span>
 
-<span class="sd">    Example:</span>
+<span class="sd">    Example::</span>
 
-<span class="sd">        wo = WaterOil(sorw=0.05)</span>
-<span class="sd">        wo.add_corey_water(nw=3)</span>
-<span class="sd">        wo.add_corey_oil(now=2)</span>
-<span class="sd">        # is equivalent to:</span>
-<span class="sd">        wo = factory.create_water_oil(dict(sorw=0.05, nw=3, now=2))</span>
+<span class="sd">      wo = WaterOil(sorw=0.05)</span>
+<span class="sd">      wo.add_corey_water(nw=3)</span>
+<span class="sd">      wo.add_corey_oil(now=2)</span>
+<span class="sd">      # is equivalent to:</span>
+<span class="sd">      wo = factory.create_water_oil(dict(sorw=0.05, nw=3, now=2))</span>
 
 <span class="sd">    Parameter names to factory functions are case *insensitive*, while</span>
 <span class="sd">    the add_*() parameters are not. This is becase the add_*() parameters</span>
@@ -237,6 +237,12 @@
 <span class="sd">        in their signatures, which is not precise enough in this</span>
 <span class="sd">        context, so we require e.g. &#39;Lw&#39; and &#39;Low&#39; (which both will be</span>
 <span class="sd">        translated to &#39;l&#39;)</span>
+
+<span class="sd">        Recognized parameters:</span>
+<span class="sd">          swirr, swl, swcr, sorw, h, tag, nw, now, krwmax, krwend,</span>
+<span class="sd">          lw, ew, tw, low, eow, tow, lo, eo, to, kromax, kroend,</span>
+<span class="sd">          a, b, poro_ref, perm_ref, drho,</span>
+<span class="sd">          a, b, poro, perm, sigma_costau</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">params</span><span class="p">:</span>
             <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
@@ -344,6 +350,12 @@
 <span class="sd">        in their signatures, which is not precise enough in this</span>
 <span class="sd">        context, so we require e.g. &#39;Lg&#39; and &#39;Log&#39; (which both will be</span>
 <span class="sd">        translated to &#39;l&#39;)</span>
+
+<span class="sd">        Recognized parameters:</span>
+<span class="sd">          swirr, sgcr, &quot;sorg, swl, krgendanchor, h, tag,</span>
+<span class="sd">          ng, krgend, krgmax, nog, kroend,</span>
+<span class="sd">          lg, eg, tg, log, eog, tog</span>
+
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">params</span><span class="p">:</span>
             <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
@@ -421,6 +433,9 @@
 
 <span class="sd">        Parameterization (Corey/LET) is inferred from presence</span>
 <span class="sd">        of certain parameters in the dictionary.</span>
+
+<span class="sd">        Check create_water_oil() and create_gas_oil() for lists</span>
+<span class="sd">        of supported parameters (case insensitive)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">params</span><span class="p">:</span>
             <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
@@ -457,9 +472,10 @@
 <span class="sd">        endpoints and LET/Corey parameters, as you would feed it to</span>
 <span class="sd">        the create_water_oil_gas() factory function;</span>
 
+<span class="sd">        Recognized parameters:</span>
 <span class="sd">           Lw, Ew, Tw, Low, Eow, Tow,</span>
 <span class="sd">           Lg, Eg, Tg, Log, Eog, Tog,</span>
-<span class="sd">           nw, now, ng, nog</span>
+<span class="sd">           nw, now, ng, nog,</span>
 <span class="sd">           swirr, swl, sorw, sorg, sgcr</span>
 
 <span class="sd">        For oil-water only, you may omit the LET parameters for gas and oil-gas</span>
@@ -500,7 +516,7 @@
 
 <div class="viewcode-block" id="PyscalFactory.create_scal_recommendation_list"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_scal_recommendation_list">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">create_scal_recommendation_list</span><span class="p">():</span>
-        <span class="sd">&quot;&quot;&quot;Reserved&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Reserved for future implementation&quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
 
 <div class="viewcode-block" id="PyscalFactory.create_wog_list"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_wog_list">[docs]</a>    <span class="nd">@staticmethod</span>

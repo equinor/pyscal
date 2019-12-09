@@ -342,6 +342,7 @@
             <span class="p">)</span></div>
 
 <div class="viewcode-block" id="GasOil.add_gasoil_fromtable"><a class="viewcode-back" href="../../pyscal.html#pyscal.gasoil.GasOil.add_gasoil_fromtable">[docs]</a>    <span class="k">def</span> <span class="nf">add_gasoil_fromtable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Deprecated. Use ``add_fromtable()``&quot;&quot;&quot;</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;add_gasoil_fromtable() is deprecated, use add_fromtable()&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_fromtable</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
@@ -361,16 +362,12 @@
 <span class="sd">        The saturation range with endpoints must be set up beforehand,</span>
 <span class="sd">        and must be compatible with the tabular input. The tabular</span>
 <span class="sd">        input will be interpolated to the initialized Sg-table.</span>
-<span class="sd">        IMPORTANT: Set sgcr and swl to sensible values.</span>
 
 <span class="sd">        If you have krg and krog in different dataframes, call this</span>
 <span class="sd">        function twice</span>
 
 <span class="sd">        Calling function is responsible for checking if any data was</span>
 <span class="sd">        actually added to the table.</span>
-
-<span class="sd">        The dataframe input can be constructed using e.g. swof2csv functionality</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">PchipInterpolator</span>
 

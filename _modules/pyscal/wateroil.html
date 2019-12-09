@@ -193,6 +193,16 @@
 <span class="sd">    Can be dumped as include files for Eclipse/OPM and Nexus simulators.</span>
 
 <span class="sd">    Args:</span>
+<span class="sd">        swirr (float): Absolute minimal water saturation at infinite capillary</span>
+<span class="sd">            pressure.</span>
+<span class="sd">        swl (float): First water saturation point in generated table. Used</span>
+<span class="sd">            for normalized saturations.</span>
+<span class="sd">        swcr (float): Critical water saturation. Water will not be mobile before the</span>
+<span class="sd">            water saturation is above this value.</span>
+<span class="sd">        sorw (float): Residual oil saturation after water flooding. At this oil</span>
+<span class="sd">            saturation, the oil has zero relative permeability.</span>
+<span class="sd">        h (float): Saturation step-length in the outputted table.</span>
+<span class="sd">        tag (str): Optional string identifier, only used in comments.</span>
 <span class="sd">        fast (bool): Set to True if in order to skip some integrity checks</span>
 <span class="sd">            and nice-to-have features. Not needed to set for normal pyscal</span>
 <span class="sd">            runs, as speed is seldom crucial. Default False</span>
@@ -280,6 +290,7 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="WaterOil.add_oilwater_fromtable"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.add_oilwater_fromtable">[docs]</a>    <span class="k">def</span> <span class="nf">add_oilwater_fromtable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Deprecated, use ``add_fromtable()``&quot;&quot;&quot;</span>
         <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;add_oilwater_fromtable() is deprecated, use add_fromtable()&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">add_fromtable</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
