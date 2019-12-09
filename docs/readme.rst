@@ -18,24 +18,24 @@ Capillary pressure is supported through a selected number of parametrizations.
 Objects:
 ~~~~~~~~
 
-``WaterOil``
+WaterOil
   represents the data for water-oil relative permeability and
   capillary pressure. Essentially the data for SWOF plus metadata.
 
-``GasOil``
+GasOil
   ditto for gas-oil relative permeability
 
-``WaterOilGas``
+WaterOilGas
   container object for one ``WaterOil`` and one ``GasOil``. Useful
   for making SOF3 output, and for ensuring endpoint consistency
   in three-phase simulations.
 
-``SCALrecommendation``
-  container object for three OilWaterGas objects which are tagged
+SCALrecommendation
+  container object for three ``WaterOilGas`` objects which are tagged
   as low, base and high. Useful for interpolating between low and high, 
   going from -1 (low) through 0 (base) to 1 (high).
 
-``PyscalFactory``
+PyscalFactory
   Contains convenience functions for initializing the above objects from
   Python dictionaries. 
 

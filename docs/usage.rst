@@ -138,23 +138,18 @@ Interpolation in a SCAL recommendation
 --------------------------------------
 
 A SCAL recommendation in this context is nothing but a container
-of three `WaterOilGas` objects, representing a `low`, a `base` and a
+of three ``WaterOilGas`` objects, representing a `low`, a `base` and a
 `high` case. The prime use case for this container is the ability
 to interpolate between the low and high case.
 
 An interpolation parameter at `-1` returns the low case, `0` returns the
 base case and `1` returns the high case. Optionally, a separate
-interpolation parameter can be used for the `GasOil` interpolation
+interpolation parameter can be used for the ``GasOil`` interpolation
 if they are believed to be independent.
 
 SCAL recommendations are initialized from three distinct
 ``WaterOilGas`` objects, which are then recommended constructed using
 the corresponding factory method. 
-
-for each of the low, base and high curve sets. LET or Corey
-parameterizations are assumed and the parameters are picked
-from the dictionaries. The dictionaries are typically parsed
-from a row in a Excel worksheet (via Pandas).
 
 .. code-block:: python
 
