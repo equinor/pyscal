@@ -1,6 +1,9 @@
 Introduction to pyscal
 ======================
 
+.. image:: images/pyscal-logo.png
+   :width: 200
+
 *pyscal* is a Python module for creating `relative permeability`_ input
 curves for Eclipse, Flow (OPM) and Nexus, either directly from parametrizations (Corey
 or LET) or from a SCAL recommendation parameter set.  

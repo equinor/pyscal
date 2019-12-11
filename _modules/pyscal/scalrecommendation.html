@@ -155,13 +155,13 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pyscal.scalrecommendation</h1><div class="highlight"><pre>
-<span></span><span class="kn">import</span> <span class="nn">copy</span>
+<span></span><span class="sd">&quot;&quot;&quot;SCALrecommendation, container for low, base and high WaterOilGas objects&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">WaterOilGas</span><span class="p">,</span> <span class="n">WaterOil</span><span class="p">,</span> <span class="n">GasOil</span><span class="p">,</span> <span class="n">interpolator</span>
+<span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">WaterOilGas</span><span class="p">,</span> <span class="n">utils</span>
 
 
 <div class="viewcode-block" id="SCALrecommendation"><a class="viewcode-back" href="../../pyscal.html#pyscal.scalrecommendation.SCALrecommendation">[docs]</a><span class="k">class</span> <span class="nc">SCALrecommendation</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -341,16 +341,16 @@
 <span class="sd">        parameter = 0 reproduces base curve</span>
 <span class="sd">        parameter = 1 reproduces high curve</span>
 
-<span class="sd">        Interpolation is performed pointwise in the &quot;relperm&quot; direction</span>
-<span class="sd">        for each saturation point. During interpolation, endpoints are</span>
-<span class="sd">        hard to handle, and only swirr is attempted preserved.</span>
+<span class="sd">        Endpoints are located for input curves, and interpolated</span>
+<span class="sd">        individually. Interpolation for the nonlinear part</span>
+<span class="sd">        is done on a normalized interval between the endpoints</span>
 
 <span class="sd">        Interpolation is linear in relperm-direction, and will thus not be</span>
 <span class="sd">        linear in log-relperm-direction</span>
 
 <span class="sd">        This method returns an WaterOilGasTable object which can be</span>
 <span class="sd">        realized into printed tables. No attempt is made to</span>
-<span class="sd">        parametrize the interpolant in L,E,T parameter space.</span>
+<span class="sd">        parametrize the interpolant in L,E,T parameter space, or Corey-space.</span>
 
 <span class="sd">        If a second parameter is supplied (&quot;parameter2&quot;) this is used</span>
 <span class="sd">        for the gas-oil interpolation. This enables the gas-oil</span>
@@ -371,8 +371,7 @@
 
         <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Interpolation parameter must be in [-1,1]&quot;</span><span class="p">)</span>
-            <span class="n">interpolant</span><span class="o">.</span><span class="n">wateroil</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="k">raise</span> <span class="ne">AssertionError</span>
+            <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
         <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">):</span>
             <span class="n">interpolant</span><span class="o">.</span><span class="n">wateroil</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">wateroil</span>
         <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">):</span>
@@ -380,63 +379,18 @@
         <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">):</span>
             <span class="n">interpolant</span><span class="o">.</span><span class="n">wateroil</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">wateroil</span>
         <span class="k">elif</span> <span class="n">parameter</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
-            <span class="n">curve1</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">wateroil</span><span class="p">)</span>
-            <span class="n">curve2</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">wateroil</span><span class="p">)</span>
-            <span class="n">param_transf</span> <span class="o">=</span> <span class="o">-</span><span class="n">parameter</span>  <span class="c1"># 0 gives base, 1 gives low.</span>
-            <span class="n">swl</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">curve1</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">param_transf</span><span class="p">)</span>
-                <span class="o">+</span> <span class="n">curve2</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">param_transf</span>
-            <span class="p">)</span>
-            <span class="n">interpolant</span><span class="o">.</span><span class="n">wateroil</span> <span class="o">=</span> <span class="n">WaterOil</span><span class="p">(</span>
-                <span class="n">swirr</span><span class="o">=</span><span class="n">swl</span><span class="p">,</span>
-                <span class="n">swl</span><span class="o">=</span><span class="n">swl</span><span class="p">,</span>
-                <span class="n">sorw</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
-                <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span>
-                <span class="n">tag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tag</span> <span class="o">+</span> <span class="s2">&quot; interpolant at </span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">parameter</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">interpolator</span><span class="p">(</span>
-                <span class="n">interpolant</span><span class="o">.</span><span class="n">wateroil</span><span class="p">,</span>
-                <span class="n">curve1</span><span class="p">,</span>
-                <span class="n">curve2</span><span class="p">,</span>
-                <span class="n">param_transf</span><span class="p">,</span>
-                <span class="s2">&quot;sw&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;krw&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;krow&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;pc&quot;</span><span class="p">,</span>
+            <span class="n">interpolant</span><span class="o">.</span><span class="n">wateroil</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">interpolate_wo</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">wateroil</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">wateroil</span><span class="p">,</span> <span class="o">-</span><span class="n">parameter</span>
             <span class="p">)</span>
         <span class="k">elif</span> <span class="n">parameter</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
-            <span class="n">curve1</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">wateroil</span><span class="p">)</span>
-            <span class="n">curve2</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">wateroil</span><span class="p">)</span>
-            <span class="n">param_transf</span> <span class="o">=</span> <span class="n">parameter</span>  <span class="c1"># 0 gives base, 1 gives high</span>
-            <span class="n">swl</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">curve1</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">param_transf</span><span class="p">)</span>
-                <span class="o">+</span> <span class="n">curve2</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">param_transf</span>
-            <span class="p">)</span>
-            <span class="n">interpolant</span><span class="o">.</span><span class="n">wateroil</span> <span class="o">=</span> <span class="n">WaterOil</span><span class="p">(</span>
-                <span class="n">swirr</span><span class="o">=</span><span class="n">swl</span><span class="p">,</span>
-                <span class="n">swl</span><span class="o">=</span><span class="n">swl</span><span class="p">,</span>
-                <span class="n">sorw</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
-                <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span>
-                <span class="n">tag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tag</span> <span class="o">+</span> <span class="s2">&quot; interpolant at </span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">parameter</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">interpolator</span><span class="p">(</span>
-                <span class="n">interpolant</span><span class="o">.</span><span class="n">wateroil</span><span class="p">,</span>
-                <span class="n">curve1</span><span class="p">,</span>
-                <span class="n">curve2</span><span class="p">,</span>
-                <span class="n">param_transf</span><span class="p">,</span>
-                <span class="s2">&quot;sw&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;krw&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;krow&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;pc&quot;</span><span class="p">,</span>
+            <span class="n">interpolant</span><span class="o">.</span><span class="n">wateroil</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">interpolate_wo</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">wateroil</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">wateroil</span><span class="p">,</span> <span class="n">parameter</span>
             <span class="p">)</span>
 
         <span class="c1"># Gas-oil interpolation</span>
-        <span class="c1"># We need swl from the interpolated WaterOil object.</span>
-        <span class="n">swl</span> <span class="o">=</span> <span class="n">interpolant</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">swl</span>
         <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">gasparameter</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
             <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Interpolation parameter must be in [-1,1]&quot;</span><span class="p">)</span>
-            <span class="n">interpolant</span><span class="o">.</span><span class="n">gasoil</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="k">raise</span> <span class="ne">AssertionError</span>
+            <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">gasparameter</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
         <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">gasparameter</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">):</span>
             <span class="n">interpolant</span><span class="o">.</span><span class="n">gasoil</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">gasoil</span>
         <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">gasparameter</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">):</span>
@@ -444,54 +398,13 @@
         <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">gasparameter</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">):</span>
             <span class="n">interpolant</span><span class="o">.</span><span class="n">gasoil</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">gasoil</span>
         <span class="k">elif</span> <span class="n">gasparameter</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
-            <span class="n">curve1</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">gasoil</span><span class="p">)</span>
-            <span class="n">curve2</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">gasoil</span><span class="p">)</span>
-            <span class="n">gas_param_transf</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">gasparameter</span>  <span class="c1"># 0 gives base, 1 gives low.</span>
-            <span class="c1"># We have to use the extreme, not interpolated sgcr.</span>
-            <span class="n">sgcr</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">curve1</span><span class="o">.</span><span class="n">sgcr</span><span class="p">,</span> <span class="n">curve2</span><span class="o">.</span><span class="n">sgcr</span><span class="p">)</span>
-            <span class="n">interpolant</span><span class="o">.</span><span class="n">gasoil</span> <span class="o">=</span> <span class="n">GasOil</span><span class="p">(</span>
-                <span class="n">sgcr</span><span class="o">=</span><span class="n">sgcr</span><span class="p">,</span>
-                <span class="n">swl</span><span class="o">=</span><span class="n">swl</span><span class="p">,</span>
-                <span class="n">sorg</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
-                <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span>
-                <span class="n">tag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tag</span> <span class="o">+</span> <span class="s2">&quot; interpolant at </span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">gasparameter</span><span class="p">,</span>
+            <span class="n">interpolant</span><span class="o">.</span><span class="n">gasoil</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">interpolate_go</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">gasoil</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">gasoil</span><span class="p">,</span> <span class="o">-</span><span class="n">gasparameter</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span>
             <span class="p">)</span>
-            <span class="n">interpolator</span><span class="p">(</span>
-                <span class="n">interpolant</span><span class="o">.</span><span class="n">gasoil</span><span class="p">,</span>
-                <span class="n">curve1</span><span class="p">,</span>
-                <span class="n">curve2</span><span class="p">,</span>
-                <span class="n">gas_param_transf</span><span class="p">,</span>
-                <span class="s2">&quot;sg&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;krg&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;krog&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;pc&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">interpolant</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">resetsorg</span><span class="p">()</span>
         <span class="k">elif</span> <span class="n">gasparameter</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
-            <span class="n">curve1</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">gasoil</span><span class="p">)</span>
-            <span class="n">curve2</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">gasoil</span><span class="p">)</span>
-            <span class="n">gas_param_transf</span> <span class="o">=</span> <span class="n">gasparameter</span>  <span class="c1"># 0 gives base, 1 gives high</span>
-            <span class="c1"># We have to use the extreme, not interpolated sgcr.</span>
-            <span class="n">sgcr</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">curve1</span><span class="o">.</span><span class="n">sgcr</span><span class="p">,</span> <span class="n">curve2</span><span class="o">.</span><span class="n">sgcr</span><span class="p">)</span>
-            <span class="n">interpolant</span><span class="o">.</span><span class="n">gasoil</span> <span class="o">=</span> <span class="n">GasOil</span><span class="p">(</span>
-                <span class="n">sgcr</span><span class="o">=</span><span class="n">sgcr</span><span class="p">,</span>
-                <span class="n">swl</span><span class="o">=</span><span class="n">swl</span><span class="p">,</span>
-                <span class="n">sorg</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
-                <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span>
-                <span class="n">tag</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tag</span> <span class="o">+</span> <span class="s2">&quot; interpolant at </span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">gasparameter</span><span class="p">,</span>
+            <span class="n">interpolant</span><span class="o">.</span><span class="n">gasoil</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">interpolate_go</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">gasoil</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">gasoil</span><span class="p">,</span> <span class="n">gasparameter</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span>
             <span class="p">)</span>
-            <span class="n">interpolator</span><span class="p">(</span>
-                <span class="n">interpolant</span><span class="o">.</span><span class="n">gasoil</span><span class="p">,</span>
-                <span class="n">curve1</span><span class="p">,</span>
-                <span class="n">curve2</span><span class="p">,</span>
-                <span class="n">gas_param_transf</span><span class="p">,</span>
-                <span class="s2">&quot;sg&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;krg&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;krog&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;pc&quot;</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">interpolant</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">resetsorg</span><span class="p">()</span>
-
         <span class="k">return</span> <span class="n">interpolant</span></div>
 
 <div class="viewcode-block" id="SCALrecommendation.defaultshandling"><a class="viewcode-back" href="../../pyscal.html#pyscal.scalrecommendation.SCALrecommendation.defaultshandling">[docs]</a>    <span class="nd">@staticmethod</span>
