@@ -57,6 +57,7 @@ class GasOil(object):
             and nice-to-have features. Not needed to set for normal pyscal
             runs, as speed is seldom crucial. Default False
     """
+
     def __init__(
         self,
         swirr=0,
@@ -122,10 +123,7 @@ class GasOil(object):
         # Now sg=1-sorg-swl might be accidentally dropped, so make sure we
         # have it by replacing the closest value by 1 - sorg exactly
         sorgindex = (
-            (self.table["sg"] - (1 - self.sorg - self.swl))
-            .abs()
-            .sort_values()
-            .index[0]
+            (self.table["sg"] - (1 - self.sorg - self.swl)).abs().sort_values().index[0]
         )
         self.table.loc[sorgindex, "sg"] = 1 - self.sorg - self.swl
 
@@ -833,7 +831,14 @@ class GasOil(object):
         return string
 
     def plotkrgkrog(
-        self, ax=None, color="blue", alpha=1, label=None, linewidth=1, linestyle="-"
+        self,
+        ax=None,
+        color="blue",
+        alpha=1,
+        label=None,
+        linewidth=1,
+        linestyle="-",
+        logyscale=False,
     ):
         """Plot krg and krog on a supplied matplotlib axis"""
         import matplotlib.pyplot as plt
@@ -844,6 +849,9 @@ class GasOil(object):
             _, useax = matplotlib.pyplot.subplots()
         else:
             useax = ax
+        if logyscale:
+            useax.set_yscale("log")
+            useax.set_ylim([1e-8, 1])
         self.table.plot(
             ax=useax,
             x="sg",

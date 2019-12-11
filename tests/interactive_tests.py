@@ -10,9 +10,180 @@ a Python session and run the functions manually.
 
 from __future__ import print_function
 
+import random
+
 import numpy as np
 
-from pyscal import WaterOil, WaterOilGas, GasOil, SCALrecommendation
+from pyscal import WaterOil, WaterOilGas, GasOil, utils, PyscalFactory
+
+
+def interpolation_art(repeats=50, interpolants=30, curvetype="corey"):
+    """This code was used to create the Pyscal logo"""
+    from matplotlib import pyplot as plt
+
+    cmap = plt.get_cmap("viridis")
+    _, ax = plt.subplots()
+    for _ in range(repeats):
+        swl = random.uniform(0, 0.1)
+        swcr = swl + random.uniform(0, 0.1)
+        sorw = random.uniform(0, 0.2)
+        wo_low = WaterOil(swl=swl, swcr=swcr, sorw=sorw)
+        wo_high = WaterOil(swl=swl + 0.1, swcr=swcr + 0.1, sorw=sorw + 0.1)
+        if curvetype == "corey":
+            wo_low.add_corey_water(
+                nw=random.uniform(1, 3), krwend=random.uniform(0.5, 1)
+            )
+            wo_high.add_corey_water(
+                nw=random.uniform(1, 3), krwend=random.uniform(0.5, 1)
+            )
+            wo_low.add_corey_oil(
+                now=random.uniform(1, 3), kroend=random.uniform(0.5, 1)
+            )
+            wo_high.add_corey_oil(
+                now=random.uniform(1, 3), kroend=random.uniform(0.5, 1)
+            )
+        elif curvetype == "let":
+            wo_low.add_LET_water(
+                l=random.uniform(1, 3),
+                e=random.uniform(1, 3),
+                t=random.uniform(1, 3),
+                krwend=random.uniform(0.5, 1),
+            )
+            wo_high.add_LET_water(
+                l=random.uniform(1, 3),
+                e=random.uniform(1, 3),
+                t=random.uniform(1, 3),
+                krwend=random.uniform(0.5, 1),
+            )
+            wo_low.add_LET_oil(
+                l=random.uniform(1, 3),
+                e=random.uniform(1, 3),
+                t=random.uniform(1, 3),
+                kroend=random.uniform(0.5, 1),
+            )
+            wo_high.add_LET_oil(
+                l=random.uniform(1, 3),
+                e=random.uniform(1, 3),
+                t=random.uniform(1, 3),
+                kroend=random.uniform(0.5, 1),
+            )
+        else:
+            print("ERROR, wrong curvetype")
+        color = cmap(random.random())
+        for t in np.arange(0, 1, 1.0 / interpolants):
+            wo_ip = utils.interpolate_wo(wo_low, wo_high, t)
+            wo_ip.plotkrwkrow(ax, color=color, alpha=0.3)
+    plt.show()
+
+
+def test_interpolate_wo():
+    swl_l = random.uniform(0, 0.1)
+    swcr_l = swl_l + random.uniform(0, 0.1)
+    sorw_l = random.uniform(0, 0.2)
+    swl_h = random.uniform(0, 0.1)
+    swcr_h = swl_h + random.uniform(0, 0.1)
+    sorw_h = random.uniform(0, 0.2)
+    wo_low = WaterOil(swl=swl_l, swcr=swcr_l, sorw=sorw_l, h=0.001)
+    wo_high = WaterOil(swl=swl_h, swcr=swcr_h, sorw=sorw_h, h=0.001)
+    wo_low.add_corey_water(nw=random.uniform(1, 3), krwend=random.uniform(0.5, 1))
+    wo_high.add_corey_water(nw=random.uniform(1, 3), krwend=random.uniform(0.5, 1))
+    wo_low.add_corey_oil(now=random.uniform(1, 3), kroend=random.uniform(0.5, 1))
+    wo_high.add_corey_oil(now=random.uniform(1, 3), kroend=random.uniform(0.5, 1))
+    print(
+        " ** Low curve (red):\n"
+        + wo_low.swcomment
+        + wo_low.krwcomment
+        + wo_low.krowcomment
+    )
+    print(
+        " ** High curve (blue):\n"
+        + wo_high.swcomment
+        + wo_high.krwcomment
+        + wo_high.krowcomment
+    )
+
+    from matplotlib import pyplot as plt
+
+    _, ax = plt.subplots()
+    wo_low.plotkrwkrow(ax, color="red")
+    wo_high.plotkrwkrow(ax, color="blue")
+
+    for t in np.arange(0, 1, 0.1):
+        wo_ip = utils.interpolate_wo(wo_low, wo_high, t, h=0.001)
+        wo_ip.plotkrwkrow(ax, color="green")
+    ax.set_title("WaterOil, random Corey, linear y-scale")
+    plt.show()
+
+    _, ax = plt.subplots()
+    wo_low.plotkrwkrow(ax, color="red")
+    wo_high.plotkrwkrow(ax, color="blue")
+    # Plot again with log yscale:
+    for t in np.arange(0, 1, 0.1):
+        wo_ip = utils.interpolate_wo(wo_low, wo_high, t, h=0.001)
+        wo_ip.plotkrwkrow(ax, color="green", logyscale=True)
+    ax.set_title("WaterOil, random Corey, log y-scale")
+    plt.show()
+
+
+def test_interpolate_go():
+    swl_l = random.uniform(0, 0.1)
+    sgcr_l = random.uniform(0, 0.1)
+    swl_h = random.uniform(0, 0.1)
+    sgcr_h = random.uniform(0, 0.1)
+    sorg_l = random.uniform(0, 0.2)
+    sorg_h = random.uniform(0, 0.2)
+    if random.uniform(0, 1) > 0.5:
+        krgendanchor_l = "sorg"
+    else:
+        krgendanchor_l = ""
+    if random.uniform(0, 1) > 0.5:
+        krgendanchor_h = "sorg"
+    else:
+        krgendanchor_h = ""
+    go_low = GasOil(
+        swl=swl_l, sgcr=sgcr_l, sorg=sorg_l, krgendanchor=krgendanchor_l, h=0.001
+    )
+    go_high = GasOil(
+        swl=swl_h, sgcr=sgcr_h, sorg=sorg_h, krgendanchor=krgendanchor_h, h=0.001
+    )
+    go_low.add_corey_gas(ng=random.uniform(1, 3), krgend=random.uniform(0.5, 1))
+    go_high.add_corey_gas(ng=random.uniform(1, 3), krgend=random.uniform(0.5, 1))
+    go_low.add_corey_oil(nog=random.uniform(1, 3), kroend=random.uniform(0.5, 1))
+    go_high.add_corey_oil(nog=random.uniform(1, 3), kroend=random.uniform(0.5, 1))
+    print(
+        " ** Low curve (red):\n"
+        + go_low.sgcomment
+        + go_low.krgcomment
+        + go_low.krogcomment
+    )
+    print(
+        " ** High curve (blue):\n"
+        + go_high.sgcomment
+        + go_high.krgcomment
+        + go_high.krogcomment
+    )
+
+    from matplotlib import pyplot as plt
+
+    _, ax = plt.subplots()
+    go_low.plotkrgkrog(ax, color="red")
+    go_high.plotkrgkrog(ax, color="blue")
+
+    for t in np.arange(0, 1, 0.1):
+        go_ip = utils.interpolate_go(go_low, go_high, t)
+        go_ip.plotkrgkrog(ax, color="green")
+    ax.set_title("GasOil, random Corey, linear y-scale")
+    plt.show()
+
+    _, ax = plt.subplots()
+    go_low.plotkrgkrog(ax, color="red")
+    go_high.plotkrgkrog(ax, color="blue")
+    # Plot again with log yscale:
+    for t in np.arange(0, 1, 0.1):
+        go_ip = utils.interpolate_go(go_low, go_high, t)
+        go_ip.plotkrgkrog(ax, color="green", logyscale=True)
+    ax.set_title("GasOil, random Corey, log y-scale")
+    plt.show()
 
 
 def interpolateplottest():
@@ -22,7 +193,9 @@ def interpolateplottest():
 
     matplotlib.style.use("ggplot")
 
-    rec = SCALrecommendation(lowsample(), basesample(), highsample(), "foo", h=0.001)
+    rec = PyscalFactory.create_scal_recommendation(
+        {"low": LOWSAMPLE, "base": BASESAMPLE, "high": HIGHSAMPLE}, "FOO", h=0.001
+    )
     _, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2)
 
     # Choosing logarithmic spaced interpolation parameters
@@ -83,7 +256,9 @@ def interpolateplottest():
 
 
 def interpolatetest():
-    rec = SCALrecommendation(lowsample(), basesample(), highsample(), "foo", h=0.05)
+    rec = PyscalFactory.create_scal_recommendation(
+        {"low": LOWSAMPLE, "base": BASESAMPLE, "high": HIGHSAMPLE}, "foo", h=0.001
+    )
     rec.add_simple_J()  # Add default pc curve
     #    print rec.low.wateroil.table
     interpolant = rec.interpolate(0.3, parameter2=-0.9, h=0.05)
@@ -104,7 +279,6 @@ def letspan():
 
     """
 
-    import random
     import matplotlib.pyplot as plt
     import matplotlib
 
@@ -177,87 +351,81 @@ def letspan():
     plt.show()
 
 
-def lowsample():
-    """Example SCAL recommendation, low curve"""
-    return {
-        "swirr": 0.1,
-        "sorw": 0.02,
-        "krwend": 0.7,
-        "krwmax": 0.8,
-        "swl": 0.16,
-        "swcr": 0.25,
-        "Lw": 2.323,
-        "Ew": 2.0,
-        "Tw": 1.329,
-        "Lo": 4.944,
-        "Eo": 5.0,
-        "To": 0.68,
-        "Lg": 4,
-        "Eg": 1,
-        "Tg": 1,
-        "Log": 4,
-        "Eog": 1,
-        "Tog": 1,
-        "sorg": 0.2,
-        "sgcr": 0.15,
-        "krgend": 0.9,
-        "krgmax": 1,
-        "kroend": 1,
-    }
+LOWSAMPLE = {
+    "swirr": 0.1,
+    "sorw": 0.02,
+    "krwend": 0.7,
+    "krwmax": 0.8,
+    "swl": 0.16,
+    "swcr": 0.25,
+    "Lw": 2.323,
+    "Ew": 2.0,
+    "Tw": 1.329,
+    "Lo": 4.944,
+    "Eo": 5.0,
+    "To": 0.68,
+    "Lg": 4,
+    "Eg": 1,
+    "Tg": 1,
+    "Log": 4,
+    "Eog": 1,
+    "Tog": 1,
+    "sorg": 0.2,
+    "sgcr": 0.15,
+    "krgend": 0.9,
+    "krgmax": 1,
+    "kroend": 1,
+}
 
 
-def basesample():
-    """Example SCAL recommendation, base curve"""
-    return {
-        "swirr": 0.1,
-        "sorw": 0.091,
-        "krwend": 0.8,
-        "swl": 0.16,
-        "swcr": 0.20,
-        "Lw": 3.369,
-        "Ew": 4.053,
-        "Tw": 1.047,
-        "Lo": 3.726,
-        "Eo": 3.165,
-        "To": 1.117,
-        "Lg": 2,
-        "Eg": 2,
-        "Tg": 2,
-        "Log": 2,
-        "Eog": 2,
-        "Tog": 2,
-        "sorg": 0.1,
-        "sgcr": 0.10,
-        "krgend": 0.97,
-        "kroend": 1,
-    }
+BASESAMPLE = {
+    "swirr": 0.1,
+    "sorw": 0.091,
+    "krwend": 0.8,
+    "swl": 0.16,
+    "swcr": 0.20,
+    "Lw": 3.369,
+    "Ew": 4.053,
+    "Tw": 1.047,
+    "Lo": 3.726,
+    "Eo": 3.165,
+    "To": 1.117,
+    "Lg": 2,
+    "Eg": 2,
+    "Tg": 2,
+    "Log": 2,
+    "Eog": 2,
+    "Tog": 2,
+    "sorg": 0.1,
+    "sgcr": 0.10,
+    "krgend": 0.97,
+    "kroend": 1,
+}
 
 
-def highsample():
-    """Example SCAL recommendation, high curve"""
-    return {
-        "swirr": 0.1,
-        "sorw": 0.137,
-        "krwend": 0.6,
-        "swl": 0.16,
-        "swcr": 0.16,
-        "Lw": 4.436,
-        "Ew": 8.0,
-        "Tw": 0.766,
-        "Lo": 2.537,
-        "Eo": 2.0,
-        "To": 1.549,
-        "Lg": 1,
-        "Eg": 2,
-        "Tg": 2,
-        "Log": 1,
-        "Eog": 2,
-        "Tog": 2,
-        "sorg": 0.05,
-        "sgcr": 0.0,
-        "krgend": 1,
-        "kroend": 1,
-    }
+HIGHSAMPLE = {
+    "swirr": 0.1,
+    "sorw": 0.137,
+    "krwend": 0.6,
+    "swl": 0.16,
+    "swcr": 0.16,
+    "Lw": 4.436,
+    "Ew": 8.0,
+    "Tw": 0.766,
+    "Lo": 2.537,
+    "Eo": 2.0,
+    "To": 1.549,
+    "Lg": 1,
+    "Eg": 2,
+    "Tg": 2,
+    "Log": 1,
+    "Eog": 2,
+    "Tog": 2,
+    "sorg": 0.05,
+    "sgcr": 0.0,
+    "krgend": 1,
+    "kroend": 1,
+}
 
 
 def testplot():
@@ -343,12 +511,14 @@ def main():
     print(sgof.SGOF())
 
     print("")
-    print("-- ***************************************")
-    print("-- Test of one Corey curve set")
-    print("-- Check that all the defined endpoints are correct")
+    print("-- ******************************************")
+    print("-- Manual visual check of interpolation in LET-space")
+    print("--  Check:")
+    print("--   * green curves are between red and blue blue line")
     print("-- (close plot window to continue)")
-    testplot()
-
+    for _ in range(0, 5):
+        test_interpolate_wo()
+        test_interpolate_go()
     print("")
     print("-- ******************************************")
     print("-- Manual visual check of interpolation in LET-space")
