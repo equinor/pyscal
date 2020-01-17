@@ -120,6 +120,34 @@ def test_normalize_nonlinpart_wo_hypo(
     assert np.isclose(kron2(1), kroend2)
 
 
+@given(
+    st.floats(min_value=0, max_value=0.3),  # swirr
+    st.floats(min_value=0.01, max_value=0.3),  # dswl
+)
+def test_normalize_pc(swirr, dswl):
+    wo = WaterOil(swirr=swirr, swl=swirr + dswl)
+    wo.add_simple_J()
+    pc_max = wo.table["pc"].max()
+    pc_min = wo.table["pc"].min()
+
+    pc_fn = utils.normalize_pc(wo)
+    assert np.isclose(pc_fn(0), pc_max)
+    assert np.isclose(pc_fn(1), pc_min)
+
+
+def test_normalize_emptypc():
+    wo = WaterOil()
+    pc_fn = utils.normalize_pc(wo)
+    assert np.isclose(pc_fn(0), 0)
+    assert np.isclose(pc_fn(1), 0)
+
+    wo = WaterOil(swl=0.01)
+    wo.add_simple_J(g=0)
+    pc_fn = utils.normalize_pc(wo)
+    assert np.isclose(pc_fn(0), 0)
+    assert np.isclose(pc_fn(1), 0)
+
+
 def test_normalize_nonlinpart_wo():
     """Manual tests for utils.normalize_nonlinpart_wo"""
     wo = WaterOil(swl=0.1, swcr=0.12, sorw=0.05, h=0.05)
@@ -184,7 +212,7 @@ def test_normalize_nonlinpart_wo():
 
 @settings(max_examples=40, deadline=5000)
 @given(
-    st.floats(min_value=0, max_value=0.1),  # swl
+    st.floats(min_value=0.01, max_value=0.1),  # swl
     st.floats(min_value=0, max_value=0.0),  # dswcr
     st.floats(min_value=0, max_value=0.1),  # dswlhigh
     st.floats(min_value=0, max_value=0.3),  # sorw
@@ -249,7 +277,7 @@ def test_interpolate_wo(
             np.mean(dists), min(dists), max(dists), np.std(np.diff(dists[1:])), ip_dist
         )
     )
-    assert np.isclose(dists[0], 0)  # Reproducing go_low
+    assert np.isclose(dists[0], 0)  # Reproducing wo_low
     # All curves that are close in parameter t, should be close in sum().sum().
     # That means that diff of the distances should be similar,
     # that is the std.dev of the distances is low:
@@ -265,6 +293,80 @@ def test_interpolate_wo(
         wo_high.plotkrwkrow(ax=ax, color="blue")
         for ip in ips:
             ip.plotkrwkrow(ax=ax, color="green")
+        plt.show()
+        assert False
+
+    # If this fails, there is a combination of parameters that might
+    # trigger a discontinuity in the interpolants, which we don't want.
+
+
+@settings(max_examples=40, deadline=5000)
+@given(
+    st.floats(min_value=0.01, max_value=0.1),  # swl
+    st.floats(min_value=0, max_value=0.0),  # dswcr
+    st.floats(min_value=0, max_value=0.1),  # dswlhigh
+    st.floats(min_value=0, max_value=0.3),  # sorw
+    st.floats(min_value=0, max_value=0.1),  # dsorw
+    st.floats(min_value=0.1, max_value=2),  # a_l
+    st.floats(min_value=0.1, max_value=2),  # a_h
+    st.floats(min_value=-2, max_value=-0.1),  # b_l
+    st.floats(min_value=-2, max_value=-0.5),  # b_l
+)
+def test_interpolate_wo_pc(swl, dswcr, dswlhigh, sorw, dsorw, a_l, a_h, b_l, b_h):
+    """
+    Generate two random WaterOil curves, interpolate pc between them
+    and check that the difference between each interpolant is small,
+    this essentially checks that we can go continously between the
+    two functions.
+    """
+    wo_low = WaterOil(swl=swl, swcr=swl + dswcr, sorw=sorw)
+    wo_high = WaterOil(
+        swl=swl + dswlhigh, swcr=swl + dswlhigh + dswcr, sorw=max(sorw - 0.01, 0)
+    )
+    wo_low.add_corey_water()
+    wo_high.add_corey_water()
+    wo_low.add_corey_oil()
+    wo_high.add_corey_oil()
+    wo_low.add_simple_J(a=a_l, b=b_l)
+    wo_high.add_simple_J(a=a_h, b=b_h)
+    ips = []
+    ip_dist = 0.05
+    for t in np.arange(0, 1 + ip_dist, ip_dist):
+        wo_ip = utils.interpolate_wo(wo_low, wo_high, t)
+        check_table_wo(wo_ip.table)
+        ips.append(wo_ip)
+        assert 0 < wo_ip.crosspoint() < 1
+
+    # Distances between low and interpolants:
+    dists = [(wo_low.table - ip.table)[["pc"]].sum().sum() for ip in ips]
+    assert np.isclose(dists[0], 0)
+
+    # Distance between high and the last interpolant
+    assert (wo_high.table - ips[-1].table)[["pc"]].sum().sum() < 0.01
+
+    # Distances between low and interpolants:
+    dists = [(wo_low.table - ip.table)[["pc"]].sum().sum() for ip in ips]
+    print(
+        "Interpolation, mean: {}, min: {}, max: {}, std: {} ip-par-dist: {}".format(
+            np.mean(dists), min(dists), max(dists), np.std(np.diff(dists[1:])), ip_dist
+        )
+    )
+    assert np.isclose(dists[0], 0)  # Reproducing wo_low
+    # All curves that are close in parameter t, should be close in sum().sum().
+    # That means that diff of the distances should be similar,
+    # that is the std.dev of the distances is low:
+    ip_dist_std = np.std(np.diff(dists[1:]))  # This number depends on 'h' and 't' range
+    # (avoiding the first which reproduces go_low
+    if ip_dist_std > 1.0:  # Found by trial and error
+        print("ip_dist_std: {}".format(ip_dist_std))
+        print(dists)
+        from matplotlib import pyplot as plt
+
+        _, ax = plt.subplots()
+        wo_low.plotpc(ax=ax, color="red", logyscale=True)
+        wo_high.plotpc(ax=ax, color="blue", logyscale=True)
+        for ip in ips:
+            ip.plotpc(ax=ax, color="green", logyscale=True)
         plt.show()
         assert False
 

@@ -97,7 +97,6 @@ def test_interpolation_deprecated(param_wo, param_go):
         low_sample_let, base_sample_let, high_sample_let, "foo", h=0.1
     )
     rec.add_simple_J()  # Add default pc curve
-
     try:
         interpolant = rec.interpolate(param_wo, param_go, h=0.1)
     except AssertionError:
@@ -138,6 +137,11 @@ def test_interpolation(param_wo, param_go):
     )
     rec.add_simple_J()  # Add default pc curve
 
+    # Check that added pc curve is non-zero
+    assert sum(rec.low.wateroil.table["pc"])
+    assert sum(rec.base.wateroil.table["pc"])
+    assert sum(rec.high.wateroil.table["pc"])
+
     try:
         interpolant = rec.interpolate(param_wo, param_go, h=0.1)
     except AssertionError:
@@ -153,6 +157,7 @@ def test_interpolation(param_wo, param_go):
     assert len(interpolant.wateroil.SWOF()) > 100
     assert interpolant.threephaseconsistency() == ""
 
+    assert sum(interpolant.wateroil.table["pc"])
 
 def test_boundary_cases():
     rec = PyscalFactory.create_scal_recommendation(
