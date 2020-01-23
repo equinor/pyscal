@@ -144,6 +144,7 @@ def test_gasoil_krendmax(swl, sgcr, sorg, kroend, kromax, krgend, krgmax, h, fas
     check_table(go.table)
     assert go.selfcheck()
     check_endpoints(go, krgend, krgmax, kroend, kromax)
+    assert 0 < go.crosspoint() < 1
 
     # Redo with krgendanchor not defaulted
     go = GasOil(swl=swl, sgcr=sgcr, sorg=sorg, h=h, krgendanchor="", tag="")
@@ -152,6 +153,7 @@ def test_gasoil_krendmax(swl, sgcr, sorg, kroend, kromax, krgend, krgmax, h, fas
     check_table(go.table)
     assert go.selfcheck()
     check_endpoints(go, krgend, krgmax, kroend, kromax)
+    assert 0 < go.crosspoint() < 1
 
     # Redo with LET:
     go = GasOil(swl=swl, sgcr=sgcr, sorg=sorg, h=h, tag="")
@@ -160,6 +162,7 @@ def test_gasoil_krendmax(swl, sgcr, sorg, kroend, kromax, krgend, krgmax, h, fas
     check_table(go.table)
     assert go.selfcheck()
     check_endpoints(go, krgend, krgmax, kroend, kromax)
+    assert 0 < go.crosspoint() < 1
 
 
 def check_endpoints(go, krgend, krgmax, kroend, kromax):
@@ -251,12 +254,14 @@ def test_gasoil_krgendanchor():
     )
     assert gasoil.table[np.isclose(gasoil.table["sg"], 1.0)]["krg"].values[0] == 1.0
     assert gasoil.selfcheck()
+    assert gasoil.crosspoint() > 0
 
     # Test once more for LET curves:
     gasoil = GasOil(krgendanchor="sorg", sorg=0.2, h=0.1)
     assert gasoil.sorg
     gasoil.add_LET_gas(1, 1, 1)
     gasoil.add_LET_oil(1, 1, 1)
+    assert 0 < gasoil.crosspoint() < 1
 
     # kg should be 1.0 at 1 - sorg due to krgendanchor == "sorg":
     assert (
@@ -290,6 +295,7 @@ def test_kromaxend():
     # Second krog-value should be kroend, values in between will be linearly
     # interpolated in Eclipse
     assert gasoil.table.sort_values("krog")[-2:-1]["krog"].values[0] == 0.5
+    assert 0 < gasoil.crosspoint() < 1
 
     gasoil.add_corey_oil(2)
     assert gasoil.table["krog"].max() == 1
