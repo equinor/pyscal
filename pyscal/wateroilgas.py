@@ -12,6 +12,10 @@ from .wateroil import WaterOil
 from .gasoil import GasOil
 
 
+logging.basicConfig()
+logger = logging.getLogger(__name__)
+
+
 class WaterOilGas(object):
 
     """A representation of three-phase properties for oil-water-gas
@@ -244,4 +248,4 @@ EQUIL
             ["/project/res/bin/runeclipse", "-i", eclfile]
         )
         ecloutputlines = ecloutput.split("\n")
-        logging.error([x for x in ecloutputlines if "Error" in x or "ERROR" in x])
+        logger.error([x for x in ecloutputlines if "Error" in x or "ERROR" in x])

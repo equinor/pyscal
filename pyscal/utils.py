@@ -13,6 +13,10 @@ from .constants import SWINTEGERS
 from .constants import EPSILON as epsilon
 
 
+logging.basicConfig()
+logger = logging.getLogger(__name__)
+
+
 def estimate_diffjumppoint(table, xcol=None, ycol=None, side="right"):
     """Estimate the point where the y-data jumps from being linear
     in x to being nonlinear, or where it shift from one linear domain
@@ -352,7 +356,7 @@ def interpolator(
     Returns:
         None, but modifies the first argument.
     """
-    logging.warning("utils.interpolator() is deprecated and will disappear")
+    logger.warning("utils.interpolator() is deprecated and will disappear")
 
     wo_low.table.rename(columns={kr1: kr1 + "_1"}, inplace=True)
     wo_high.table.rename(columns={kr1: kr1 + "_2"}, inplace=True)

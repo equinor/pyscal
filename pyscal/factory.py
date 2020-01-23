@@ -4,6 +4,11 @@ import logging
 
 from pyscal import WaterOil, GasOil, WaterOilGas, SCALrecommendation
 
+logging.basicConfig()
+logger = logging.getLogger(__name__)
+
+logger.error("init factory")
+
 
 def slicedict(dct, keys):
     """Slice a dictionary for a set of keys.
@@ -99,7 +104,7 @@ class PyscalFactory(object):
         # No requirements to the base objects, defaults are ok.
         wateroil = WaterOil(**slicedict(params, WO_INIT))
         usedparams = usedparams.union(set(slicedict(params, WO_INIT).keys()))
-        logging.info(
+        logger.info(
             "Initialized WaterOil object from parameters %s", str(list(usedparams))
         )
 
@@ -109,7 +114,7 @@ class PyscalFactory(object):
         if set(WO_COREY_WATER).issubset(set(params_corey_water)):
             wateroil.add_corey_water(**params_corey_water)
             usedparams = usedparams.union(set(params_corey_water.keys()))
-            logging.info(
+            logger.info(
                 "Added Corey water to WaterOil object from parameters %s",
                 str(params_corey_water.keys()),
             )
@@ -119,12 +124,12 @@ class PyscalFactory(object):
             params_let_water["t"] = params_let_water.pop("tw")
             wateroil.add_LET_water(**params_let_water)
             usedparams = usedparams.union(set(params_let_water.keys()))
-            logging.info(
+            logger.info(
                 "Added LET water to WaterOil object from parameters %s",
                 str(params_let_water.keys()),
             )
         else:
-            logging.warning(
+            logger.warning(
                 "Missing or ambiguous parameters for water curve in WaterOil object"
             )
 
@@ -135,7 +140,7 @@ class PyscalFactory(object):
         )
         if set(WO_COREY_OIL).issubset(set(params_corey_oil)):
             wateroil.add_corey_oil(**params_corey_oil)
-            logging.info(
+            logger.info(
                 "Added Corey water to WaterOil object from parameters %s",
                 str(params_corey_oil.keys()),
             )
@@ -144,7 +149,7 @@ class PyscalFactory(object):
             params_let_oil["e"] = params_let_oil.pop("eow")
             params_let_oil["t"] = params_let_oil.pop("tow")
             wateroil.add_LET_oil(**params_let_oil)
-            logging.info(
+            logger.info(
                 "Added LET water to WaterOil object from parameters %s",
                 str(params_let_oil.keys()),
             )
@@ -153,12 +158,12 @@ class PyscalFactory(object):
             params_let_oil["e"] = params_let_oil.pop("eo")
             params_let_oil["t"] = params_let_oil.pop("to")
             wateroil.add_LET_oil(**params_let_oil)
-            logging.info(
+            logger.info(
                 "Added LET water to WaterOil object from parameters %s",
                 str(params_let_oil.keys()),
             )
         else:
-            logging.warning(
+            logger.warning(
                 "Missing or ambiguous parameters for oil curve in WaterOil object"
             )
 
@@ -170,7 +175,7 @@ class PyscalFactory(object):
         elif set(WO_NORM_J).issubset(set(params_norm_j)):
             wateroil.add_normalized_J(**params_norm_j)
         else:
-            logging.warning(
+            logger.warning(
                 "Missing or ambiguous parameters for capillary pressure in WaterOil object. Using zero."
             )
         if not wateroil.selfcheck():
@@ -212,7 +217,7 @@ class PyscalFactory(object):
         # No requirements to the base objects, defaults are ok.
         gasoil = GasOil(**slicedict(params, GO_INIT))
         usedparams = usedparams.union(set(slicedict(params, GO_INIT).keys()))
-        logging.info(
+        logger.info(
             "Initialized GasOil object from parameters %s", str(list(usedparams))
         )
 
@@ -222,7 +227,7 @@ class PyscalFactory(object):
         if set(GO_COREY_GAS).issubset(set(params_corey_gas)):
             gasoil.add_corey_gas(**params_corey_gas)
             usedparams = usedparams.union(set(params_corey_gas.keys()))
-            logging.info(
+            logger.info(
                 "Added Corey gas to GasOil object from parameters %s",
                 str(params_corey_gas.keys()),
             )
@@ -232,12 +237,12 @@ class PyscalFactory(object):
             params_let_gas["t"] = params_let_gas.pop("tg")
             gasoil.add_LET_gas(**params_let_gas)
             usedparams = usedparams.union(set(params_let_gas.keys()))
-            logging.info(
+            logger.info(
                 "Added LET gas to GasOil object from parameters %s",
                 str(params_let_gas.keys()),
             )
         else:
-            logging.warning(
+            logger.warning(
                 "Missing or ambiguous parameters for gas curve in GasOil object"
             )
 
@@ -246,7 +251,7 @@ class PyscalFactory(object):
         params_let_oil = slicedict(params, GO_LET_OIL + GO_OIL_ENDPOINTS)
         if set(GO_COREY_OIL).issubset(set(params_corey_oil)):
             gasoil.add_corey_oil(**params_corey_oil)
-            logging.info(
+            logger.info(
                 "Added Corey gas to GasOil object from parameters %s",
                 str(params_corey_oil.keys()),
             )
@@ -255,12 +260,12 @@ class PyscalFactory(object):
             params_let_oil["e"] = params_let_oil.pop("eog")
             params_let_oil["t"] = params_let_oil.pop("tog")
             gasoil.add_LET_oil(**params_let_oil)
-            logging.info(
+            logger.info(
                 "Added LET gas to GasOil object from parameters %s",
                 str(params_let_oil.keys()),
             )
         else:
-            logging.warning(
+            logger.warning(
                 "Missing or ambiguous parameters for oil curve in GasOil object"
             )
         if not gasoil.selfcheck():
@@ -341,15 +346,15 @@ class PyscalFactory(object):
         errored = False
         wog_low = PyscalFactory.create_water_oil_gas(params["low"])
         if not wog_low.selfcheck():
-            logging.error("Incomplete parameter set for low case")
+            logger.error("Incomplete parameter set for low case")
             errored = True
         wog_base = PyscalFactory.create_water_oil_gas(params["base"])
         if not wog_base.selfcheck():
-            logging.error("Incomplete parameter set for base case")
+            logger.error("Incomplete parameter set for base case")
             errored = True
         wog_high = PyscalFactory.create_water_oil_gas(params["high"])
         if not wog_high.selfcheck():
-            logging.error("Incomplete parameter set for high case")
+            logger.error("Incomplete parameter set for high case")
             errored = True
         if errored:
             raise ValueError("Incomplete SCAL recommendation")
