@@ -14,6 +14,10 @@ from pyscal.constants import MAX_EXPONENT
 from pyscal import utils
 
 
+logging.basicConfig()
+logger = logging.getLogger(__name__)
+
+
 class WaterOil(object):
     """A representation of two-phase properties for oil-water.
 
@@ -128,13 +132,13 @@ class WaterOil(object):
         self.krowcomment = ""
         self.pccomment = ""
 
-        logging.info(
+        logger.info(
             "Initialized WaterOil with %s saturation points", str(len(self.table))
         )
 
     def add_oilwater_fromtable(self, *args, **kwargs):
         """Deprecated, use ``add_fromtable()``"""
-        logging.warning("add_oilwater_fromtable() is deprecated, use add_fromtable()")
+        logger.warning("add_oilwater_fromtable() is deprecated, use add_fromtable()")
         self.add_fromtable(*args, **kwargs)
 
     def add_fromtable(
@@ -185,14 +189,14 @@ class WaterOil(object):
 
         # Avoid having to deal with multi-indices:
         if len(df.index.names) > 1:
-            logging.warning(
+            logger.warning(
                 "add_fromtable() did a reset_index(), consider not supplying MultiIndex"
             )
             df = df.reset_index()
 
         if swcolname not in df:
-            logging.critical(
-                swcolname + " not found in dataframe, can't read table data"
+            logger.critical(
+                "%s not found in dataframe, can't read table data", swcolname
             )
             raise ValueError
         if (df[swcolname].diff() < 0).any():
@@ -202,7 +206,7 @@ class WaterOil(object):
                 sorw = df[swcolname].max() - utils.estimate_diffjumppoint(
                     df, xcol=swcolname, ycol=krwcolname, side="right"
                 )
-                logging.info("Estimated sorw in tabular data to %f", sorw)
+                logger.info("Estimated sorw in tabular data to %f", sorw)
             assert -epsilon <= sorw <= 1 + epsilon
             linearpart = df[swcolname] >= 1 - sorw
             nonlinearpart = df[swcolname] <= 1 - sorw  # (overlapping at sorw)
@@ -242,7 +246,7 @@ class WaterOil(object):
                 sorw = df[swcolname].max() - utils.estimate_diffjumppoint(
                     df, xcol=swcolname, ycol=krowcolname, side="right"
                 )
-                logging.info("Estimated sorw in tabular data from krow to %s", sorw)
+                logger.info("Estimated sorw in tabular data from krow to %s", sorw)
             assert -epsilon <= sorw <= 1 + epsilon
             linearpart = df[swcolname] >= 1 - sorw
             nonlinearpart = df[swcolname] <= 1 - sorw  # (overlapping at sorw)
@@ -284,7 +288,7 @@ class WaterOil(object):
             if df[swcolname].max() < self.table["sw"].max():
                 raise ValueError("max(sw) of incoming data not large enough")
             if np.isinf(df[pccolname]).any():
-                logging.warning(
+                logger.warning(
                     (
                         "Infinity pc values detected. Will be dropped. "
                         "Risk of extrapolation"
@@ -365,7 +369,7 @@ class WaterOil(object):
             self.table.loc[self.table["sw"] > (1 - self.sorw - epsilon), "krw"] = krwmax
         else:
             if krwmax:
-                logging.warning("krwmax ignored when sorw is zero")
+                logger.warning("krwmax ignored when sorw is zero")
             self.table.loc[self.table["sw"] > (1 - self.sorw - epsilon), "krw"] = krwend
         self.table.loc[np.isclose(self.table["sw"], 1 - self.sorw), "krw"] = krwend
         self.table.loc[self.table.sw < self.swcr, "krw"] = 0
@@ -388,7 +392,7 @@ class WaterOil(object):
         self.table.loc[self.table["son"] > 1.0 + epsilon, "krow"] = np.nan
         if self.swcr < self.swl + self.h:
             if kromax:
-                logging.warning("kromax ignored when swcr is close to swl")
+                logger.warning("kromax ignored when swcr is close to swl")
             self.table.loc[self.table["sw"] <= self.swl + epsilon, "krow"] = kroend
         else:
             if not kromax:
@@ -550,13 +554,13 @@ class WaterOil(object):
         assert perm_ref > 0.0
 
         if self.swl < epsilon:
-            logging.error(
+            logger.error(
                 "swl must larger than zero to avoid infinite capillary pressure"
             )
             raise ValueError
 
         if b > 0:
-            logging.warning(
+            logger.warning(
                 "positive b will give increasing capillary pressure with saturation"
             )
 
@@ -604,21 +608,21 @@ class WaterOil(object):
         assert isinstance(sigma_costau, (int, float))
 
         if b < 0 and np.isclose(self.swirr, self.swl):
-            logging.error("swl must be set larger than swirr to avoid infinite p_c")
+            logger.error("swl must be set larger than swirr to avoid infinite p_c")
             raise ValueError("swl must be larger than swirr")
 
         if abs(b) < 0.01:
-            logging.warning(
+            logger.warning(
                 "b exponent is very small, risk of infinite capillary pressure"
             )
 
         if abs(a) < 0.01:
-            logging.warning(
+            logger.warning(
                 "a parameter is very small, risk of infinite capillary pressure"
             )
 
         if abs(a) > 5:
-            logging.warning(
+            logger.warning(
                 "a parameter is very high, risk of infinite capillary pressure"
             )
 
@@ -656,16 +660,16 @@ class WaterOil(object):
         """  # noqa
         inputerror = False
         if cw < 0:
-            logging.error("cw must be larger or equal to zero")
+            logger.error("cw must be larger or equal to zero")
             inputerror = True
         if co > 0:
-            logging.error("co must be less than zero")
+            logger.error("co must be less than zero")
             inputerror = True
         if aw <= 0:
-            logging.error("aw must be larger than zero")
+            logger.error("aw must be larger than zero")
             inputerror = True
         if ao <= 0:
-            logging.error("ao must be larger than zero")
+            logger.error("ao must be larger than zero")
             inputerror = True
 
         if swr is None:
@@ -674,13 +678,13 @@ class WaterOil(object):
             sor = self.sorw
 
         if swr >= 1 - sor:
-            logging.error("swr (swirr) must be less than 1 - sor")
+            logger.error("swr (swirr) must be less than 1 - sor")
             inputerror = True
         if swr < 0 or swr > 1:
-            logging.error("swr must be contained in [0,1]")
+            logger.error("swr must be contained in [0,1]")
             inputerror = True
         if sor < 0 or sor > 1:
-            logging.error("sor must be contained in [0,1]")
+            logger.error("sor must be contained in [0,1]")
             inputerror = True
         if inputerror:
             return False
@@ -884,44 +888,44 @@ class WaterOil(object):
         """
         error = False
         if "krw" not in self.table:
-            logging.error("krw data not found")
+            logger.error("krw data not found")
             error = True
         if "krow" not in self.table:
-            logging.error("krow data not found")
+            logger.error("krow data not found")
             error = True
         if not (self.table["sw"].diff().dropna().round(10) > -epsilon).all():
-            logging.error("sw data not strictly increasing")
+            logger.error("sw data not strictly increasing")
             error = True
         if (
             "krw" in self.table
             and not (self.table["krw"].diff().dropna().round(10) >= -epsilon).all()
         ):
-            logging.error("krw data not monotonically increasing")
+            logger.error("krw data not monotonically increasing")
             error = True
         if (
             "krow" in self.table.columns
             and not (self.table["krow"].diff().dropna().round(10) <= epsilon).all()
         ):
-            logging.error("krow data not monotonically decreasing")
+            logger.error("krow data not monotonically decreasing")
             error = True
         if "pc" in self.table.columns and self.table["pc"][0] > -epsilon:
             if not (self.table["pc"].diff().dropna().round(10) < epsilon).all():
-                logging.error("pc data not strictly decreasing")
+                logger.error("pc data not strictly decreasing")
                 error = True
         if "pc" in self.table.columns and np.isinf(self.table["pc"].max()):
-            logging.error("pc goes to infinity. Maybe swirr=swl?")
+            logger.error("pc goes to infinity. Maybe swirr=swl?")
             error = True
         for col in list(set(["sw", "krw", "krow"]) & set(self.table.columns)):
             if not (
                 (round(min(self.table[col]), 10) >= -epsilon)
                 and (round(max(self.table[col]), 10) <= 1 + epsilon)
             ):
-                logging.error("%s data should be contained in [0,1]", col)
+                logger.error("%s data should be contained in [0,1]", col)
                 error = True
         if error:
             return False
         else:
-            logging.info("WaterOil object is checked to be valid")
+            logger.info("WaterOil object is checked to be valid")
             return True
 
     def SWOF(self, header=True, dataincommentrow=True):

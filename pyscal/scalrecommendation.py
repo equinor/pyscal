@@ -7,6 +7,10 @@ import numpy as np
 from pyscal import WaterOilGas, utils
 
 
+logging.basicConfig()
+logger = logging.getLogger(__name__)
+
+
 class SCALrecommendation(object):
     """A SCAL recommendation consists of three OilWaterGas objects,
     tagged low, base and high.
@@ -37,7 +41,7 @@ class SCALrecommendation(object):
 
         if isinstance(low, dict) and isinstance(base, dict) and isinstance(high, dict):
 
-            logging.warning(
+            logger.warning(
                 (
                     "Making SCALrecommendation from dicts is deprecated "
                     "and will not be supported in future versions\n"
@@ -213,7 +217,7 @@ class SCALrecommendation(object):
         interpolant = WaterOilGas()
 
         if abs(parameter) > 1.0:
-            logging.error("Interpolation parameter must be in [-1,1]")
+            logger.error("Interpolation parameter must be in [-1,1]")
             assert abs(parameter) <= 1.0
         elif np.isclose(parameter, 0.0):
             interpolant.wateroil = self.base.wateroil
@@ -232,7 +236,7 @@ class SCALrecommendation(object):
 
         # Gas-oil interpolation
         if abs(gasparameter) > 1.0:
-            logging.error("Interpolation parameter must be in [-1,1]")
+            logger.error("Interpolation parameter must be in [-1,1]")
             assert abs(gasparameter) <= 1.0
         elif np.isclose(gasparameter, 0.0):
             interpolant.gasoil = self.base.gasoil
