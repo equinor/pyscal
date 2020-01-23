@@ -169,6 +169,10 @@
 <span class="kn">from</span> <span class="nn">.gasoil</span> <span class="kn">import</span> <span class="n">GasOil</span>
 
 
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">()</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
 <div class="viewcode-block" id="WaterOilGas"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroilgas.WaterOilGas">[docs]</a><span class="k">class</span> <span class="nc">WaterOilGas</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
     <span class="sd">&quot;&quot;&quot;A representation of three-phase properties for oil-water-gas</span>
@@ -401,7 +405,7 @@
             <span class="p">[</span><span class="s2">&quot;/project/res/bin/runeclipse&quot;</span><span class="p">,</span> <span class="s2">&quot;-i&quot;</span><span class="p">,</span> <span class="n">eclfile</span><span class="p">]</span>
         <span class="p">)</span>
         <span class="n">ecloutputlines</span> <span class="o">=</span> <span class="n">ecloutput</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ecloutputlines</span> <span class="k">if</span> <span class="s2">&quot;Error&quot;</span> <span class="ow">in</span> <span class="n">x</span> <span class="ow">or</span> <span class="s2">&quot;ERROR&quot;</span> <span class="ow">in</span> <span class="n">x</span><span class="p">])</span></div></div>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">([</span><span class="n">x</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">ecloutputlines</span> <span class="k">if</span> <span class="s2">&quot;Error&quot;</span> <span class="ow">in</span> <span class="n">x</span> <span class="ow">or</span> <span class="s2">&quot;ERROR&quot;</span> <span class="ow">in</span> <span class="n">x</span><span class="p">])</span></div></div>
 </pre></div>
 
            </div>
