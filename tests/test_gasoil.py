@@ -27,6 +27,21 @@ def series_increasing(series):
     return (series.diff().dropna() > -1e-8).all()
 
 
+def sgof_str_ok(sgofstr):
+    """Test that a supplied string from SGOF() is
+    probably ok for Eclipse"""
+    for line in sgofstr.splitlines():
+        if not (
+            not line
+            or line.startswith("S")
+            or line.startswith("--")
+            or line.startswith("/")
+            or int(line[0]) >= 0
+        ):
+            return False
+    return True
+
+
 def check_table(df):
     """Check sanity of important columns"""
     assert not df.empty
@@ -321,6 +336,13 @@ def test_gasoil_corey1(ng, nog):
     check_table(go.table)
     sgofstr = go.SGOF()
     assert len(sgofstr) > 100
+    assert sgof_str_ok(sgofstr)
+
+    go.resetsorg()
+    check_table(go.table)
+    sgofstr = go.SGOF()
+    assert len(sgofstr) > 100
+    assert sgof_str_ok(sgofstr)
 
 
 @settings(deadline=1000)
@@ -339,3 +361,4 @@ def test_gasoil_let1(l, e, t, krgend, krgmax):
     check_table(go.table)
     sgofstr = go.SGOF()
     assert len(sgofstr) > 100
+    assert sgof_str_ok(sgofstr)

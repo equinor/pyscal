@@ -162,9 +162,12 @@ class GasOil(object):
 
         # Normalized oil saturation should be 0 at 1-sorg, and 1 at swl+sgcr
         self.table["son"] = (self.table["sl"] - sorg - swl) / (1 - sorg - swl - sgcr)
-        self.sgcomment = (
-            '-- swirr=%g, sgcr=%g, swl=%g, sorg=%g, krgendanchor="%s"\n'
-            % (self.swirr, self.sgcr, self.swl, self.sorg, self.krgendanchor)
+        self.sgcomment = "-- swirr=%g, sgcr=%g, swl=%g, sorg=%g, krgendanchor=%s\n" % (
+            self.swirr,
+            self.sgcr,
+            self.swl,
+            self.sorg,
+            self.krgendanchor,
         )
         self.krgcomment = ""
         self.krogcomment = ""
@@ -181,7 +184,7 @@ class GasOil(object):
                 1 - self.swl - self.table[np.isclose(self.table.krog, 0.0)].min()["sg"]
             )
             self.sgcomment = (
-                '-- swirr=%g, sgcr=%g, swl=%g, sorg=%g\n, krgendanchor="%s"'
+                "-- swirr=%g, sgcr=%g, swl=%g, sorg=%g, krgendanchor=%s\n"
                 % (self.swirr, self.sgcr, self.swl, self.sorg, self.krgendanchor)
             )
 

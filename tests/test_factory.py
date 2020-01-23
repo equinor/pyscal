@@ -13,6 +13,7 @@ import pytest
 
 from pyscal import WaterOil, GasOil, PyscalFactory
 
+from test_gasoil import sgof_str_ok
 
 def test_factory_wateroil():
     """Test that we can create curves from dictionaries of parameters"""
@@ -130,22 +131,26 @@ def test_factory_gasoil():
     assert go.swirr == 0.01
     assert go.tag == "Good sand"
     sgof = go.SGOF()
+    assert sgof_str_ok(sgof)
     assert "Corey krg" in sgof
     assert "Corey krog" in sgof
     assert "Zero capillary pressure" in sgof
 
     go = factory.create_gas_oil(dict(ng=1.2, nog=2, krgend=0.8, krgmax=0.9, kroend=0.6))
     sgof = go.SGOF()
+    assert sgof_str_ok(sgof)
     assert "kroend=0.6" in sgof
     assert "krgend=0.8" in sgof
 
     go = factory.create_gas_oil(dict(ng=1.3, Log=2, Eog=2, Tog=2))
     sgof = go.SGOF()
+    assert sgof_str_ok(sgof)
     assert "Corey krg" in sgof
     assert "LET krog" in sgof
 
     go = factory.create_gas_oil(dict(Lg=1, Eg=1, Tg=1, Log=2, Eog=2, Tog=2))
     sgof = go.SGOF()
+    assert sgof_str_ok(sgof)
     assert "LET krg" in sgof
     assert "LET krog" in sgof
 
@@ -158,6 +163,8 @@ def test_factory_wateroilgas():
     wog = factory.create_water_oil_gas(dict(nw=2, now=3, ng=1, nog=2.5))
     swof = wog.SWOF()
     sgof = wog.SGOF()
+    assert sgof_str_ok(swof)  # sgof code works for swof also currently
+    assert sgof_str_ok(sgof)
     assert "Corey krg" in sgof
     assert "Corey krog" in sgof
     assert "Corey krw" in swof
@@ -167,6 +174,8 @@ def test_factory_wateroilgas():
     wog = factory.create_water_oil_gas(dict(NW=2, NOW=3, NG=1, nog=2.5))
     swof = wog.SWOF()
     sgof = wog.SGOF()
+    assert sgof_str_ok(swof)  # sgof code works for swof also currently
+    assert sgof_str_ok(sgof)
     assert "Corey krg" in sgof
     assert "Corey krog" in sgof
     assert "Corey krw" in swof
@@ -198,6 +207,7 @@ def test_xls_factory():
         assert "LET krow" in swof
         assert "Simplified J" in swof
         sgof = wog.SGOF()
+        assert sgof_str_ok(sgof)
         assert "LET krg" in sgof
         assert "LET krog" in sgof
 
