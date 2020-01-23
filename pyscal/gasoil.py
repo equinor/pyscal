@@ -580,6 +580,9 @@ class GasOil(object):
         tmp = pd.concat([tmp, zerodf], sort=True)
 
         tmp.set_index("krgminuskrog", inplace=True)
+        if tmp.index.isnull().any():
+            logger.warning("Could not compute crosspoint. Bug?")
+            return -1
         tmp.interpolate(method="slinear", inplace=True)
 
         return tmp[np.isclose(tmp.index, 0.0)].sg.values[0]

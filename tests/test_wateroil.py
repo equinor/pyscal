@@ -104,6 +104,7 @@ def test_wateroil_krendmax(swl, swcr, sorw, kroend, kromax, krwend, krwmax, h, f
     wo.add_corey_water(krwend=krwend, krwmax=krwmax)
     check_table(wo.table)
     assert wo.selfcheck()
+    assert 0 < wo.crosspoint() < 1
 
     check_endpoints(wo, krwend, krwmax, kroend, kromax)
     ####################################
@@ -114,6 +115,7 @@ def test_wateroil_krendmax(swl, swcr, sorw, kroend, kromax, krwend, krwmax, h, f
     check_table(wo.table)
     # Check endpoints for oil curve:
     check_endpoints(wo, krwend, krwmax, kroend, kromax)
+    assert 0 < wo.crosspoint() < 1
 
 
 def float_df_checker(df, idxcol, value, compcol, answer):

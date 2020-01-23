@@ -233,6 +233,7 @@ def test_interpolate_wo(
         wo_ip = utils.interpolate_wo(wo_low, wo_high, t)
         check_table_wo(wo_ip.table)
         ips.append(wo_ip)
+        assert 0 < wo_ip.crosspoint() < 1
 
     # Distances between low and interpolants:
     dists = [(wo_low.table - ip.table)[["krw", "krow"]].sum().sum() for ip in ips]
@@ -435,6 +436,7 @@ def test_interpolate_go(
         go_ip = utils.interpolate_go(go_low, go_high, t)
         check_table_go(go_ip.table)
         ips.append(go_ip)
+        assert 0 < go_ip.crosspoint() < 1
 
     # Distances between low and interpolants:
     dists = [(go_low.table - ip.table)[["krg", "krog"]].sum().sum() for ip in ips]

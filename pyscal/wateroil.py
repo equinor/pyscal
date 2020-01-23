@@ -872,6 +872,11 @@ class WaterOil(object):
         # When Pandas is upgraded for all users:
         # tmp = pd.concat([tmp, zerodf], sort=True)
         tmp.set_index("krwminuskrow", inplace=True)
+
+        if tmp.index.isnull().any():
+            logger.warning("Could not compute crosspoint. Bug?")
+            return -1
+
         tmp.interpolate(method="slinear", inplace=True)
 
         return tmp[np.isclose(tmp.index, 0.0)].sw.values[0]
