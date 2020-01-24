@@ -328,6 +328,7 @@ swirr, swl, sorw, sorg, sgcr</p>
 </div>
 <div class="section" id="module-pyscal.gasoil">
 <span id="pyscal-gasoil-module"></span><h2>pyscal.gasoil module<a class="headerlink" href="#module-pyscal.gasoil" title="Permalink to this headline">¶</a></h2>
+<p>Representing a GasOil object</p>
 <dl class="class">
 <dt id="pyscal.gasoil.GasOil">
 <em class="property">class </em><code class="sig-prename descclassname">pyscal.gasoil.</code><code class="sig-name descname">GasOil</code><span class="sig-paren">(</span><em class="sig-param">swirr=0</em>, <em class="sig-param">sgcr=0.0</em>, <em class="sig-param">h=0.01</em>, <em class="sig-param">swl=0.0</em>, <em class="sig-param">sorg=0.0</em>, <em class="sig-param">tag=''</em>, <em class="sig-param">krgendanchor='sorg'</em>, <em class="sig-param">fast=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gasoil.html#GasOil"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gasoil.GasOil" title="Permalink to this definition">¶</a></dt>
@@ -389,7 +390,7 @@ runs, as speed is seldom crucial. Default False</p></li>
 
 <dl class="method">
 <dt id="pyscal.gasoil.GasOil.add_fromtable">
-<code class="sig-name descname">add_fromtable</code><span class="sig-paren">(</span><em class="sig-param">df</em>, <em class="sig-param">sgcolname='Sg'</em>, <em class="sig-param">krgcolname='krg'</em>, <em class="sig-param">krogcolname='krog'</em>, <em class="sig-param">pccolname='pcog'</em>, <em class="sig-param">krgcomment=''</em>, <em class="sig-param">krogcomment=''</em>, <em class="sig-param">pccomment=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gasoil.html#GasOil.add_fromtable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gasoil.GasOil.add_fromtable" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_fromtable</code><span class="sig-paren">(</span><em class="sig-param">dframe</em>, <em class="sig-param">sgcolname='Sg'</em>, <em class="sig-param">krgcolname='krg'</em>, <em class="sig-param">krogcolname='krog'</em>, <em class="sig-param">pccolname='pcog'</em>, <em class="sig-param">krgcomment=''</em>, <em class="sig-param">krogcomment=''</em>, <em class="sig-param">pccomment=''</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gasoil.html#GasOil.add_fromtable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gasoil.GasOil.add_fromtable" title="Permalink to this definition">¶</a></dt>
 <dd><p>Interpolate relpermdata from a dataframe.</p>
 <p>The saturation range with endpoints must be set up beforehand,
 and must be compatible with the tabular input. The tabular
@@ -957,6 +958,7 @@ will be modified.</p></li>
 </div>
 <div class="section" id="module-pyscal.wateroil">
 <span id="pyscal-wateroil-module"></span><h2>pyscal.wateroil module<a class="headerlink" href="#module-pyscal.wateroil" title="Permalink to this headline">¶</a></h2>
+<p>Wateroil module</p>
 <dl class="class">
 <dt id="pyscal.wateroil.WaterOil">
 <em class="property">class </em><code class="sig-prename descclassname">pyscal.wateroil.</code><code class="sig-name descname">WaterOil</code><span class="sig-paren">(</span><em class="sig-param">swirr=0.0</em>, <em class="sig-param">swl=0.0</em>, <em class="sig-param">swcr=0.0</em>, <em class="sig-param">sorw=0.0</em>, <em class="sig-param">h=0.01</em>, <em class="sig-param">tag=''</em>, <em class="sig-param">fast=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil" title="Permalink to this definition">¶</a></dt>
@@ -1007,7 +1009,7 @@ runs, as speed is seldom crucial. Default False</p></li>
 
 <dl class="method">
 <dt id="pyscal.wateroil.WaterOil.add_fromtable">
-<code class="sig-name descname">add_fromtable</code><span class="sig-paren">(</span><em class="sig-param">df</em>, <em class="sig-param">swcolname='Sw'</em>, <em class="sig-param">krwcolname='krw'</em>, <em class="sig-param">krowcolname='krow'</em>, <em class="sig-param">pccolname='pcow'</em>, <em class="sig-param">krwcomment=''</em>, <em class="sig-param">krowcomment=''</em>, <em class="sig-param">pccomment=''</em>, <em class="sig-param">sorw=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.add_fromtable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.add_fromtable" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_fromtable</code><span class="sig-paren">(</span><em class="sig-param">dframe</em>, <em class="sig-param">swcolname='Sw'</em>, <em class="sig-param">krwcolname='krw'</em>, <em class="sig-param">krowcolname='krow'</em>, <em class="sig-param">pccolname='pcow'</em>, <em class="sig-param">krwcomment=''</em>, <em class="sig-param">krowcomment=''</em>, <em class="sig-param">pccomment=''</em>, <em class="sig-param">sorw=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.add_fromtable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.add_fromtable" title="Permalink to this definition">¶</a></dt>
 <dd><p>Interpolate relpermdata from a dataframe.</p>
 <p>The saturation range with endpoints must be set up beforehand,
 and must be compatible with the tabular input. The tabular
@@ -1025,7 +1027,7 @@ files to dataframes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>df</strong> (<em>pd.DataFrame</em>) – containing data</p></li>
+<li><p><strong>dframe</strong> (<em>pd.DataFrame</em>) – containing data</p></li>
 <li><p><strong>swcolname</strong> (<em>string</em>) – column name with the saturation data in the dataframe df</p></li>
 <li><p><strong>krwcolname</strong> (<em>string</em>) – name of column in df with krw</p></li>
 <li><p><strong>krowcolname</strong> (<em>string</em>) – name of column in df with krow</p></li>
@@ -1357,6 +1359,7 @@ window will be made. If supplied, it will draw on the specified axis.</p>
 </div>
 <div class="section" id="module-pyscal.wateroilgas">
 <span id="pyscal-wateroilgas-module"></span><h2>pyscal.wateroilgas module<a class="headerlink" href="#module-pyscal.wateroilgas" title="Permalink to this headline">¶</a></h2>
+<p>Container object for one WaterOil and one GasOil object</p>
 <dl class="class">
 <dt id="pyscal.wateroilgas.WaterOilGas">
 <em class="property">class </em><code class="sig-prename descclassname">pyscal.wateroilgas.</code><code class="sig-name descname">WaterOilGas</code><span class="sig-paren">(</span><em class="sig-param">swirr=0</em>, <em class="sig-param">swl=0.0</em>, <em class="sig-param">swcr=0.0</em>, <em class="sig-param">sorw=0.0</em>, <em class="sig-param">sorg=0</em>, <em class="sig-param">sgcr=0</em>, <em class="sig-param">h=0.01</em>, <em class="sig-param">tag=''</em>, <em class="sig-param">fast=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroilgas.html#WaterOilGas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroilgas.WaterOilGas" title="Permalink to this definition">¶</a></dt>

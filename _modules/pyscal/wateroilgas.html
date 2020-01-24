@@ -155,7 +155,7 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pyscal.wateroilgas</h1><div class="highlight"><pre>
-<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span></span><span class="sd">&quot;&quot;&quot;Container object for one WaterOil and one GasOil object&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">absolute_import</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
 
@@ -335,10 +335,9 @@
         <span class="c1"># in grid cell (i, j, k) for saturation endpoints sgu=0.78,</span>
         <span class="c1"># swl=0.45, (1-swl) = 0.55</span>
 
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">errors</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">errors</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">errors</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">&quot;&quot;</span></div>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span></div>
 
 <div class="viewcode-block" id="WaterOilGas.run_eclipse_test"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroilgas.WaterOilGas.run_eclipse_test">[docs]</a>    <span class="k">def</span> <span class="nf">run_eclipse_test</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Start the Eclipse simulator on a minimal deck in order to</span>
