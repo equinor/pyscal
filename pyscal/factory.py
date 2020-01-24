@@ -7,8 +7,6 @@ from pyscal import WaterOil, GasOil, WaterOilGas, SCALrecommendation
 logging.basicConfig()
 logger = logging.getLogger(__name__)
 
-logger.error("init factory")
-
 
 def slicedict(dct, keys):
     """Slice a dictionary for a set of keys.
