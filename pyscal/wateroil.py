@@ -390,7 +390,7 @@ class WaterOil(object):
 
         # Linear curve between swl and swcr (left part):
         self.table.loc[self.table["son"] > 1.0 + epsilon, "krow"] = np.nan
-        if self.swcr < self.swl + self.h:
+        if self.swcr < self.swl + epsilon:
             if kromax:
                 logger.warning("kromax ignored when swcr is close to swl")
             self.table.loc[self.table["sw"] <= self.swl + epsilon, "krow"] = kroend
@@ -911,7 +911,10 @@ class WaterOil(object):
             "krow" in self.table.columns
             and not (self.table["krow"].diff().dropna().round(10) <= epsilon).all()
         ):
-            logger.error("krow data not monotonically decreasing")
+            # In normal Eclipse runs, krow needs to be level or decreasing.
+            # In hysteresis runs, it needs to be strictly decreasing, that must
+            # be the users responsibility.
+            logger.error("krow data not level or monotonically decreasing")
             error = True
         if "pc" in self.table.columns and self.table["pc"][0] > -epsilon:
             if not (self.table["pc"].diff().dropna().round(10) < epsilon).all():
