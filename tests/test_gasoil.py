@@ -172,7 +172,7 @@ def test_gasoil_krendmax(swl, sgcr, sorg, kroend, kromax, krgend, krgmax, h, fas
 
     # Redo with LET:
     go = GasOil(swl=swl, sgcr=sgcr, sorg=sorg, h=h, tag="")
-    go.add_LET_oil(kroend=kroend, kromax=kromax)
+    go.add_LET_oil(t=1.1, kroend=kroend, kromax=kromax)
     go.add_LET_gas(krgend=krgend, krgmax=krgmax)
     check_table(go.table)
     assert go.selfcheck()
@@ -274,8 +274,8 @@ def test_gasoil_krgendanchor():
     # Test once more for LET curves:
     gasoil = GasOil(krgendanchor="sorg", sorg=0.2, h=0.1)
     assert gasoil.sorg
-    gasoil.add_LET_gas(1, 1, 1)
-    gasoil.add_LET_oil(1, 1, 1)
+    gasoil.add_LET_gas(1, 1, 1.1)
+    gasoil.add_LET_oil(1, 1, 1.1)
     assert 0 < gasoil.crosspoint() < 1
 
     # kg should be 1.0 at 1 - sorg due to krgendanchor == "sorg":
@@ -287,8 +287,8 @@ def test_gasoil_krgendanchor():
 
     gasoil = GasOil(krgendanchor="", sorg=0.2, h=0.1)
     assert gasoil.sorg
-    gasoil.add_LET_gas(1, 1, 1)
-    gasoil.add_LET_oil(1, 1, 1)
+    gasoil.add_LET_gas(1, 1, 1.1)
+    gasoil.add_LET_oil(1, 1, 1.1)
     assert gasoil.selfcheck()
 
     # kg should be < 1 at 1 - sorg due to krgendanchor being ""
@@ -303,9 +303,9 @@ def test_kromaxend():
     """Manual testing of kromax and kroend behaviour"""
     gasoil = GasOil(swirr=0.01, sgcr=0.01, h=0.01, swl=0.1, sorg=0.05)
     gasoil.add_LET_gas()
-    gasoil.add_LET_oil(2, 2, 2)
+    gasoil.add_LET_oil(2, 2, 2.1)
     assert gasoil.table["krog"].max() == 1
-    gasoil.add_LET_oil(2, 2, 2, kroend=0.5, kromax=0.9)
+    gasoil.add_LET_oil(2, 2, 2.1, kroend=0.5, kromax=0.9)
     assert gasoil.table["krog"].max() == 0.9
     # Second krog-value should be kroend, values in between will be linearly
     # interpolated in Eclipse

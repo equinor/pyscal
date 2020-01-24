@@ -453,6 +453,8 @@ class GasOil(object):
             * self.table.sgn ** l
             / ((self.table.sgn ** l) + e * (1 - self.table.sgn) ** t)
         )
+        # This equation is undefined for t a float and sgn=1, set explicitly:
+        self.table.loc[np.isclose(self.table['sgn'], 1.0), "krg"] = krgend
 
         self.set_endpoints_linearpart_krg(krgend, krgmax)
 
@@ -497,6 +499,8 @@ class GasOil(object):
             * self.table["son"] ** l
             / ((self.table["son"] ** l) + e * (1 - self.table["son"]) ** t)
         )
+        # This equation is undefined for t a float and son=1, set explicitly:
+        self.table.loc[np.isclose(self.table['son'], 1.0), "krog"] = kroend
 
         self.set_endpoints_linearpart_krog(kroend, kromax)
 
