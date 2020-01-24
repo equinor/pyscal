@@ -89,17 +89,21 @@ def test_interpolate_wo():
     wo_high.add_corey_water(nw=random.uniform(1, 3), krwend=random.uniform(0.5, 1))
     wo_low.add_corey_oil(now=random.uniform(1, 3), kroend=random.uniform(0.5, 1))
     wo_high.add_corey_oil(now=random.uniform(1, 3), kroend=random.uniform(0.5, 1))
+    wo_low.add_simple_J(a=random.uniform(0.1, 2), b=random.uniform(-2,-1))
+    wo_high.add_simple_J(a=random.uniform(0.1,2), b=random.uniform(-2,1))
     print(
         " ** Low curve (red):\n"
         + wo_low.swcomment
         + wo_low.krwcomment
         + wo_low.krowcomment
+        + wo_low.pccomment
     )
     print(
         " ** High curve (blue):\n"
         + wo_high.swcomment
         + wo_high.krwcomment
         + wo_high.krowcomment
+        + wo_high.pccomment
     )
 
     from matplotlib import pyplot as plt
@@ -107,22 +111,32 @@ def test_interpolate_wo():
     _, ax = plt.subplots()
     wo_low.plotkrwkrow(ax, color="red")
     wo_high.plotkrwkrow(ax, color="blue")
-
     for t in np.arange(0, 1, 0.1):
         wo_ip = utils.interpolate_wo(wo_low, wo_high, t, h=0.001)
         wo_ip.plotkrwkrow(ax, color="green")
     ax.set_title("WaterOil, random Corey, linear y-scale")
     plt.show()
 
+    # Plot again with log yscale:
     _, ax = plt.subplots()
     wo_low.plotkrwkrow(ax, color="red")
     wo_high.plotkrwkrow(ax, color="blue")
-    # Plot again with log yscale:
     for t in np.arange(0, 1, 0.1):
         wo_ip = utils.interpolate_wo(wo_low, wo_high, t, h=0.001)
         wo_ip.plotkrwkrow(ax, color="green", logyscale=True)
     ax.set_title("WaterOil, random Corey, log y-scale")
     plt.show()
+
+    # Capillary pressure
+    _, ax = plt.subplots()
+    wo_low.plotpc(ax, color="red", logyscale=True)
+    wo_high.plotpc(ax, color="blue", logyscale=True)
+    for t in np.arange(0, 1, 0.1):
+        wo_ip = utils.interpolate_wo(wo_low, wo_high, t, h=0.001)
+        wo_ip.plotpc(ax, color="green", logyscale=True)
+    ax.set_title("WaterOil, capillary pressure")
+    plt.show()
+
 
 
 def test_interpolate_go():
@@ -184,6 +198,19 @@ def test_interpolate_go():
         go_ip.plotkrgkrog(ax, color="green", logyscale=True)
     ax.set_title("GasOil, random Corey, log y-scale")
     plt.show()
+
+    # Capillary pressure - This is barely supported for gasoil
+    # so the plotpc() function is missing. Include calculations
+    # here so we ensure we don't crash on the all zeros.
+    # _, ax = plt.subplots()
+    # go_low.plotpc(ax, color="red", logyscale=True)
+    # go_high.plotpc(ax, color="blue", logyscale=True)
+    for t in np.arange(0, 1, 0.1):
+        go_ip = utils.interpolate_go(go_low, go_high, t, h=0.001)
+        # go_ip.plotpc(ax, color="green", logyscale=True)
+    # ax.set_title("GasOil, capillary pressure")
+    # plt.show()
+
 
 
 def interpolateplottest():

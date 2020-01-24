@@ -196,6 +196,52 @@ def normalize_nonlinpart_go(curve):
     return (krg_fn, kro_fn)
 
 
+def normalize_pc(curve):
+    """Normalize the capillary pressure curve.
+
+    This is only normalized with respect to the
+    smallest and largest saturation present in the table,
+    not to the could-be-uncertain swirr
+    that the object could contain, because we then have
+    to make assumptions on the equations used to generate
+    the data in the table.
+
+    Args:
+        curve (WaterOil or GasOil): An object with a table with a pc column
+
+    Returns:
+        a lambda function that will evaluate pc on
+        the normalized interval [0,1]
+    """
+    if isinstance(curve, pyscal.WaterOil):
+        sat_col = "sw"
+    elif isinstance(curve, pyscal.GasOil):
+        sat_col = "sg"
+    else:
+        raise ValueError("Only WaterOil or GasOil allowed as argument")
+
+    if "pc" not in curve.table:
+        # Return a dummy zero lambda
+        return lambda sxn: 0
+
+    min_pc = curve.table["pc"].min()
+    max_pc = curve.table["pc"].max()
+    min_sx = curve.table[sat_col].min()
+    max_sx = curve.table[sat_col].max()
+
+    pc_interp = interp1d(
+        curve.table[sat_col],
+        curve.table["pc"],
+        kind="linear",
+        bounds_error=False,
+        fill_value=(max_pc, min_pc),  # This gives constant extrapolation outside [0, 1]
+    )
+    # Map from normalized value to real saturation domain:
+    sx_fn = lambda sxn: curve.table[sat_col].min() + sxn * (max_sx - min_sx)
+    pc_fn = lambda sxn: pc_interp(sx_fn(sxn))
+    return pc_fn
+
+
 def interpolate_wo(wo_low, wo_high, parameter, h=0.01):
     """Interpolates between two water-oil curves.
 
@@ -229,6 +275,8 @@ def interpolate_wo(wo_low, wo_high, parameter, h=0.01):
     # Constructs functions that works on normalized saturation interval
     krw1, kro1 = normalize_nonlinpart_wo(wo_low)
     krw2, kro2 = normalize_nonlinpart_wo(wo_high)
+    pc1 = normalize_pc(wo_low)
+    pc2 = normalize_pc(wo_high)
 
     # Construct a lambda function that can be applied to both relperm values
     # and endpoints
@@ -260,6 +308,14 @@ def interpolate_wo(wo_low, wo_high, parameter, h=0.01):
     wo_new.set_endpoints_linearpart_krw(krwend=krwend_new, krwmax=krwmax_new)
     wo_new.set_endpoints_linearpart_krow(kroend=kroend_new, kromax=kromax_new)
 
+    # We need a new fit-for-purpose normalized swnpc, that ignores
+    # the initial swnpc (swirr-influenced)
+    wo_new.table["swn_pc_intp"] = (wo_new.table["sw"] - wo_new.table["sw"].min()) / (
+        wo_new.table["sw"].max() - wo_new.table["sw"].min()
+    )
+    wo_new.table["pc"] = weighted_value(
+        pc1(wo_new.table["swn_pc_intp"]), pc2(wo_new.table["swn_pc_intp"])
+    )
     return wo_new
 
 
@@ -296,6 +352,8 @@ def interpolate_go(go_low, go_high, parameter, h=0.01):
     # Constructs functions that works on normalized saturation interval
     krg1, kro1 = normalize_nonlinpart_go(go_low)
     krg2, kro2 = normalize_nonlinpart_go(go_high)
+    pc1 = normalize_pc(go_low)
+    pc2 = normalize_pc(go_high)
 
     # Construct a lambda function that can be applied to both relperm values
     # and endpoints
@@ -322,6 +380,17 @@ def interpolate_go(go_low, go_high, parameter, h=0.01):
     )
     go_new.table["krog"] = weighted_value(
         kro1(go_new.table["son"]), kro2(go_new.table["son"])
+    )
+    go_new.table["pc"] = weighted_value(
+        pc1(go_new.table["sgn"]), pc2(go_new.table["sgn"])
+    )
+
+    # We need a new fit-for-purpose normalized sgnpc
+    go_new.table["sgn_pc_intp"] = (go_new.table["sg"] - go_new.table["sg"].min()) / (
+        go_new.table["sg"].max() - go_new.table["sg"].min()
+    )
+    go_new.table["pc"] = weighted_value(
+        pc1(go_new.table["sgn_pc_intp"]), pc2(go_new.table["sgn_pc_intp"])
     )
 
     go_new.set_endpoints_linearpart_krg(krgend=krgend_new, krgmax=krgmax_new)
