@@ -136,7 +136,7 @@ def test_factory_gasoil():
     assert "Corey krog" in sgof
     assert "Zero capillary pressure" in sgof
 
-    go = factory.create_gas_oil(dict(ng=1.2, nog=2, krgend=0.8, krgmax=0.9, kroend=0.6))
+    go = factory.create_gas_oil(dict(ng=1.2, nog=2, krgend=0.8, krgmax=0.9, krogend=0.6))
     sgof = go.SGOF()
     assert sgof_str_ok(sgof)
     assert "kroend=0.6" in sgof
