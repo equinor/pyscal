@@ -911,7 +911,10 @@ class WaterOil(object):
             "krow" in self.table.columns
             and not (self.table["krow"].diff().dropna().round(10) <= epsilon).all()
         ):
-            logger.error("krow data not monotonically decreasing")
+            # In normal Eclipse runs, krow needs to be level or decreasing.
+            # In hysteresis runs, it needs to be strictly decreasing, that must
+            # be the users responsibility.
+            logger.error("krow data not level or monotonically decreasing")
             error = True
         if "pc" in self.table.columns and self.table["pc"][0] > -epsilon:
             if not (self.table["pc"].diff().dropna().round(10) < epsilon).all():
