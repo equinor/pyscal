@@ -839,6 +839,27 @@ evaluate krog on the normalized So interval [0,1].</p>
 </dd></dl>
 
 <dl class="function">
+<dt id="pyscal.utils.normalize_pc">
+<code class="sig-prename descclassname">pyscal.utils.</code><code class="sig-name descname">normalize_pc</code><span class="sig-paren">(</span><em class="sig-param">curve</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils.html#normalize_pc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.utils.normalize_pc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Normalize the capillary pressure curve.</p>
+<p>This is only normalized with respect to the
+smallest and largest saturation present in the table,
+not to the could-be-uncertain swirr
+that the object could contain, because we then have
+to make assumptions on the equations used to generate
+the data in the table.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>curve</strong> (<a class="reference internal" href="#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><em>WaterOil</em></a><em> or </em><a class="reference internal" href="#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><em>GasOil</em></a>) – An object with a table with a pc column</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>a lambda function that will evaluate pc on
+the normalized interval [0,1]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
 <dt id="pyscal.utils.interpolate_wo">
 <code class="sig-prename descclassname">pyscal.utils.</code><code class="sig-name descname">interpolate_wo</code><span class="sig-paren">(</span><em class="sig-param">wo_low</em>, <em class="sig-param">wo_high</em>, <em class="sig-param">parameter</em>, <em class="sig-param">h=0.01</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils.html#interpolate_wo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.utils.interpolate_wo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Interpolates between two water-oil curves.</p>

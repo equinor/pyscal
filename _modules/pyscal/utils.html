@@ -353,6 +353,52 @@
     <span class="k">return</span> <span class="p">(</span><span class="n">krg_fn</span><span class="p">,</span> <span class="n">kro_fn</span><span class="p">)</span></div>
 
 
+<div class="viewcode-block" id="normalize_pc"><a class="viewcode-back" href="../../pyscal.html#pyscal.utils.normalize_pc">[docs]</a><span class="k">def</span> <span class="nf">normalize_pc</span><span class="p">(</span><span class="n">curve</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Normalize the capillary pressure curve.</span>
+
+<span class="sd">    This is only normalized with respect to the</span>
+<span class="sd">    smallest and largest saturation present in the table,</span>
+<span class="sd">    not to the could-be-uncertain swirr</span>
+<span class="sd">    that the object could contain, because we then have</span>
+<span class="sd">    to make assumptions on the equations used to generate</span>
+<span class="sd">    the data in the table.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        curve (WaterOil or GasOil): An object with a table with a pc column</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        a lambda function that will evaluate pc on</span>
+<span class="sd">        the normalized interval [0,1]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">curve</span><span class="p">,</span> <span class="n">pyscal</span><span class="o">.</span><span class="n">WaterOil</span><span class="p">):</span>
+        <span class="n">sat_col</span> <span class="o">=</span> <span class="s2">&quot;sw&quot;</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">curve</span><span class="p">,</span> <span class="n">pyscal</span><span class="o">.</span><span class="n">GasOil</span><span class="p">):</span>
+        <span class="n">sat_col</span> <span class="o">=</span> <span class="s2">&quot;sg&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Only WaterOil or GasOil allowed as argument&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s2">&quot;pc&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">:</span>
+        <span class="c1"># Return a dummy zero lambda</span>
+        <span class="k">return</span> <span class="k">lambda</span> <span class="n">sxn</span><span class="p">:</span> <span class="mi">0</span>
+
+    <span class="n">min_pc</span> <span class="o">=</span> <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+    <span class="n">max_pc</span> <span class="o">=</span> <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="n">min_sx</span> <span class="o">=</span> <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">sat_col</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+    <span class="n">max_sx</span> <span class="o">=</span> <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">sat_col</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+
+    <span class="n">pc_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span>
+        <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">sat_col</span><span class="p">],</span>
+        <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">],</span>
+        <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span>
+        <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="n">max_pc</span><span class="p">,</span> <span class="n">min_pc</span><span class="p">),</span>  <span class="c1"># This gives constant extrapolation outside [0, 1]</span>
+    <span class="p">)</span>
+    <span class="c1"># Map from normalized value to real saturation domain:</span>
+    <span class="n">sx_fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">sxn</span><span class="p">:</span> <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">sat_col</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">+</span> <span class="n">sxn</span> <span class="o">*</span> <span class="p">(</span><span class="n">max_sx</span> <span class="o">-</span> <span class="n">min_sx</span><span class="p">)</span>
+    <span class="n">pc_fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">sxn</span><span class="p">:</span> <span class="n">pc_interp</span><span class="p">(</span><span class="n">sx_fn</span><span class="p">(</span><span class="n">sxn</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">pc_fn</span></div>
+
+
 <div class="viewcode-block" id="interpolate_wo"><a class="viewcode-back" href="../../pyscal.html#pyscal.utils.interpolate_wo">[docs]</a><span class="k">def</span> <span class="nf">interpolate_wo</span><span class="p">(</span><span class="n">wo_low</span><span class="p">,</span> <span class="n">wo_high</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Interpolates between two water-oil curves.</span>
 
@@ -386,6 +432,8 @@
     <span class="c1"># Constructs functions that works on normalized saturation interval</span>
     <span class="n">krw1</span><span class="p">,</span> <span class="n">kro1</span> <span class="o">=</span> <span class="n">normalize_nonlinpart_wo</span><span class="p">(</span><span class="n">wo_low</span><span class="p">)</span>
     <span class="n">krw2</span><span class="p">,</span> <span class="n">kro2</span> <span class="o">=</span> <span class="n">normalize_nonlinpart_wo</span><span class="p">(</span><span class="n">wo_high</span><span class="p">)</span>
+    <span class="n">pc1</span> <span class="o">=</span> <span class="n">normalize_pc</span><span class="p">(</span><span class="n">wo_low</span><span class="p">)</span>
+    <span class="n">pc2</span> <span class="o">=</span> <span class="n">normalize_pc</span><span class="p">(</span><span class="n">wo_high</span><span class="p">)</span>
 
     <span class="c1"># Construct a lambda function that can be applied to both relperm values</span>
     <span class="c1"># and endpoints</span>
@@ -417,6 +465,14 @@
     <span class="n">wo_new</span><span class="o">.</span><span class="n">set_endpoints_linearpart_krw</span><span class="p">(</span><span class="n">krwend</span><span class="o">=</span><span class="n">krwend_new</span><span class="p">,</span> <span class="n">krwmax</span><span class="o">=</span><span class="n">krwmax_new</span><span class="p">)</span>
     <span class="n">wo_new</span><span class="o">.</span><span class="n">set_endpoints_linearpart_krow</span><span class="p">(</span><span class="n">kroend</span><span class="o">=</span><span class="n">kroend_new</span><span class="p">,</span> <span class="n">kromax</span><span class="o">=</span><span class="n">kromax_new</span><span class="p">)</span>
 
+    <span class="c1"># We need a new fit-for-purpose normalized swnpc, that ignores</span>
+    <span class="c1"># the initial swnpc (swirr-influenced)</span>
+    <span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;swn_pc_intp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span>
+        <span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span>
+        <span class="n">pc1</span><span class="p">(</span><span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;swn_pc_intp&quot;</span><span class="p">]),</span> <span class="n">pc2</span><span class="p">(</span><span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;swn_pc_intp&quot;</span><span class="p">])</span>
+    <span class="p">)</span>
     <span class="k">return</span> <span class="n">wo_new</span></div>
 
 
@@ -453,6 +509,8 @@
     <span class="c1"># Constructs functions that works on normalized saturation interval</span>
     <span class="n">krg1</span><span class="p">,</span> <span class="n">kro1</span> <span class="o">=</span> <span class="n">normalize_nonlinpart_go</span><span class="p">(</span><span class="n">go_low</span><span class="p">)</span>
     <span class="n">krg2</span><span class="p">,</span> <span class="n">kro2</span> <span class="o">=</span> <span class="n">normalize_nonlinpart_go</span><span class="p">(</span><span class="n">go_high</span><span class="p">)</span>
+    <span class="n">pc1</span> <span class="o">=</span> <span class="n">normalize_pc</span><span class="p">(</span><span class="n">go_low</span><span class="p">)</span>
+    <span class="n">pc2</span> <span class="o">=</span> <span class="n">normalize_pc</span><span class="p">(</span><span class="n">go_high</span><span class="p">)</span>
 
     <span class="c1"># Construct a lambda function that can be applied to both relperm values</span>
     <span class="c1"># and endpoints</span>
@@ -479,6 +537,17 @@
     <span class="p">)</span>
     <span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krog&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span>
         <span class="n">kro1</span><span class="p">(</span><span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;son&quot;</span><span class="p">]),</span> <span class="n">kro2</span><span class="p">(</span><span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;son&quot;</span><span class="p">])</span>
+    <span class="p">)</span>
+    <span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span>
+        <span class="n">pc1</span><span class="p">(</span><span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sgn&quot;</span><span class="p">]),</span> <span class="n">pc2</span><span class="p">(</span><span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sgn&quot;</span><span class="p">])</span>
+    <span class="p">)</span>
+
+    <span class="c1"># We need a new fit-for-purpose normalized sgnpc</span>
+    <span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sgn_pc_intp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sg&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sg&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span>
+        <span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sg&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sg&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+    <span class="p">)</span>
+    <span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span>
+        <span class="n">pc1</span><span class="p">(</span><span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sgn_pc_intp&quot;</span><span class="p">]),</span> <span class="n">pc2</span><span class="p">(</span><span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sgn_pc_intp&quot;</span><span class="p">])</span>
     <span class="p">)</span>
 
     <span class="n">go_new</span><span class="o">.</span><span class="n">set_endpoints_linearpart_krg</span><span class="p">(</span><span class="n">krgend</span><span class="o">=</span><span class="n">krgend_new</span><span class="p">,</span> <span class="n">krgmax</span><span class="o">=</span><span class="n">krgmax_new</span><span class="p">)</span>
