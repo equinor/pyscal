@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-"""Test module for relperm"""
+"""Test module for SCAL recommendation objects"""
 
 from __future__ import absolute_import
 from __future__ import division
@@ -11,7 +10,7 @@ import hypothesis.strategies as st
 from pyscal import SCALrecommendation, PyscalFactory
 
 # Example SCAL recommendation, low case
-low_sample_let = {
+LOW_SAMPLE_LET = {
     "swirr": 0.1,
     "sorw": 0.02,
     "krwend": 0.7,
@@ -37,7 +36,7 @@ low_sample_let = {
     "kroend": 1,
 }
 # Example SCAL recommendation, base case
-base_sample_let = {
+BASE_SAMPLE_LET = {
     "swirr": 0.1,
     "sorw": 0.091,
     "krwend": 0.8,
@@ -61,7 +60,7 @@ base_sample_let = {
     "kroend": 1,
 }
 # Example SCAL recommendation, high case
-high_sample_let = {
+HIGH_SAMPLE_LET = {
     "swirr": 0.1,
     "sorw": 0.137,
     "krwend": 0.6,
@@ -94,7 +93,7 @@ def test_interpolation_deprecated(param_wo, param_go):
     """Testing deprecated functionality. Remove
     this test function when SCALrecommendation class is updated"""
     rec = SCALrecommendation(
-        low_sample_let, base_sample_let, high_sample_let, "foo", h=0.1
+        LOW_SAMPLE_LET, BASE_SAMPLE_LET, HIGH_SAMPLE_LET, "foo", h=0.1
     )
     rec.add_simple_J()  # Add default pc curve
     try:
@@ -116,9 +115,9 @@ def test_interpolation_deprecated(param_wo, param_go):
 def test_make_scalrecommendation():
     """Test that we can make scal recommendation objects
     from three WaterOilGas objects"""
-    low = PyscalFactory.create_water_oil_gas(low_sample_let)
-    base = PyscalFactory.create_water_oil_gas(base_sample_let)
-    high = PyscalFactory.create_water_oil_gas(high_sample_let)
+    low = PyscalFactory.create_water_oil_gas(LOW_SAMPLE_LET)
+    base = PyscalFactory.create_water_oil_gas(BASE_SAMPLE_LET)
+    high = PyscalFactory.create_water_oil_gas(HIGH_SAMPLE_LET)
     rec = SCALrecommendation(low, base, high)
     interpolant = rec.interpolate(-0.5)
     check_table_wo(interpolant.wateroil.table)
@@ -131,7 +130,7 @@ def test_make_scalrecommendation():
 )
 def test_interpolation(param_wo, param_go):
     rec = PyscalFactory.create_scal_recommendation(
-        {"low": low_sample_let, "base": base_sample_let, "high": high_sample_let},
+        {"low": LOW_SAMPLE_LET, "base": BASE_SAMPLE_LET, "high": HIGH_SAMPLE_LET},
         "foo",
         h=0.1,
     )
@@ -159,9 +158,10 @@ def test_interpolation(param_wo, param_go):
 
     assert sum(interpolant.wateroil.table["pc"])
 
+
 def test_boundary_cases():
     rec = PyscalFactory.create_scal_recommendation(
-        {"low": low_sample_let, "base": base_sample_let, "high": high_sample_let},
+        {"low": LOW_SAMPLE_LET, "base": BASE_SAMPLE_LET, "high": HIGH_SAMPLE_LET},
         "foo",
         h=0.1,
     )

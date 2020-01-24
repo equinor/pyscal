@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-"""Test module for relperm"""
+"""Test module for the saturation ranges in WaterOil objects"""
 
 from __future__ import absolute_import
 from __future__ import division
@@ -15,6 +14,8 @@ from test_wateroil import float_df_checker
 
 
 def check_table(df):
+    """Check that the numbers in a dataframe has the properties
+    that Eclipse enforces"""
     assert not df.empty
     assert not df.isnull().values.any()
     assert len(df["sw"].unique()) == len(df)
@@ -53,55 +54,59 @@ def test_wateroil_random(swirr, swl, swcr, sorw, h, tag):
 )
 def test_wateroil_normalization(swirr, swl, swcr, sorw, h, tag):
     """Shoot with more realistic values and test normalized saturations"""
-    wo = WaterOil(swirr=swirr, swl=swl, swcr=swcr, sorw=sorw, h=h, tag=tag)
-    assert not wo.table.empty
-    assert not wo.table.isnull().values.any()
+    wateroil = WaterOil(swirr=swirr, swl=swl, swcr=swcr, sorw=sorw, h=h, tag=tag)
+    assert not wateroil.table.empty
+    assert not wateroil.table.isnull().values.any()
 
     # Check that son is 1 at swcr:
-    assert float_df_checker(wo.table, "sw", wo.swcr, "son", 1)
+    assert float_df_checker(wateroil.table, "sw", wateroil.swcr, "son", 1)
     # Check that son is 0 at sorw:
-    if wo.sorw > h:
-        assert float_df_checker(wo.table, "sw", 1 - wo.sorw, "son", 0)
+    if wateroil.sorw > h:
+        assert float_df_checker(wateroil.table, "sw", 1 - wateroil.sorw, "son", 0)
 
     # Check that swn is 0 at swcr:
-    assert float_df_checker(wo.table, "sw", wo.swcr, "swn", 0)
+    assert float_df_checker(wateroil.table, "sw", wateroil.swcr, "swn", 0)
     # Check that swn is 1 at 1 - sorw
-    if wo.sorw > 1 / SWINTEGERS:
-        assert float_df_checker(wo.table, "sw", 1 - wo.sorw, "swn", 1)
+    if wateroil.sorw > 1 / SWINTEGERS:
+        assert float_df_checker(wateroil.table, "sw", 1 - wateroil.sorw, "swn", 1)
 
     # Check that swnpc is 0 at swirr and 1 at 1:
-    if wo.swirr >= wo.swl + h:
-        assert float_df_checker(wo.table, "sw", wo.swirr, "swnpc", 0)
+    if wateroil.swirr >= wateroil.swl + h:
+        assert float_df_checker(wateroil.table, "sw", wateroil.swirr, "swnpc", 0)
     else:
         # Let this go, when swirr is too close to swl. We
         # are not guaranteed to have sw=swirr present
         pass
 
-    assert float_df_checker(wo.table, "sw", 1.0, "swnpc", 1)
+    assert float_df_checker(wateroil.table, "sw", 1.0, "swnpc", 1)
 
 
 @given(st.floats(min_value=0, max_value=1))
 def test_wateroil_swir(swirr):
-    wo = WaterOil(swirr=swirr)
-    check_table(wo.table)
+    """Check that the saturation values are valid for all swirr"""
+    wateroil = WaterOil(swirr=swirr)
+    check_table(wateroil.table)
 
 
 @given(st.floats(min_value=0, max_value=1))
 def test_wateroil_swl(swl):
-    wo = WaterOil(swl=swl)
-    check_table(wo.table)
+    """Check that the saturation values are valid for all swl"""
+    wateroil = WaterOil(swl=swl)
+    check_table(wateroil.table)
 
 
 @given(st.floats(min_value=0, max_value=1))
 def test_wateroil_swcr(swcr):
-    wo = WaterOil(swcr=swcr)
-    check_table(wo.table)
+    """Check that the saturation values are valid for all swcr"""
+    wateroil = WaterOil(swcr=swcr)
+    check_table(wateroil.table)
 
 
 @given(st.floats(min_value=0, max_value=1))
 def test_wateroil_sorw(sorw):
-    wo = WaterOil(sorw=sorw)
-    check_table(wo.table)
+    """Check that the saturation values are valid for all sorw"""
+    wateroil = WaterOil(sorw=sorw)
+    check_table(wateroil.table)
 
 
 # Test combination of 2 floats as parameters:
@@ -109,26 +114,26 @@ def test_wateroil_sorw(sorw):
 @given(st.floats(min_value=0, max_value=1), st.floats(min_value=0, max_value=1))
 def test_wateroil_dual(p1, p2):
     try:
-        wo = WaterOil(swl=p1, sorw=p2)
-        check_table(wo.table)
+        wateroil = WaterOil(swl=p1, sorw=p2)
+        check_table(wateroil.table)
         # Will fail when swl > 1 - sorw
     except AssertionError:
         pass
 
     try:
-        wo = WaterOil(swl=p1, swirr=p2)
-        check_table(wo.table)
+        wateroil = WaterOil(swl=p1, swirr=p2)
+        check_table(wateroil.table)
     except AssertionError:
         pass
 
     try:
-        wo = WaterOil(swcr=p1, sorw=p2)
-        check_table(wo.table)
+        wateroil = WaterOil(swcr=p1, sorw=p2)
+        check_table(wateroil.table)
     except AssertionError:
         pass
 
     try:
-        wo = WaterOil(swirr=p1, sorw=p2)
-        check_table(wo.table)
+        wateroil = WaterOil(swirr=p1, sorw=p2)
+        check_table(wateroil.table)
     except AssertionError:
         pass

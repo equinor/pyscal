@@ -46,7 +46,7 @@ wo.add_corey_oil(now=3)
 print(wo.SWOF())
 ```
 which will produce the string
-```
+```console
 SWOF
 --
 -- Sw Krw Krow Pc

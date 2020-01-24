@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """A module for creating relative permeability input curves for
 Eclipse and Nexus.
 """
@@ -7,12 +6,12 @@ from __future__ import division, absolute_import
 from __future__ import print_function
 
 
-from .utils import interpolator
-from .wateroil import WaterOil
-from .wateroilgas import WaterOilGas
-from .gasoil import GasOil
-from .scalrecommendation import SCALrecommendation
-from .factory import PyscalFactory
+from .utils import interpolator  # noqa
+from .wateroil import WaterOil  # noqa
+from .wateroilgas import WaterOilGas  # noqa
+from .gasoil import GasOil  # noqa
+from .scalrecommendation import SCALrecommendation  # noqa
+from .factory import PyscalFactory  # noqa
 
 
 from ._version import get_versions

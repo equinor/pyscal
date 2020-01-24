@@ -1,12 +1,13 @@
-# -*- coding: utf-8 -*-
+"""Wateroil module"""
 from __future__ import division, absolute_import
 from __future__ import print_function
 
 import math
 import logging
+import six
+
 import numpy as np
 import pandas as pd
-import six
 
 from pyscal.constants import EPSILON as epsilon
 from pyscal.constants import SWINTEGERS
@@ -143,7 +144,7 @@ class WaterOil(object):
 
     def add_fromtable(
         self,
-        df,
+        dframe,
         swcolname="Sw",
         krwcolname="krw",
         krowcolname="krow",
@@ -174,7 +175,7 @@ class WaterOil(object):
         files to dataframes.
 
         Args:
-            df (pd.DataFrame): containing data
+            dframe (pd.DataFrame): containing data
             swcolname (string): column name with the saturation data in the dataframe df
             krwcolname (string): name of column in df with krw
             krowcolname (string): name of column in df with krow
@@ -188,28 +189,28 @@ class WaterOil(object):
         from scipy.interpolate import PchipInterpolator, interp1d
 
         # Avoid having to deal with multi-indices:
-        if len(df.index.names) > 1:
+        if len(dframe.index.names) > 1:
             logger.warning(
                 "add_fromtable() did a reset_index(), consider not supplying MultiIndex"
             )
-            df = df.reset_index()
+            dframe = dframe.reset_index()
 
-        if swcolname not in df:
+        if swcolname not in dframe:
             logger.critical(
                 "%s not found in dataframe, can't read table data", swcolname
             )
             raise ValueError
-        if (df[swcolname].diff() < 0).any():
+        if (dframe[swcolname].diff() < 0).any():
             raise ValueError("sw data not sorted")
-        if krwcolname in df:
+        if krwcolname in dframe:
             if not sorw:
-                sorw = df[swcolname].max() - utils.estimate_diffjumppoint(
-                    df, xcol=swcolname, ycol=krwcolname, side="right"
+                sorw = dframe[swcolname].max() - utils.estimate_diffjumppoint(
+                    dframe, xcol=swcolname, ycol=krwcolname, side="right"
                 )
                 logger.info("Estimated sorw in tabular data to %f", sorw)
             assert -epsilon <= sorw <= 1 + epsilon
-            linearpart = df[swcolname] >= 1 - sorw
-            nonlinearpart = df[swcolname] <= 1 - sorw  # (overlapping at sorw)
+            linearpart = dframe[swcolname] >= 1 - sorw
+            nonlinearpart = dframe[swcolname] <= 1 - sorw  # (overlapping at sorw)
             if sum(linearpart) < 2:
                 linearpart = pd.Series([False] * len(linearpart))
                 nonlinearpart = ~linearpart
@@ -217,23 +218,23 @@ class WaterOil(object):
             if sum(nonlinearpart) < 2:
                 nonlinearpart = pd.Series([False] * len(nonlinearpart))
                 linearpart = ~nonlinearpart
-            if not np.isclose(df[swcolname].min(), self.table["sw"].min()):
+            if not np.isclose(dframe[swcolname].min(), self.table["sw"].min()):
                 raise ValueError("Incompatible swl")
             # Verify that incoming data is increasing (or level):
-            if not (df[krwcolname].diff().dropna() > -epsilon).all():
+            if not (dframe[krwcolname].diff().dropna() > -epsilon).all():
                 raise ValueError("Incoming krw not increasing")
             if sum(nonlinearpart) >= 2:
                 pchip = PchipInterpolator(
-                    df[nonlinearpart][swcolname].astype(float),
-                    df[nonlinearpart][krwcolname].astype(float),
+                    dframe[nonlinearpart][swcolname].astype(float),
+                    dframe[nonlinearpart][krwcolname].astype(float),
                 )
                 self.table.loc[self.table["sw"] <= 1 - sorw, "krw"] = pchip(
                     self.table.loc[self.table["sw"] <= 1 - sorw, "sw"]
                 )
             if sum(linearpart) >= 2:
                 linearinterpolator = interp1d(
-                    df[linearpart][swcolname].astype(float),
-                    df[linearpart][krwcolname].astype(float),
+                    dframe[linearpart][swcolname].astype(float),
+                    dframe[linearpart][krwcolname].astype(float),
                 )
                 self.table.loc[self.table["sw"] > 1 - sorw, "krw"] = linearinterpolator(
                     self.table.loc[self.table["sw"] > 1 - sorw, "sw"]
@@ -241,15 +242,15 @@ class WaterOil(object):
             self.sorw = sorw
             self.krwcomment = "-- krw from tabular input" + krwcomment + "\n"
 
-        if krowcolname in df:
+        if krowcolname in dframe:
             if not sorw:
-                sorw = df[swcolname].max() - utils.estimate_diffjumppoint(
-                    df, xcol=swcolname, ycol=krowcolname, side="right"
+                sorw = dframe[swcolname].max() - utils.estimate_diffjumppoint(
+                    dframe, xcol=swcolname, ycol=krowcolname, side="right"
                 )
                 logger.info("Estimated sorw in tabular data from krow to %s", sorw)
             assert -epsilon <= sorw <= 1 + epsilon
-            linearpart = df[swcolname] >= 1 - sorw
-            nonlinearpart = df[swcolname] <= 1 - sorw  # (overlapping at sorw)
+            linearpart = dframe[swcolname] >= 1 - sorw
+            nonlinearpart = dframe[swcolname] <= 1 - sorw  # (overlapping at sorw)
             if sum(linearpart) < 2:
                 linearpart = pd.Series([False] * len(linearpart))
                 nonlinearpart = ~linearpart
@@ -257,22 +258,22 @@ class WaterOil(object):
             if sum(nonlinearpart) < 2:
                 nonlinearpart = pd.Series([False] * len(nonlinearpart))
                 linearpart = ~nonlinearpart
-            if not np.isclose(df[swcolname].min(), self.table["sw"].min()):
+            if not np.isclose(dframe[swcolname].min(), self.table["sw"].min()):
                 raise ValueError("Incompatible swl")
-            if not (df[krowcolname].diff().dropna() < epsilon).all():
+            if not (dframe[krowcolname].diff().dropna() < epsilon).all():
                 raise ValueError("Incoming krow not decreasing")
             if sum(nonlinearpart) >= 2:
                 pchip = PchipInterpolator(
-                    df[nonlinearpart][swcolname].astype(float),
-                    df[nonlinearpart][krowcolname].astype(float),
+                    dframe[nonlinearpart][swcolname].astype(float),
+                    dframe[nonlinearpart][krowcolname].astype(float),
                 )
                 self.table.loc[self.table["sw"] <= 1 - sorw, "krow"] = pchip(
                     self.table.loc[self.table["sw"] <= 1 - sorw, "sw"]
                 )
             if sum(linearpart) >= 2:
                 linearinterpolator = interp1d(
-                    df[linearpart][swcolname].astype(float),
-                    df[linearpart][krowcolname].astype(float),
+                    dframe[linearpart][swcolname].astype(float),
+                    dframe[linearpart][krowcolname].astype(float),
                 )
                 self.table.loc[
                     self.table["sw"] > 1 - sorw, "krow"
@@ -281,27 +282,27 @@ class WaterOil(object):
                 )
             self.sorw = sorw
             self.krowcomment = "-- krow from tabular input" + krowcomment + "\n"
-        if pccolname in df:
+        if pccolname in dframe:
             # Incoming dataframe must cover the range:
-            if df[swcolname].min() > self.table["sw"].min():
+            if dframe[swcolname].min() > self.table["sw"].min():
                 raise ValueError("Too large swl for pc interpolation")
-            if df[swcolname].max() < self.table["sw"].max():
+            if dframe[swcolname].max() < self.table["sw"].max():
                 raise ValueError("max(sw) of incoming data not large enough")
-            if np.isinf(df[pccolname]).any():
+            if np.isinf(dframe[pccolname]).any():
                 logger.warning(
                     (
                         "Infinity pc values detected. Will be dropped. "
                         "Risk of extrapolation"
                     )
                 )
-            df = df.replace([np.inf, -np.inf], np.nan)
-            df.dropna(subset=[pccolname], how="all", inplace=True)
+            dframe = dframe.replace([np.inf, -np.inf], np.nan)
+            dframe.dropna(subset=[pccolname], how="all", inplace=True)
             # If nonzero, then it must be decreasing:
-            if df[pccolname].abs().sum() > 0:
-                if not (df[pccolname].diff().dropna() < 0.0).all():
+            if dframe[pccolname].abs().sum() > 0:
+                if not (dframe[pccolname].diff().dropna() < 0.0).all():
                     raise ValueError("Incoming pc not decreasing")
             pchip = PchipInterpolator(
-                df[swcolname].astype(float), df[pccolname].astype(float)
+                dframe[swcolname].astype(float), dframe[pccolname].astype(float)
             )
             self.table["pc"] = pchip(self.table["sw"])
             if np.isnan(self.table["pc"]).any() or np.isinf(self.table["pc"]).any():
@@ -586,6 +587,8 @@ class WaterOil(object):
         )
 
     def add_normalized_J(self, a, b, poro, perm, sigma_costau):
+        # Don't make this a raw string to avoid the \l warning,
+        # it destroys the Latex-formatting in sphinx
         """
         Add capillary pressure in bar through a normalized J-function.
 
@@ -693,7 +696,7 @@ class WaterOil(object):
             logger.error("sor must be contained in [0,1]")
             inputerror = True
         if inputerror:
-            return False
+            return
         self.pccomment = (
             "-- Skjæveland correlation for Pc;\n"
             + "-- cw=%g, co=%g, aw=%g, ao=%g, swr=%g, sor=%g\n"
@@ -938,9 +941,8 @@ class WaterOil(object):
                 error = True
         if error:
             return False
-        else:
-            logger.info("WaterOil object is checked to be valid")
-            return True
+        logger.info("WaterOil object is checked to be valid")
+        return True
 
     def SWOF(self, header=True, dataincommentrow=True):
         """
@@ -961,7 +963,8 @@ class WaterOil(object):
                 be printed. Defualt True
         """
         if not self.fast and not self.selfcheck():
-            return
+            # selfcheck failed and has issued an error message
+            return ""
         string = ""
         if "pc" not in self.table.columns:
             self.table["pc"] = 0
@@ -985,7 +988,8 @@ class WaterOil(object):
 
     def SWFN(self, header=True, dataincommentrow=True):
         if not self.selfcheck():
-            return
+            # selfcheck will print errors/warnings
+            return ""
         string = ""
         if "pc" not in self.table.columns:
             self.table["pc"] = 0
