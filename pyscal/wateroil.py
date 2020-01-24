@@ -442,7 +442,7 @@ class WaterOil(object):
             / ((self.table.swn ** l) + e * (1 - self.table.swn) ** t)
         )
         # This equation is undefined for t a float and swn=1, set explicitly:
-        self.table.loc[np.isclose(self.table['swn'], 1.0), "krw"] = krwend
+        self.table.loc[np.isclose(self.table["swn"], 1.0), "krw"] = krwend
 
         self.set_endpoints_linearpart_krw(krwend, krwmax)
 
@@ -486,7 +486,7 @@ class WaterOil(object):
             / ((self.table.son ** l) + e * (1 - self.table.son) ** t)
         )
         # This equation is undefined for t a float and son=1, set explicitly:
-        self.table.loc[np.isclose(self.table['son'], 1.0), "krow"] = kroend
+        self.table.loc[np.isclose(self.table["son"], 1.0), "krow"] = kroend
 
         self.table.loc[self.table.sw >= (1 - self.sorw), "krow"] = 0
 

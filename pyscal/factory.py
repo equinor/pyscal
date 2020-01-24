@@ -28,7 +28,7 @@ WO_COREY_OIL = ["now"]
 WO_LET_WATER = ["lw", "ew", "tw"]  # Will translated to l, e and t in code below.
 WO_LET_OIL = ["low", "eow", "tow"]
 WO_LET_OIL_ALT = ["lo", "eo", "to"]  # Alternative parameter names.
-WO_OIL_ENDPOINTS = ["kromax", "kroend"]
+WO_OIL_ENDPOINTS = ["kromax", "krowend"]
 WO_SIMPLE_J = ["a", "b", "poro_ref", "perm_ref", "drho"]  # "g" is optional
 WO_NORM_J = ["a", "b", "poro", "perm", "sigma_costau"]
 
@@ -36,11 +36,13 @@ GO_INIT = ["swirr", "sgcr", "sorg", "swl", "krgendanchor", "h", "tag"]
 GO_COREY_GAS = ["ng"]
 GO_GAS_ENDPOINTS = ["krgend", "krgmax"]
 GO_COREY_OIL = ["nog"]
-GO_OIL_ENDPOINTS = ["kroend"]
+GO_OIL_ENDPOINTS = ["krogend"]
 GO_LET_GAS = ["lg", "eg", "tg"]
 GO_LET_OIL = ["log", "eog", "tog"]
 
 WOG_INIT = ["swirr", "swl", "swcr", "sorw", "sorg", "sgcr", "h", "tag"]
+
+DEPRECATED = ["kroend"]  # This key will be ignored, as it it ambiguous.
 
 
 class PyscalFactory(object):
@@ -86,7 +88,7 @@ class PyscalFactory(object):
 
         Recognized parameters:
           swirr, swl, swcr, sorw, h, tag, nw, now, krwmax, krwend,
-          lw, ew, tw, low, eow, tow, lo, eo, to, kromax, kroend,
+          lw, ew, tw, low, eow, tow, lo, eo, to, kromax, krowend,
           a, b, poro_ref, perm_ref, drho,
           a, b, poro, perm, sigma_costau
         """
@@ -94,6 +96,8 @@ class PyscalFactory(object):
             params = dict()
         if not isinstance(params, dict):
             raise TypeError("Parameter to create_water_oil must be a dictionary")
+
+        check_deprecated(params)
 
         # For case insensitiveness, all keys are converted to lower case:
         params = {key.lower(): value for (key, value) in params.items()}
@@ -137,6 +141,8 @@ class PyscalFactory(object):
             params, WO_LET_OIL + WO_LET_OIL_ALT + WO_OIL_ENDPOINTS
         )
         if set(WO_COREY_OIL).issubset(set(params_corey_oil)):
+            if "krowenc" in params_corey_oil:
+                params_corey_oil["kroend"] = params_corey_oil.pop("krowend")
             wateroil.add_corey_oil(**params_corey_oil)
             logger.info(
                 "Added Corey water to WaterOil object from parameters %s",
@@ -146,6 +152,8 @@ class PyscalFactory(object):
             params_let_oil["l"] = params_let_oil.pop("low")
             params_let_oil["e"] = params_let_oil.pop("eow")
             params_let_oil["t"] = params_let_oil.pop("tow")
+            if "krowend" in params_let_oil:
+                params_let_oil["kroend"] = params_let_oil.pop("krowend")
             wateroil.add_LET_oil(**params_let_oil)
             logger.info(
                 "Added LET water to WaterOil object from parameters %s",
@@ -155,6 +163,8 @@ class PyscalFactory(object):
             params_let_oil["l"] = params_let_oil.pop("lo")
             params_let_oil["e"] = params_let_oil.pop("eo")
             params_let_oil["t"] = params_let_oil.pop("to")
+            if "krowend" in params_let_oil:
+                params_let_oil["kroend"] = params_let_oil.pop("krowend")
             wateroil.add_LET_oil(**params_let_oil)
             logger.info(
                 "Added LET water to WaterOil object from parameters %s",
@@ -195,11 +205,12 @@ class PyscalFactory(object):
         NB: the add_LET_* methods have the names 'l', 'e' and 't'
         in their signatures, which is not precise enough in this
         context, so we require e.g. 'Lg' and 'Log' (which both will be
-        translated to 'l')
+        translated to 'l'). Also note that in this factory context,
+        kroend is an ambiguous parametre, krogend must be used.
 
         Recognized parameters:
           swirr, sgcr, "sorg, swl, krgendanchor, h, tag,
-          ng, krgend, krgmax, nog, kroend,
+          ng, krgend, krgmax, nog, krogend,
           lg, eg, tg, log, eog, tog
 
         """
@@ -207,6 +218,8 @@ class PyscalFactory(object):
             params = dict()
         if not isinstance(params, dict):
             raise TypeError("Parameter to create_gas_oil must be a dictionary")
+
+        check_deprecated(params)
 
         # For case insensitiveness, all keys are converted to lower case:
         params = {key.lower(): value for (key, value) in params.items()}
@@ -248,6 +261,8 @@ class PyscalFactory(object):
         params_corey_oil = slicedict(params, GO_COREY_OIL + GO_OIL_ENDPOINTS)
         params_let_oil = slicedict(params, GO_LET_OIL + GO_OIL_ENDPOINTS)
         if set(GO_COREY_OIL).issubset(set(params_corey_oil)):
+            if "krogend" in params_corey_oil:
+                params_corey_oil["kroend"] = params_corey_oil.pop("krogend")
             gasoil.add_corey_oil(**params_corey_oil)
             logger.info(
                 "Added Corey gas to GasOil object from parameters %s",
@@ -257,6 +272,8 @@ class PyscalFactory(object):
             params_let_oil["l"] = params_let_oil.pop("log")
             params_let_oil["e"] = params_let_oil.pop("eog")
             params_let_oil["t"] = params_let_oil.pop("tog")
+            if "krogend" in params_corey_oil:
+                params_let_oil["kroend"] = params_let_oil.pop("krogend")
             gasoil.add_LET_oil(**params_let_oil)
             logger.info(
                 "Added LET gas to GasOil object from parameters %s",
@@ -287,6 +304,8 @@ class PyscalFactory(object):
             params = dict()
         if not isinstance(params, dict):
             raise TypeError("Parameter to create_water_oil_gas must be a dictionary")
+
+        check_deprecated(params)
 
         # For case insensitiveness, all keys are converted to lower case:
         params = {key.lower(): value for (key, value) in params.items()}
@@ -341,6 +360,10 @@ class PyscalFactory(object):
         if not all([isinstance(x, dict) for x in params.values()]):
             raise ValueError("All values in parameter dict must be dictionaries")
 
+        check_deprecated(params["low"])
+        check_deprecated(params["base"])
+        check_deprecated(params["high"])
+
         errored = False
         wog_low = PyscalFactory.create_water_oil_gas(params["low"])
         if not wog_low.selfcheck():
@@ -369,3 +392,16 @@ class PyscalFactory(object):
     def create_wog_list():
         """Reserved for future implementation"""
         raise NotImplementedError
+
+
+def check_deprecated(params):
+    """Check for deprecated parameter names
+
+    Args:
+        params: Dictionary of parameters for which only the keys are used here.
+    """
+    for key in params:
+        if key.lower() in DEPRECATED:
+            logger.warning(
+                "The key %s to PyscalFactory is deprecated and will be ignored", key
+            )
