@@ -246,7 +246,7 @@ class SCALrecommendation(object):
             interpolant.gasoil = self.high.gasoil
         elif gasparameter < 0.0:
             interpolant.gasoil = utils.interpolate_go(
-                self.base.gasoil, self.low.gasoil, -gasparameter, h=h
+                self.base.gasoil, self.low.gasoil, -1 * gasparameter, h=h
             )
         elif gasparameter > 0.0:
             interpolant.gasoil = utils.interpolate_go(

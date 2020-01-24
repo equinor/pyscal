@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+"""Container object for one WaterOil and one GasOil object"""
 from __future__ import division, absolute_import
 from __future__ import print_function
 
@@ -178,10 +178,9 @@ class WaterOilGas(object):
         # in grid cell (i, j, k) for saturation endpoints sgu=0.78,
         # swl=0.45, (1-swl) = 0.55
 
-        if len(errors):
+        if errors:
             return errors
-        else:
-            return ""
+        return ""
 
     def run_eclipse_test(self):
         """Start the Eclipse simulator on a minimal deck in order to

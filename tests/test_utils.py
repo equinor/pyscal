@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Test module for pyscal.utils"""
 
 from __future__ import absolute_import
@@ -22,17 +21,17 @@ def test_diffjumppoint():
 
     This code is also extensively tested throuth test_addfromtable"""
 
-    df = pd.DataFrame(columns=["x", "y"], data=[[0, 0], [0.3, 0.2], [1, 1]])
+    dframe = pd.DataFrame(columns=["x", "y"], data=[[0, 0], [0.3, 0.2], [1, 1]])
 
-    assert utils.estimate_diffjumppoint(df, side="right") == 0.3
-    assert utils.estimate_diffjumppoint(df, side="left") == 0.3
+    assert utils.estimate_diffjumppoint(dframe, side="right") == 0.3
+    assert utils.estimate_diffjumppoint(dframe, side="left") == 0.3
 
-    df = pd.DataFrame(columns=["x", "y"], data=[[0, 0], [1, 1]])
+    dframe = pd.DataFrame(columns=["x", "y"], data=[[0, 0], [1, 1]])
     # We don't really care what gets printed from this, just don't crash..
-    assert 0 <= utils.estimate_diffjumppoint(df, side="right") <= 1
-    assert 0 <= utils.estimate_diffjumppoint(df, side="left") <= 1
+    assert 0 <= utils.estimate_diffjumppoint(dframe, side="right") <= 1
+    assert 0 <= utils.estimate_diffjumppoint(dframe, side="left") <= 1
 
-    df = pd.DataFrame(
+    dframe = pd.DataFrame(
         columns=["x", "y"],
         data=[
             [0, 0],
@@ -45,10 +44,10 @@ def test_diffjumppoint():
             [1, 1],
         ],
     )
-    assert utils.estimate_diffjumppoint(df, side="left") == 0.2
-    assert utils.estimate_diffjumppoint(df, side="right") == 0.7
+    assert utils.estimate_diffjumppoint(dframe, side="left") == 0.2
+    assert utils.estimate_diffjumppoint(dframe, side="right") == 0.7
 
-    df = pd.DataFrame(
+    dframe = pd.DataFrame(
         columns=["x", "y"],
         data=[
             [0, 0],
@@ -59,8 +58,8 @@ def test_diffjumppoint():
             [1, 1],
         ],
     )
-    assert utils.estimate_diffjumppoint(df, side="left") == 0.2
-    assert utils.estimate_diffjumppoint(df, side="right") == 0.9
+    assert utils.estimate_diffjumppoint(dframe, side="left") == 0.2
+    assert utils.estimate_diffjumppoint(dframe, side="right") == 0.9
 
 
 @settings(deadline=1000)
@@ -69,7 +68,6 @@ def test_diffjumppoint():
     st.floats(min_value=0, max_value=0.0),  # dswcr
     st.floats(min_value=0, max_value=0.1),  # dswlhigh
     st.floats(min_value=0, max_value=0.3),  # sorw
-    st.floats(min_value=0, max_value=0.1),  # dsorw
     st.floats(min_value=0.1, max_value=5),  # nw1
     st.floats(min_value=0.1, max_value=1),  # krwend1
     st.floats(min_value=0.1, max_value=5),  # now1
@@ -80,19 +78,7 @@ def test_diffjumppoint():
     st.floats(min_value=0.1, max_value=1),  # kroend2
 )
 def test_normalize_nonlinpart_wo_hypo(
-    swl,
-    dswcr,
-    dswlhigh,
-    sorw,
-    dsorw,
-    nw1,
-    krwend1,
-    now1,
-    kroend1,
-    nw2,
-    krwend2,
-    now2,
-    kroend2,
+    swl, dswcr, dswlhigh, sorw, nw1, krwend1, now1, kroend1, nw2, krwend2, now2, kroend2
 ):
     """Test the normalization code in utils.
 
@@ -125,35 +111,38 @@ def test_normalize_nonlinpart_wo_hypo(
     st.floats(min_value=0.01, max_value=0.3),  # dswl
 )
 def test_normalize_pc(swirr, dswl):
-    wo = WaterOil(swirr=swirr, swl=swirr + dswl)
-    wo.add_simple_J()
-    pc_max = wo.table["pc"].max()
-    pc_min = wo.table["pc"].min()
+    """Test that we can normalize a pc curve"""
+    wateroil = WaterOil(swirr=swirr, swl=swirr + dswl)
+    wateroil.add_simple_J()
+    pc_max = wateroil.table["pc"].max()
+    pc_min = wateroil.table["pc"].min()
 
-    pc_fn = utils.normalize_pc(wo)
+    pc_fn = utils.normalize_pc(wateroil)
     assert np.isclose(pc_fn(0), pc_max)
     assert np.isclose(pc_fn(1), pc_min)
 
 
 def test_normalize_emptypc():
-    wo = WaterOil()
-    pc_fn = utils.normalize_pc(wo)
+    """Test that we can normalize both
+    when pc is missing, and when it is all zero"""
+    wateroil = WaterOil()
+    pc_fn = utils.normalize_pc(wateroil)
     assert np.isclose(pc_fn(0), 0)
     assert np.isclose(pc_fn(1), 0)
 
-    wo = WaterOil(swl=0.01)
-    wo.add_simple_J(g=0)
-    pc_fn = utils.normalize_pc(wo)
+    wateroil = WaterOil(swl=0.01)
+    wateroil.add_simple_J(g=0)
+    pc_fn = utils.normalize_pc(wateroil)
     assert np.isclose(pc_fn(0), 0)
     assert np.isclose(pc_fn(1), 0)
 
 
 def test_normalize_nonlinpart_wo():
     """Manual tests for utils.normalize_nonlinpart_wo"""
-    wo = WaterOil(swl=0.1, swcr=0.12, sorw=0.05, h=0.05)
-    wo.add_corey_water(nw=2.1, krwend=0.9)
-    wo.add_corey_oil(now=3, kroend=0.8)
-    krwn, kron = utils.normalize_nonlinpart_wo(wo)
+    wateroil = WaterOil(swl=0.1, swcr=0.12, sorw=0.05, h=0.05)
+    wateroil.add_corey_water(nw=2.1, krwend=0.9)
+    wateroil.add_corey_oil(now=3, kroend=0.8)
+    krwn, kron = utils.normalize_nonlinpart_wo(wateroil)
 
     assert np.isclose(krwn(0), 0)
     assert np.isclose(krwn(1), 0.9)
@@ -164,33 +153,33 @@ def test_normalize_nonlinpart_wo():
 
     # Test with tricky endpoints
     h = 0.01
-    wo = WaterOil(swl=h, swcr=h, sorw=h, h=h)
-    wo.add_corey_water(nw=2.1, krwend=0.9)
-    wo.add_corey_oil(now=3, kroend=0.8)
-    krwn, kron = utils.normalize_nonlinpart_wo(wo)
+    wateroil = WaterOil(swl=h, swcr=h, sorw=h, h=h)
+    wateroil.add_corey_water(nw=2.1, krwend=0.9)
+    wateroil.add_corey_oil(now=3, kroend=0.8)
+    krwn, kron = utils.normalize_nonlinpart_wo(wateroil)
     assert np.isclose(krwn(0), 0.0)
     assert np.isclose(krwn(1), 0.9)
     assert np.isclose(kron(0), 0)
     assert np.isclose(kron(1), 0.8)
 
     # Test again with zero endpoints:
-    wo = WaterOil(swl=0, swcr=0, sorw=0, h=0.01)
-    wo.add_corey_water(nw=2.1, krwend=0.9)
-    wo.add_corey_oil(now=3, kroend=0.8)
-    krwn, kron = utils.normalize_nonlinpart_wo(wo)
+    wateroil = WaterOil(swl=0, swcr=0, sorw=0, h=0.01)
+    wateroil.add_corey_water(nw=2.1, krwend=0.9)
+    wateroil.add_corey_oil(now=3, kroend=0.8)
+    krwn, kron = utils.normalize_nonlinpart_wo(wateroil)
     assert np.isclose(krwn(0), 0.0)
     assert np.isclose(krwn(1), 0.9)
     assert np.isclose(kron(0), 0)
     assert np.isclose(kron(1), 0.8)
 
     # Test when endpoints are messed up:
-    wo = WaterOil(swl=0.1, swcr=0.2, sorw=0.1, h=0.1)
-    wo.add_corey_water(nw=2.1, krwend=0.6)
-    wo.add_corey_oil(now=3, kroend=0.8)
-    wo.swl = 0
-    wo.swcr = 0
-    wo.sorw = 0
-    krwn, kron = utils.normalize_nonlinpart_wo(wo)
+    wateroil = WaterOil(swl=0.1, swcr=0.2, sorw=0.1, h=0.1)
+    wateroil.add_corey_water(nw=2.1, krwend=0.6)
+    wateroil.add_corey_oil(now=3, kroend=0.8)
+    wateroil.swl = 0
+    wateroil.swcr = 0
+    wateroil.sorw = 0
+    krwn, kron = utils.normalize_nonlinpart_wo(wateroil)
     # These go well still, since we are at zero
     assert np.isclose(krwn(0), 0.0)
     assert np.isclose(kron(0), 0)
@@ -199,11 +188,11 @@ def test_normalize_nonlinpart_wo():
     assert not np.isclose(kron(1), 0.8)
 
     # So fix endpoints!
-    wo.swl = wo.table["sw"].min()
-    wo.swcr = wo.estimate_swcr()
-    wo.sorw = wo.estimate_sorw()
+    wateroil.swl = wateroil.table["sw"].min()
+    wateroil.swcr = wateroil.estimate_swcr()
+    wateroil.sorw = wateroil.estimate_sorw()
     # Try again
-    krwn, kron = utils.normalize_nonlinpart_wo(wo)
+    krwn, kron = utils.normalize_nonlinpart_wo(wateroil)
     assert np.isclose(krwn(0), 0.0)
     assert np.isclose(kron(0), 0)
     assert np.isclose(krwn(1), 0.6)
@@ -257,8 +246,8 @@ def test_interpolate_wo(
     wo_high.add_corey_oil(now=now_h, kroend=kroend_h)
     ips = []
     ip_dist = 0.05
-    for t in np.arange(0, 1 + ip_dist, ip_dist):
-        wo_ip = utils.interpolate_wo(wo_low, wo_high, t)
+    for tparam in np.arange(0, 1 + ip_dist, ip_dist):
+        wo_ip = utils.interpolate_wo(wo_low, wo_high, tparam)
         check_table_wo(wo_ip.table)
         ips.append(wo_ip)
         assert 0 < wo_ip.crosspoint() < 1
@@ -433,10 +422,10 @@ def test_normalize_nonlinpart_go_hypo(
 
 def test_normalize_nonlinpart_go():
     """Manual tests for utils.normalize_nonlinpart_go"""
-    go = GasOil(swl=0.1, sgcr=0.12, sorg=0.05, h=0.05)
-    go.add_corey_gas(ng=2.1, krgend=0.9)
-    go.add_corey_oil(nog=3, kroend=0.8)
-    krgn, kron = utils.normalize_nonlinpart_go(go)
+    gasoil = GasOil(swl=0.1, sgcr=0.12, sorg=0.05, h=0.05)
+    gasoil.add_corey_gas(ng=2.1, krgend=0.9)
+    gasoil.add_corey_oil(nog=3, kroend=0.8)
+    krgn, kron = utils.normalize_nonlinpart_go(gasoil)
 
     assert np.isclose(krgn(0), 0)
     assert np.isclose(krgn(1), 0.9)
@@ -447,33 +436,33 @@ def test_normalize_nonlinpart_go():
 
     # Test with tricky endpoints
     h = 0.01
-    go = GasOil(swl=h, sgcr=h, sorg=h, h=h)
-    go.add_corey_gas(ng=2.1, krgend=0.9)
-    go.add_corey_oil(nog=3, kroend=0.8)
-    krgn, kron = utils.normalize_nonlinpart_go(go)
+    gasoil = GasOil(swl=h, sgcr=h, sorg=h, h=h)
+    gasoil.add_corey_gas(ng=2.1, krgend=0.9)
+    gasoil.add_corey_oil(nog=3, kroend=0.8)
+    krgn, kron = utils.normalize_nonlinpart_go(gasoil)
     assert np.isclose(krgn(0), 0.0)
     assert np.isclose(krgn(1), 0.9)
     assert np.isclose(kron(0), 0)
     assert np.isclose(kron(1), 0.8)
 
     # Test again with zero endpoints:
-    go = GasOil(swl=0, sgcr=0, sorg=0, h=0.01)
-    go.add_corey_gas(ng=2.1, krgend=0.9)
-    go.add_corey_oil(nog=3, kroend=0.8)
-    krgn, kron = utils.normalize_nonlinpart_go(go)
+    gasoil = GasOil(swl=0, sgcr=0, sorg=0, h=0.01)
+    gasoil.add_corey_gas(ng=2.1, krgend=0.9)
+    gasoil.add_corey_oil(nog=3, kroend=0.8)
+    krgn, kron = utils.normalize_nonlinpart_go(gasoil)
     assert np.isclose(krgn(0), 0.0)
     assert np.isclose(krgn(1), 0.9)
     assert np.isclose(kron(0), 0)
     assert np.isclose(kron(1), 0.8)
 
     # Test when endpoints are messed up (cleared)
-    go = GasOil(swl=0.1, sgcr=0.2, sorg=0.1, h=0.1)
-    go.add_corey_gas(ng=2.1, krgend=0.6)
-    go.add_corey_oil(nog=3, kroend=0.8)
-    go.swl = 0
-    go.sgcr = 0
-    go.sorg = 0
-    krgn, kron = utils.normalize_nonlinpart_go(go)
+    gasoil = GasOil(swl=0.1, sgcr=0.2, sorg=0.1, h=0.1)
+    gasoil.add_corey_gas(ng=2.1, krgend=0.6)
+    gasoil.add_corey_oil(nog=3, kroend=0.8)
+    gasoil.swl = 0
+    gasoil.sgcr = 0
+    gasoil.sorg = 0
+    krgn, kron = utils.normalize_nonlinpart_go(gasoil)
     # These go well still, since we are at zero
     assert np.isclose(krgn(0), 0.0)
     assert np.isclose(kron(0), 0)
@@ -482,11 +471,11 @@ def test_normalize_nonlinpart_go():
     assert not np.isclose(kron(1), 0.8)
 
     # So fix endpoints!
-    go.swl = 1 - go.table["sg"].max()
-    go.sgcr = go.estimate_sgcr()
-    go.sorg = go.estimate_sorg()
+    gasoil.swl = 1 - gasoil.table["sg"].max()
+    gasoil.sgcr = gasoil.estimate_sgcr()
+    gasoil.sorg = gasoil.estimate_sorg()
     # Try again
-    krgn, kron = utils.normalize_nonlinpart_go(go)
+    krgn, kron = utils.normalize_nonlinpart_go(gasoil)
     assert np.isclose(krgn(0), 0.0)
     assert np.isclose(kron(0), 0)
     assert np.isclose(krgn(1), 0.6)
@@ -526,6 +515,8 @@ def test_interpolate_go(
     kroend_l,
     kroend_h,
 ):
+    """Test many possible combinations of interpolation between two
+    Corey gasoil curves, looking for numerical corner cases"""
     go_low = GasOil(swl=swl, sgcr=sgcr, sorg=sorg)
     go_high = GasOil(swl=swl + dswlhigh, sgcr=sgcr + dsgcr, sorg=max(sorg - dsorg, 0))
     go_low.add_corey_gas(ng=ng_l, krgend=krgend_l)

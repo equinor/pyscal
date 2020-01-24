@@ -184,7 +184,10 @@ class PyscalFactory(object):
             wateroil.add_normalized_J(**params_norm_j)
         else:
             logger.warning(
-                "Missing or ambiguous parameters for capillary pressure in WaterOil object. Using zero."
+                (
+                    "Missing or ambiguous parameters for capillary pressure in "
+                    "WaterOil object. Using zero."
+                )
             )
         if not wateroil.selfcheck():
             raise ValueError(

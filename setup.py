@@ -1,9 +1,9 @@
 # coding: utf-8
 
+from os import path
+
 from setuptools import setup
 import versioneer
-
-from os import path
 
 # Read the contents of README.md, for PyPI
 this_directory = path.abspath(path.dirname(__file__))

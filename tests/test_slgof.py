@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-"""Test module for relperm"""
+"""Test module for SLGOF export from GasOil"""
 
 from __future__ import absolute_import
 from __future__ import division
@@ -47,7 +46,7 @@ def test_slgof(swl, sorg, sgcr):
     assert "sl" in slgof
     assert "krg" in slgof
     assert "krog" in slgof
-    assert len(slgof)
+    assert not slgof.empty
 
     check_table(slgof)
 

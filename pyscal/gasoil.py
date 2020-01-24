@@ -1,4 +1,6 @@
-# -*- coding: utf-8 -*-
+"""
+Representing a GasOil object
+"""
 from __future__ import division, absolute_import
 from __future__ import print_function
 
@@ -195,7 +197,7 @@ class GasOil(object):
 
     def add_fromtable(
         self,
-        df,
+        dframe,
         sgcolname="Sg",
         krgcolname="krg",
         krogcolname="krog",
@@ -219,67 +221,67 @@ class GasOil(object):
         from scipy.interpolate import PchipInterpolator
 
         # Avoid having to deal with multi-indices:
-        if len(df.index.names) > 1:
+        if len(dframe.index.names) > 1:
             logger.warning(
                 "add_fromtable() did a reset_index(), consider not supplying MultiIndex"
             )
-            df = df.reset_index()
+            dframe = dframe.reset_index()
 
-        if sgcolname not in df:
+        if sgcolname not in dframe:
             logger.critical(
                 "%s not found in dataframe, can't read table data", sgcolname
             )
             raise ValueError
-        if df[sgcolname].min() > 0.0:
+        if dframe[sgcolname].min() > 0.0:
             raise ValueError("sg must start at zero")
-        swlfrominput = 1 - df[sgcolname].max()
+        swlfrominput = 1 - dframe[sgcolname].max()
         if abs(swlfrominput - self.swl) < epsilon:
             logger.warning(
                 "swl and 1-max(sg) from incoming table does not seem compatible"
             )
             logger.warning("         Do not trust the result near the endpoint.")
-        if krgcolname in df:
-            if not (df[krgcolname].diff().dropna() > -epsilon).all():
+        if krgcolname in dframe:
+            if not (dframe[krgcolname].diff().dropna() > -epsilon).all():
                 raise ValueError("Incoming krg not increasing")
             pchip = PchipInterpolator(
-                df[sgcolname].astype(float), df[krgcolname].astype(float)
+                dframe[sgcolname].astype(float), dframe[krgcolname].astype(float)
             )
             # Do not extrapolate this data. We will bfill and ffill afterwards
             self.table["krg"] = pchip(self.table.sg, extrapolate=False)
             self.table["krg"].fillna(method="ffill", inplace=True)
             self.table["krg"].fillna(method="bfill", inplace=True)
             self.krgcomment = "-- krg from tabular input" + krgcomment + "\n"
-        if krogcolname in df:
-            if not (df[krogcolname].diff().dropna() < epsilon).all():
+        if krogcolname in dframe:
+            if not (dframe[krogcolname].diff().dropna() < epsilon).all():
                 raise ValueError("Incoming krogcolname not decreasing")
             pchip = PchipInterpolator(
-                df[sgcolname].astype(float), df[krogcolname].astype(float)
+                dframe[sgcolname].astype(float), dframe[krogcolname].astype(float)
             )
             self.table["krog"] = pchip(self.table.sg, extrapolate=False)
             self.table["krog"].fillna(method="ffill", inplace=True)
             self.table["krog"].fillna(method="bfill", inplace=True)
             self.krogcomment = "-- krog from tabular input" + krogcomment + "\n"
-        if pccolname in df:
+        if pccolname in dframe:
             # Incoming dataframe must cover the range:
-            if df[sgcolname].min() > self.table["sg"].min():
+            if dframe[sgcolname].min() > self.table["sg"].min():
                 raise ValueError("Too large sgcr for pcog interpolation")
-            if df[sgcolname].max() < self.table["sg"].max():
+            if dframe[sgcolname].max() < self.table["sg"].max():
                 raise ValueError("Too large swl for pcog interpolation")
-            if np.isinf(df[pccolname]).any():
+            if np.isinf(dframe[pccolname]).any():
                 logger.warning(
                     (
                         "Infinity pc values detected. Will be dropped, "
                         "risk of extrapolation"
                     )
                 )
-            df = df.replace([np.inf, -np.inf], np.nan)
-            df.dropna(subset=[pccolname], how="all", inplace=True)
+            dframe = dframe.replace([np.inf, -np.inf], np.nan)
+            dframe.dropna(subset=[pccolname], how="all", inplace=True)
             # If nonzero, then it must be decreasing:
-            if df[pccolname].abs().sum() > 0:
-                if not (df[pccolname].diff().dropna() < 0.0).all():
+            if dframe[pccolname].abs().sum() > 0:
+                if not (dframe[pccolname].diff().dropna() < 0.0).all():
                     raise ValueError("Incoming pc not decreasing")
             pchip = PchipInterpolator(
-                df[sgcolname].astype(float), df[pccolname].astype(float)
+                dframe[sgcolname].astype(float), dframe[pccolname].astype(float)
             )
             self.table["pc"] = pchip(self.table.sg, extrapolate=False)
             if np.isnan(self.table["pc"]).any() or np.isinf(self.table["pc"]).any():
@@ -538,12 +540,11 @@ class GasOil(object):
             return self.table["sg"].max() - utils.estimate_diffjumppoint(
                 self.table, xcol="sg", ycol="krg", side="right"
             )
-        else:
-            assert "krog" in self.table
-            assert self.table["krog"].sum() > 0
-            return self.table["sg"].max() - utils.estimate_diffjumppoint(
-                self.table, xcol="sg", ycol="krog", side="right"
-            )
+        assert "krog" in self.table
+        assert self.table["krog"].sum() > 0
+        return self.table["sg"].max() - utils.estimate_diffjumppoint(
+            self.table, xcol="sg", ycol="krog", side="right"
+        )
 
     def estimate_sgcr(self, curve="krog"):
         """Estimate sgcr of the current krog data.
@@ -606,10 +607,10 @@ class GasOil(object):
         If you call SGOF/SLGOF, this function must not return False.
         """
         error = False
-        if not "krg" in self.table:
+        if "krg" not in self.table:
             logger.error("krg data missing")
             error = True
-        if not "krog" in self.table:
+        if "krog" not in self.table:
             logger.error("krog data missing")
             error = True
         if not (self.table["sg"].diff().dropna() > -epsilon).all():
@@ -647,9 +648,8 @@ class GasOil(object):
                 error = True
         if error:
             return False
-        else:
-            logger.info("GasOil object is checked to be valid")
-            return True
+        logger.info("GasOil object is checked to be valid")
+        return True
 
     def SGOF(self, header=True, dataincommentrow=True):
         """

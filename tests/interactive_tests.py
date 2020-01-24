@@ -70,8 +70,8 @@ def interpolation_art(repeats=50, interpolants=30, curvetype="corey"):
         else:
             print("ERROR, wrong curvetype")
         color = cmap(random.random())
-        for t in np.arange(0, 1, 1.0 / interpolants):
-            wo_ip = utils.interpolate_wo(wo_low, wo_high, t)
+        for tparam in np.arange(0, 1, 1.0 / interpolants):
+            wo_ip = utils.interpolate_wo(wo_low, wo_high, tparam)
             wo_ip.plotkrwkrow(ax, color=color, alpha=0.3)
     plt.show()
 
@@ -89,8 +89,8 @@ def test_interpolate_wo():
     wo_high.add_corey_water(nw=random.uniform(1, 3), krwend=random.uniform(0.5, 1))
     wo_low.add_corey_oil(now=random.uniform(1, 3), kroend=random.uniform(0.5, 1))
     wo_high.add_corey_oil(now=random.uniform(1, 3), kroend=random.uniform(0.5, 1))
-    wo_low.add_simple_J(a=random.uniform(0.1, 2), b=random.uniform(-2,-1))
-    wo_high.add_simple_J(a=random.uniform(0.1,2), b=random.uniform(-2,1))
+    wo_low.add_simple_J(a=random.uniform(0.1, 2), b=random.uniform(-2, -1))
+    wo_high.add_simple_J(a=random.uniform(0.1, 2), b=random.uniform(-2, 1))
     print(
         " ** Low curve (red):\n"
         + wo_low.swcomment
@@ -111,8 +111,8 @@ def test_interpolate_wo():
     _, ax = plt.subplots()
     wo_low.plotkrwkrow(ax, color="red")
     wo_high.plotkrwkrow(ax, color="blue")
-    for t in np.arange(0, 1, 0.1):
-        wo_ip = utils.interpolate_wo(wo_low, wo_high, t, h=0.001)
+    for tparam in np.arange(0, 1, 0.1):
+        wo_ip = utils.interpolate_wo(wo_low, wo_high, tparam, h=0.001)
         wo_ip.plotkrwkrow(ax, color="green")
     ax.set_title("WaterOil, random Corey, linear y-scale")
     plt.show()
@@ -121,8 +121,8 @@ def test_interpolate_wo():
     _, ax = plt.subplots()
     wo_low.plotkrwkrow(ax, color="red")
     wo_high.plotkrwkrow(ax, color="blue")
-    for t in np.arange(0, 1, 0.1):
-        wo_ip = utils.interpolate_wo(wo_low, wo_high, t, h=0.001)
+    for tparam in np.arange(0, 1, 0.1):
+        wo_ip = utils.interpolate_wo(wo_low, wo_high, tparam, h=0.001)
         wo_ip.plotkrwkrow(ax, color="green", logyscale=True)
     ax.set_title("WaterOil, random Corey, log y-scale")
     plt.show()
@@ -131,15 +131,15 @@ def test_interpolate_wo():
     _, ax = plt.subplots()
     wo_low.plotpc(ax, color="red", logyscale=True)
     wo_high.plotpc(ax, color="blue", logyscale=True)
-    for t in np.arange(0, 1, 0.1):
-        wo_ip = utils.interpolate_wo(wo_low, wo_high, t, h=0.001)
+    for tparam in np.arange(0, 1, 0.1):
+        wo_ip = utils.interpolate_wo(wo_low, wo_high, tparam, h=0.001)
         wo_ip.plotpc(ax, color="green", logyscale=True)
     ax.set_title("WaterOil, capillary pressure")
     plt.show()
 
 
-
 def test_interpolate_go():
+    """Interactive tests for gasoil"""
     swl_l = random.uniform(0, 0.1)
     sgcr_l = random.uniform(0, 0.1)
     swl_h = random.uniform(0, 0.1)
@@ -183,8 +183,8 @@ def test_interpolate_go():
     go_low.plotkrgkrog(ax, color="red")
     go_high.plotkrgkrog(ax, color="blue")
 
-    for t in np.arange(0, 1, 0.1):
-        go_ip = utils.interpolate_go(go_low, go_high, t)
+    for tparam in np.arange(0, 1, 0.1):
+        go_ip = utils.interpolate_go(go_low, go_high, tparam)
         go_ip.plotkrgkrog(ax, color="green")
     ax.set_title("GasOil, random Corey, linear y-scale")
     plt.show()
@@ -193,8 +193,8 @@ def test_interpolate_go():
     go_low.plotkrgkrog(ax, color="red")
     go_high.plotkrgkrog(ax, color="blue")
     # Plot again with log yscale:
-    for t in np.arange(0, 1, 0.1):
-        go_ip = utils.interpolate_go(go_low, go_high, t)
+    for tparam in np.arange(0, 1, 0.1):
+        go_ip = utils.interpolate_go(go_low, go_high, tparam)
         go_ip.plotkrgkrog(ax, color="green", logyscale=True)
     ax.set_title("GasOil, random Corey, log y-scale")
     plt.show()
@@ -205,12 +205,11 @@ def test_interpolate_go():
     # _, ax = plt.subplots()
     # go_low.plotpc(ax, color="red", logyscale=True)
     # go_high.plotpc(ax, color="blue", logyscale=True)
-    for t in np.arange(0, 1, 0.1):
-        go_ip = utils.interpolate_go(go_low, go_high, t, h=0.001)
+    for tparam in np.arange(0, 1, 0.1):
+        go_ip = utils.interpolate_go(go_low, go_high, tparam, h=0.001)
         # go_ip.plotpc(ax, color="green", logyscale=True)
     # ax.set_title("GasOil, capillary pressure")
     # plt.show()
-
 
 
 def interpolateplottest():
@@ -237,13 +236,13 @@ def interpolateplottest():
     # that yields something that spans nicely both the linear and the
     # logarithmic kr space (?)
 
-    for t in np.arange(-1, 0, 0.2):
-        interp = rec.interpolate(t, h=0.001)
+    for tparam in np.arange(-1, 0, 0.2):
+        interp = rec.interpolate(tparam, h=0.001)
         interp.wateroil.plotkrwkrow(ax1, "r")
         interp.wateroil.plotkrwkrow(ax2, "r")
 
-    for t in np.arange(0, 1, 0.2):
-        interp = rec.interpolate(t, h=0.001)
+    for tparam in np.arange(0, 1, 0.2):
+        interp = rec.interpolate(tparam, h=0.001)
         interp.wateroil.plotkrwkrow(ax1, "g")
         interp.wateroil.plotkrwkrow(ax2, "g")
 
@@ -258,13 +257,13 @@ def interpolateplottest():
     ax1.set_title("Water-oil, low, base, high and interpolants")
     ax2.set_title("Water-oil, low, base, high and interpolants")
 
-    for t in np.arange(-1, 0, 0.2):
-        interp = rec.interpolate(t, h=0.001)
+    for tparam in np.arange(-1, 0, 0.2):
+        interp = rec.interpolate(tparam, h=0.001)
         interp.gasoil.plotkrgkrog(ax3, "r")
         interp.gasoil.plotkrgkrog(ax4, "r")
 
-    for t in np.arange(0, 1, 0.2):
-        interp = rec.interpolate(t, h=0.001)
+    for tparam in np.arange(0, 1, 0.2):
+        interp = rec.interpolate(tparam, h=0.001)
         interp.gasoil.plotkrgkrog(ax3, "g")
         interp.gasoil.plotkrgkrog(ax4, "g")
 

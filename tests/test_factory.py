@@ -1,5 +1,4 @@
-# -*- coding: utf-8 -*-
-
+"""Test the PyscalFactory module"""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -14,6 +13,7 @@ import pytest
 from pyscal import WaterOil, GasOil, PyscalFactory
 
 from test_gasoil import sgof_str_ok
+
 
 def test_factory_wateroil():
     """Test that we can create curves from dictionaries of parameters"""
@@ -30,7 +30,7 @@ def test_factory_wateroil():
         # (it must be a dictionary)
         factory.create_water_oil(swirr=0.01)  # noqa
 
-    wo = factory.create_water_oil(
+    wateroil = factory.create_water_oil(
         dict(
             swirr=0.01,
             swl=0.1,
@@ -42,73 +42,77 @@ def test_factory_wateroil():
             krwmax=0.5,
         )
     )
-    assert isinstance(wo, WaterOil)
-    assert wo.swirr == 0.01
-    assert wo.swl == 0.1
-    assert wo.tag == "Good sand"
-    assert "krw" in wo.table
-    assert "Corey" in wo.krwcomment
-    assert wo.table["krw"].max() == 0.2  # Because sorw==0 by default
+    assert isinstance(wateroil, WaterOil)
+    assert wateroil.swirr == 0.01
+    assert wateroil.swl == 0.1
+    assert wateroil.tag == "Good sand"
+    assert "krw" in wateroil.table
+    assert "Corey" in wateroil.krwcomment
+    assert wateroil.table["krw"].max() == 0.2  # Because sorw==0 by default
 
-    wo = factory.create_water_oil(dict(nw=3, now=2, sorw=0.1, krwend=0.2, krwmax=0.5))
-    assert isinstance(wo, WaterOil)
-    assert "krw" in wo.table
-    assert "Corey" in wo.krwcomment
-    assert wo.table["krw"].max() == 0.5
+    wateroil = factory.create_water_oil(
+        dict(nw=3, now=2, sorw=0.1, krwend=0.2, krwmax=0.5)
+    )
+    assert isinstance(wateroil, WaterOil)
+    assert "krw" in wateroil.table
+    assert "Corey" in wateroil.krwcomment
+    assert wateroil.table["krw"].max() == 0.5
 
     # Ambiguous works, but we don't guarantee that this results
     # in LET or Corey.
-    wo = factory.create_water_oil(dict(nw=3, Lw=2, Ew=2, Tw=2, now=3))
-    assert "krw" in wo.table
-    assert "Corey" in wo.krwcomment or "LET" in wo.krwcomment
+    wateroil = factory.create_water_oil(dict(nw=3, Lw=2, Ew=2, Tw=2, now=3))
+    assert "krw" in wateroil.table
+    assert "Corey" in wateroil.krwcomment or "LET" in wateroil.krwcomment
 
-    wo = factory.create_water_oil(dict(Lw=2, Ew=2, Tw=2, krwend=1, now=4))
-    assert isinstance(wo, WaterOil)
-    assert "krw" in wo.table
-    assert wo.table["krw"].max() == 1.0
-    assert "LET" in wo.krwcomment
+    wateroil = factory.create_water_oil(dict(Lw=2, Ew=2, Tw=2, krwend=1, now=4))
+    assert isinstance(wateroil, WaterOil)
+    assert "krw" in wateroil.table
+    assert wateroil.table["krw"].max() == 1.0
+    assert "LET" in wateroil.krwcomment
 
-    wo = factory.create_water_oil(
+    wateroil = factory.create_water_oil(
         dict(Lw=2, Ew=2, Tw=2, Low=3, Eow=3, Tow=3, krwend=0.5)
     )
-    assert isinstance(wo, WaterOil)
-    assert "krw" in wo.table
-    assert "krow" in wo.table
-    assert wo.table["krw"].max() == 0.5
-    assert wo.table["krow"].max() == 1
-    assert "LET" in wo.krwcomment
-    assert "LET" in wo.krowcomment
+    assert isinstance(wateroil, WaterOil)
+    assert "krw" in wateroil.table
+    assert "krow" in wateroil.table
+    assert wateroil.table["krw"].max() == 0.5
+    assert wateroil.table["krow"].max() == 1
+    assert "LET" in wateroil.krwcomment
+    assert "LET" in wateroil.krowcomment
 
     # Add capillary pressure
-    wo = factory.create_water_oil(
+    wateroil = factory.create_water_oil(
         dict(swl=0.1, nw=1, now=1, a=2, b=-1, poro_ref=0.2, perm_ref=100, drho=200)
     )
-    assert "pc" in wo.table
-    assert wo.table["pc"].max() > 0.0
-    assert "Simplified J" in wo.pccomment
+    assert "pc" in wateroil.table
+    assert wateroil.table["pc"].max() > 0.0
+    assert "Simplified J" in wateroil.pccomment
 
     # Test that the optional gravity g is picked up:
-    wo = factory.create_water_oil(
+    wateroil = factory.create_water_oil(
         dict(swl=0.1, nw=1, now=1, a=2, b=-1, poro_ref=0.2, perm_ref=100, drho=200, g=0)
     )
-    assert "pc" in wo.table
-    assert wo.table["pc"].max() == 0.0
+    assert "pc" in wateroil.table
+    assert wateroil.table["pc"].max() == 0.0
 
     # One pc param missing:
-    wo = factory.create_water_oil(
+    wateroil = factory.create_water_oil(
         dict(swl=0.1, nw=1, now=1, a=2, b=-1, perm_ref=100, drho=200, g=0)
     )
-    assert "pc" not in wo.table
+    assert "pc" not in wateroil.table
 
 
 def test_ambiguity():
+    """Test how the factory handles ambiguity between Corey and LET
+    parameters"""
     factory = PyscalFactory()
-    wo = factory.create_water_oil(
+    wateroil = factory.create_water_oil(
         dict(swl=0.1, nw=10, Lw=1, Ew=1, Tw=1, now=2, h=0.1, no=2)
     )
     # Corey is picked here.
-    assert "Corey" in wo.krwcomment
-    assert "krw" in wo.table
+    assert "Corey" in wateroil.krwcomment
+    assert "krw" in wateroil.table
 
 
 def test_factory_gasoil():
@@ -122,34 +126,36 @@ def test_factory_gasoil():
         # (this must be a dictionary)
         factory.create_gas_oil(swirr=0.01)  # noqa
 
-    go = factory.create_gas_oil(
+    gasoil = factory.create_gas_oil(
         dict(swirr=0.01, swl=0.1, sgcr=0.05, tag="Good sand", ng=1, nog=2)
     )
-    assert isinstance(go, GasOil)
-    assert go.sgcr == 0.05
-    assert go.swl == 0.1
-    assert go.swirr == 0.01
-    assert go.tag == "Good sand"
-    sgof = go.SGOF()
+    assert isinstance(gasoil, GasOil)
+    assert gasoil.sgcr == 0.05
+    assert gasoil.swl == 0.1
+    assert gasoil.swirr == 0.01
+    assert gasoil.tag == "Good sand"
+    sgof = gasoil.SGOF()
     assert sgof_str_ok(sgof)
     assert "Corey krg" in sgof
     assert "Corey krog" in sgof
     assert "Zero capillary pressure" in sgof
 
-    go = factory.create_gas_oil(dict(ng=1.2, nog=2, krgend=0.8, krgmax=0.9, krogend=0.6))
-    sgof = go.SGOF()
+    gasoil = factory.create_gas_oil(
+        dict(ng=1.2, nog=2, krgend=0.8, krgmax=0.9, krogend=0.6)
+    )
+    sgof = gasoil.SGOF()
     assert sgof_str_ok(sgof)
     assert "kroend=0.6" in sgof
     assert "krgend=0.8" in sgof
 
-    go = factory.create_gas_oil(dict(ng=1.3, Log=2, Eog=2, Tog=2))
-    sgof = go.SGOF()
+    gasoil = factory.create_gas_oil(dict(ng=1.3, Log=2, Eog=2, Tog=2))
+    sgof = gasoil.SGOF()
     assert sgof_str_ok(sgof)
     assert "Corey krg" in sgof
     assert "LET krog" in sgof
 
-    go = factory.create_gas_oil(dict(Lg=1, Eg=1, Tg=1, Log=2, Eog=2, Tog=2))
-    sgof = go.SGOF()
+    gasoil = factory.create_gas_oil(dict(Lg=1, Eg=1, Tg=1, Log=2, Eog=2, Tog=2))
+    sgof = gasoil.SGOF()
     assert sgof_str_ok(sgof)
     assert "LET krg" in sgof
     assert "LET krog" in sgof
@@ -316,16 +322,16 @@ def test_gensatfunc():
     # Example config line for gen_satfunc:
     conf_line_pc = "RELPERM 4 2 1 3 2 1 0.15 0.10 0.5 20 100 0.2 0.22 -0.5 30"
 
-    wo = factory.create_water_oil(parse_gensatfuncline(conf_line_pc))
-    swof = wo.SWOF()
+    wateroil = factory.create_water_oil(parse_gensatfuncline(conf_line_pc))
+    swof = wateroil.SWOF()
     assert "0.17580" in swof  # krw at sw=0.65
     assert "0.0127" in swof  # krow at sw=0.65
     assert "Capillary pressure from normalized J-function" in swof
     assert "2.0669" in swof  # pc at swl
 
     conf_line_min = "RELPERM 1 2 3 1 2 3 0.1 0.15 0.5 20"
-    wo = factory.create_water_oil(parse_gensatfuncline(conf_line_min))
-    swof = wo.SWOF()
+    wateroil = factory.create_water_oil(parse_gensatfuncline(conf_line_min))
+    swof = wateroil.SWOF()
     assert "Zero capillary pressure" in swof
 
     conf_line_few = "RELPERM 1 2 3 1 2 3"
@@ -334,8 +340,8 @@ def test_gensatfunc():
 
     # sigma_costau is missing here:
     conf_line_almost_pc = "RELPERM 4 2 1 3 2 1 0.15 0.10 0.5 20 100 0.2 0.22 -0.5"
-    wo = factory.create_water_oil(parse_gensatfuncline(conf_line_almost_pc))
-    swof = wo.SWOF()
+    wateroil = factory.create_water_oil(parse_gensatfuncline(conf_line_almost_pc))
+    swof = wateroil.SWOF()
     # The factory will not recognize the normalized J-function
     # when costau is missing. Any error message would be the responsibility
     # of the parser
