@@ -109,8 +109,8 @@ def test_wateroil_krendmax(swl, swcr, sorw, kroend, kromax, krwend, krwmax, h, f
     check_endpoints(wo, krwend, krwmax, kroend, kromax)
     ####################################
     # Do it over again, but with LET:
-    wo.add_LET_oil(kroend=kroend, kromax=kromax)
-    wo.add_LET_water(krwend=krwend, krwmax=krwmax)
+    wo.add_LET_oil(t=1.1, kroend=kroend, kromax=kromax)
+    wo.add_LET_water(t=1.1, krwend=krwend, krwmax=krwmax)
     assert wo.selfcheck()
     check_table(wo.table)
     # Check endpoints for oil curve:
