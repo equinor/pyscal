@@ -390,7 +390,7 @@ class WaterOil(object):
 
         # Linear curve between swl and swcr (left part):
         self.table.loc[self.table["son"] > 1.0 + epsilon, "krow"] = np.nan
-        if self.swcr < self.swl + self.h:
+        if self.swcr < self.swl + epsilon:
             if kromax:
                 logger.warning("kromax ignored when swcr is close to swl")
             self.table.loc[self.table["sw"] <= self.swl + epsilon, "krow"] = kroend

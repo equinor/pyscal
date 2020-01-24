@@ -151,7 +151,7 @@ def check_endpoints(wo, krwend, krwmax, kroend, kromax):
         assert float_df_checker(wo.table, "son", 1.0, "krow", kroend)
     # krow at sorw should be zero:
     assert float_df_checker(wo.table, "son", 0.0, "krow", 0.0)
-    if wo.swcr > wo.swl + max(wo.h, swtol):
+    if wo.swcr > wo.swl + swtol:
         # krow at swl should be kromax:
         assert float_df_checker(wo.table, "sw", wo.swl, "krow", kromax)
     else:
