@@ -243,7 +243,7 @@ context, so we require e.g. ‘Lw’ and ‘Low’ (which both will be
 translated to ‘l’)</p>
 <dl class="simple">
 <dt>Recognized parameters:</dt><dd><p>swirr, swl, swcr, sorw, h, tag, nw, now, krwmax, krwend,
-lw, ew, tw, low, eow, tow, lo, eo, to, kromax, kroend,
+lw, ew, tw, low, eow, tow, lo, eo, to, kromax, krowend,
 a, b, poro_ref, perm_ref, drho,
 a, b, poro, perm, sigma_costau</p>
 </dd>
@@ -261,10 +261,11 @@ the same time.</p>
 <p>NB: the add_LET_* methods have the names ‘l’, ‘e’ and ‘t’
 in their signatures, which is not precise enough in this
 context, so we require e.g. ‘Lg’ and ‘Log’ (which both will be
-translated to ‘l’)</p>
+translated to ‘l’). Also note that in this factory context,
+kroend is an ambiguous parametre, krogend must be used.</p>
 <dl class="simple">
 <dt>Recognized parameters:</dt><dd><p>swirr, sgcr, “sorg, swl, krgendanchor, h, tag,
-ng, krgend, krgmax, nog, kroend,
+ng, krgend, krgmax, nog, krogend,
 lg, eg, tg, log, eog, tog</p>
 </dd>
 </dl>
@@ -311,6 +312,17 @@ swirr, swl, sorw, sorg, sgcr</p>
 <dd><p>Reserved for future implementation</p>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="function">
+<dt id="pyscal.factory.check_deprecated">
+<code class="sig-prename descclassname">pyscal.factory.</code><code class="sig-name descname">check_deprecated</code><span class="sig-paren">(</span><em class="sig-param">params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#check_deprecated"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.check_deprecated" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check for deprecated parameter names</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>params</strong> – Dictionary of parameters for which only the keys are used here.</p>
+</dd>
+</dl>
 </dd></dl>
 
 </div>

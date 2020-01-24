@@ -1,8 +1,8 @@
 Usage
 =====
 
-``pyscal`` is a Python API, meaning that end users can use it in 
-Python scripts or interactive Python sessions. Scripts can be built on 
+``pyscal`` is a Python API, meaning that end users can use it in
+Python scripts or interactive Python sessions. Scripts can be built on
 top of pyscal that read input from text files, CSV files or Excel worksheets.
 
 A water-oil curve
@@ -67,7 +67,7 @@ equivalent to the code lines above (except for capillary pressure) is then:
 .. code-block:: python
 
     from pyscal import PyscalFactory
-    params = dict(swl=0.05, sorw=0.03, h=0.1, nw=2.1, krwend=0.6, now=2.5, kroend=0.9, h=0.05)
+    params = dict(swl=0.05, sorw=0.03, h=0.1, nw=2.1, krwend=0.6, now=2.5, krowend=0.9, h=0.05)
     wo = PyscalFactory.create_water_oil(params)
     print(wo.SWOF())
 
@@ -77,7 +77,15 @@ are meant as a Python API, while the factory class is there to aid
 users when input is written in a different context, like an Excel
 spreadsheet.
 
-For visual inspection, there is a function ``.plotkrwkrow()`` which will 
+Also bear in mind that some API parameter names are ambiguous in the context of
+the factory. ``kroend`` makes sense for ``WaterOil.add_corey_oil()`` but
+is ambiguous in the factory where both water-oil and gas-oil are accounted for.
+In the factory the names ``krowend`` and ``krogend`` must be used.
+
+Similarly for the LET parameters, where `l` is valid for the low-level functions, while
+in the factory context you must state `Lo`, `Lw`, `Lg` or `Log` (case-insensitive).
+
+For visual inspection, there is a function ``.plotkrwkrow()`` which will
 make a simple plot of the relative permeability curves using matplotlib.
 
 Gas-oil curve
@@ -98,7 +106,7 @@ to share some of the saturation endpoints, as there are compatibility constraint
 For this reason, it is recommended to initialize both the ``WaterOil`` and ``GasOil``
 objects trough a ``WaterOilGas`` object.
 
-There is a corresponding ``PyscalFactory.create_gas_oil()`` support function with 
+There is a corresponding ``PyscalFactory.create_gas_oil()`` support function with
 dictionary as argument.
 
 For plotting, ``GasOil`` object has a function ``.plotkrgkrog()``.
@@ -126,7 +134,7 @@ Typical usage could be:
 As seen in the example, the object members ``wateroil`` and ``gasoil`` are ``WaterOil`` and ``GasOil`` objects
 having been initialized by the ``WaterOilGas`` initialization.
 
-Alternatively, there is a 
+Alternatively, there is a
 The ``WaterOilGas`` objects can write ``SWOF`` tables (which is directly delegated to the ``WaterOil`` object, but
 it can also write a ``SOF3`` table.
 
@@ -149,7 +157,7 @@ if they are believed to be independent.
 
 SCAL recommendations are initialized from three distinct
 ``WaterOilGas`` objects, which are then recommended constructed using
-the corresponding factory method. 
+the corresponding factory method.
 
 .. code-block:: python
 
