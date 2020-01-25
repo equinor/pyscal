@@ -205,7 +205,6 @@ def test_normalize_nonlinpart_wo():
     st.floats(min_value=0, max_value=0.0),  # dswcr
     st.floats(min_value=0, max_value=0.1),  # dswlhigh
     st.floats(min_value=0, max_value=0.3),  # sorw
-    st.floats(min_value=0, max_value=0.1),  # dsorw
     st.floats(min_value=1, max_value=5),  # nw_l
     st.floats(min_value=1, max_value=5),  # nw_h
     st.floats(min_value=1, max_value=5),  # now_l
@@ -220,7 +219,6 @@ def test_interpolate_wo(
     dswcr,
     dswlhigh,
     sorw,
-    dsorw,
     nw_l,
     nw_h,
     now_l,
@@ -253,14 +251,18 @@ def test_interpolate_wo(
         assert 0 < wo_ip.crosspoint() < 1
 
     # Distances between low and interpolants:
-    dists = [(wo_low.table - ip.table)[["krw", "krow"]].sum().sum() for ip in ips]
+    dists = [
+        (wo_low.table - interp.table)[["krw", "krow"]].sum().sum() for interp in ips
+    ]
     assert np.isclose(dists[0], 0)
 
     # Distance between high and the last interpolant
     assert (wo_high.table - ips[-1].table)[["krw", "krow"]].sum().sum() < 0.01
 
     # Distances between low and interpolants:
-    dists = [(wo_low.table - ip.table)[["krw", "krow"]].sum().sum() for ip in ips]
+    dists = [
+        (wo_low.table - interp.table)[["krw", "krow"]].sum().sum() for interp in ips
+    ]
     print(
         "Interpolation, mean: {}, min: {}, max: {}, std: {} ip-par-dist: {}".format(
             np.mean(dists), min(dists), max(dists), np.std(np.diff(dists[1:])), ip_dist
@@ -280,8 +282,8 @@ def test_interpolate_wo(
         _, ax = plt.subplots()
         wo_low.plotkrwkrow(ax=ax, color="red")
         wo_high.plotkrwkrow(ax=ax, color="blue")
-        for ip in ips:
-            ip.plotkrwkrow(ax=ax, color="green")
+        for interp in ips:
+            interp.plotkrwkrow(ax=ax, color="green")
         plt.show()
         assert False
 
@@ -295,13 +297,12 @@ def test_interpolate_wo(
     st.floats(min_value=0, max_value=0.0),  # dswcr
     st.floats(min_value=0, max_value=0.1),  # dswlhigh
     st.floats(min_value=0, max_value=0.3),  # sorw
-    st.floats(min_value=0, max_value=0.1),  # dsorw
     st.floats(min_value=0.1, max_value=2),  # a_l
     st.floats(min_value=0.1, max_value=2),  # a_h
     st.floats(min_value=-2, max_value=-0.1),  # b_l
     st.floats(min_value=-2, max_value=-0.5),  # b_l
 )
-def test_interpolate_wo_pc(swl, dswcr, dswlhigh, sorw, dsorw, a_l, a_h, b_l, b_h):
+def test_interpolate_wo_pc(swl, dswcr, dswlhigh, sorw, a_l, a_h, b_l, b_h):
     """
     Generate two random WaterOil curves, interpolate pc between them
     and check that the difference between each interpolant is small,
@@ -327,14 +328,14 @@ def test_interpolate_wo_pc(swl, dswcr, dswlhigh, sorw, dsorw, a_l, a_h, b_l, b_h
         assert 0 < wo_ip.crosspoint() < 1
 
     # Distances between low and interpolants:
-    dists = [(wo_low.table - ip.table)[["pc"]].sum().sum() for ip in ips]
+    dists = [(wo_low.table - interp.table)[["pc"]].sum().sum() for interp in ips]
     assert np.isclose(dists[0], 0)
 
     # Distance between high and the last interpolant
     assert (wo_high.table - ips[-1].table)[["pc"]].sum().sum() < 0.01
 
     # Distances between low and interpolants:
-    dists = [(wo_low.table - ip.table)[["pc"]].sum().sum() for ip in ips]
+    dists = [(wo_low.table - interp.table)[["pc"]].sum().sum() for interp in ips]
     print(
         "Interpolation, mean: {}, min: {}, max: {}, std: {} ip-par-dist: {}".format(
             np.mean(dists), min(dists), max(dists), np.std(np.diff(dists[1:])), ip_dist
@@ -354,8 +355,8 @@ def test_interpolate_wo_pc(swl, dswcr, dswlhigh, sorw, dsorw, a_l, a_h, b_l, b_h
         _, ax = plt.subplots()
         wo_low.plotpc(ax=ax, color="red", logyscale=True)
         wo_high.plotpc(ax=ax, color="blue", logyscale=True)
-        for ip in ips:
-            ip.plotpc(ax=ax, color="green", logyscale=True)
+        for interp in ips:
+            interp.plotpc(ax=ax, color="green", logyscale=True)
         plt.show()
         assert False
 
@@ -532,7 +533,9 @@ def test_interpolate_go(
         assert 0 < go_ip.crosspoint() < 1
 
     # Distances between low and interpolants:
-    dists = [(go_low.table - ip.table)[["krg", "krog"]].sum().sum() for ip in ips]
+    dists = [
+        (go_low.table - interp.table)[["krg", "krog"]].sum().sum() for interp in ips
+    ]
     print(
         "Interpolation, mean: {}, min: {}, max: {}, std: {} ip-par-dist: {}".format(
             np.mean(dists), min(dists), max(dists), np.std(np.diff(dists[1:])), ip_dist
@@ -555,8 +558,8 @@ def test_interpolate_go(
         _, ax = plt.subplots()
         go_low.plotkrgkrog(ax=ax, color="red")
         go_high.plotkrgkrog(ax=ax, color="blue")
-        for ip in ips:
-            ip.plotkrgkrog(ax=ax, color="green")
+        for interp in ips:
+            interp.plotkrgkrog(ax=ax, color="green")
         plt.show()
         assert False
 

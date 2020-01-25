@@ -639,8 +639,8 @@ class WaterOil(object):
         # pascal_to_atm = 1.0 / 101325.0  # = 9.86923267e-6
         pascal_to_bar = 1e-5
 
-        perm_D = perm / 1000
-        perm_sq_meters = perm_D * 9.869233e-13
+        perm_darcy = perm / 1000
+        perm_sq_meters = perm_darcy * 9.869233e-13
         tmp = (self.table["swnpc"] / a) ** (1.0 / b)
         tmp = tmp / math.sqrt(perm_sq_meters / poro)
         tmp = tmp * sigma_costau / 1000  # Converting mN/m to N/m
@@ -987,6 +987,7 @@ class WaterOil(object):
         return string
 
     def SWFN(self, header=True, dataincommentrow=True):
+        """Return a SWFN keyword with data to Eclipse"""
         if not self.selfcheck():
             # selfcheck will print errors/warnings
             return ""
@@ -1036,7 +1037,6 @@ class WaterOil(object):
         ax=None,
         color="blue",
         alpha=1,
-        label=None,
         linewidth=1,
         linestyle="-",
         logyscale=False,
@@ -1071,7 +1071,6 @@ class WaterOil(object):
         ax=None,
         color="blue",
         alpha=1,
-        label=None,
         linewidth=1,
         linestyle="-",
         logyscale=False,

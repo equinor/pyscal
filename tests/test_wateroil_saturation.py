@@ -13,17 +13,17 @@ from pyscal.constants import SWINTEGERS
 from test_wateroil import float_df_checker
 
 
-def check_table(df):
+def check_table(dframe):
     """Check that the numbers in a dataframe has the properties
     that Eclipse enforces"""
-    assert not df.empty
-    assert not df.isnull().values.any()
-    assert len(df["sw"].unique()) == len(df)
-    assert df["sw"].is_monotonic
-    assert (df["sw"] >= 0.0).all()
-    assert df["swn"].is_monotonic
-    assert df["son"].is_monotonic_decreasing
-    assert df["swnpc"].is_monotonic
+    assert not dframe.empty
+    assert not dframe.isnull().values.any()
+    assert len(dframe["sw"].unique()) == len(dframe)
+    assert dframe["sw"].is_monotonic
+    assert (dframe["sw"] >= 0.0).all()
+    assert dframe["swn"].is_monotonic
+    assert dframe["son"].is_monotonic_decreasing
+    assert dframe["swnpc"].is_monotonic
 
 
 @given(
@@ -109,31 +109,31 @@ def test_wateroil_sorw(sorw):
     check_table(wateroil.table)
 
 
-# Test combination of 2 floats as parameters:
 @settings(deadline=1000)
 @given(st.floats(min_value=0, max_value=1), st.floats(min_value=0, max_value=1))
-def test_wateroil_dual(p1, p2):
+def test_wateroil_dual(param1, param2):
+    """Test combination of 2 floats as parameters"""
     try:
-        wateroil = WaterOil(swl=p1, sorw=p2)
+        wateroil = WaterOil(swl=param1, sorw=param2)
         check_table(wateroil.table)
         # Will fail when swl > 1 - sorw
     except AssertionError:
         pass
 
     try:
-        wateroil = WaterOil(swl=p1, swirr=p2)
+        wateroil = WaterOil(swl=param1, swirr=param2)
         check_table(wateroil.table)
     except AssertionError:
         pass
 
     try:
-        wateroil = WaterOil(swcr=p1, sorw=p2)
+        wateroil = WaterOil(swcr=param1, sorw=param2)
         check_table(wateroil.table)
     except AssertionError:
         pass
 
     try:
-        wateroil = WaterOil(swirr=p1, sorw=p2)
+        wateroil = WaterOil(swirr=param1, sorw=param2)
         check_table(wateroil.table)
     except AssertionError:
         pass
