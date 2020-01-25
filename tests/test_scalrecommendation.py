@@ -160,6 +160,8 @@ def test_interpolation(param_wo, param_go):
 
 
 def test_boundary_cases():
+    """Test that interpolation is able to return the boundaries
+    at +/- 1"""
     rec = PyscalFactory.create_scal_recommendation(
         {"low": LOW_SAMPLE_LET, "base": BASE_SAMPLE_LET, "high": HIGH_SAMPLE_LET},
         "foo",
@@ -193,30 +195,30 @@ def test_boundary_cases():
     assert rec.interpolate(1, -1).gasoil == rec.low.gasoil
 
 
-def check_table_wo(df):
+def check_table_wo(dframe):
     """Check sanity of important columns"""
-    assert not df.empty
-    assert not df.isnull().values.any()
-    assert len(df["sw"].unique()) == len(df)
-    assert df["sw"].is_monotonic
-    assert (df["sw"] >= 0.0).all()
-    assert df["swn"].is_monotonic
-    assert df["son"].is_monotonic_decreasing
-    assert df["swnpc"].is_monotonic
-    assert df["krow"].is_monotonic_decreasing
-    assert df["krw"].is_monotonic
+    assert not dframe.empty
+    assert not dframe.isnull().values.any()
+    assert len(dframe["sw"].unique()) == len(dframe)
+    assert dframe["sw"].is_monotonic
+    assert (dframe["sw"] >= 0.0).all()
+    assert dframe["swn"].is_monotonic
+    assert dframe["son"].is_monotonic_decreasing
+    assert dframe["swnpc"].is_monotonic
+    assert dframe["krow"].is_monotonic_decreasing
+    assert dframe["krw"].is_monotonic
 
 
-def check_table_go(df):
+def check_table_go(dframe):
     """Check sanity of important columns"""
-    assert not df.empty
-    assert not df.isnull().values.any()
-    assert len(df["sg"].unique()) == len(df)
-    assert df["sg"].is_monotonic
-    assert (df["sg"] >= 0.0).all()
-    assert df["sgn"].is_monotonic
-    assert df["son"].is_monotonic_decreasing
-    assert df["krog"].is_monotonic_decreasing
-    assert df["krg"].is_monotonic
-    if "pc" in df:
-        assert df["pc"].is_monotonic
+    assert not dframe.empty
+    assert not dframe.isnull().values.any()
+    assert len(dframe["sg"].unique()) == len(dframe)
+    assert dframe["sg"].is_monotonic
+    assert (dframe["sg"] >= 0.0).all()
+    assert dframe["sgn"].is_monotonic
+    assert dframe["son"].is_monotonic_decreasing
+    assert dframe["krog"].is_monotonic_decreasing
+    assert dframe["krg"].is_monotonic
+    if "pc" in dframe:
+        assert dframe["pc"].is_monotonic

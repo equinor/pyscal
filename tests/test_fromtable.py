@@ -14,13 +14,12 @@ import hypothesis.strategies as st
 
 from pyscal import WaterOil, GasOil
 
-from test_wateroil import float_df_checker
-
 from test_gasoil import check_table as check_go_table
-from test_wateroil import check_table as check_wo_table
+from test_wateroil import check_table as check_wo_table, float_df_checker
 
 
 def test_wo_fromtable_simple():
+    """Test loading a simple curve from a table"""
     df1 = pd.DataFrame(
         columns=["SW", "KRW", "KROW", "PC"], data=[[0, 0, 1, 2], [1, 1, 0, 0]]
     )
@@ -86,6 +85,7 @@ def test_wo_fromtable_multiindex():
 
 
 def test_go_fromtable_problems():
+    """Test loading from a table where there should be problems"""
     df1 = pd.DataFrame(
         columns=["Sg", "KRG", "KROG", "PCOG"], data=[[0.1, 0, 1, 2], [0.9, 1, 0, 0]]
     )
@@ -121,16 +121,17 @@ def test_go_fromtable_problems():
 
 
 def test_wo_singlecolumns():
+    """Test that we can load single columns from individual dataframes"""
     krw = pd.DataFrame(columns=["Sw", "krw"], data=[[0.15, 0], [0.89, 1], [1, 1]])
     krow = pd.DataFrame(columns=["Sw", "krow"], data=[[0.15, 1], [0.89, 0], [1, 0]])
-    pc = pd.DataFrame(columns=["Sw", "pcow"], data=[[0.15, 3], [0.89, 0.1], [1, 0]])
+    pc1 = pd.DataFrame(columns=["Sw", "pcow"], data=[[0.15, 3], [0.89, 0.1], [1, 0]])
     wateroil = WaterOil(h=0.1, swl=0.15, sorw=1 - 0.89)
     wateroil.add_fromtable(krw)
     assert "krw" in wateroil.table
     assert "krow" not in wateroil.table
     wateroil.add_fromtable(krow)
     assert "krow" in wateroil.table
-    wateroil.add_fromtable(pc)
+    wateroil.add_fromtable(pc1)
     assert "pc" in wateroil.table
 
     # We want to allow a pc dataframe where sw starts from zero:
@@ -218,6 +219,7 @@ def test_wo_invalidcurves():
 
 
 def test_go_invalidcurves():
+    """Test  fromtable on invalid gasoil data"""
     # Sw data not ordered:
     krg1 = pd.DataFrame(columns=["Sg", "krg"], data=[[0.15, 0], [0.1, 1], [1, 1]])
     gasoil = GasOil(h=0.1)

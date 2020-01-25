@@ -24,23 +24,23 @@ def series_increasing(series):
     return (series.diff().dropna() > -1e-8).all()
 
 
-def check_table(df):
+def check_table(dframe):
     """Check sanity of important columns"""
-    assert not df.empty
-    assert not df.isnull().values.any()
-    assert len(df["sw"].unique()) == len(df)
-    assert df["sw"].is_monotonic
-    assert (df["sw"] >= 0.0).all()
-    assert df["swn"].is_monotonic
-    assert df["son"].is_monotonic_decreasing
-    assert df["swnpc"].is_monotonic
-    assert series_decreasing(df["krow"])
-    assert series_increasing(df["krw"])
-    assert np.isclose(df["krw"].iloc[0], 0.0)
-    assert (df["krw"] >= 0).all()
-    assert (df["krw"] <= 1.0).all()
-    assert (df["krow"] >= 0).all()
-    assert (df["krow"] <= 1.0).all()
+    assert not dframe.empty
+    assert not dframe.isnull().values.any()
+    assert len(dframe["sw"].unique()) == len(dframe)
+    assert dframe["sw"].is_monotonic
+    assert (dframe["sw"] >= 0.0).all()
+    assert dframe["swn"].is_monotonic
+    assert dframe["son"].is_monotonic_decreasing
+    assert dframe["swnpc"].is_monotonic
+    assert series_decreasing(dframe["krow"])
+    assert series_increasing(dframe["krw"])
+    assert np.isclose(dframe["krw"].iloc[0], 0.0)
+    assert (dframe["krw"] >= 0).all()
+    assert (dframe["krw"] <= 1.0).all()
+    assert (dframe["krow"] >= 0).all()
+    assert (dframe["krow"] <= 1.0).all()
 
 
 def float_df_checker(dframe, idxcol, value, compcol, answer):

@@ -23,20 +23,20 @@ def series_decreasing(series):
     return (series.diff().dropna() < 1e-8).all()
 
 
-def check_table(df):
+def check_table(dframe):
     """Check that the table has the properties Eclipse enforces"""
-    assert not df.empty
-    assert not df.isnull().values.any()
-    assert len(df["sw"].unique()) == len(df)
-    assert df["sw"].is_monotonic
-    assert (df["sw"] >= 0.0).all()
-    assert df["swn"].is_monotonic
-    assert df["son"].is_monotonic_decreasing
-    assert df["swnpc"].is_monotonic
-    assert series_decreasing(df["pc"])
+    assert not dframe.empty
+    assert not dframe.isnull().values.any()
+    assert len(dframe["sw"].unique()) == len(dframe)
+    assert dframe["sw"].is_monotonic
+    assert (dframe["sw"] >= 0.0).all()
+    assert dframe["swn"].is_monotonic
+    assert dframe["son"].is_monotonic_decreasing
+    assert dframe["swnpc"].is_monotonic
+    assert series_decreasing(dframe["pc"])
 
 
-def test_simple_J():
+def test_simple_j():
     """Simple test of the simple J function correlation"""
     wateroil = WaterOil(swl=0.01)
     wateroil.add_simple_J()  # swl set to zero will give infinite pc
@@ -74,7 +74,7 @@ def test_simple_J():
     st.floats(min_value=0.01, max_value=1000000),
     st.floats(min_value=0.001, max_value=10000000),
 )
-def test_simple_J_random(a, b, poro_ref, perm_ref, drho, g):
+def test_simple_j_random(a, b, poro_ref, perm_ref, drho, g):
     """Test different J-function parameters.
 
     Parameter ranges tested through hypothesis are limited, as not
@@ -89,7 +89,7 @@ def test_simple_J_random(a, b, poro_ref, perm_ref, drho, g):
     check_table(wateroil.table)
 
 
-def test_normalized_J():
+def test_normalized_j():
     """Test the normalized J-function correlation for capillary pressure"""
     wateroil = WaterOil(swirr=0.1, h=0.1)
     with pytest.raises(ValueError):
@@ -117,7 +117,7 @@ def test_normalized_J():
     st.floats(min_value=0.0001, max_value=1000000000),  # perm
     st.floats(min_value=0, max_value=100000),  # sigma_costau
 )
-def test_norm_J_pc_random(swirr, swl, a_pc, b_pc, poro, perm, sigma_costau):
+def test_norm_j_pc_random(swirr, swl, a_pc, b_pc, poro, perm, sigma_costau):
     """Test many possibilities of Pc-parameters.
 
     Outside of the tested range, there are many combination of parameters
@@ -134,7 +134,7 @@ def test_norm_J_pc_random(swirr, swl, a_pc, b_pc, poro, perm, sigma_costau):
     check_table(wateroil.table)
 
 
-def test_LET_pc_pd():
+def test_let_pc_pd():
     """Test LET formulation for primary drainage capillary pressure"""
     wateroil = WaterOil(swirr=0.1)
     wateroil.add_LET_pc_pd(Lp=1, Ep=1, Tp=1, Lt=1, Et=1, Tt=1, Pcmax=10, Pct=5)
@@ -160,7 +160,7 @@ def test_LET_pc_pd():
     # wateroil.plotpc()
 
 
-def test_LET_pc_imb():
+def test_let_pc_imb():
     """Test the LET formulation for imbibition capillary pressures"""
     wateroil = WaterOil(swirr=0.1)
     wateroil.add_LET_pc_imb(

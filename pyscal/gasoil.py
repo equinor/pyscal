@@ -5,9 +5,10 @@ from __future__ import division, absolute_import
 from __future__ import print_function
 
 import logging
+import six
+
 import numpy as np
 import pandas as pd
-import six
 
 from pyscal import utils
 
@@ -748,7 +749,8 @@ class GasOil(object):
                 defaults to True.
         """
         if not self.selfcheck():
-            return
+            # Selfcheck will issue error messages.
+            return ""
         string = ""
         if "pc" not in self.table:
             self.table["pc"] = 0
@@ -848,7 +850,6 @@ class GasOil(object):
         ax=None,
         color="blue",
         alpha=1,
-        label=None,
         linewidth=1,
         linestyle="-",
         logyscale=False,

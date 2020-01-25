@@ -77,6 +77,7 @@ def interpolation_art(repeats=50, interpolants=30, curvetype="corey"):
 
 
 def test_interpolate_wo():
+    """Discrete test scenarios for wateroil interpolation"""
     swl_l = random.uniform(0, 0.1)
     swcr_l = swl_l + random.uniform(0, 0.1)
     sorw_l = random.uniform(0, 0.2)
@@ -282,6 +283,7 @@ def interpolateplottest():
 
 
 def interpolatetest():
+    """Test interpolation (sample test) in a scal recommentation"""
     rec = PyscalFactory.create_scal_recommendation(
         {"low": LOWSAMPLE, "base": BASESAMPLE, "high": HIGHSAMPLE}, "foo", h=0.001
     )
@@ -310,7 +312,7 @@ def letspan():
 
     matplotlib.style.use("ggplot")
 
-    LETw = {
+    let_w = {
         "l": [2, 4],
         "e": [1, 2],
         "t": [2, 1],  # first value should be larger than first to avoid crossing
@@ -320,7 +322,7 @@ def letspan():
 
     # Parameter test set from SCAL group, first is pessimistic, second
     # is optimistic
-    LETw = {
+    let_w = {
         "l": [2.323, 4.436],
         "e": [2, 8],
         "t": [1.329, 0.766],  # first value should be larger
@@ -330,7 +332,7 @@ def letspan():
     }
 
     # LET oil:
-    LETo = {
+    let_o = {
         "l": [4.944, 2.537],
         "e": [5, 2],
         "t": [0.68, 1.549],  # first value should be larger
@@ -340,8 +342,8 @@ def letspan():
     }
 
     # We need sorted versions for the random function
-    slimw = {x: sorted(LETw[x]) for x in LETw}
-    slimo = {x: sorted(LETo[x]) for x in LETo}
+    slimw = {x: sorted(let_w[x]) for x in let_w}
+    slimo = {x: sorted(let_o[x]) for x in let_o}
 
     _, ax = plt.subplots()
     for _ in range(100):
@@ -361,17 +363,17 @@ def letspan():
         )
         swof.plotkrwkrow(ax=ax, alpha=0.1)
     # Boundary lines
-    swof = WaterOil(h=0.01, sorw=LETw["sorw"][0], swl=0.16)
+    swof = WaterOil(h=0.01, sorw=let_w["sorw"][0], swl=0.16)
     swof.add_LET_water(
-        l=LETw["l"][0], e=LETw["e"][0], t=LETw["t"][0], krwend=LETw["krwend"][0]
+        l=let_w["l"][0], e=let_w["e"][0], t=let_w["t"][0], krwend=let_w["krwend"][0]
     )
-    swof.add_LET_oil(l=LETo["l"][0], e=LETo["e"][0], t=LETo["t"][0])
+    swof.add_LET_oil(l=let_o["l"][0], e=let_o["e"][0], t=let_o["t"][0])
     swof.plotkrwkrow(ax=ax, color="red", label="Low")
-    swof = WaterOil(h=0.01, sorw=LETw["sorw"][1], swl=0.16)
+    swof = WaterOil(h=0.01, sorw=let_w["sorw"][1], swl=0.16)
     swof.add_LET_water(
-        l=LETw["l"][1], e=LETw["e"][1], t=LETw["t"][1], krwend=LETw["krwend"][1]
+        l=let_w["l"][1], e=let_w["e"][1], t=let_w["t"][1], krwend=let_w["krwend"][1]
     )
-    swof.add_LET_oil(l=LETo["l"][1], e=LETo["e"][1], t=LETo["t"][1])
+    swof.add_LET_oil(l=let_o["l"][1], e=let_o["e"][1], t=let_o["t"][1])
     swof.plotkrwkrow(ax=ax, color="red", label="High")
     # ax.set_yscale('log')
     plt.show()
@@ -521,6 +523,10 @@ def testgascurves():
 
 
 def main():
+    """Entry point for interactive tests, will run
+    some tests where the intention is that the user will
+    look at what is displayed, and potentially see if
+    something looks really bad"""
     print("-- **********************************")
     print("-- Manual check of output")
     swof = WaterOil(tag="Good sand, SATNUM 1", h=0.1, swl=0.1)
