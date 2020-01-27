@@ -327,7 +327,10 @@ def test_interpolate_wo_pc(swl, dswcr, dswlhigh, sorw, a_l, a_h, b_l, b_h):
         assert 0 < wo_ip.crosspoint() < 1
 
     # Distances between low and interpolants:
-    dists = [(wo_low.table - interp.table)[["pc"]].sum().sum() for interp in ips]
+    dists = [
+        (np.log(wo_low.table["pc"]) - np.log(interp.table["pc"])).sum()
+        for interp in ips
+    ]
     assert np.isclose(dists[0], 0)
 
     # Distance between high and the last interpolant
