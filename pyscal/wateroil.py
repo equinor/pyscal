@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Wateroil module"""
 from __future__ import division, absolute_import
 from __future__ import print_function
