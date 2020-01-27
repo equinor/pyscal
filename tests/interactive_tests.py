@@ -22,7 +22,7 @@ def interpolation_art(repeats=50, interpolants=30, curvetype="corey"):
     from matplotlib import pyplot as plt
 
     cmap = plt.get_cmap("viridis")
-    _, ax = plt.subplots()
+    _, mpl_ax = plt.subplots()
     for _ in range(repeats):
         swl = random.uniform(0, 0.1)
         swcr = swl + random.uniform(0, 0.1)
@@ -72,7 +72,7 @@ def interpolation_art(repeats=50, interpolants=30, curvetype="corey"):
         color = cmap(random.random())
         for tparam in np.arange(0, 1, 1.0 / interpolants):
             wo_ip = utils.interpolate_wo(wo_low, wo_high, tparam)
-            wo_ip.plotkrwkrow(ax, color=color, alpha=0.3)
+            wo_ip.plotkrwkrow(mpl_ax, color=color, alpha=0.3)
     plt.show()
 
 
@@ -109,33 +109,33 @@ def test_interpolate_wo():
 
     from matplotlib import pyplot as plt
 
-    _, ax = plt.subplots()
-    wo_low.plotkrwkrow(ax, color="red")
-    wo_high.plotkrwkrow(ax, color="blue")
+    _, mpl_ax = plt.subplots()
+    wo_low.plotkrwkrow(mpl_ax, color="red")
+    wo_high.plotkrwkrow(mpl_ax, color="blue")
     for tparam in np.arange(0, 1, 0.1):
         wo_ip = utils.interpolate_wo(wo_low, wo_high, tparam, h=0.001)
-        wo_ip.plotkrwkrow(ax, color="green")
-    ax.set_title("WaterOil, random Corey, linear y-scale")
+        wo_ip.plotkrwkrow(mpl_ax, color="green")
+    mpl_ax.set_title("WaterOil, random Corey, linear y-scale")
     plt.show()
 
     # Plot again with log yscale:
-    _, ax = plt.subplots()
-    wo_low.plotkrwkrow(ax, color="red")
-    wo_high.plotkrwkrow(ax, color="blue")
+    _, mpl_ax = plt.subplots()
+    wo_low.plotkrwkrow(mpl_ax, color="red")
+    wo_high.plotkrwkrow(mpl_ax, color="blue")
     for tparam in np.arange(0, 1, 0.1):
         wo_ip = utils.interpolate_wo(wo_low, wo_high, tparam, h=0.001)
-        wo_ip.plotkrwkrow(ax, color="green", logyscale=True)
-    ax.set_title("WaterOil, random Corey, log y-scale")
+        wo_ip.plotkrwkrow(mpl_ax, color="green", logyscale=True)
+    mpl_ax.set_title("WaterOil, random Corey, log y-scale")
     plt.show()
 
     # Capillary pressure
-    _, ax = plt.subplots()
-    wo_low.plotpc(ax, color="red", logyscale=True)
-    wo_high.plotpc(ax, color="blue", logyscale=True)
+    _, mpl_ax = plt.subplots()
+    wo_low.plotpc(mpl_ax, color="red", logyscale=True)
+    wo_high.plotpc(mpl_ax, color="blue", logyscale=True)
     for tparam in np.arange(0, 1, 0.1):
         wo_ip = utils.interpolate_wo(wo_low, wo_high, tparam, h=0.001)
-        wo_ip.plotpc(ax, color="green", logyscale=True)
-    ax.set_title("WaterOil, capillary pressure")
+        wo_ip.plotpc(mpl_ax, color="green", logyscale=True)
+    mpl_ax.set_title("WaterOil, capillary pressure")
     plt.show()
 
 
@@ -180,36 +180,36 @@ def test_interpolate_go():
 
     from matplotlib import pyplot as plt
 
-    _, ax = plt.subplots()
-    go_low.plotkrgkrog(ax, color="red")
-    go_high.plotkrgkrog(ax, color="blue")
+    _, mpl_ax = plt.subplots()
+    go_low.plotkrgkrog(mpl_ax, color="red")
+    go_high.plotkrgkrog(mpl_ax, color="blue")
 
     for tparam in np.arange(0, 1, 0.1):
         go_ip = utils.interpolate_go(go_low, go_high, tparam)
-        go_ip.plotkrgkrog(ax, color="green")
-    ax.set_title("GasOil, random Corey, linear y-scale")
+        go_ip.plotkrgkrog(mpl_ax, color="green")
+    mpl_ax.set_title("GasOil, random Corey, linear y-scale")
     plt.show()
 
-    _, ax = plt.subplots()
-    go_low.plotkrgkrog(ax, color="red")
-    go_high.plotkrgkrog(ax, color="blue")
+    _, mpl_ax = plt.subplots()
+    go_low.plotkrgkrog(mpl_ax, color="red")
+    go_high.plotkrgkrog(mpl_ax, color="blue")
     # Plot again with log yscale:
     for tparam in np.arange(0, 1, 0.1):
         go_ip = utils.interpolate_go(go_low, go_high, tparam)
-        go_ip.plotkrgkrog(ax, color="green", logyscale=True)
-    ax.set_title("GasOil, random Corey, log y-scale")
+        go_ip.plotkrgkrog(mpl_ax, color="green", logyscale=True)
+    mpl_ax.set_title("GasOil, random Corey, log y-scale")
     plt.show()
 
     # Capillary pressure - This is barely supported for gasoil
     # so the plotpc() function is missing. Include calculations
     # here so we ensure we don't crash on the all zeros.
-    # _, ax = plt.subplots()
-    # go_low.plotpc(ax, color="red", logyscale=True)
-    # go_high.plotpc(ax, color="blue", logyscale=True)
+    # _, mpl_ax = plt.subplots()
+    # go_low.plotpc(mpl_ax, color="red", logyscale=True)
+    # go_high.plotpc(mpl_ax, color="blue", logyscale=True)
     for tparam in np.arange(0, 1, 0.1):
         go_ip = utils.interpolate_go(go_low, go_high, tparam, h=0.001)
-        # go_ip.plotpc(ax, color="green", logyscale=True)
-    # ax.set_title("GasOil, capillary pressure")
+        # go_ip.plotpc(mpl_ax, color="green", logyscale=True)
+    # mpl_ax.set_title("GasOil, capillary pressure")
     # plt.show()
 
 
@@ -345,7 +345,7 @@ def letspan():
     slimw = {x: sorted(let_w[x]) for x in let_w}
     slimo = {x: sorted(let_o[x]) for x in let_o}
 
-    _, ax = plt.subplots()
+    _, mpl_ax = plt.subplots()
     for _ in range(100):
         swof = WaterOil(
             h=0.01, swl=0.16, sorw=random.uniform(slimw["sorw"][0], slimw["sorw"][1])
@@ -361,21 +361,21 @@ def letspan():
             e=random.uniform(slimo["e"][0], slimo["e"][1]),
             t=random.uniform(slimo["t"][0], slimo["t"][1]),
         )
-        swof.plotkrwkrow(ax=ax, alpha=0.1)
+        swof.plotkrwkrow(mpl_ax=mpl_ax, alpha=0.1)
     # Boundary lines
     swof = WaterOil(h=0.01, sorw=let_w["sorw"][0], swl=0.16)
     swof.add_LET_water(
         l=let_w["l"][0], e=let_w["e"][0], t=let_w["t"][0], krwend=let_w["krwend"][0]
     )
     swof.add_LET_oil(l=let_o["l"][0], e=let_o["e"][0], t=let_o["t"][0])
-    swof.plotkrwkrow(ax=ax, color="red", label="Low")
+    swof.plotkrwkrow(mpl_ax=mpl_ax, color="red", label="Low")
     swof = WaterOil(h=0.01, sorw=let_w["sorw"][1], swl=0.16)
     swof.add_LET_water(
         l=let_w["l"][1], e=let_w["e"][1], t=let_w["t"][1], krwend=let_w["krwend"][1]
     )
     swof.add_LET_oil(l=let_o["l"][1], e=let_o["e"][1], t=let_o["t"][1])
-    swof.plotkrwkrow(ax=ax, color="red", label="High")
-    # ax.set_yscale('log')
+    swof.plotkrwkrow(mpl_ax=mpl_ax, color="red", label="High")
+    # mpl_ax.set_yscale('log')
     plt.show()
 
 
@@ -471,8 +471,8 @@ def testplot():
 
     # Print the first 7 lines of SWOF:
     print("\n".join(swof.SWOF().split("\n")[0:8]))
-    _, ax = plt.subplots()
-    swof.plotkrwkrow(ax)
+    _, mpl_ax = plt.subplots()
+    swof.plotkrwkrow(mpl_ax)
     plt.show()
 
 
@@ -515,9 +515,9 @@ def testgascurves():
     sgof.add_LET_oil(l=2, e=3, t=1.4, kroend=0.7)
 
     print(sgof.table)
-    _, ax = plt.subplots()
-    sgof.plotkrgkrog(ax)
-    # ax.set_yscale('log')
+    _, mpl_ax = plt.subplots()
+    sgof.plotkrgkrog(mpl_ax)
+    # mpl_ax.set_yscale('log')
     print(sgof.SGOF())
     plt.show()
 

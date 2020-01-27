@@ -76,11 +76,11 @@ def estimate_diffjumppoint(table, xcol=None, ycol=None, side="right"):
         maxcumsum = table["_lindevcumsum"].max()
         linearpart = table[(table["_lindevcumsum"] - maxcumsum).abs() < epsilon]
         return linearpart.iloc[1][xcol]
-    else:
-        linearpart = table[(table["_lindevcumsum"] < epsilon)]
-        if len(linearpart) == 1:
-            linearpart = table[(table["_lindevcumsum"].shift(1) < epsilon)]
-        return linearpart.iloc[-1][xcol]
+    # else:
+    linearpart = table[(table["_lindevcumsum"] < epsilon)]
+    if len(linearpart) == 1:
+        linearpart = table[(table["_lindevcumsum"].shift(1) < epsilon)]
+    return linearpart.iloc[-1][xcol]
 
 
 def normalize_nonlinpart_wo(curve):
@@ -256,8 +256,8 @@ def interpolate_wo(wo_low, wo_high, parameter, h=0.01):
     Arguments:
         wo_low (WaterOil): a "low" case
         wo_high (WaterOil): a "high" case
-        parameter (float): Between 0 and 1. 0 will return the low case, 1 will return the
-            high case. Any number in between will return an interpolated curve
+        parameter (float): Between 0 and 1. 0 will return the low case, 1 will return
+            the high case. Any number in between will return an interpolated curve
         h (float): Saturation step-size in interpolant. If defaulted, a value
             smaller than in the input curves are used, to preserve information.
     Returns:
@@ -333,8 +333,8 @@ def interpolate_go(go_low, go_high, parameter, h=0.01):
     Arguments:
         go_low (GasOil): a "low" case
         go_high (GasOil): a "high" case
-        parameter (float): Between 0 and 1. 0 will return the low case, 1 will return the
-            high case. Any number in between will return an interpolated curve
+        parameter (float): Between 0 and 1. 0 will return the low case, 1 will return
+            the high case. Any number in between will return an interpolated curve
         h (float): Saturation step-size in interpolant. If defaulted, a value
             smaller than in the input curves are used, to preserve information.
     Returns:

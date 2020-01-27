@@ -112,15 +112,15 @@ class GasOil(object):
             # This is too much info..
             self.krgendanchor = ""  # This is critical to avoid bugs due to numerics.
 
-        sg = (
+        sg_list = (
             [0]
             + [sgcr]
             + list(np.arange(sgcr + h, 1 - swl, h))
             + [1 - sorg - swl]
             + [1 - swl]
         )
-        sg.sort()
-        self.table = pd.DataFrame(sg, columns=["sg"])
+        sg_list.sort()
+        self.table = pd.DataFrame(sg_list, columns=["sg"])
         self.table["sgint"] = list(
             map(int, list(map(round, self.table["sg"] * SWINTEGERS)))
         )
@@ -520,9 +520,10 @@ class GasOil(object):
     def estimate_sorg(self):
         """Estimate sorg of the current krg or krog data.
 
-        sorg is estimated by searching for a linear part in krg downwards from sg=1-swl.
-        In practice it is impossible to infer sorg = 0, since we are limited by
-        h, and the last segment from sg=1-swl-h to sg=1-swl can always be assumed linear.
+        sorg is estimated by searching for a linear part in krg downwards
+        from sg=1-swl. In practice it is impossible to infer sorg = 0,
+        since we are limited by h, and the last segment from sg=1-swl-h
+        to sg=1-swl can always be assumed linear.
 
         If krgend is anchored to sorg, krg data is used to infer sorg. If not,
         krg cannot be used for this, and krog is used. sorg might be overestimated
@@ -671,7 +672,8 @@ class GasOil(object):
                 defaults to True.
         """
         if not self.fast and not self.selfcheck():
-            return
+            # selfcheck() will log error/warning messages
+            return ""
         string = ""
         if "pc" not in self.table:
             self.table["pc"] = 0
@@ -847,22 +849,28 @@ class GasOil(object):
 
     def plotkrgkrog(
         self,
-        ax=None,
+        mpl_ax=None,
         color="blue",
         alpha=1,
         linewidth=1,
         linestyle="-",
+        label=None,
         logyscale=False,
     ):
-        """Plot krg and krog on a supplied matplotlib axis"""
+        """Plot krg and krog
+
+        If mpl_ax is not None, it will be used as a
+        matplotlib axis to plot on, if None, a fresh plot
+        will be made.
+        """
         import matplotlib.pyplot as plt
         import matplotlib
 
-        if not ax:
+        if mpl_ax is None:
             matplotlib.style.use("ggplot")
             _, useax = matplotlib.pyplot.subplots()
         else:
-            useax = ax
+            useax = mpl_ax
         if logyscale:
             useax.set_yscale("log")
             useax.set_ylim([1e-8, 1])
@@ -873,6 +881,7 @@ class GasOil(object):
             c=color,
             alpha=alpha,
             legend=None,
+            label=label,
             linewidth=linewidth,
             linestyle=linestyle,
         )
@@ -883,8 +892,9 @@ class GasOil(object):
             c=color,
             alpha=alpha,
             legend=None,
+            label=None,
             linewidth=linewidth,
             linestyle=linestyle,
         )
-        if not ax:
+        if mpl_ax is None:
             plt.show()

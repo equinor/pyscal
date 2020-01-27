@@ -129,6 +129,8 @@ def test_make_scalrecommendation():
     st.floats(min_value=-1.1, max_value=1.1), st.floats(min_value=-1.1, max_value=1.1)
 )
 def test_interpolation(param_wo, param_go):
+    """Test interpolation with random interpolation parameters,
+    looking for numerical corner cases"""
     rec = PyscalFactory.create_scal_recommendation(
         {"low": LOW_SAMPLE_LET, "base": BASE_SAMPLE_LET, "high": HIGH_SAMPLE_LET},
         "foo",

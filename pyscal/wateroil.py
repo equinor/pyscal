@@ -85,9 +85,11 @@ class WaterOil(object):
         self.h = h
         self.tag = tag
         self.fast = fast
-        sw = list(np.arange(self.swl, 1 - sorw, h)) + [self.swcr] + [1 - sorw] + [1]
-        sw.sort()  # Using default timsort on nearly sorted data.
-        self.table = pd.DataFrame(sw, columns=["sw"])
+        sw_list = (
+            list(np.arange(self.swl, 1 - sorw, h)) + [self.swcr] + [1 - sorw] + [1]
+        )
+        sw_list.sort()  # Using default timsort on nearly sorted data.
+        self.table = pd.DataFrame(sw_list, columns=["sw"])
 
         # Ensure that we do not have sw values that are too close
         # to each other, determined rougly by the distance 1/10000
@@ -1035,22 +1037,27 @@ class WaterOil(object):
 
     def plotpc(
         self,
-        ax=None,
+        mpl_ax=None,
         color="blue",
         alpha=1,
         linewidth=1,
         linestyle="-",
+        label="",
         logyscale=False,
     ):
-        """Plot capillary pressure (pc) a supplied matplotlib axis"""
+        """Plot capillary pressure (pc)
+
+        If mpl_ax is supplied, the curve will be drawn on
+        that, if not, a new axis (plot) will be made
+        """
         import matplotlib.pyplot as plt
         import matplotlib
 
-        if not ax:
+        if mpl_ax is None:
             matplotlib.style.use("ggplot")
             _, useax = plt.subplots()
         else:
-            useax = ax
+            useax = mpl_ax
         if logyscale:
             useax.set_yscale("log")
             useax.set_ylim([1e-6, 100])
@@ -1060,34 +1067,37 @@ class WaterOil(object):
             y="pc",
             c=color,
             alpha=alpha,
+            label=label,
             legend=None,
             linewidth=linewidth,
             linestyle=linestyle,
         )
-        if not ax:
+        if mpl_ax is None:
             plt.show()
 
     def plotkrwkrow(
         self,
-        ax=None,
+        mpl_ax=None,
         color="blue",
         alpha=1,
         linewidth=1,
         linestyle="-",
+        label="",
         logyscale=False,
     ):
         """Plot krw and krow
 
-        If the argument 'ax' is not supplied, a new plot
-        window will be made. If supplied, it will draw on the specified axis."""
+        If the argument 'mpl_ax' is not supplied, a new plot
+        window will be made. If supplied, it will draw on
+        the specified axis."""
         import matplotlib.pyplot as plt
         import matplotlib
 
-        if not ax:
+        if mpl_ax is None:
             matplotlib.style.use("ggplot")
             _, useax = plt.subplots()
         else:
-            useax = ax
+            useax = mpl_ax
         if logyscale:
             useax.set_yscale("log")
             useax.set_ylim([1e-8, 1])
@@ -1098,6 +1108,7 @@ class WaterOil(object):
             c=color,
             alpha=alpha,
             legend=None,
+            label=label,
             linewidth=linewidth,
             linestyle=linestyle,
         )
@@ -1107,9 +1118,10 @@ class WaterOil(object):
             y="krow",
             c=color,
             alpha=alpha,
+            label=None,
             legend=None,
             linewidth=linewidth,
             linestyle=linestyle,
         )
-        if not ax:
+        if mpl_ax is None:
             plt.show()

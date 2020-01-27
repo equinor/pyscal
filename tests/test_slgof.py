@@ -12,19 +12,21 @@ import numpy as np
 from pyscal import WaterOilGas, GasOil
 from pyscal.constants import SWINTEGERS, EPSILON
 
+from test_gasoil import sgof_str_ok
 
-def check_table(df):
+
+def check_table(dframe):
     """Check sanity of important columns"""
-    assert not df.empty
-    assert not df.isnull().values.any()
-    assert df["sl"].is_monotonic
-    assert (df["sl"] >= 0.0).all()
-    assert (df["sl"] <= 1.0).all()
+    assert not dframe.empty
+    assert not dframe.isnull().values.any()
+    assert dframe["sl"].is_monotonic
+    assert (dframe["sl"] >= 0.0).all()
+    assert (dframe["sl"] <= 1.0).all()
     # Increasing, but not monotonically for slgof
-    assert (df["krog"].diff().dropna() > -EPSILON).all()
-    assert df["krg"].is_monotonic_decreasing
-    if "pc" in df:
-        assert df["pc"].is_monotonic_decreasing
+    assert (dframe["krog"].diff().dropna() > -EPSILON).all()
+    assert dframe["krg"].is_monotonic_decreasing
+    if "pc" in dframe:
+        assert dframe["pc"].is_monotonic_decreasing
 
 
 @settings(deadline=1000)
@@ -34,6 +36,7 @@ def check_table(df):
     st.floats(min_value=0.0, max_value=0.2),
 )
 def test_slgof(swl, sorg, sgcr):
+    """Test dumping SLGOF records"""
     wog = WaterOilGas(swl=swl, sorg=sorg, sgcr=sgcr, h=0.05)
     wog.wateroil.add_corey_water()
     wog.wateroil.add_corey_oil()
@@ -49,6 +52,7 @@ def test_slgof(swl, sorg, sgcr):
     assert not slgof.empty
 
     check_table(slgof)
+    sgof_str_ok(wog.SLGOF())
 
     # Requirements from E100 manual:
     assert np.isclose(slgof["sl"].values[0], wog.gasoil.swl + wog.gasoil.sorg)
@@ -101,3 +105,4 @@ def test_slgof_hypo(swl, sorg, sgcr, h):
     slgof_str = gasoil.SLGOF()
     assert isinstance(slgof_str, str)
     assert slgof_str
+    assert sgof_str_ok(slgof_str)

@@ -162,6 +162,7 @@ def test_factory_gasoil():
 
 
 def test_factory_wateroilgas():
+    """Test creating discrete cases of WaterOilGas from factory"""
     logging.getLogger().setLevel("INFO")
 
     factory = PyscalFactory()

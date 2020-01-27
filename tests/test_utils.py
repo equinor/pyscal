@@ -279,11 +279,11 @@ def test_interpolate_wo(
         print(dists)
         from matplotlib import pyplot as plt
 
-        _, ax = plt.subplots()
-        wo_low.plotkrwkrow(ax=ax, color="red")
-        wo_high.plotkrwkrow(ax=ax, color="blue")
+        _, mpl_ax = plt.subplots()
+        wo_low.plotkrwkrow(mpl_ax=mpl_ax, color="red")
+        wo_high.plotkrwkrow(mpl_ax=mpl_ax, color="blue")
         for interp in ips:
-            interp.plotkrwkrow(ax=ax, color="green")
+            interp.plotkrwkrow(mpl_ax=mpl_ax, color="green")
         plt.show()
         assert False
 
@@ -352,11 +352,11 @@ def test_interpolate_wo_pc(swl, dswcr, dswlhigh, sorw, a_l, a_h, b_l, b_h):
         print(dists)
         from matplotlib import pyplot as plt
 
-        _, ax = plt.subplots()
-        wo_low.plotpc(ax=ax, color="red", logyscale=True)
-        wo_high.plotpc(ax=ax, color="blue", logyscale=True)
+        _, mpl_ax = plt.subplots()
+        wo_low.plotpc(mpl_ax=mpl_ax, color="red", logyscale=True)
+        wo_high.plotpc(mpl_ax=mpl_ax, color="blue", logyscale=True)
         for interp in ips:
-            interp.plotpc(ax=ax, color="green", logyscale=True)
+            interp.plotpc(mpl_ax=mpl_ax, color="green", logyscale=True)
         plt.show()
         assert False
 
@@ -555,11 +555,11 @@ def test_interpolate_go(
         print(dists)
         from matplotlib import pyplot as plt
 
-        _, ax = plt.subplots()
-        go_low.plotkrgkrog(ax=ax, color="red")
-        go_high.plotkrgkrog(ax=ax, color="blue")
+        _, mpl_ax = plt.subplots()
+        go_low.plotkrgkrog(mpl_ax=mpl_ax, color="red")
+        go_high.plotkrgkrog(mpl_ax=mpl_ax, color="blue")
         for interp in ips:
-            interp.plotkrgkrog(ax=ax, color="green")
+            interp.plotkrgkrog(mpl_ax=mpl_ax, color="green")
         plt.show()
         assert False
 

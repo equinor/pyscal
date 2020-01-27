@@ -100,6 +100,7 @@ def check_endpoints(wateroil, krwend, krwmax, kroend, kromax):
 @settings(deadline=1000)
 @given(st.floats(), st.floats())
 def test_wateroil_corey1(nw, now):
+    """Test random corey parameters"""
     wateroil = WaterOil()
     try:
         wateroil.add_corey_oil(now=now)
@@ -119,6 +120,7 @@ def test_wateroil_corey1(nw, now):
 @settings(deadline=1000)
 @given(st.floats(), st.floats(), st.floats(), st.floats(), st.floats())
 def test_wateroil_let1(l, e, t, krwend, krwmax):
+    """Test random LET parameters"""
     wateroil = WaterOil()
     try:
         wateroil.add_LET_oil(l, e, t, krwend, krwmax)
@@ -147,6 +149,7 @@ def test_wateroil_let1(l, e, t, krwend, krwmax):
     st.booleans(),
 )
 def test_wateroil_krendmax(swl, swcr, sorw, kroend, kromax, krwend, krwmax, h, fast):
+    """Test endpoints for wateroil using hypothesis testing"""
     try:
         wateroil = WaterOil(swl=swl, swcr=swcr, sorw=sorw, h=h, fast=fast)
     except AssertionError:

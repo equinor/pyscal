@@ -41,19 +41,19 @@ def sgof_str_ok(sgofstr):
     return True
 
 
-def check_table(df):
+def check_table(dframe):
     """Check sanity of important columns"""
-    assert not df.empty
-    assert not df.isnull().values.any()
-    assert len(df["sg"].unique()) == len(df)
-    assert df["sg"].is_monotonic
-    assert (df["sg"] >= 0.0).all()
-    assert df["sgn"].is_monotonic
-    assert df["son"].is_monotonic_decreasing
-    assert series_decreasing(df["krog"])
-    assert series_increasing(df["krg"])
-    if "pc" in df:
-        assert series_decreasing(df["pc"])
+    assert not dframe.empty
+    assert not dframe.isnull().values.any()
+    assert len(dframe["sg"].unique()) == len(dframe)
+    assert dframe["sg"].is_monotonic
+    assert (dframe["sg"] >= 0.0).all()
+    assert dframe["sgn"].is_monotonic
+    assert dframe["son"].is_monotonic_decreasing
+    assert series_decreasing(dframe["krog"])
+    assert series_increasing(dframe["krg"])
+    if "pc" in dframe:
+        assert series_decreasing(dframe["pc"])
 
 
 def test_gasoil_init():
