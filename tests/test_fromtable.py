@@ -252,6 +252,7 @@ def test_go_invalidcurves():
 
 
 def test_wo_fromtable_problems():
+    """Test wateroil from tables with problematic data"""
     # Implicit swl and sorw in the input, how do we handle that?
     df1 = pd.DataFrame(
         columns=["Sw", "krw", "krow", "pcow"],
@@ -279,6 +280,7 @@ def test_wo_fromtable_problems():
 @settings(deadline=2000)
 @given(st.floats(min_value=1e-5, max_value=1))
 def test_wo_fromtable_h(h):
+    """Test making curves from tabular data with random stepsize h"""
     df1 = pd.DataFrame(
         columns=["Sw", "krw", "krow", "pcow"],
         data=[[0.15, 0, 1, 3], [0.89, 1, 0, 0.1], [1, 1, 0, 0]],
