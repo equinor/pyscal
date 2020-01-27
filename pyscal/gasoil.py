@@ -235,9 +235,11 @@ class GasOil(object):
         if dframe[sgcolname].min() > 0.0:
             raise ValueError("sg must start at zero")
         swlfrominput = 1 - dframe[sgcolname].max()
-        if abs(swlfrominput - self.swl) < epsilon:
+        if abs(swlfrominput - self.swl) > epsilon:
             logger.warning(
-                "swl and 1-max(sg) from incoming table does not seem compatible"
+                "swl=%f and 1-max(sg)=%f from incoming table does not seem compatible",
+                self.swl,
+                swlfrominput,
             )
             logger.warning("         Do not trust the result near the endpoint.")
         if krgcolname in dframe:
