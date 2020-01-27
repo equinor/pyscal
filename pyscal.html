@@ -525,9 +525,10 @@ parametrization.</p>
 <dt id="pyscal.gasoil.GasOil.estimate_sorg">
 <code class="sig-name descname">estimate_sorg</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gasoil.html#GasOil.estimate_sorg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gasoil.GasOil.estimate_sorg" title="Permalink to this definition">¶</a></dt>
 <dd><p>Estimate sorg of the current krg or krog data.</p>
-<p>sorg is estimated by searching for a linear part in krg downwards from sg=1-swl.
-In practice it is impossible to infer sorg = 0, since we are limited by
-h, and the last segment from sg=1-swl-h to sg=1-swl can always be assumed linear.</p>
+<p>sorg is estimated by searching for a linear part in krg downwards
+from sg=1-swl. In practice it is impossible to infer sorg = 0,
+since we are limited by h, and the last segment from sg=1-swl-h
+to sg=1-swl can always be assumed linear.</p>
 <p>If krgend is anchored to sorg, krg data is used to infer sorg. If not,
 krg cannot be used for this, and krog is used. sorg might be overestimated
 when krog is used if it very close to zero before reaching sorw.</p>
@@ -687,8 +688,11 @@ defaults to True.</p></li>
 
 <dl class="method">
 <dt id="pyscal.gasoil.GasOil.plotkrgkrog">
-<code class="sig-name descname">plotkrgkrog</code><span class="sig-paren">(</span><em class="sig-param">ax=None</em>, <em class="sig-param">color='blue'</em>, <em class="sig-param">alpha=1</em>, <em class="sig-param">linewidth=1</em>, <em class="sig-param">linestyle='-'</em>, <em class="sig-param">logyscale=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gasoil.html#GasOil.plotkrgkrog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gasoil.GasOil.plotkrgkrog" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot krg and krog on a supplied matplotlib axis</p>
+<code class="sig-name descname">plotkrgkrog</code><span class="sig-paren">(</span><em class="sig-param">mpl_ax=None</em>, <em class="sig-param">color='blue'</em>, <em class="sig-param">alpha=1</em>, <em class="sig-param">linewidth=1</em>, <em class="sig-param">linestyle='-'</em>, <em class="sig-param">label=None</em>, <em class="sig-param">logyscale=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gasoil.html#GasOil.plotkrgkrog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gasoil.GasOil.plotkrgkrog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot krg and krog</p>
+<p>If mpl_ax is not None, it will be used as a
+matplotlib axis to plot on, if None, a fresh plot
+will be made.</p>
 </dd></dl>
 
 </dd></dl>
@@ -887,8 +891,8 @@ interpolated individually.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>wo_low</strong> (<a class="reference internal" href="#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><em>WaterOil</em></a>) – a “low” case</p></li>
 <li><p><strong>wo_high</strong> (<a class="reference internal" href="#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><em>WaterOil</em></a>) – a “high” case</p></li>
-<li><p><strong>parameter</strong> (<em>float</em>) – Between 0 and 1. 0 will return the low case, 1 will return the
-high case. Any number in between will return an interpolated curve</p></li>
+<li><p><strong>parameter</strong> (<em>float</em>) – Between 0 and 1. 0 will return the low case, 1 will return
+the high case. Any number in between will return an interpolated curve</p></li>
 <li><p><strong>h</strong> (<em>float</em>) – Saturation step-size in interpolant. If defaulted, a value
 smaller than in the input curves are used, to preserve information.</p></li>
 </ul>
@@ -914,8 +918,8 @@ interpolated individually.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>go_low</strong> (<a class="reference internal" href="#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><em>GasOil</em></a>) – a “low” case</p></li>
 <li><p><strong>go_high</strong> (<a class="reference internal" href="#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><em>GasOil</em></a>) – a “high” case</p></li>
-<li><p><strong>parameter</strong> (<em>float</em>) – Between 0 and 1. 0 will return the low case, 1 will return the
-high case. Any number in between will return an interpolated curve</p></li>
+<li><p><strong>parameter</strong> (<em>float</em>) – Between 0 and 1. 0 will return the low case, 1 will return
+the high case. Any number in between will return an interpolated curve</p></li>
 <li><p><strong>h</strong> (<em>float</em>) – Saturation step-size in interpolant. If defaulted, a value
 smaller than in the input curves are used, to preserve information.</p></li>
 </ul>
@@ -1343,16 +1347,19 @@ be printed. Defualt True</p></li>
 
 <dl class="method">
 <dt id="pyscal.wateroil.WaterOil.plotpc">
-<code class="sig-name descname">plotpc</code><span class="sig-paren">(</span><em class="sig-param">ax=None</em>, <em class="sig-param">color='blue'</em>, <em class="sig-param">alpha=1</em>, <em class="sig-param">linewidth=1</em>, <em class="sig-param">linestyle='-'</em>, <em class="sig-param">logyscale=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.plotpc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.plotpc" title="Permalink to this definition">¶</a></dt>
-<dd><p>Plot capillary pressure (pc) a supplied matplotlib axis</p>
+<code class="sig-name descname">plotpc</code><span class="sig-paren">(</span><em class="sig-param">mpl_ax=None</em>, <em class="sig-param">color='blue'</em>, <em class="sig-param">alpha=1</em>, <em class="sig-param">linewidth=1</em>, <em class="sig-param">linestyle='-'</em>, <em class="sig-param">label=''</em>, <em class="sig-param">logyscale=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.plotpc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.plotpc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot capillary pressure (pc)</p>
+<p>If mpl_ax is supplied, the curve will be drawn on
+that, if not, a new axis (plot) will be made</p>
 </dd></dl>
 
 <dl class="method">
 <dt id="pyscal.wateroil.WaterOil.plotkrwkrow">
-<code class="sig-name descname">plotkrwkrow</code><span class="sig-paren">(</span><em class="sig-param">ax=None</em>, <em class="sig-param">color='blue'</em>, <em class="sig-param">alpha=1</em>, <em class="sig-param">linewidth=1</em>, <em class="sig-param">linestyle='-'</em>, <em class="sig-param">logyscale=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.plotkrwkrow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.plotkrwkrow" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">plotkrwkrow</code><span class="sig-paren">(</span><em class="sig-param">mpl_ax=None</em>, <em class="sig-param">color='blue'</em>, <em class="sig-param">alpha=1</em>, <em class="sig-param">linewidth=1</em>, <em class="sig-param">linestyle='-'</em>, <em class="sig-param">label=''</em>, <em class="sig-param">logyscale=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.plotkrwkrow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.plotkrwkrow" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot krw and krow</p>
-<p>If the argument ‘ax’ is not supplied, a new plot
-window will be made. If supplied, it will draw on the specified axis.</p>
+<p>If the argument ‘mpl_ax’ is not supplied, a new plot
+window will be made. If supplied, it will draw on
+the specified axis.</p>
 </dd></dl>
 
 </dd></dl>

@@ -269,15 +269,15 @@
             <span class="c1"># This is too much info..</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">krgendanchor</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>  <span class="c1"># This is critical to avoid bugs due to numerics.</span>
 
-        <span class="n">sg</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">sg_list</span> <span class="o">=</span> <span class="p">(</span>
             <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
             <span class="o">+</span> <span class="p">[</span><span class="n">sgcr</span><span class="p">]</span>
             <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">sgcr</span> <span class="o">+</span> <span class="n">h</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">swl</span><span class="p">,</span> <span class="n">h</span><span class="p">))</span>
             <span class="o">+</span> <span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">sorg</span> <span class="o">-</span> <span class="n">swl</span><span class="p">]</span>
             <span class="o">+</span> <span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">swl</span><span class="p">]</span>
         <span class="p">)</span>
-        <span class="n">sg</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sg</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;sg&quot;</span><span class="p">])</span>
+        <span class="n">sg_list</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sg_list</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;sg&quot;</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sgint&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
             <span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">round</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sg&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">SWINTEGERS</span><span class="p">)))</span>
         <span class="p">)</span>
@@ -677,9 +677,10 @@
 <div class="viewcode-block" id="GasOil.estimate_sorg"><a class="viewcode-back" href="../../pyscal.html#pyscal.gasoil.GasOil.estimate_sorg">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_sorg</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Estimate sorg of the current krg or krog data.</span>
 
-<span class="sd">        sorg is estimated by searching for a linear part in krg downwards from sg=1-swl.</span>
-<span class="sd">        In practice it is impossible to infer sorg = 0, since we are limited by</span>
-<span class="sd">        h, and the last segment from sg=1-swl-h to sg=1-swl can always be assumed linear.</span>
+<span class="sd">        sorg is estimated by searching for a linear part in krg downwards</span>
+<span class="sd">        from sg=1-swl. In practice it is impossible to infer sorg = 0,</span>
+<span class="sd">        since we are limited by h, and the last segment from sg=1-swl-h</span>
+<span class="sd">        to sg=1-swl can always be assumed linear.</span>
 
 <span class="sd">        If krgend is anchored to sorg, krg data is used to infer sorg. If not,</span>
 <span class="sd">        krg cannot be used for this, and krog is used. sorg might be overestimated</span>
@@ -828,7 +829,8 @@
 <span class="sd">                defaults to True.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">fast</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">selfcheck</span><span class="p">():</span>
-            <span class="k">return</span>
+            <span class="c1"># selfcheck() will log error/warning messages</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
         <span class="n">string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">if</span> <span class="s2">&quot;pc&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
@@ -1004,22 +1006,28 @@
 
 <div class="viewcode-block" id="GasOil.plotkrgkrog"><a class="viewcode-back" href="../../pyscal.html#pyscal.gasoil.GasOil.plotkrgkrog">[docs]</a>    <span class="k">def</span> <span class="nf">plotkrgkrog</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">mpl_ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span>
         <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;-&quot;</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">logyscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Plot krg and krog on a supplied matplotlib axis&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Plot krg and krog</span>
+
+<span class="sd">        If mpl_ax is not None, it will be used as a</span>
+<span class="sd">        matplotlib axis to plot on, if None, a fresh plot</span>
+<span class="sd">        will be made.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
         <span class="kn">import</span> <span class="nn">matplotlib</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">ax</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">mpl_ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">matplotlib</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;ggplot&quot;</span><span class="p">)</span>
             <span class="n">_</span><span class="p">,</span> <span class="n">useax</span> <span class="o">=</span> <span class="n">matplotlib</span><span class="o">.</span><span class="n">pyplot</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">useax</span> <span class="o">=</span> <span class="n">ax</span>
+            <span class="n">useax</span> <span class="o">=</span> <span class="n">mpl_ax</span>
         <span class="k">if</span> <span class="n">logyscale</span><span class="p">:</span>
             <span class="n">useax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
             <span class="n">useax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="mf">1e-8</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
@@ -1030,6 +1038,7 @@
             <span class="n">c</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
             <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
             <span class="n">legend</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span>
             <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">,</span>
             <span class="n">linestyle</span><span class="o">=</span><span class="n">linestyle</span><span class="p">,</span>
         <span class="p">)</span>
@@ -1040,10 +1049,11 @@
             <span class="n">c</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
             <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
             <span class="n">legend</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">,</span>
             <span class="n">linestyle</span><span class="o">=</span><span class="n">linestyle</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">ax</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">mpl_ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div></div>
 </pre></div>
 

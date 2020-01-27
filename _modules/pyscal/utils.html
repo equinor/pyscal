@@ -233,11 +233,11 @@
         <span class="n">maxcumsum</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;_lindevcumsum&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
         <span class="n">linearpart</span> <span class="o">=</span> <span class="n">table</span><span class="p">[(</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;_lindevcumsum&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">maxcumsum</span><span class="p">)</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">linearpart</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">xcol</span><span class="p">]</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">linearpart</span> <span class="o">=</span> <span class="n">table</span><span class="p">[(</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;_lindevcumsum&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">)]</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">linearpart</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">linearpart</span> <span class="o">=</span> <span class="n">table</span><span class="p">[(</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;_lindevcumsum&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">)]</span>
-        <span class="k">return</span> <span class="n">linearpart</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">xcol</span><span class="p">]</span></div>
+    <span class="c1"># else:</span>
+    <span class="n">linearpart</span> <span class="o">=</span> <span class="n">table</span><span class="p">[(</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;_lindevcumsum&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">linearpart</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">linearpart</span> <span class="o">=</span> <span class="n">table</span><span class="p">[(</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;_lindevcumsum&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="n">linearpart</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">xcol</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="normalize_nonlinpart_wo"><a class="viewcode-back" href="../../pyscal.html#pyscal.utils.normalize_nonlinpart_wo">[docs]</a><span class="k">def</span> <span class="nf">normalize_nonlinpart_wo</span><span class="p">(</span><span class="n">curve</span><span class="p">):</span>
@@ -413,8 +413,8 @@
 <span class="sd">    Arguments:</span>
 <span class="sd">        wo_low (WaterOil): a &quot;low&quot; case</span>
 <span class="sd">        wo_high (WaterOil): a &quot;high&quot; case</span>
-<span class="sd">        parameter (float): Between 0 and 1. 0 will return the low case, 1 will return the</span>
-<span class="sd">            high case. Any number in between will return an interpolated curve</span>
+<span class="sd">        parameter (float): Between 0 and 1. 0 will return the low case, 1 will return</span>
+<span class="sd">            the high case. Any number in between will return an interpolated curve</span>
 <span class="sd">        h (float): Saturation step-size in interpolant. If defaulted, a value</span>
 <span class="sd">            smaller than in the input curves are used, to preserve information.</span>
 <span class="sd">    Returns:</span>
@@ -490,8 +490,8 @@
 <span class="sd">    Arguments:</span>
 <span class="sd">        go_low (GasOil): a &quot;low&quot; case</span>
 <span class="sd">        go_high (GasOil): a &quot;high&quot; case</span>
-<span class="sd">        parameter (float): Between 0 and 1. 0 will return the low case, 1 will return the</span>
-<span class="sd">            high case. Any number in between will return an interpolated curve</span>
+<span class="sd">        parameter (float): Between 0 and 1. 0 will return the low case, 1 will return</span>
+<span class="sd">            the high case. Any number in between will return an interpolated curve</span>
 <span class="sd">        h (float): Saturation step-size in interpolant. If defaulted, a value</span>
 <span class="sd">            smaller than in the input curves are used, to preserve information.</span>
 <span class="sd">    Returns:</span>

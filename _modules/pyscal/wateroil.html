@@ -242,9 +242,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">=</span> <span class="n">h</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tag</span> <span class="o">=</span> <span class="n">tag</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fast</span> <span class="o">=</span> <span class="n">fast</span>
-        <span class="n">sw</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">swl</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span><span class="p">,</span> <span class="n">h</span><span class="p">))</span> <span class="o">+</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">swcr</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="n">sw</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>  <span class="c1"># Using default timsort on nearly sorted data.</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sw</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">])</span>
+        <span class="n">sw_list</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">swl</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span><span class="p">,</span> <span class="n">h</span><span class="p">))</span> <span class="o">+</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">swcr</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">sw_list</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>  <span class="c1"># Using default timsort on nearly sorted data.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sw_list</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">])</span>
 
         <span class="c1"># Ensure that we do not have sw values that are too close</span>
         <span class="c1"># to each other, determined rougly by the distance 1/10000</span>
@@ -1192,22 +1194,27 @@
 
 <div class="viewcode-block" id="WaterOil.plotpc"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.plotpc">[docs]</a>    <span class="k">def</span> <span class="nf">plotpc</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">mpl_ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span>
         <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;-&quot;</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
         <span class="n">logyscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Plot capillary pressure (pc) a supplied matplotlib axis&quot;&quot;&quot;</span>
+        <span class="sd">&quot;&quot;&quot;Plot capillary pressure (pc)</span>
+
+<span class="sd">        If mpl_ax is supplied, the curve will be drawn on</span>
+<span class="sd">        that, if not, a new axis (plot) will be made</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
         <span class="kn">import</span> <span class="nn">matplotlib</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">ax</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">mpl_ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">matplotlib</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;ggplot&quot;</span><span class="p">)</span>
             <span class="n">_</span><span class="p">,</span> <span class="n">useax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">useax</span> <span class="o">=</span> <span class="n">ax</span>
+            <span class="n">useax</span> <span class="o">=</span> <span class="n">mpl_ax</span>
         <span class="k">if</span> <span class="n">logyscale</span><span class="p">:</span>
             <span class="n">useax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
             <span class="n">useax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="mf">1e-6</span><span class="p">,</span> <span class="mi">100</span><span class="p">])</span>
@@ -1217,34 +1224,37 @@
             <span class="n">y</span><span class="o">=</span><span class="s2">&quot;pc&quot;</span><span class="p">,</span>
             <span class="n">c</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
             <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span>
             <span class="n">legend</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">,</span>
             <span class="n">linestyle</span><span class="o">=</span><span class="n">linestyle</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">ax</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">mpl_ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="WaterOil.plotkrwkrow"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.plotkrwkrow">[docs]</a>    <span class="k">def</span> <span class="nf">plotkrwkrow</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">mpl_ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">color</span><span class="o">=</span><span class="s2">&quot;blue&quot;</span><span class="p">,</span>
         <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
         <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;-&quot;</span><span class="p">,</span>
+        <span class="n">label</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
         <span class="n">logyscale</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Plot krw and krow</span>
 
-<span class="sd">        If the argument &#39;ax&#39; is not supplied, a new plot</span>
-<span class="sd">        window will be made. If supplied, it will draw on the specified axis.&quot;&quot;&quot;</span>
+<span class="sd">        If the argument &#39;mpl_ax&#39; is not supplied, a new plot</span>
+<span class="sd">        window will be made. If supplied, it will draw on</span>
+<span class="sd">        the specified axis.&quot;&quot;&quot;</span>
         <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
         <span class="kn">import</span> <span class="nn">matplotlib</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">ax</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">mpl_ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">matplotlib</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;ggplot&quot;</span><span class="p">)</span>
             <span class="n">_</span><span class="p">,</span> <span class="n">useax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">useax</span> <span class="o">=</span> <span class="n">ax</span>
+            <span class="n">useax</span> <span class="o">=</span> <span class="n">mpl_ax</span>
         <span class="k">if</span> <span class="n">logyscale</span><span class="p">:</span>
             <span class="n">useax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
             <span class="n">useax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="mf">1e-8</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
@@ -1255,6 +1265,7 @@
             <span class="n">c</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
             <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
             <span class="n">legend</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span>
             <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">,</span>
             <span class="n">linestyle</span><span class="o">=</span><span class="n">linestyle</span><span class="p">,</span>
         <span class="p">)</span>
@@ -1264,11 +1275,12 @@
             <span class="n">y</span><span class="o">=</span><span class="s2">&quot;krow&quot;</span><span class="p">,</span>
             <span class="n">c</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
             <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">legend</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">,</span>
             <span class="n">linestyle</span><span class="o">=</span><span class="n">linestyle</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">ax</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">mpl_ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div></div>
 </pre></div>
 
