@@ -9,6 +9,9 @@ import hypothesis.strategies as st
 
 from pyscal import SCALrecommendation, PyscalFactory
 
+from test_wateroil import check_table
+
+
 # Example SCAL recommendation, low case
 LOW_SAMPLE_LET = {
     "swirr": 0.1,
@@ -101,8 +104,8 @@ def test_interpolation_deprecated(param_wo, param_go):
     except AssertionError:
         return
 
-    check_table_wo(interpolant.wateroil.table)
-    check_table_go(interpolant.gasoil.table)
+    check_table(interpolant.wateroil.table)
+    check_table(interpolant.gasoil.table)
 
     assert len(interpolant.gasoil.SGOF()) > 100
     assert len(interpolant.gasoil.SGFN()) > 100
@@ -120,8 +123,8 @@ def test_make_scalrecommendation():
     high = PyscalFactory.create_water_oil_gas(HIGH_SAMPLE_LET)
     rec = SCALrecommendation(low, base, high)
     interpolant = rec.interpolate(-0.5)
-    check_table_wo(interpolant.wateroil.table)
-    check_table_go(interpolant.gasoil.table)
+    check_table(interpolant.wateroil.table)
+    check_table(interpolant.gasoil.table)
 
 
 @settings(max_examples=10, deadline=1500)
@@ -148,8 +151,8 @@ def test_interpolation(param_wo, param_go):
     except AssertionError:
         return
 
-    check_table_wo(interpolant.wateroil.table)
-    check_table_go(interpolant.gasoil.table)
+    check_table(interpolant.wateroil.table)
+    check_table(interpolant.gasoil.table)
 
     assert len(interpolant.gasoil.SGOF()) > 100
     assert len(interpolant.gasoil.SGFN()) > 100
@@ -195,32 +198,3 @@ def test_boundary_cases():
     assert rec.interpolate(0, -1).gasoil == rec.low.gasoil
     assert rec.interpolate(-1, -1).gasoil == rec.low.gasoil
     assert rec.interpolate(1, -1).gasoil == rec.low.gasoil
-
-
-def check_table_wo(dframe):
-    """Check sanity of important columns"""
-    assert not dframe.empty
-    assert not dframe.isnull().values.any()
-    assert len(dframe["sw"].unique()) == len(dframe)
-    assert dframe["sw"].is_monotonic
-    assert (dframe["sw"] >= 0.0).all()
-    assert dframe["swn"].is_monotonic
-    assert dframe["son"].is_monotonic_decreasing
-    assert dframe["swnpc"].is_monotonic
-    assert dframe["krow"].is_monotonic_decreasing
-    assert dframe["krw"].is_monotonic
-
-
-def check_table_go(dframe):
-    """Check sanity of important columns"""
-    assert not dframe.empty
-    assert not dframe.isnull().values.any()
-    assert len(dframe["sg"].unique()) == len(dframe)
-    assert dframe["sg"].is_monotonic
-    assert (dframe["sg"] >= 0.0).all()
-    assert dframe["sgn"].is_monotonic
-    assert dframe["son"].is_monotonic_decreasing
-    assert dframe["krog"].is_monotonic_decreasing
-    assert dframe["krg"].is_monotonic
-    if "pc" in dframe:
-        assert dframe["pc"].is_monotonic

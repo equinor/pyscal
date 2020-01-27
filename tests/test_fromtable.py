@@ -14,8 +14,7 @@ import hypothesis.strategies as st
 
 from pyscal import WaterOil, GasOil
 
-from test_gasoil import check_table as check_go_table
-from test_wateroil import check_table as check_wo_table, float_df_checker
+from common import check_table, float_df_checker
 
 
 def test_wo_fromtable_simple():
@@ -43,7 +42,7 @@ def test_wo_fromtable_simple():
     assert "krw" in wateroil.table.columns
     assert "krow" in wateroil.table.columns
     assert "pc" in wateroil.table.columns
-    check_wo_table(wateroil.table)
+    check_table(wateroil.table)
 
 
 def test_go_fromtable_simple():
@@ -55,7 +54,7 @@ def test_go_fromtable_simple():
     gasoil.add_fromtable(
         df1, sgcolname="SG", krgcolname="KRG", krogcolname="KROG", pccolname="PC"
     )
-    check_go_table(gasoil.table)
+    check_table(gasoil.table)
 
 
 def test_wo_fromtable_multiindex():
@@ -81,7 +80,7 @@ def test_wo_fromtable_multiindex():
     assert "krw" in wateroil.table.columns
     assert "krow" in wateroil.table.columns
     assert "pc" in wateroil.table.columns
-    check_wo_table(wateroil.table)
+    check_table(wateroil.table)
 
 
 def test_go_fromtable_problems():
@@ -267,13 +266,13 @@ def test_wo_fromtable_problems():
     wateroil = WaterOil(h=0.1, swl=df1["Sw"].min())
     wateroil.add_fromtable(df1)
     # The table is now valid, but we did not preserve the 0.89 point
-    check_wo_table(wateroil.table)
+    check_table(wateroil.table)
 
     # If we also tell the WaterOil object about sorw, we are guaranteed
     # to have it expclitly included:
     wateroil = WaterOil(h=0.1, swl=df1["Sw"].min(), sorw=1 - 0.89)
     wateroil.add_fromtable(df1)
-    check_wo_table(wateroil.table)
+    check_table(wateroil.table)
     # For low enough h, this will however NOT matter.
 
 
@@ -287,4 +286,4 @@ def test_wo_fromtable_h(h):
     )
     wateroil = WaterOil(h=h, swl=0.15, sorw=1 - 0.89)
     wateroil.add_fromtable(df1)
-    check_wo_table(wateroil.table)
+    check_table(wateroil.table)

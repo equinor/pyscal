@@ -16,6 +16,8 @@ import numpy as np
 
 from pyscal import WaterOil, WaterOilGas, GasOil, utils, PyscalFactory
 
+from test_scalrecommendation import LOW_SAMPLE_LET, BASE_SAMPLE_LET, HIGH_SAMPLE_LET
+
 
 def interpolation_art(repeats=50, interpolants=30, curvetype="corey"):
     """This code was used to create the Pyscal logo"""
@@ -221,7 +223,9 @@ def interpolateplottest():
     matplotlib.style.use("ggplot")
 
     rec = PyscalFactory.create_scal_recommendation(
-        {"low": LOWSAMPLE, "base": BASESAMPLE, "high": HIGHSAMPLE}, "FOO", h=0.001
+        {"low": LOW_SAMPLE_LET, "base": BASE_SAMPLE_LET, "high": HIGH_SAMPLE_LET},
+        "FOO",
+        h=0.001,
     )
     _, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2)
 
@@ -285,7 +289,9 @@ def interpolateplottest():
 def interpolatetest():
     """Test interpolation (sample test) in a scal recommentation"""
     rec = PyscalFactory.create_scal_recommendation(
-        {"low": LOWSAMPLE, "base": BASESAMPLE, "high": HIGHSAMPLE}, "foo", h=0.001
+        {"low": LOW_SAMPLE_LET, "base": BASE_SAMPLE_LET, "high": HIGH_SAMPLE_LET},
+        "foo",
+        h=0.001,
     )
     rec.add_simple_J()  # Add default pc curve
     #    print rec.low.wateroil.table
@@ -377,83 +383,6 @@ def letspan():
     swof.plotkrwkrow(mpl_ax=mpl_ax, color="red", label="High")
     # mpl_ax.set_yscale('log')
     plt.show()
-
-
-LOWSAMPLE = {
-    "swirr": 0.1,
-    "sorw": 0.02,
-    "krwend": 0.7,
-    "krwmax": 0.8,
-    "swl": 0.16,
-    "swcr": 0.25,
-    "Lw": 2.323,
-    "Ew": 2.0,
-    "Tw": 1.329,
-    "Lo": 4.944,
-    "Eo": 5.0,
-    "To": 0.68,
-    "Lg": 4,
-    "Eg": 1,
-    "Tg": 1,
-    "Log": 4,
-    "Eog": 1,
-    "Tog": 1,
-    "sorg": 0.2,
-    "sgcr": 0.15,
-    "krgend": 0.9,
-    "krgmax": 1,
-    "kroend": 1,
-}
-
-
-BASESAMPLE = {
-    "swirr": 0.1,
-    "sorw": 0.091,
-    "krwend": 0.8,
-    "swl": 0.16,
-    "swcr": 0.20,
-    "Lw": 3.369,
-    "Ew": 4.053,
-    "Tw": 1.047,
-    "Lo": 3.726,
-    "Eo": 3.165,
-    "To": 1.117,
-    "Lg": 2,
-    "Eg": 2,
-    "Tg": 2,
-    "Log": 2,
-    "Eog": 2,
-    "Tog": 2,
-    "sorg": 0.1,
-    "sgcr": 0.10,
-    "krgend": 0.97,
-    "kroend": 1,
-}
-
-
-HIGHSAMPLE = {
-    "swirr": 0.1,
-    "sorw": 0.137,
-    "krwend": 0.6,
-    "swl": 0.16,
-    "swcr": 0.16,
-    "Lw": 4.436,
-    "Ew": 8.0,
-    "Tw": 0.766,
-    "Lo": 2.537,
-    "Eo": 2.0,
-    "To": 1.549,
-    "Lg": 1,
-    "Eg": 2,
-    "Tg": 2,
-    "Log": 1,
-    "Eog": 2,
-    "Tog": 2,
-    "sorg": 0.05,
-    "sgcr": 0.0,
-    "krgend": 1,
-    "kroend": 1,
-}
 
 
 def testplot():

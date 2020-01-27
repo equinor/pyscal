@@ -14,26 +14,7 @@ import hypothesis.strategies as st
 from pyscal import WaterOil
 from pyscal.constants import MAX_EXPONENT
 
-from test_wateroil import float_df_checker
-
-
-def series_decreasing(series):
-    """Weaker than pd.Series.is_monotonic_decreasing,
-    allows constant parts"""
-    return (series.diff().dropna() < 1e-8).all()
-
-
-def check_table(dframe):
-    """Check that the table has the properties Eclipse enforces"""
-    assert not dframe.empty
-    assert not dframe.isnull().values.any()
-    assert len(dframe["sw"].unique()) == len(dframe)
-    assert dframe["sw"].is_monotonic
-    assert (dframe["sw"] >= 0.0).all()
-    assert dframe["swn"].is_monotonic
-    assert dframe["son"].is_monotonic_decreasing
-    assert dframe["swnpc"].is_monotonic
-    assert series_decreasing(dframe["pc"])
+from common import float_df_checker, check_table
 
 
 def test_simple_j():
