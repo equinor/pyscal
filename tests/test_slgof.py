@@ -12,7 +12,7 @@ import numpy as np
 from pyscal import WaterOilGas, GasOil
 from pyscal.constants import SWINTEGERS, EPSILON
 
-from test_gasoil import sgof_str_ok
+from test_gasoil import sat_table_str_ok
 
 
 def check_table(dframe):
@@ -52,7 +52,7 @@ def test_slgof(swl, sorg, sgcr):
     assert not slgof.empty
 
     check_table(slgof)
-    sgof_str_ok(wog.SLGOF())
+    assert sat_table_str_ok(wog.SLGOF())
 
     # Requirements from E100 manual:
     assert np.isclose(slgof["sl"].values[0], wog.gasoil.swl + wog.gasoil.sorg)
@@ -105,4 +105,4 @@ def test_slgof_hypo(swl, sorg, sgcr, h):
     slgof_str = gasoil.SLGOF()
     assert isinstance(slgof_str, str)
     assert slgof_str
-    assert sgof_str_ok(slgof_str)
+    assert sat_table_str_ok(slgof_str)

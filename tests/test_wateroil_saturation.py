@@ -10,20 +10,7 @@ import hypothesis.strategies as st
 from pyscal import WaterOil
 from pyscal.constants import SWINTEGERS
 
-from test_wateroil import float_df_checker
-
-
-def check_table(dframe):
-    """Check that the numbers in a dataframe has the properties
-    that Eclipse enforces"""
-    assert not dframe.empty
-    assert not dframe.isnull().values.any()
-    assert len(dframe["sw"].unique()) == len(dframe)
-    assert dframe["sw"].is_monotonic
-    assert (dframe["sw"] >= 0.0).all()
-    assert dframe["swn"].is_monotonic
-    assert dframe["son"].is_monotonic_decreasing
-    assert dframe["swnpc"].is_monotonic
+from common import float_df_checker, check_table
 
 
 @given(

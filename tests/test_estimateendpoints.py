@@ -134,7 +134,7 @@ def test_linear_corey():
 @given(
     st.floats(min_value=0.001, max_value=0.2),
     st.floats(min_value=0, max_value=0.5),
-    st.floats(min_value=0.1, max_value=3),
+    st.floats(min_value=0.5, max_value=3),
 )
 def test_sorw_hypo(h, sorw, nw):
     """Test estimate_sorw extensively"""

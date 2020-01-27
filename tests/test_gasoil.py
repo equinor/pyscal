@@ -9,26 +9,23 @@ import numpy as np
 from hypothesis import given, settings
 import hypothesis.strategies as st
 
-from test_wateroil import float_df_checker
+from common import float_df_checker, check_table
 
 from pyscal import GasOil
 from pyscal.constants import SWINTEGERS
 
 
-def series_decreasing(series):
-    """Weaker than pd.Series.is_monotonic_decreasing,
-    allows constant parts"""
-    return (series.diff().dropna() < 1e-8).all()
+def sat_table_str_ok(sgofstr):
+    """Test that a supplied string from SWOF()/SGOF() etc is
+    probably ok for Eclipse.
 
+    This is checking that the first characters on each line is sensible.
 
-def series_increasing(series):
-    """Weaker than pd.Series.is_monotonic_increasing"""
-    return (series.diff().dropna() > -1e-8).all()
+    Wrap this function with assert
 
-
-def sgof_str_ok(sgofstr):
-    """Test that a supplied string from SGOF() is
-    probably ok for Eclipse"""
+    Returns:
+        True if tests pass.
+    """
     for line in sgofstr.splitlines():
         if not (
             not line
@@ -39,21 +36,6 @@ def sgof_str_ok(sgofstr):
         ):
             return False
     return True
-
-
-def check_table(dframe):
-    """Check sanity of important columns"""
-    assert not dframe.empty
-    assert not dframe.isnull().values.any()
-    assert len(dframe["sg"].unique()) == len(dframe)
-    assert dframe["sg"].is_monotonic
-    assert (dframe["sg"] >= 0.0).all()
-    assert dframe["sgn"].is_monotonic
-    assert dframe["son"].is_monotonic_decreasing
-    assert series_decreasing(dframe["krog"])
-    assert series_increasing(dframe["krg"])
-    if "pc" in dframe:
-        assert series_decreasing(dframe["pc"])
 
 
 def test_gasoil_init():
@@ -140,11 +122,11 @@ def test_gasoil_normalization(swl, sgcr, sorg, h, tag):
 @given(
     st.floats(min_value=0, max_value=0.3),  # swl
     st.floats(min_value=0, max_value=0.3),  # sgcr
-    st.floats(min_value=0, max_value=0.3),  # sorg
+    st.floats(min_value=0, max_value=0.4),  # sorg
     st.floats(min_value=0.1, max_value=1),  # kroend
     st.floats(min_value=0.1, max_value=1),  # kromax
     st.floats(min_value=0.1, max_value=1),  # krgend
-    st.floats(min_value=0.1, max_value=1),  # krgmax
+    st.floats(min_value=0.2, max_value=1),  # krgmax
     st.floats(min_value=0.0001, max_value=1),  # h
     st.booleans(),  # fast mode
 )
@@ -340,13 +322,13 @@ def test_gasoil_corey1(ng, nog):
     check_table(gasoil.table)
     sgofstr = gasoil.SGOF()
     assert len(sgofstr) > 100
-    assert sgof_str_ok(sgofstr)
+    assert sat_table_str_ok(sgofstr)
 
     gasoil.resetsorg()
     check_table(gasoil.table)
     sgofstr = gasoil.SGOF()
     assert len(sgofstr) > 100
-    assert sgof_str_ok(sgofstr)
+    assert sat_table_str_ok(sgofstr)
 
 
 @settings(deadline=1000)
@@ -366,4 +348,4 @@ def test_gasoil_let1(l, e, t, krgend, krgmax):
     check_table(gasoil.table)
     sgofstr = gasoil.SGOF()
     assert len(sgofstr) > 100
-    assert sgof_str_ok(sgofstr)
+    assert sat_table_str_ok(sgofstr)

@@ -12,8 +12,7 @@ import hypothesis.strategies as st
 
 
 from pyscal import utils, WaterOil, GasOil
-from test_wateroil import check_table as check_table_wo
-from test_gasoil import check_table as check_table_go
+from test_wateroil import check_table
 
 
 def test_diffjumppoint():
@@ -246,7 +245,7 @@ def test_interpolate_wo(
     ip_dist = 0.05
     for tparam in np.arange(0, 1 + ip_dist, ip_dist):
         wo_ip = utils.interpolate_wo(wo_low, wo_high, tparam)
-        check_table_wo(wo_ip.table)
+        check_table(wo_ip.table)
         ips.append(wo_ip)
         assert 0 < wo_ip.crosspoint() < 1
 
@@ -323,7 +322,7 @@ def test_interpolate_wo_pc(swl, dswcr, dswlhigh, sorw, a_l, a_h, b_l, b_h):
     ip_dist = 0.05
     for t in np.arange(0, 1 + ip_dist, ip_dist):
         wo_ip = utils.interpolate_wo(wo_low, wo_high, t)
-        check_table_wo(wo_ip.table)
+        check_table(wo_ip.table)
         ips.append(wo_ip)
         assert 0 < wo_ip.crosspoint() < 1
 
@@ -528,7 +527,7 @@ def test_interpolate_go(
     ip_dist = 0.05
     for t in np.arange(0, 1 + ip_dist, ip_dist):
         go_ip = utils.interpolate_go(go_low, go_high, t)
-        check_table_go(go_ip.table)
+        check_table(go_ip.table)
         ips.append(go_ip)
         assert 0 < go_ip.crosspoint() < 1
 
