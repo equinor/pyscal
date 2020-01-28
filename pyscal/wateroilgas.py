@@ -168,6 +168,8 @@ class WaterOilGas(object):
         if dataincommentrow:
             string += self.wateroil.swcomment
             string += self.gasoil.sgcomment
+            string += self.wateroil.krowcomment
+            string += self.gasoil.krogcomment
 
         string += sof3table[["so", "krow", "krog"]].to_csv(
             sep=" ", float_format="%1.5f", header=None, index=False
