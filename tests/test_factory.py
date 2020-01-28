@@ -10,9 +10,9 @@ import pandas as pd
 
 import pytest
 
-from pyscal import WaterOil, GasOil, PyscalFactory
+from pyscal import WaterOil, GasOil, PyscalFactory, factory
 
-from test_gasoil import sat_table_str_ok
+from common import sat_table_str_ok, check_table
 
 
 def test_factory_wateroil():
@@ -49,6 +49,9 @@ def test_factory_wateroil():
     assert "krw" in wateroil.table
     assert "Corey" in wateroil.krwcomment
     assert wateroil.table["krw"].max() == 0.2  # Because sorw==0 by default
+    check_table(wateroil.table)
+    assert sat_table_str_ok(wateroil.SWOF())
+    assert sat_table_str_ok(wateroil.SWFN())
 
     wateroil = factory.create_water_oil(
         dict(nw=3, now=2, sorw=0.1, krwend=0.2, krwmax=0.5)
@@ -57,18 +60,27 @@ def test_factory_wateroil():
     assert "krw" in wateroil.table
     assert "Corey" in wateroil.krwcomment
     assert wateroil.table["krw"].max() == 0.5
+    check_table(wateroil.table)
+    assert sat_table_str_ok(wateroil.SWOF())
+    assert sat_table_str_ok(wateroil.SWFN())
 
     # Ambiguous works, but we don't guarantee that this results
     # in LET or Corey.
     wateroil = factory.create_water_oil(dict(nw=3, Lw=2, Ew=2, Tw=2, now=3))
     assert "krw" in wateroil.table
     assert "Corey" in wateroil.krwcomment or "LET" in wateroil.krwcomment
+    check_table(wateroil.table)
+    assert sat_table_str_ok(wateroil.SWOF())
+    assert sat_table_str_ok(wateroil.SWFN())
 
     wateroil = factory.create_water_oil(dict(Lw=2, Ew=2, Tw=2, krwend=1, now=4))
     assert isinstance(wateroil, WaterOil)
     assert "krw" in wateroil.table
     assert wateroil.table["krw"].max() == 1.0
     assert "LET" in wateroil.krwcomment
+    check_table(wateroil.table)
+    assert sat_table_str_ok(wateroil.SWOF())
+    assert sat_table_str_ok(wateroil.SWFN())
 
     wateroil = factory.create_water_oil(
         dict(Lw=2, Ew=2, Tw=2, Low=3, Eow=3, Tow=3, krwend=0.5)
@@ -80,6 +92,9 @@ def test_factory_wateroil():
     assert wateroil.table["krow"].max() == 1
     assert "LET" in wateroil.krwcomment
     assert "LET" in wateroil.krowcomment
+    check_table(wateroil.table)
+    assert sat_table_str_ok(wateroil.SWOF())
+    assert sat_table_str_ok(wateroil.SWFN())
 
     # Add capillary pressure
     wateroil = factory.create_water_oil(
@@ -88,6 +103,9 @@ def test_factory_wateroil():
     assert "pc" in wateroil.table
     assert wateroil.table["pc"].max() > 0.0
     assert "Simplified J" in wateroil.pccomment
+    check_table(wateroil.table)
+    assert sat_table_str_ok(wateroil.SWOF())
+    assert sat_table_str_ok(wateroil.SWFN())
 
     # Test that the optional gravity g is picked up:
     wateroil = factory.create_water_oil(
@@ -95,6 +113,9 @@ def test_factory_wateroil():
     )
     assert "pc" in wateroil.table
     assert wateroil.table["pc"].max() == 0.0
+    check_table(wateroil.table)
+    assert sat_table_str_ok(wateroil.SWOF())
+    assert sat_table_str_ok(wateroil.SWFN())
 
     # One pc param missing:
     wateroil = factory.create_water_oil(
@@ -136,6 +157,7 @@ def test_factory_gasoil():
     assert gasoil.tag == "Good sand"
     sgof = gasoil.SGOF()
     assert sat_table_str_ok(sgof)
+    check_table(gasoil.table)
     assert "Corey krg" in sgof
     assert "Corey krog" in sgof
     assert "Zero capillary pressure" in sgof
@@ -147,9 +169,11 @@ def test_factory_gasoil():
     assert sat_table_str_ok(sgof)
     assert "kroend=0.6" in sgof
     assert "krgend=0.8" in sgof
+    check_table(gasoil.table)
 
     gasoil = factory.create_gas_oil(dict(ng=1.3, Log=2, Eog=2, Tog=2))
     sgof = gasoil.SGOF()
+    check_table(gasoil.table)
     assert sat_table_str_ok(sgof)
     assert "Corey krg" in sgof
     assert "LET krog" in sgof
@@ -157,6 +181,7 @@ def test_factory_gasoil():
     gasoil = factory.create_gas_oil(dict(Lg=1, Eg=1, Tg=1, Log=2, Eog=2, Tog=2))
     sgof = gasoil.SGOF()
     assert sat_table_str_ok(sgof)
+    check_table(gasoil.table)
     assert "LET krg" in sgof
     assert "LET krog" in sgof
 
@@ -176,6 +201,8 @@ def test_factory_wateroilgas():
     assert "Corey krog" in sgof
     assert "Corey krw" in swof
     assert "Corey krow" in swof
+    check_table(wog.gasoil.table)
+    check_table(wog.wateroil.table)
 
     # Some users will mess up lower vs upper case:
     wog = factory.create_water_oil_gas(dict(NW=2, NOW=3, NG=1, nog=2.5))
@@ -188,9 +215,25 @@ def test_factory_wateroilgas():
     assert "Corey krw" in swof
     assert "Corey krow" in swof
 
-    # Mangling data:
+    # Mangling data
     with pytest.raises(ValueError):
         factory.create_water_oil_gas(dict(nw=2, now=3, ng=1))
+
+
+def test_factory_wateroilgas_wo():
+    """Test making only wateroil through the wateroilgas factory"""
+    factory = PyscalFactory()
+    wog = factory.create_water_oil_gas(
+        dict(nw=2, now=3, krowend=0.5, sorw=0.04, swcr=0.1)
+    )
+    swof = wog.SWOF()
+    assert "Corey krw" in swof
+    assert "krw" in wog.wateroil.table
+    assert sat_table_str_ok(swof)
+    check_table(wog.wateroil.table)
+    assert wog.gasoil is None
+
+    wog.SGOF()
 
 
 def test_xls_factory():
@@ -238,10 +281,20 @@ def test_scalrecommendation():
     with pytest.raises(ValueError):
         factory.create_scal_recommendation(incomplete1)
 
-    incomplete2 = scal_input.copy()
-    del incomplete2["low"]["now"]
-    with pytest.raises(ValueError):
-        factory.create_scal_recommendation(incomplete2)
+    go_only = scal_input.copy()
+    del go_only["low"]["now"]
+    del go_only["low"]["nw"]
+    gasoil = factory.create_scal_recommendation(go_only)
+    assert gasoil.low.wateroil is None
+    assert gasoil.base.wateroil is not None
+    assert gasoil.high.wateroil is not None
+    interp = scal.interpolate(-0.5)
+    assert sat_table_str_ok(interp.SWOF())
+    assert sat_table_str_ok(interp.SGOF())
+    assert sat_table_str_ok(interp.SLGOF())
+    assert sat_table_str_ok(interp.SOF3())
+    check_table(interp.wateroil.table)
+    check_table(interp.gasoil.table)
 
 
 def test_xls_scalrecommendation():
@@ -347,3 +400,31 @@ def test_gensatfunc():
     # when costau is missing. Any error message would be the responsibility
     # of the parser
     assert "Zero capillary pressure" in swof
+
+
+def test_sufficient_params():
+    """Test the utility functions to determine whether
+    WaterOil and GasOil object have sufficient parameters"""
+
+    assert factory.sufficient_gas_oil_params({"ng": 0, "nog": 0})
+    # If it looks like the user meant to create GasOil, but only provided
+    # data for krg, then we error hard. If the user did not provide
+    # any data for GasOil, then the code returns False
+    with pytest.raises(ValueError):
+        factory.sufficient_gas_oil_params({"ng": 0})
+    assert not factory.sufficient_gas_oil_params(dict())
+    with pytest.raises(ValueError):
+        factory.sufficient_gas_oil_params({"lg": 0})
+    assert factory.sufficient_gas_oil_params(
+        {"lg": 0, "eg": 0, "Tg": 0, "log": 0, "eog": 0, "tog": 0}
+    )
+
+    assert factory.sufficient_water_oil_params({"nw": 0, "now": 0})
+    with pytest.raises(ValueError):
+        factory.sufficient_water_oil_params({"nw": 0})
+    assert not factory.sufficient_water_oil_params(dict())
+    with pytest.raises(ValueError):
+        factory.sufficient_water_oil_params({"lw": 0})
+    assert factory.sufficient_water_oil_params(
+        {"lw": 0, "ew": 0, "Tw": 0, "low": 0, "eow": 0, "tow": 0}
+    )

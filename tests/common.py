@@ -14,6 +14,31 @@ def series_increasing(series):
     return (series.diff().dropna() > -1e-8).all()
 
 
+def sat_table_str_ok(sgofstr):
+    """Test that a supplied string from SWOF()/SGOF() etc is
+    probably ok for Eclipse.
+
+    This is checking that the first characters on each line is sensible.
+
+    Wrap this function with assert
+
+    Returns:
+        True if tests pass.
+    """
+    if not sgofstr:
+        return False
+    for line in sgofstr.splitlines():
+        if not (
+            not line
+            or line.startswith("S")
+            or line.startswith("--")
+            or line.startswith("/")
+            or int(line[0]) >= 0
+        ):
+            return False
+    return True
+
+
 def check_table(dframe):
     """Check that the numbers in a dataframe for WaterOil or GasOil
     has the properties that Eclipse enforces"""

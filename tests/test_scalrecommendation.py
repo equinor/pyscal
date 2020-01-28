@@ -8,8 +8,9 @@ from hypothesis import given, settings
 import hypothesis.strategies as st
 
 from pyscal import SCALrecommendation, PyscalFactory
+from pyscal.factory import slicedict
 
-from test_wateroil import check_table
+from common import sat_table_str_ok, check_table
 
 
 # Example SCAL recommendation, low case
@@ -36,7 +37,8 @@ LOW_SAMPLE_LET = {
     "sgcr": 0.15,
     "krgend": 0.9,
     "krgmax": 1,
-    "kroend": 1,
+    "krowend": 1,
+    "krogend": 1,
 }
 # Example SCAL recommendation, base case
 BASE_SAMPLE_LET = {
@@ -60,7 +62,8 @@ BASE_SAMPLE_LET = {
     "sorg": 0.1,
     "sgcr": 0.10,
     "krgend": 0.97,
-    "kroend": 1,
+    "krowend": 1,
+    "krogend": 1,
 }
 # Example SCAL recommendation, high case
 HIGH_SAMPLE_LET = {
@@ -84,7 +87,8 @@ HIGH_SAMPLE_LET = {
     "sorg": 0.05,
     "sgcr": 0.0,
     "krgend": 1,
-    "kroend": 1,
+    "krowend": 1,
+    "krogend": 1,
 }
 
 
@@ -95,9 +99,11 @@ HIGH_SAMPLE_LET = {
 def test_interpolation_deprecated(param_wo, param_go):
     """Testing deprecated functionality. Remove
     this test function when SCALrecommendation class is updated"""
+
     rec = SCALrecommendation(
         LOW_SAMPLE_LET, BASE_SAMPLE_LET, HIGH_SAMPLE_LET, "foo", h=0.1
     )
+
     rec.add_simple_J()  # Add default pc curve
     try:
         interpolant = rec.interpolate(param_wo, param_go, h=0.1)
@@ -118,6 +124,7 @@ def test_interpolation_deprecated(param_wo, param_go):
 def test_make_scalrecommendation():
     """Test that we can make scal recommendation objects
     from three WaterOilGas objects"""
+
     low = PyscalFactory.create_water_oil_gas(LOW_SAMPLE_LET)
     base = PyscalFactory.create_water_oil_gas(BASE_SAMPLE_LET)
     high = PyscalFactory.create_water_oil_gas(HIGH_SAMPLE_LET)
@@ -127,6 +134,84 @@ def test_make_scalrecommendation():
     check_table(interpolant.gasoil.table)
 
 
+def test_make_scalrecommendation_wo():
+    """Test that we can make scal recommendation objects
+    from three WaterOilGas objects, but only with WaterOil
+    objects"""
+
+    wo_param_names = [
+        "swirr",
+        "sorw",
+        "krwend",
+        "krwmax",
+        "swl",
+        "swcr",
+        "Lw",
+        "Ew",
+        "Tw",
+        "Lo",
+        "Eo",
+        "To",
+        "krowend",
+    ]
+
+    low_let_wo = slicedict(LOW_SAMPLE_LET, wo_param_names)
+    low = PyscalFactory.create_water_oil_gas(low_let_wo)
+    base_let_wo = slicedict(BASE_SAMPLE_LET, wo_param_names)
+    base = PyscalFactory.create_water_oil_gas(base_let_wo)
+    high_let_wo = slicedict(HIGH_SAMPLE_LET, wo_param_names)
+    assert "Lg" not in high_let_wo
+    high = PyscalFactory.create_water_oil_gas(high_let_wo)
+    rec = SCALrecommendation(low, base, high)
+    interpolant = rec.interpolate(-0.5)
+    check_table(interpolant.wateroil.table)
+    assert interpolant.gasoil is None
+    assert sat_table_str_ok(interpolant.SWOF())
+    assert sat_table_str_ok(interpolant.SWFN())
+
+    # This should return empty string
+    assert not interpolant.SGOF()
+
+
+def test_make_scalrecommendation_go():
+    """Test that we can make scal recommendation objects
+    from three WaterOilGas objects, but only with GasOil
+    objects"""
+
+    go_param_names = [
+        "swirr",
+        "sorg",
+        "krgend",
+        "krgmax",
+        "swl",
+        "sgcr",
+        "Lg",
+        "Eg",
+        "Tg",
+        "Log",
+        "Eog",
+        "Tog",
+        "krogend",
+    ]
+
+    low_let_go = slicedict(LOW_SAMPLE_LET, go_param_names)
+    low = PyscalFactory.create_water_oil_gas(low_let_go)
+    base_let_go = slicedict(BASE_SAMPLE_LET, go_param_names)
+    base = PyscalFactory.create_water_oil_gas(base_let_go)
+    high_let_go = slicedict(HIGH_SAMPLE_LET, go_param_names)
+    assert "Lw" not in high_let_go
+    high = PyscalFactory.create_water_oil_gas(high_let_go)
+    rec = SCALrecommendation(low, base, high)
+    interpolant = rec.interpolate(-0.5)
+    check_table(interpolant.gasoil.table)
+    assert interpolant.wateroil is None
+    assert sat_table_str_ok(interpolant.SGOF())
+    assert sat_table_str_ok(interpolant.SGFN())
+
+    # This should return empty string
+    assert not interpolant.SWOF()
+
+
 @settings(max_examples=10, deadline=1500)
 @given(
     st.floats(min_value=-1.1, max_value=1.1), st.floats(min_value=-1.1, max_value=1.1)
@@ -134,6 +219,7 @@ def test_make_scalrecommendation():
 def test_interpolation(param_wo, param_go):
     """Test interpolation with random interpolation parameters,
     looking for numerical corner cases"""
+
     rec = PyscalFactory.create_scal_recommendation(
         {"low": LOW_SAMPLE_LET, "base": BASE_SAMPLE_LET, "high": HIGH_SAMPLE_LET},
         "foo",
