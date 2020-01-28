@@ -9,33 +9,10 @@ import numpy as np
 from hypothesis import given, settings
 import hypothesis.strategies as st
 
-from common import float_df_checker, check_table
+from common import float_df_checker, check_table, sat_table_str_ok
 
 from pyscal import GasOil
 from pyscal.constants import SWINTEGERS
-
-
-def sat_table_str_ok(sgofstr):
-    """Test that a supplied string from SWOF()/SGOF() etc is
-    probably ok for Eclipse.
-
-    This is checking that the first characters on each line is sensible.
-
-    Wrap this function with assert
-
-    Returns:
-        True if tests pass.
-    """
-    for line in sgofstr.splitlines():
-        if not (
-            not line
-            or line.startswith("S")
-            or line.startswith("--")
-            or line.startswith("/")
-            or int(line[0]) >= 0
-        ):
-            return False
-    return True
 
 
 def test_gasoil_init():

@@ -26,7 +26,10 @@ class WaterOilGas(object):
     compatible saturation ranges. Access the class members 'wateroil'
     and 'gasoil' directly to add curves.
 
-    All arguments can be defaulted, and all are zero except h.
+    All arguments to the initializer can be defaulted, and all are zero except h.
+
+    Either the gasoil or the wateroil member is allowed to be None
+    in case of only two phases present.
 
     Args:
         swirr (float): Irreducible water saturation for capillary pressure
@@ -64,28 +67,57 @@ class WaterOilGas(object):
     def selfcheck(self):
         """Run selfcheck on both wateroil and gasoil.
 
-        Returns true only if both passes"""
-        return self.wateroil.selfcheck() and self.gasoil.selfcheck()
+        Returns true only if both passes if both are present.
+
+        If only wateroil or gasoil is present (the other
+        being None, only the relevant is checked.
+
+        Returns:
+            bool
+        """
+        if self.wateroil is not None and self.gasoil is not None:
+            return self.wateroil.selfcheck() and self.gasoil.selfcheck()
+        elif self.wateroil is not None:
+            return self.wateroil.selfcheck()
+        elif self.gasoil is not None:
+            return self.gasoil.selfcheck()
+        logger.error("Both wateroil and gasoil are None in WaterOilGas")
+        return False
 
     def SWOF(self, header=True, dataincommentrow=True):
         """Return a SWOF string. Delegated to the wateroil object"""
-        return self.wateroil.SWOF(header, dataincommentrow)
+        if self.wateroil is not None:
+            return self.wateroil.SWOF(header, dataincommentrow)
+        logger.error("No WaterOil object in this WaterOilGas object")
+        return ""
 
     def SGOF(self, header=True, dataincommentrow=True):
         """Return a SGOF string. Delegated to the gasoil object."""
-        return self.gasoil.SGOF(header, dataincommentrow)
+        if self.gasoil is not None:
+            return self.gasoil.SGOF(header, dataincommentrow)
+        logger.error("No GasOil object in this WaterOilGas object")
+        return ""
 
     def SLGOF(self, header=True, dataincommentrow=True):
         """Return a SLGOF string. Delegated to the gasoil object."""
-        return self.gasoil.SLGOF(header, dataincommentrow)
+        if self.gasoil is not None:
+            return self.gasoil.SLGOF(header, dataincommentrow)
+        logger.error("No GasOil object in this WaterOilGas object")
+        return ""
 
     def SGFN(self, header=True, dataincommentrow=True):
         """Return a SGFN string. Delegated to the gasoil object."""
-        return self.gasoil.SGFN(header, dataincommentrow)
+        if self.gasoil is not None:
+            return self.gasoil.SGFN(header, dataincommentrow)
+        logger.error("No GasOil object in this WaterOilGas object")
+        return ""
 
     def SWFN(self, header=True, dataincommentrow=True):
         """Return a SWFN string. Delegated to the wateroil object."""
-        return self.wateroil.SWFN(header, dataincommentrow)
+        if self.wateroil is not None:
+            return self.wateroil.SWFN(header, dataincommentrow)
+        logger.error("No WaterOil object in this WaterOilGas object")
+        return ""
 
     def SOF3(self, header=True, dataincommentrow=True):
         """Return a SOF3 string, combining data from the wateroil and
@@ -94,6 +126,10 @@ class WaterOilGas(object):
         So - the oil saturation ranges from 0 to 1-swl. The saturation points
         from the WaterOil object is used to generate these
         """
+        if self.wateroil is None or self.gasoil is None:
+            logger.error("Both WaterOil and GasOil is needed for SOF3")
+            return ""
+
         # Copy of the wateroil data:
         table = pd.DataFrame(self.wateroil.table[["sw", "krow"]])
         table["so"] = 1 - table["sw"]
@@ -157,6 +193,10 @@ class WaterOilGas(object):
         # relative permeability for a system with oil and connate
         # water only - but in this case they are different (krow=1.0
         # and krog=0.93)
+
+        if self.wateroil is None or self.gasoil is None:
+            # Nothing here to check if we only have two phases
+            return True
 
         errors = ""
         if not np.isclose(

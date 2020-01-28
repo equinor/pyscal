@@ -53,7 +53,10 @@ class SCALrecommendation(object):
             self.defaultshandling("swcr", 0.0, [low, base, high])
             self.defaultshandling("sorg", 0.0, [low, base, high])
             self.defaultshandling("sgcr", 0.0, [low, base, high])
-            self.defaultshandling("kroend", 1.0, [low, base, high])
+            if "kroend" in low:
+                logger.error("Use krogend or krowend instead of kroend. kroend ignored")
+            self.defaultshandling("krogend", 1.0, [low, base, high])
+            self.defaultshandling("krowend", 1.0, [low, base, high])
             self.defaultshandling("krwmax", 1.0, [low, base, high])
             self.defaultshandling("krgend", 1.0, [low, base, high])
             self.defaultshandling("krgmax", 1.0, [low, base, high])
@@ -114,13 +117,13 @@ class SCALrecommendation(object):
             )
 
             self.low.wateroil.add_LET_oil(
-                l=low["Lo"], e=low["Eo"], t=low["To"], kroend=low["kroend"]
+                l=low["Lo"], e=low["Eo"], t=low["To"], kroend=low["krowend"]
             )
             self.base.wateroil.add_LET_oil(
-                l=base["Lo"], e=base["Eo"], t=base["To"], kroend=base["kroend"]
+                l=base["Lo"], e=base["Eo"], t=base["To"], kroend=base["krowend"]
             )
             self.high.wateroil.add_LET_oil(
-                l=high["Lo"], e=high["Eo"], t=high["To"], kroend=high["kroend"]
+                l=high["Lo"], e=high["Eo"], t=high["To"], kroend=high["krowend"]
             )
 
             # Add gas and oil curves:
@@ -146,13 +149,13 @@ class SCALrecommendation(object):
                 krgmax=high["krgmax"],
             )
             self.low.gasoil.add_LET_oil(
-                l=low["Log"], e=low["Eog"], t=low["Tog"], kroend=low["kroend"]
+                l=low["Log"], e=low["Eog"], t=low["Tog"], kroend=low["krogend"]
             )
             self.base.gasoil.add_LET_oil(
-                l=base["Log"], e=base["Eog"], t=base["Tog"], kroend=base["kroend"]
+                l=base["Log"], e=base["Eog"], t=base["Tog"], kroend=base["krogend"]
             )
             self.high.gasoil.add_LET_oil(
-                l=high["Log"], e=high["Eog"], t=high["Tog"], kroend=high["kroend"]
+                l=high["Log"], e=high["Eog"], t=high["Tog"], kroend=high["krogend"]
             )
         elif (
             isinstance(low, WaterOilGas)
@@ -212,46 +215,75 @@ class SCALrecommendation(object):
         else:
             gasparameter = parameter
 
+        # Either wateroil or gasoil can be None in the low, base, high
+        # If they are None, it is a two-phase problem and we
+        # should support this.
+        do_wateroil = (
+            self.base.wateroil is not None
+            and self.low.wateroil is not None
+            and self.high.wateroil is not None
+        )
+
+        do_gasoil = (
+            self.base.gasoil is not None
+            and self.low.gasoil is not None
+            and self.high.gasoil is not None
+        )
+
+        if not do_wateroil and not do_gasoil:
+            raise ValueError(
+                "Neither wateroil or gasoil is complete in SCAL recommendation"
+            )
+
+        if parameter2 is not None and not do_gasoil:
+            logger.warning("parameter2 is meaningless for water-oil only")
+
         # Initialize wateroil and gasoil curves to be filled with
         # interpolated curves:
         interpolant = WaterOilGas()
 
-        if abs(parameter) > 1.0:
-            logger.error("Interpolation parameter must be in [-1,1]")
-            assert abs(parameter) <= 1.0
-        elif np.isclose(parameter, 0.0):
-            interpolant.wateroil = self.base.wateroil
-        elif np.isclose(parameter, -1.0):
-            interpolant.wateroil = self.low.wateroil
-        elif np.isclose(parameter, 1.0):
-            interpolant.wateroil = self.high.wateroil
-        elif parameter < 0.0:
-            interpolant.wateroil = utils.interpolate_wo(
-                self.base.wateroil, self.low.wateroil, -parameter
-            )
-        elif parameter > 0.0:
-            interpolant.wateroil = utils.interpolate_wo(
-                self.base.wateroil, self.high.wateroil, parameter
-            )
+        if do_wateroil:
+            if abs(parameter) > 1.0:
+                logger.error("Interpolation parameter must be in [-1,1]")
+                assert abs(parameter) <= 1.0
+            elif np.isclose(parameter, 0.0):
+                interpolant.wateroil = self.base.wateroil
+            elif np.isclose(parameter, -1.0):
+                interpolant.wateroil = self.low.wateroil
+            elif np.isclose(parameter, 1.0):
+                interpolant.wateroil = self.high.wateroil
+            elif parameter < 0.0:
+                interpolant.wateroil = utils.interpolate_wo(
+                    self.base.wateroil, self.low.wateroil, -parameter
+                )
+            elif parameter > 0.0:
+                interpolant.wateroil = utils.interpolate_wo(
+                    self.base.wateroil, self.high.wateroil, parameter
+                )
+        else:
+            interpolant.wateroil = None
 
-        # Gas-oil interpolation
-        if abs(gasparameter) > 1.0:
-            logger.error("Interpolation parameter must be in [-1,1]")
-            assert abs(gasparameter) <= 1.0
-        elif np.isclose(gasparameter, 0.0):
-            interpolant.gasoil = self.base.gasoil
-        elif np.isclose(gasparameter, -1.0):
-            interpolant.gasoil = self.low.gasoil
-        elif np.isclose(gasparameter, 1.0):
-            interpolant.gasoil = self.high.gasoil
-        elif gasparameter < 0.0:
-            interpolant.gasoil = utils.interpolate_go(
-                self.base.gasoil, self.low.gasoil, -1 * gasparameter, h=h
-            )
-        elif gasparameter > 0.0:
-            interpolant.gasoil = utils.interpolate_go(
-                self.base.gasoil, self.high.gasoil, gasparameter, h=h
-            )
+        if do_gasoil:
+            if abs(gasparameter) > 1.0:
+                logger.error("Interpolation parameter must be in [-1,1]")
+                assert abs(gasparameter) <= 1.0
+            elif np.isclose(gasparameter, 0.0):
+                interpolant.gasoil = self.base.gasoil
+            elif np.isclose(gasparameter, -1.0):
+                interpolant.gasoil = self.low.gasoil
+            elif np.isclose(gasparameter, 1.0):
+                interpolant.gasoil = self.high.gasoil
+            elif gasparameter < 0.0:
+                interpolant.gasoil = utils.interpolate_go(
+                    self.base.gasoil, self.low.gasoil, -1 * gasparameter, h=h
+                )
+            elif gasparameter > 0.0:
+                interpolant.gasoil = utils.interpolate_go(
+                    self.base.gasoil, self.high.gasoil, gasparameter, h=h
+                )
+        else:
+            interpolant.gasoil = None
+
         return interpolant
 
     @staticmethod
