@@ -10,11 +10,10 @@ import six
 import numpy as np
 import pandas as pd
 
+import pyscal
 from pyscal import utils
-
 from pyscal.constants import EPSILON as epsilon
-from pyscal.constants import SWINTEGERS
-from pyscal.constants import MAX_EXPONENT
+from pyscal.constants import SWINTEGERS, MAX_EXPONENT
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
@@ -681,7 +680,7 @@ class GasOil(object):
         if header:
             string += "SGOF\n"
         string += "-- " + self.tag + "\n"
-        string += "-- Sg Krg Krog Pc\n"
+        string += "-- pyscal: " + str(pyscal.__version__) + "\n"
         if dataincommentrow:
             string += self.sgcomment
             string += self.krgcomment
@@ -689,6 +688,15 @@ class GasOil(object):
             if not self.fast:
                 string += "-- krg = krog @ sw=%1.5f\n" % self.crosspoint()
             string += self.pccomment
+        width = 10
+        string += (
+            "-- "
+            + "SG".ljust(width - 3)
+            + "KRG".ljust(width)
+            + "KROG".ljust(width)
+            + "PC".ljust(width)
+            + "\n"
+        )
         string += self.table[["sg", "krg", "krog", "pc"]].to_csv(
             sep=" ", float_format="%1.7f", header=None, index=False
         )
@@ -760,13 +768,22 @@ class GasOil(object):
         if header:
             string += "SLGOF\n"
         string += "-- " + self.tag + "\n"
-        string += "-- Sl Krg Krog Pc\n"
+        string += "-- pyscal: " + str(pyscal.__version__) + "\n"
         if dataincommentrow:
             string += self.sgcomment
             string += self.krgcomment
             string += self.krogcomment
             string += "-- krg = krog @ sw=%1.5f\n" % self.crosspoint()
             string += self.pccomment
+        width = 10
+        string += (
+            "-- "
+            + "SL".ljust(width - 3)
+            + "KRG".ljust(width)
+            + "KROG".ljust(width)
+            + "PC".ljust(width)
+            + "\n"
+        )
         string += self.slgof_df().to_csv(
             sep=" ", float_format="%1.7f", header=None, index=False
         )
@@ -798,13 +815,21 @@ class GasOil(object):
         if header:
             string += "SGFN\n"
         string += "-- " + self.tag + "\n"
-        string += "-- Sg Krg Pc\n"
+        string += "-- pyscal: " + str(pyscal.__version__) + "\n"
         if dataincommentrow:
             string += self.sgcomment
             string += self.krgcomment
             if "krog" in self.table.columns:
                 string += "-- krg = krog @ sw=%1.5f\n" % self.crosspoint()
             string += self.pccomment
+        width = 10
+        string += (
+            "-- "
+            + "SG".ljust(width - 3)
+            + "KRG".ljust(width)
+            + "PC".ljust(width)
+            + "\n"
+        )
         string += self.table[["sg", "krg", "pc"]].to_csv(
             sep=" ", float_format="%1.7f", header=None, index=False
         )
@@ -836,12 +861,22 @@ class GasOil(object):
         if header:
             string += "GOTABLE\n"
             string += "SG KRG KROG PC\n"
+        string += "! pyscal: " + str(pyscal.__version__) + "\n"
         if dataincommentrow:
             string += self.sgcomment.replace("--", "!")
             string += self.krgcomment.replace("--", "!")
             string += self.krogcomment.replace("--", "!")
             string += "! krg = krog @ sw=%1.5f\n" % self.crosspoint()
             string += self.pccomment.replace("--", "!")
+        width = 10
+        string += (
+            "! "
+            + "SG".ljust(width - 2)
+            + "KRG".ljust(width)
+            + "KROG".ljust(width)
+            + "PC".ljust(width)
+            + "\n"
+        )
         string += self.table[["sg", "krg", "krog", "pc"]].to_csv(
             sep=" ", float_format="%1.7f", header=None, index=False
         )

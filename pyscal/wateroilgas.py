@@ -6,6 +6,7 @@ import logging
 import numpy as np
 import pandas as pd
 
+import pyscal
 from pyscal.constants import SWINTEGERS
 
 from .wateroil import WaterOil
@@ -164,15 +165,23 @@ class WaterOilGas(object):
             string += "SOF3\n"
         string += "-- " + self.wateroil.tag + "\n"
         string += "-- " + self.gasoil.tag + "\n"
-        string += "-- So Krow Krog\n"
+        string += "-- pyscal: " + str(pyscal.__version__) + "\n"
         if dataincommentrow:
             string += self.wateroil.swcomment
             string += self.gasoil.sgcomment
             string += self.wateroil.krowcomment
             string += self.gasoil.krogcomment
 
+        width = 10
+        string += (
+            "-- "
+            + "SW".ljust(width - 3)
+            + "KROW".ljust(width)
+            + "KROG".ljust(width)
+            + "\n"
+        )
         string += sof3table[["so", "krow", "krog"]].to_csv(
-            sep=" ", float_format="%1.5f", header=None, index=False
+            sep=" ", float_format="%1.7f", header=None, index=False
         )
         string += "/\n"
         return string
