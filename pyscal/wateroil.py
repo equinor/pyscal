@@ -10,9 +10,9 @@ import six
 import numpy as np
 import pandas as pd
 
+import pyscal
 from pyscal.constants import EPSILON as epsilon
-from pyscal.constants import SWINTEGERS
-from pyscal.constants import MAX_EXPONENT
+from pyscal.constants import SWINTEGERS, MAX_EXPONENT
 from pyscal import utils
 
 
@@ -969,13 +969,13 @@ class WaterOil(object):
             # selfcheck failed and has issued an error message
             return ""
         string = ""
-        if "pc" not in self.table.columns:
-            self.table["pc"] = 0
-            self.pccomment = "-- Zero capillary pressure\n"
         if header:
             string += "SWOF\n"
         string += "-- " + self.tag + "\n"
-        string += "-- Sw Krw Krow Pc\n"
+        string += "-- pyscal: " + str(pyscal.__version__) + "\n"
+        if "pc" not in self.table.columns:
+            self.table["pc"] = 0
+            self.pccomment = "-- Zero capillary pressure\n"
         if dataincommentrow:
             string += self.swcomment
             string += self.krwcomment
@@ -983,6 +983,15 @@ class WaterOil(object):
             if not self.fast:
                 string += "-- krw = krow @ sw=%1.5f\n" % self.crosspoint()
             string += self.pccomment
+        width = 10
+        string += (
+            "-- "
+            + "SW".ljust(width - 3)
+            + "KRW".ljust(width)
+            + "KROW".ljust(width)
+            + "PC".ljust(width)
+            + "\n"
+        )
         string += self.table[["sw", "krw", "krow", "pc"]].to_csv(
             sep=" ", float_format="%1.7f", header=None, index=False
         )
@@ -1001,13 +1010,21 @@ class WaterOil(object):
         if header:
             string += "SWFN\n"
         string += "-- " + self.tag + "\n"
-        string += "-- Sw Krw Pc\n"
+        string += "-- pyscal: " + str(pyscal.__version__) + "\n"
         if dataincommentrow:
             string += self.swcomment
             string += self.krwcomment
             if "krow" in self.table.columns and not self.fast:
                 string += "-- krw = krow @ sw=%1.5f\n" % self.crosspoint()
             string += self.pccomment
+        width = 10
+        string += (
+            "-- "
+            + "SW".ljust(width - 3)
+            + "KRW".ljust(width)
+            + "PC".ljust(width)
+            + "\n"
+        )
         string += self.table[["sw", "krw", "pc"]].to_csv(
             sep=" ", float_format="%1.7f", header=None, index=False
         )
@@ -1020,9 +1037,11 @@ class WaterOil(object):
         if "pc" not in self.table.columns:
             self.table["pc"] = 0
             self.pccomment = "-- Zero capillary pressure\n"
+
         if header:
             string += "WOTABLE\n"
             string += "SW KRW KROW PC\n"
+        string += "! pyscal: " + str(pyscal.__version__) + "\n"
         if dataincommentrow:
             string += self.swcomment.replace("--", "!")
             string += self.krwcomment.replace("--", "!")
@@ -1030,6 +1049,15 @@ class WaterOil(object):
             if not self.fast:
                 string += "! krw = krow @ sw=%1.5f\n" % self.crosspoint()
             string += self.pccomment.replace("--", "!")
+        width = 10
+        string += (
+            "! "
+            + "SW".ljust(width - 2)
+            + "KRW".ljust(width)
+            + "KROW".ljust(width)
+            + "PC".ljust(width)
+            + "\n"
+        )
         string += self.table[["sw", "krw", "krow", "pc"]].to_csv(
             sep=" ", float_format="%1.7f", header=None, index=False
         )

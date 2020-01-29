@@ -14,7 +14,7 @@ def series_increasing(series):
     return (series.diff().dropna() > -1e-8).all()
 
 
-def sat_table_str_ok(sgofstr):
+def sat_table_str_ok(sat_table_str):
     """Test that a supplied string from SWOF()/SGOF() etc is
     probably ok for Eclipse.
 
@@ -25,9 +25,9 @@ def sat_table_str_ok(sgofstr):
     Returns:
         True if tests pass.
     """
-    if not sgofstr:
+    if not sat_table_str:
         return False
-    for line in sgofstr.splitlines():
+    for line in sat_table_str.splitlines():
         if not (
             not line
             or line.startswith("S")
@@ -36,6 +36,9 @@ def sat_table_str_ok(sgofstr):
             or int(line[0]) >= 0
         ):
             return False
+    if "-- pyscal: " not in sat_table_str:
+        # This should hold the version
+        return False
     return True
 
 
