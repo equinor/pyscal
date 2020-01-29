@@ -223,7 +223,7 @@ explicitly having to call the API for each task.</p>
 </pre></div>
 </div>
 <p>Parameter names to factory functions are case <em>insensitive</em>, while
-the add_*() parameters are not. This is becase the add_*() parameters
+the add_*() parameters are not. This is because the add_*() parameters
 are meant as a Python API, while the factory class is there to aid
 users when input is written in a different context, like an Excel
 spreadsheet.</p>
@@ -262,9 +262,9 @@ the same time.</p>
 in their signatures, which is not precise enough in this
 context, so we require e.g. ‘Lg’ and ‘Log’ (which both will be
 translated to ‘l’). Also note that in this factory context,
-kroend is an ambiguous parametre, krogend must be used.</p>
+kroend is an ambiguous parameter, krogend must be used.</p>
 <dl class="simple">
-<dt>Recognized parameters:</dt><dd><p>swirr, sgcr, “sorg, swl, krgendanchor, h, tag,
+<dt>Recognized parameters:</dt><dd><p>swirr, sgcr, sorg, swl, krgendanchor, h, tag,
 ng, krgend, krgmax, nog, krogend,
 lg, eg, tg, log, eog, tog</p>
 </dd>
@@ -289,15 +289,9 @@ dictionary of dictionary.</p>
 <p>The keys in in the dictionary <em>must</em> be “low”, “base” and “high”.</p>
 <p>The value for “low” must be a new dictionary with saturation
 endpoints and LET/Corey parameters, as you would feed it to
-the create_water_oil_gas() factory function;</p>
-<dl class="simple">
-<dt>Recognized parameters:</dt><dd><p>Lw, Ew, Tw, Low, Eow, Tow,
-Lg, Eg, Tg, Log, Eog, Tog,
-nw, now, ng, nog,
-swirr, swl, sorw, sorg, sgcr</p>
-</dd>
-</dl>
-<p>For oil-water only, you may omit the LET parameters for gas and oil-gas</p>
+the create_water_oil_gas() factory function, and then similarly
+for base and high.</p>
+<p>For oil-water only, you may omit the parameters for gas-oil.</p>
 </dd></dl>
 
 <dl class="method">
@@ -312,6 +306,44 @@ swirr, swl, sorw, sorg, sgcr</p>
 <dd><p>Reserved for future implementation</p>
 </dd></dl>
 
+</dd></dl>
+
+<dl class="function">
+<dt id="pyscal.factory.sufficient_water_oil_params">
+<code class="sig-prename descclassname">pyscal.factory.</code><code class="sig-name descname">sufficient_water_oil_params</code><span class="sig-paren">(</span><em class="sig-param">params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#sufficient_water_oil_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.sufficient_water_oil_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine if the supplied parameters are sufficient for
+attempting creating a WaterOil object.</p>
+<p>In the factory context, relying on the defaults in the API
+is not allowed, as that would leave the tasks for the factory
+undefined (Corey or LET, and which pc?)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>params</strong> – dict</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if a WaterOil object should be attempted constructed
+(but no guarantee for validity of numerical values)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyscal.factory.sufficient_gas_oil_params">
+<code class="sig-prename descclassname">pyscal.factory.</code><code class="sig-name descname">sufficient_gas_oil_params</code><span class="sig-paren">(</span><em class="sig-param">params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#sufficient_gas_oil_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.sufficient_gas_oil_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine if the supplied parameters are sufficient for
+attempting at creating a GasOil object.</p>
+<p>In the factory context, relying on the defaults in the API
+is not allowed, as that would leave the tasks for the factory
+undefined (Corey or LET, and which pc?)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>params</strong> – dict</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if a GasOil object should be attempted constructed
+(but no guarantee for validity of numerical values)</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="function">
@@ -1377,7 +1409,9 @@ the specified axis.</p>
 <p>One WaterOil and one GasOil object will be created, with
 compatible saturation ranges. Access the class members ‘wateroil’
 and ‘gasoil’ directly to add curves.</p>
-<p>All arguments can be defaulted, and all are zero except h.</p>
+<p>All arguments to the initializer can be defaulted, and all are zero except h.</p>
+<p>Either the gasoil or the wateroil member is allowed to be None
+in case of only two phases present.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -1397,7 +1431,14 @@ pyscal will not guarantee valid output in this mode.</p></li>
 <dt id="pyscal.wateroilgas.WaterOilGas.selfcheck">
 <code class="sig-name descname">selfcheck</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroilgas.html#WaterOilGas.selfcheck"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroilgas.WaterOilGas.selfcheck" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run selfcheck on both wateroil and gasoil.</p>
-<p>Returns true only if both passes</p>
+<p>Returns true only if both passes if both are present.</p>
+<p>If only wateroil or gasoil is present (the other
+being None, only the relevant is checked.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
