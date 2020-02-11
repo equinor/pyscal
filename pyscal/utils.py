@@ -289,7 +289,12 @@ def interpolate_wo(wo_low, wo_high, parameter, h=0.01):
 
     # Interpolate kr at saturation endpoints
     krwmax_new = weighted_value(wo_low.table["krw"].max(), wo_high.table["krw"].max())
-    kromax_new = weighted_value(wo_low.table["krow"].max(), wo_high.table["krow"].max())
+    if swcr_new > swl_new + epsilon:
+        kromax_new = weighted_value(
+            wo_low.table["krow"].max(), wo_high.table["krow"].max()
+        )
+    else:
+        kromax_new = None
     krwend_new = weighted_value(krw1(1), krw2(1))
     kroend_new = weighted_value(kro1(1), kro2(1))
 
@@ -366,11 +371,16 @@ def interpolate_go(go_low, go_high, parameter, h=0.01):
 
     # Interpolate kr at saturation endpoints
     krgmax_new = weighted_value(go_low.table["krg"].max(), go_high.table["krg"].max())
-    kromax_new = weighted_value(go_low.table["krog"].max(), go_high.table["krog"].max())
+    if sgcr_new > epsilon:
+        kromax_new = weighted_value(
+            go_low.table["krog"].max(), go_high.table["krog"].max()
+        )
+    else:
+        kromax_new = None
     krgend_new = weighted_value(krg1(1), krg2(1))
     kroend_new = weighted_value(kro1(1), kro2(1))
 
-    # Construct the new WaterOil object, with interpolated
+    # Construct the new GasOil object, with interpolated
     # endpoints:
     go_new = pyscal.GasOil(swl=swl_new, sgcr=sgcr_new, sorg=sorg_new, h=h)
 
@@ -393,8 +403,10 @@ def interpolate_go(go_low, go_high, parameter, h=0.01):
         pc1(go_new.table["sgn_pc_intp"]), pc2(go_new.table["sgn_pc_intp"])
     )
 
-    go_new.set_endpoints_linearpart_krg(krgend=krgend_new, krgmax=krgmax_new)
     go_new.set_endpoints_linearpart_krog(kroend=kroend_new, kromax=kromax_new)
+
+    # Here we should have honored krgendanchor. Check github issue.
+    go_new.set_endpoints_linearpart_krg(krgend=krgend_new, krgmax=krgmax_new)
 
     return go_new
 
