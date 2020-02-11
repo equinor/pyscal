@@ -521,31 +521,43 @@ def test_ip_krogmax():
     assert float_df_checker(go_ip.table, "sg", 0.0, "krog", 0.85)
     # kroend is 0.6 in low and high, but sgcr has changed:
     assert float_df_checker(go_ip.table, "sg", 0.075, "krog", 0.6)
+    assert np.isclose(go_ip.swl, 0.01)
+    assert np.isclose(go_ip.sorg, 0.15)
 
     # krgmax at 1 - swl:
-    assert float_df_checker(go_ip.table, "sg", 1 - 0.01, "krg", 0.71)
+    assert float_df_checker(go_ip.table, "sg", 1 - go_ip.swl, "krg", 0.71)
     # krgend at 1 - swl - sorg
-    assert float_df_checker(go_ip.table, "sg", 1 - 0.01 - 0.15, "krg", 0.5)
+    assert float_df_checker(go_ip.table, "sg", 1 - go_ip.swl - go_ip.sorg, "krg", 0.5)
 
     # If krgendanchor is None, then krgmax should be irrelevant
     go_low = GasOil(swl=0, sgcr=0.1, sorg=0.2, krgendanchor="")
-    go_low.add_corey_gas(ng=2, krgend=0.5, krgmax=0.7)
-    # krgmax will trigger warning message, intended.
+    go_low.add_corey_gas(ng=5, krgend=0.5, krgmax=0.7)
+    # krgmax will trigger warning message, intended, as the 0.7
+    # value here will mean nothing.
     go_low.add_corey_oil(nog=2, kroend=0.6, kromax=0.9)
 
     go_high = GasOil(swl=0.02, sgcr=0.05, sorg=0.1, krgendanchor="")
-    go_high.add_corey_gas(ng=2, krgend=0.5, krgmax=0.72)
+    go_high.add_corey_gas(ng=4, krgend=0.5, krgmax=0.72)
     # krgmax will trigger warning message, intended.
     go_high.add_corey_oil(nog=2, kroend=0.6, kromax=0.8)
 
     # Interpolate to midpoint between the curves above
-    go_ip = utils.interpolate_go(go_low, go_high, 0.5)
+    go_ip = utils.interpolate_go(go_low, go_high, 0.5, h=0.1)
 
     assert float_df_checker(go_ip.table, "sg", 0.0, "krog", 0.85)
     # kroend is 0.6 in low and high, but swcr has changed:
     assert float_df_checker(go_ip.table, "sg", 0.075, "krog", 0.6)
 
-    # krgmax is irrelant, krgend is used here:
+    # Activate these line to see a bug, interpolation_go
+    # does not honor krgendanchorA:
+    # from matplotlib import pyplot as plt
+    # _, mpl_ax = plt.subplots()
+    # go_low.plotkrgkrog(mpl_ax=mpl_ax, color="red")
+    # go_high.plotkrgkrog(mpl_ax=mpl_ax, color="blue")
+    # go_ip.plotkrgkrog(mpl_ax=mpl_ax, color="green")
+    # plt.show()
+
+    # krgmax is irrelevant, krgend is used here:
     assert float_df_checker(go_ip.table, "sg", 1 - 0.01, "krg", 0.5)
 
     # Do we get into trouble if krgendanchor is different in low and high?
