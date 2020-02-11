@@ -12,7 +12,7 @@ import hypothesis.strategies as st
 
 
 from pyscal import utils, WaterOil, GasOil
-from test_wateroil import check_table
+from common import check_table, float_df_checker
 
 
 def test_diffjumppoint():
@@ -480,6 +480,99 @@ def test_normalize_nonlinpart_go():
     assert np.isclose(kron(0), 0)
     assert np.isclose(krgn(1), 0.6)
     assert np.isclose(kron(1), 0.8)
+
+
+def test_ip_kromax():
+    """Test behaviour of kroend/kromax under interpolation"""
+    wo_low = WaterOil(swl=0, swcr=0.1, sorw=0.2)
+    wo_low.add_corey_water(nw=2, krwend=0.5, krwmax=0.7)
+    wo_low.add_corey_oil(now=2, kroend=0.6, kromax=0.9)
+
+    wo_high = WaterOil(swl=0.02, swcr=0.05, sorw=0.1)
+    wo_high.add_corey_water(nw=2, krwend=0.5, krwmax=0.72)
+    wo_high.add_corey_oil(now=2, kroend=0.6, kromax=0.8)
+
+    # Interpolate to midpoint between the curves above
+    wo_ip = utils.interpolate_wo(wo_low, wo_high, 0.5)
+
+    # kromax at mean swl:
+    assert float_df_checker(wo_ip.table, "sw", 0.01, "krow", 0.85)
+    # kroend is 0.6 in low and high, but swcr has changed:
+    assert float_df_checker(wo_ip.table, "sw", 0.075, "krow", 0.6)
+
+    assert float_df_checker(wo_ip.table, "sw", 1, "krw", 0.71)
+    assert float_df_checker(wo_ip.table, "sw", 1 - 0.15, "krw", 0.5)
+
+
+def test_ip_krogmax():
+    """Test behaviour of kroend/kromax under interpolation"""
+    go_low = GasOil(swl=0, sgcr=0.1, sorg=0.2)
+    go_low.add_corey_gas(ng=2, krgend=0.5, krgmax=0.7)
+    go_low.add_corey_oil(nog=2, kroend=0.6, kromax=0.9)
+
+    go_high = GasOil(swl=0.02, sgcr=0.05, sorg=0.1)
+    go_high.add_corey_gas(ng=2, krgend=0.5, krgmax=0.72)
+    go_high.add_corey_oil(nog=2, kroend=0.6, kromax=0.8)
+
+    # Interpolate to midpoint between the curves above
+    go_ip = utils.interpolate_go(go_low, go_high, 0.5)
+
+    # kromax at sg zero, should be kromax:
+    assert float_df_checker(go_ip.table, "sg", 0.0, "krog", 0.85)
+    # kroend is 0.6 in low and high, but sgcr has changed:
+    assert float_df_checker(go_ip.table, "sg", 0.075, "krog", 0.6)
+
+    # krgmax at 1 - swl:
+    assert float_df_checker(go_ip.table, "sg", 1 - 0.01, "krg", 0.71)
+    # krgend at 1 - swl - sorg
+    assert float_df_checker(go_ip.table, "sg", 1 - 0.01 - 0.15, "krg", 0.5)
+
+    # If krgendanchor is None, then krgmax should be irrelevant
+    go_low = GasOil(swl=0, sgcr=0.1, sorg=0.2, krgendanchor="")
+    go_low.add_corey_gas(ng=2, krgend=0.5, krgmax=0.7)
+    # krgmax will trigger warning message, intended.
+    go_low.add_corey_oil(nog=2, kroend=0.6, kromax=0.9)
+
+    go_high = GasOil(swl=0.02, sgcr=0.05, sorg=0.1, krgendanchor="")
+    go_high.add_corey_gas(ng=2, krgend=0.5, krgmax=0.72)
+    # krgmax will trigger warning message, intended.
+    go_high.add_corey_oil(nog=2, kroend=0.6, kromax=0.8)
+
+    # Interpolate to midpoint between the curves above
+    go_ip = utils.interpolate_go(go_low, go_high, 0.5)
+
+    assert float_df_checker(go_ip.table, "sg", 0.0, "krog", 0.85)
+    # kroend is 0.6 in low and high, but swcr has changed:
+    assert float_df_checker(go_ip.table, "sg", 0.075, "krog", 0.6)
+
+    # krgmax is irrelant, krgend is used here:
+    assert float_df_checker(go_ip.table, "sg", 1 - 0.01, "krg", 0.5)
+
+    # Do we get into trouble if krgendanchor is different in low and high?
+    go_low = GasOil(swl=0, sgcr=0.1, sorg=0.2, krgendanchor="sorg")
+    go_low.add_corey_gas(ng=2, krgend=0.5, krgmax=0.7)
+    go_low.add_corey_oil(nog=2, kroend=0.6, kromax=0.9)
+
+    go_high = GasOil(swl=0.02, sgcr=0.05, sorg=0.1, krgendanchor="")
+    go_high.add_corey_gas(ng=2, krgend=0.5)
+    go_high.add_corey_oil(nog=2, kroend=0.6, kromax=0.8)
+
+    # Interpolate to midpoint between the curves above
+    go_ip = utils.interpolate_go(go_low, go_high, 0.5)
+
+    assert float_df_checker(go_ip.table, "sg", 0.0, "krog", 0.85)
+    # kroend is 0.6 in low and high, but swcr has changed:
+    assert float_df_checker(go_ip.table, "sg", 0.075, "krog", 0.6)
+
+    # max(krg) is here avg of krgmax and krgend from the differnt tables:
+    assert float_df_checker(go_ip.table, "sg", 1 - 0.01, "krg", 0.6)
+
+    # krgend at 1 - swl - sorg, non-trivial expression, so a numerical
+    # value is used here in the test:
+    assert float_df_checker(go_ip.table, "sg", 1 - 0.01 - 0.15, "krg", 0.4491271)
+
+    # krog-zero at 1 - swl - sorg:
+    assert float_df_checker(go_ip.table, "sg", 1 - 0.01 - 0.15, "krog", 0)
 
 
 @settings(max_examples=50, deadline=5000)
