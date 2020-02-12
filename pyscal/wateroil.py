@@ -765,7 +765,7 @@ class WaterOil(object):
         self.table.loc[self.table["swn"] < epsilon, "pc"] = Pcmax
         self.pccomment = (
             "-- LET correlation for primary drainage Pc;\n"
-            + "-- Lp=%g, Ep=%g, Tp=%g, Lt=%g, Et=%g, Tt=%g, Pcmax=%g, Pct=%g\n"
+            "-- Lp=%g, Ep=%g, Tp=%g, Lt=%g, Et=%g, Tt=%g, Pcmax=%g, Pct=%g\n"
             % (Lp, Ep, Tp, Lt, Et, Tt, Pcmax, Pct)
         )
 
@@ -809,8 +809,8 @@ class WaterOil(object):
         # and [1-sorw,1]
         self.table.loc[self.table["swnpco"] > 1 - epsilon, "pc"] = Pcmin
         self.pccomment = (
-            "-- LET correlation for imbibition Pc;\n -- "
-            + "Ls=%g, Es=%g, Ts=%g, Lf=%g, Ef=%g, Tf=%g, Pcmax=%g, Pcmin=%g, Pct=%g\n"
+            "-- LET correlation for imbibition Pc;\n"
+            "-- Ls=%g, Es=%g, Ts=%g, Lf=%g, Ef=%g, Tf=%g, Pcmax=%g, Pcmin=%g, Pct=%g\n"
             % (Ls, Es, Ts, Lf, Ef, Tf, Pcmax, Pcmin, Pct)
         )
 

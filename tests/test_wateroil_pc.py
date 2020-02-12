@@ -14,7 +14,7 @@ import hypothesis.strategies as st
 from pyscal import WaterOil
 from pyscal.constants import MAX_EXPONENT
 
-from common import float_df_checker, check_table
+from common import float_df_checker, check_table, sat_table_str_ok
 
 
 def test_simple_j():
@@ -45,6 +45,8 @@ def test_simple_j():
     swof = wateroil.SWOF()
     assert isinstance(swof, str)
     assert swof
+    assert sat_table_str_ok(swof)
+    assert sat_table_str_ok(wateroil.SWFN())
 
 
 @given(
@@ -113,6 +115,9 @@ def test_norm_j_pc_random(swirr, swl, a_pc, b_pc, poro, perm, sigma_costau):
     except (AssertionError, ValueError):  # when poro is < 0 f.ex.
         return
     check_table(wateroil.table)
+    wateroil.add_corey_water()
+    wateroil.add_corey_oil()
+    assert sat_table_str_ok(wateroil.SWOF())
 
 
 def test_let_pc_pd():
@@ -138,7 +143,9 @@ def test_let_pc_pd():
         len(wateroil.table[(wateroil.table["sw"] >= 0.6) & (wateroil.table["sw"] <= 1)])
         == 2
     )
-    # wateroil.plotpc()
+    wateroil.add_corey_water()
+    wateroil.add_corey_oil()
+    assert sat_table_str_ok(wateroil.SWOF())
 
 
 def test_let_pc_imb():
@@ -159,3 +166,8 @@ def test_let_pc_imb():
     wateroil.add_LET_pc_imb(Ls=5, Es=5, Ts=5, Lf=5, Ef=5, Tf=5, Pcmax=5, Pcmin=1, Pct=4)
     assert np.isclose(wateroil.table["pc"].max(), 5)
     assert np.isclose(wateroil.table["pc"].min(), 1)
+    wateroil.add_corey_water()
+    wateroil.add_corey_oil()
+    print(wateroil.SWOF())
+
+    assert sat_table_str_ok(wateroil.SWOF())
