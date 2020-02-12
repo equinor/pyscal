@@ -446,7 +446,12 @@
 
     <span class="c1"># Interpolate kr at saturation endpoints</span>
     <span class="n">krwmax_new</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span><span class="n">wo_low</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krw&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">wo_high</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krw&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
-    <span class="n">kromax_new</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span><span class="n">wo_low</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krow&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">wo_high</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krow&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">swcr_new</span> <span class="o">&gt;</span> <span class="n">swl_new</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">:</span>
+        <span class="n">kromax_new</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span>
+            <span class="n">wo_low</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krow&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">wo_high</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krow&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">kromax_new</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">krwend_new</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span><span class="n">krw1</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">krw2</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
     <span class="n">kroend_new</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span><span class="n">kro1</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">kro2</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
 
@@ -523,11 +528,16 @@
 
     <span class="c1"># Interpolate kr at saturation endpoints</span>
     <span class="n">krgmax_new</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span><span class="n">go_low</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krg&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">go_high</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krg&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
-    <span class="n">kromax_new</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span><span class="n">go_low</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krog&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">go_high</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krog&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">sgcr_new</span> <span class="o">&gt;</span> <span class="n">epsilon</span><span class="p">:</span>
+        <span class="n">kromax_new</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span>
+            <span class="n">go_low</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krog&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">go_high</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krog&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">kromax_new</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="n">krgend_new</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span><span class="n">krg1</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">krg2</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
     <span class="n">kroend_new</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span><span class="n">kro1</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">kro2</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
 
-    <span class="c1"># Construct the new WaterOil object, with interpolated</span>
+    <span class="c1"># Construct the new GasOil object, with interpolated</span>
     <span class="c1"># endpoints:</span>
     <span class="n">go_new</span> <span class="o">=</span> <span class="n">pyscal</span><span class="o">.</span><span class="n">GasOil</span><span class="p">(</span><span class="n">swl</span><span class="o">=</span><span class="n">swl_new</span><span class="p">,</span> <span class="n">sgcr</span><span class="o">=</span><span class="n">sgcr_new</span><span class="p">,</span> <span class="n">sorg</span><span class="o">=</span><span class="n">sorg_new</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">)</span>
 
@@ -550,8 +560,10 @@
         <span class="n">pc1</span><span class="p">(</span><span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sgn_pc_intp&quot;</span><span class="p">]),</span> <span class="n">pc2</span><span class="p">(</span><span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sgn_pc_intp&quot;</span><span class="p">])</span>
     <span class="p">)</span>
 
-    <span class="n">go_new</span><span class="o">.</span><span class="n">set_endpoints_linearpart_krg</span><span class="p">(</span><span class="n">krgend</span><span class="o">=</span><span class="n">krgend_new</span><span class="p">,</span> <span class="n">krgmax</span><span class="o">=</span><span class="n">krgmax_new</span><span class="p">)</span>
     <span class="n">go_new</span><span class="o">.</span><span class="n">set_endpoints_linearpart_krog</span><span class="p">(</span><span class="n">kroend</span><span class="o">=</span><span class="n">kroend_new</span><span class="p">,</span> <span class="n">kromax</span><span class="o">=</span><span class="n">kromax_new</span><span class="p">)</span>
+
+    <span class="c1"># Here we should have honored krgendanchor. Check github issue.</span>
+    <span class="n">go_new</span><span class="o">.</span><span class="n">set_endpoints_linearpart_krg</span><span class="p">(</span><span class="n">krgend</span><span class="o">=</span><span class="n">krgend_new</span><span class="p">,</span> <span class="n">krgmax</span><span class="o">=</span><span class="n">krgmax_new</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">go_new</span></div>
 

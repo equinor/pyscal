@@ -392,9 +392,11 @@
         <span class="k">if</span> <span class="n">dframe</span><span class="p">[</span><span class="n">sgcolname</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;sg must start at zero&quot;</span><span class="p">)</span>
         <span class="n">swlfrominput</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">dframe</span><span class="p">[</span><span class="n">sgcolname</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">swlfrominput</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">swlfrominput</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">epsilon</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;swl and 1-max(sg) from incoming table does not seem compatible&quot;</span>
+                <span class="s2">&quot;swl=</span><span class="si">%f</span><span class="s2"> and 1-max(sg)=</span><span class="si">%f</span><span class="s2"> from incoming table does not seem compatible&quot;</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">swl</span><span class="p">,</span>
+                <span class="n">swlfrominput</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;         Do not trust the result near the endpoint.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">krgcolname</span> <span class="ow">in</span> <span class="n">dframe</span><span class="p">:</span>
