@@ -585,7 +585,7 @@ class WaterOil(object):
         self.table["pc"] = self.table.H * drho / 1000 * g / 100.0
         self.pccomment = (
             "-- Simplified J function for Pc; \n--   "
-            + "a=%g, b=%g, poro_ref=%g, perm_ref=%g mD, drho=%g kg/m³, g=%g m/s²\n"
+            + "a=%g, b=%g, poro_ref=%g, perm_ref=%g mD, drho=%g kg/m^3, g=%g m/s^2\n"
             % (a, b, poro_ref, perm_ref, drho, g)
         )
 
