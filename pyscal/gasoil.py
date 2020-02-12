@@ -74,6 +74,8 @@ class GasOil(object):
         krgendanchor="sorg",
         fast=False,
     ):
+        if h is None:
+            h = 0.01
         assert epsilon < h <= 1
         assert -epsilon < swirr < 1.0 + epsilon
         assert -epsilon < sgcr < 1

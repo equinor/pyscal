@@ -198,7 +198,7 @@ class SCALrecommendation(object):
         Interpolation is linear in relperm-direction, and will thus not be
         linear in log-relperm-direction
 
-        This method returns an WaterOilGasTable object which can be
+        This method returns an WaterOilGas object which can be
         realized into printed tables. No attempt is made to
         parametrize the interpolant in L,E,T parameter space, or Corey-space.
 
@@ -240,7 +240,7 @@ class SCALrecommendation(object):
 
         # Initialize wateroil and gasoil curves to be filled with
         # interpolated curves:
-        interpolant = WaterOilGas()
+        interpolant = WaterOilGas(h=h)
 
         if do_wateroil:
             if abs(parameter) > 1.0:
@@ -254,11 +254,11 @@ class SCALrecommendation(object):
                 interpolant.wateroil = self.high.wateroil
             elif parameter < 0.0:
                 interpolant.wateroil = utils.interpolate_wo(
-                    self.base.wateroil, self.low.wateroil, -parameter
+                    self.base.wateroil, self.low.wateroil, -parameter, h=h
                 )
             elif parameter > 0.0:
                 interpolant.wateroil = utils.interpolate_wo(
-                    self.base.wateroil, self.high.wateroil, parameter
+                    self.base.wateroil, self.high.wateroil, parameter, h=h
                 )
         else:
             interpolant.wateroil = None

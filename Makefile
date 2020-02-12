@@ -29,15 +29,15 @@ endef
 export PRINT_HELP_PYSCRIPT
 
 
-APPLICATIONROOT := pyscal 
-APPLICATION := pyscal 
-APPLICATIONPKG := pyscal 
+APPLICATIONROOT := pyscal
+APPLICATION := pyscal
+APPLICATIONPKG := pyscal
 SRCAPPLICATION := pyscal
-TOPSRCAPPLICATION := pyscal 
+TOPSRCAPPLICATION := pyscal
 DOCSINSTALL := /project/sdpdocs/FMU/lib
 
 # A list of the applications
-RUNAPPS := pyscal 
+RUNAPPS := pyscal
 
 BROWSER := firefox
 

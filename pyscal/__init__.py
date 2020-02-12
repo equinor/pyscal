@@ -11,8 +11,8 @@ from .wateroil import WaterOil  # noqa
 from .wateroilgas import WaterOilGas  # noqa
 from .gasoil import GasOil  # noqa
 from .scalrecommendation import SCALrecommendation  # noqa
+from .pyscallist import PyscalList  # noqa
 from .factory import PyscalFactory  # noqa
-
 
 from ._version import get_versions
 

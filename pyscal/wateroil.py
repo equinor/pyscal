@@ -66,6 +66,8 @@ class WaterOil(object):
         assert -epsilon < swl < 1.0 + epsilon
         assert -epsilon < swcr < 1.0 + epsilon
         assert -epsilon < sorw < 1.0 + epsilon
+        if h is None:
+            h = 0.01
         assert epsilon < h <= 1
         assert swl < 1 - sorw
         assert swcr < 1 - sorw

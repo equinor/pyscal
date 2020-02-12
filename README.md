@@ -2,7 +2,7 @@
 
 ![Pyscal art, interpolation in random Corey curves](docs/images/pyscal-logo.png)
 
-Python module for relative permeability/SCAL support in reservoir simulation
+Python tool module for relative permeability/SCAL support in reservoir simulation
 
 ## Documentation
 
@@ -10,32 +10,34 @@ Python module for relative permeability/SCAL support in reservoir simulation
 
 ## Feature overview
 
+*   Command line tool for generating Eclipse input from parameters
+    in an XLSX- or CSV-file.
+
 *   API to create relative permeability curves through correlations or
-    tables
+    tables.
 
-*   Similar for capillary pressure.
-
-*   Consistency checks for three-phase setups, makes your oil-water
-    tables and gas-oil tables compatible
+*   Consistency checks for three-phase setups, ensures compatibility of
+    oil-water tables and gas-oil tables.
 
 *   Support for handling uncertainty, doing book-keeping for low, base
     and high cases, and the possiblity to interpolate between these
     cases using a number from -1 to +1.
 
-## Scripts
+## Command line tool
+Example use with CSV input for one SATNUM:
+```console
+$ cat relperminput.csv
+SATNUM, swl, sorw, Nw, Now
+1,      0.1, 0.05, 2, 3
+$ pyscal relperminput.csv --delta_s 0.1 -o relperm.inc
+Written to relperm.inc
+```
 
-There will eventually be some end-user scripts for this module
+where `relperm.inc` can be used directly as an INCLUDE file in Eclipse or Flow.
 
-*   create_relperm.py - will read configation from Excel worksheets with
-    parameters, and produce Eclipse include files
+## Python API usage
 
-*   interpolate_relperm.py - reads low-base-high Eclipse include files,
-    and interpolates between them
-
-## Library usage
-
-Illustrative example of how to produce a SWOF include file for Eclipse 
-with a Corey relative permeability curve
+Using the Python API, the same curves as above are made with
 
 ```python
 from pyscal import WaterOil
@@ -45,7 +47,7 @@ wo.add_corey_water(nw=2)
 wo.add_corey_oil(now=3)
 print(wo.SWOF())
 ```
-which will produce the string
+which will produce the output
 ```console
 SWOF
 --

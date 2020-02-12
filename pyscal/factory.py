@@ -2,7 +2,11 @@
 
 import logging
 
-from pyscal import WaterOil, GasOil, WaterOilGas, SCALrecommendation
+import os
+import pandas as pd
+import xlrd
+
+from pyscal import WaterOil, GasOil, WaterOilGas, SCALrecommendation, PyscalList
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
@@ -373,6 +377,11 @@ class PyscalFactory(object):
         check_deprecated(params["high"])
 
         errored = False
+        if h is not None:
+            params["low"]["h"] = h
+            params["base"]["h"] = h
+            params["high"]["h"] = h
+
         wog_low = PyscalFactory.create_water_oil_gas(params["low"])
         if not wog_low.selfcheck():
             logger.error("Incomplete parameter set for low case")
@@ -388,18 +397,261 @@ class PyscalFactory(object):
         if errored:
             raise ValueError("Incomplete SCAL recommendation")
 
-        scal = SCALrecommendation(wog_low, wog_base, wog_high, tag, h)
+        scal = SCALrecommendation(wog_low, wog_base, wog_high, tag)
         return scal
 
     @staticmethod
-    def create_scal_recommendation_list():
-        """Reserved for future implementation"""
-        raise NotImplementedError
+    def load_relperm_df(inputfile, sheet_name=None):
+        """Read CSV or XLSX from file and return scal/relperm data
+        a dataframe.
+
+        Checks validity in SATNUM and CASE columns.
+        Ensures case-insensitivenes SATNUM, CASE, TAG and COMMENT
+
+        Merges COMMENT into TAG column, as only TAG is picked up downstream.
+        Adds a prexix "SATNUM <number>" to all tags.
+
+        All strings in CASE column are converted to lowercase.
+
+        Args:
+            inputfile (str or pd.DataFrame): Filename for XLSX or CSV file, or a
+                pandas DataFrame.
+            sheet_name (str): Sheet-name, only used when loading xlsx files.
+        Returns:
+            pd.DataFrame. To be handed over to pyscal list factory methods.
+        """
+        if isinstance(inputfile, str) and os.path.exists(inputfile):
+            if inputfile.lower().endswith("csv"):
+                logger.warning(
+                    "Sheet name only relevant for XLSX files, ignoring %s", sheet_name,
+                )
+            try:
+                if sheet_name:
+                    input_df = pd.read_excel(inputfile, sheet_name=sheet_name)
+                    logger.info("Parsed XLSX file %s, sheet %s", inputfile, sheet_name)
+                else:
+                    input_df = pd.read_excel(inputfile)
+                    logger.info("Parsed XLSX file %s", inputfile)
+            except xlrd.XLRDError as xlserror:
+                if inputfile.lower().endswith("xlsx") or inputfile.lower().endswith(
+                    "xls"
+                ):
+                    logger.error(xlserror)
+                try:
+                    input_df = pd.read_csv(inputfile, skipinitialspace=True)
+                    logger.info("Parsed CSV file %s", inputfile)
+                except pd.errors.ParserError as csverror:
+                    logger.error("Could not parse %s as XLSX or CSV", inputfile)
+                    logger.error("Error message from csv-parser: %s", str(csverror))
+                except ValueError:
+                    # We end here when we use csv reader on xls files, that
+                    # means that xls parsing failed in the first place. Other
+                    # error messages have been, and will be printed.
+                    input_df = pd.DataFrame()
+        elif isinstance(inputfile, pd.DataFrame):
+            input_df = inputfile
+        else:
+            if isinstance(inputfile, str) and not os.path.exists(inputfile):
+                raise IOError("File not found " + str(inputfile))
+            raise ValueError("Unsupported argument " + str(inputfile))
+        assert isinstance(input_df, pd.DataFrame)
+        if input_df.empty:
+            logger.error("Relperm input dataframe is empty!")
+
+        # We will ignore case on the column names, solved by converting column
+        # name to uppercase
+        ignorecasecolumns = ["satnum", "case", "tag", "comment"]
+        for colname in input_df.columns:
+            if colname.lower() in ignorecasecolumns:
+                input_df.rename(
+                    {colname: colname.upper()}, axis="columns", inplace=True
+                )
+
+        # Support both TAG and COLUMN (as TAG)
+        if "COMMENT" in input_df and "TAG" not in input_df:
+            input_df.rename({"COMMENT": "TAG"}, axis="columns", inplace=True)
+        if "COMMENT" in input_df and "TAG" in input_df:
+            # It might never happen that a user puts both tag and comment in
+            # the dataframe, but if so, merge them.
+            input_df["TAG"] = (
+                "tag: " + input_df["TAG"] + "; comment: " + input_df["COMMENT"]
+            )
+
+        # It is tempting to detect any NaN's at this point because that can
+        # indicate merged cells, which is not supported, but that could
+        # break optional comment columns which might only be defined on certain lines.
+
+        if "SATNUM" not in input_df:
+            logger.error("SATNUM must be present in CSV/XLSX file/dataframe")
+            raise ValueError("SATNUM missing")
+
+        if input_df["SATNUM"].isnull().sum() > 0:
+            logger.error(
+                "Found not-a-number in the SATNUM column. This could be due to"
+            )
+            logger.error("merged cells in XLSX, which is not supported.")
+            raise ValueError
+
+        # Check that SATNUM's are consecutive and integers:
+        try:
+            input_df["SATNUM"] = input_df["SATNUM"].astype(int)
+        except ValueError:
+            logger.error("SATNUM must contain only integers")
+            raise ValueError
+        if min(input_df["SATNUM"]) != 1:
+            logger.error("SATNUM must start at 1")
+            raise ValueError
+        if max(input_df["SATNUM"]) != len(input_df["SATNUM"].unique()):
+            logger.error(
+                "Missing SATNUMs? Max SATNUM is not equal to number of unique SATNUMS"
+            )
+            raise ValueError
+        if "CASE" not in input_df and len(input_df["SATNUM"].unique()) != len(input_df):
+            logger.error("Non-unique SATNUMs?")
+            raise ValueError
+        # If we are in a SCAL recommendation setting
+        if "CASE" in input_df:
+            # Enforce lower case:
+            input_df["CASE"] = [case_str.lower() for case_str in input_df["CASE"]]
+            if input_df["CASE"].isnull().sum() > 0:
+                logger.error("Found not-a-number in the CASE column. This could be due")
+                logger.error("merged cells in XLSX, which is not supported.")
+                raise ValueError
+            if set(input_df["CASE"].unique()) != set(["low", "base", "high"]):
+                logger.error(
+                    "Contents of CASE-column must be exactly low, base and high"
+                )
+                logger.error("You provided %s", str(input_df["CASE"].unique()))
+                raise ValueError
+
+        # Add the SATNUM index to the TAG column
+        if "TAG" not in input_df:
+            input_df["TAG"] = ""
+        input_df["TAG"].fillna(value="", inplace=True)  # Empty cells to empty string.
+        input_df["TAG"] = (
+            "SATNUM " + input_df["SATNUM"].astype(str) + " " + input_df["TAG"]
+        )
+
+        # Check that we are able to make something out of the first row:
+        firstrow = input_df.loc[0, :]
+        if not sufficient_water_oil_params(firstrow) and not sufficient_gas_oil_params(
+            firstrow
+        ):
+            logger.error("Can't make neither WaterOil or GasOil from the given data.")
+            logger.error("Check documentation for what you need to supply")
+            logger.error("You provided the columns %s", str(input_df.columns))
+            raise ValueError
+        return input_df.sort_values("SATNUM")
 
     @staticmethod
-    def create_wog_list():
-        """Reserved for future implementation"""
-        raise NotImplementedError
+    def create_scal_recommendation_list(input_df, h=None):
+        """Requires SATNUM and CASE to be defined in the input data
+
+        Args:
+            input_df (pd.DataFrame): Input data, should have been processed
+                through load_relperm_df().
+            h (float): Saturation step-value
+
+        Returns:
+            PyscalList, consisting of SCALrecommendation objects
+        """
+        scal_l = PyscalList()
+        assert isinstance(input_df, pd.DataFrame)
+
+        scalinput = input_df.set_index(["SATNUM", "CASE"])
+
+        for satnum in scalinput.index.levels[0].values:
+            scal_l.append(
+                PyscalFactory.create_scal_recommendation(
+                    scalinput.loc[satnum, :].to_dict(orient="index"), h=h
+                )
+            )
+        return scal_l
+
+    @staticmethod
+    def create_pyscal_list(relperm_params_df, h=None):
+        """Create wateroilgas, wateroil or gasoil list
+        based on what is available
+
+        Args:
+            relperm_params_df (pd.DataFrame): Input data, should have been processed
+                through load_relperm_df().
+            h (float): Saturation step-value
+
+        Returns:
+            PyscalList, consisting of either WaterOil, GasOil or WaterOilGas objects
+        """
+        params = relperm_params_df.loc[0, :]  # first row
+        water_oil = sufficient_water_oil_params(params)
+        gas_oil = sufficient_gas_oil_params(params)
+        if water_oil and gas_oil:
+            return PyscalFactory.create_wateroilgas_list(relperm_params_df, h)
+        elif water_oil:
+            return PyscalFactory.create_wateroil_list(relperm_params_df, h)
+        elif gas_oil:
+            return PyscalFactory.create_gasoil_list(relperm_params_df, h)
+        logger.error("Could not determine two or three phase from parameters")
+        return None
+
+    @staticmethod
+    def create_wateroilgas_list(relperm_params_df, h=None):
+        """Create a PyscalList with WaterOilGas objects from
+        a dataframe
+
+        Args:
+            relperm_params_df (pd.DataFrame): Input data, should have been processed
+                through load_relperm_df().
+            h (float): Saturation step-value
+
+        Returns:
+            PyscalList, consisting of WaterOilGas objects
+        """
+        wogl = PyscalList()
+        for (_, params) in relperm_params_df.iterrows():
+            if h is not None:
+                params["h"] = h
+            wogl.append(PyscalFactory.create_water_oil_gas(params.to_dict()))
+        return wogl
+
+    @staticmethod
+    def create_wateroil_list(relperm_params_df, h=None):
+        """Create a PyscalList with WaterOil objects from
+        a dataframe
+
+        Args:
+            relperm_params_df (pd.DataFrame): A valid dataframe with
+                WaterOil parameters, processed through load_relperm_df()
+            h (float): Saturation steplength
+
+        Returns:
+            PyscalList, consisting of WaterOil objects
+        """
+        wol = PyscalList()
+        for (_, params) in relperm_params_df.iterrows():
+            if h is not None:
+                params["h"] = h
+            wol.append(PyscalFactory.create_water_oil(params.to_dict()))
+        return wol
+
+    @staticmethod
+    def create_gasoil_list(relperm_params_df, h=None):
+        """Create a PyscalList with GasOil objects from
+        a dataframe
+
+        Args:
+            relperm_params_df (pd.DataFrame): A valid dataframe with GasOil parameters,
+                processed through load_relperm_df()
+            h (float): Saturation steplength
+
+        Returns:
+            PyscalList, consisting of GasOil objects
+        """
+        gol = PyscalList()
+        for (_, params) in relperm_params_df.iterrows():
+            if h is not None:
+                params["h"] = h
+            gol.append(PyscalFactory.create_gas_oil(params.to_dict()))
+        return gol
 
 
 def sufficient_water_oil_params(params):
