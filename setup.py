@@ -15,6 +15,7 @@ setup(
     version=versioneer.get_version(),
     cmdclass=versioneer.get_cmdclass(),
     description="Generate relative permeability include files for Eclipse reservoir simulator",
+    entry_points={"console_scripts": ["pyscal = pyscal.pyscalcli:main"]},
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="http://github.com/equinor/pyscal",
@@ -23,5 +24,4 @@ setup(
     license="LGPLv3",
     packages=["pyscal"],
     zip_safe=False,
-    entry_points={"console_scripts": []},
 )

@@ -1,7 +1,9 @@
 Installation
 ============
 
-To install the latest release from PyPI, use ``pip`` inside a virtual environment 
+From source
+-----------
+To install the latest release from PyPI, use ``pip`` inside a virtual environment
 
 .. code-block:: console
 
@@ -18,7 +20,7 @@ For contributing to pyscal and access to latest bleeding code, do
 
 
 Internally in Equinor
-~~~~~~~~~~~~~~~~~~~~~
+---------------------
 
 pyscal is distributed through Komodo_.
 
