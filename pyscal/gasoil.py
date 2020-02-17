@@ -158,8 +158,10 @@ class GasOil(object):
         self.table["sl"] = 1 - self.table["sg"]
         if krgendanchor == "sorg":
             # Normalized sg (sgn) is 0 at sgcr, and 1 at 1-swl-sorg
+            assert 1 - swl - sgcr - sorg > epsilon
             self.table["sgn"] = (self.table["sg"] - sgcr) / (1 - swl - sgcr - sorg)
         else:
+            assert 1 - swl - sgcr > epsilon
             self.table["sgn"] = (self.table["sg"] - sgcr) / (1 - swl - sgcr)
 
         # Normalized oil saturation should be 0 at 1-sorg, and 1 at swl+sgcr

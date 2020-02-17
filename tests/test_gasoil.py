@@ -99,7 +99,7 @@ def test_gasoil_normalization(swl, sgcr, sorg, h, tag):
 @given(
     st.floats(min_value=0, max_value=0.3),  # swl
     st.floats(min_value=0, max_value=0.3),  # sgcr
-    st.floats(min_value=0, max_value=0.4),  # sorg
+    st.floats(min_value=0, max_value=0.41),  # sorg (sgn collapses when >0.4)
     st.floats(min_value=0.1, max_value=1),  # kroend
     st.floats(min_value=0.1, max_value=1),  # kromax
     st.floats(min_value=0.1, max_value=1),  # krgend
@@ -108,7 +108,11 @@ def test_gasoil_normalization(swl, sgcr, sorg, h, tag):
     st.booleans(),  # fast mode
 )
 def test_gasoil_krendmax(swl, sgcr, sorg, kroend, kromax, krgend, krgmax, h, fast):
-    """Test that krendmax gets correct in all numerical corner cases"""
+    """Test that krendmax gets correct in all numerical corner cases.
+
+    The normalized sg-range is allowed to collapse to nothing in this test.
+    (causes AssertionError)
+    """
     try:
         gasoil = GasOil(swl=swl, sgcr=sgcr, sorg=sorg, h=h, tag="", fast=fast)
     except AssertionError:
