@@ -328,7 +328,8 @@ class GasOil(object):
             ] = tmp.loc[tmp.sg >= (1 - (self.sorg + self.swl + epsilon)), "krg"]
         else:
             self.table.loc[self.table.sg > (1 - (self.swl + epsilon)), "krg"] = krgend
-            if krgmax:
+            if krgmax and krgmax < 1.0:
+                # Only warn if something else than default is in use
                 logger.warning("krgmax ignored when not anchoring to sorg")
 
     def set_endpoints_linearpart_krog(self, kroend, kromax):
@@ -357,7 +358,8 @@ class GasOil(object):
                 kromax = 1
             self.table.loc[self.table["sg"] < 1.0 / SWINTEGERS, "krog"] = kromax
         else:
-            if kromax:
+            if kromax and kromax < 1.0:
+                # Only warn for non-defaulted values
                 logger.warning("kromax ignored when sgcr is close to zero")
             self.table.loc[self.table["sg"] < 1.0 / SWINTEGERS, "krog"] = kroend
 
