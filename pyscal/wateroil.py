@@ -372,7 +372,8 @@ class WaterOil(object):
                 krwmax = 1.0
             self.table.loc[self.table["sw"] > (1 - self.sorw - epsilon), "krw"] = krwmax
         else:
-            if krwmax:
+            if krwmax and krwmax < 1.0:
+                # Only warn if non-default value
                 logger.warning("krwmax ignored when sorw is zero")
             self.table.loc[self.table["sw"] > (1 - self.sorw - epsilon), "krw"] = krwend
         self.table.loc[np.isclose(self.table["sw"], 1 - self.sorw), "krw"] = krwend
@@ -395,7 +396,8 @@ class WaterOil(object):
         # Linear curve between swl and swcr (left part):
         self.table.loc[self.table["son"] > 1.0 + epsilon, "krow"] = np.nan
         if self.swcr < self.swl + epsilon:
-            if kromax:
+            if kromax and kromax < 1.0:
+                # Only warn if non-default value
                 logger.warning("kromax ignored when swcr is close to swl")
             self.table.loc[self.table["sw"] <= self.swl + epsilon, "krow"] = kroend
         else:
