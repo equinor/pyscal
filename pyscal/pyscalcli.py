@@ -120,90 +120,113 @@ def get_parser():
 
 
 def main():
-    """Endpoint for pyscals command line utility"""
+    """Endpoint for pyscals command line utility.
+
+    Translates from argparse API to Pyscal's Python API"""
     parser = get_parser()
     args = parser.parse_args()
 
-    if args.verbose:
+    try:
+        pyscal_main(
+            parametertable=args.parametertable,
+            verbose=args.verbose,
+            output=args.output,
+            delta_s=args.delta_s,
+            int_param_wo=args.int_param_wo,
+            int_param_go=args.int_param_go,
+            sheet_name=args.sheet_name,
+            slgof=args.slgof,
+            family2=args.family2,
+        )
+    except ValueError:
+        ### If ValueErrors, error messages have already been printed
+        sys.exit(1)
+
+
+def pyscal_main(
+    parametertable,
+    verbose=False,
+    output="relperm.inc",
+    delta_s=None,
+    int_param_wo=None,
+    int_param_go=None,
+    sheet_name=None,
+    slgof=False,
+    family2=False,
+):
+    """A "main()" method not relying on argparse. This can be used
+    for testing, and also by an ERT forward model, e.g.
+    in semeio (github.com/equinor/semeio)
+
+    Args:
+        parametertable (string): Filename (CSV or XLSX) to load
+        verbose (bool): verbose or not
+        output (string): Output filename
+        delta_s (float): Saturation step-length
+        int_param_wo (list): Interpolation params for wateroil
+        int_param_go (list): Interpolation params for gasoil
+        sheet_name (string): Which sheet in XLSX file
+        slgof (bool): Use SLGOF
+        family2 (bool): Dump family 2 keywords
+    """
+    if verbose:
         # Fixme: Logging level is not inherited in called modules.
         logger.setLevel(logging.INFO)
 
-    if args.sheet_name:
-        logger.info(
-            "Loading data from %s and sheetname %s",
-            args.parametertable,
-            args.sheet_name,
-        )
+    if sheet_name:
+        logger.info("Loading data from %s and sheetname %s", parametertable, sheet_name)
     else:
-        logger.info("Loading data from %s", args.parametertable)
-    try:
-        scalinput_df = PyscalFactory.load_relperm_df(
-            args.parametertable, sheet_name=args.sheet_name
-        )
-    except ValueError:
-        # If ValueErrors are raised by pyscal-code, error messages
-        # have already been printed. Lets just exit with error code.
-        sys.exit(1)
+        logger.info("Loading data from %s", parametertable)
+    scalinput_df = PyscalFactory.load_relperm_df(parametertable, sheet_name=sheet_name)
 
     logger.info("Input data:\n%s", scalinput_df.to_string(index=False))
 
-    if args.int_param_go is not None and args.int_param_wo is None:
+    if int_param_go is not None and int_param_wo is None:
         logger.error("Don't use int_param_go alone, only int_param_wo")
-        sys.exit(1)
+        raise ValueError
     if "SATNUM" not in scalinput_df:
         logger.error("There is no column called SATNUM in the input data")
-        sys.exit(1)
+        raise ValueError
     if "CASE" in scalinput_df:
         # Then we should do interpolation
-        if args.int_param_wo is None:
+        if int_param_wo is None:
             logger.error("No interpolation parameters provided")
-            sys.exit(1)
-        try:
-            scalrec_list = PyscalFactory.create_scal_recommendation_list(
-                scalinput_df, h=args.delta_s
-            )
-        except ValueError:
-            sys.exit(1)
+            raise ValueError
+        scalrec_list = PyscalFactory.create_scal_recommendation_list(
+            scalinput_df, h=delta_s
+        )
         logger.info(
             "Interpolating, wateroil=%s, gasoil=%s",
-            str(args.int_param_wo),
-            str(args.int_param_go),
+            str(int_param_wo),
+            str(int_param_go),
         )
-        try:
-            wog_list = scalrec_list.interpolate(
-                args.int_param_wo, args.int_param_go, h=args.delta_s
-            )
-        except ValueError:
-            sys.exit(1)
+        wog_list = scalrec_list.interpolate(int_param_wo, int_param_go, h=delta_s)
     else:
-        try:
-            wog_list = PyscalFactory.create_pyscal_list(
-                scalinput_df, h=args.delta_s
-            )  # can be both water-oil, water-oil-gas, or gas-water
-        except ValueError:
-            sys.exit(1)
+        wog_list = PyscalFactory.create_pyscal_list(
+            scalinput_df, h=delta_s
+        )  # can be both water-oil, water-oil-gas, or gas-water
 
     if (
-        args.int_param_wo is not None or args.int_param_go is not None
+        int_param_wo is not None or int_param_go is not None
     ) and "CASE" not in scalinput_df:
         logger.error(
             "Interpolation parameter provided but no CASE column in input data"
         )
-        sys.exit(1)
-    if not args.family2:
+        raise ValueError
+    if not family2:
         logger.info("Generating family 1 keywords.")
-        if args.output == "-":
-            print(wog_list.dump_family_1(slgof=args.slgof))
+        if output == "-":
+            print(wog_list.dump_family_1(slgof=slgof))
         else:
-            wog_list.dump_family_1(filename=args.output, slgof=args.slgof)
-            print("Written to " + args.output)
+            wog_list.dump_family_1(filename=output, slgof=slgof)
+            print("Written to " + output)
     else:
         logger.info("Generating family 2 keywords")
-        if args.output == "-":
+        if output == "-":
             print(wog_list.dump_family_2())
         else:
-            wog_list.dump_family_2(filename=args.output)
-            print("Written to " + args.output)
+            wog_list.dump_family_2(filename=output)
+            print("Written to " + output)
 
 
 if __name__ == "__main__":
