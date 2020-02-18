@@ -34,10 +34,11 @@ Written to relperm.inc
 ```
 
 where `relperm.inc` can be used directly as an INCLUDE file in Eclipse or Flow.
+The same table as in the CSV above could have been in an XLSX file also.
 
 ## Python API usage
 
-Using the Python API, the same curves as above are made with
+Using the Python API, the same curves as above can be constructed with
 
 ```python
 from pyscal import WaterOil

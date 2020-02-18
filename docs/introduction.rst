@@ -34,11 +34,12 @@ Example use with CSV input for one SATNUM:
     $ cat relperminput.csv  # Show example input file
     SATNUM, swl, sorw, Nw, Now
     1,      0.1, 0.05, 2, 3
-    # Run pyscal on example input:
+    $ # Run pyscal on example input:
     $ pyscal relperminput.csv --delta_s 0.2 -o relperm.inc
     Written to relperm.inc
 
-The output from this will look like:
+Exactly the same table in an XLSX file would give identical results. The output
+from the pyscal command above will look like:
 
 .. code-block:: console
 
@@ -63,13 +64,13 @@ The output from this will look like:
 
 
 The saturation step-length ``--delta_s`` was set artificially high for the sake
-of the example. Leave it defaulted.
+of the example. Leave it defaulted (0.01) for practical use.
 
 Python API
 ----------
 
 The corresponding API can be used directly for more control and for custom-made
-solutions. An example recreating the the same table above is given by:
+solutions. An example recreating the the same table as above is given by:
 
 .. code-block:: python
 
@@ -82,7 +83,9 @@ solutions. An example recreating the the same table above is given by:
 
 which will give the same output as the example above.
 
-Objects
+See the full API for in-depth information.
+
+Classes
 ^^^^^^^
 
 WaterOil
