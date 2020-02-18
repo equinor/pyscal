@@ -1,12 +1,28 @@
 Usage
 =====
 
-``pyscal`` is a Python API, meaning that end users can use it in
-Python scripts or interactive Python sessions. Scripts can be built on
-top of pyscal that read input from text files, CSV files or Excel worksheets.
+``pyscal`` is a both a command line tool and a Python API. The command
+line tool is a short wrapper utilizing the underlying pyscal functionality.
 
-A water-oil curve
------------------
+The command line tool
+---------------------
+
+.. argparse::
+    :ref: pyscal.pyscalcli.get_parser
+    :prog: pyscal
+
+An example input table could look like:
+
+========  ==========  ======  =====  ========  ====  ====  ====  =====  =====  =====  ====  ====  ====  =====  =====  =====  ======  ======  ========  =========  =========  =======  =====  ======  ==========  ==========  ======
+  SATNUM  comment      sorw    swl    krwend    Lw    Ew    Tw    Low    Eow    Tow    Lg    Eg    Tg    Log    Eog    Tog    sorg    sgcr    krgend    krogend    krowend    swirr      a       b    poro_ref    perm_ref    drho
+========  ==========  ======  =====  ========  ====  ====  ====  =====  =====  =====  ====  ====  ====  =====  =====  =====  ======  ======  ========  =========  =========  =======  =====  ======  ==========  ==========  ======
+       1  Sognefj      0.19    0.12      0.39  2.53  2.37  0.99   2.5    1.92   1.14  1.71  1.27  1.03   2.92   3.22   1.28    0.07    0.01      0.87          1          1     0.01  0.321  -1.283        0.25        1000     300
+       2  Myolites     0.19    0.16      0.3   2.63  1.94  0.97   2.38   2.2    1.22  1.78  1.13  1.01   2.71   3.62   1.42    0.06    0.01      0.9           1          1     0.01  0.321  -1.283        0.18         300     300
+       3  Foobarites   0.28    0.23      0.18  2.81  1.24  0.93   2.12   3.02   1.4   1.91  0.91  0.96   2.4    4.79   1.8     0.04    0.01      0.93          1          1     0.01  0.321  -1.283        0.1            1     300
+========  ==========  ======  =====  ========  ====  ====  ====  =====  =====  =====  ====  ====  ====  =====  =====  =====  ======  ======  ========  =========  =========  =======  =====  ======  ==========  ==========  ======
+
+Python API
+----------
 
 To generate SWOF input for Eclipse or flow (OPM) with certain
 saturation endpoints and certain relative permeability endpoints, you
@@ -171,5 +187,3 @@ the corresponding factory method.
     interpolant = rec.interpolate(-0.4)
 
     print(interpolant.SWOF())
-
-

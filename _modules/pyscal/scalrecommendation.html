@@ -87,7 +87,7 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../readme.html">Introduction to pyscal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction to pyscal</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules.html">API for pyscal</a></li>
@@ -355,7 +355,7 @@
 <span class="sd">        Interpolation is linear in relperm-direction, and will thus not be</span>
 <span class="sd">        linear in log-relperm-direction</span>
 
-<span class="sd">        This method returns an WaterOilGasTable object which can be</span>
+<span class="sd">        This method returns an WaterOilGas object which can be</span>
 <span class="sd">        realized into printed tables. No attempt is made to</span>
 <span class="sd">        parametrize the interpolant in L,E,T parameter space, or Corey-space.</span>
 
@@ -397,7 +397,7 @@
 
         <span class="c1"># Initialize wateroil and gasoil curves to be filled with</span>
         <span class="c1"># interpolated curves:</span>
-        <span class="n">interpolant</span> <span class="o">=</span> <span class="n">WaterOilGas</span><span class="p">()</span>
+        <span class="n">interpolant</span> <span class="o">=</span> <span class="n">WaterOilGas</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">do_wateroil</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
@@ -411,11 +411,11 @@
                 <span class="n">interpolant</span><span class="o">.</span><span class="n">wateroil</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">wateroil</span>
             <span class="k">elif</span> <span class="n">parameter</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
                 <span class="n">interpolant</span><span class="o">.</span><span class="n">wateroil</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">interpolate_wo</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">wateroil</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">wateroil</span><span class="p">,</span> <span class="o">-</span><span class="n">parameter</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">wateroil</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">wateroil</span><span class="p">,</span> <span class="o">-</span><span class="n">parameter</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span>
                 <span class="p">)</span>
             <span class="k">elif</span> <span class="n">parameter</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
                 <span class="n">interpolant</span><span class="o">.</span><span class="n">wateroil</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">interpolate_wo</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">wateroil</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">wateroil</span><span class="p">,</span> <span class="n">parameter</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">wateroil</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">wateroil</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span>
                 <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">interpolant</span><span class="o">.</span><span class="n">wateroil</span> <span class="o">=</span> <span class="kc">None</span>

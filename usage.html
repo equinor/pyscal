@@ -89,10 +89,15 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="readme.html">Introduction to pyscal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction to pyscal</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Usage</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#a-water-oil-curve">A water-oil curve</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-command-line-tool">The command line tool</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Positional Arguments">Positional Arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Named Arguments">Named Arguments</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#python-api">Python API</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#gas-oil-curve">Gas-oil curve</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#water-oil-gas">Water-oil-gas</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#interpolation-in-a-scal-recommendation">Interpolation in a SCAL recommendation</a></li>
@@ -166,11 +171,235 @@
             
   <div class="section" id="usage">
 <h1>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h1>
-<p><code class="docutils literal notranslate"><span class="pre">pyscal</span></code> is a Python API, meaning that end users can use it in
-Python scripts or interactive Python sessions. Scripts can be built on
-top of pyscal that read input from text files, CSV files or Excel worksheets.</p>
-<div class="section" id="a-water-oil-curve">
-<h2>A water-oil curve<a class="headerlink" href="#a-water-oil-curve" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal notranslate"><span class="pre">pyscal</span></code> is a both a command line tool and a Python API. The command
+line tool is a short wrapper utilizing the underlying pyscal functionality.</p>
+<div class="section" id="the-command-line-tool">
+<h2>The command line tool<a class="headerlink" href="#the-command-line-tool" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">pyscal</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">o</span> <span class="n">OUTPUT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">delta_s</span> <span class="n">DELTA_S</span><span class="p">]</span>
+              <span class="p">[</span><span class="o">--</span><span class="n">int_param_wo</span> <span class="n">INT_PARAM_WO</span> <span class="p">[</span><span class="n">INT_PARAM_WO</span> <span class="o">...</span><span class="p">]]</span>
+              <span class="p">[</span><span class="o">--</span><span class="n">int_param_go</span> <span class="n">INT_PARAM_GO</span> <span class="p">[</span><span class="n">INT_PARAM_GO</span> <span class="o">...</span><span class="p">]]</span>
+              <span class="p">[</span><span class="o">--</span><span class="n">sheet_name</span> <span class="n">SHEET_NAME</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">slgof</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">family2</span><span class="p">]</span>
+              <span class="n">parametertable</span>
+</pre></div>
+</div>
+<div class="section" id="Positional Arguments">
+<h3>Positional Arguments<a class="headerlink" href="#Positional Arguments" title="Permalink to this headline">¶</a></h3>
+<dl class="option-list">
+<dt><kbd>parametertable</kbd></dt>
+<dd><p>CSV or XLSX file with Corey or LET parameters for relperms. One SATNUM pr row.</p>
+</dd>
+</dl>
+</div>
+<div class="section" id="Named Arguments">
+<h3>Named Arguments<a class="headerlink" href="#Named Arguments" title="Permalink to this headline">¶</a></h3>
+<dl class="option-list">
+<dt><kbd>-v, --verbose</kbd></dt>
+<dd><p>Print informational messages while processing input</p>
+<p>Default: False</p>
+</dd>
+<dt><kbd>-o, --output</kbd></dt>
+<dd><p>Name of Eclipse include file to produce</p>
+<p>Default: “relperm.inc”</p>
+</dd>
+<dt><kbd>--delta_s</kbd></dt>
+<dd><p>Saturation table step-length for sw/sg. Default 0.01</p>
+</dd>
+<dt><kbd>--int_param_wo</kbd></dt>
+<dd><p>Interpolation parameters for water-oil, if the parametertable contains low, base and high for each SATNUM. Either one number used for all SATMUM, or a sequence of length equal to the max SATNUM. Numbers between -1 and 1</p>
+</dd>
+<dt><kbd>--int_param_go</kbd></dt>
+<dd><p>Interpolation parameters for gas-oil, if the parametertable contains low, base and high for each SATNUM. Either one number used for all SATMUM, or a sequence of length equal to the max SATNUM. Numbers between -1 and 1</p>
+</dd>
+<dt><kbd>--sheet_name</kbd></dt>
+<dd><p>Sheet name if reading XLSX file. Defaults to first sheet</p>
+</dd>
+<dt><kbd>--slgof</kbd></dt>
+<dd><p>If using family 1 keywords, use SLGOF instead of SGOF</p>
+<p>Default: False</p>
+</dd>
+<dt><kbd>--family2</kbd></dt>
+<dd><p>Output family 2 keywords, SWFN, SGFN and SOF3/SOF2. Family 1 (SWOF + SGOF) is written if this is not set</p>
+<p>Default: False</p>
+</dd>
+</dl>
+</div>
+<p><p>The parameter file should contain a table with at least the column
+SATNUM, containing only consecutive integers starting at 1. Each row
+provides the data for the corresponding SATNUM. Comments are put in a
+column called TAG or COMMENT. Column headers are case insensitive.</p>
+<p>Saturation endpoints are put in columns ‘swirr’, ‘swl’, ‘swcr’, ‘sorw’,
+‘sgcr’ and ‘sorg’. Relative permeability endpoints are put in columns
+‘krwend’, ‘krwmax’, ‘krowend’, ‘krogend’, ‘kromax’, ‘krgend’ and ‘krgmax’.
+These columns are optional and are defaulted to 0 or 1.</p>
+<p>Corey or LET parametrization are based on presence of the columns
+‘Nw’, ‘Now’, ‘Nog’, ‘Ng’, ‘Lw’, ‘Ew’, ‘Tw’, ‘Low’, ‘Eow’, ‘Tow’,
+‘Log’, ‘Eog’, ‘Tog’, ‘Lg’, ‘Eg’, ‘Tg’.</p>
+<p>Simple J-function for capillary pressure is used if the columns
+‘a’, ‘b’, ‘poro_ref’, ‘perm_ref’ and ‘drho’ are found.</p>
+<p>For SCAL recommendations, there should be exactly three rows for each SATNUM,
+tagged with the strings ‘low’, ‘base’ and ‘high’ in the column ‘CASE’</p>
+<p>When interpolating in a SCAL recommendation, ‘int_param_wo’ is the main parameter
+that is used for both water-oil and gas-oil, and for all SATNUMs if nothing
+more is provided. Provide int_param_go in addition if separate interpolation
+for WaterOil and GasOil is needed, and specify multiple floats pr. parameter
+if individual interpolation for each SATNUM is needed.</p>
+</p>
+<p>An example input table could look like:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 5%" />
+<col style="width: 6%" />
+<col style="width: 3%" />
+<col style="width: 3%" />
+<col style="width: 5%" />
+<col style="width: 2%" />
+<col style="width: 2%" />
+<col style="width: 2%" />
+<col style="width: 3%" />
+<col style="width: 3%" />
+<col style="width: 3%" />
+<col style="width: 2%" />
+<col style="width: 2%" />
+<col style="width: 2%" />
+<col style="width: 3%" />
+<col style="width: 3%" />
+<col style="width: 3%" />
+<col style="width: 3%" />
+<col style="width: 3%" />
+<col style="width: 5%" />
+<col style="width: 5%" />
+<col style="width: 5%" />
+<col style="width: 4%" />
+<col style="width: 3%" />
+<col style="width: 3%" />
+<col style="width: 6%" />
+<col style="width: 6%" />
+<col style="width: 3%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>SATNUM</p></th>
+<th class="head"><p>comment</p></th>
+<th class="head"><p>sorw</p></th>
+<th class="head"><p>swl</p></th>
+<th class="head"><p>krwend</p></th>
+<th class="head"><p>Lw</p></th>
+<th class="head"><p>Ew</p></th>
+<th class="head"><p>Tw</p></th>
+<th class="head"><p>Low</p></th>
+<th class="head"><p>Eow</p></th>
+<th class="head"><p>Tow</p></th>
+<th class="head"><p>Lg</p></th>
+<th class="head"><p>Eg</p></th>
+<th class="head"><p>Tg</p></th>
+<th class="head"><p>Log</p></th>
+<th class="head"><p>Eog</p></th>
+<th class="head"><p>Tog</p></th>
+<th class="head"><p>sorg</p></th>
+<th class="head"><p>sgcr</p></th>
+<th class="head"><p>krgend</p></th>
+<th class="head"><p>krogend</p></th>
+<th class="head"><p>krowend</p></th>
+<th class="head"><p>swirr</p></th>
+<th class="head"><p>a</p></th>
+<th class="head"><p>b</p></th>
+<th class="head"><p>poro_ref</p></th>
+<th class="head"><p>perm_ref</p></th>
+<th class="head"><p>drho</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>Sognefj</p></td>
+<td><p>0.19</p></td>
+<td><p>0.12</p></td>
+<td><p>0.39</p></td>
+<td><p>2.53</p></td>
+<td><p>2.37</p></td>
+<td><p>0.99</p></td>
+<td><p>2.5</p></td>
+<td><p>1.92</p></td>
+<td><p>1.14</p></td>
+<td><p>1.71</p></td>
+<td><p>1.27</p></td>
+<td><p>1.03</p></td>
+<td><p>2.92</p></td>
+<td><p>3.22</p></td>
+<td><p>1.28</p></td>
+<td><p>0.07</p></td>
+<td><p>0.01</p></td>
+<td><p>0.87</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>0.01</p></td>
+<td><p>0.321</p></td>
+<td><p>-1.283</p></td>
+<td><p>0.25</p></td>
+<td><p>1000</p></td>
+<td><p>300</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>Myolites</p></td>
+<td><p>0.19</p></td>
+<td><p>0.16</p></td>
+<td><p>0.3</p></td>
+<td><p>2.63</p></td>
+<td><p>1.94</p></td>
+<td><p>0.97</p></td>
+<td><p>2.38</p></td>
+<td><p>2.2</p></td>
+<td><p>1.22</p></td>
+<td><p>1.78</p></td>
+<td><p>1.13</p></td>
+<td><p>1.01</p></td>
+<td><p>2.71</p></td>
+<td><p>3.62</p></td>
+<td><p>1.42</p></td>
+<td><p>0.06</p></td>
+<td><p>0.01</p></td>
+<td><p>0.9</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>0.01</p></td>
+<td><p>0.321</p></td>
+<td><p>-1.283</p></td>
+<td><p>0.18</p></td>
+<td><p>300</p></td>
+<td><p>300</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>Foobarites</p></td>
+<td><p>0.28</p></td>
+<td><p>0.23</p></td>
+<td><p>0.18</p></td>
+<td><p>2.81</p></td>
+<td><p>1.24</p></td>
+<td><p>0.93</p></td>
+<td><p>2.12</p></td>
+<td><p>3.02</p></td>
+<td><p>1.4</p></td>
+<td><p>1.91</p></td>
+<td><p>0.91</p></td>
+<td><p>0.96</p></td>
+<td><p>2.4</p></td>
+<td><p>4.79</p></td>
+<td><p>1.8</p></td>
+<td><p>0.04</p></td>
+<td><p>0.01</p></td>
+<td><p>0.93</p></td>
+<td><p>1</p></td>
+<td><p>1</p></td>
+<td><p>0.01</p></td>
+<td><p>0.321</p></td>
+<td><p>-1.283</p></td>
+<td><p>0.1</p></td>
+<td><p>1</p></td>
+<td><p>300</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="python-api">
+<h2>Python API<a class="headerlink" href="#python-api" title="Permalink to this headline">¶</a></h2>
 <p>To generate SWOF input for Eclipse or flow (OPM) with certain
 saturation endpoints and certain relative permeability endpoints, you
 may run the following code:</p>

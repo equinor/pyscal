@@ -87,7 +87,7 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../readme.html">Introduction to pyscal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction to pyscal</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules.html">API for pyscal</a></li>
@@ -231,6 +231,8 @@
         <span class="n">krgendanchor</span><span class="o">=</span><span class="s2">&quot;sorg&quot;</span><span class="p">,</span>
         <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
+        <span class="k">if</span> <span class="n">h</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="mf">0.01</span>
         <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">h</span> <span class="o">&lt;=</span> <span class="mi">1</span>
         <span class="k">assert</span> <span class="o">-</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">swirr</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">epsilon</span>
         <span class="k">assert</span> <span class="o">-</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">sgcr</span> <span class="o">&lt;</span> <span class="mi">1</span>

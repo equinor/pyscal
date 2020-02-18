@@ -89,7 +89,7 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="readme.html">Introduction to pyscal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction to pyscal</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">API for pyscal</a><ul class="current">
@@ -98,6 +98,8 @@
 <li class="toctree-l3"><a class="reference internal" href="#module-pyscal.constants">pyscal.constants module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pyscal.factory">pyscal.factory module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pyscal.gasoil">pyscal.gasoil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pyscal.pyscalcli">pyscal.pyscalcli module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pyscal.pyscallist">pyscal.pyscallist module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pyscal.scalrecommendation">pyscal.scalrecommendation module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pyscal.utils">pyscal.utils module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pyscal.wateroil">pyscal.wateroil module</a></li>
@@ -295,15 +297,121 @@ for base and high.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="pyscal.factory.PyscalFactory.create_scal_recommendation_list">
-<em class="property">static </em><code class="sig-name descname">create_scal_recommendation_list</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_scal_recommendation_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_scal_recommendation_list" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reserved for future implementation</p>
+<dt id="pyscal.factory.PyscalFactory.load_relperm_df">
+<em class="property">static </em><code class="sig-name descname">load_relperm_df</code><span class="sig-paren">(</span><em class="sig-param">inputfile</em>, <em class="sig-param">sheet_name=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.load_relperm_df"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.load_relperm_df" title="Permalink to this definition">¶</a></dt>
+<dd><p>Read CSV or XLSX from file and return scal/relperm data
+a dataframe.</p>
+<p>Checks validity in SATNUM and CASE columns.
+Ensures case-insensitivenes SATNUM, CASE, TAG and COMMENT</p>
+<p>Merges COMMENT into TAG column, as only TAG is picked up downstream.
+Adds a prexix “SATNUM &lt;number&gt;” to all tags.</p>
+<p>All strings in CASE column are converted to lowercase.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>inputfile</strong> (<em>str</em><em> or </em><em>pd.DataFrame</em>) – Filename for XLSX or CSV file, or a
+pandas DataFrame.</p></li>
+<li><p><strong>sheet_name</strong> (<em>str</em>) – Sheet-name, only used when loading xlsx files.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>pd.DataFrame. To be handed over to pyscal list factory methods.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
-<dt id="pyscal.factory.PyscalFactory.create_wog_list">
-<em class="property">static </em><code class="sig-name descname">create_wog_list</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_wog_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_wog_list" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reserved for future implementation</p>
+<dt id="pyscal.factory.PyscalFactory.create_scal_recommendation_list">
+<em class="property">static </em><code class="sig-name descname">create_scal_recommendation_list</code><span class="sig-paren">(</span><em class="sig-param">input_df</em>, <em class="sig-param">h=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_scal_recommendation_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_scal_recommendation_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Requires SATNUM and CASE to be defined in the input data</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_df</strong> (<em>pd.DataFrame</em>) – Input data, should have been processed
+through load_relperm_df().</p></li>
+<li><p><strong>h</strong> (<em>float</em>) – Saturation step-value</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>PyscalList, consisting of SCALrecommendation objects</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyscal.factory.PyscalFactory.create_pyscal_list">
+<em class="property">static </em><code class="sig-name descname">create_pyscal_list</code><span class="sig-paren">(</span><em class="sig-param">relperm_params_df</em>, <em class="sig-param">h=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_pyscal_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_pyscal_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create wateroilgas, wateroil or gasoil list
+based on what is available</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>relperm_params_df</strong> (<em>pd.DataFrame</em>) – Input data, should have been processed
+through load_relperm_df().</p></li>
+<li><p><strong>h</strong> (<em>float</em>) – Saturation step-value</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>PyscalList, consisting of either WaterOil, GasOil or WaterOilGas objects</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyscal.factory.PyscalFactory.create_wateroilgas_list">
+<em class="property">static </em><code class="sig-name descname">create_wateroilgas_list</code><span class="sig-paren">(</span><em class="sig-param">relperm_params_df</em>, <em class="sig-param">h=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_wateroilgas_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_wateroilgas_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a PyscalList with WaterOilGas objects from
+a dataframe</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>relperm_params_df</strong> (<em>pd.DataFrame</em>) – Input data, should have been processed
+through load_relperm_df().</p></li>
+<li><p><strong>h</strong> (<em>float</em>) – Saturation step-value</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>PyscalList, consisting of WaterOilGas objects</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyscal.factory.PyscalFactory.create_wateroil_list">
+<em class="property">static </em><code class="sig-name descname">create_wateroil_list</code><span class="sig-paren">(</span><em class="sig-param">relperm_params_df</em>, <em class="sig-param">h=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_wateroil_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_wateroil_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a PyscalList with WaterOil objects from
+a dataframe</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>relperm_params_df</strong> (<em>pd.DataFrame</em>) – A valid dataframe with
+WaterOil parameters, processed through load_relperm_df()</p></li>
+<li><p><strong>h</strong> (<em>float</em>) – Saturation steplength</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>PyscalList, consisting of WaterOil objects</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyscal.factory.PyscalFactory.create_gasoil_list">
+<em class="property">static </em><code class="sig-name descname">create_gasoil_list</code><span class="sig-paren">(</span><em class="sig-param">relperm_params_df</em>, <em class="sig-param">h=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_gasoil_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_gasoil_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a PyscalList with GasOil objects from
+a dataframe</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>relperm_params_df</strong> (<em>pd.DataFrame</em>) – A valid dataframe with GasOil parameters,
+processed through load_relperm_df()</p></li>
+<li><p><strong>h</strong> (<em>float</em>) – Saturation steplength</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>PyscalList, consisting of GasOil objects</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -730,6 +838,163 @@ will be made.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-pyscal.pyscalcli">
+<span id="pyscal-pyscalcli-module"></span><h2>pyscal.pyscalcli module<a class="headerlink" href="#module-pyscal.pyscalcli" title="Permalink to this headline">¶</a></h2>
+<p>Command line tool for pyscal</p>
+<dl class="function">
+<dt id="pyscal.pyscalcli.get_parser">
+<code class="sig-prename descclassname">pyscal.pyscalcli.</code><code class="sig-name descname">get_parser</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/pyscalcli.html#get_parser"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.pyscalcli.get_parser" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct the argparse parser for the command line script.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>argparse.Parser</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyscal.pyscalcli.main">
+<code class="sig-prename descclassname">pyscal.pyscalcli.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/pyscalcli.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.pyscalcli.main" title="Permalink to this definition">¶</a></dt>
+<dd><p>Endpoint for pyscals command line utility</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyscal.pyscallist">
+<span id="pyscal-pyscallist-module"></span><h2>pyscal.pyscallist module<a class="headerlink" href="#module-pyscal.pyscallist" title="Permalink to this headline">¶</a></h2>
+<p>Container class for list of Pyscal objects</p>
+<dl class="class">
+<dt id="pyscal.pyscallist.PyscalList">
+<em class="property">class </em><code class="sig-prename descclassname">pyscal.pyscallist.</code><code class="sig-name descname">PyscalList</code><span class="sig-paren">(</span><em class="sig-param">pyscal_list=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/pyscallist.html#PyscalList"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.pyscallist.PyscalList" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Container class for a list of WaterOilGas objects.</p>
+<p>Essentially this is a list of objects of equal type, and all
+being pyscal objects WaterOil, GasOil, WaterOilGas or SCALrecommendation</p>
+<p>It is possible to ask this list class for SWOF++ printouts,
+and it will call SWOF on each element succesively.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>pyscal_list</strong> (<em>list</em>) – List of objects if already ready. Can be empty or None.</p>
+</dd>
+</dl>
+<dl class="method">
+<dt id="pyscal.pyscallist.PyscalList.append">
+<code class="sig-name descname">append</code><span class="sig-paren">(</span><em class="sig-param">pyscal_obj</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/pyscallist.html#PyscalList.append"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.pyscallist.PyscalList.append" title="Permalink to this definition">¶</a></dt>
+<dd><p>Append a pyscal object to the list</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>pyscal_obj</strong> (<a class="reference internal" href="#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><em>WaterOil</em></a><em>, </em><a class="reference internal" href="#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><em>GasOil</em></a><em>, </em><a class="reference internal" href="#pyscal.wateroilgas.WaterOilGas" title="pyscal.wateroilgas.WaterOilGas"><em>WaterOilGas</em></a><em> or </em><a class="reference internal" href="#pyscal.scalrecommendation.SCALrecommendation" title="pyscal.scalrecommendation.SCALrecommendation"><em>SCALrecommendation</em></a>) – </p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError if the type of the incoming object does not</strong> – match existing objects in the list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyscal.pyscallist.PyscalList.dump_family_1">
+<code class="sig-name descname">dump_family_1</code><span class="sig-paren">(</span><em class="sig-param">filename=None</em>, <em class="sig-param">slgof=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/pyscallist.html#PyscalList.dump_family_1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.pyscallist.PyscalList.dump_family_1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dumps family 1 Eclipse saturation tables to one
+filename. This means SWOF + SGOF (SGOF only if relevant)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – Filename for the output to be given to Eclips 100</p></li>
+<li><p><strong>slgof</strong> (<em>bool</em>) – Set to true of SLGOF is wanted instead of SGOF</p></li>
+<li><p><strong>(</strong><strong>float</strong><strong>, </strong><strong>tuple of two floats</strong><strong>, or </strong><strong>list of floats or</strong> (<em>interpolate</em>) – list of tuples):  Interpolation parameter(s), tuple refers
+to different parameter for wateroil and gasoil, list refers to
+indidual SATNUMs</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyscal.pyscallist.PyscalList.interpolate">
+<code class="sig-name descname">interpolate</code><span class="sig-paren">(</span><em class="sig-param">int_params_wo</em>, <em class="sig-param">int_params_go=None</em>, <em class="sig-param">h=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/pyscallist.html#PyscalList.interpolate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.pyscallist.PyscalList.interpolate" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function will interpolate each SCALrecommendation
+object to the chosen parameters</p>
+<p>This only works on lists of SCALrecommendation objects</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>int_params_wo</strong> (<em>float</em><em> or </em><em>list of float</em>) – Interpolation parameters
+for wateroil, or for both. If list,
+separate parameter for each SATNUM. All numbers between
+-1 and 1.</p></li>
+<li><p><strong>int_params_go</strong> (<em>float</em><em> or </em><em>list of float</em>) – If specified, will
+be used for GasOil interpolation.</p></li>
+<li><p><strong>h</strong> (<em>float</em>) – Saturation step-length</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>PyscalList of type WaterOilGas, with the same length.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyscal.pyscallist.PyscalList.dump_family_2">
+<code class="sig-name descname">dump_family_2</code><span class="sig-paren">(</span><em class="sig-param">filename=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/pyscallist.html#PyscalList.dump_family_2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.pyscallist.PyscalList.dump_family_2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dumps family 2 Eclipse saturation tables to one
+filename. This means SWFN + SGFN + SOF3</p>
+<p>Can interpolate if is a list of SCAL recommendations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<em>str</em>) – Filename for the output to be given to Eclips 100</p></li>
+<li><p><strong>(</strong><strong>float</strong><strong>, </strong><strong>tuple of two floats</strong><strong>, or </strong><strong>list of floats or</strong> (<em>interpolate</em>) – list of tuples):  Interpolation parameter(s), tuple refers
+to different parameter for wateroil and gasoil, list refers to
+indidual SATNUMs</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyscal.pyscallist.PyscalList.make_ecl_output">
+<code class="sig-name descname">make_ecl_output</code><span class="sig-paren">(</span><em class="sig-param">keyword</em>, <em class="sig-param">write_to_filename=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/pyscallist.html#PyscalList.make_ecl_output"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.pyscallist.PyscalList.make_ecl_output" title="Permalink to this definition">¶</a></dt>
+<dd><p>Internal helper function for constructing strings and writing to disk</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyscal.pyscallist.PyscalList.SWOF">
+<code class="sig-name descname">SWOF</code><span class="sig-paren">(</span><em class="sig-param">write_to_filename=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/pyscallist.html#PyscalList.SWOF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.pyscallist.PyscalList.SWOF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make SWOF string and optionally print to file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyscal.pyscallist.PyscalList.SGOF">
+<code class="sig-name descname">SGOF</code><span class="sig-paren">(</span><em class="sig-param">write_to_filename=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/pyscallist.html#PyscalList.SGOF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.pyscallist.PyscalList.SGOF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make SGOF string and optionally print to file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyscal.pyscallist.PyscalList.SLGOF">
+<code class="sig-name descname">SLGOF</code><span class="sig-paren">(</span><em class="sig-param">write_to_filename=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/pyscallist.html#PyscalList.SLGOF"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.pyscallist.PyscalList.SLGOF" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make SLGOF string and optionally print to file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyscal.pyscallist.PyscalList.SGFN">
+<code class="sig-name descname">SGFN</code><span class="sig-paren">(</span><em class="sig-param">write_to_filename=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/pyscallist.html#PyscalList.SGFN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.pyscallist.PyscalList.SGFN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make SGFN string and optionally print to file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyscal.pyscallist.PyscalList.SWFN">
+<code class="sig-name descname">SWFN</code><span class="sig-paren">(</span><em class="sig-param">write_to_filename=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/pyscallist.html#PyscalList.SWFN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.pyscallist.PyscalList.SWFN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make SWFN string and optionally print to file</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyscal.pyscallist.PyscalList.SOF3">
+<code class="sig-name descname">SOF3</code><span class="sig-paren">(</span><em class="sig-param">write_to_filename=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/pyscallist.html#PyscalList.SOF3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.pyscallist.PyscalList.SOF3" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make SOF3 string and optionally print to file</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
 <div class="section" id="module-pyscal.scalrecommendation">
 <span id="pyscal-scalrecommendation-module"></span><h2>pyscal.scalrecommendation module<a class="headerlink" href="#module-pyscal.scalrecommendation" title="Permalink to this headline">¶</a></h2>
 <p>SCALrecommendation, container for low, base and high WaterOilGas objects</p>
@@ -770,7 +1035,7 @@ individually. Interpolation for the nonlinear part
 is done on a normalized interval between the endpoints</p>
 <p>Interpolation is linear in relperm-direction, and will thus not be
 linear in log-relperm-direction</p>
-<p>This method returns an WaterOilGasTable object which can be
+<p>This method returns an WaterOilGas object which can be
 realized into printed tables. No attempt is made to
 parametrize the interpolant in L,E,T parameter space, or Corey-space.</p>
 <p>If a second parameter is supplied (“parameter2”) this is used

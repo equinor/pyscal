@@ -88,7 +88,7 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="readme.html">Introduction to pyscal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction to pyscal</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">API for pyscal</a></li>
@@ -165,6 +165,8 @@
  | <a href="#E"><strong>E</strong></a>
  | <a href="#G"><strong>G</strong></a>
  | <a href="#I"><strong>I</strong></a>
+ | <a href="#L"><strong>L</strong></a>
+ | <a href="#M"><strong>M</strong></a>
  | <a href="#N"><strong>N</strong></a>
  | <a href="#P"><strong>P</strong></a>
  | <a href="#R"><strong>R</strong></a>
@@ -222,6 +224,8 @@
       </ul></li>
       <li><a href="pyscal.html#pyscal.wateroil.WaterOil.add_skjaeveland_pc">add_skjaeveland_pc() (pyscal.wateroil.WaterOil method)</a>
 </li>
+      <li><a href="pyscal.html#pyscal.pyscallist.PyscalList.append">append() (pyscal.pyscallist.PyscalList method)</a>
+</li>
   </ul></td>
 </tr></table>
 
@@ -231,6 +235,10 @@
       <li><a href="pyscal.html#pyscal.factory.check_deprecated">check_deprecated() (in module pyscal.factory)</a>
 </li>
       <li><a href="pyscal.html#pyscal.factory.PyscalFactory.create_gas_oil">create_gas_oil() (pyscal.factory.PyscalFactory static method)</a>
+</li>
+      <li><a href="pyscal.html#pyscal.factory.PyscalFactory.create_gasoil_list">create_gasoil_list() (pyscal.factory.PyscalFactory static method)</a>
+</li>
+      <li><a href="pyscal.html#pyscal.factory.PyscalFactory.create_pyscal_list">create_pyscal_list() (pyscal.factory.PyscalFactory static method)</a>
 </li>
       <li><a href="pyscal.html#pyscal.factory.PyscalFactory.create_scal_recommendation">create_scal_recommendation() (pyscal.factory.PyscalFactory static method)</a>
 </li>
@@ -242,7 +250,9 @@
 </li>
       <li><a href="pyscal.html#pyscal.factory.PyscalFactory.create_water_oil_gas">create_water_oil_gas() (pyscal.factory.PyscalFactory static method)</a>
 </li>
-      <li><a href="pyscal.html#pyscal.factory.PyscalFactory.create_wog_list">create_wog_list() (pyscal.factory.PyscalFactory static method)</a>
+      <li><a href="pyscal.html#pyscal.factory.PyscalFactory.create_wateroil_list">create_wateroil_list() (pyscal.factory.PyscalFactory static method)</a>
+</li>
+      <li><a href="pyscal.html#pyscal.factory.PyscalFactory.create_wateroilgas_list">create_wateroilgas_list() (pyscal.factory.PyscalFactory static method)</a>
 </li>
       <li><a href="pyscal.html#pyscal.gasoil.GasOil.crosspoint">crosspoint() (pyscal.gasoil.GasOil method)</a>
 
@@ -257,6 +267,12 @@
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="pyscal.html#pyscal.scalrecommendation.SCALrecommendation.defaultshandling">defaultshandling() (pyscal.scalrecommendation.SCALrecommendation static method)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyscal.html#pyscal.pyscallist.PyscalList.dump_family_1">dump_family_1() (pyscal.pyscallist.PyscalList method)</a>
+</li>
+      <li><a href="pyscal.html#pyscal.pyscallist.PyscalList.dump_family_2">dump_family_2() (pyscal.pyscallist.PyscalList method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -286,6 +302,8 @@
 </li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyscal.html#pyscal.pyscalcli.get_parser">get_parser() (in module pyscal.pyscalcli)</a>
+</li>
       <li><a href="pyscal.html#pyscal.gasoil.GasOil.GOTABLE">GOTABLE() (pyscal.gasoil.GasOil method)</a>
 </li>
   </ul></td>
@@ -294,15 +312,39 @@
 <h2 id="I">I</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pyscal.html#pyscal.scalrecommendation.SCALrecommendation.interpolate">interpolate() (pyscal.scalrecommendation.SCALrecommendation method)</a>
+      <li><a href="pyscal.html#pyscal.pyscallist.PyscalList.interpolate">interpolate() (pyscal.pyscallist.PyscalList method)</a>
+
+      <ul>
+        <li><a href="pyscal.html#pyscal.scalrecommendation.SCALrecommendation.interpolate">(pyscal.scalrecommendation.SCALrecommendation method)</a>
 </li>
-      <li><a href="pyscal.html#pyscal.utils.interpolate_go">interpolate_go() (in module pyscal.utils)</a>
-</li>
+      </ul></li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyscal.html#pyscal.utils.interpolate_go">interpolate_go() (in module pyscal.utils)</a>
+</li>
       <li><a href="pyscal.html#pyscal.utils.interpolate_wo">interpolate_wo() (in module pyscal.utils)</a>
 </li>
       <li><a href="pyscal.html#pyscal.utils.interpolator">interpolator() (in module pyscal.utils)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="L">L</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyscal.html#pyscal.factory.PyscalFactory.load_relperm_df">load_relperm_df() (pyscal.factory.PyscalFactory static method)</a>
+</li>
+  </ul></td>
+</tr></table>
+
+<h2 id="M">M</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyscal.html#pyscal.pyscalcli.main">main() (in module pyscal.pyscalcli)</a>
+</li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="pyscal.html#pyscal.pyscallist.PyscalList.make_ecl_output">make_ecl_output() (pyscal.pyscallist.PyscalList method)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -336,9 +378,13 @@
 </li>
       <li><a href="pyscal.html#module-pyscal.factory">pyscal.factory (module)</a>
 </li>
+      <li><a href="pyscal.html#module-pyscal.gasoil">pyscal.gasoil (module)</a>
+</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="pyscal.html#module-pyscal.gasoil">pyscal.gasoil (module)</a>
+      <li><a href="pyscal.html#module-pyscal.pyscalcli">pyscal.pyscalcli (module)</a>
+</li>
+      <li><a href="pyscal.html#module-pyscal.pyscallist">pyscal.pyscallist (module)</a>
 </li>
       <li><a href="pyscal.html#module-pyscal.scalrecommendation">pyscal.scalrecommendation (module)</a>
 </li>
@@ -349,6 +395,8 @@
       <li><a href="pyscal.html#module-pyscal.wateroilgas">pyscal.wateroilgas (module)</a>
 </li>
       <li><a href="pyscal.html#pyscal.factory.PyscalFactory">PyscalFactory (class in pyscal.factory)</a>
+</li>
+      <li><a href="pyscal.html#pyscal.pyscallist.PyscalList">PyscalList (class in pyscal.pyscallist)</a>
 </li>
   </ul></td>
 </tr></table>
@@ -389,12 +437,16 @@
       <li><a href="pyscal.html#pyscal.gasoil.GasOil.SGFN">SGFN() (pyscal.gasoil.GasOil method)</a>
 
       <ul>
+        <li><a href="pyscal.html#pyscal.pyscallist.PyscalList.SGFN">(pyscal.pyscallist.PyscalList method)</a>
+</li>
         <li><a href="pyscal.html#pyscal.wateroilgas.WaterOilGas.SGFN">(pyscal.wateroilgas.WaterOilGas method)</a>
 </li>
       </ul></li>
       <li><a href="pyscal.html#pyscal.gasoil.GasOil.SGOF">SGOF() (pyscal.gasoil.GasOil method)</a>
 
       <ul>
+        <li><a href="pyscal.html#pyscal.pyscallist.PyscalList.SGOF">(pyscal.pyscallist.PyscalList method)</a>
+</li>
         <li><a href="pyscal.html#pyscal.wateroilgas.WaterOilGas.SGOF">(pyscal.wateroilgas.WaterOilGas method)</a>
 </li>
       </ul></li>
@@ -403,6 +455,8 @@
       <li><a href="pyscal.html#pyscal.gasoil.GasOil.SLGOF">SLGOF() (pyscal.gasoil.GasOil method)</a>
 
       <ul>
+        <li><a href="pyscal.html#pyscal.pyscallist.PyscalList.SLGOF">(pyscal.pyscallist.PyscalList method)</a>
+</li>
         <li><a href="pyscal.html#pyscal.wateroilgas.WaterOilGas.SLGOF">(pyscal.wateroilgas.WaterOilGas method)</a>
 </li>
       </ul></li>
@@ -410,21 +464,29 @@
 </li>
       <li><a href="pyscal.html#pyscal.factory.slicedict">slicedict() (in module pyscal.factory)</a>
 </li>
-      <li><a href="pyscal.html#pyscal.wateroilgas.WaterOilGas.SOF3">SOF3() (pyscal.wateroilgas.WaterOilGas method)</a>
+      <li><a href="pyscal.html#pyscal.pyscallist.PyscalList.SOF3">SOF3() (pyscal.pyscallist.PyscalList method)</a>
+
+      <ul>
+        <li><a href="pyscal.html#pyscal.wateroilgas.WaterOilGas.SOF3">(pyscal.wateroilgas.WaterOilGas method)</a>
 </li>
+      </ul></li>
       <li><a href="pyscal.html#pyscal.factory.sufficient_gas_oil_params">sufficient_gas_oil_params() (in module pyscal.factory)</a>
 </li>
       <li><a href="pyscal.html#pyscal.factory.sufficient_water_oil_params">sufficient_water_oil_params() (in module pyscal.factory)</a>
 </li>
-      <li><a href="pyscal.html#pyscal.wateroil.WaterOil.SWFN">SWFN() (pyscal.wateroil.WaterOil method)</a>
+      <li><a href="pyscal.html#pyscal.pyscallist.PyscalList.SWFN">SWFN() (pyscal.pyscallist.PyscalList method)</a>
 
       <ul>
+        <li><a href="pyscal.html#pyscal.wateroil.WaterOil.SWFN">(pyscal.wateroil.WaterOil method)</a>
+</li>
         <li><a href="pyscal.html#pyscal.wateroilgas.WaterOilGas.SWFN">(pyscal.wateroilgas.WaterOilGas method)</a>
 </li>
       </ul></li>
-      <li><a href="pyscal.html#pyscal.wateroil.WaterOil.SWOF">SWOF() (pyscal.wateroil.WaterOil method)</a>
+      <li><a href="pyscal.html#pyscal.pyscallist.PyscalList.SWOF">SWOF() (pyscal.pyscallist.PyscalList method)</a>
 
       <ul>
+        <li><a href="pyscal.html#pyscal.wateroil.WaterOil.SWOF">(pyscal.wateroil.WaterOil method)</a>
+</li>
         <li><a href="pyscal.html#pyscal.wateroilgas.WaterOilGas.SWOF">(pyscal.wateroilgas.WaterOilGas method)</a>
 </li>
       </ul></li>

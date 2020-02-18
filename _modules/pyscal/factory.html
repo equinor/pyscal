@@ -87,7 +87,7 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../readme.html">Introduction to pyscal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction to pyscal</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../modules.html">API for pyscal</a></li>
@@ -159,7 +159,11 @@
 
 <span class="kn">import</span> <span class="nn">logging</span>
 
-<span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">WaterOil</span><span class="p">,</span> <span class="n">GasOil</span><span class="p">,</span> <span class="n">WaterOilGas</span><span class="p">,</span> <span class="n">SCALrecommendation</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">xlrd</span>
+
+<span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">WaterOil</span><span class="p">,</span> <span class="n">GasOil</span><span class="p">,</span> <span class="n">WaterOilGas</span><span class="p">,</span> <span class="n">SCALrecommendation</span><span class="p">,</span> <span class="n">PyscalList</span>
 
 <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">()</span>
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -530,6 +534,11 @@
         <span class="n">check_deprecated</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;high&quot;</span><span class="p">])</span>
 
         <span class="n">errored</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">h</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="s2">&quot;low&quot;</span><span class="p">][</span><span class="s2">&quot;h&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">h</span>
+            <span class="n">params</span><span class="p">[</span><span class="s2">&quot;base&quot;</span><span class="p">][</span><span class="s2">&quot;h&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">h</span>
+            <span class="n">params</span><span class="p">[</span><span class="s2">&quot;high&quot;</span><span class="p">][</span><span class="s2">&quot;h&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">h</span>
+
         <span class="n">wog_low</span> <span class="o">=</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_water_oil_gas</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;low&quot;</span><span class="p">])</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">wog_low</span><span class="o">.</span><span class="n">selfcheck</span><span class="p">():</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Incomplete parameter set for low case&quot;</span><span class="p">)</span>
@@ -545,18 +554,261 @@
         <span class="k">if</span> <span class="n">errored</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Incomplete SCAL recommendation&quot;</span><span class="p">)</span>
 
-        <span class="n">scal</span> <span class="o">=</span> <span class="n">SCALrecommendation</span><span class="p">(</span><span class="n">wog_low</span><span class="p">,</span> <span class="n">wog_base</span><span class="p">,</span> <span class="n">wog_high</span><span class="p">,</span> <span class="n">tag</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
+        <span class="n">scal</span> <span class="o">=</span> <span class="n">SCALrecommendation</span><span class="p">(</span><span class="n">wog_low</span><span class="p">,</span> <span class="n">wog_base</span><span class="p">,</span> <span class="n">wog_high</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">scal</span></div>
 
-<div class="viewcode-block" id="PyscalFactory.create_scal_recommendation_list"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_scal_recommendation_list">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">create_scal_recommendation_list</span><span class="p">():</span>
-        <span class="sd">&quot;&quot;&quot;Reserved for future implementation&quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+<div class="viewcode-block" id="PyscalFactory.load_relperm_df"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.load_relperm_df">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">load_relperm_df</span><span class="p">(</span><span class="n">inputfile</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Read CSV or XLSX from file and return scal/relperm data</span>
+<span class="sd">        a dataframe.</span>
 
-<div class="viewcode-block" id="PyscalFactory.create_wog_list"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_wog_list">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">create_wog_list</span><span class="p">():</span>
-        <span class="sd">&quot;&quot;&quot;Reserved for future implementation&quot;&quot;&quot;</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div></div>
+<span class="sd">        Checks validity in SATNUM and CASE columns.</span>
+<span class="sd">        Ensures case-insensitivenes SATNUM, CASE, TAG and COMMENT</span>
+
+<span class="sd">        Merges COMMENT into TAG column, as only TAG is picked up downstream.</span>
+<span class="sd">        Adds a prexix &quot;SATNUM &lt;number&gt;&quot; to all tags.</span>
+
+<span class="sd">        All strings in CASE column are converted to lowercase.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            inputfile (str or pd.DataFrame): Filename for XLSX or CSV file, or a</span>
+<span class="sd">                pandas DataFrame.</span>
+<span class="sd">            sheet_name (str): Sheet-name, only used when loading xlsx files.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            pd.DataFrame. To be handed over to pyscal list factory methods.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputfile</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputfile</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;csv&quot;</span><span class="p">):</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;Sheet name only relevant for XLSX files, ignoring </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">sheet_name</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">sheet_name</span><span class="p">:</span>
+                    <span class="n">input_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">inputfile</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="n">sheet_name</span><span class="p">)</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Parsed XLSX file </span><span class="si">%s</span><span class="s2">, sheet </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">,</span> <span class="n">sheet_name</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">input_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">inputfile</span><span class="p">)</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Parsed XLSX file </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">)</span>
+            <span class="k">except</span> <span class="n">xlrd</span><span class="o">.</span><span class="n">XLRDError</span> <span class="k">as</span> <span class="n">xlserror</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;xlsx&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span>
+                    <span class="s2">&quot;xls&quot;</span>
+                <span class="p">):</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">xlserror</span><span class="p">)</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">input_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">inputfile</span><span class="p">,</span> <span class="n">skipinitialspace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Parsed CSV file </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">)</span>
+                <span class="k">except</span> <span class="n">pd</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">ParserError</span> <span class="k">as</span> <span class="n">csverror</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Could not parse </span><span class="si">%s</span><span class="s2"> as XLSX or CSV&quot;</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">)</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Error message from csv-parser: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">csverror</span><span class="p">))</span>
+                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+                    <span class="c1"># We end here when we use csv reader on xls files, that</span>
+                    <span class="c1"># means that xls parsing failed in the first place. Other</span>
+                    <span class="c1"># error messages have been, and will be printed.</span>
+                    <span class="n">input_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputfile</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+            <span class="n">input_df</span> <span class="o">=</span> <span class="n">inputfile</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputfile</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">inputfile</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;File not found &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">inputfile</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unsupported argument &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">inputfile</span><span class="p">))</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">input_df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Relperm input dataframe is empty!&quot;</span><span class="p">)</span>
+
+        <span class="c1"># We will ignore case on the column names, solved by converting column</span>
+        <span class="c1"># name to uppercase</span>
+        <span class="n">ignorecasecolumns</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;satnum&quot;</span><span class="p">,</span> <span class="s2">&quot;case&quot;</span><span class="p">,</span> <span class="s2">&quot;tag&quot;</span><span class="p">,</span> <span class="s2">&quot;comment&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">colname</span> <span class="ow">in</span> <span class="n">input_df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">colname</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">ignorecasecolumns</span><span class="p">:</span>
+                <span class="n">input_df</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span>
+                    <span class="p">{</span><span class="n">colname</span><span class="p">:</span> <span class="n">colname</span><span class="o">.</span><span class="n">upper</span><span class="p">()},</span> <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;columns&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span>
+                <span class="p">)</span>
+
+        <span class="c1"># Support both TAG and COLUMN (as TAG)</span>
+        <span class="k">if</span> <span class="s2">&quot;COMMENT&quot;</span> <span class="ow">in</span> <span class="n">input_df</span> <span class="ow">and</span> <span class="s2">&quot;TAG&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_df</span><span class="p">:</span>
+            <span class="n">input_df</span><span class="o">.</span><span class="n">rename</span><span class="p">({</span><span class="s2">&quot;COMMENT&quot;</span><span class="p">:</span> <span class="s2">&quot;TAG&quot;</span><span class="p">},</span> <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;columns&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;COMMENT&quot;</span> <span class="ow">in</span> <span class="n">input_df</span> <span class="ow">and</span> <span class="s2">&quot;TAG&quot;</span> <span class="ow">in</span> <span class="n">input_df</span><span class="p">:</span>
+            <span class="c1"># It might never happen that a user puts both tag and comment in</span>
+            <span class="c1"># the dataframe, but if so, merge them.</span>
+            <span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;TAG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;tag: &quot;</span> <span class="o">+</span> <span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;TAG&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;; comment: &quot;</span> <span class="o">+</span> <span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;COMMENT&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+
+        <span class="c1"># It is tempting to detect any NaN&#39;s at this point because that can</span>
+        <span class="c1"># indicate merged cells, which is not supported, but that could</span>
+        <span class="c1"># break optional comment columns which might only be defined on certain lines.</span>
+
+        <span class="k">if</span> <span class="s2">&quot;SATNUM&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_df</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;SATNUM must be present in CSV/XLSX file/dataframe&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;SATNUM missing&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;SATNUM&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;Found not-a-number in the SATNUM column. This could be due to&quot;</span>
+            <span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;merged cells in XLSX, which is not supported.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span>
+
+        <span class="c1"># Check that SATNUM&#39;s are consecutive and integers:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;SATNUM&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;SATNUM&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;SATNUM must contain only integers&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span>
+        <span class="k">if</span> <span class="nb">min</span><span class="p">(</span><span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;SATNUM&quot;</span><span class="p">])</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;SATNUM must start at 1&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span>
+        <span class="k">if</span> <span class="nb">max</span><span class="p">(</span><span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;SATNUM&quot;</span><span class="p">])</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;SATNUM&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;Missing SATNUMs? Max SATNUM is not equal to number of unique SATNUMS&quot;</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span>
+        <span class="k">if</span> <span class="s2">&quot;CASE&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_df</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;SATNUM&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_df</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Non-unique SATNUMs?&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span>
+        <span class="c1"># If we are in a SCAL recommendation setting</span>
+        <span class="k">if</span> <span class="s2">&quot;CASE&quot;</span> <span class="ow">in</span> <span class="n">input_df</span><span class="p">:</span>
+            <span class="c1"># Enforce lower case:</span>
+            <span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;CASE&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">case_str</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">case_str</span> <span class="ow">in</span> <span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;CASE&quot;</span><span class="p">]]</span>
+            <span class="k">if</span> <span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;CASE&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Found not-a-number in the CASE column. This could be due&quot;</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;merged cells in XLSX, which is not supported.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span>
+            <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;CASE&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span> <span class="o">!=</span> <span class="nb">set</span><span class="p">([</span><span class="s2">&quot;low&quot;</span><span class="p">,</span> <span class="s2">&quot;base&quot;</span><span class="p">,</span> <span class="s2">&quot;high&quot;</span><span class="p">]):</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                    <span class="s2">&quot;Contents of CASE-column must be exactly low, base and high&quot;</span>
+                <span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;You provided </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;CASE&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()))</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span>
+
+        <span class="c1"># Add the SATNUM index to the TAG column</span>
+        <span class="k">if</span> <span class="s2">&quot;TAG&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_df</span><span class="p">:</span>
+            <span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;TAG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;TAG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># Empty cells to empty string.</span>
+        <span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;TAG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="s2">&quot;SATNUM &quot;</span> <span class="o">+</span> <span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;SATNUM&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;TAG&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Check that we are able to make something out of the first row:</span>
+        <span class="n">firstrow</span> <span class="o">=</span> <span class="n">input_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">sufficient_water_oil_params</span><span class="p">(</span><span class="n">firstrow</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">sufficient_gas_oil_params</span><span class="p">(</span>
+            <span class="n">firstrow</span>
+        <span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Can&#39;t make neither WaterOil or GasOil from the given data.&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Check documentation for what you need to supply&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;You provided the columns </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">input_df</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span>
+        <span class="k">return</span> <span class="n">input_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;SATNUM&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PyscalFactory.create_scal_recommendation_list"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_scal_recommendation_list">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">create_scal_recommendation_list</span><span class="p">(</span><span class="n">input_df</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Requires SATNUM and CASE to be defined in the input data</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            input_df (pd.DataFrame): Input data, should have been processed</span>
+<span class="sd">                through load_relperm_df().</span>
+<span class="sd">            h (float): Saturation step-value</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            PyscalList, consisting of SCALrecommendation objects</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">scal_l</span> <span class="o">=</span> <span class="n">PyscalList</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span>
+
+        <span class="n">scalinput</span> <span class="o">=</span> <span class="n">input_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="s2">&quot;SATNUM&quot;</span><span class="p">,</span> <span class="s2">&quot;CASE&quot;</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">satnum</span> <span class="ow">in</span> <span class="n">scalinput</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">levels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
+            <span class="n">scal_l</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_scal_recommendation</span><span class="p">(</span>
+                    <span class="n">scalinput</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">satnum</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">),</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">scal_l</span></div>
+
+<div class="viewcode-block" id="PyscalFactory.create_pyscal_list"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_pyscal_list">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">create_pyscal_list</span><span class="p">(</span><span class="n">relperm_params_df</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create wateroilgas, wateroil or gasoil list</span>
+<span class="sd">        based on what is available</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            relperm_params_df (pd.DataFrame): Input data, should have been processed</span>
+<span class="sd">                through load_relperm_df().</span>
+<span class="sd">            h (float): Saturation step-value</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            PyscalList, consisting of either WaterOil, GasOil or WaterOilGas objects</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">relperm_params_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>  <span class="c1"># first row</span>
+        <span class="n">water_oil</span> <span class="o">=</span> <span class="n">sufficient_water_oil_params</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">gas_oil</span> <span class="o">=</span> <span class="n">sufficient_gas_oil_params</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">water_oil</span> <span class="ow">and</span> <span class="n">gas_oil</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_wateroilgas_list</span><span class="p">(</span><span class="n">relperm_params_df</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">water_oil</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_wateroil_list</span><span class="p">(</span><span class="n">relperm_params_df</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">gas_oil</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_gasoil_list</span><span class="p">(</span><span class="n">relperm_params_df</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Could not determine two or three phase from parameters&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="PyscalFactory.create_wateroilgas_list"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_wateroilgas_list">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">create_wateroilgas_list</span><span class="p">(</span><span class="n">relperm_params_df</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create a PyscalList with WaterOilGas objects from</span>
+<span class="sd">        a dataframe</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            relperm_params_df (pd.DataFrame): Input data, should have been processed</span>
+<span class="sd">                through load_relperm_df().</span>
+<span class="sd">            h (float): Saturation step-value</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            PyscalList, consisting of WaterOilGas objects</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">wogl</span> <span class="o">=</span> <span class="n">PyscalList</span><span class="p">()</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span> <span class="ow">in</span> <span class="n">relperm_params_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">h</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">params</span><span class="p">[</span><span class="s2">&quot;h&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">h</span>
+            <span class="n">wogl</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_water_oil_gas</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()))</span>
+        <span class="k">return</span> <span class="n">wogl</span></div>
+
+<div class="viewcode-block" id="PyscalFactory.create_wateroil_list"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_wateroil_list">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">create_wateroil_list</span><span class="p">(</span><span class="n">relperm_params_df</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create a PyscalList with WaterOil objects from</span>
+<span class="sd">        a dataframe</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            relperm_params_df (pd.DataFrame): A valid dataframe with</span>
+<span class="sd">                WaterOil parameters, processed through load_relperm_df()</span>
+<span class="sd">            h (float): Saturation steplength</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            PyscalList, consisting of WaterOil objects</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">wol</span> <span class="o">=</span> <span class="n">PyscalList</span><span class="p">()</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span> <span class="ow">in</span> <span class="n">relperm_params_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">h</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">params</span><span class="p">[</span><span class="s2">&quot;h&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">h</span>
+            <span class="n">wol</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_water_oil</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()))</span>
+        <span class="k">return</span> <span class="n">wol</span></div>
+
+<div class="viewcode-block" id="PyscalFactory.create_gasoil_list"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_gasoil_list">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">create_gasoil_list</span><span class="p">(</span><span class="n">relperm_params_df</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Create a PyscalList with GasOil objects from</span>
+<span class="sd">        a dataframe</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            relperm_params_df (pd.DataFrame): A valid dataframe with GasOil parameters,</span>
+<span class="sd">                processed through load_relperm_df()</span>
+<span class="sd">            h (float): Saturation steplength</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            PyscalList, consisting of GasOil objects</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">gol</span> <span class="o">=</span> <span class="n">PyscalList</span><span class="p">()</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span> <span class="ow">in</span> <span class="n">relperm_params_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">h</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">params</span><span class="p">[</span><span class="s2">&quot;h&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">h</span>
+            <span class="n">gol</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_gas_oil</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()))</span>
+        <span class="k">return</span> <span class="n">gol</span></div></div>
 
 
 <div class="viewcode-block" id="sufficient_water_oil_params"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.sufficient_water_oil_params">[docs]</a><span class="k">def</span> <span class="nf">sufficient_water_oil_params</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
