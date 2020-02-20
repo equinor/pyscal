@@ -122,6 +122,15 @@ def test_wateroil_krendmax(swl, swcr, sorw, kroend, kromax, krwend, krwmax, h, f
     assert 0 < wateroil.crosspoint() < 1
 
 
+def test_swfn():
+    """Test that we can dump SWFN without giving oil relperm"""
+    wateroil = WaterOil(h=0.1)
+    wateroil.add_corey_water()
+    swfnstr = wateroil.SWFN()
+    assert "SWFN" in swfnstr
+    assert len(swfnstr) > 15
+
+
 def test_wateroil_linear():
     """Test linear wateroil curves"""
     wateroil = WaterOil(h=1)

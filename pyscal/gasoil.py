@@ -604,7 +604,7 @@ class GasOil(object):
 
         return tmp[np.isclose(tmp.index, 0.0)].sg.values[0]
 
-    def selfcheck(self):
+    def selfcheck(self, mode="SGOF"):
         """Check validities of the data in the table.
 
         This is to catch errors that are either physically wrong
@@ -614,13 +614,13 @@ class GasOil(object):
         is found.
 
         If you call SGOF/SLGOF, this function must not return False.
+
+        Args:
+            mode (str): If mode is "SGFN", krog is not required.
         """
         error = False
         if "krg" not in self.table:
             logger.error("krg data missing")
-            error = True
-        if "krog" not in self.table:
-            logger.error("krog data missing")
             error = True
         if not (self.table["sg"].diff().dropna() > -epsilon).all():
             logger.error("sg data not strictly increasing")
@@ -632,12 +632,16 @@ class GasOil(object):
             logger.error("krg data not monotonically decreasing")
             error = True
 
-        if (
-            "krog" in self.table
-            and not (self.table["krog"].diff().dropna() <= epsilon).all()
-        ):
-            logger.error("krog data not monotonically increasing")
-            error = True
+        if mode != "SGFN":
+            if "krog" not in self.table:
+                logger.error("krog data missing")
+                error = True
+            if (
+                "krog" in self.table
+                and not (self.table["krog"].diff().dropna() <= epsilon).all()
+            ):
+                logger.error("krog data not monotonically increasing")
+                error = True
         if "krg" in self.table and not np.isclose(min(self.table["krg"]), 0.0):
             logger.error("krg must start at zero")
             error = True

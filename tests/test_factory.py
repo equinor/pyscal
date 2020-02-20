@@ -558,7 +558,7 @@ def test_corey_let_mix():
     have Corey and others have LET"""
     dframe = pd.DataFrame(
         columns=["SATNUM", "Nw", "Now", "Lw", "Ew", "Tw", "Ng", "Nog"],
-        data=[[1, 2, 2, np.nan, np.nan, np.nan, 1, 1], [2, np.nan, 3, 1, 1, 1, 2, 2],],
+        data=[[1, 2, 2, np.nan, np.nan, np.nan, 1, 1], [2, np.nan, 3, 1, 1, 1, 2, 2]],
     )
     relperm_data = PyscalFactory.load_relperm_df(dframe)
     p_list = PyscalFactory.create_pyscal_list(relperm_data, h=0.2)

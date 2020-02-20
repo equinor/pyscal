@@ -897,7 +897,7 @@ class WaterOil(object):
 
         return tmp[np.isclose(tmp.index, 0.0)].sw.values[0]
 
-    def selfcheck(self):
+    def selfcheck(self, mode="SWOF"):
         """Check validities of the data in the table.
 
         An unfinished object will return False.
@@ -906,13 +906,13 @@ class WaterOil(object):
 
         This function should not throw an exception, but capture
         the error and give an error.
+
+        Args:
+            mode (str): "SWOF" or "SWFN". If SWFN, krow is not required.
         """
         error = False
         if "krw" not in self.table:
             logger.error("krw data not found")
-            error = True
-        if "krow" not in self.table:
-            logger.error("krow data not found")
             error = True
         if not (self.table["sw"].diff().dropna().round(10) > -epsilon).all():
             logger.error("sw data not strictly increasing")
@@ -923,15 +923,20 @@ class WaterOil(object):
         ):
             logger.error("krw data not monotonically increasing")
             error = True
-        if (
-            "krow" in self.table.columns
-            and not (self.table["krow"].diff().dropna().round(10) <= epsilon).all()
-        ):
-            # In normal Eclipse runs, krow needs to be level or decreasing.
-            # In hysteresis runs, it needs to be strictly decreasing, that must
-            # be the users responsibility.
-            logger.error("krow data not level or monotonically decreasing")
-            error = True
+        if mode != "SWFN":
+            if "krow" not in self.table:
+                logger.error("krow data not found")
+                error = True
+
+            if (
+                "krow" in self.table.columns
+                and not (self.table["krow"].diff().dropna().round(10) <= epsilon).all()
+            ):
+                # In normal Eclipse runs, krow needs to be level or decreasing.
+                # In hysteresis runs, it needs to be strictly decreasing, that must
+                # be the users responsibility.
+                logger.error("krow data not level or monotonically decreasing")
+                error = True
         if "pc" in self.table.columns and self.table["pc"][0] > -epsilon:
             if not (self.table["pc"].diff().dropna().round(10) < epsilon).all():
                 logger.error("pc data not strictly decreasing")
@@ -1004,7 +1009,7 @@ class WaterOil(object):
 
     def SWFN(self, header=True, dataincommentrow=True):
         """Return a SWFN keyword with data to Eclipse"""
-        if not self.selfcheck():
+        if not self.selfcheck(mode="SWFN"):
             # selfcheck will print errors/warnings
             return ""
         string = ""
