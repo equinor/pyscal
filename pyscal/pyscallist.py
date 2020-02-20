@@ -3,6 +3,8 @@
 from __future__ import division, absolute_import
 from __future__ import print_function
 
+import os
+
 import logging
 
 import six
@@ -99,6 +101,9 @@ class PyscalList(object):
             logger.info(
                 "Dumping family 1 keywords for %d SATNUMs to %s", len(self), filename
             )
+            directory = os.path.dirname(filename)
+            if directory and not os.path.exists(directory):
+                os.makedirs(directory)
             with open(filename, "w") as file_h:
                 file_h.write(six.ensure_str(family_1_str))
         return family_1_str
@@ -194,6 +199,9 @@ class PyscalList(object):
             raise ValueError
         family_2_str = self.SWFN() + "\n" + self.SGFN() + "\n" + self.SOF3()
         if filename is not None:
+            directory = os.path.dirname(filename)
+            if directory and not os.path.exists(directory):
+                os.makedirs(directory)
             with open(filename, "w") as file_h:
                 file_h.write(six.ensure_str(family_2_str))
         return family_2_str
@@ -213,6 +221,9 @@ class PyscalList(object):
                 outputter = getattr(pyscal_obj, keyword)
                 string += outputter(header=False)
         if write_to_filename:
+            directory = os.path.dirname(write_to_filename)
+            if directory and not os.path.exists(directory):
+                os.makedirs(directory)
             with open(write_to_filename, "w") as file_h:
                 file_h.write(six.ensure_str(string))
         return string

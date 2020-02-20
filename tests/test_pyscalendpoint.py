@@ -66,6 +66,21 @@ def test_pyscal_endpoint_static(tmpdir):
     assert "SOF3" not in relpermlines
     assert sat_table_str_ok(relpermlines)
 
+    # Dump to deep directory structure that does not exists
+    sys.argv = [
+        "pyscal",
+        relperm_file,
+        "--family2",
+        "-o",
+        "eclipse/include/props/relperm-fam2.inc",
+    ]
+    pyscalcli.main()
+    assert os.path.exists("eclipse/include/props/relperm-fam2.inc")
+
+    sys.argv = ["pyscal", relperm_file, "-o", "include/props/relperm.inc"]
+    pyscalcli.main()
+    assert os.path.exists("include/props/relperm.inc")
+
     # Check that we can read specific sheets
     sys.argv = [
         "pyscal",
