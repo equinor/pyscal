@@ -551,3 +551,20 @@ def test_sufficient_params():
     assert factory.sufficient_water_oil_params(
         {"lw": 0, "ew": 0, "Tw": 0, "low": 0, "eow": 0, "tow": 0}
     )
+
+
+def test_corey_let_mix():
+    """Test that we can supply a dataframe where some SATNUMs
+    have Corey and others have LET"""
+    dframe = pd.DataFrame(
+        columns=["SATNUM", "Nw", "Now", "Lw", "Ew", "Tw", "Ng", "Nog"],
+        data=[[1, 2, 2, np.nan, np.nan, np.nan, 1, 1], [2, np.nan, 3, 1, 1, 1, 2, 2],],
+    )
+    relperm_data = PyscalFactory.load_relperm_df(dframe)
+    p_list = PyscalFactory.create_pyscal_list(relperm_data, h=0.2)
+    swof1 = p_list.pyscal_list[0].SWOF()
+    swof2 = p_list.pyscal_list[1].SWOF()
+    assert "Corey krw" in swof1
+    assert "Corey krow" in swof1
+    assert "LET krw" in swof2
+    assert "Corey krow" in swof2

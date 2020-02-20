@@ -3,7 +3,10 @@
 import logging
 
 import os
+import six
+
 import pandas as pd
+import numpy as np
 import xlrd
 
 from pyscal import WaterOil, GasOil, WaterOilGas, SCALrecommendation, PyscalList
@@ -95,6 +98,10 @@ class PyscalFactory(object):
           lw, ew, tw, low, eow, tow, lo, eo, to, kromax, krowend,
           a, b, poro_ref, perm_ref, drho,
           a, b, poro, perm, sigma_costau
+
+        Args:
+            params (dict): Dictionary with parameters describing
+                the WaterOil object.
         """
         if not params:
             params = dict()
@@ -105,6 +112,9 @@ class PyscalFactory(object):
 
         # For case insensitiveness, all keys are converted to lower case:
         params = {key.lower(): value for (key, value) in params.items()}
+
+        # Allowing sending in NaN values, delete those keys.
+        params = filter_nan_from_dict(params)
 
         usedparams = set()
         # No requirements to the base objects, defaults are ok.
@@ -230,6 +240,9 @@ class PyscalFactory(object):
 
         # For case insensitiveness, all keys are converted to lower case:
         params = {key.lower(): value for (key, value) in params.items()}
+
+        # Allowing sending in NaN values, delete those keys.
+        params = filter_nan_from_dict(params)
 
         usedparams = set()
         # No requirements to the base objects, defaults are ok.
@@ -423,7 +436,7 @@ class PyscalFactory(object):
         if isinstance(inputfile, str) and os.path.exists(inputfile):
             if inputfile.lower().endswith("csv"):
                 logger.warning(
-                    "Sheet name only relevant for XLSX files, ignoring %s", sheet_name,
+                    "Sheet name only relevant for XLSX files, ignoring %s", sheet_name
                 )
             try:
                 if sheet_name:
@@ -716,6 +729,27 @@ def sufficient_gas_oil_params(params):
     if len(go_let_params) >= 6:
         return True
     return False
+
+
+def filter_nan_from_dict(params):
+    """Clean out keys with NaN values in a dict.
+
+    Key with string values are passed through (empty strings are allowed)
+
+    Args:
+        params (dict): Any dictionary
+
+    Returns
+        dict, with as many or fewer keys.
+    """
+    cleaned_params = {}
+    for key, value in params.items():
+        if isinstance(value, six.string_types):
+            cleaned_params[key] = value
+        else:
+            if not np.isnan(value):
+                cleaned_params[key] = value
+    return cleaned_params
 
 
 def check_deprecated(params):
