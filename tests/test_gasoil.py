@@ -330,3 +330,13 @@ def test_gasoil_let1(l, e, t, krgend, krgmax):
     sgofstr = gasoil.SGOF()
     assert len(sgofstr) > 100
     assert sat_table_str_ok(sgofstr)
+
+
+def test_sgfn():
+    """Test that we can call SGFN without oil relperm defined"""
+    gasoil = GasOil()
+    gasoil.add_corey_gas()
+    sgfn_str = gasoil.SGFN()
+    assert "SGFN" in sgfn_str
+    assert len(sgfn_str) > 15
+    print(sgfn_str)
