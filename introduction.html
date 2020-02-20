@@ -92,7 +92,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Introduction to pyscal</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#command-line-tool">Command line tool</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#python-api">Python API</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#objects">Objects</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#classes">Classes</a></li>
 </ul>
 </li>
 </ul>
@@ -188,12 +188,13 @@ file as the main input. Each SATNUM is represented by one row of data in the tab
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> cat relperminput.csv  <span class="c1"># Show example input file</span>
 <span class="go">SATNUM, swl, sorw, Nw, Now</span>
 <span class="go">1,      0.1, 0.05, 2, 3</span>
-<span class="gp">#</span> Run pyscal on example input:
+<span class="gp">$</span> <span class="c1"># Run pyscal on example input:</span>
 <span class="gp">$</span> pyscal relperminput.csv --delta_s <span class="m">0</span>.2 -o relperm.inc
 <span class="go">Written to relperm.inc</span>
 </pre></div>
 </div>
-<p>The output from this will look like:</p>
+<p>Exactly the same table in an XLSX file would give identical results. The output
+from the pyscal command above will look like:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> cat relperm.inc
 <span class="go">SWOF</span>
 <span class="go">-- SATNUM 1</span>
@@ -215,12 +216,12 @@ file as the main input. Each SATNUM is represented by one row of data in the tab
 </pre></div>
 </div>
 <p>The saturation step-length <code class="docutils literal notranslate"><span class="pre">--delta_s</span></code> was set artificially high for the sake
-of the example. Leave it defaulted.</p>
+of the example. Leave it defaulted (0.01) for practical use.</p>
 </div>
 <div class="section" id="python-api">
 <h2>Python API<a class="headerlink" href="#python-api" title="Permalink to this headline">¶</a></h2>
 <p>The corresponding API can be used directly for more control and for custom-made
-solutions. An example recreating the the same table above is given by:</p>
+solutions. An example recreating the the same table as above is given by:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">WaterOil</span>
 
 <span class="n">wo</span> <span class="o">=</span> <span class="n">WaterOil</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">sorw</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">swl</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
@@ -230,8 +231,9 @@ solutions. An example recreating the the same table above is given by:</p>
 </pre></div>
 </div>
 <p>which will give the same output as the example above.</p>
-<div class="section" id="objects">
-<h3>Objects<a class="headerlink" href="#objects" title="Permalink to this headline">¶</a></h3>
+<p>See the full API for in-depth information.</p>
+<div class="section" id="classes">
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h3>
 <dl class="simple">
 <dt>WaterOil</dt><dd><p>Represents the data for water-oil relative permeability and
 capillary pressure. Essentially the data for SWOF plus metadata.

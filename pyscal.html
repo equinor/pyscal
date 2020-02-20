@@ -855,7 +855,31 @@ will be made.</p>
 <dl class="function">
 <dt id="pyscal.pyscalcli.main">
 <code class="sig-prename descclassname">pyscal.pyscalcli.</code><code class="sig-name descname">main</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/pyscalcli.html#main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.pyscalcli.main" title="Permalink to this definition">¶</a></dt>
-<dd><p>Endpoint for pyscals command line utility</p>
+<dd><p>Endpoint for pyscals command line utility.</p>
+<p>Translates from argparse API to Pyscal’s Python API</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyscal.pyscalcli.pyscal_main">
+<code class="sig-prename descclassname">pyscal.pyscalcli.</code><code class="sig-name descname">pyscal_main</code><span class="sig-paren">(</span><em class="sig-param">parametertable</em>, <em class="sig-param">verbose=False</em>, <em class="sig-param">output='relperm.inc'</em>, <em class="sig-param">delta_s=None</em>, <em class="sig-param">int_param_wo=None</em>, <em class="sig-param">int_param_go=None</em>, <em class="sig-param">sheet_name=None</em>, <em class="sig-param">slgof=False</em>, <em class="sig-param">family2=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/pyscalcli.html#pyscal_main"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.pyscalcli.pyscal_main" title="Permalink to this definition">¶</a></dt>
+<dd><p>A “main()” method not relying on argparse. This can be used
+for testing, and also by an ERT forward model, e.g.
+in semeio (github.com/equinor/semeio)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parametertable</strong> (<em>string</em>) – Filename (CSV or XLSX) to load</p></li>
+<li><p><strong>verbose</strong> (<em>bool</em>) – verbose or not</p></li>
+<li><p><strong>output</strong> (<em>string</em>) – Output filename</p></li>
+<li><p><strong>delta_s</strong> (<em>float</em>) – Saturation step-length</p></li>
+<li><p><strong>int_param_wo</strong> (<em>list</em>) – Interpolation params for wateroil</p></li>
+<li><p><strong>int_param_go</strong> (<em>list</em>) – Interpolation params for gasoil</p></li>
+<li><p><strong>sheet_name</strong> (<em>string</em>) – Which sheet in XLSX file</p></li>
+<li><p><strong>slgof</strong> (<em>bool</em>) – Use SLGOF</p></li>
+<li><p><strong>family2</strong> (<em>bool</em>) – Dump family 2 keywords</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </div>
