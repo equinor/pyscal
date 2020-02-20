@@ -250,6 +250,12 @@ a, b, poro_ref, perm_ref, drho,
 a, b, poro, perm, sigma_costau</p>
 </dd>
 </dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>params</strong> (<em>dict</em>) – Dictionary with parameters describing
+the WaterOil object.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -450,6 +456,22 @@ undefined (Corey or LET, and which pc?)</p>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>True if a GasOil object should be attempted constructed
 (but no guarantee for validity of numerical values)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyscal.factory.filter_nan_from_dict">
+<code class="sig-prename descclassname">pyscal.factory.</code><code class="sig-name descname">filter_nan_from_dict</code><span class="sig-paren">(</span><em class="sig-param">params</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#filter_nan_from_dict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.filter_nan_from_dict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clean out keys with NaN values in a dict.</p>
+<p>Key with string values are passed through (empty strings are allowed)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>params</strong> (<em>dict</em>) – Any dictionary</p>
+</dd>
+</dl>
+<dl class="simple">
+<dt>Returns</dt><dd><p>dict, with as many or fewer keys.</p>
 </dd>
 </dl>
 </dd></dl>
