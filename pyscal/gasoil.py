@@ -32,13 +32,9 @@ class GasOil(object):
 
     No support (yet) to add capillary pressure.
 
-    krgend can be anchored both to `1-swl-sorg` and to `1-swl`. Default is
-    to anchor to `1-swl-sorg`. If the krgendanchor argument is something
+    krgend is by default anchored both to `1-swl-sorg`, but can be set to
+    anchor to `1-swl` instead. If the krgendanchor argument is something
     else than the string `sorg`, it will be anchored to `1-swl`.
-
-    Code duplication warning: Code is analogous to WaterOil, but with
-    some subtle details sufficiently different for now warranting its
-    own code (no easy inheritance)
 
     Arguments:
         swirr (float): Absolute minimal water saturation at infinite capillary
@@ -51,11 +47,11 @@ class GasOil(object):
             gas saturation is above this value.
         sorg (float): Residual oil saturation after gas flooding. At this oil
             saturation, the oil has zero relative permeability.
-        krgendanchor (str): Set to `sorg` or something else, where to
+        krgendanchor (str): Set to `sorg` (default) or something else, where to
             anchor `krgend`. If `sorg`, then the normalized gas
-            saturation will be equal to 1 at `1 - swl - sgcr - sorg`,
-            if not, it will be 1 at `1 - swl - sgcr`. If `sorg` is zero
-            it does not matter.
+            saturation will be equal to 1 at `1 - swl - sorg`,
+            if not, it will be 1 at `1 - swl`. If `sorg` is zero
+            it does not matter. krgmax is only relevant when this anchor is sorg.
         h (float): Saturation step-length in the outputted table.
         tag (str): Optional string identifier, only used in comments.
         fast (bool): Set to True if in order to skip some integrity checks
@@ -83,6 +79,9 @@ class GasOil(object):
         assert -epsilon < sorg < 1
         if not isinstance(tag, six.string_types):
             tag = ""
+        if krgendanchor is None:
+            krgendanchor = ""
+
         assert isinstance(krgendanchor, six.string_types)
 
         self.h = h
@@ -110,7 +109,6 @@ class GasOil(object):
         self.fast = fast
 
         if np.isclose(sorg, 0.0) and self.krgendanchor == "sorg":
-            # This is too much info..
             self.krgendanchor = ""  # This is critical to avoid bugs due to numerics.
 
         sg_list = (
@@ -297,13 +295,16 @@ class GasOil(object):
     def set_endpoints_linearpart_krg(self, krgend, krgmax=None):
         """Set linear parts of krg outside endpoints.
 
-        Curve will be linear from [1 - swl - sorg, 1 - swl]
-        (from krgend to krgmax) and zero in [0, sgcr]. Except special
-        handling for krgendanchor:
+        Curve is set to zero in [0, sgcr].
+
+        Given the default krgendanchor==sorg, the
+        curve will be linear in [1 - swl - sorg, 1 - swl]
+        (from krgend to krgmax). If not anchored to sorg, there
+        is no linear part near sg=1-swl.
 
         If krgendanchor is set to `sorg` (default), then the normalized
         gas saturation `sgn` (which is what is raised to the power of `ng`)
-        is 1 at `1 - swl - sgcr - sorg`. If not, it is 1 at `1 - swl - sgcr`.
+        is 1 at `sg = 1 - swl - sorg`. If not, it is 1 at `sg = 1 - swl`.
 
         krgmax is only relevant if krgendanchor is 'sorg'
 
@@ -311,8 +312,8 @@ class GasOil(object):
         utility functions. It should not be necessary for end-users.
 
         Args:
-            krgend (float): krg at 1 - swl - sgcr - sorg. Checkme.
-            krgmax (float): krg at Sg=1-swl. Default 1.
+            krgend (float): krg at sg = 1 - swl - sorg.
+            krgmax (float): krg at Sg = 1 - swl. Default 1.
 
         """
         self.table.loc[self.table.sg <= self.sgcr, "krg"] = 0
@@ -371,9 +372,9 @@ class GasOil(object):
         A column called 'krg' will be added. If it exists, it will
         be replaced.
 
-        If krgendanchor is set to `sorg` (default), then the normalized
-        gas saturation `sgn` (which is what is raised to the power of `ng`)
-        is 1 at `1 - swl - sgcr - sorg`. If not, it is 1 at `1 - swl - sgcr`.
+        If krgendanchor is sorg, the Corey curve ends at krgend at
+        sg = 1 - swl - sorg, and then linear up to krgmax at
+        sg = 1 - swl. If not, it ends at krgend at sg = 1 - swl.
 
         krgmax is only relevant if krgendanchor is 'sorg'
         """
@@ -436,9 +437,9 @@ class GasOil(object):
 
         A column called 'krg' will be added, replaced if it does not exist
 
-        If krgendanchor is set to `sorg` (default), then the normalized
-        gas saturation `sgn` (which is what is raised to the power of `ng`)
-        is 1 at `1 - swl - sgcr - sorg`. If not, it is 1 at `1 - swl - sgcr`
+        If krgendanchor is sorg, the LET curve ends at krgend at
+        sg = 1 - swl - sorg, and then linear up to krgmax at
+        sg = 1 - swl. If not, it ends at krgend at sg = 1 - swl.
 
         Arguments:
             l (float): L parameter in LET
