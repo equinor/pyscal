@@ -743,13 +743,18 @@ column names changed only</p>
 
 <dl class="method">
 <dt id="pyscal.gasoil.GasOil.selfcheck">
-<code class="sig-name descname">selfcheck</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gasoil.html#GasOil.selfcheck"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gasoil.GasOil.selfcheck" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">selfcheck</code><span class="sig-paren">(</span><em class="sig-param">mode='SGOF'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gasoil.html#GasOil.selfcheck"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gasoil.GasOil.selfcheck" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check validities of the data in the table.</p>
 <p>This is to catch errors that are either physically wrong
 or at least causes Eclipse 100 to stop.</p>
 <p>Returns True if no errors are found, False if at least one
 is found.</p>
 <p>If you call SGOF/SLGOF, this function must not return False.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>mode</strong> (<em>str</em>) – If mode is “SGFN”, krog is not required.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -1646,12 +1651,17 @@ when initializing the saturation range</p>
 
 <dl class="method">
 <dt id="pyscal.wateroil.WaterOil.selfcheck">
-<code class="sig-name descname">selfcheck</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.selfcheck"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.selfcheck" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">selfcheck</code><span class="sig-paren">(</span><em class="sig-param">mode='SWOF'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.selfcheck"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.selfcheck" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check validities of the data in the table.</p>
 <p>An unfinished object will return False.</p>
 <p>If you call SWOF, this function must not return False</p>
 <p>This function should not throw an exception, but capture
 the error and give an error.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>mode</strong> (<em>str</em>) – “SWOF” or “SWFN”. If SWFN, krow is not required.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
