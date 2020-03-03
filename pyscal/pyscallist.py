@@ -75,10 +75,6 @@ class PyscalList(object):
         Args:
             filename (str): Filename for the output to be given to Eclips 100
             slgof (bool): Set to true of SLGOF is wanted instead of SGOF
-            interpolate (float, tuple of two floats, or list of floats or
-                list of tuples):  Interpolation parameter(s), tuple refers
-                to different parameter for wateroil and gasoil, list refers to
-                indidual SATNUMs
         """
         logger.info("FOOBAR")
         if self.pyscaltype == SCALrecommendation:
@@ -180,14 +176,8 @@ class PyscalList(object):
         """Dumps family 2 Eclipse saturation tables to one
         filename. This means SWFN + SGFN + SOF3
 
-        Can interpolate if is a list of SCAL recommendations.
-
         Args:
             filename (str): Filename for the output to be given to Eclips 100
-            interpolate (float, tuple of two floats, or list of floats or
-                list of tuples):  Interpolation parameter(s), tuple refers
-                to different parameter for wateroil and gasoil, list refers to
-                indidual SATNUMs
         """
         if self.pyscaltype == SCALrecommendation:
             logger.error(
