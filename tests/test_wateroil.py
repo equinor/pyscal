@@ -84,7 +84,7 @@ def test_wateroil_let1(l, e, t, krwend, krwmax):
     assert len(swofstr) > 100
 
 
-@settings(max_examples=100, deadline=500)
+@settings(deadline=500)
 @given(
     st.floats(min_value=0, max_value=0.3),
     st.floats(min_value=0, max_value=0.3),
