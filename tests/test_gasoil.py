@@ -95,7 +95,7 @@ def test_gasoil_normalization(swl, sgcr, sorg, h, tag):
     assert float_df_checker(gasoil.table, "sg", gasoil.sgcr, "sgn", 0)
 
 
-@settings(max_examples=100, deadline=500)
+@settings(deadline=500)
 @given(
     st.floats(min_value=0, max_value=0.3),  # swl
     st.floats(min_value=0, max_value=0.3),  # sgcr
