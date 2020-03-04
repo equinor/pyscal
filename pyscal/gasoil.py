@@ -76,7 +76,6 @@ class GasOil(object):
     ):
         if h is None:
             h = 0.01
-        assert epsilon < h <= 1
         assert -epsilon < swirr < 1.0 + epsilon
         assert -epsilon < sgcr < 1
         assert -epsilon < swl < 1
@@ -85,7 +84,15 @@ class GasOil(object):
             tag = ""
         assert isinstance(krgendanchor, six.string_types)
 
-        self.h = h
+        h_min = 1.0 / float(SWINTEGERS)
+        if h < h_min:
+            logger.warning(
+                "Requested saturation step length (%g) too small, reset to %g", h, h_min
+            )
+            self.h = h_min
+        else:
+            self.h = h
+
         swl = max(swl, swirr)  # Can't allow swl < swirr, should we warn user?
         self.swl = swl
         self.swirr = swirr
@@ -97,6 +104,7 @@ class GasOil(object):
 
         self.sgcr = sgcr
         self.tag = tag
+
         if not 1 - sorg - swl > 0:
             raise Exception(
                 "No saturation range left " + "after endpoints, check input"
@@ -116,7 +124,7 @@ class GasOil(object):
         sg_list = (
             [0]
             + [sgcr]
-            + list(np.arange(sgcr + h, 1 - swl, h))
+            + list(np.arange(sgcr + self.h, 1 - swl, self.h))
             + [1 - sorg - swl]
             + [1 - swl]
         )

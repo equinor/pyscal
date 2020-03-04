@@ -68,10 +68,19 @@ class WaterOil(object):
         assert -epsilon < sorw < 1.0 + epsilon
         if h is None:
             h = 0.01
-        assert epsilon < h <= 1
         assert swl < 1 - sorw
         assert swcr < 1 - sorw
         assert swirr < 1 - sorw
+
+        h_min = 1.0 / float(SWINTEGERS)
+        if h < h_min:
+            logger.warning(
+                "Requested saturation step length (%g) too small, reset to %g", h, h_min
+            )
+            self.h = h_min
+        else:
+            self.h = h
+
         if not isinstance(tag, six.string_types):
             tag = ""
         self.swirr = swirr
@@ -84,11 +93,10 @@ class WaterOil(object):
             swcr = self.swl
         self.swcr = max(self.swl, swcr)  # Cannot allow swcr < swl. Warn?
         self.sorw = sorw
-        self.h = h
         self.tag = tag
         self.fast = fast
         sw_list = (
-            list(np.arange(self.swl, 1 - sorw, h)) + [self.swcr] + [1 - sorw] + [1]
+            list(np.arange(self.swl, 1 - sorw, self.h)) + [self.swcr] + [1 - sorw] + [1]
         )
         sw_list.sort()  # Using default timsort on nearly sorted data.
         self.table = pd.DataFrame(sw_list, columns=["sw"])
