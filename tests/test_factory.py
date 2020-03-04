@@ -129,6 +129,26 @@ def test_factory_wateroil():
     assert sat_table_str_ok(wateroil.SWOF())
     assert sat_table_str_ok(wateroil.SWFN())
 
+    # Test petrophysical simple J:
+    wateroil = factory.create_water_oil(
+        dict(
+            swl=0.1,
+            nw=1,
+            now=1,
+            a_petro=2,
+            b_petro=-1,
+            poro_ref=0.2,
+            perm_ref=100,
+            drho=200,
+        )
+    )
+    assert "pc" in wateroil.table
+    assert wateroil.table["pc"].max() > 0.0
+    assert "etrophysic" in wateroil.pccomment
+    check_table(wateroil.table)
+    assert sat_table_str_ok(wateroil.SWOF())
+    assert sat_table_str_ok(wateroil.SWFN())
+
     # One pc param missing:
     wateroil = factory.create_water_oil(
         dict(swl=0.1, nw=1, now=1, a=2, b=-1, perm_ref=100, drho=200, g=0)

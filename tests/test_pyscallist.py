@@ -103,6 +103,73 @@ def test_dump():
     assert sat_table_str_ok(fam2)
 
 
+def test_capillary_pressure():
+    """Test that we recognize capillary pressure parametrizations"""
+    dframe = pd.DataFrame(
+        columns=[
+            "SATNUM",
+            "nw",
+            "now",
+            "swl",
+            "a",
+            "b",
+            "PORO_reF",
+            "PERM_ref",
+            "drho",
+        ],
+        data=[[1, 1, 1, 0.05, 3.6, -3.5, 0.25, 15, 150]],
+    )
+    pyscal_list = PyscalFactory.create_pyscal_list(
+        PyscalFactory.load_relperm_df(dframe)
+    )
+    swof = pyscal_list.dump_family_1()
+    assert "Simplified J-function" in swof
+    assert "petrophysical" not in swof
+
+    dframe = pd.DataFrame(
+        columns=[
+            "SATNUM",
+            "nw",
+            "now",
+            "swl",
+            "a_petro",
+            "b_petro",
+            "PORO_reF",
+            "PERM_ref",
+            "drho",
+        ],
+        data=[[1, 1, 1, 0.05, 3.6, -3.5, 0.25, 15, 150]],
+    )
+    pyscal_list = PyscalFactory.create_pyscal_list(
+        PyscalFactory.load_relperm_df(dframe)
+    )
+    swof = pyscal_list.dump_family_1()
+    assert "Simplified J-function" in swof
+    assert "petrophysical" in swof
+
+    dframe = pd.DataFrame(
+        columns=[
+            "SATNUM",
+            "nw",
+            "now",
+            "swl",
+            "a",
+            "b",
+            "PORO",
+            "PERM",
+            "sigma_COStau",
+        ],
+        data=[[1, 1, 1, 0.05, 3.6, -3.5, 0.25, 15, 30]],
+    )
+    pyscal_list = PyscalFactory.create_pyscal_list(
+        PyscalFactory.load_relperm_df(dframe)
+    )
+    swof = pyscal_list.dump_family_1()
+    assert "normalized J-function" in swof
+    assert "sigma_costau" in swof
+    assert "petrophysical" not in swof
+
+
 def test_explicit_df():
     """Test some dataframes, check the error messages given"""
 

@@ -556,18 +556,37 @@ class WaterOil(object):
     def add_simple_J(self, a=5, b=-1.5, poro_ref=0.25, perm_ref=100, drho=300, g=9.81):
         """Add capillary pressure function from a simplified J-function
 
-        This is the 'inverse' or 'RMS' version of the a and b, the formula
-        is
+        This is the RMS version of the coefficients *a* and *b*, the formula
+        used is
+
+        .. math::
 
             J = a S_w^b
 
-        J is not dimensionless.
-        Doc: https://wiki.equinor.com/wiki/index.php/Res:Water_saturation_from_Leverett_J-function
+        *J* is not dimensionless in this equation. The capillary pressure
+        be in bars.
 
-        poro_ref is a fraction, between 0 and 1
-        perm_ref is in milliDarcy
-        drho has SI units kg/m³. Default value is 300
-        g has SI units m/s², default value is 9.81
+        This is identical to the also seen formula
+
+        .. math::
+
+           J = 10^{b \log(S_w) + \log(a)}
+
+        :math:`S_w` in this formula is normalized with respect to the *swirr* variable
+        of the WaterOil object.
+
+        Args:
+            a (float): a coefficient
+            b (float): b coefficient
+            poro_ref (float): Reference porosity for scaling to Pc, between 0 and 1
+            perm_ref (float): Reference permeability for scaling to Pc, in milliDarcy
+            drho (float): Density difference between water and oil, in SI units kg/m³.
+                Default value is 300
+            g (float): Gravitational acceleration, in SI units m/s²,
+                default value is 9.81
+
+        Returns:
+            None. Modifies pc column in self.table, using bar as pressure unit.
         """  # noqa
         assert g >= 0
         assert b < MAX_EXPONENT
@@ -596,7 +615,72 @@ class WaterOil(object):
         # Scale drho and g from SI units to g/cc and m/s²100
         self.table["pc"] = self.table.H * drho / 1000 * g / 100.0
         self.pccomment = (
-            "-- Simplified J function for Pc; \n--   "
+            "-- Simplified J-function for Pc; rms version, in bar\n--   "
+            + "a=%g, b=%g, poro_ref=%g, perm_ref=%g mD, drho=%g kg/m^3, g=%g m/s^2\n"
+            % (a, b, poro_ref, perm_ref, drho, g)
+        )
+
+    def add_simple_J_petro(self, a, b, poro_ref=0.25, perm_ref=100, drho=300, g=9.81):
+        """Add capillary pressure function from a simplified J-function
+
+        This is the *petrophysical* version of the coefficients *a* and *b*, the formula
+        used is
+
+        .. math::
+
+            J = \left(\\frac{S_w}{a}\\right)^{\\frac{1}{b}}
+
+
+        which is identical to
+
+        .. math::
+
+            J = 10^\\frac{\log(S_w) - \log(a)}{b}
+
+        *J* is not dimensionless in this equation.
+
+        :math:`S_w` in this formula is normalized with respect to the *swirr* variable
+        of the WaterOil object.
+
+        Args:
+            a (float): a coefficient, petrophysical version
+            b (float): b coefficient, petrophysical version
+            poro_ref (float): Reference porosity for scaling to Pc, between 0 and 1
+            perm_ref (float): Reference permeability for scaling to Pc, in milliDarcy
+            drho (float): Density difference between water and oil, in SI units kg/m³.
+                Default value is 300
+            g (float): Gravitational acceleration, in SI units m/s²,
+                default value is 9.81
+
+        Returns:
+            None. Modifies pc column in self.table, using bar as pressure unit.
+        """  # noqa
+        assert g >= 0
+        assert b < MAX_EXPONENT
+        assert b > -MAX_EXPONENT
+        assert 0.0 <= poro_ref <= 1.0
+        assert perm_ref > 0.0
+
+        if self.swl < epsilon:
+            logger.error(
+                "swl must larger than zero to avoid infinite capillary pressure"
+            )
+            raise ValueError
+
+        if b > 0:
+            logger.warning(
+                "positive b will give increasing capillary pressure with saturation"
+            )
+
+        # Convert from "Petrophysical" a's and b's to "RMS" a's and b's:
+        rms_a = math.pow(1 / a, 1 / b)
+        rms_b = 1 / b
+
+        # Use the other variant of this function for actual computation
+        self.add_simple_J(rms_a, rms_b, poro_ref, perm_ref, drho, g)
+
+        self.pccomment = (
+            "-- Simplified J-function for Pc, petrophysical version, in bar \n--   "
             + "a=%g, b=%g, poro_ref=%g, perm_ref=%g mD, drho=%g kg/m^3, g=%g m/s^2\n"
             % (a, b, poro_ref, perm_ref, drho, g)
         )
@@ -612,7 +696,7 @@ class WaterOil(object):
             p_c = \\frac{\left(\\frac{S_w}{a}\\right)^{\\frac{1}{b}}
             \sigma \cos \\tau}{\sqrt{\\frac{k}{\phi}}}
 
-        The Sw saturation used in the formula is normalized with respect
+        The :math:`S_w` saturation used in the formula is normalized with respect
         to the swirr parameter.
 
         Args:

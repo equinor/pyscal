@@ -49,6 +49,35 @@ def test_simple_j():
     assert sat_table_str_ok(wateroil.SWFN())
 
 
+def test_simple_j_petro():
+    """Simple test of the simple J petrophysical function correlation"""
+    wateroil = WaterOil(swl=0.01)
+    wateroil.add_simple_J_petro(a=1, b=-2)
+    check_table(wateroil.table)
+    assert wateroil.pccomment
+    assert "etrophysic" in wateroil.pccomment
+
+    # Zero gravity:
+    wateroil.add_simple_J_petro(a=1, b=-2, g=0)
+    assert wateroil.table.pc.unique() == 0.0
+
+    # Numerical test from sample numbers calculated independently in different tool:
+    wateroil = WaterOil(swl=0.05, h=0.025)
+    wateroil.add_simple_J_petro(
+        a=1.45, b=-0.285, drho=143, g=9.81, perm_ref=15, poro_ref=0.27
+    )
+    float_df_checker(wateroil.table, "sw", 0.1, "pc", 22.36746)
+    assert "Simplified" in wateroil.pccomment
+    assert "etrophysic" in wateroil.pccomment
+    wateroil.add_corey_oil()
+    wateroil.add_corey_water()
+    swof = wateroil.SWOF()
+    assert isinstance(swof, str)
+    assert swof
+    assert sat_table_str_ok(swof)
+    assert sat_table_str_ok(wateroil.SWFN())
+
+
 @given(
     st.floats(min_value=0.001, max_value=1000000),
     st.floats(min_value=-0.9 * MAX_EXPONENT, max_value=-0.001),

@@ -38,6 +38,14 @@ WO_LET_OIL_ALT = ["lo", "eo", "to"]  # Alternative parameter names.
 WO_OIL_ENDPOINTS = ["kromax", "krowend"]
 WO_SIMPLE_J = ["a", "b", "poro_ref", "perm_ref", "drho"]  # "g" is optional
 WO_NORM_J = ["a", "b", "poro", "perm", "sigma_costau"]
+# 'a' in WO_NORM_J is the same as a_petro, but should possibly kept as is.
+WO_SIMPLE_J_PETRO = [
+    "a_petro",
+    "b_petro",
+    "poro_ref",
+    "perm_ref",
+    "drho",
+]  # "g" is optional
 
 GO_INIT = ["swirr", "sgcr", "sorg", "swl", "krgendanchor", "h", "tag"]
 GO_COREY_GAS = ["ng"]
@@ -96,7 +104,7 @@ class PyscalFactory(object):
         Recognized parameters:
           swirr, swl, swcr, sorw, h, tag, nw, now, krwmax, krwend,
           lw, ew, tw, low, eow, tow, lo, eo, to, kromax, krowend,
-          a, b, poro_ref, perm_ref, drho,
+          a, a_petro, b, b_petro, poro_ref, perm_ref, drho,
           a, b, poro, perm, sigma_costau
 
         Args:
@@ -192,8 +200,13 @@ class PyscalFactory(object):
         # Capillary pressure:
         params_simple_j = slicedict(params, WO_SIMPLE_J + ["g"])
         params_norm_j = slicedict(params, WO_NORM_J)
+        params_simple_j_petro = slicedict(params, WO_SIMPLE_J_PETRO + ["g"])
         if set(WO_SIMPLE_J).issubset(set(params_simple_j)):
             wateroil.add_simple_J(**params_simple_j)
+        elif set(WO_SIMPLE_J_PETRO).issubset(set(params_simple_j_petro)):
+            params_simple_j_petro["a"] = params_simple_j_petro.pop("a_petro")
+            params_simple_j_petro["b"] = params_simple_j_petro.pop("b_petro")
+            wateroil.add_simple_J_petro(**params_simple_j_petro)
         elif set(WO_NORM_J).issubset(set(params_norm_j)):
             wateroil.add_normalized_J(**params_norm_j)
         else:
