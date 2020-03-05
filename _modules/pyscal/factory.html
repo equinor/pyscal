@@ -195,6 +195,14 @@
 <span class="n">WO_OIL_ENDPOINTS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;kromax&quot;</span><span class="p">,</span> <span class="s2">&quot;krowend&quot;</span><span class="p">]</span>
 <span class="n">WO_SIMPLE_J</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;poro_ref&quot;</span><span class="p">,</span> <span class="s2">&quot;perm_ref&quot;</span><span class="p">,</span> <span class="s2">&quot;drho&quot;</span><span class="p">]</span>  <span class="c1"># &quot;g&quot; is optional</span>
 <span class="n">WO_NORM_J</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;poro&quot;</span><span class="p">,</span> <span class="s2">&quot;perm&quot;</span><span class="p">,</span> <span class="s2">&quot;sigma_costau&quot;</span><span class="p">]</span>
+<span class="c1"># &#39;a&#39; in WO_NORM_J is the same as a_petro, but should possibly kept as is.</span>
+<span class="n">WO_SIMPLE_J_PETRO</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;a_petro&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;b_petro&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;poro_ref&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;perm_ref&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;drho&quot;</span><span class="p">,</span>
+<span class="p">]</span>  <span class="c1"># &quot;g&quot; is optional</span>
 
 <span class="n">GO_INIT</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;swirr&quot;</span><span class="p">,</span> <span class="s2">&quot;sgcr&quot;</span><span class="p">,</span> <span class="s2">&quot;sorg&quot;</span><span class="p">,</span> <span class="s2">&quot;swl&quot;</span><span class="p">,</span> <span class="s2">&quot;krgendanchor&quot;</span><span class="p">,</span> <span class="s2">&quot;h&quot;</span><span class="p">,</span> <span class="s2">&quot;tag&quot;</span><span class="p">]</span>
 <span class="n">GO_COREY_GAS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ng&quot;</span><span class="p">]</span>
@@ -253,7 +261,7 @@
 <span class="sd">        Recognized parameters:</span>
 <span class="sd">          swirr, swl, swcr, sorw, h, tag, nw, now, krwmax, krwend,</span>
 <span class="sd">          lw, ew, tw, low, eow, tow, lo, eo, to, kromax, krowend,</span>
-<span class="sd">          a, b, poro_ref, perm_ref, drho,</span>
+<span class="sd">          a, a_petro, b, b_petro, poro_ref, perm_ref, drho,</span>
 <span class="sd">          a, b, poro, perm, sigma_costau</span>
 
 <span class="sd">        Args:</span>
@@ -349,8 +357,13 @@
         <span class="c1"># Capillary pressure:</span>
         <span class="n">params_simple_j</span> <span class="o">=</span> <span class="n">slicedict</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">WO_SIMPLE_J</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;g&quot;</span><span class="p">])</span>
         <span class="n">params_norm_j</span> <span class="o">=</span> <span class="n">slicedict</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">WO_NORM_J</span><span class="p">)</span>
+        <span class="n">params_simple_j_petro</span> <span class="o">=</span> <span class="n">slicedict</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">WO_SIMPLE_J_PETRO</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;g&quot;</span><span class="p">])</span>
         <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">WO_SIMPLE_J</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">params_simple_j</span><span class="p">)):</span>
             <span class="n">wateroil</span><span class="o">.</span><span class="n">add_simple_J</span><span class="p">(</span><span class="o">**</span><span class="n">params_simple_j</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">set</span><span class="p">(</span><span class="n">WO_SIMPLE_J_PETRO</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">params_simple_j_petro</span><span class="p">)):</span>
+            <span class="n">params_simple_j_petro</span><span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params_simple_j_petro</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;a_petro&quot;</span><span class="p">)</span>
+            <span class="n">params_simple_j_petro</span><span class="p">[</span><span class="s2">&quot;b&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params_simple_j_petro</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;b_petro&quot;</span><span class="p">)</span>
+            <span class="n">wateroil</span><span class="o">.</span><span class="n">add_simple_J_petro</span><span class="p">(</span><span class="o">**</span><span class="n">params_simple_j_petro</span><span class="p">)</span>
         <span class="k">elif</span> <span class="nb">set</span><span class="p">(</span><span class="n">WO_NORM_J</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">params_norm_j</span><span class="p">)):</span>
             <span class="n">wateroil</span><span class="o">.</span><span class="n">add_normalized_J</span><span class="p">(</span><span class="o">**</span><span class="n">params_norm_j</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>

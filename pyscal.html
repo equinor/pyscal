@@ -246,7 +246,7 @@ translated to ‘l’)</p>
 <dl class="simple">
 <dt>Recognized parameters:</dt><dd><p>swirr, swl, swcr, sorw, h, tag, nw, now, krwmax, krwend,
 lw, ew, tw, low, eow, tow, lo, eo, to, kromax, krowend,
-a, b, poro_ref, perm_ref, drho,
+a, a_petro, b, b_petro, poro_ref, perm_ref, drho,
 a, b, poro, perm, sigma_costau</p>
 </dd>
 </dl>
@@ -1510,17 +1510,67 @@ apply up to 1-sorw.</p>
 <dt id="pyscal.wateroil.WaterOil.add_simple_J">
 <code class="sig-name descname">add_simple_J</code><span class="sig-paren">(</span><em class="sig-param">a=5</em>, <em class="sig-param">b=-1.5</em>, <em class="sig-param">poro_ref=0.25</em>, <em class="sig-param">perm_ref=100</em>, <em class="sig-param">drho=300</em>, <em class="sig-param">g=9.81</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.add_simple_J"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.add_simple_J" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add capillary pressure function from a simplified J-function</p>
-<p>This is the ‘inverse’ or ‘RMS’ version of the a and b, the formula
-is</p>
-<blockquote>
-<div><p>J = a S_w^b</p>
-</div></blockquote>
-<p>J is not dimensionless.
-Doc: <a class="reference external" href="https://wiki.equinor.com/wiki/index.php/Res:Water_saturation_from_Leverett_J-function">https://wiki.equinor.com/wiki/index.php/Res:Water_saturation_from_Leverett_J-function</a></p>
-<p>poro_ref is a fraction, between 0 and 1
-perm_ref is in milliDarcy
-drho has SI units kg/m³. Default value is 300
-g has SI units m/s², default value is 9.81</p>
+<p>This is the RMS version of the coefficients <em>a</em> and <em>b</em>, the formula
+used is</p>
+<div class="math notranslate nohighlight">
+\[J = a S_w^b\]</div>
+<p><em>J</em> is not dimensionless in this equation. The capillary pressure
+be in bars.</p>
+<p>This is identical to the also seen formula</p>
+<div class="math notranslate nohighlight">
+\[J = 10^{b \log(S_w) + \log(a)}\]</div>
+<p><span class="math notranslate nohighlight">\(S_w\)</span> in this formula is normalized with respect to the <em>swirr</em> variable
+of the WaterOil object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<em>float</em>) – a coefficient</p></li>
+<li><p><strong>b</strong> (<em>float</em>) – b coefficient</p></li>
+<li><p><strong>poro_ref</strong> (<em>float</em>) – Reference porosity for scaling to Pc, between 0 and 1</p></li>
+<li><p><strong>perm_ref</strong> (<em>float</em>) – Reference permeability for scaling to Pc, in milliDarcy</p></li>
+<li><p><strong>drho</strong> (<em>float</em>) – Density difference between water and oil, in SI units kg/m³.
+Default value is 300</p></li>
+<li><p><strong>g</strong> (<em>float</em>) – Gravitational acceleration, in SI units m/s²,
+default value is 9.81</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None. Modifies pc column in self.table, using bar as pressure unit.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyscal.wateroil.WaterOil.add_simple_J_petro">
+<code class="sig-name descname">add_simple_J_petro</code><span class="sig-paren">(</span><em class="sig-param">a</em>, <em class="sig-param">b</em>, <em class="sig-param">poro_ref=0.25</em>, <em class="sig-param">perm_ref=100</em>, <em class="sig-param">drho=300</em>, <em class="sig-param">g=9.81</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.add_simple_J_petro"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.add_simple_J_petro" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add capillary pressure function from a simplified J-function</p>
+<p>This is the <em>petrophysical</em> version of the coefficients <em>a</em> and <em>b</em>, the formula
+used is</p>
+<div class="math notranslate nohighlight">
+\[J = \left(\frac{S_w}{a}\right)^{\frac{1}{b}}\]</div>
+<p>which is identical to</p>
+<div class="math notranslate nohighlight">
+\[J = 10^\frac{\log(S_w) - \log(a)}{b}\]</div>
+<p><em>J</em> is not dimensionless in this equation.</p>
+<p><span class="math notranslate nohighlight">\(S_w\)</span> in this formula is normalized with respect to the <em>swirr</em> variable
+of the WaterOil object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<em>float</em>) – a coefficient, petrophysical version</p></li>
+<li><p><strong>b</strong> (<em>float</em>) – b coefficient, petrophysical version</p></li>
+<li><p><strong>poro_ref</strong> (<em>float</em>) – Reference porosity for scaling to Pc, between 0 and 1</p></li>
+<li><p><strong>perm_ref</strong> (<em>float</em>) – Reference permeability for scaling to Pc, in milliDarcy</p></li>
+<li><p><strong>drho</strong> (<em>float</em>) – Density difference between water and oil, in SI units kg/m³.
+Default value is 300</p></li>
+<li><p><strong>g</strong> (<em>float</em>) – Gravitational acceleration, in SI units m/s²,
+default value is 9.81</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None. Modifies pc column in self.table, using bar as pressure unit.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
@@ -1530,7 +1580,7 @@ g has SI units m/s², default value is 9.81</p>
 <div class="math notranslate nohighlight">
 \[p_c = \frac{\left(\frac{S_w}{a}\right)^{\frac{1}{b}}
 \sigma \cos \tau}{\sqrt{\frac{k}{\phi}}}\]</div>
-<p>The Sw saturation used in the formula is normalized with respect
+<p>The <span class="math notranslate nohighlight">\(S_w\)</span> saturation used in the formula is normalized with respect
 to the swirr parameter.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
