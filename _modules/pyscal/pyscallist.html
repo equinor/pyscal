@@ -232,10 +232,6 @@
 <span class="sd">        Args:</span>
 <span class="sd">            filename (str): Filename for the output to be given to Eclips 100</span>
 <span class="sd">            slgof (bool): Set to true of SLGOF is wanted instead of SGOF</span>
-<span class="sd">            interpolate (float, tuple of two floats, or list of floats or</span>
-<span class="sd">                list of tuples):  Interpolation parameter(s), tuple refers</span>
-<span class="sd">                to different parameter for wateroil and gasoil, list refers to</span>
-<span class="sd">                indidual SATNUMs</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;FOOBAR&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">==</span> <span class="n">SCALrecommendation</span><span class="p">:</span>
@@ -337,14 +333,8 @@
         <span class="sd">&quot;&quot;&quot;Dumps family 2 Eclipse saturation tables to one</span>
 <span class="sd">        filename. This means SWFN + SGFN + SOF3</span>
 
-<span class="sd">        Can interpolate if is a list of SCAL recommendations.</span>
-
 <span class="sd">        Args:</span>
 <span class="sd">            filename (str): Filename for the output to be given to Eclips 100</span>
-<span class="sd">            interpolate (float, tuple of two floats, or list of floats or</span>
-<span class="sd">                list of tuples):  Interpolation parameter(s), tuple refers</span>
-<span class="sd">                to different parameter for wateroil and gasoil, list refers to</span>
-<span class="sd">                indidual SATNUMs</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">==</span> <span class="n">SCALrecommendation</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>

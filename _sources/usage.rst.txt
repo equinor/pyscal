@@ -21,6 +21,20 @@ An example input table could look like:
        3  Foobarites   0.28    0.23      0.18  2.81  1.24  0.93   2.12   3.02   1.4   1.91  0.91  0.96   2.4    4.79   1.8     0.04    0.01      0.93          1          1     0.01  0.321  -1.283        0.1            1     300
 ========  ==========  ======  =====  ========  ====  ====  ====  =====  =====  =====  ====  ====  ====  =====  =====  =====  ======  ======  ========  =========  =========  =======  =====  ======  ==========  ==========  ======
 
+Saturation and relative permeability endpoints
+----------------------------------------------
+
+The endpoints used in the parametrization is shown in the following figure for WaterOil.
+
+.. image:: images/wateroil-endpoints.png
+    :width: 600
+
+For GasOil, there is an option of where to anchor ``krgend``, shown in the following figure.
+The red curve is the default, where ``krgendanchor=="sorg"``, and the pink is the other choice.
+
+.. image:: images/gasoil-endpoints.png
+    :width: 600
+
 Python API
 ----------
 
