@@ -518,6 +518,15 @@ class PyscalFactory(object):
             logger.error("merged cells in XLSX, which is not supported.")
             raise ValueError
 
+        # Warn about any other columns with empty cells:
+        nan_columns = set(input_df.columns[input_df.isnull().any()])
+        allowed_nan_columns = set(["COMMENT"])
+        if nan_columns - allowed_nan_columns:
+            logger.warning(
+                "Found empty cells in these columns, this might create trouble:"
+            )
+            logger.warning("%s", str(nan_columns - allowed_nan_columns))
+
         # Check that SATNUM's are consecutive and integers:
         try:
             input_df["SATNUM"] = input_df["SATNUM"].astype(int)
