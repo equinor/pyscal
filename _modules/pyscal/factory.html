@@ -675,6 +675,15 @@
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;merged cells in XLSX, which is not supported.&quot;</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">ValueError</span>
 
+        <span class="c1"># Warn about any other columns with empty cells:</span>
+        <span class="n">nan_columns</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">input_df</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">input_df</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()])</span>
+        <span class="n">allowed_nan_columns</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="s2">&quot;COMMENT&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">nan_columns</span> <span class="o">-</span> <span class="n">allowed_nan_columns</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;Found empty cells in these columns, this might create trouble:&quot;</span>
+            <span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">nan_columns</span> <span class="o">-</span> <span class="n">allowed_nan_columns</span><span class="p">))</span>
+
         <span class="c1"># Check that SATNUM&#39;s are consecutive and integers:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;SATNUM&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;SATNUM&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
