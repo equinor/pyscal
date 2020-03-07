@@ -573,6 +573,64 @@ def test_sufficient_params():
     )
 
 
+def test_case_aliasing():
+    """Test that we can use aliases for the CASE column
+    in SCAL recommendations"""
+    dframe = pd.DataFrame(
+        columns=["SATNUM", "CASE", "Nw", "Now", "Ng", "Nog"],
+        data=[
+            [1, "pess", 2, 2, 1, 1],
+            [1, "base", 3, 1, 1, 1],
+            [1, "optIMIstiC", 3, 1, 1, 1],
+        ],
+    )
+    relperm_data = PyscalFactory.load_relperm_df(dframe)
+    PyscalFactory.create_scal_recommendation_list(relperm_data, h=0.2).interpolate(-0.4)
+    with pytest.raises(ValueError):
+        PyscalFactory.load_relperm_df(
+            pd.DataFrame(
+                columns=["SATNUM", "CASE", "Nw", "Now", "Ng", "Nog"],
+                data=[
+                    [1, "FOOBAR", 2, 2, 1, 1],
+                    [1, "base", 3, 1, 1, 1],
+                    [1, "optIMIstiC", 3, 1, 1, 1],
+                ],
+            )
+        )
+
+    # Ambigous data:
+    with pytest.raises(ValueError):
+        amb = PyscalFactory.load_relperm_df(
+            pd.DataFrame(
+                columns=["SATNUM", "CASE", "Nw", "Now", "Ng", "Nog"],
+                data=[
+                    [1, "low", 2, 2, 1, 1],
+                    [1, "pess", 5, 5, 5, 5],
+                    [1, "base", 3, 1, 1, 1],
+                    [1, "optIMIstiC", 3, 1, 1, 1],
+                ],
+            )
+        )
+        PyscalFactory.create_scal_recommendation_list(amb)
+
+    # Missing a case
+    with pytest.raises(ValueError):
+        PyscalFactory.load_relperm_df(
+            pd.DataFrame(
+                columns=["SATNUM", "CASE", "Nw", "Now", "Ng", "Nog"],
+                data=[[1, "base", 3, 1, 1, 1], [1, "optIMIstiC", 3, 1, 1, 1],],
+            )
+        )
+    # Missing a case
+    with pytest.raises(ValueError):
+        PyscalFactory.load_relperm_df(
+            pd.DataFrame(
+                columns=["SATNUM", "CASE", "Nw", "Now", "Ng", "Nog"],
+                data=[[1, "base", 3, 1, 1, 1],],
+            )
+        )
+
+
 def test_corey_let_mix():
     """Test that we can supply a dataframe where some SATNUMs
     have Corey and others have LET"""
