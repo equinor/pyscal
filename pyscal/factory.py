@@ -437,7 +437,9 @@ class PyscalFactory(object):
         Merges COMMENT into TAG column, as only TAG is picked up downstream.
         Adds a prexix "SATNUM <number>" to all tags.
 
-        All strings in CASE column are converted to lowercase.
+        All strings in CASE column are converted to lowercase. Applies
+        aliasing in the CASE column so that "pessimistic" and "pess" map to
+        "low", and "optimistic" and "opt" map to "high".
 
         Args:
             inputfile (str or pd.DataFrame): Filename for XLSX or CSV file, or a
@@ -547,17 +549,13 @@ class PyscalFactory(object):
         # If we are in a SCAL recommendation setting
         if "CASE" in input_df:
             # Enforce lower case:
-            input_df["CASE"] = [case_str.lower() for case_str in input_df["CASE"]]
             if input_df["CASE"].isnull().sum() > 0:
                 logger.error("Found not-a-number in the CASE column. This could be due")
                 logger.error("merged cells in XLSX, which is not supported.")
                 raise ValueError
-            if set(input_df["CASE"].unique()) != set(["low", "base", "high"]):
-                logger.error(
-                    "Contents of CASE-column must be exactly low, base and high"
-                )
-                logger.error("You provided %s", str(input_df["CASE"].unique()))
-                raise ValueError
+            input_df["CASE"] = PyscalFactory.remap_validate_cases(
+                input_df["CASE"].values
+            )
 
         # Add the SATNUM index to the TAG column
         if "TAG" not in input_df:
@@ -579,6 +577,42 @@ class PyscalFactory(object):
         return input_df.sort_values("SATNUM")
 
     @staticmethod
+    def remap_validate_cases(casevalues):
+        """Remap values in the CASE column so that we can use aliases.
+
+        All values are first made lower case, then
+        "pessimistic" and "pess" are mapped to "low" and
+        "optimistic" and "opt" are mapped to "high".
+
+        Will raise ValueError if some values are not understood, and
+        if we don't have exactly three unique values.
+
+        Args:
+            casevalues (list of str): values to remap.
+        """
+        accepted = ["low", "base", "high"]
+        aliases = {
+            "pessismistic": "low",
+            "pess": "low",
+            "optimistic": "high",
+            "opt": "high",
+        }
+        lowered = [value.lower() for value in casevalues]
+        remapped = [
+            aliases[value] if value in aliases.keys() else value for value in lowered
+        ]
+        not_understood = set(remapped) - set(accepted)
+        if not_understood:
+            logger.error("Invalid case values: %s", str(not_understood))
+            raise ValueError
+        if len(set(remapped)) != len(accepted):
+            logger.error(
+                "You must supply low, base AND high, got only %s", str(set(remapped))
+            )
+            raise ValueError
+        return remapped
+
+    @staticmethod
     def create_scal_recommendation_list(input_df, h=None):
         """Requires SATNUM and CASE to be defined in the input data
 
@@ -596,6 +630,14 @@ class PyscalFactory(object):
         scalinput = input_df.set_index(["SATNUM", "CASE"])
 
         for satnum in scalinput.index.levels[0].values:
+            # load_relperm_df only validates the CASE column for all SATNUMs at
+            # once, errors for particular SATNUMs are caught here.
+            if len(scalinput.loc[satnum, :]) > 3:
+                logger.error("Too many cases supplied for SATNUM %s", str(satnum))
+                raise ValueError
+            if len(scalinput.loc[satnum, :]) < 3:
+                logger.error("Too few cases supplied for SATNUM %s", str(satnum))
+                raise ValueError
             scal_l.append(
                 PyscalFactory.create_scal_recommendation(
                     scalinput.loc[satnum, :].to_dict(orient="index"), h=h
