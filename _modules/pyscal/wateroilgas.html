@@ -251,6 +251,7 @@
 
 <div class="viewcode-block" id="WaterOilGas.SGOF"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroilgas.WaterOilGas.SGOF">[docs]</a>    <span class="k">def</span> <span class="nf">SGOF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return a SGOF string. Delegated to the gasoil object.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threephaseconsistency</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">SGOF</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;No GasOil object in this WaterOilGas object&quot;</span><span class="p">)</span>
@@ -258,6 +259,7 @@
 
 <div class="viewcode-block" id="WaterOilGas.SLGOF"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroilgas.WaterOilGas.SLGOF">[docs]</a>    <span class="k">def</span> <span class="nf">SLGOF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return a SLGOF string. Delegated to the gasoil object.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threephaseconsistency</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">SLGOF</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;No GasOil object in this WaterOilGas object&quot;</span><span class="p">)</span>
@@ -287,6 +289,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Both WaterOil and GasOil is needed for SOF3&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">threephaseconsistency</span><span class="p">()</span>
 
         <span class="c1"># Copy of the wateroil data:</span>
         <span class="n">table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;sw&quot;</span><span class="p">,</span> <span class="s2">&quot;krow&quot;</span><span class="p">]])</span>
@@ -345,13 +348,20 @@
 
 <div class="viewcode-block" id="WaterOilGas.threephaseconsistency"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroilgas.WaterOilGas.threephaseconsistency">[docs]</a>    <span class="k">def</span> <span class="nf">threephaseconsistency</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Perform consistency checks on produced curves, similar</span>
-<span class="sd">        to what Eclipse does at startup</span>
+<span class="sd">        to what Eclipse does at startup.</span>
 
-<span class="sd">        Returns empty string if no errors catched. Alternatively</span>
-<span class="sd">        an error description string is returned.</span>
+<span class="sd">        If any (likely) errors are found, these are printed</span>
+<span class="sd">        as warnings and this function returns False.</span>
 
-<span class="sd">        Possible variation of this function would be</span>
-<span class="sd">        to throw Exceptions.</span>
+<span class="sd">        &quot;Errors&quot; from this function should be treated as</span>
+<span class="sd">        warnings, as false positives from this function should</span>
+<span class="sd">        not have breaking consequences.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            None, examines self.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool - True if this function approves the data</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="c1"># Eclipse errors:</span>
@@ -366,17 +376,19 @@
             <span class="c1"># Nothing here to check if we only have two phases</span>
             <span class="k">return</span> <span class="kc">True</span>
 
-        <span class="n">errors</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">wog_is_ok</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krow&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krog&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
         <span class="p">):</span>
-            <span class="n">errors</span> <span class="o">+=</span> <span class="s2">&quot;Error: max(krow) is not equal to max(krog)</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Eclipse will fail, max(krow) is not equal to max(krog)&quot;</span><span class="p">)</span>
+            <span class="n">wog_is_ok</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="c1"># 2: Inconsistent end points in saturation table 1 the maximum</span>
         <span class="c1"># gas saturation (0.91) plus the connate water saturation</span>
         <span class="c1"># (0.10) must not exceed 1.0</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sg&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
-            <span class="n">errors</span> <span class="o">+=</span> <span class="s2">&quot;Error: Max(sg) + Swl &gt; 1.0</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Eclipse will fail, max(sg) + Swl &gt; 1.0&quot;</span><span class="p">)</span>
+            <span class="n">wog_is_ok</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="c1"># 3: Warning: Consistency problem for gas phase endpoint (krgr &gt; krg)</span>
         <span class="c1"># in grid cell (i, j, k) for saturation end-points krgr=1.0</span>
@@ -386,9 +398,7 @@
         <span class="c1"># in grid cell (i, j, k) for saturation endpoints sgu=0.78,</span>
         <span class="c1"># swl=0.45, (1-swl) = 0.55</span>
 
-        <span class="k">if</span> <span class="n">errors</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">errors</span>
-        <span class="k">return</span> <span class="s2">&quot;&quot;</span></div>
+        <span class="k">return</span> <span class="n">wog_is_ok</span></div>
 
 <div class="viewcode-block" id="WaterOilGas.run_eclipse_test"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroilgas.WaterOilGas.run_eclipse_test">[docs]</a>    <span class="k">def</span> <span class="nf">run_eclipse_test</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Start the Eclipse simulator on a minimal deck in order to</span>

@@ -1863,11 +1863,20 @@ from the WaterOil object is used to generate these</p>
 <dt id="pyscal.wateroilgas.WaterOilGas.threephaseconsistency">
 <code class="sig-name descname">threephaseconsistency</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroilgas.html#WaterOilGas.threephaseconsistency"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroilgas.WaterOilGas.threephaseconsistency" title="Permalink to this definition">¶</a></dt>
 <dd><p>Perform consistency checks on produced curves, similar
-to what Eclipse does at startup</p>
-<p>Returns empty string if no errors catched. Alternatively
-an error description string is returned.</p>
-<p>Possible variation of this function would be
-to throw Exceptions.</p>
+to what Eclipse does at startup.</p>
+<p>If any (likely) errors are found, these are printed
+as warnings and this function returns False.</p>
+<p>“Errors” from this function should be treated as
+warnings, as false positives from this function should
+not have breaking consequences.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>examines self.</strong> (<em>None</em><em>,</em>) – </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>bool - True if this function approves the data</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="method">
