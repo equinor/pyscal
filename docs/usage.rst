@@ -21,6 +21,28 @@ An example input table could look like:
        3  Foobarites   0.28    0.23      0.18  2.81  1.24  0.93   2.12   3.02   1.4   1.91  0.91  0.96   2.4    4.79   1.8     0.04    0.01      0.93          1          1     0.01  0.321  -1.283        0.1            1     300
 ========  ==========  ======  =====  ========  ====  ====  ====  =====  =====  =====  ====  ====  ====  =====  =====  =====  ======  ======  ========  =========  =========  =======  =====  ======  ==========  ==========  ======
 
+For SCAL recommendation where the intention is to interpolate between a pessimistic,
+through a base case and to a optimistic curve set, this is accomplished
+by having three rows for each SATNUM, and a column called CASE which contains
+the strings 'pessimistic', 'base' and 'optimistic' (also possible is
+'low', 'high', 'opt' and 'pess'. 'low' is identical to 'pessimistic' always and
+vice versa. An example table could be
+
+======= ===== ====== ======
+ SATNUM CASE     nw   etc..
+======= ===== ====== ======
+      1 low      2.1    ...
+      1 base     1.8    ...
+      1 high     1.5    ...
+      2 pess     2.4    ...
+      2 base     1.9    ...
+      2 opt      1.2    ...
+======= ===== ====== ======
+
+The values in the CASE column are also case-insensitive. Remember to always
+supply interpolation parameters to the command line client whenever the
+data set contains a CASE column.
+
 Saturation and relative permeability endpoints
 ----------------------------------------------
 
