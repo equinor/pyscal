@@ -311,7 +311,9 @@ a dataframe.</p>
 Ensures case-insensitivenes SATNUM, CASE, TAG and COMMENT</p>
 <p>Merges COMMENT into TAG column, as only TAG is picked up downstream.
 Adds a prexix “SATNUM &lt;number&gt;” to all tags.</p>
-<p>All strings in CASE column are converted to lowercase.</p>
+<p>All strings in CASE column are converted to lowercase. Applies
+aliasing in the CASE column so that “pessimistic” and “pess” map to
+“low”, and “optimistic” and “opt” map to “high”.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -322,6 +324,22 @@ pandas DataFrame.</p></li>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>pd.DataFrame. To be handed over to pyscal list factory methods.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyscal.factory.PyscalFactory.remap_validate_cases">
+<em class="property">static </em><code class="sig-name descname">remap_validate_cases</code><span class="sig-paren">(</span><em class="sig-param">casevalues</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.remap_validate_cases"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.remap_validate_cases" title="Permalink to this definition">¶</a></dt>
+<dd><p>Remap values in the CASE column so that we can use aliases.</p>
+<p>All values are first made lower case, then
+“pessimistic” and “pess” are mapped to “low” and
+“optimistic” and “opt” are mapped to “high”.</p>
+<p>Will raise ValueError if some values are not understood, and
+if we don’t have exactly three unique values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>casevalues</strong> (<em>list of str</em>) – values to remap.</p>
 </dd>
 </dl>
 </dd></dl>

@@ -594,7 +594,9 @@
 <span class="sd">        Merges COMMENT into TAG column, as only TAG is picked up downstream.</span>
 <span class="sd">        Adds a prexix &quot;SATNUM &lt;number&gt;&quot; to all tags.</span>
 
-<span class="sd">        All strings in CASE column are converted to lowercase.</span>
+<span class="sd">        All strings in CASE column are converted to lowercase. Applies</span>
+<span class="sd">        aliasing in the CASE column so that &quot;pessimistic&quot; and &quot;pess&quot; map to</span>
+<span class="sd">        &quot;low&quot;, and &quot;optimistic&quot; and &quot;opt&quot; map to &quot;high&quot;.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            inputfile (str or pd.DataFrame): Filename for XLSX or CSV file, or a</span>
@@ -704,17 +706,13 @@
         <span class="c1"># If we are in a SCAL recommendation setting</span>
         <span class="k">if</span> <span class="s2">&quot;CASE&quot;</span> <span class="ow">in</span> <span class="n">input_df</span><span class="p">:</span>
             <span class="c1"># Enforce lower case:</span>
-            <span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;CASE&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">case_str</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">case_str</span> <span class="ow">in</span> <span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;CASE&quot;</span><span class="p">]]</span>
             <span class="k">if</span> <span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;CASE&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Found not-a-number in the CASE column. This could be due&quot;</span><span class="p">)</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;merged cells in XLSX, which is not supported.&quot;</span><span class="p">)</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span>
-            <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;CASE&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span> <span class="o">!=</span> <span class="nb">set</span><span class="p">([</span><span class="s2">&quot;low&quot;</span><span class="p">,</span> <span class="s2">&quot;base&quot;</span><span class="p">,</span> <span class="s2">&quot;high&quot;</span><span class="p">]):</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                    <span class="s2">&quot;Contents of CASE-column must be exactly low, base and high&quot;</span>
-                <span class="p">)</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;You provided </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;CASE&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()))</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span>
+            <span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;CASE&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">remap_validate_cases</span><span class="p">(</span>
+                <span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;CASE&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+            <span class="p">)</span>
 
         <span class="c1"># Add the SATNUM index to the TAG column</span>
         <span class="k">if</span> <span class="s2">&quot;TAG&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_df</span><span class="p">:</span>
@@ -735,6 +733,42 @@
             <span class="k">raise</span> <span class="ne">ValueError</span>
         <span class="k">return</span> <span class="n">input_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;SATNUM&quot;</span><span class="p">)</span></div>
 
+<div class="viewcode-block" id="PyscalFactory.remap_validate_cases"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.remap_validate_cases">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">remap_validate_cases</span><span class="p">(</span><span class="n">casevalues</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Remap values in the CASE column so that we can use aliases.</span>
+
+<span class="sd">        All values are first made lower case, then</span>
+<span class="sd">        &quot;pessimistic&quot; and &quot;pess&quot; are mapped to &quot;low&quot; and</span>
+<span class="sd">        &quot;optimistic&quot; and &quot;opt&quot; are mapped to &quot;high&quot;.</span>
+
+<span class="sd">        Will raise ValueError if some values are not understood, and</span>
+<span class="sd">        if we don&#39;t have exactly three unique values.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            casevalues (list of str): values to remap.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">accepted</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;low&quot;</span><span class="p">,</span> <span class="s2">&quot;base&quot;</span><span class="p">,</span> <span class="s2">&quot;high&quot;</span><span class="p">]</span>
+        <span class="n">aliases</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;pessismistic&quot;</span><span class="p">:</span> <span class="s2">&quot;low&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;pess&quot;</span><span class="p">:</span> <span class="s2">&quot;low&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;optimistic&quot;</span><span class="p">:</span> <span class="s2">&quot;high&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;opt&quot;</span><span class="p">:</span> <span class="s2">&quot;high&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">lowered</span> <span class="o">=</span> <span class="p">[</span><span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">casevalues</span><span class="p">]</span>
+        <span class="n">remapped</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">aliases</span><span class="p">[</span><span class="n">value</span><span class="p">]</span> <span class="k">if</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">aliases</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">else</span> <span class="n">value</span> <span class="k">for</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">lowered</span>
+        <span class="p">]</span>
+        <span class="n">not_understood</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">remapped</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">accepted</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">not_understood</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Invalid case values: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">not_understood</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">remapped</span><span class="p">))</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">accepted</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+                <span class="s2">&quot;You must supply low, base AND high, got only </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">remapped</span><span class="p">))</span>
+            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span>
+        <span class="k">return</span> <span class="n">remapped</span></div>
+
 <div class="viewcode-block" id="PyscalFactory.create_scal_recommendation_list"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_scal_recommendation_list">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">create_scal_recommendation_list</span><span class="p">(</span><span class="n">input_df</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Requires SATNUM and CASE to be defined in the input data</span>
@@ -753,6 +787,14 @@
         <span class="n">scalinput</span> <span class="o">=</span> <span class="n">input_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="s2">&quot;SATNUM&quot;</span><span class="p">,</span> <span class="s2">&quot;CASE&quot;</span><span class="p">])</span>
 
         <span class="k">for</span> <span class="n">satnum</span> <span class="ow">in</span> <span class="n">scalinput</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">levels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">:</span>
+            <span class="c1"># load_relperm_df only validates the CASE column for all SATNUMs at</span>
+            <span class="c1"># once, errors for particular SATNUMs are caught here.</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">scalinput</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">satnum</span><span class="p">,</span> <span class="p">:])</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Too many cases supplied for SATNUM </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">satnum</span><span class="p">))</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">scalinput</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">satnum</span><span class="p">,</span> <span class="p">:])</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Too few cases supplied for SATNUM </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">satnum</span><span class="p">))</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span>
             <span class="n">scal_l</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_scal_recommendation</span><span class="p">(</span>
                     <span class="n">scalinput</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">satnum</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">),</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span>
