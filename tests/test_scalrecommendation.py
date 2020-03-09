@@ -118,7 +118,7 @@ def test_interpolation_deprecated(param_wo, param_go):
     assert len(interpolant.wateroil.SWFN()) > 100
     assert len(interpolant.SOF3()) > 100
     assert len(interpolant.wateroil.SWOF()) > 100
-    assert interpolant.threephaseconsistency() == ""
+    assert interpolant.threephaseconsistency()
 
 
 def test_make_scalrecommendation():
@@ -245,7 +245,7 @@ def test_interpolation(param_wo, param_go):
     assert len(interpolant.wateroil.SWFN()) > 100
     assert len(interpolant.SOF3()) > 100
     assert len(interpolant.wateroil.SWOF()) > 100
-    assert interpolant.threephaseconsistency() == ""
+    assert interpolant.threephaseconsistency()
 
     assert sum(interpolant.wateroil.table["pc"])
 
