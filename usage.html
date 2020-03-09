@@ -401,6 +401,62 @@ if individual interpolation for each SATNUM is needed.</p>
 </tr>
 </tbody>
 </table>
+<p>For SCAL recommendation where the intention is to interpolate between a pessimistic,
+through a base case and to a optimistic curve set, this is accomplished
+by having three rows for each SATNUM, and a column called CASE which contains
+the strings ‘pessimistic’, ‘base’ and ‘optimistic’ (also possible is
+‘low’, ‘high’, ‘opt’ and ‘pess’. ‘low’ is identical to ‘pessimistic’ always and
+vice versa. An example table could be</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 29%" />
+<col style="width: 21%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>SATNUM</p></th>
+<th class="head"><p>CASE</p></th>
+<th class="head"><p>nw</p></th>
+<th class="head"><p>etc..</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>low</p></td>
+<td><p>2.1</p></td>
+<td><p>…</p></td>
+</tr>
+<tr class="row-odd"><td><p>1</p></td>
+<td><p>base</p></td>
+<td><p>1.8</p></td>
+<td><p>…</p></td>
+</tr>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>high</p></td>
+<td><p>1.5</p></td>
+<td><p>…</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>pess</p></td>
+<td><p>2.4</p></td>
+<td><p>…</p></td>
+</tr>
+<tr class="row-even"><td><p>2</p></td>
+<td><p>base</p></td>
+<td><p>1.9</p></td>
+<td><p>…</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>opt</p></td>
+<td><p>1.2</p></td>
+<td><p>…</p></td>
+</tr>
+</tbody>
+</table>
+<p>The values in the CASE column are also case-insensitive. Remember to always
+supply interpolation parameters to the command line client whenever the
+data set contains a CASE column.</p>
 </div>
 <div class="section" id="saturation-and-relative-permeability-endpoints">
 <h2>Saturation and relative permeability endpoints<a class="headerlink" href="#saturation-and-relative-permeability-endpoints" title="Permalink to this headline">¶</a></h2>
