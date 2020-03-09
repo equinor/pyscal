@@ -94,6 +94,7 @@ class WaterOilGas(object):
 
     def SGOF(self, header=True, dataincommentrow=True):
         """Return a SGOF string. Delegated to the gasoil object."""
+        self.threephaseconsistency()
         if self.gasoil is not None:
             return self.gasoil.SGOF(header, dataincommentrow)
         logger.error("No GasOil object in this WaterOilGas object")
@@ -101,6 +102,7 @@ class WaterOilGas(object):
 
     def SLGOF(self, header=True, dataincommentrow=True):
         """Return a SLGOF string. Delegated to the gasoil object."""
+        self.threephaseconsistency()
         if self.gasoil is not None:
             return self.gasoil.SLGOF(header, dataincommentrow)
         logger.error("No GasOil object in this WaterOilGas object")
@@ -130,6 +132,7 @@ class WaterOilGas(object):
         if self.wateroil is None or self.gasoil is None:
             logger.error("Both WaterOil and GasOil is needed for SOF3")
             return ""
+        self.threephaseconsistency()
 
         # Copy of the wateroil data:
         table = pd.DataFrame(self.wateroil.table[["sw", "krow"]])
@@ -188,13 +191,20 @@ class WaterOilGas(object):
 
     def threephaseconsistency(self):
         """Perform consistency checks on produced curves, similar
-        to what Eclipse does at startup
+        to what Eclipse does at startup.
 
-        Returns empty string if no errors catched. Alternatively
-        an error description string is returned.
+        If any (likely) errors are found, these are printed
+        as warnings and this function returns False.
 
-        Possible variation of this function would be
-        to throw Exceptions.
+        "Errors" from this function should be treated as
+        warnings, as false positives from this function should
+        not have breaking consequences.
+
+        Args:
+            None, examines self.
+
+        Returns:
+            bool - True if this function approves the data
         """
 
         # Eclipse errors:
@@ -209,17 +219,19 @@ class WaterOilGas(object):
             # Nothing here to check if we only have two phases
             return True
 
-        errors = ""
+        wog_is_ok = True
         if not np.isclose(
             self.wateroil.table["krow"].max(), self.gasoil.table["krog"].max()
         ):
-            errors += "Error: max(krow) is not equal to max(krog)\n"
+            logger.warning("Eclipse will fail, max(krow) is not equal to max(krog)")
+            wog_is_ok = False
 
         # 2: Inconsistent end points in saturation table 1 the maximum
         # gas saturation (0.91) plus the connate water saturation
         # (0.10) must not exceed 1.0
         if self.gasoil.table["sg"].max() + self.wateroil.table["sw"].min() > 1.0:
-            errors += "Error: Max(sg) + Swl > 1.0\n"
+            logger.warning("Eclipse will fail, max(sg) + Swl > 1.0")
+            wog_is_ok = False
 
         # 3: Warning: Consistency problem for gas phase endpoint (krgr > krg)
         # in grid cell (i, j, k) for saturation end-points krgr=1.0
@@ -229,9 +241,7 @@ class WaterOilGas(object):
         # in grid cell (i, j, k) for saturation endpoints sgu=0.78,
         # swl=0.45, (1-swl) = 0.55
 
-        if errors:
-            return errors
-        return ""
+        return wog_is_ok
 
     def run_eclipse_test(self):
         """Start the Eclipse simulator on a minimal deck in order to
