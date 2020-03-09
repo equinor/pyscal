@@ -242,6 +242,25 @@ class GasOil(object):
                 "%s not found in dataframe, can't read table data", sgcolname
             )
             raise ValueError
+
+        for col in [sgcolname, krgcolname, krogcolname, pccolname]:
+            # Typecheck/convert all numerical columns:
+            if col in dframe and not pd.api.types.is_numeric_dtype(dframe[col]):
+                # Try to convert to numeric type
+                try:
+                    dframe[col] = dframe[col].astype(float)
+                    logger.info("Converted column %s to numbers for fromtable()", col)
+                except ValueError as e_msg:
+                    logger.error(
+                        "Failed to parse column %s as numbers for add_fromtable()", col
+                    )
+                    raise ValueError(e_msg)
+                except TypeError as e_msg:
+                    logger.error(
+                        "Failed to parse column %s as numbers for add_fromtable()", col
+                    )
+                    raise TypeError(e_msg)
+
         if dframe[sgcolname].min() > 0.0:
             raise ValueError("sg must start at zero")
         swlfrominput = 1 - dframe[sgcolname].max()

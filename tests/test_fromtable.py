@@ -276,6 +276,51 @@ def test_wo_fromtable_problems():
     # For low enough h, this will however NOT matter.
 
 
+def test_fromtable_types():
+    """Test loading from a table with incorrect types"""
+
+    # This frame is valid, but the type was wrong. This
+    # can happen if data is via CSV files, and some other rows
+    # ruin the numerical interpretation of a column.
+    df1 = pd.DataFrame(
+        columns=["SW", "KRW", "KROW", "PC"],
+        data=[["0", "0", "1", "2"], ["1", "1", "0", "0"]],
+    )
+    wateroil = WaterOil(h=0.1)
+    wateroil.add_fromtable(
+        df1, swcolname="SW", krwcolname="KRW", krowcolname="KROW", pccolname="PC"
+    )
+    assert "krw" in wateroil.table.columns
+    assert "krow" in wateroil.table.columns
+    assert "pc" in wateroil.table.columns
+    check_table(wateroil.table)
+
+    gasoil = GasOil(h=0.1)
+    gasoil.add_fromtable(
+        df1, sgcolname="SW", krgcolname="KRW", krogcolname="KROW", pccolname="PC"
+    )
+    assert "krg" in gasoil.table.columns
+    assert "krog" in gasoil.table.columns
+    assert "pc" in gasoil.table.columns
+    check_table(gasoil.table)
+
+    # But this should not make sense.
+    df2 = pd.DataFrame(
+        columns=["SW", "KRW", "KROW", "PC"],
+        data=[["0", dict(foo="bar"), "1", "2"], ["1", "1", "0", "0"]],
+    )
+    wateroil = WaterOil(h=0.1)
+    with pytest.raises((ValueError, TypeError)):
+        wateroil.add_fromtable(
+            df2, swcolname="SW", krwcolname="KRW", krowcolname="KROW", pccolname="PC"
+        )
+    gasoil = GasOil(h=0.1)
+    with pytest.raises((ValueError, TypeError)):
+        gasoil.add_fromtable(
+            df2, sgcolname="SW", krgcolname="KRW", krogcolname="KROW", pccolname="PC"
+        )
+
+
 @settings(deadline=2000)
 @given(st.floats(min_value=1e-5, max_value=1))
 def test_wo_fromtable_h(h):
