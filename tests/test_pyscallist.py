@@ -33,6 +33,13 @@ def test_pyscallist_basic():
 
     p_list.append(WaterOil())
     assert len(p_list) == 1
+    assert isinstance(p_list[1], WaterOil)
+    with pytest.raises(IndexError):
+        # pylint: disable=W0104
+        p_list[0]
+    with pytest.raises(IndexError):
+        # pylint: disable=W0104
+        p_list[2]
     with pytest.raises(ValueError):
         p_list.append(GasOil())
     assert len(p_list) == 1
