@@ -1059,7 +1059,7 @@ filename. This means SWFN + SGFN + SOF3</p>
 <p>SCALrecommendation, container for low, base and high WaterOilGas objects</p>
 <dl class="class">
 <dt id="pyscal.scalrecommendation.SCALrecommendation">
-<em class="property">class </em><code class="sig-prename descclassname">pyscal.scalrecommendation.</code><code class="sig-name descname">SCALrecommendation</code><span class="sig-paren">(</span><em class="sig-param">low</em>, <em class="sig-param">base</em>, <em class="sig-param">high</em>, <em class="sig-param">tag=''</em>, <em class="sig-param">h=0.01</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/scalrecommendation.html#SCALrecommendation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.scalrecommendation.SCALrecommendation" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pyscal.scalrecommendation.</code><code class="sig-name descname">SCALrecommendation</code><span class="sig-paren">(</span><em class="sig-param">low</em>, <em class="sig-param">base</em>, <em class="sig-param">high</em>, <em class="sig-param">tag=None</em>, <em class="sig-param">h=0.01</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/scalrecommendation.html#SCALrecommendation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.scalrecommendation.SCALrecommendation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A SCAL recommendation consists of three OilWaterGas objects,
 tagged low, base and high.</p>
@@ -1234,7 +1234,7 @@ the normalized interval [0,1]</p>
 
 <dl class="function">
 <dt id="pyscal.utils.interpolate_wo">
-<code class="sig-prename descclassname">pyscal.utils.</code><code class="sig-name descname">interpolate_wo</code><span class="sig-paren">(</span><em class="sig-param">wo_low</em>, <em class="sig-param">wo_high</em>, <em class="sig-param">parameter</em>, <em class="sig-param">h=0.01</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils.html#interpolate_wo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.utils.interpolate_wo" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pyscal.utils.</code><code class="sig-name descname">interpolate_wo</code><span class="sig-paren">(</span><em class="sig-param">wo_low</em>, <em class="sig-param">wo_high</em>, <em class="sig-param">parameter</em>, <em class="sig-param">h=0.01</em>, <em class="sig-param">tag=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils.html#interpolate_wo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.utils.interpolate_wo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Interpolates between two water-oil curves.</p>
 <p>The saturation endpoints for the curves must be known
 by the objects. They can be estimated by estimate_sorw() etc.
@@ -1251,6 +1251,8 @@ interpolated individually.</p>
 the high case. Any number in between will return an interpolated curve</p></li>
 <li><p><strong>h</strong> (<em>float</em>) – Saturation step-size in interpolant. If defaulted, a value
 smaller than in the input curves are used, to preserve information.</p></li>
+<li><p><strong>tag</strong> (<em>string</em>) – Tag to associate to the constructed object. If None
+it will be automatically filled. Set to empty string to ensure no tag.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1260,8 +1262,30 @@ smaller than in the input curves are used, to preserve information.</p></li>
 </dd></dl>
 
 <dl class="function">
+<dt id="pyscal.utils.comment_formatter">
+<code class="sig-prename descclassname">pyscal.utils.</code><code class="sig-name descname">comment_formatter</code><span class="sig-paren">(</span><em class="sig-param">multiline</em>, <em class="sig-param">prefix='-- '</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils.html#comment_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.utils.comment_formatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepends comment characters to every line in input</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>multiline</strong> (<em>str</em>) – String that can contain newlines</p></li>
+<li><p><strong>prefix</strong> (<em>str</em>) – Comment characters to prepend every line with
+Default is the Eclipse comment syntax ‘– ‘</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>string, with newlines preserved, and where each line</dt><dd><p>starts with the given prefix. Always ends with a newline.</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="function">
 <dt id="pyscal.utils.interpolate_go">
-<code class="sig-prename descclassname">pyscal.utils.</code><code class="sig-name descname">interpolate_go</code><span class="sig-paren">(</span><em class="sig-param">go_low</em>, <em class="sig-param">go_high</em>, <em class="sig-param">parameter</em>, <em class="sig-param">h=0.01</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils.html#interpolate_go"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.utils.interpolate_go" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pyscal.utils.</code><code class="sig-name descname">interpolate_go</code><span class="sig-paren">(</span><em class="sig-param">go_low</em>, <em class="sig-param">go_high</em>, <em class="sig-param">parameter</em>, <em class="sig-param">h=0.01</em>, <em class="sig-param">tag=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils.html#interpolate_go"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.utils.interpolate_go" title="Permalink to this definition">¶</a></dt>
 <dd><p>Interpolates between two gas-oil curves.</p>
 <p>The saturation endpoints for the curves must be known
 by the objects. They can be estimated by estimate_sorg() etc.
@@ -1278,6 +1302,8 @@ interpolated individually.</p>
 the high case. Any number in between will return an interpolated curve</p></li>
 <li><p><strong>h</strong> (<em>float</em>) – Saturation step-size in interpolant. If defaulted, a value
 smaller than in the input curves are used, to preserve information.</p></li>
+<li><p><strong>tag</strong> (<em>string</em>) – Tag to associate to the constructed object. If None
+it will be automatically filled. Set to empty string to ensure no tag.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>

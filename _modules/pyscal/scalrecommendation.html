@@ -182,14 +182,14 @@
 <span class="sd">        tag (str): A string that describes the recommendation. Optional.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">low</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">high</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">low</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">high</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set up a SCAL recommendation curve set from WaterOilGas objects</span>
 
 <span class="sd">        Arguments:</span>
 <span class="sd">            low (WaterOilGas): low case</span>
 <span class="sd">            base (WaterOilGas): base case</span>
 <span class="sd">            high (WaterOilGas): high case</span>
-<span class="sd">            tag (str): Describes the recommendtion. This string will be used</span>
+<span class="sd">            tag (str): Describes the recommendation. This string will be used</span>
 <span class="sd">                as tag strings for the interpolants.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -397,46 +397,78 @@
 
         <span class="c1"># Initialize wateroil and gasoil curves to be filled with</span>
         <span class="c1"># interpolated curves:</span>
-        <span class="n">interpolant</span> <span class="o">=</span> <span class="n">WaterOilGas</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">)</span>
+
+        <span class="n">tags</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">do_wateroil</span><span class="p">:</span>
+            <span class="n">tags</span> <span class="o">=</span> <span class="n">tags</span><span class="o">.</span><span class="n">union</span><span class="p">(</span>
+                <span class="nb">set</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span>
+                    <span class="p">]</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">do_gasoil</span><span class="p">:</span>
+            <span class="n">tags</span> <span class="o">=</span> <span class="n">tags</span><span class="o">.</span><span class="n">union</span><span class="p">(</span>
+                <span class="nb">set</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">tag</span><span class="p">])</span>
+            <span class="p">)</span>
+        <span class="n">tagstring</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tags</span><span class="p">)</span>
+
+        <span class="n">interpolant</span> <span class="o">=</span> <span class="n">WaterOilGas</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">tagstring</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">do_wateroil</span><span class="p">:</span>
+            <span class="n">tag</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;SCAL recommendation interpolation to </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
+                <span class="o">+</span> <span class="n">tagstring</span>
+            <span class="p">)</span>
             <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Interpolation parameter must be in [-1,1]&quot;</span><span class="p">)</span>
                 <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
             <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">):</span>
                 <span class="n">interpolant</span><span class="o">.</span><span class="n">wateroil</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">wateroil</span>
+                <span class="n">interpolant</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">tag</span> <span class="o">=</span> <span class="n">tag</span>
             <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">):</span>
                 <span class="n">interpolant</span><span class="o">.</span><span class="n">wateroil</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">wateroil</span>
+                <span class="n">interpolant</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">tag</span> <span class="o">=</span> <span class="n">tag</span>
             <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">):</span>
                 <span class="n">interpolant</span><span class="o">.</span><span class="n">wateroil</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">wateroil</span>
+                <span class="n">interpolant</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">tag</span> <span class="o">=</span> <span class="n">tag</span>
             <span class="k">elif</span> <span class="n">parameter</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
                 <span class="n">interpolant</span><span class="o">.</span><span class="n">wateroil</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">interpolate_wo</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">wateroil</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">wateroil</span><span class="p">,</span> <span class="o">-</span><span class="n">parameter</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">wateroil</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">wateroil</span><span class="p">,</span> <span class="o">-</span><span class="n">parameter</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">tag</span>
                 <span class="p">)</span>
             <span class="k">elif</span> <span class="n">parameter</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
                 <span class="n">interpolant</span><span class="o">.</span><span class="n">wateroil</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">interpolate_wo</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">wateroil</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">wateroil</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">wateroil</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">wateroil</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">tag</span>
                 <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">interpolant</span><span class="o">.</span><span class="n">wateroil</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">if</span> <span class="n">do_gasoil</span><span class="p">:</span>
+            <span class="n">tag</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="s2">&quot;SCAL recommendation interpolation to </span><span class="si">{}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
+                <span class="o">+</span> <span class="n">tagstring</span>
+            <span class="p">)</span>
             <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">gasparameter</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Interpolation parameter must be in [-1,1]&quot;</span><span class="p">)</span>
                 <span class="k">assert</span> <span class="nb">abs</span><span class="p">(</span><span class="n">gasparameter</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
             <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">gasparameter</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">):</span>
                 <span class="n">interpolant</span><span class="o">.</span><span class="n">gasoil</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">gasoil</span>
+                <span class="n">interpolant</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">tag</span> <span class="o">=</span> <span class="n">tag</span>
             <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">gasparameter</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">):</span>
                 <span class="n">interpolant</span><span class="o">.</span><span class="n">gasoil</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">gasoil</span>
+                <span class="n">interpolant</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">tag</span> <span class="o">=</span> <span class="n">tag</span>
             <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">gasparameter</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">):</span>
                 <span class="n">interpolant</span><span class="o">.</span><span class="n">gasoil</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">gasoil</span>
+                <span class="n">interpolant</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">tag</span> <span class="o">=</span> <span class="n">tag</span>
             <span class="k">elif</span> <span class="n">gasparameter</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
                 <span class="n">interpolant</span><span class="o">.</span><span class="n">gasoil</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">interpolate_go</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">gasoil</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">gasoil</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">gasparameter</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">gasoil</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">gasoil</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">gasparameter</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">tag</span>
                 <span class="p">)</span>
             <span class="k">elif</span> <span class="n">gasparameter</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
                 <span class="n">interpolant</span><span class="o">.</span><span class="n">gasoil</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">interpolate_go</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">gasoil</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">gasoil</span><span class="p">,</span> <span class="n">gasparameter</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">gasoil</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">gasoil</span><span class="p">,</span> <span class="n">gasparameter</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">tag</span>
                 <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">interpolant</span><span class="o">.</span><span class="n">gasoil</span> <span class="o">=</span> <span class="kc">None</span>

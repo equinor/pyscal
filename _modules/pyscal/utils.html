@@ -399,7 +399,36 @@
     <span class="k">return</span> <span class="n">pc_fn</span></div>
 
 
-<div class="viewcode-block" id="interpolate_wo"><a class="viewcode-back" href="../../pyscal.html#pyscal.utils.interpolate_wo">[docs]</a><span class="k">def</span> <span class="nf">interpolate_wo</span><span class="p">(</span><span class="n">wo_low</span><span class="p">,</span> <span class="n">wo_high</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_interpolate_tags</span><span class="p">(</span><span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Preserve tag/comment. Depending on context, the</span>
+<span class="sd">    interpolation parameter may or may not make sense. In a SCALrecommendation</span>
+<span class="sd">    interpolation, the new tag should be constructed in the caller of this function.</span>
+<span class="sd">    because of the way the parameter value is handled.</span>
+
+<span class="sd">    This function is used by interpolate_wo and interpolate_go</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        low (WaterOil or GasOil): low case in interpolation</span>
+<span class="sd">        high (WaterOil or GasOil): high case</span>
+<span class="sd">        parameter (float): between 0 and 1</span>
+<span class="sd">        tag (str): If not none, this is directly returned.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        string, a &quot;computed&quot; tag if a tag is not directly supplied</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">tag</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">low</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="n">high</span><span class="o">.</span><span class="n">tag</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">low</span><span class="o">.</span><span class="n">tag</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s2">&quot;Interpolated to </span><span class="si">{}</span><span class="s2"> in </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="n">low</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
+            <span class="c1"># No tags defined.</span>
+            <span class="k">return</span> <span class="s2">&quot;Interpolated to </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;Interpolated to </span><span class="si">{}</span><span class="s2"> between </span><span class="si">{}</span><span class="s2"> and </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">parameter</span><span class="p">,</span> <span class="n">low</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">high</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">tag</span>
+
+
+<div class="viewcode-block" id="interpolate_wo"><a class="viewcode-back" href="../../pyscal.html#pyscal.utils.interpolate_wo">[docs]</a><span class="k">def</span> <span class="nf">interpolate_wo</span><span class="p">(</span><span class="n">wo_low</span><span class="p">,</span> <span class="n">wo_high</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Interpolates between two water-oil curves.</span>
 
 <span class="sd">    The saturation endpoints for the curves must be known</span>
@@ -417,6 +446,8 @@
 <span class="sd">            the high case. Any number in between will return an interpolated curve</span>
 <span class="sd">        h (float): Saturation step-size in interpolant. If defaulted, a value</span>
 <span class="sd">            smaller than in the input curves are used, to preserve information.</span>
+<span class="sd">        tag (string): Tag to associate to the constructed object. If None</span>
+<span class="sd">            it will be automatically filled. Set to empty string to ensure no tag.</span>
 <span class="sd">    Returns:</span>
 <span class="sd">        A new oil-water curve</span>
 
@@ -478,10 +509,34 @@
     <span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span>
         <span class="n">pc1</span><span class="p">(</span><span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;swn_pc_intp&quot;</span><span class="p">]),</span> <span class="n">pc2</span><span class="p">(</span><span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;swn_pc_intp&quot;</span><span class="p">])</span>
     <span class="p">)</span>
+
+    <span class="n">wo_new</span><span class="o">.</span><span class="n">tag</span> <span class="o">=</span> <span class="n">_interpolate_tags</span><span class="p">(</span><span class="n">wo_low</span><span class="p">,</span> <span class="n">wo_high</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
+
     <span class="k">return</span> <span class="n">wo_new</span></div>
 
 
-<div class="viewcode-block" id="interpolate_go"><a class="viewcode-back" href="../../pyscal.html#pyscal.utils.interpolate_go">[docs]</a><span class="k">def</span> <span class="nf">interpolate_go</span><span class="p">(</span><span class="n">go_low</span><span class="p">,</span> <span class="n">go_high</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+<div class="viewcode-block" id="comment_formatter"><a class="viewcode-back" href="../../pyscal.html#pyscal.utils.comment_formatter">[docs]</a><span class="k">def</span> <span class="nf">comment_formatter</span><span class="p">(</span><span class="n">multiline</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;-- &quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Prepends comment characters to every line in input</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        multiline (str): String that can contain newlines</span>
+<span class="sd">        prefix (str): Comment characters to prepend every line with</span>
+<span class="sd">            Default is the Eclipse comment syntax &#39;-- &#39;</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        string, with newlines preserved, and where each line</span>
+<span class="sd">            starts with the given prefix. Always ends with a newline.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">multiline</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">multiline</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+        <span class="c1"># Ensure we indicate that there is placeholder for something.</span>
+        <span class="k">return</span> <span class="s2">&quot;-- </span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">prefix</span> <span class="o">+</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">multiline</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()])</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="interpolate_go"><a class="viewcode-back" href="../../pyscal.html#pyscal.utils.interpolate_go">[docs]</a><span class="k">def</span> <span class="nf">interpolate_go</span><span class="p">(</span><span class="n">go_low</span><span class="p">,</span> <span class="n">go_high</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Interpolates between two gas-oil curves.</span>
 
 <span class="sd">    The saturation endpoints for the curves must be known</span>
@@ -499,6 +554,8 @@
 <span class="sd">            the high case. Any number in between will return an interpolated curve</span>
 <span class="sd">        h (float): Saturation step-size in interpolant. If defaulted, a value</span>
 <span class="sd">            smaller than in the input curves are used, to preserve information.</span>
+<span class="sd">        tag (string): Tag to associate to the constructed object. If None</span>
+<span class="sd">            it will be automatically filled. Set to empty string to ensure no tag.</span>
 <span class="sd">    Returns:</span>
 <span class="sd">        A new gas-oil curve</span>
 
@@ -564,6 +621,8 @@
 
     <span class="c1"># Here we should have honored krgendanchor. Check github issue.</span>
     <span class="n">go_new</span><span class="o">.</span><span class="n">set_endpoints_linearpart_krg</span><span class="p">(</span><span class="n">krgend</span><span class="o">=</span><span class="n">krgend_new</span><span class="p">,</span> <span class="n">krgmax</span><span class="o">=</span><span class="n">krgmax_new</span><span class="p">)</span>
+
+    <span class="n">go_new</span><span class="o">.</span><span class="n">tag</span> <span class="o">=</span> <span class="n">_interpolate_tags</span><span class="p">(</span><span class="n">go_low</span><span class="p">,</span> <span class="n">go_high</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">go_new</span></div>
 
@@ -650,8 +709,7 @@
     <span class="n">tableobject</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">kr1</span><span class="p">]</span> <span class="o">=</span> <span class="n">intdf</span><span class="p">[</span><span class="n">kr1</span><span class="p">]</span>
     <span class="n">tableobject</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">kr2</span><span class="p">]</span> <span class="o">=</span> <span class="n">intdf</span><span class="p">[</span><span class="n">kr2</span><span class="p">]</span>
     <span class="n">tableobject</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">pc</span><span class="p">]</span> <span class="o">=</span> <span class="n">intdf</span><span class="p">[</span><span class="n">pc</span><span class="p">]</span>
-    <span class="n">tableobject</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;ffill&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="k">return</span></div>
+    <span class="n">tableobject</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;ffill&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 </pre></div>
 
            </div>
