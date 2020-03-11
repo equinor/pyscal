@@ -25,14 +25,14 @@ class SCALrecommendation(object):
         tag (str): A string that describes the recommendation. Optional.
     """
 
-    def __init__(self, low, base, high, tag="", h=0.01):
+    def __init__(self, low, base, high, tag=None, h=0.01):
         """Set up a SCAL recommendation curve set from WaterOilGas objects
 
         Arguments:
             low (WaterOilGas): low case
             base (WaterOilGas): base case
             high (WaterOilGas): high case
-            tag (str): Describes the recommendtion. This string will be used
+            tag (str): Describes the recommendation. This string will be used
                 as tag strings for the interpolants.
         """
 
@@ -240,46 +240,78 @@ class SCALrecommendation(object):
 
         # Initialize wateroil and gasoil curves to be filled with
         # interpolated curves:
-        interpolant = WaterOilGas(h=h)
+
+        tags = set()
+        if do_wateroil:
+            tags = tags.union(
+                set(
+                    [
+                        self.base.wateroil.tag,
+                        self.low.wateroil.tag,
+                        self.high.wateroil.tag,
+                    ]
+                )
+            )
+        if do_gasoil:
+            tags = tags.union(
+                set([self.base.gasoil.tag, self.low.gasoil.tag, self.high.gasoil.tag])
+            )
+        tagstring = "\n".join(tags)
+
+        interpolant = WaterOilGas(h=h, tag=tagstring)
 
         if do_wateroil:
+            tag = (
+                "SCAL recommendation interpolation to {}\n".format(parameter)
+                + tagstring
+            )
             if abs(parameter) > 1.0:
                 logger.error("Interpolation parameter must be in [-1,1]")
                 assert abs(parameter) <= 1.0
             elif np.isclose(parameter, 0.0):
                 interpolant.wateroil = self.base.wateroil
+                interpolant.wateroil.tag = tag
             elif np.isclose(parameter, -1.0):
                 interpolant.wateroil = self.low.wateroil
+                interpolant.wateroil.tag = tag
             elif np.isclose(parameter, 1.0):
                 interpolant.wateroil = self.high.wateroil
+                interpolant.wateroil.tag = tag
             elif parameter < 0.0:
                 interpolant.wateroil = utils.interpolate_wo(
-                    self.base.wateroil, self.low.wateroil, -parameter, h=h
+                    self.base.wateroil, self.low.wateroil, -parameter, h=h, tag=tag
                 )
             elif parameter > 0.0:
                 interpolant.wateroil = utils.interpolate_wo(
-                    self.base.wateroil, self.high.wateroil, parameter, h=h
+                    self.base.wateroil, self.high.wateroil, parameter, h=h, tag=tag
                 )
         else:
             interpolant.wateroil = None
 
         if do_gasoil:
+            tag = (
+                "SCAL recommendation interpolation to {}\n".format(parameter)
+                + tagstring
+            )
             if abs(gasparameter) > 1.0:
                 logger.error("Interpolation parameter must be in [-1,1]")
                 assert abs(gasparameter) <= 1.0
             elif np.isclose(gasparameter, 0.0):
                 interpolant.gasoil = self.base.gasoil
+                interpolant.gasoil.tag = tag
             elif np.isclose(gasparameter, -1.0):
                 interpolant.gasoil = self.low.gasoil
+                interpolant.gasoil.tag = tag
             elif np.isclose(gasparameter, 1.0):
                 interpolant.gasoil = self.high.gasoil
+                interpolant.gasoil.tag = tag
             elif gasparameter < 0.0:
                 interpolant.gasoil = utils.interpolate_go(
-                    self.base.gasoil, self.low.gasoil, -1 * gasparameter, h=h
+                    self.base.gasoil, self.low.gasoil, -1 * gasparameter, h=h, tag=tag
                 )
             elif gasparameter > 0.0:
                 interpolant.gasoil = utils.interpolate_go(
-                    self.base.gasoil, self.high.gasoil, gasparameter, h=h
+                    self.base.gasoil, self.high.gasoil, gasparameter, h=h, tag=tag
                 )
         else:
             interpolant.gasoil = None

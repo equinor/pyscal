@@ -53,8 +53,8 @@ def test_load_scalrec():
         testdir + "/data/scal-pc-input-example.xlsx"
     )
     scalrec_list = PyscalFactory.create_scal_recommendation_list(scalrec_data)
+    wog_list = scalrec_list.interpolate(-0.3)
 
-    wog_list = scalrec_list.interpolate(-1)
     with pytest.raises((AssertionError, ValueError)):
         scalrec_list.interpolate(-1.1)
     assert wog_list.pyscaltype == WaterOilGas
@@ -81,6 +81,70 @@ def test_load_scalrec():
 
     with pytest.raises(ValueError):
         scalrec_list.interpolate(1, [-1, 1, 0, 0])
+
+
+def test_load_scalrec_tags():
+    """Test tag handling for a SCAL recommendation with SATNUM range"""
+    if "__file__" in globals():
+        # Easen up copying test code into interactive sessions
+        testdir = os.path.dirname(os.path.abspath(__file__))
+    else:
+        testdir = os.path.abspath(".")
+
+    scalrec_data = PyscalFactory.load_relperm_df(
+        testdir + "/data/scal-pc-input-example.xlsx"
+    )
+    scalrec_list = PyscalFactory.create_scal_recommendation_list(scalrec_data)
+
+    wog_list = scalrec_list.interpolate(-1)
+
+    swof = wog_list.SWOF()
+    assert swof.count("SCAL recommendation interpolation to -1") == 3
+    assert swof.count("SATNUM 1") == 1
+    assert swof.count("SATNUM") == 3
+
+    sof3 = wog_list.SOF3()
+    assert sof3.count("SCAL recommendation interpolation to -1") == 3
+    assert sof3.count("SATNUM 1") == 1
+    assert sof3.count("SATNUM") == 3
+
+    assert (
+        scalrec_list.interpolate(1)
+        .SWOF()
+        .count("SCAL recommendation interpolation to 1\n")
+        == 3
+    )
+    assert (
+        scalrec_list.interpolate(0)
+        .SWOF()
+        .count("SCAL recommendation interpolation to 0\n")
+        == 3
+    )
+    assert (
+        scalrec_list.interpolate(-0.444)
+        .SWOF()
+        .count("SCAL recommendation interpolation to -0.444\n")
+        == 3
+    )
+
+    # Give each row in the SCAL recommendation its own tag (low, base, high
+    # explicitly in each tag, someone will do that)
+    scalrec_data["TAG"] = [
+        "SAT1 low",
+        "SAT1 base",
+        "SAT1 high",
+        "SAT2 pess",
+        "SAT2 base",
+        "SAT2 opt",
+        "SAT3 pessimistic",
+        "SAT3 base case",
+        "SAT3 optimistic",
+    ]
+    scalrec_list2 = PyscalFactory.create_scal_recommendation_list(scalrec_data)
+    swof = scalrec_list2.interpolate(-0.5, h=0.2).SWOF()
+    assert swof.count("SCAL recommendation") == 3
+    for tag in scalrec_data["TAG"]:
+        assert swof.count(tag) == 1
 
 
 def test_dump():
@@ -278,7 +342,7 @@ def test_comments_df():
     relperm_data = PyscalFactory.load_relperm_df(dframe)
     p_list = PyscalFactory.create_pyscal_list(relperm_data, h=0.2)
     relperm_str = p_list.dump_family_1()
-    assert "thisisacomment" in relperm_str
+    assert relperm_str.count("thisisacomment") == 2
 
     # Check case insensitiveness:
     dframe = pd.DataFrame(
@@ -287,7 +351,7 @@ def test_comments_df():
     )
     relperm_data = PyscalFactory.load_relperm_df(dframe)
     p_list = PyscalFactory.create_pyscal_list(relperm_data, h=0.2)
-    relperm_str = p_list.dump_family_1()
+    assert p_list.dump_family_1().count("thisisacomment") == 2
 
     # UTF-8 stuff:
     dframe = pd.DataFrame(
@@ -296,5 +360,4 @@ def test_comments_df():
     )
     relperm_data = PyscalFactory.load_relperm_df(dframe)
     p_list = PyscalFactory.create_pyscal_list(relperm_data, h=0.2)
-    relperm_str = p_list.dump_family_1()
-    assert "æøå" in relperm_str
+    assert p_list.dump_family_1().count("æøå") == 2
