@@ -7,6 +7,11 @@ import logging
 
 from pyscal import PyscalFactory
 
+from ._version import get_versions
+
+__VERSION__ = get_versions()["version"]
+del get_versions
+
 logging.basicConfig()
 logger = logging.getLogger(__name__)
 
@@ -48,7 +53,14 @@ def get_parser():
     Returns:
         argparse.Parser
     """
-    parser = argparse.ArgumentParser(prog="pyscal", epilog=EPILOG)
+    parser = argparse.ArgumentParser(
+        prog="pyscal",
+        description=(
+            "pyscal (" + __VERSION__ + ") is a tool to create Eclipse include "
+            "files for relative permeability input from tabulated parameters."
+        ),
+        epilog=EPILOG,
+    )
     parser.add_argument(
         "parametertable",
         help=(
