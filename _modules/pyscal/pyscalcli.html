@@ -164,6 +164,11 @@
 
 <span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">PyscalFactory</span>
 
+<span class="kn">from</span> <span class="nn">._version</span> <span class="kn">import</span> <span class="n">get_versions</span>
+
+<span class="n">__VERSION__</span> <span class="o">=</span> <span class="n">get_versions</span><span class="p">()[</span><span class="s2">&quot;version&quot;</span><span class="p">]</span>
+<span class="k">del</span> <span class="n">get_versions</span>
+
 <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">()</span>
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -205,7 +210,14 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        argparse.Parser</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span><span class="n">prog</span><span class="o">=</span><span class="s2">&quot;pyscal&quot;</span><span class="p">,</span> <span class="n">epilog</span><span class="o">=</span><span class="n">EPILOG</span><span class="p">)</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
+        <span class="n">prog</span><span class="o">=</span><span class="s2">&quot;pyscal&quot;</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">&quot;pyscal (&quot;</span> <span class="o">+</span> <span class="n">__VERSION__</span> <span class="o">+</span> <span class="s2">&quot;) is a tool to create Eclipse include &quot;</span>
+            <span class="s2">&quot;files for relative permeability input from tabulated parameters.&quot;</span>
+        <span class="p">),</span>
+        <span class="n">epilog</span><span class="o">=</span><span class="n">EPILOG</span><span class="p">,</span>
+    <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;parametertable&quot;</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="p">(</span>
