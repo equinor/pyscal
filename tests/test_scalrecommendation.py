@@ -39,6 +39,7 @@ LOW_SAMPLE_LET = {
     "krgmax": 1,
     "krowend": 1,
     "krogend": 1,
+    "tag": "SATNUM X",
 }
 # Example SCAL recommendation, base case
 BASE_SAMPLE_LET = {
@@ -64,6 +65,7 @@ BASE_SAMPLE_LET = {
     "krgend": 0.97,
     "krowend": 1,
     "krogend": 1,
+    "tag": "SATNUM X",
 }
 # Example SCAL recommendation, high case
 HIGH_SAMPLE_LET = {
@@ -89,6 +91,7 @@ HIGH_SAMPLE_LET = {
     "krgend": 1,
     "krowend": 1,
     "krogend": 1,
+    "tag": "SATNUM X",
 }
 
 
@@ -129,9 +132,20 @@ def test_make_scalrecommendation():
     base = PyscalFactory.create_water_oil_gas(BASE_SAMPLE_LET)
     high = PyscalFactory.create_water_oil_gas(HIGH_SAMPLE_LET)
     rec = SCALrecommendation(low, base, high)
-    interpolant = rec.interpolate(-0.5)
+    interpolant = rec.interpolate(-0.5, h=0.2)
     check_table(interpolant.wateroil.table)
     check_table(interpolant.gasoil.table)
+
+    # Check preservation of tags.
+    swof = interpolant.SWOF()
+    assert "SCAL recommendation interpolation to -0.5" in swof
+    assert "SCAL recommendation interpolation to -0.5" in interpolant.SGOF()
+    assert "SCAL recommendation interpolation to -0.5" in interpolant.SWFN()
+    assert "SCAL recommendation interpolation to -0.5" in interpolant.SOF3()
+    assert "SCAL recommendation interpolation to -0.5" in interpolant.SGFN()
+
+    assert swof.count("SATNUM X") == 1
+    assert interpolant.SOF3().count("SATNUM X") == 1
 
 
 def test_make_scalrecommendation_wo():
