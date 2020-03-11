@@ -296,16 +296,16 @@ class WaterOil(object):
                 raise ValueError("Incoming krow not decreasing")
             if sum(nonlinearpart) >= 2:
                 pchip = PchipInterpolator(
-                    dframe[nonlinearpart][swcolname].astype(float),
-                    dframe[nonlinearpart][krowcolname].astype(float),
+                    dframe.loc[nonlinearpart, swcolname].astype(float),
+                    dframe.loc[nonlinearpart, krowcolname].astype(float),
                 )
                 self.table.loc[self.table["sw"] <= 1 - sorw, "krow"] = pchip(
                     self.table.loc[self.table["sw"] <= 1 - sorw, "sw"]
                 )
             if sum(linearpart) >= 2:
                 linearinterpolator = interp1d(
-                    dframe[linearpart][swcolname].astype(float),
-                    dframe[linearpart][krowcolname].astype(float),
+                    dframe.loc[linearpart, swcolname].astype(float),
+                    dframe.loc[linearpart, krowcolname].astype(float),
                 )
                 self.table.loc[
                     self.table["sw"] > 1 - sorw, "krow"
