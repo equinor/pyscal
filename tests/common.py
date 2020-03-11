@@ -28,13 +28,18 @@ def sat_table_str_ok(sat_table_str):
     if not sat_table_str:
         return False
     for line in sat_table_str.splitlines():
-        if not (
-            not line
-            or line.startswith("S")
-            or line.startswith("--")
-            or line.startswith("/")
-            or int(line[0]) >= 0
-        ):
+        try:
+            if not (
+                not line
+                or line.startswith("S")
+                or line.startswith("--")
+                or line.startswith("/")
+                or int(line[0]) >= 0
+            ):
+                return False
+        except ValueError as e_msg:
+            # the int(line[0]) will get here on strings.
+            print(e_msg)
             return False
     if "-- pyscal: " not in sat_table_str:
         # This should hold the version

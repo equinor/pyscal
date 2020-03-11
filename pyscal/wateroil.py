@@ -1091,7 +1091,7 @@ class WaterOil(object):
         string = ""
         if header:
             string += "SWOF\n"
-        string += "-- " + self.tag + "\n"
+        string += utils.comment_formatter(self.tag)
         string += "-- pyscal: " + str(pyscal.__version__) + "\n"
         if "pc" not in self.table.columns:
             self.table["pc"] = 0
@@ -1129,7 +1129,7 @@ class WaterOil(object):
             self.pccomment = "-- Zero capillary pressure\n"
         if header:
             string += "SWFN\n"
-        string += "-- " + self.tag + "\n"
+        string += utils.comment_formatter(self.tag)
         string += "-- pyscal: " + str(pyscal.__version__) + "\n"
         if dataincommentrow:
             string += self.swcomment

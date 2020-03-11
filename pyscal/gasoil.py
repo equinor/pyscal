@@ -719,7 +719,7 @@ class GasOil(object):
             self.pccomment = "-- Zero capillary pressure\n"
         if header:
             string += "SGOF\n"
-        string += "-- " + self.tag + "\n"
+        string += utils.comment_formatter(self.tag)
         string += "-- pyscal: " + str(pyscal.__version__) + "\n"
         if dataincommentrow:
             string += self.sgcomment
@@ -807,7 +807,7 @@ class GasOil(object):
             self.pccomment = "-- Zero capillary pressure\n"
         if header:
             string += "SLGOF\n"
-        string += "-- " + self.tag + "\n"
+        string += utils.comment_formatter(self.tag)
         string += "-- pyscal: " + str(pyscal.__version__) + "\n"
         if dataincommentrow:
             string += self.sgcomment
@@ -854,7 +854,7 @@ class GasOil(object):
             self.pccomment = "-- Zero capillary pressure\n"
         if header:
             string += "SGFN\n"
-        string += "-- " + self.tag + "\n"
+        string += utils.comment_formatter(self.tag)
         string += "-- pyscal: " + str(pyscal.__version__) + "\n"
         if dataincommentrow:
             string += self.sgcomment

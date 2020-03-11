@@ -618,7 +618,7 @@ def test_case_aliasing():
         PyscalFactory.load_relperm_df(
             pd.DataFrame(
                 columns=["SATNUM", "CASE", "Nw", "Now", "Ng", "Nog"],
-                data=[[1, "base", 3, 1, 1, 1], [1, "optIMIstiC", 3, 1, 1, 1],],
+                data=[[1, "base", 3, 1, 1, 1], [1, "optIMIstiC", 3, 1, 1, 1]],
             )
         )
     # Missing a case
@@ -626,7 +626,7 @@ def test_case_aliasing():
         PyscalFactory.load_relperm_df(
             pd.DataFrame(
                 columns=["SATNUM", "CASE", "Nw", "Now", "Ng", "Nog"],
-                data=[[1, "base", 3, 1, 1, 1],],
+                data=[[1, "base", 3, 1, 1, 1]],
             )
         )
 
