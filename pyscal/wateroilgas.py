@@ -9,9 +9,9 @@ import pandas as pd
 import pyscal
 from pyscal.constants import SWINTEGERS
 
+from pyscal import utils
 from .wateroil import WaterOil
 from .gasoil import GasOil
-
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
@@ -166,8 +166,14 @@ class WaterOilGas(object):
         string = ""
         if header:
             string += "SOF3\n"
-        string += "-- " + self.wateroil.tag + "\n"
-        string += "-- " + self.gasoil.tag + "\n"
+        wo_tag = utils.comment_formatter(self.wateroil.tag)
+        go_tag = utils.comment_formatter(self.gasoil.tag)
+        if wo_tag != go_tag:
+            string += wo_tag
+            string += go_tag
+        else:
+            # Only print once if they are equal
+            string += wo_tag
         string += "-- pyscal: " + str(pyscal.__version__) + "\n"
         if dataincommentrow:
             string += self.wateroil.swcomment

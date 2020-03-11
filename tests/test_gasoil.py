@@ -59,6 +59,18 @@ def test_gasoil_init():
     assert np.isclose(gasoil.table["sg"].max(), 0.9)
 
 
+@given(st.text())
+def test_gasoil_tag(tag):
+    """Test tagging of GasOil objects,
+    that we are not able to produce something that
+    can crash Eclipse"""
+    gasoil = GasOil(h=0.5, tag=tag)
+    gasoil.add_corey_gas()
+    gasoil.add_corey_oil()
+    assert sat_table_str_ok(gasoil.SGOF())
+    assert sat_table_str_ok(gasoil.SGFN())
+
+
 @given(
     st.floats(min_value=0, max_value=0.15),  # swl
     st.floats(min_value=0, max_value=0.3),  # sgcr

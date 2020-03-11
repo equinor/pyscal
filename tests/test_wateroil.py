@@ -12,7 +12,7 @@ import hypothesis.strategies as st
 from pyscal import WaterOil
 from pyscal.constants import SWINTEGERS
 
-from common import check_table, float_df_checker
+from common import check_table, float_df_checker, sat_table_str_ok
 
 
 def check_endpoints(wateroil, krwend, krwmax, kroend, kromax):
@@ -43,6 +43,17 @@ def check_endpoints(wateroil, krwend, krwmax, kroend, kromax):
         assert np.isclose(wateroil.table["krw"].max(), krwmax)
     else:
         assert np.isclose(wateroil.table["krw"].max(), krwend)
+
+
+@given(st.text())
+def test_wateroil_tag(tag):
+    """Test that we are unlikely to crash Eclipse
+    by having ugly tag names"""
+    wateroil = WaterOil(h=0.5, tag=tag)
+    wateroil.add_corey_oil()
+    wateroil.add_corey_water()
+    assert sat_table_str_ok(wateroil.SWOF())
+    assert sat_table_str_ok(wateroil.SWFN())
 
 
 @settings(deadline=1000)

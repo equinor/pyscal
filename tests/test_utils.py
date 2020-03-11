@@ -198,6 +198,22 @@ def test_normalize_nonlinpart_wo():
     assert np.isclose(kron(1), 0.8)
 
 
+def test_comment_formatter():
+    """Test the comment formatter
+
+    This is also tested through hypothesis.text()
+    in test_wateroil and test_gasoil, there is it tested
+    through the use of tag formatting
+    """
+    assert utils.comment_formatter(None) == "-- \n"
+    assert utils.comment_formatter("\n") == "-- \n"
+    assert utils.comment_formatter("\r\n") == "-- \n"
+    assert utils.comment_formatter("\r") == "-- \n"
+    assert utils.comment_formatter("foo") == "-- foo\n"
+    assert utils.comment_formatter("foo", prefix="gaa") == "gaafoo\n"
+    assert utils.comment_formatter("foo\nbar") == "-- foo\n-- bar\n"
+
+
 def test_tag_preservation():
     """Test that we can preserve tags/comments through interpolation"""
     wo_low = WaterOil(swl=0.1)
@@ -231,6 +247,14 @@ def test_tag_preservation():
         wo_low, wo_high, parameter=0.1, h=0.2, tag="Explicit tag"
     )
     assert interpolant4.tag == "Explicit tag"
+
+    # Tag with newline
+    interpolant6 = utils.interpolate_wo(
+        wo_low, wo_high, parameter=0.1, h=0.2, tag="Explicit tag\non two lines"
+    )
+    assert "Explicit tag" in interpolant6.tag
+    print(interpolant6.SWOF())
+    assert sat_table_str_ok(interpolant6.SWOF())
 
     # Empty tag:
     interpolant5 = utils.interpolate_wo(wo_low, wo_high, parameter=0.1, h=0.2, tag="")
