@@ -245,3 +245,26 @@ class PyscalList(object):
     def __len__(self):
         """Return the count of Pyscal objects in the list"""
         return len(self.pyscal_list)
+
+    def __getitem__(self, satnum_idx):
+        """Get a specific List member.
+
+        The indexing starts at 1, not zero, similar
+        to how SATNUMs are indexed.
+
+        Args:
+            satnum_idx (int): Index for wanted SATNUM. Starts at 1
+
+        Returns:
+            WaterOilGas, GasOil, WaterOil or SCALrecommendation, depending
+                on self.pyscaltype.
+        """
+        if satnum_idx < 1:
+            e_msg = "SATNUM must be 1 or higher"
+            logger.error(e_msg)
+            raise IndexError(e_msg)
+        if satnum_idx > self.__len__():
+            e_msg = "SATNUM index out of range, length is " + str(self.__len__())
+            logger.error(e_msg)
+            raise IndexError(e_msg)
+        return self.pyscal_list[satnum_idx - 1]
