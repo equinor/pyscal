@@ -12,7 +12,7 @@ import hypothesis.strategies as st
 
 
 from pyscal import utils, WaterOil, GasOil
-from common import check_table, float_df_checker
+from common import check_table, float_df_checker, sat_table_str_ok
 
 
 def test_diffjumppoint():
@@ -198,6 +198,56 @@ def test_normalize_nonlinpart_wo():
     assert np.isclose(kron(1), 0.8)
 
 
+def test_tag_preservation():
+    """Test that we can preserve tags/comments through interpolation"""
+    wo_low = WaterOil(swl=0.1)
+    wo_high = WaterOil(swl=0.2)
+    wo_low.add_corey_water(nw=2)
+    wo_high.add_corey_water(nw=3)
+    wo_low.add_corey_oil(now=2)
+    wo_high.add_corey_oil(now=3)
+    interpolant1 = utils.interpolate_wo(wo_low, wo_high, parameter=0.1, h=0.2)
+    assert "Interpolated to 0.1" in interpolant1.tag
+    assert sat_table_str_ok(interpolant1.SWOF())
+
+    wo_high.tag = "FOOBAR"
+    interpolant2 = utils.interpolate_wo(wo_low, wo_high, parameter=0.1, h=0.2)
+    assert "Interpolated to 0.1" in interpolant2.tag
+    assert "between" in interpolant2.tag
+    assert wo_high.tag in interpolant2.tag
+    assert sat_table_str_ok(interpolant2.SWOF())
+    # wo_low.tag was empty deliberately here.
+
+    # When wo_log and wo_high has the same tag:
+    wo_low.tag = "FOOBAR"
+    interpolant3 = utils.interpolate_wo(wo_low, wo_high, parameter=0.1, h=0.2)
+    assert "Interpolated to 0.1" in interpolant3.tag
+    assert "between" not in interpolant3.tag
+    assert wo_high.tag in interpolant3.tag
+    assert sat_table_str_ok(interpolant3.SWOF())
+
+    # Explicit tag:
+    interpolant4 = utils.interpolate_wo(
+        wo_low, wo_high, parameter=0.1, h=0.2, tag="Explicit tag"
+    )
+    assert interpolant4.tag == "Explicit tag"
+
+    # Empty tag:
+    interpolant5 = utils.interpolate_wo(wo_low, wo_high, parameter=0.1, h=0.2, tag="")
+    assert interpolant5.tag == ""
+
+    # Also sample check for GasOil (calls the same code)
+    go_low = GasOil()
+    go_high = GasOil()
+    go_low.add_corey_gas(ng=2)
+    go_high.add_corey_gas(ng=3)
+    go_low.add_corey_oil(nog=2)
+    go_high.add_corey_oil(nog=3)
+    interpolant1 = utils.interpolate_go(go_low, go_high, parameter=0.1, h=0.2)
+    assert "Interpolated to 0.1" in interpolant1.tag
+    assert sat_table_str_ok(interpolant1.SGOF())
+
+
 @settings(max_examples=40, deadline=5000)
 @given(
     st.floats(min_value=0.01, max_value=0.1),  # swl
@@ -246,6 +296,7 @@ def test_interpolate_wo(
     for tparam in np.arange(0, 1 + ip_dist, ip_dist):
         wo_ip = utils.interpolate_wo(wo_low, wo_high, tparam)
         check_table(wo_ip.table)
+        assert wo_ip.tag
         ips.append(wo_ip)
         assert 0 < wo_ip.crosspoint() < 1
 
