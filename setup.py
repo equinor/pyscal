@@ -2,7 +2,7 @@
 
 from os import path
 
-from setuptools import setup
+from setuptools import setup, find_packages
 from setuptools_scm import get_version
 from sphinx.setup_command import BuildDoc
 
@@ -40,7 +40,7 @@ setup(
     author="Håvard Berland",
     author_email="havb@equinor.com",
     license="LGPLv3",
-    packages=["pyscal"],
+    packages=find_packages("pyscal"),
     zip_safe=False,
     test_suite="tests",
     install_requires=REQUIREMENTS,
