@@ -4,6 +4,7 @@ from os import path
 
 from setuptools import setup
 from setuptools_scm import get_version
+from sphinx.setup_command import BuildDoc
 
 # Read the contents of README.md, for PyPI
 this_directory = path.abspath(path.dirname(__file__))
@@ -27,7 +28,7 @@ SETUP_REQUIREMENTS = ["pytest-runner", "setuptools >=28", "setuptools_scm"]
 setup(
     name="pyscal",
     use_scm_version={"write_to": "pyscal/version.py",},
-    cmdclass={},
+    cmdclass={"build_sphinx": BuildDoc},
     description=(
         "Generate relative permeability include files for "
         "Eclipse reservoir simulator"
@@ -41,7 +42,7 @@ setup(
     license="LGPLv3",
     packages=["pyscal"],
     zip_safe=False,
-    tests_suite="tests",
+    test_suite="tests",
     install_requires=REQUIREMENTS,
     tests_require=TEST_REQUIREMENTS,
     setup_requires=SETUP_REQUIREMENTS,
