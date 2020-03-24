@@ -14,7 +14,9 @@ from .scalrecommendation import SCALrecommendation  # noqa
 from .pyscallist import PyscalList  # noqa
 from .factory import PyscalFactory  # noqa
 
-from ._version import get_versions
+try:
+    from .version import version
+    __version__ = version
+except ImportError:
+    __version__ =  "v0.0.0"
 
-__version__ = get_versions()["version"]
-del get_versions

@@ -2,7 +2,6 @@ language: python
 
 python:
 - '2.7'
-#- '3.5'  # disabled due to travis bug
 - '3.6'
 - '3.7'
 - '3.8'
@@ -13,13 +12,14 @@ install:
 - pip install .
 
 script:
-- pytest
-- make docsrun
+- python setup.py test
+- python setup.py build_sphinx
+- touch build/sphinx/html/.nojekyll
 
 deploy:
 - provider: pages
   skip_cleanup: true
-  local_dir: "./docs/_build/html"
+  local_dir: "./build/sphinx/html"
   github_token:
     secure: "tmv4rjGV4v4iqPEziUcHfTUg5mObF4i8jX4rTyfeom2NfOObT+ytHwt4yW3xPK8O8FgXoDTNGtCj/cc7Bf/oTS4FNKGuhceTr7/bkaQYdLDlVjlWXsx3A9QeHF+29nBfBOEfirj6v9UL/eDxTZCBThoxAZ89LDO5WWeoa7E4A6C4I2ctu+UaGiqCk0j+MpIjy0IDUyLl36KZeDowIgm05Wo//IGh1AaRY9SuzKChPE/HsOEcMNyh2kP8iKITmCKFaMnPLhsm/i3D6lEN9SZN+O4APddSTGs8moyyYBLyTvmUcEI8R1igLL/0G/yjlBfu4FmVEvznV1+GQOt9MHU0WL4N1p2VKLff20TVhhto8CH3zHjLz+vDpjq444Gg2/HB/OynNtbyzfUONap6z61kMvd/uu2EfBh1OlewQA+PPAm1F5Rt7U52D1umbsZ9IGaLUp5o2eLjmdor770FE+MpFX02cGGQYM1Nx9IckJNLVoZtlX2G7wzmYsoflzkNvbdu9x+jCI71WUBBszhBj+XePxtF31DRoV8Jg+wxvZX93MYgV76c4su02cd/+02UiDWAAfVvl5e7N77vikRicqIquN9GdOSi/kwJDeJlAfpAFaY1j/LU2tcNLmVcaEFK9/XNliO+0e8wlB7d/KsNF5AFon2ukg92Ebs3KerHT2voGng="
   keep_history: true
