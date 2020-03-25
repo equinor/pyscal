@@ -9,9 +9,17 @@ import os
 import sys
 
 import pytest
+import subprocess
 
 from pyscal import pyscalcli
 from common import sat_table_str_ok
+
+
+@pytest.mark.integration
+def test_installed():
+    """Test that the endpoint is installed in PATH and
+    starts up nicely"""
+    assert subprocess.check_output(["pyscal", "-h"])
 
 
 def test_pyscal_endpoint_static(tmpdir):
