@@ -40,7 +40,7 @@ setup(
     author="Håvard Berland",
     author_email="havb@equinor.com",
     license="LGPLv3",
-    packages=find_packages("pyscal"),
+    packages=["pyscal"],
     zip_safe=False,
     test_suite="tests",
     install_requires=REQUIREMENTS,
