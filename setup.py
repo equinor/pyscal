@@ -3,7 +3,6 @@
 from os import path
 
 from setuptools import setup, find_packages
-from setuptools_scm import get_version
 from sphinx.setup_command import BuildDoc
 
 # Read the contents of README.md, for PyPI
