@@ -449,7 +449,7 @@ class PyscalFactory(object):
             pd.DataFrame. To be handed over to pyscal list factory methods.
         """
         if isinstance(inputfile, str) and os.path.exists(inputfile):
-            if inputfile.lower().endswith("csv"):
+            if inputfile.lower().endswith("csv") and sheet_name is not None:
                 logger.warning(
                     "Sheet name only relevant for XLSX files, ignoring %s", sheet_name
                 )
