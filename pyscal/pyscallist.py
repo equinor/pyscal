@@ -8,6 +8,7 @@ import os
 import logging
 
 import six
+import pandas as pd
 
 from pyscal import WaterOilGas, WaterOil, GasOil, SCALrecommendation
 
@@ -67,6 +68,104 @@ class PyscalList(object):
             )
             raise ValueError
         self.pyscal_list.append(pyscal_obj)
+
+    def df(self):
+        """Dump dataframes of generated relperm data
+
+        Column names are compatible with ecl2df.satfunc. Always uppercase
+        and capillary pressure is PCOW or PCOG (wateroil vs gasoil)
+
+        If the PyscalList contains SCALrecommendations, the CASE column
+        will contain the strings 'pess', 'base' and 'opt' (independent of
+        any alias name potentially used in an input xlsx/csv)
+
+        Returns:
+            pd.DataFrame
+        """
+        gasoil_col_renamer = {"sg": "SG", "krg": "KRG", "krog": "KROG", "pc": "PCOG"}
+        wateroil_col_renamer = {"sw": "SW", "krw": "KRW", "krow": "KROW", "pc": "PCOW"}
+        df_list = []
+        if self.pyscaltype == WaterOilGas:
+            for (satnum, wateroilgas) in enumerate(self.pyscal_list):
+                gasoil_cols = set(wateroilgas.gasoil.table.columns).intersection(
+                    set(["sg", "krg", "krog", "pc"])
+                )
+                wateroil_cols = set(wateroilgas.wateroil.table.columns).intersection(
+                    set(["sw", "krw", "krow", "pc"])
+                )
+                df_list.append(
+                    wateroilgas.gasoil.table[gasoil_cols]
+                    .assign(SATNUM=satnum + 1)
+                    .rename(gasoil_col_renamer, axis="columns")
+                )
+                df_list.append(
+                    wateroilgas.wateroil.table[wateroil_cols]
+                    .assign(SATNUM=satnum + 1)
+                    .rename(wateroil_col_renamer, axis="columns")
+                )
+        elif self.pyscaltype == SCALrecommendation:
+            for (satnum, scalrec) in enumerate(self.pyscal_list):
+                gasoil_cols = set(scalrec.base.gasoil.table.columns).intersection(
+                    set(["sg", "krg", "krog", "pc"])
+                )
+                wateroil_cols = set(scalrec.base.wateroil.table.columns).intersection(
+                    set(["sw", "krw", "krow", "pc"])
+                )
+                df_list.append(
+                    scalrec.low.gasoil.table[gasoil_cols]
+                    .assign(SATNUM=satnum + 1, CASE="pess")
+                    .rename(gasoil_col_renamer, axis="columns")
+                )
+                df_list.append(
+                    scalrec.base.gasoil.table[gasoil_cols]
+                    .assign(SATNUM=satnum + 1, CASE="base")
+                    .rename(gasoil_col_renamer, axis="columns")
+                )
+                df_list.append(
+                    scalrec.high.gasoil.table[gasoil_cols]
+                    .assign(SATNUM=satnum + 1, CASE="opt")
+                    .rename(gasoil_col_renamer, axis="columns")
+                )
+
+                df_list.append(
+                    scalrec.low.wateroil.table[wateroil_cols]
+                    .assign(SATNUM=satnum + 1, CASE="pess")
+                    .rename(wateroil_col_renamer, axis="columns")
+                )
+                df_list.append(
+                    scalrec.base.wateroil.table[wateroil_cols]
+                    .assign(SATNUM=satnum + 1, CASE="base")
+                    .rename(wateroil_col_renamer, axis="columns")
+                )
+                df_list.append(
+                    scalrec.high.wateroil.table[wateroil_cols]
+                    .assign(SATNUM=satnum + 1, CASE="opt")
+                    .rename(wateroil_col_renamer, axis="columns")
+                )
+        elif self.pyscaltype == WaterOil:
+            for (satnum, wateroil) in enumerate(self.pyscal_list):
+                wateroil_cols = set(wateroil.table.columns).intersection(
+                    set(["sw", "krw", "krow", "pc"])
+                )
+                df_list.append(
+                    wateroil.table[wateroil_cols]
+                    .assign(SATNUM=satnum + 1)
+                    .rename(wateroil_col_renamer, axis="columns")
+                )
+        elif self.pyscaltype == GasOil:
+            for (satnum, gasoil) in enumerate(self.pyscal_list):
+                gasoil_cols = set(gasoil.table.columns).intersection(
+                    set(["sg", "krg", "krog", "pc"])
+                )
+                df_list.append(
+                    gasoil.table[gasoil_cols]
+                    .assign(SATNUM=satnum + 1)
+                    .rename(gasoil_col_renamer, axis="columns")
+                )
+        dframe = pd.concat(df_list, ignore_index=True)
+        # for later: sort the columns
+        # consider mixing row order for dtype-inferral
+        return dframe
 
     def dump_family_1(self, filename=None, slgof=False):
         """Dumps family 1 Eclipse saturation tables to one

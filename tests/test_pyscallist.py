@@ -90,6 +90,79 @@ def test_load_scalrec():
         scalrec_list.interpolate(1, [-1, 1, 0, 0])
 
 
+def test_df():
+    """Test dataframe dumps"""
+    if "__file__" in globals():
+        # Easen up copying test code into interactive sessions
+        testdir = os.path.dirname(os.path.abspath(__file__))
+    else:
+        testdir = os.path.abspath(".")
+
+    scalrec_data = PyscalFactory.load_relperm_df(
+        testdir + "/data/scal-pc-input-example.xlsx"
+    )
+    scalrec_list = PyscalFactory.create_scal_recommendation_list(scalrec_data)
+    wog_list = scalrec_list.interpolate(-0.3)
+
+    # Test dataframe dumps:
+    dframe = scalrec_list.df()
+    assert "SG" in dframe
+    assert "KRG" in dframe
+    assert "KROG" in dframe
+    assert "PCOW" in dframe
+    if "PCOG" in dframe:
+        # Allow PCOG to be included later.
+        assert dframe["PCOG"].sum() == 0
+    assert "KRW" in dframe
+    assert "KROW" in dframe
+    assert "SATNUM" in dframe
+    assert dframe["SATNUM"].min() == 1
+    assert len(dframe["SATNUM"].unique()) == len(scalrec_list)
+    assert set(dframe["CASE"]) == set(["pess", "base", "opt"])
+    assert dframe["SATNUM"].max() == len(scalrec_list)
+
+    # WaterOilGasList:
+    dframe = wog_list.df()
+    assert "SG" in dframe
+    assert "KRG" in dframe
+    assert "KROG" in dframe
+    assert "PCOW" in dframe
+    assert "PCOG" in dframe  # This gets included through interpolation
+    assert "KRW" in dframe
+    assert "KROW" in dframe
+    assert "SATNUM" in dframe
+    assert dframe["SATNUM"].min() == 1
+    assert len(dframe["SATNUM"].unique()) == len(wog_list)
+    assert "CASE" not in dframe
+    assert dframe["SATNUM"].max() == len(wog_list)
+
+    # WaterOil list
+    input_dframe = pd.DataFrame(columns=["SATNUM", "Nw", "Now"], data=[[1, 2, 2]])
+    relperm_data = PyscalFactory.load_relperm_df(input_dframe)
+    p_list = PyscalFactory.create_pyscal_list(relperm_data, h=0.2)
+    dframe = p_list.df()
+    assert "SW" in dframe
+    assert "KRW" in dframe
+    assert "KROW" in dframe
+    assert "PCOW" not in dframe  # to be interpreted as zero
+    assert "SATNUM" in dframe
+    assert len(dframe.columns) == 4
+    assert not dframe.empty
+
+    # GasOil list
+    input_dframe = pd.DataFrame(columns=["SATNUM", "Ng", "Nog"], data=[[1, 2, 2]])
+    relperm_data = PyscalFactory.load_relperm_df(input_dframe)
+    p_list = PyscalFactory.create_pyscal_list(relperm_data, h=0.2)
+    dframe = p_list.df()
+    assert "SG" in dframe
+    assert "KRG" in dframe
+    assert "KROG" in dframe
+    assert "PCOG" not in dframe  # to be interpreted as zero
+    assert "SATNUM" in dframe
+    assert len(dframe.columns) == 4
+    assert not dframe.empty
+
+
 def test_load_scalrec_tags():
     """Test tag handling for a SCAL recommendation with SATNUM range"""
     if "__file__" in globals():
@@ -155,7 +228,7 @@ def test_load_scalrec_tags():
 
 
 def test_dump():
-    """Test dumping Eclipse include dataa to file"""
+    """Test dumping Eclipse include data to file"""
     if "__file__" in globals():
         # Easen up copying test code into interactive sessions
         testdir = os.path.dirname(os.path.abspath(__file__))
