@@ -82,16 +82,22 @@ class PyscalList(object):
         Returns:
             pd.DataFrame
         """
+        # Names of dataframe columns in wateroil/gasoil.table:
+        wateroil_pyscal_cols = {"sw", "krw", "krow", "pc"}
+        gasoil_pyscal_cols = {"sg", "krg", "krog", "pc"}
+
+        # Renamers applied to the returned dataframe:
         gasoil_col_renamer = {"sg": "SG", "krg": "KRG", "krog": "KROG", "pc": "PCOG"}
         wateroil_col_renamer = {"sw": "SW", "krw": "KRW", "krow": "KROW", "pc": "PCOW"}
+
         df_list = []
         if self.pyscaltype == WaterOilGas:
             for (satnum, wateroilgas) in enumerate(self.pyscal_list):
-                gasoil_cols = set(wateroilgas.gasoil.table.columns).intersection(
-                    set(["sg", "krg", "krog", "pc"])
-                )
                 wateroil_cols = set(wateroilgas.wateroil.table.columns).intersection(
-                    set(["sw", "krw", "krow", "pc"])
+                    wateroil_pyscal_cols
+                )
+                gasoil_cols = set(wateroilgas.gasoil.table.columns).intersection(
+                    gasoil_pyscal_cols
                 )
                 df_list.append(
                     wateroilgas.gasoil.table[gasoil_cols]
@@ -106,10 +112,10 @@ class PyscalList(object):
         elif self.pyscaltype == SCALrecommendation:
             for (satnum, scalrec) in enumerate(self.pyscal_list):
                 gasoil_cols = set(scalrec.base.gasoil.table.columns).intersection(
-                    set(["sg", "krg", "krog", "pc"])
+                    gasoil_pyscal_cols
                 )
                 wateroil_cols = set(scalrec.base.wateroil.table.columns).intersection(
-                    set(["sw", "krw", "krow", "pc"])
+                    wateroil_pyscal_cols
                 )
                 df_list.append(
                     scalrec.low.gasoil.table[gasoil_cols]
@@ -145,7 +151,7 @@ class PyscalList(object):
         elif self.pyscaltype == WaterOil:
             for (satnum, wateroil) in enumerate(self.pyscal_list):
                 wateroil_cols = set(wateroil.table.columns).intersection(
-                    set(["sw", "krw", "krow", "pc"])
+                    wateroil_pyscal_cols
                 )
                 df_list.append(
                     wateroil.table[wateroil_cols]
@@ -154,9 +160,7 @@ class PyscalList(object):
                 )
         elif self.pyscaltype == GasOil:
             for (satnum, gasoil) in enumerate(self.pyscal_list):
-                gasoil_cols = set(gasoil.table.columns).intersection(
-                    set(["sg", "krg", "krog", "pc"])
-                )
+                gasoil_cols = set(gasoil.table.columns).intersection(gasoil_pyscal_cols)
                 df_list.append(
                     gasoil.table[gasoil_cols]
                     .assign(SATNUM=satnum + 1)
