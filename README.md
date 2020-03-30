@@ -52,12 +52,13 @@ which will produce the output
 ```console
 SWOF
 --
--- Sw Krw Krow Pc
+-- pyscal: 0.4.1
 -- swirr=0 swl=0.1 swcr=0.1 sorw=0.05
 -- Corey krw, nw=2, krwend=1, krwmax=1
 -- Corey krow, now=3, kroend=1, kromax=1
 -- krw = krow @ sw=0.46670
 -- Zero capillary pressure
+-- SW     KRW       KROW      PC
 0.1000000 0.0000000 1.0000000 0
 0.2000000 0.0138408 0.6869530 0
 0.3000000 0.0553633 0.4471809 0
