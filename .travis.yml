@@ -13,6 +13,7 @@ install:
 
 script:
 - python setup.py test
+- sphinx-apidoc -H "API for pyscal" -o docs pyscal
 - python setup.py build_sphinx
 - touch build/sphinx/html/.nojekyll
 
