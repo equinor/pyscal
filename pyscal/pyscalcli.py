@@ -91,8 +91,8 @@ def get_parser():
         help=(
             "Interpolation parameters for water-oil, if the parametertable contains "
             "low, base and high for each SATNUM. "
-            "Either one number used for all SATMUM, or a sequence of "
-            "length equal to the max SATNUM. Numbers between -1 and 1"
+            "Either one number used for all SATNUM, or a sequence of "
+            "length equal to the max SATNUM. Numbers between -1 and 1. "
         ),
     )
     parser.add_argument(
@@ -103,8 +103,10 @@ def get_parser():
         help=(
             "Interpolation parameters for gas-oil, if the parametertable contains "
             "low, base and high for each SATNUM. "
-            "Either one number used for all SATMUM, or a sequence "
-            "of length equal to the max SATNUM. Numbers between -1 and 1"
+            "Either one number used for all SATNUM, or a sequence "
+            "of length equal to the max SATNUM. Numbers between -1 and 1. "
+            "If not provided, the water-oil interpolation parameter will be used "
+            "as default."
         ),
     )
     parser.add_argument(
