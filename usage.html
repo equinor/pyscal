@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Usage &mdash; pyscal 0.4.2.dev1+gfc4c5c0 documentation</title>
+  <title>Usage &mdash; pyscal 0.4.2.dev3+g7e55727 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.4.2.dev1+gfc4c5c0
+                0.4.2.dev3+g7e55727
               </div>
             
           
@@ -176,7 +176,7 @@
 line tool is a short wrapper utilizing the underlying pyscal functionality.</p>
 <div class="section" id="the-command-line-tool">
 <h2>The command line tool<a class="headerlink" href="#the-command-line-tool" title="Permalink to this headline">¶</a></h2>
-<p><p>pyscal (0.4.2.dev1+gfc4c5c0) is a tool to create Eclipse include files for relative permeability input from tabulated parameters.</p>
+<p><p>pyscal (0.4.2.dev3+g7e55727) is a tool to create Eclipse include files for relative permeability input from tabulated parameters.</p>
 </p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">pyscal</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">o</span> <span class="n">OUTPUT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">delta_s</span> <span class="n">DELTA_S</span><span class="p">]</span>
               <span class="p">[</span><span class="o">--</span><span class="n">int_param_wo</span> <span class="n">INT_PARAM_WO</span> <span class="p">[</span><span class="n">INT_PARAM_WO</span> <span class="o">...</span><span class="p">]]</span>
@@ -208,10 +208,10 @@ line tool is a short wrapper utilizing the underlying pyscal functionality.</p>
 <dd><p>Saturation table step-length for sw/sg. Default 0.01</p>
 </dd>
 <dt><kbd>--int_param_wo</kbd></dt>
-<dd><p>Interpolation parameters for water-oil, if the parametertable contains low, base and high for each SATNUM. Either one number used for all SATMUM, or a sequence of length equal to the max SATNUM. Numbers between -1 and 1</p>
+<dd><p>Interpolation parameters for water-oil, if the parametertable contains low, base and high for each SATNUM. Either one number used for all SATNUM, or a sequence of length equal to the max SATNUM. Numbers between -1 and 1.</p>
 </dd>
 <dt><kbd>--int_param_go</kbd></dt>
-<dd><p>Interpolation parameters for gas-oil, if the parametertable contains low, base and high for each SATNUM. Either one number used for all SATMUM, or a sequence of length equal to the max SATNUM. Numbers between -1 and 1</p>
+<dd><p>Interpolation parameters for gas-oil, if the parametertable contains low, base and high for each SATNUM. Either one number used for all SATNUM, or a sequence of length equal to the max SATNUM. Numbers between -1 and 1. If not provided, the water-oil interpolation parameter will be used as default.</p>
 </dd>
 <dt><kbd>--sheet_name</kbd></dt>
 <dd><p>Sheet name if reading XLSX file. Defaults to first sheet</p>

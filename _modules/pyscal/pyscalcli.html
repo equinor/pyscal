@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal.pyscalcli &mdash; pyscal 0.4.2.dev1+gfc4c5c0 documentation</title>
+  <title>pyscal.pyscalcli &mdash; pyscal 0.4.2.dev3+g7e55727 documentation</title>
   
 
   
@@ -62,7 +62,7 @@
             
             
               <div class="version">
-                0.4.2.dev1+gfc4c5c0
+                0.4.2.dev3+g7e55727
               </div>
             
           
@@ -248,8 +248,8 @@
         <span class="n">help</span><span class="o">=</span><span class="p">(</span>
             <span class="s2">&quot;Interpolation parameters for water-oil, if the parametertable contains &quot;</span>
             <span class="s2">&quot;low, base and high for each SATNUM. &quot;</span>
-            <span class="s2">&quot;Either one number used for all SATMUM, or a sequence of &quot;</span>
-            <span class="s2">&quot;length equal to the max SATNUM. Numbers between -1 and 1&quot;</span>
+            <span class="s2">&quot;Either one number used for all SATNUM, or a sequence of &quot;</span>
+            <span class="s2">&quot;length equal to the max SATNUM. Numbers between -1 and 1. &quot;</span>
         <span class="p">),</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
@@ -260,8 +260,10 @@
         <span class="n">help</span><span class="o">=</span><span class="p">(</span>
             <span class="s2">&quot;Interpolation parameters for gas-oil, if the parametertable contains &quot;</span>
             <span class="s2">&quot;low, base and high for each SATNUM. &quot;</span>
-            <span class="s2">&quot;Either one number used for all SATMUM, or a sequence &quot;</span>
-            <span class="s2">&quot;of length equal to the max SATNUM. Numbers between -1 and 1&quot;</span>
+            <span class="s2">&quot;Either one number used for all SATNUM, or a sequence &quot;</span>
+            <span class="s2">&quot;of length equal to the max SATNUM. Numbers between -1 and 1. &quot;</span>
+            <span class="s2">&quot;If not provided, the water-oil interpolation parameter will be used &quot;</span>
+            <span class="s2">&quot;as default.&quot;</span>
         <span class="p">),</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
