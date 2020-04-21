@@ -78,8 +78,12 @@ def check_table(dframe):
         assert series_decreasing(dframe["pc"])
     if "krog" in dframe:
         assert series_decreasing(dframe["krog"])
+        assert (dframe["krog"] >= 0).all()
+        assert (dframe["krog"] <= 1.0).all()
     if "krg" in dframe:
         assert series_increasing(dframe["krg"])
+        assert (dframe["krg"] >= 0).all()
+        assert (dframe["krg"] <= 1.0).all()
 
 
 def float_df_checker(dframe, idxcol, value, compcol, answer):

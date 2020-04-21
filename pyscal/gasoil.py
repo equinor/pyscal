@@ -352,7 +352,9 @@ class GasOil(object):
                 krgmax = 1
             tmp = pd.DataFrame(self.table[["sg"]])
             tmp["sgendnorm"] = (tmp["sg"] - (1 - (self.sorg + self.swl))) / (self.sorg)
-            tmp["krg"] = tmp["sgendnorm"] * krgmax + (1 - tmp["sgendnorm"]) * krgend
+            tmp["krg"] = (
+                tmp["sgendnorm"] * krgmax + (1 - tmp["sgendnorm"]) * krgend
+            ).clip(lower=0.0, upper=1.0)
             self.table.loc[
                 self.table.sg >= (1 - (self.sorg + self.swl + epsilon)), "krg"
             ] = tmp.loc[tmp.sg >= (1 - (self.sorg + self.swl + epsilon)), "krg"]
