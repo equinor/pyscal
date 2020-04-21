@@ -118,6 +118,24 @@ def test_go_fromtable_problems():
     gasoil = GasOil(h=0.1, swl=0.1)
     gasoil.add_fromtable(df2, krgcolname="KRG", krogcolname="KROG")
 
+    df3 = pd.DataFrame(
+        columns=["Sg", "KRG", "KROG", "PCOG"], data=[[0, -0.01, 1, 0], [1, 1, 0, 0]]
+    )
+    gasoil = GasOil(h=0.1)
+    with pytest.raises(ValueError):
+        # Should say krg is negative
+        gasoil.add_fromtable(df3, krgcolname="KRG")
+
+    df4 = pd.DataFrame(
+        columns=["Sg", "KRG", "KROG", "PCOG"],
+        data=[[0, 0, 1, 0], [1, 1.0000000001, 0, 0]],
+    )
+    gasoil = GasOil(h=0.1)
+    with pytest.raises(ValueError):
+        # Should say krg is above 1.0
+        print(df4)
+        gasoil.add_fromtable(df4, krgcolname="KRG")
+
 
 def test_wo_singlecolumns():
     """Test that we can load single columns from individual dataframes"""
@@ -274,6 +292,23 @@ def test_wo_fromtable_problems():
     wateroil.add_fromtable(df1)
     check_table(wateroil.table)
     # For low enough h, this will however NOT matter.
+
+    df2 = pd.DataFrame(
+        columns=["Sw", "KRW", "KROW", "PCOW"], data=[[0, -0.01, 1, 0], [1, 1, 0, 0]]
+    )
+    wateroil = WaterOil(h=0.1)
+    with pytest.raises(ValueError):
+        # Should say krw is negative
+        wateroil.add_fromtable(df2, krwcolname="KRW")
+
+    df3 = pd.DataFrame(
+        columns=["Sw", "KRW", "KROW", "PCOW"],
+        data=[[0, 0, 1, 0], [1, 1.000000001, 0, 0]],
+    )
+    wateroil = WaterOil(h=0.1)
+    with pytest.raises(ValueError):
+        # Should say krw is above 1.0
+        wateroil.add_fromtable(df3, krwcolname="KRW")
 
 
 def test_fromtable_types():

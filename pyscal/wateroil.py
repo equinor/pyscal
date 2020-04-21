@@ -241,6 +241,10 @@ class WaterOil(object):
                 )
                 logger.info("Estimated sorw in tabular data to %f", sorw)
             assert -epsilon <= sorw <= 1 + epsilon
+            if dframe[krwcolname].max() > 1.0:
+                raise ValueError("krw is above 1 in incoming table")
+            if dframe[krwcolname].min() < 0.0:
+                raise ValueError("krw is below 0 in incoming table")
             linearpart = dframe[swcolname] >= 1 - sorw
             nonlinearpart = dframe[swcolname] <= 1 - sorw  # (overlapping at sorw)
             if sum(linearpart) < 2:
@@ -255,6 +259,10 @@ class WaterOil(object):
             # Verify that incoming data is increasing (or level):
             if not (dframe[krwcolname].diff().dropna() > -epsilon).all():
                 raise ValueError("Incoming krw not increasing")
+            if dframe[krwcolname].max() > 1.0:
+                raise ValueError("krw is above 1 in incoming table")
+            if dframe[krwcolname].min() < 0.0:
+                raise ValueError("krw is below 0 in incoming table")
             if sum(nonlinearpart) >= 2:
                 pchip = PchipInterpolator(
                     dframe[nonlinearpart][swcolname].astype(float),
@@ -271,6 +279,7 @@ class WaterOil(object):
                 self.table.loc[self.table["sw"] > 1 - sorw, "krw"] = linearinterpolator(
                     self.table.loc[self.table["sw"] > 1 - sorw, "sw"]
                 )
+            self.table["krw"].clip(lower=0.0, upper=1.0, inplace=True)
             self.sorw = sorw
             self.krwcomment = "-- krw from tabular input" + krwcomment + "\n"
 
@@ -294,6 +303,10 @@ class WaterOil(object):
                 raise ValueError("Incompatible swl")
             if not (dframe[krowcolname].diff().dropna() < epsilon).all():
                 raise ValueError("Incoming krow not decreasing")
+            if dframe[krowcolname].max() > 1.0:
+                raise ValueError("krow is above 1 in incoming table")
+            if dframe[krowcolname].min() < 0.0:
+                raise ValueError("krow is below 0 in incoming table")
             if sum(nonlinearpart) >= 2:
                 pchip = PchipInterpolator(
                     dframe.loc[nonlinearpart, swcolname].astype(float),
@@ -312,6 +325,7 @@ class WaterOil(object):
                 ] = linearinterpolator(
                     self.table.loc[self.table["sw"] > 1 - sorw, "sw"]
                 )
+            self.table["krow"].clip(lower=0.0, upper=1.0, inplace=True)
             self.sorw = sorw
             self.krowcomment = "-- krow from tabular input" + krowcomment + "\n"
         if pccolname in dframe:

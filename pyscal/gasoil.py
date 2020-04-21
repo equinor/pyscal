@@ -274,6 +274,10 @@ class GasOil(object):
         if krgcolname in dframe:
             if not (dframe[krgcolname].diff().dropna() > -epsilon).all():
                 raise ValueError("Incoming krg not increasing")
+            if dframe[krgcolname].max() > 1.0:
+                raise ValueError("krg is above 1 in incoming table")
+            if dframe[krgcolname].min() < 0.0:
+                raise ValueError("krg is below 0 in incoming table")
             pchip = PchipInterpolator(
                 dframe[sgcolname].astype(float), dframe[krgcolname].astype(float)
             )
@@ -281,16 +285,22 @@ class GasOil(object):
             self.table["krg"] = pchip(self.table.sg, extrapolate=False)
             self.table["krg"].fillna(method="ffill", inplace=True)
             self.table["krg"].fillna(method="bfill", inplace=True)
+            self.table["krg"].clip(lower=0.0, upper=0.0, inplace=True)
             self.krgcomment = "-- krg from tabular input" + krgcomment + "\n"
         if krogcolname in dframe:
             if not (dframe[krogcolname].diff().dropna() < epsilon).all():
                 raise ValueError("Incoming krogcolname not decreasing")
+            if dframe[krogcolname].max() > 1.0:
+                raise ValueError("krog is above 1 in incoming table")
+            if dframe[krogcolname].min() < 0.0:
+                raise ValueError("krog is below 0 in incoming table")
             pchip = PchipInterpolator(
                 dframe[sgcolname].astype(float), dframe[krogcolname].astype(float)
             )
             self.table["krog"] = pchip(self.table.sg, extrapolate=False)
             self.table["krog"].fillna(method="ffill", inplace=True)
             self.table["krog"].fillna(method="bfill", inplace=True)
+            self.table["krog"].clip(lower=0.0, upper=0.0, inplace=True)
             self.krogcomment = "-- krog from tabular input" + krogcomment + "\n"
         if pccolname in dframe:
             # Incoming dataframe must cover the range:
