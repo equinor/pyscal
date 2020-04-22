@@ -290,7 +290,7 @@ class SCALrecommendation(object):
 
         if do_gasoil:
             tag = (
-                "SCAL recommendation interpolation to {}\n".format(parameter)
+                "SCAL recommendation interpolation to {}\n".format(gasparameter)
                 + tagstring
             )
             if abs(gasparameter) > 1.0:

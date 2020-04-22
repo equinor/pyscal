@@ -147,6 +147,11 @@ def test_make_scalrecommendation():
     assert swof.count("SATNUM X") == 1
     assert interpolant.SOF3().count("SATNUM X") == 1
 
+    # Check different comment when different interpolation parameter:
+    interpolant = rec.interpolate(-0.777, 0.888, h=0.2)
+    assert "SCAL recommendation interpolation to -0.777" in interpolant.SWOF()
+    assert "SCAL recommendation interpolation to 0.888" in interpolant.SGOF()
+
 
 def test_make_scalrecommendation_wo():
     """Test that we can make scal recommendation objects
