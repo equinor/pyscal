@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal.utils &mdash; pyscal 0.4.2.dev8+g8a4954f documentation</title>
+  <title>pyscal.utils &mdash; pyscal 0.1.dev1+g45681ad documentation</title>
   
 
   
@@ -62,7 +62,7 @@
             
             
               <div class="version">
-                0.4.2.dev8+g8a4954f
+                0.1.dev1+g45681ad
               </div>
             
           
@@ -278,9 +278,12 @@
     <span class="c1"># The internal dataframe might contain normalized</span>
     <span class="c1"># saturation values, but we do not want to assume they</span>
     <span class="c1"># are there or even correct, therefore we effectively</span>
-    <span class="c1"># recalculate them (here using lambda functions)</span>
-    <span class="n">sw_fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">swn</span><span class="p">:</span> <span class="n">curve</span><span class="o">.</span><span class="n">swcr</span> <span class="o">+</span> <span class="n">swn</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">curve</span><span class="o">.</span><span class="n">swcr</span> <span class="o">-</span> <span class="n">curve</span><span class="o">.</span><span class="n">sorw</span><span class="p">)</span>
-    <span class="n">krw_fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">swn</span><span class="p">:</span> <span class="n">krw_interp</span><span class="p">(</span><span class="n">sw_fn</span><span class="p">(</span><span class="n">swn</span><span class="p">))</span>
+    <span class="c1"># recalculate them</span>
+    <span class="k">def</span> <span class="nf">sw_fn</span><span class="p">(</span><span class="n">swn</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">curve</span><span class="o">.</span><span class="n">swcr</span> <span class="o">+</span> <span class="n">swn</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">curve</span><span class="o">.</span><span class="n">swcr</span> <span class="o">-</span> <span class="n">curve</span><span class="o">.</span><span class="n">sorw</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">krw_fn</span><span class="p">(</span><span class="n">swn</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">krw_interp</span><span class="p">(</span><span class="n">sw_fn</span><span class="p">(</span><span class="n">swn</span><span class="p">))</span>
 
     <span class="n">kro_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span>
         <span class="mf">1.0</span> <span class="o">-</span> <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">],</span>
@@ -289,8 +292,12 @@
         <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krow&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()),</span>
     <span class="p">)</span>
-    <span class="n">so_fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">son</span><span class="p">:</span> <span class="n">curve</span><span class="o">.</span><span class="n">sorw</span> <span class="o">+</span> <span class="n">son</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">curve</span><span class="o">.</span><span class="n">sorw</span> <span class="o">-</span> <span class="n">curve</span><span class="o">.</span><span class="n">swcr</span><span class="p">)</span>
-    <span class="n">kro_fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">son</span><span class="p">:</span> <span class="n">kro_interp</span><span class="p">(</span><span class="n">so_fn</span><span class="p">(</span><span class="n">son</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">so_fn</span><span class="p">(</span><span class="n">son</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">curve</span><span class="o">.</span><span class="n">sorw</span> <span class="o">+</span> <span class="n">son</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">curve</span><span class="o">.</span><span class="n">sorw</span> <span class="o">-</span> <span class="n">curve</span><span class="o">.</span><span class="n">swcr</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">kro_fn</span><span class="p">(</span><span class="n">son</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">kro_interp</span><span class="p">(</span><span class="n">so_fn</span><span class="p">(</span><span class="n">son</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="p">(</span><span class="n">krw_fn</span><span class="p">,</span> <span class="n">kro_fn</span><span class="p">)</span></div>
 
@@ -317,7 +324,7 @@
 <span class="sd">        curve (GasOil): incoming gasoil curve set (krg and krog)</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        tuple of lambda functions. The first will evaluate krg on</span>
+<span class="sd">        tuple of functions. The first will evaluate krg on</span>
 <span class="sd">            the normalized Sg interval [0,1], the second will</span>
 <span class="sd">            evaluate krog on the normalized So interval [0,1].</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -332,9 +339,12 @@
     <span class="c1"># The internal dataframe might contain normalized</span>
     <span class="c1"># saturation values, but we do not want to assume they</span>
     <span class="c1"># are there or even correct, therefore we effectively</span>
-    <span class="c1"># recalculate them (here using lambda functions)</span>
-    <span class="n">sg_fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">sgn</span><span class="p">:</span> <span class="n">curve</span><span class="o">.</span><span class="n">sgcr</span> <span class="o">+</span> <span class="n">sgn</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">curve</span><span class="o">.</span><span class="n">swl</span> <span class="o">-</span> <span class="n">curve</span><span class="o">.</span><span class="n">sgcr</span> <span class="o">-</span> <span class="n">curve</span><span class="o">.</span><span class="n">sorg</span><span class="p">)</span>
-    <span class="n">krg_fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">sgn</span><span class="p">:</span> <span class="n">krg_interp</span><span class="p">(</span><span class="n">sg_fn</span><span class="p">(</span><span class="n">sgn</span><span class="p">))</span>
+    <span class="c1"># recalculate them</span>
+    <span class="k">def</span> <span class="nf">sg_fn</span><span class="p">(</span><span class="n">sgn</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">curve</span><span class="o">.</span><span class="n">sgcr</span> <span class="o">+</span> <span class="n">sgn</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">curve</span><span class="o">.</span><span class="n">swl</span> <span class="o">-</span> <span class="n">curve</span><span class="o">.</span><span class="n">sgcr</span> <span class="o">-</span> <span class="n">curve</span><span class="o">.</span><span class="n">sorg</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">krg_fn</span><span class="p">(</span><span class="n">sgn</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">krg_interp</span><span class="p">(</span><span class="n">sg_fn</span><span class="p">(</span><span class="n">sgn</span><span class="p">))</span>
 
     <span class="n">kro_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span>
         <span class="mf">1.0</span> <span class="o">-</span> <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sg&quot;</span><span class="p">],</span>
@@ -348,7 +358,9 @@
         <span class="o">+</span> <span class="n">curve</span><span class="o">.</span><span class="n">sorg</span>
         <span class="o">+</span> <span class="n">son</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">curve</span><span class="o">.</span><span class="n">swl</span> <span class="o">-</span> <span class="n">curve</span><span class="o">.</span><span class="n">sorg</span> <span class="o">-</span> <span class="n">curve</span><span class="o">.</span><span class="n">sgcr</span><span class="p">)</span>
     <span class="p">)</span>
-    <span class="n">kro_fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">son</span><span class="p">:</span> <span class="n">kro_interp</span><span class="p">(</span><span class="n">so_fn</span><span class="p">(</span><span class="n">son</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">kro_fn</span><span class="p">(</span><span class="n">son</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">kro_interp</span><span class="p">(</span><span class="n">so_fn</span><span class="p">(</span><span class="n">son</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="p">(</span><span class="n">krg_fn</span><span class="p">,</span> <span class="n">kro_fn</span><span class="p">)</span></div>
 
@@ -393,9 +405,14 @@
         <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="n">max_pc</span><span class="p">,</span> <span class="n">min_pc</span><span class="p">),</span>  <span class="c1"># This gives constant extrapolation outside [0, 1]</span>
     <span class="p">)</span>
+
     <span class="c1"># Map from normalized value to real saturation domain:</span>
-    <span class="n">sx_fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">sxn</span><span class="p">:</span> <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">sat_col</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">+</span> <span class="n">sxn</span> <span class="o">*</span> <span class="p">(</span><span class="n">max_sx</span> <span class="o">-</span> <span class="n">min_sx</span><span class="p">)</span>
-    <span class="n">pc_fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">sxn</span><span class="p">:</span> <span class="n">pc_interp</span><span class="p">(</span><span class="n">sx_fn</span><span class="p">(</span><span class="n">sxn</span><span class="p">))</span>
+    <span class="k">def</span> <span class="nf">sx_fn</span><span class="p">(</span><span class="n">sxn</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">sat_col</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">+</span> <span class="n">sxn</span> <span class="o">*</span> <span class="p">(</span><span class="n">max_sx</span> <span class="o">-</span> <span class="n">min_sx</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">pc_fn</span><span class="p">(</span><span class="n">sxn</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">pc_interp</span><span class="p">(</span><span class="n">sx_fn</span><span class="p">(</span><span class="n">sxn</span><span class="p">))</span>
+
     <span class="k">return</span> <span class="n">pc_fn</span></div>
 
 
@@ -466,9 +483,10 @@
     <span class="n">pc1</span> <span class="o">=</span> <span class="n">normalize_pc</span><span class="p">(</span><span class="n">wo_low</span><span class="p">)</span>
     <span class="n">pc2</span> <span class="o">=</span> <span class="n">normalize_pc</span><span class="p">(</span><span class="n">wo_high</span><span class="p">)</span>
 
-    <span class="c1"># Construct a lambda function that can be applied to both relperm values</span>
+    <span class="c1"># Construct a function that can be applied to both relperm values</span>
     <span class="c1"># and endpoints</span>
-    <span class="n">weighted_value</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">a</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">parameter</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">parameter</span>
+    <span class="k">def</span> <span class="nf">weighted_value</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">parameter</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">parameter</span>
 
     <span class="c1"># Interpolate saturation endpoints</span>
     <span class="n">swl_new</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span><span class="n">wo_low</span><span class="o">.</span><span class="n">swl</span><span class="p">,</span> <span class="n">wo_high</span><span class="o">.</span><span class="n">swl</span><span class="p">)</span>
@@ -576,7 +594,8 @@
 
     <span class="c1"># Construct a lambda function that can be applied to both relperm values</span>
     <span class="c1"># and endpoints</span>
-    <span class="n">weighted_value</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">a</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">parameter</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">parameter</span>
+    <span class="k">def</span> <span class="nf">weighted_value</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">a</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">parameter</span><span class="p">)</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">parameter</span>
 
     <span class="c1"># Interpolate saturation endpoints</span>
     <span class="n">swl_new</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span><span class="n">go_low</span><span class="o">.</span><span class="n">swl</span><span class="p">,</span> <span class="n">go_high</span><span class="o">.</span><span class="n">swl</span><span class="p">)</span>
@@ -722,7 +741,7 @@
 
   <div role="contentinfo">
     <p>
-        &copy; Copyright Equinor
+        &copy; Copyright Equinor 2019-2020
 
     </p>
   </div>
@@ -758,6 +777,9 @@
     /* Sidebar */
     .wy-nav-side {
       background: #474747;
+    }
+    .wy-side-nav-search > div.version {
+      color: white;
     }
   </style>
 
