@@ -42,6 +42,9 @@ def test_wo_fromtable_simple():
     assert "krw" in wateroil.table.columns
     assert "krow" in wateroil.table.columns
     assert "pc" in wateroil.table.columns
+    assert sum(wateroil.table["krw"]) > 0
+    assert sum(wateroil.table["krow"]) > 0
+    assert sum(wateroil.table["pc"]) == 11  #  Linearly decreasing PC
     check_table(wateroil.table)
 
 
@@ -54,6 +57,9 @@ def test_go_fromtable_simple():
     gasoil.add_fromtable(
         df1, sgcolname="SG", krgcolname="KRG", krogcolname="KROG", pccolname="PC"
     )
+    assert sum(gasoil.table["krg"]) > 0
+    assert sum(gasoil.table["krog"]) > 0
+    assert sum(gasoil.table["pc"]) == 11  # Linearly decreasing PCOG
     check_table(gasoil.table)
 
 
