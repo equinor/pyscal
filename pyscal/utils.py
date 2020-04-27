@@ -121,9 +121,12 @@ def normalize_nonlinpart_wo(curve):
     # The internal dataframe might contain normalized
     # saturation values, but we do not want to assume they
     # are there or even correct, therefore we effectively
-    # recalculate them (here using lambda functions)
-    sw_fn = lambda swn: curve.swcr + swn * (1.0 - curve.swcr - curve.sorw)
-    krw_fn = lambda swn: krw_interp(sw_fn(swn))
+    # recalculate them
+    def sw_fn(swn):
+        return curve.swcr + swn * (1.0 - curve.swcr - curve.sorw)
+
+    def krw_fn(swn):
+        return krw_interp(sw_fn(swn))
 
     kro_interp = interp1d(
         1.0 - curve.table["sw"],
@@ -132,8 +135,12 @@ def normalize_nonlinpart_wo(curve):
         bounds_error=False,
         fill_value=(0.0, curve.table["krow"].max()),
     )
-    so_fn = lambda son: curve.sorw + son * (1.0 - curve.sorw - curve.swcr)
-    kro_fn = lambda son: kro_interp(so_fn(son))
+
+    def so_fn(son):
+        return curve.sorw + son * (1.0 - curve.sorw - curve.swcr)
+
+    def kro_fn(son):
+        return kro_interp(so_fn(son))
 
     return (krw_fn, kro_fn)
 
@@ -160,7 +167,7 @@ def normalize_nonlinpart_go(curve):
         curve (GasOil): incoming gasoil curve set (krg and krog)
 
     Returns:
-        tuple of lambda functions. The first will evaluate krg on
+        tuple of functions. The first will evaluate krg on
             the normalized Sg interval [0,1], the second will
             evaluate krog on the normalized So interval [0,1].
     """
@@ -175,9 +182,12 @@ def normalize_nonlinpart_go(curve):
     # The internal dataframe might contain normalized
     # saturation values, but we do not want to assume they
     # are there or even correct, therefore we effectively
-    # recalculate them (here using lambda functions)
-    sg_fn = lambda sgn: curve.sgcr + sgn * (1.0 - curve.swl - curve.sgcr - curve.sorg)
-    krg_fn = lambda sgn: krg_interp(sg_fn(sgn))
+    # recalculate them
+    def sg_fn(sgn):
+        return curve.sgcr + sgn * (1.0 - curve.swl - curve.sgcr - curve.sorg)
+
+    def krg_fn(sgn):
+        return krg_interp(sg_fn(sgn))
 
     kro_interp = interp1d(
         1.0 - curve.table["sg"],
@@ -191,7 +201,9 @@ def normalize_nonlinpart_go(curve):
         + curve.sorg
         + son * (1.0 - curve.swl - curve.sorg - curve.sgcr)
     )
-    kro_fn = lambda son: kro_interp(so_fn(son))
+
+    def kro_fn(son):
+        return kro_interp(so_fn(son))
 
     return (krg_fn, kro_fn)
 
@@ -236,9 +248,14 @@ def normalize_pc(curve):
         bounds_error=False,
         fill_value=(max_pc, min_pc),  # This gives constant extrapolation outside [0, 1]
     )
+
     # Map from normalized value to real saturation domain:
-    sx_fn = lambda sxn: curve.table[sat_col].min() + sxn * (max_sx - min_sx)
-    pc_fn = lambda sxn: pc_interp(sx_fn(sxn))
+    def sx_fn(sxn):
+        return curve.table[sat_col].min() + sxn * (max_sx - min_sx)
+
+    def pc_fn(sxn):
+        return pc_interp(sx_fn(sxn))
+
     return pc_fn
 
 
@@ -309,9 +326,10 @@ def interpolate_wo(wo_low, wo_high, parameter, h=0.01, tag=None):
     pc1 = normalize_pc(wo_low)
     pc2 = normalize_pc(wo_high)
 
-    # Construct a lambda function that can be applied to both relperm values
+    # Construct a function that can be applied to both relperm values
     # and endpoints
-    weighted_value = lambda a, b: a * (1.0 - parameter) + b * parameter
+    def weighted_value(a, b):
+        return a * (1.0 - parameter) + b * parameter
 
     # Interpolate saturation endpoints
     swl_new = weighted_value(wo_low.swl, wo_high.swl)
@@ -419,7 +437,8 @@ def interpolate_go(go_low, go_high, parameter, h=0.01, tag=None):
 
     # Construct a lambda function that can be applied to both relperm values
     # and endpoints
-    weighted_value = lambda a, b: a * (1.0 - parameter) + b * parameter
+    def weighted_value(a, b):
+        return a * (1.0 - parameter) + b * parameter
 
     # Interpolate saturation endpoints
     swl_new = weighted_value(go_low.swl, go_high.swl)

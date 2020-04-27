@@ -153,7 +153,7 @@ def main():
             family2=args.family2,
         )
     except ValueError:
-        ### If ValueErrors, error messages have already been printed
+        # If ValueErrors, error messages have already been printed
         sys.exit(1)
 
 
