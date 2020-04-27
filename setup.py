@@ -18,18 +18,22 @@ with open(path.join(this_directory, "README.md")) as f_handle:
     LONG_DESCRIPTION = f_handle.read()
 
 
-def parse_requirements(filename):
-    """Load requirements from a pip requirements file"""
-    try:
-        lineiter = (line.strip() for line in open(filename))
-        return [line for line in lineiter if line and not line.startswith("#")]
-    except IOError:
-        return []
-
-
-REQUIREMENTS = parse_requirements("requirements.txt")
-TEST_REQUIREMENTS = parse_requirements("requirements_dev.txt")
+REQUIREMENTS = [
+    "numpy",
+    "pandas",
+    "scipy",
+    "six>=1.12.0",
+    "xlrd",
+]
+TEST_REQUIREMENTS = [
+    "hypothesis",
+    "pytest",
+    "sphinx",
+    "sphinx-argparse",
+    "sphinx_rtd_theme",
+]
 SETUP_REQUIREMENTS = ["pytest-runner", "setuptools >=28", "setuptools_scm"]
+EXTRAS_REQUIRE = {"tests": TEST_REQUIREMENTS}
 
 setup(
     name="pyscal",
@@ -64,6 +68,6 @@ setup(
     zip_safe=False,
     test_suite="tests",
     install_requires=REQUIREMENTS,
-    tests_require=TEST_REQUIREMENTS,
     setup_requires=SETUP_REQUIREMENTS,
+    extras_require=EXTRAS_REQUIRE,
 )
