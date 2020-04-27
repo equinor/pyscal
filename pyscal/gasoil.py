@@ -285,7 +285,7 @@ class GasOil(object):
             self.table["krg"] = pchip(self.table.sg, extrapolate=False)
             self.table["krg"].fillna(method="ffill", inplace=True)
             self.table["krg"].fillna(method="bfill", inplace=True)
-            self.table["krg"].clip(lower=0.0, upper=0.0, inplace=True)
+            self.table["krg"].clip(lower=0.0, upper=1.0, inplace=True)
             self.krgcomment = "-- krg from tabular input" + krgcomment + "\n"
         if krogcolname in dframe:
             if not (dframe[krogcolname].diff().dropna() < epsilon).all():
@@ -300,7 +300,7 @@ class GasOil(object):
             self.table["krog"] = pchip(self.table.sg, extrapolate=False)
             self.table["krog"].fillna(method="ffill", inplace=True)
             self.table["krog"].fillna(method="bfill", inplace=True)
-            self.table["krog"].clip(lower=0.0, upper=0.0, inplace=True)
+            self.table["krog"].clip(lower=0.0, upper=1.0, inplace=True)
             self.krogcomment = "-- krog from tabular input" + krogcomment + "\n"
         if pccolname in dframe:
             # Incoming dataframe must cover the range:
