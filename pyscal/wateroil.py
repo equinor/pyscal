@@ -1126,9 +1126,7 @@ class WaterOil(object):
             + "PC".ljust(width)
             + "\n"
         )
-        string += self.table[["sw", "krw", "krow", "pc"]].to_csv(
-            sep=" ", float_format="%1.7f", header=None, index=False
-        )
+        string += utils.df2str(self.table[["sw", "krw", "krow", "pc"]])
         string += "/\n"  # Empty line at the end
         return string
 
@@ -1159,9 +1157,7 @@ class WaterOil(object):
             + "PC".ljust(width)
             + "\n"
         )
-        string += self.table[["sw", "krw", "pc"]].to_csv(
-            sep=" ", float_format="%1.7f", header=None, index=False
-        )
+        string += utils.df2str(self.table[["sw", "krw", "pc"]])
         string += "/\n"  # Empty line at the end
         return string
 
@@ -1192,9 +1188,7 @@ class WaterOil(object):
             + "PC".ljust(width)
             + "\n"
         )
-        string += self.table[["sw", "krw", "krow", "pc"]].to_csv(
-            sep=" ", float_format="%1.7f", header=None, index=False
-        )
+        string += utils.df2str(self.table[["sw", "krw", "krow", "pc"]])
         return string
 
     def plotpc(

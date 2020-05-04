@@ -44,7 +44,7 @@ def test_wo_fromtable_simple():
     assert "pc" in wateroil.table.columns
     assert sum(wateroil.table["krw"]) > 0
     assert sum(wateroil.table["krow"]) > 0
-    assert sum(wateroil.table["pc"]) == 11  #  Linearly decreasing PC
+    assert sum(wateroil.table["pc"]) == 11  # Linearly decreasing PC
     check_table(wateroil.table)
 
 

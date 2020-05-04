@@ -17,6 +17,32 @@ logging.basicConfig()
 logger = logging.getLogger(__name__)
 
 
+def df2str(dframe, digits=7, roundlevel=9, header=False):
+    """
+    Make a string representation of a dataframe with
+    proper rounding.
+
+    This is used to print the tables in the SWOF/SGOF include files,
+    explicit rounding is necessary to avoid monotonicity errors
+    from truncation. Examples in test code.
+
+    Args:
+        dframe (pd.DataFrame): A dataframe to print, all columns
+            are included
+        digits (int): Number of digits used in floating point format f.ex ".7f"
+            It is not recommended to deviate from the default 7 uncritically
+            for pyscal output, other code have to be tuned to ensure
+            numerical robustness to the deviation.
+        roundlevel (int): To how many digits should we round prior to print.
+            Recommended to be > digits + 1, see test code.
+        header (bool): If the dataframe column header should be included
+    """
+    float_format = "%1." + str(digits) + "f"
+    return dframe.round(roundlevel).to_csv(
+        sep=" ", float_format=float_format, header=header, index=False
+    )
+
+
 def estimate_diffjumppoint(table, xcol=None, ycol=None, side="right"):
     """Estimate the point where the y-data jumps from being linear
     in x to being nonlinear, or where it shift from one linear domain

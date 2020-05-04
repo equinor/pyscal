@@ -189,9 +189,7 @@ class WaterOilGas(object):
             + "KROG".ljust(width)
             + "\n"
         )
-        string += sof3table[["so", "krow", "krog"]].to_csv(
-            sep=" ", float_format="%1.7f", header=None, index=False
-        )
+        string += utils.df2str(sof3table[["so", "krow", "krog"]])
         string += "/\n"
         return string
 
