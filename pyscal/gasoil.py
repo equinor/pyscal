@@ -749,9 +749,7 @@ class GasOil(object):
             + "PC".ljust(width)
             + "\n"
         )
-        string += self.table[["sg", "krg", "krog", "pc"]].to_csv(
-            sep=" ", float_format="%1.7f", header=None, index=False
-        )
+        string += utils.df2str(self.table[["sg", "krg", "krog", "pc"]])
         string += "/\n"
         return string
 
@@ -836,9 +834,7 @@ class GasOil(object):
             + "PC".ljust(width)
             + "\n"
         )
-        string += self.slgof_df().to_csv(
-            sep=" ", float_format="%1.7f", header=None, index=False
-        )
+        string += utils.df2str(self.slgof_df())
         string += "/\n"
         return string
 
@@ -882,9 +878,7 @@ class GasOil(object):
             + "PC".ljust(width)
             + "\n"
         )
-        string += self.table[["sg", "krg", "pc"]].to_csv(
-            sep=" ", float_format="%1.7f", header=None, index=False
-        )
+        string += utils.df2str(self.table[["sg", "krg", "pc"]])
         string += "/\n"
         return string
 
@@ -929,9 +923,7 @@ class GasOil(object):
             + "PC".ljust(width)
             + "\n"
         )
-        string += self.table[["sg", "krg", "krog", "pc"]].to_csv(
-            sep=" ", float_format="%1.7f", header=None, index=False
-        )
+        string += utils.df2str(self.table[["sg", "krg", "krog", "pc"]])
         return string
 
     def plotkrgkrog(

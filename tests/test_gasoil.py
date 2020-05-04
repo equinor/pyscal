@@ -5,6 +5,7 @@ from __future__ import division
 from __future__ import print_function
 
 import numpy as np
+import pandas as pd
 
 from hypothesis import given, settings
 import hypothesis.strategies as st
@@ -352,3 +353,45 @@ def test_sgfn():
     assert "SGFN" in sgfn_str
     assert len(sgfn_str) > 15
     print(sgfn_str)
+
+
+def test_roundoff():
+    """Test robustness to monotonicity issues arising from
+    representation errors
+
+    https://docs.python.org/3/tutorial/floatingpoint.html#representation-error
+
+    The dataframe injected in this function has occured in the wild, and
+    caused fatal errors in Eclipse100. The error lies in
+    pd.dataframe.to_csv(float_format=".7f") which does truncation of floating points
+    instead of rounding (intentional). Since we have a strict dependency on
+    monotonicity properties for Eclipse to work, the data must be rounded
+    before being sent to to_csv(). This is being done in the .SGOF() and SWOF() as
+    it is a representation issue, not a numerical issues in the objects themselves.
+    """
+
+    gasoil = GasOil()
+    # Inject a custom dataframe that has occured in the wild,
+    # and given monotonicity issues in GasOil.SGOF().
+    gasoil.table = pd.DataFrame(
+        columns=["sg", "krg", "krog", "pc"],
+        data=[
+            [0.02, 0, 0.19524045000000001, 0],
+            [0.040000000000000001, 0, 0.19524044999999998, 0],
+            [0.059999999999999998, 0, 0.19524045000000004, 0],
+            [0.080000000000000002, 0, 0.19524045000000001, 0],
+            [0.10000000000000001, 0, 0.19524045000000001, 0],
+            [0.16, 0, 0.19524045000000001, 0],
+            [0.17999999999999999, 0, 0.19524045000000001, 0],
+            [0.19999999999999998, 0, 0.19524044999999998, 0],
+            [0.22, 0, 0.19524045000000001, 0],
+            [1, 1, 0, 0],
+        ],
+    )
+    gasoil.table["sgn"] = gasoil.table["sg"]
+    gasoil.table["son"] = 1 - gasoil.table["sg"]
+    # If this value (as string) occurs, then we are victim of floating point truncation
+    # in float_format=".7f":
+    assert "0.1952404" not in gasoil.SGOF()
+    assert "0.1952405" in gasoil.SGOF()
+    check_table(gasoil.table)  # This function allows this monotonicity hiccup.

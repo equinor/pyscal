@@ -5,7 +5,13 @@ import numpy as np
 
 def series_decreasing(series):
     """Weaker than pd.Series.is_monotonic_decreasing,
-    allows constant parts"""
+    allows constant parts.
+
+    We do not enforce less than zero here, because there will be
+    some positive differences due to representation errors which
+    is ok in terms of numerical equivalence. It is not ok when dumped
+    to Eclipse, so the representation of the dataframe as a SGOF table
+    must be properly rounded before printed."""
     return (series.diff().dropna() < 1e-8).all()
 
 
