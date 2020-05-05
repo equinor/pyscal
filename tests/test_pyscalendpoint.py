@@ -43,7 +43,7 @@ def test_pyscal_endpoint_static(tmpdir):
     assert "SGOF" in relpermlines
     assert "SLGOF" not in relpermlines
     assert "SOF3" not in relpermlines
-    assert sat_table_str_ok(relpermlines)
+    sat_table_str_ok(relpermlines)
 
     sys.argv = ["pyscal", relperm_file, "--output", "alt2relperm.inc"]
     pyscalcli.main()
@@ -62,7 +62,7 @@ def test_pyscal_endpoint_static(tmpdir):
     assert "SOF3" in relpermlines
     assert "SWOF" not in relpermlines
     assert "SGOF" not in relpermlines
-    assert sat_table_str_ok(relpermlines)
+    sat_table_str_ok(relpermlines)
 
     sys.argv = ["pyscal", relperm_file, "--slgof", "--output", "relperm-slgof.inc"]
     pyscalcli.main()
@@ -72,7 +72,7 @@ def test_pyscal_endpoint_static(tmpdir):
     assert "SGOF" not in relpermlines
     assert "SLGOF" in relpermlines
     assert "SOF3" not in relpermlines
-    assert sat_table_str_ok(relpermlines)
+    sat_table_str_ok(relpermlines)
 
     # Dump to deep directory structure that does not exists
     sys.argv = [
@@ -167,7 +167,7 @@ def test_pyscal_endpoint_scal(tmpdir):
     assert "SGOF" in relpermlines
     assert "SLGOF" not in relpermlines
     assert "SOF3" not in relpermlines
-    assert sat_table_str_ok(relpermlines)
+    sat_table_str_ok(relpermlines)
     # assert "int_param_wo: 0\n" in relpermlines  # this should be in the tag.
 
     sys.argv = ["pyscal", scalrec_file, "--int_param_wo", "-0.5", "-o", "relperm2.inc"]

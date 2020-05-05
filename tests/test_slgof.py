@@ -52,7 +52,7 @@ def test_slgof(swl, sorg, sgcr):
     assert not slgof.empty
 
     check_table(slgof)
-    assert sat_table_str_ok(wog.SLGOF())
+    sat_table_str_ok(wog.SLGOF())
 
     # Requirements from E100 manual:
     assert np.isclose(slgof["sl"].values[0], wog.gasoil.swl + wog.gasoil.sorg)
@@ -105,4 +105,4 @@ def test_slgof_hypo(swl, sorg, sgcr, h):
     slgof_str = gasoil.SLGOF()
     assert isinstance(slgof_str, str)
     assert slgof_str
-    assert sat_table_str_ok(slgof_str)
+    sat_table_str_ok(slgof_str)

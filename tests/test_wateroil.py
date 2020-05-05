@@ -52,8 +52,8 @@ def test_wateroil_tag(tag):
     wateroil = WaterOil(h=0.5, tag=tag)
     wateroil.add_corey_oil()
     wateroil.add_corey_water()
-    assert sat_table_str_ok(wateroil.SWOF())
-    assert sat_table_str_ok(wateroil.SWFN())
+    sat_table_str_ok(wateroil.SWOF())
+    sat_table_str_ok(wateroil.SWFN())
 
 
 @settings(deadline=1000)

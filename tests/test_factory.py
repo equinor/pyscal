@@ -62,8 +62,8 @@ def test_factory_wateroil():
     assert "Corey" in wateroil.krwcomment
     assert wateroil.table["krw"].max() == 0.2  # Because sorw==0 by default
     check_table(wateroil.table)
-    assert sat_table_str_ok(wateroil.SWOF())
-    assert sat_table_str_ok(wateroil.SWFN())
+    sat_table_str_ok(wateroil.SWOF())
+    sat_table_str_ok(wateroil.SWFN())
 
     wateroil = factory.create_water_oil(
         dict(nw=3, now=2, sorw=0.1, krwend=0.2, krwmax=0.5)
@@ -73,8 +73,8 @@ def test_factory_wateroil():
     assert "Corey" in wateroil.krwcomment
     assert wateroil.table["krw"].max() == 0.5
     check_table(wateroil.table)
-    assert sat_table_str_ok(wateroil.SWOF())
-    assert sat_table_str_ok(wateroil.SWFN())
+    sat_table_str_ok(wateroil.SWOF())
+    sat_table_str_ok(wateroil.SWFN())
 
     # Ambiguous works, but we don't guarantee that this results
     # in LET or Corey.
@@ -82,8 +82,8 @@ def test_factory_wateroil():
     assert "krw" in wateroil.table
     assert "Corey" in wateroil.krwcomment or "LET" in wateroil.krwcomment
     check_table(wateroil.table)
-    assert sat_table_str_ok(wateroil.SWOF())
-    assert sat_table_str_ok(wateroil.SWFN())
+    sat_table_str_ok(wateroil.SWOF())
+    sat_table_str_ok(wateroil.SWFN())
 
     wateroil = factory.create_water_oil(dict(Lw=2, Ew=2, Tw=2, krwend=1, now=4))
     assert isinstance(wateroil, WaterOil)
@@ -91,8 +91,8 @@ def test_factory_wateroil():
     assert wateroil.table["krw"].max() == 1.0
     assert "LET" in wateroil.krwcomment
     check_table(wateroil.table)
-    assert sat_table_str_ok(wateroil.SWOF())
-    assert sat_table_str_ok(wateroil.SWFN())
+    sat_table_str_ok(wateroil.SWOF())
+    sat_table_str_ok(wateroil.SWFN())
 
     wateroil = factory.create_water_oil(
         dict(Lw=2, Ew=2, Tw=2, Low=3, Eow=3, Tow=3, krwend=0.5)
@@ -105,8 +105,8 @@ def test_factory_wateroil():
     assert "LET" in wateroil.krwcomment
     assert "LET" in wateroil.krowcomment
     check_table(wateroil.table)
-    assert sat_table_str_ok(wateroil.SWOF())
-    assert sat_table_str_ok(wateroil.SWFN())
+    sat_table_str_ok(wateroil.SWOF())
+    sat_table_str_ok(wateroil.SWFN())
 
     # Add capillary pressure
     wateroil = factory.create_water_oil(
@@ -116,8 +116,8 @@ def test_factory_wateroil():
     assert wateroil.table["pc"].max() > 0.0
     assert "Simplified J" in wateroil.pccomment
     check_table(wateroil.table)
-    assert sat_table_str_ok(wateroil.SWOF())
-    assert sat_table_str_ok(wateroil.SWFN())
+    sat_table_str_ok(wateroil.SWOF())
+    sat_table_str_ok(wateroil.SWFN())
 
     # Test that the optional gravity g is picked up:
     wateroil = factory.create_water_oil(
@@ -126,8 +126,8 @@ def test_factory_wateroil():
     assert "pc" in wateroil.table
     assert wateroil.table["pc"].max() == 0.0
     check_table(wateroil.table)
-    assert sat_table_str_ok(wateroil.SWOF())
-    assert sat_table_str_ok(wateroil.SWFN())
+    sat_table_str_ok(wateroil.SWOF())
+    sat_table_str_ok(wateroil.SWFN())
 
     # Test petrophysical simple J:
     wateroil = factory.create_water_oil(
@@ -146,8 +146,8 @@ def test_factory_wateroil():
     assert wateroil.table["pc"].max() > 0.0
     assert "etrophysic" in wateroil.pccomment
     check_table(wateroil.table)
-    assert sat_table_str_ok(wateroil.SWOF())
-    assert sat_table_str_ok(wateroil.SWFN())
+    sat_table_str_ok(wateroil.SWOF())
+    sat_table_str_ok(wateroil.SWFN())
 
     # One pc param missing:
     wateroil = factory.create_water_oil(
@@ -188,7 +188,7 @@ def test_factory_gasoil():
     assert gasoil.swirr == 0.01
     assert gasoil.tag == "Good sand"
     sgof = gasoil.SGOF()
-    assert sat_table_str_ok(sgof)
+    sat_table_str_ok(sgof)
     check_table(gasoil.table)
     assert "Corey krg" in sgof
     assert "Corey krog" in sgof
@@ -198,7 +198,7 @@ def test_factory_gasoil():
         dict(ng=1.2, nog=2, krgend=0.8, krgmax=0.9, krogend=0.6)
     )
     sgof = gasoil.SGOF()
-    assert sat_table_str_ok(sgof)
+    sat_table_str_ok(sgof)
     assert "kroend=0.6" in sgof
     assert "krgend=0.8" in sgof
     check_table(gasoil.table)
@@ -206,13 +206,13 @@ def test_factory_gasoil():
     gasoil = factory.create_gas_oil(dict(ng=1.3, Log=2, Eog=2, Tog=2))
     sgof = gasoil.SGOF()
     check_table(gasoil.table)
-    assert sat_table_str_ok(sgof)
+    sat_table_str_ok(sgof)
     assert "Corey krg" in sgof
     assert "LET krog" in sgof
 
     gasoil = factory.create_gas_oil(dict(Lg=1, Eg=1, Tg=1, Log=2, Eog=2, Tog=2))
     sgof = gasoil.SGOF()
-    assert sat_table_str_ok(sgof)
+    sat_table_str_ok(sgof)
     check_table(gasoil.table)
     assert "LET krg" in sgof
     assert "LET krog" in sgof
@@ -227,8 +227,8 @@ def test_factory_wateroilgas():
     wog = factory.create_water_oil_gas(dict(nw=2, now=3, ng=1, nog=2.5))
     swof = wog.SWOF()
     sgof = wog.SGOF()
-    assert sat_table_str_ok(swof)  # sgof code works for swof also currently
-    assert sat_table_str_ok(sgof)
+    sat_table_str_ok(swof)  # sgof code works for swof also currently
+    sat_table_str_ok(sgof)
     assert "Corey krg" in sgof
     assert "Corey krog" in sgof
     assert "Corey krw" in swof
@@ -240,8 +240,8 @@ def test_factory_wateroilgas():
     wog = factory.create_water_oil_gas(dict(NW=2, NOW=3, NG=1, nog=2.5))
     swof = wog.SWOF()
     sgof = wog.SGOF()
-    assert sat_table_str_ok(swof)  # sgof code works for swof also currently
-    assert sat_table_str_ok(sgof)
+    sat_table_str_ok(swof)  # sgof code works for swof also currently
+    sat_table_str_ok(sgof)
     assert "Corey krg" in sgof
     assert "Corey krog" in sgof
     assert "Corey krw" in swof
@@ -261,7 +261,7 @@ def test_factory_wateroilgas_wo():
     swof = wog.SWOF()
     assert "Corey krw" in swof
     assert "krw" in wog.wateroil.table
-    assert sat_table_str_ok(swof)
+    sat_table_str_ok(swof)
     check_table(wog.wateroil.table)
     assert wog.gasoil is None
 
@@ -366,7 +366,7 @@ def test_xls_factory():
         assert "LET krow" in swof
         assert "Simplified J" in swof
         sgof = wog.SGOF()
-        assert sat_table_str_ok(sgof)
+        sat_table_str_ok(sgof)
         assert "LET krg" in sgof
         assert "LET krog" in sgof
 
@@ -432,10 +432,10 @@ def test_scalrecommendation():
     assert gasoil.base.wateroil is not None
     assert gasoil.high.wateroil is not None
     interp = scal.interpolate(-0.5)
-    assert sat_table_str_ok(interp.SWOF())
-    assert sat_table_str_ok(interp.SGOF())
-    assert sat_table_str_ok(interp.SLGOF())
-    assert sat_table_str_ok(interp.SOF3())
+    sat_table_str_ok(interp.SWOF())
+    sat_table_str_ok(interp.SGOF())
+    sat_table_str_ok(interp.SLGOF())
+    sat_table_str_ok(interp.SOF3())
     check_table(interp.wateroil.table)
     check_table(interp.gasoil.table)
 

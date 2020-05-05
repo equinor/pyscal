@@ -185,8 +185,8 @@ def test_make_scalrecommendation_wo():
     interpolant = rec.interpolate(-0.5)
     check_table(interpolant.wateroil.table)
     assert interpolant.gasoil is None
-    assert sat_table_str_ok(interpolant.SWOF())
-    assert sat_table_str_ok(interpolant.SWFN())
+    sat_table_str_ok(interpolant.SWOF())
+    sat_table_str_ok(interpolant.SWFN())
 
     # This should return empty string
     assert not interpolant.SGOF()
@@ -224,8 +224,8 @@ def test_make_scalrecommendation_go():
     interpolant = rec.interpolate(-0.5)
     check_table(interpolant.gasoil.table)
     assert interpolant.wateroil is None
-    assert sat_table_str_ok(interpolant.SGOF())
-    assert sat_table_str_ok(interpolant.SGFN())
+    sat_table_str_ok(interpolant.SGOF())
+    sat_table_str_ok(interpolant.SGFN())
 
     # This should return empty string
     assert not interpolant.SWOF()

@@ -68,8 +68,8 @@ def test_gasoil_tag(tag):
     gasoil = GasOil(h=0.5, tag=tag)
     gasoil.add_corey_gas()
     gasoil.add_corey_oil()
-    assert sat_table_str_ok(gasoil.SGOF())
-    assert sat_table_str_ok(gasoil.SGFN())
+    sat_table_str_ok(gasoil.SGOF())
+    sat_table_str_ok(gasoil.SGFN())
 
 
 @given(
@@ -316,13 +316,13 @@ def test_gasoil_corey1(ng, nog):
     check_table(gasoil.table)
     sgofstr = gasoil.SGOF()
     assert len(sgofstr) > 100
-    assert sat_table_str_ok(sgofstr)
+    sat_table_str_ok(sgofstr)
 
     gasoil.resetsorg()
     check_table(gasoil.table)
     sgofstr = gasoil.SGOF()
     assert len(sgofstr) > 100
-    assert sat_table_str_ok(sgofstr)
+    sat_table_str_ok(sgofstr)
 
 
 @settings(deadline=1000)
@@ -342,7 +342,7 @@ def test_gasoil_let1(l, e, t, krgend, krgmax):
     check_table(gasoil.table)
     sgofstr = gasoil.SGOF()
     assert len(sgofstr) > 100
-    assert sat_table_str_ok(sgofstr)
+    sat_table_str_ok(sgofstr)
 
 
 def test_sgfn():

@@ -1126,7 +1126,9 @@ class WaterOil(object):
             + "PC".ljust(width)
             + "\n"
         )
-        string += utils.df2str(self.table[["sw", "krw", "krow", "pc"]])
+        string += utils.df2str(
+            self.table[["sw", "krw", "krow", "pc"]], monotonecolumn="pc"
+        )
         string += "/\n"  # Empty line at the end
         return string
 
@@ -1157,7 +1159,7 @@ class WaterOil(object):
             + "PC".ljust(width)
             + "\n"
         )
-        string += utils.df2str(self.table[["sw", "krw", "pc"]])
+        string += utils.df2str(self.table[["sw", "krw", "pc"]], monotonecolumn="pc")
         string += "/\n"  # Empty line at the end
         return string
 
@@ -1188,7 +1190,9 @@ class WaterOil(object):
             + "PC".ljust(width)
             + "\n"
         )
-        string += utils.df2str(self.table[["sw", "krw", "krow", "pc"]])
+        string += utils.df2str(
+            self.table[["sw", "krw", "krow", "pc"]], monotonecolumn="pc"
+        )
         return string
 
     def plotpc(
