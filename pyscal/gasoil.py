@@ -784,6 +784,8 @@ class GasOil(object):
                     map(int, list(map(round, slgof["sl"] * SWINTEGERS)))
                 )
                 slgof.drop_duplicates("slint", inplace=True)
+                # Delete the temporary column:
+                slgof.drop(labels="slint", axis="columns", inplace=True)
             else:
                 # Give up repairing the table:
                 logger.critical(

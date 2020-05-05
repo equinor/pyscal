@@ -110,7 +110,6 @@ def test_df2str_monotone():
         utils.df2str(pd.DataFrame(data=[0, 0, 0]), digits=2, monotonecolumn=0)
         == "0\n0\n0\n"
     )
-
     # A constant nonzero column, makes no sense as capillary pressure
     # but still we ensure it runs in eclipse:
     assert (
