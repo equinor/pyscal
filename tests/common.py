@@ -1,6 +1,8 @@
 """Common functions and mock data for usage in pyscal testing"""
 
 import numpy as np
+import pandas as pd
+import six
 
 
 def series_decreasing(series):
@@ -24,15 +26,12 @@ def sat_table_str_ok(sat_table_str):
     """Test that a supplied string from SWOF()/SGOF() etc is
     probably ok for Eclipse.
 
-    This is checking that the first characters on each line is sensible.
-
-    Wrap this function with assert
-
-    Returns:
-        True if tests pass.
+    Number of floats pr. line must be constant
+    All numerical lines must be parseable to a rectangular dataframe
+    with only floats.
     """
-    if not sat_table_str:
-        return False
+    assert sat_table_str
+
     for line in sat_table_str.splitlines():
         try:
             if not (
@@ -42,15 +41,46 @@ def sat_table_str_ok(sat_table_str):
                 or line.startswith("/")
                 or int(line[0]) >= 0
             ):
-                return False
+                assert False
+
         except ValueError as e_msg:
             # the int(line[0]) will get here on strings.
             print(e_msg)
-            return False
-    if "-- pyscal: " not in sat_table_str:
-        # This should hold the version
-        return False
-    return True
+            assert False
+
+    assert "-- pyscal: " in sat_table_str
+
+    # On non-comment lines, number of ascii floats should be the same:
+    number_lines = [
+        line for line in sat_table_str.splitlines() if line and line[0] in ["0", "1"]
+    ]
+
+    floats_pr_line = [len(line.split()) for line in number_lines]
+    # This must be a constant:
+    assert len(set(floats_pr_line)) == 1
+
+    float_characters = {len(flt) for flt in " ".join(number_lines).split()}
+    digits = 7  # This is the default value in utils.df2str()
+    for float_str_length in float_characters:
+        assert not 1 < float_str_length < digits + 2
+        # float_str_length must be 1, or above digits + 1
+
+    # And pyscal only emits three or four floats pr. line:
+    assert list(set(floats_pr_line))[0] in [3, 4]
+
+    # So we should be able to parse this to a dataframe:
+    dframe = pd.read_csv(six.StringIO("\n".join(number_lines)), sep=" ", header=None)
+    assert len(dframe) == len(number_lines)
+
+    # The first column holds saturations, for pyscal test-data that
+    # is always between zero and 1
+    assert 0 <= dframe[0].min() <= dframe[0].max() <= 1
+
+    # Second column is never capillary pressure, so there we can enforce the same
+    assert 0 <= dframe[1].min() <= dframe[1].max() <= 1
+    # And then sometimes for the third column:
+    if len(dframe.columns) > 3 or "SOF3" in sat_table_str:
+        assert 0 <= dframe[2].min() <= dframe[2].max() <= 1
 
 
 def check_table(dframe):

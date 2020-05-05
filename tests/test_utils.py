@@ -102,6 +102,37 @@ def test_df2str():
     # (this is the rationale for roundlevel > digits + 1)
 
 
+def test_df2str_monotone():
+    """Test the monotonocity enforcement in df2str()"""
+
+    # Don't touch all-zero columns
+    assert (
+        utils.df2str(pd.DataFrame(data=[0, 0, 0]), digits=2, monotonecolumn=0)
+        == "0\n0\n0\n"
+    )
+
+    # A constant nonzero column, makes no sense as capillary pressure
+    # but still we ensure it runs in eclipse:
+    assert (
+        utils.df2str(pd.DataFrame(data=[1, 1, 1]), digits=2, monotonecolumn=0)
+        == "1.00\n0.99\n0.98\n"
+    )
+
+    assert (
+        utils.df2str(pd.DataFrame(data=[1, 1, 1]), digits=7, monotonecolumn=0)
+        == "1.0000000\n0.9999999\n0.9999998\n"
+    )
+
+    # Actual data that has occured:
+    dframe = pd.DataFrame(
+        data=[0.0000027, 0.0000026, 0.0000024, 0.0000024, 0.0000017], columns=["pc"]
+    )
+    assert (
+        utils.df2str(dframe, monotonecolumn="pc")
+        == "0.0000027\n0.0000026\n0.0000024\n0.0000023\n0.0000017\n"
+    )
+
+
 def test_diffjumppoint():
     """Test estimator for the jump in first derivative for some manually set up cases.
 
@@ -311,14 +342,14 @@ def test_tag_preservation():
     wo_high.add_corey_oil(now=3)
     interpolant1 = utils.interpolate_wo(wo_low, wo_high, parameter=0.1, h=0.2)
     assert "Interpolated to 0.1" in interpolant1.tag
-    assert sat_table_str_ok(interpolant1.SWOF())
+    sat_table_str_ok(interpolant1.SWOF())
 
     wo_high.tag = "FOOBAR"
     interpolant2 = utils.interpolate_wo(wo_low, wo_high, parameter=0.1, h=0.2)
     assert "Interpolated to 0.1" in interpolant2.tag
     assert "between" in interpolant2.tag
     assert wo_high.tag in interpolant2.tag
-    assert sat_table_str_ok(interpolant2.SWOF())
+    sat_table_str_ok(interpolant2.SWOF())
     # wo_low.tag was empty deliberately here.
 
     # When wo_log and wo_high has the same tag:
@@ -327,7 +358,7 @@ def test_tag_preservation():
     assert "Interpolated to 0.1" in interpolant3.tag
     assert "between" not in interpolant3.tag
     assert wo_high.tag in interpolant3.tag
-    assert sat_table_str_ok(interpolant3.SWOF())
+    sat_table_str_ok(interpolant3.SWOF())
 
     # Explicit tag:
     interpolant4 = utils.interpolate_wo(
@@ -341,7 +372,7 @@ def test_tag_preservation():
     )
     assert "Explicit tag" in interpolant6.tag
     print(interpolant6.SWOF())
-    assert sat_table_str_ok(interpolant6.SWOF())
+    sat_table_str_ok(interpolant6.SWOF())
 
     # Empty tag:
     interpolant5 = utils.interpolate_wo(wo_low, wo_high, parameter=0.1, h=0.2, tag="")
@@ -356,7 +387,7 @@ def test_tag_preservation():
     go_high.add_corey_oil(nog=3)
     interpolant1 = utils.interpolate_go(go_low, go_high, parameter=0.1, h=0.2)
     assert "Interpolated to 0.1" in interpolant1.tag
-    assert sat_table_str_ok(interpolant1.SGOF())
+    sat_table_str_ok(interpolant1.SGOF())
 
 
 @settings(max_examples=40, deadline=5000)

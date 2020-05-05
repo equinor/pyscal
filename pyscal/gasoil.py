@@ -749,7 +749,9 @@ class GasOil(object):
             + "PC".ljust(width)
             + "\n"
         )
-        string += utils.df2str(self.table[["sg", "krg", "krog", "pc"]])
+        string += utils.df2str(
+            self.table[["sg", "krg", "krog", "pc"]], monotonecolumn="pc"
+        )
         string += "/\n"
         return string
 
@@ -834,7 +836,7 @@ class GasOil(object):
             + "PC".ljust(width)
             + "\n"
         )
-        string += utils.df2str(self.slgof_df())
+        string += utils.df2str(self.slgof_df(), monotonecolumn="pc")
         string += "/\n"
         return string
 
@@ -878,7 +880,7 @@ class GasOil(object):
             + "PC".ljust(width)
             + "\n"
         )
-        string += utils.df2str(self.table[["sg", "krg", "pc"]])
+        string += utils.df2str(self.table[["sg", "krg", "pc"]], monotonecolumn="pc")
         string += "/\n"
         return string
 
@@ -923,7 +925,9 @@ class GasOil(object):
             + "PC".ljust(width)
             + "\n"
         )
-        string += utils.df2str(self.table[["sg", "krg", "krog", "pc"]])
+        string += utils.df2str(
+            self.table[["sg", "krg", "krog", "pc"]], monotonecolumn="pc"
+        )
         return string
 
     def plotkrgkrog(

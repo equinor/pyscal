@@ -17,7 +17,7 @@ logging.basicConfig()
 logger = logging.getLogger(__name__)
 
 
-def df2str(dframe, digits=7, roundlevel=9, header=False):
+def df2str(dframe, digits=7, roundlevel=9, header=False, monotonecolumn=None):
     """
     Make a string representation of a dataframe with
     proper rounding.
@@ -25,6 +25,10 @@ def df2str(dframe, digits=7, roundlevel=9, header=False):
     This is used to print the tables in the SWOF/SGOF include files,
     explicit rounding is necessary to avoid monotonicity errors
     from truncation. Examples in test code.
+
+    Capillary pressure must be strictly monotone if nonzero, and if a
+    column name is provided, the string representation of that column is
+    ensured to be strictly monotone decreasing
 
     Args:
         dframe (pd.DataFrame): A dataframe to print, all columns
@@ -36,8 +40,22 @@ def df2str(dframe, digits=7, roundlevel=9, header=False):
         roundlevel (int): To how many digits should we round prior to print.
             Recommended to be > digits + 1, see test code.
         header (bool): If the dataframe column header should be included
+        monotonecolumn: column name for which strict decreasing monotonicity
+            must be preserved in output.
     """
     float_format = "%1." + str(digits) + "f"
+
+    if monotonecolumn is not None and dframe[monotonecolumn].abs().sum() > 0:
+        dframe = dframe.copy()
+        constants = dframe[monotonecolumn].round(digits).diff() == 0.0
+        while constants.any():
+            # Substract the smallest value that we can represent where
+            # it is needed:
+            dframe.loc[constants, monotonecolumn] = (
+                dframe.loc[constants, monotonecolumn] - 1 / 10 ** digits
+            )
+            constants = dframe[monotonecolumn].round(digits).diff() == 0.0
+
     return dframe.round(roundlevel).to_csv(
         sep=" ", float_format=float_format, header=header, index=False
     )
@@ -309,7 +327,7 @@ def _interpolate_tags(low, high, parameter, tag):
             # No tags defined.
             return "Interpolated to {}".format(parameter)
         return "Interpolated to {} between {} and {}".format(
-            parameter, low.tag, high.tag,
+            parameter, low.tag, high.tag
         )
     return tag
 

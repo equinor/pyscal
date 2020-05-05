@@ -273,10 +273,10 @@ def test_dump():
     pyscal_list = PyscalFactory.create_pyscal_list(relperm_data)
 
     fam1 = pyscal_list.dump_family_1()
-    assert sat_table_str_ok(fam1)
+    sat_table_str_ok(fam1)
 
     fam2 = pyscal_list.dump_family_2()
-    assert sat_table_str_ok(fam2)
+    sat_table_str_ok(fam2)
 
 
 def test_capillary_pressure():

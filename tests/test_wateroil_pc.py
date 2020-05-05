@@ -45,8 +45,8 @@ def test_simple_j():
     swof = wateroil.SWOF()
     assert isinstance(swof, str)
     assert swof
-    assert sat_table_str_ok(swof)
-    assert sat_table_str_ok(wateroil.SWFN())
+    sat_table_str_ok(swof)
+    sat_table_str_ok(wateroil.SWFN())
 
 
 def test_simple_j_petro():
@@ -74,8 +74,8 @@ def test_simple_j_petro():
     swof = wateroil.SWOF()
     assert isinstance(swof, str)
     assert swof
-    assert sat_table_str_ok(swof)
-    assert sat_table_str_ok(wateroil.SWFN())
+    sat_table_str_ok(swof)
+    sat_table_str_ok(wateroil.SWFN())
 
 
 @given(
@@ -146,7 +146,7 @@ def test_norm_j_pc_random(swirr, swl, a_pc, b_pc, poro, perm, sigma_costau):
     check_table(wateroil.table)
     wateroil.add_corey_water()
     wateroil.add_corey_oil()
-    assert sat_table_str_ok(wateroil.SWOF())
+    sat_table_str_ok(wateroil.SWOF())
 
 
 def test_let_pc_pd():
@@ -174,7 +174,7 @@ def test_let_pc_pd():
     )
     wateroil.add_corey_water()
     wateroil.add_corey_oil()
-    assert sat_table_str_ok(wateroil.SWOF())
+    sat_table_str_ok(wateroil.SWOF())
 
 
 def test_let_pc_imb():
@@ -199,4 +199,4 @@ def test_let_pc_imb():
     wateroil.add_corey_oil()
     print(wateroil.SWOF())
 
-    assert sat_table_str_ok(wateroil.SWOF())
+    sat_table_str_ok(wateroil.SWOF())
