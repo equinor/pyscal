@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal.utils &mdash; pyscal 0.4.3.dev1+gea40058 documentation</title>
+  <title>pyscal.utils &mdash; pyscal 0.4.3.dev2+gae89146 documentation</title>
   
 
   
@@ -62,7 +62,7 @@
             
             
               <div class="version">
-                0.4.3.dev1+gea40058
+                0.4.3.dev2+gae89146
               </div>
             
           
@@ -172,6 +172,32 @@
 
 <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">()</span>
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="df2str"><a class="viewcode-back" href="../../pyscal.html#pyscal.utils.df2str">[docs]</a><span class="k">def</span> <span class="nf">df2str</span><span class="p">(</span><span class="n">dframe</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">roundlevel</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make a string representation of a dataframe with</span>
+<span class="sd">    proper rounding.</span>
+
+<span class="sd">    This is used to print the tables in the SWOF/SGOF include files,</span>
+<span class="sd">    explicit rounding is necessary to avoid monotonicity errors</span>
+<span class="sd">    from truncation. Examples in test code.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dframe (pd.DataFrame): A dataframe to print, all columns</span>
+<span class="sd">            are included</span>
+<span class="sd">        digits (int): Number of digits used in floating point format f.ex &quot;.7f&quot;</span>
+<span class="sd">            It is not recommended to deviate from the default 7 uncritically</span>
+<span class="sd">            for pyscal output, other code have to be tuned to ensure</span>
+<span class="sd">            numerical robustness to the deviation.</span>
+<span class="sd">        roundlevel (int): To how many digits should we round prior to print.</span>
+<span class="sd">            Recommended to be &gt; digits + 1, see test code.</span>
+<span class="sd">        header (bool): If the dataframe column header should be included</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">float_format</span> <span class="o">=</span> <span class="s2">&quot;%1.&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">digits</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;f&quot;</span>
+    <span class="k">return</span> <span class="n">dframe</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">roundlevel</span><span class="p">)</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span>
+        <span class="n">sep</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">float_format</span><span class="o">=</span><span class="n">float_format</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="estimate_diffjumppoint"><a class="viewcode-back" href="../../pyscal.html#pyscal.utils.estimate_diffjumppoint">[docs]</a><span class="k">def</span> <span class="nf">estimate_diffjumppoint</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">):</span>
