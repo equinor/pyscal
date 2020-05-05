@@ -52,20 +52,27 @@ def sat_table_str_ok(sat_table_str):
 
     # On non-comment lines, number of ascii floats should be the same:
     number_lines = [
-        line for line in sat_table_str.splitlines() if line and line[0] in ["0", "1"]
+        line
+        for line in sat_table_str.splitlines()
+        if line.strip() and line.strip()[0] in ["0", "1", "."]
     ]
 
-    floats_pr_line = [len(line.split()) for line in number_lines]
+    floats_pr_line = {len(line.split()) for line in number_lines}
     # This must be a constant:
-    assert len(set(floats_pr_line)) == 1
+    assert len(floats_pr_line) == 1
+    # And not more than 4:
+    if not list(floats_pr_line)[0] <= 4:
+        print(sat_table_str)
+    assert list(floats_pr_line)[0] <= 4
 
     float_characters = {len(flt) for flt in " ".join(number_lines).split()}
     digits = 7  # This is the default value in utils.df2str()
     for float_str_length in float_characters:
         assert not 1 < float_str_length < digits + 2
-        # float_str_length must be 1, or above digits + 1
+        # float_str_length must be 1 (a pure zero value),
+        # or above digits + 1, otherwise it is a sign of some error.
 
-    # And pyscal only emits three or four floats pr. line:
+    # And pyscal only emits three or four floats pr. line for all keywords:
     assert list(set(floats_pr_line))[0] in [3, 4]
 
     # So we should be able to parse this to a dataframe:

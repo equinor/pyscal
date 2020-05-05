@@ -52,7 +52,7 @@ def df2str(dframe, digits=7, roundlevel=9, header=False, monotonecolumn=None):
             # Substract the smallest value that we can represent where
             # it is needed:
             dframe.loc[constants, monotonecolumn] = (
-                dframe.loc[constants, monotonecolumn] - 1 / 10 ** digits
+                dframe.loc[constants, monotonecolumn] - 1.0 / 10.0 ** digits
             )
             constants = dframe[monotonecolumn].round(digits).diff() == 0.0
 
