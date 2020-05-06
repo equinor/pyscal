@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal.pyscallist &mdash; pyscal 0.4.3.dev2+gae89146 documentation</title>
+  <title>pyscal.pyscallist &mdash; pyscal 0.4.3.dev3+g57ebc5a documentation</title>
   
 
   
@@ -62,7 +62,7 @@
             
             
               <div class="version">
-                0.4.3.dev2+gae89146
+                0.4.3.dev3+g57ebc5a
               </div>
             
           
@@ -247,6 +247,9 @@
         <span class="n">gasoil_col_renamer</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;sg&quot;</span><span class="p">:</span> <span class="s2">&quot;SG&quot;</span><span class="p">,</span> <span class="s2">&quot;krg&quot;</span><span class="p">:</span> <span class="s2">&quot;KRG&quot;</span><span class="p">,</span> <span class="s2">&quot;krog&quot;</span><span class="p">:</span> <span class="s2">&quot;KROG&quot;</span><span class="p">,</span> <span class="s2">&quot;pc&quot;</span><span class="p">:</span> <span class="s2">&quot;PCOG&quot;</span><span class="p">}</span>
         <span class="n">wateroil_col_renamer</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;sw&quot;</span><span class="p">:</span> <span class="s2">&quot;SW&quot;</span><span class="p">,</span> <span class="s2">&quot;krw&quot;</span><span class="p">:</span> <span class="s2">&quot;KRW&quot;</span><span class="p">,</span> <span class="s2">&quot;krow&quot;</span><span class="p">:</span> <span class="s2">&quot;KROW&quot;</span><span class="p">,</span> <span class="s2">&quot;pc&quot;</span><span class="p">:</span> <span class="s2">&quot;PCOW&quot;</span><span class="p">}</span>
 
+        <span class="c1"># Sort order for rows in returned dataframe:</span>
+        <span class="n">sort_candidates</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;SATNUM&quot;</span><span class="p">,</span> <span class="s2">&quot;CASE&quot;</span><span class="p">,</span> <span class="s2">&quot;KEYWORD&quot;</span><span class="p">,</span> <span class="s2">&quot;SW&quot;</span><span class="p">,</span> <span class="s2">&quot;SG&quot;</span><span class="p">,</span> <span class="s2">&quot;SL&quot;</span><span class="p">]</span>
+
         <span class="n">df_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">==</span> <span class="n">WaterOilGas</span><span class="p">:</span>
             <span class="k">for</span> <span class="p">(</span><span class="n">satnum</span><span class="p">,</span> <span class="n">wateroilgas</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyscal_list</span><span class="p">):</span>
@@ -323,9 +326,10 @@
                     <span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">SATNUM</span><span class="o">=</span><span class="n">satnum</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
                     <span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">gasoil_col_renamer</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;columns&quot;</span><span class="p">)</span>
                 <span class="p">)</span>
-        <span class="n">dframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">df_list</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="c1"># for later: sort the columns</span>
-        <span class="c1"># consider mixing row order for dtype-inferral</span>
+        <span class="n">dframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">df_list</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">sort_rows_on</span> <span class="o">=</span> <span class="p">[</span><span class="n">colname</span> <span class="k">for</span> <span class="n">colname</span> <span class="ow">in</span> <span class="n">sort_candidates</span> <span class="k">if</span> <span class="n">colname</span> <span class="ow">in</span> <span class="n">dframe</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">sort_rows_on</span><span class="p">:</span>
+            <span class="n">dframe</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">sort_rows_on</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">dframe</span></div>
 
 <div class="viewcode-block" id="PyscalList.dump_family_1"><a class="viewcode-back" href="../../pyscal.html#pyscal.pyscallist.PyscalList.dump_family_1">[docs]</a>    <span class="k">def</span> <span class="nf">dump_family_1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">slgof</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
