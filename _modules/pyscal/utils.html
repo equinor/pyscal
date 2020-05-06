@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal.utils &mdash; pyscal 0.4.3.dev3+g57ebc5a documentation</title>
+  <title>pyscal.utils &mdash; pyscal 0.4.3.dev6+g3baaa87 documentation</title>
   
 
   
@@ -62,7 +62,7 @@
             
             
               <div class="version">
-                0.4.3.dev3+g57ebc5a
+                0.4.3.dev6+g3baaa87
               </div>
             
           
@@ -174,7 +174,7 @@
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="df2str"><a class="viewcode-back" href="../../pyscal.html#pyscal.utils.df2str">[docs]</a><span class="k">def</span> <span class="nf">df2str</span><span class="p">(</span><span class="n">dframe</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">roundlevel</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="df2str"><a class="viewcode-back" href="../../pyscal.html#pyscal.utils.df2str">[docs]</a><span class="k">def</span> <span class="nf">df2str</span><span class="p">(</span><span class="n">dframe</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">roundlevel</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">monotonecolumn</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make a string representation of a dataframe with</span>
 <span class="sd">    proper rounding.</span>
@@ -182,6 +182,10 @@
 <span class="sd">    This is used to print the tables in the SWOF/SGOF include files,</span>
 <span class="sd">    explicit rounding is necessary to avoid monotonicity errors</span>
 <span class="sd">    from truncation. Examples in test code.</span>
+
+<span class="sd">    Capillary pressure must be strictly monotone if nonzero, and if a</span>
+<span class="sd">    column name is provided, the string representation of that column is</span>
+<span class="sd">    ensured to be strictly monotone decreasing</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        dframe (pd.DataFrame): A dataframe to print, all columns</span>
@@ -193,8 +197,22 @@
 <span class="sd">        roundlevel (int): To how many digits should we round prior to print.</span>
 <span class="sd">            Recommended to be &gt; digits + 1, see test code.</span>
 <span class="sd">        header (bool): If the dataframe column header should be included</span>
+<span class="sd">        monotonecolumn: column name for which strict decreasing monotonicity</span>
+<span class="sd">            must be preserved in output.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">float_format</span> <span class="o">=</span> <span class="s2">&quot;%1.&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">digits</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;f&quot;</span>
+
+    <span class="k">if</span> <span class="n">monotonecolumn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">dframe</span><span class="p">[</span><span class="n">monotonecolumn</span><span class="p">]</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">dframe</span> <span class="o">=</span> <span class="n">dframe</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">constants</span> <span class="o">=</span> <span class="n">dframe</span><span class="p">[</span><span class="n">monotonecolumn</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">digits</span><span class="p">)</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span> <span class="o">==</span> <span class="mf">0.0</span>
+        <span class="k">while</span> <span class="n">constants</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="c1"># Substract the smallest value that we can represent where</span>
+            <span class="c1"># it is needed:</span>
+            <span class="n">dframe</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">constants</span><span class="p">,</span> <span class="n">monotonecolumn</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">dframe</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">constants</span><span class="p">,</span> <span class="n">monotonecolumn</span><span class="p">]</span> <span class="o">-</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="mf">10.0</span> <span class="o">**</span> <span class="n">digits</span>
+            <span class="p">)</span>
+            <span class="n">constants</span> <span class="o">=</span> <span class="n">dframe</span><span class="p">[</span><span class="n">monotonecolumn</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">digits</span><span class="p">)</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span> <span class="o">==</span> <span class="mf">0.0</span>
+
     <span class="k">return</span> <span class="n">dframe</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">roundlevel</span><span class="p">)</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span>
         <span class="n">sep</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">float_format</span><span class="o">=</span><span class="n">float_format</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">)</span></div>
@@ -466,7 +484,7 @@
             <span class="c1"># No tags defined.</span>
             <span class="k">return</span> <span class="s2">&quot;Interpolated to </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
         <span class="k">return</span> <span class="s2">&quot;Interpolated to </span><span class="si">{}</span><span class="s2"> between </span><span class="si">{}</span><span class="s2"> and </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">parameter</span><span class="p">,</span> <span class="n">low</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">high</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span>
+            <span class="n">parameter</span><span class="p">,</span> <span class="n">low</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="n">high</span><span class="o">.</span><span class="n">tag</span>
         <span class="p">)</span>
     <span class="k">return</span> <span class="n">tag</span>
 

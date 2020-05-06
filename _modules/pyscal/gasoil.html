@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal.gasoil &mdash; pyscal 0.4.3.dev3+g57ebc5a documentation</title>
+  <title>pyscal.gasoil &mdash; pyscal 0.4.3.dev6+g3baaa87 documentation</title>
   
 
   
@@ -62,7 +62,7 @@
             
             
               <div class="version">
-                0.4.3.dev3+g57ebc5a
+                0.4.3.dev6+g3baaa87
               </div>
             
           
@@ -906,7 +906,9 @@
             <span class="o">+</span> <span class="s2">&quot;PC&quot;</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>
             <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="p">)</span>
-        <span class="n">string</span> <span class="o">+=</span> <span class="n">utils</span><span class="o">.</span><span class="n">df2str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;sg&quot;</span><span class="p">,</span> <span class="s2">&quot;krg&quot;</span><span class="p">,</span> <span class="s2">&quot;krog&quot;</span><span class="p">,</span> <span class="s2">&quot;pc&quot;</span><span class="p">]])</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="n">utils</span><span class="o">.</span><span class="n">df2str</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;sg&quot;</span><span class="p">,</span> <span class="s2">&quot;krg&quot;</span><span class="p">,</span> <span class="s2">&quot;krog&quot;</span><span class="p">,</span> <span class="s2">&quot;pc&quot;</span><span class="p">]],</span> <span class="n">monotonecolumn</span><span class="o">=</span><span class="s2">&quot;pc&quot;</span>
+        <span class="p">)</span>
         <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;/</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="n">string</span></div>
 
@@ -939,6 +941,8 @@
                     <span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">round</span><span class="p">,</span> <span class="n">slgof</span><span class="p">[</span><span class="s2">&quot;sl&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">SWINTEGERS</span><span class="p">)))</span>
                 <span class="p">)</span>
                 <span class="n">slgof</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="s2">&quot;slint&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="c1"># Delete the temporary column:</span>
+                <span class="n">slgof</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">labels</span><span class="o">=</span><span class="s2">&quot;slint&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;columns&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># Give up repairing the table:</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span>
@@ -991,7 +995,7 @@
             <span class="o">+</span> <span class="s2">&quot;PC&quot;</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>
             <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="p">)</span>
-        <span class="n">string</span> <span class="o">+=</span> <span class="n">utils</span><span class="o">.</span><span class="n">df2str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slgof_df</span><span class="p">())</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="n">utils</span><span class="o">.</span><span class="n">df2str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slgof_df</span><span class="p">(),</span> <span class="n">monotonecolumn</span><span class="o">=</span><span class="s2">&quot;pc&quot;</span><span class="p">)</span>
         <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;/</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="n">string</span></div>
 
@@ -1035,7 +1039,7 @@
             <span class="o">+</span> <span class="s2">&quot;PC&quot;</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>
             <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="p">)</span>
-        <span class="n">string</span> <span class="o">+=</span> <span class="n">utils</span><span class="o">.</span><span class="n">df2str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;sg&quot;</span><span class="p">,</span> <span class="s2">&quot;krg&quot;</span><span class="p">,</span> <span class="s2">&quot;pc&quot;</span><span class="p">]])</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="n">utils</span><span class="o">.</span><span class="n">df2str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;sg&quot;</span><span class="p">,</span> <span class="s2">&quot;krg&quot;</span><span class="p">,</span> <span class="s2">&quot;pc&quot;</span><span class="p">]],</span> <span class="n">monotonecolumn</span><span class="o">=</span><span class="s2">&quot;pc&quot;</span><span class="p">)</span>
         <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;/</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="n">string</span></div>
 
@@ -1080,7 +1084,9 @@
             <span class="o">+</span> <span class="s2">&quot;PC&quot;</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>
             <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="p">)</span>
-        <span class="n">string</span> <span class="o">+=</span> <span class="n">utils</span><span class="o">.</span><span class="n">df2str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;sg&quot;</span><span class="p">,</span> <span class="s2">&quot;krg&quot;</span><span class="p">,</span> <span class="s2">&quot;krog&quot;</span><span class="p">,</span> <span class="s2">&quot;pc&quot;</span><span class="p">]])</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="n">utils</span><span class="o">.</span><span class="n">df2str</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;sg&quot;</span><span class="p">,</span> <span class="s2">&quot;krg&quot;</span><span class="p">,</span> <span class="s2">&quot;krog&quot;</span><span class="p">,</span> <span class="s2">&quot;pc&quot;</span><span class="p">]],</span> <span class="n">monotonecolumn</span><span class="o">=</span><span class="s2">&quot;pc&quot;</span>
+        <span class="p">)</span>
         <span class="k">return</span> <span class="n">string</span></div>
 
 <div class="viewcode-block" id="GasOil.plotkrgkrog"><a class="viewcode-back" href="../../pyscal.html#pyscal.gasoil.GasOil.plotkrgkrog">[docs]</a>    <span class="k">def</span> <span class="nf">plotkrgkrog</span><span class="p">(</span>
