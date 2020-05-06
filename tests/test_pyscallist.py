@@ -127,7 +127,6 @@ def test_df():
     assert len(dframe["SATNUM"].unique()) == len(scalrec_list)
     assert set(dframe["CASE"]) == set(["pess", "base", "opt"])
     assert dframe["SATNUM"].max() == len(scalrec_list)
-
     if HAVE_ECL2DF:
         # Test using ecl2df to do the include file printing. First we need to
         # massage the dataframe into what ecl2df can handle:

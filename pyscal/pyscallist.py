@@ -90,6 +90,9 @@ class PyscalList(object):
         gasoil_col_renamer = {"sg": "SG", "krg": "KRG", "krog": "KROG", "pc": "PCOG"}
         wateroil_col_renamer = {"sw": "SW", "krw": "KRW", "krow": "KROW", "pc": "PCOW"}
 
+        # Sort order for rows in returned dataframe:
+        sort_candidates = ["SATNUM", "CASE", "KEYWORD", "SW", "SG", "SL"]
+
         df_list = []
         if self.pyscaltype == WaterOilGas:
             for (satnum, wateroilgas) in enumerate(self.pyscal_list):
@@ -166,9 +169,10 @@ class PyscalList(object):
                     .assign(SATNUM=satnum + 1)
                     .rename(gasoil_col_renamer, axis="columns")
                 )
-        dframe = pd.concat(df_list, ignore_index=True)
-        # for later: sort the columns
-        # consider mixing row order for dtype-inferral
+        dframe = pd.concat(df_list, sort=False, ignore_index=True)
+        sort_rows_on = [colname for colname in sort_candidates if colname in dframe]
+        if sort_rows_on:
+            dframe.sort_values(sort_rows_on, inplace=True)
         return dframe
 
     def dump_family_1(self, filename=None, slgof=False):
