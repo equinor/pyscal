@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal package &mdash; pyscal 0.4.3.dev6+g3baaa87 documentation</title>
+  <title>pyscal package &mdash; pyscal 0.4.3.dev7+gba4598d documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.4.3.dev6+g3baaa87
+                0.4.3.dev7+gba4598d
               </div>
             
           
@@ -1160,7 +1160,7 @@ Default is the Eclipse comment syntax ‘– ‘</p></li>
 
 <dl class="py function">
 <dt id="pyscal.utils.df2str">
-<code class="sig-prename descclassname">pyscal.utils.</code><code class="sig-name descname">df2str</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dframe</span></em>, <em class="sig-param"><span class="n">digits</span><span class="o">=</span><span class="default_value">7</span></em>, <em class="sig-param"><span class="n">roundlevel</span><span class="o">=</span><span class="default_value">9</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">monotonecolumn</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils.html#df2str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.utils.df2str" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pyscal.utils.</code><code class="sig-name descname">df2str</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dframe</span></em>, <em class="sig-param"><span class="n">digits</span><span class="o">=</span><span class="default_value">7</span></em>, <em class="sig-param"><span class="n">roundlevel</span><span class="o">=</span><span class="default_value">9</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">monotone_column</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">monotone_direction</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils.html#df2str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.utils.df2str" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a string representation of a dataframe with
 proper rounding.</p>
 <p>This is used to print the tables in the SWOF/SGOF include files,
@@ -1181,8 +1181,10 @@ numerical robustness to the deviation.</p></li>
 <li><p><strong>roundlevel</strong> (<em>int</em>) – To how many digits should we round prior to print.
 Recommended to be &gt; digits + 1, see test code.</p></li>
 <li><p><strong>header</strong> (<em>bool</em>) – If the dataframe column header should be included</p></li>
-<li><p><strong>monotonecolumn</strong> – column name for which strict decreasing monotonicity
-must be preserved in output.</p></li>
+<li><p><strong>monotone_column</strong> – column name for which strict monotonicity
+must be preserved in output. Only one column can be fixed.</p></li>
+<li><p><strong>monotone_direction</strong> – Direction of monotonicity, increasing or decreasing,
+allowed values are ‘-1’, ‘1’, ‘inc’ or ‘dec’</p></li>
 </ul>
 </dd>
 </dl>

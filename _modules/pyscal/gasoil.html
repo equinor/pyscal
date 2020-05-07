@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal.gasoil &mdash; pyscal 0.4.3.dev6+g3baaa87 documentation</title>
+  <title>pyscal.gasoil &mdash; pyscal 0.4.3.dev7+gba4598d documentation</title>
   
 
   
@@ -62,7 +62,7 @@
             
             
               <div class="version">
-                0.4.3.dev6+g3baaa87
+                0.4.3.dev7+gba4598d
               </div>
             
           
@@ -474,10 +474,10 @@
                 <span class="p">)</span>
             <span class="n">dframe</span> <span class="o">=</span> <span class="n">dframe</span><span class="o">.</span><span class="n">replace</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
             <span class="n">dframe</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="n">pccolname</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="c1"># If nonzero, then it must be decreasing:</span>
+            <span class="c1"># If nonzero, then it must be increasing:</span>
             <span class="k">if</span> <span class="n">dframe</span><span class="p">[</span><span class="n">pccolname</span><span class="p">]</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="n">pccolname</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Incoming pc not decreasing&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="n">pccolname</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Incoming pc not increasing&quot;</span><span class="p">)</span>
             <span class="n">pchip</span> <span class="o">=</span> <span class="n">PchipInterpolator</span><span class="p">(</span>
                 <span class="n">dframe</span><span class="p">[</span><span class="n">sgcolname</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span> <span class="n">dframe</span><span class="p">[</span><span class="n">pccolname</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
             <span class="p">)</span>
@@ -907,7 +907,9 @@
             <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="p">)</span>
         <span class="n">string</span> <span class="o">+=</span> <span class="n">utils</span><span class="o">.</span><span class="n">df2str</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;sg&quot;</span><span class="p">,</span> <span class="s2">&quot;krg&quot;</span><span class="p">,</span> <span class="s2">&quot;krog&quot;</span><span class="p">,</span> <span class="s2">&quot;pc&quot;</span><span class="p">]],</span> <span class="n">monotonecolumn</span><span class="o">=</span><span class="s2">&quot;pc&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;sg&quot;</span><span class="p">,</span> <span class="s2">&quot;krg&quot;</span><span class="p">,</span> <span class="s2">&quot;krog&quot;</span><span class="p">,</span> <span class="s2">&quot;pc&quot;</span><span class="p">]],</span>
+            <span class="n">monotone_column</span><span class="o">=</span><span class="s2">&quot;pc&quot;</span><span class="p">,</span>
+            <span class="n">monotone_direction</span><span class="o">=</span><span class="s2">&quot;inc&quot;</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;/</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="n">string</span></div>
@@ -995,7 +997,9 @@
             <span class="o">+</span> <span class="s2">&quot;PC&quot;</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>
             <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="p">)</span>
-        <span class="n">string</span> <span class="o">+=</span> <span class="n">utils</span><span class="o">.</span><span class="n">df2str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slgof_df</span><span class="p">(),</span> <span class="n">monotonecolumn</span><span class="o">=</span><span class="s2">&quot;pc&quot;</span><span class="p">)</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="n">utils</span><span class="o">.</span><span class="n">df2str</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">slgof_df</span><span class="p">(),</span> <span class="n">monotone_column</span><span class="o">=</span><span class="s2">&quot;pc&quot;</span><span class="p">,</span> <span class="n">monotone_direction</span><span class="o">=</span><span class="s2">&quot;dec&quot;</span>
+        <span class="p">)</span>
         <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;/</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="n">string</span></div>
 
@@ -1039,7 +1043,11 @@
             <span class="o">+</span> <span class="s2">&quot;PC&quot;</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>
             <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="p">)</span>
-        <span class="n">string</span> <span class="o">+=</span> <span class="n">utils</span><span class="o">.</span><span class="n">df2str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;sg&quot;</span><span class="p">,</span> <span class="s2">&quot;krg&quot;</span><span class="p">,</span> <span class="s2">&quot;pc&quot;</span><span class="p">]],</span> <span class="n">monotonecolumn</span><span class="o">=</span><span class="s2">&quot;pc&quot;</span><span class="p">)</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="n">utils</span><span class="o">.</span><span class="n">df2str</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;sg&quot;</span><span class="p">,</span> <span class="s2">&quot;krg&quot;</span><span class="p">,</span> <span class="s2">&quot;pc&quot;</span><span class="p">]],</span>
+            <span class="n">monotone_column</span><span class="o">=</span><span class="s2">&quot;pc&quot;</span><span class="p">,</span>
+            <span class="n">monotone_direction</span><span class="o">=</span><span class="s2">&quot;inc&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
         <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;/</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="n">string</span></div>
 
@@ -1085,7 +1093,9 @@
             <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="p">)</span>
         <span class="n">string</span> <span class="o">+=</span> <span class="n">utils</span><span class="o">.</span><span class="n">df2str</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;sg&quot;</span><span class="p">,</span> <span class="s2">&quot;krg&quot;</span><span class="p">,</span> <span class="s2">&quot;krog&quot;</span><span class="p">,</span> <span class="s2">&quot;pc&quot;</span><span class="p">]],</span> <span class="n">monotonecolumn</span><span class="o">=</span><span class="s2">&quot;pc&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;sg&quot;</span><span class="p">,</span> <span class="s2">&quot;krg&quot;</span><span class="p">,</span> <span class="s2">&quot;krog&quot;</span><span class="p">,</span> <span class="s2">&quot;pc&quot;</span><span class="p">]],</span>
+            <span class="n">monotone_column</span><span class="o">=</span><span class="s2">&quot;pc&quot;</span><span class="p">,</span>
+            <span class="n">monotone_direction</span><span class="o">=</span><span class="s2">&quot;inc&quot;</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">string</span></div>
 

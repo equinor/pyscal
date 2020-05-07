@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal.utils &mdash; pyscal 0.4.3.dev6+g3baaa87 documentation</title>
+  <title>pyscal.utils &mdash; pyscal 0.4.3.dev7+gba4598d documentation</title>
   
 
   
@@ -62,7 +62,7 @@
             
             
               <div class="version">
-                0.4.3.dev6+g3baaa87
+                0.4.3.dev7+gba4598d
               </div>
             
           
@@ -174,7 +174,14 @@
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="df2str"><a class="viewcode-back" href="../../pyscal.html#pyscal.utils.df2str">[docs]</a><span class="k">def</span> <span class="nf">df2str</span><span class="p">(</span><span class="n">dframe</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span> <span class="n">roundlevel</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">monotonecolumn</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="df2str"><a class="viewcode-back" href="../../pyscal.html#pyscal.utils.df2str">[docs]</a><span class="k">def</span> <span class="nf">df2str</span><span class="p">(</span>
+    <span class="n">dframe</span><span class="p">,</span>
+    <span class="n">digits</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
+    <span class="n">roundlevel</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span>
+    <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">monotone_column</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">monotone_direction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make a string representation of a dataframe with</span>
 <span class="sd">    proper rounding.</span>
@@ -197,21 +204,34 @@
 <span class="sd">        roundlevel (int): To how many digits should we round prior to print.</span>
 <span class="sd">            Recommended to be &gt; digits + 1, see test code.</span>
 <span class="sd">        header (bool): If the dataframe column header should be included</span>
-<span class="sd">        monotonecolumn: column name for which strict decreasing monotonicity</span>
-<span class="sd">            must be preserved in output.</span>
+<span class="sd">        monotone_column: column name for which strict monotonicity</span>
+<span class="sd">            must be preserved in output. Only one column can be fixed.</span>
+<span class="sd">        monotone_direction: Direction of monotonicity, increasing or decreasing,</span>
+<span class="sd">            allowed values are &#39;-1&#39;, &#39;1&#39;, &#39;inc&#39; or &#39;dec&#39;</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">float_format</span> <span class="o">=</span> <span class="s2">&quot;%1.&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">digits</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;f&quot;</span>
 
-    <span class="k">if</span> <span class="n">monotonecolumn</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">dframe</span><span class="p">[</span><span class="n">monotonecolumn</span><span class="p">]</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">monotone_direction</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">monotone_direction</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">monotone_direction</span> <span class="o">==</span> <span class="s2">&quot;inc&quot;</span><span class="p">:</span>
+            <span class="n">sign</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">monotone_direction</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">or</span> <span class="n">monotone_direction</span> <span class="o">==</span> <span class="s2">&quot;dec&quot;</span><span class="p">:</span>
+            <span class="n">sign</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unknown monotone_direction: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">monotone_direction</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">monotone_column</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">sign</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1"># Default is decreasing monotonocity</span>
+
+    <span class="k">if</span> <span class="n">monotone_column</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">dframe</span><span class="p">[</span><span class="n">monotone_column</span><span class="p">]</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">dframe</span> <span class="o">=</span> <span class="n">dframe</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">constants</span> <span class="o">=</span> <span class="n">dframe</span><span class="p">[</span><span class="n">monotonecolumn</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">digits</span><span class="p">)</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span> <span class="o">==</span> <span class="mf">0.0</span>
+        <span class="n">constants</span> <span class="o">=</span> <span class="n">dframe</span><span class="p">[</span><span class="n">monotone_column</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">digits</span><span class="p">)</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span> <span class="o">==</span> <span class="mf">0.0</span>
         <span class="k">while</span> <span class="n">constants</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
             <span class="c1"># Substract the smallest value that we can represent where</span>
             <span class="c1"># it is needed:</span>
-            <span class="n">dframe</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">constants</span><span class="p">,</span> <span class="n">monotonecolumn</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">dframe</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">constants</span><span class="p">,</span> <span class="n">monotonecolumn</span><span class="p">]</span> <span class="o">-</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="mf">10.0</span> <span class="o">**</span> <span class="n">digits</span>
+            <span class="n">dframe</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">constants</span><span class="p">,</span> <span class="n">monotone_column</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">dframe</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">constants</span><span class="p">,</span> <span class="n">monotone_column</span><span class="p">]</span> <span class="o">+</span> <span class="n">sign</span> <span class="o">/</span> <span class="mf">10.0</span> <span class="o">**</span> <span class="n">digits</span>
             <span class="p">)</span>
-            <span class="n">constants</span> <span class="o">=</span> <span class="n">dframe</span><span class="p">[</span><span class="n">monotonecolumn</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">digits</span><span class="p">)</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span> <span class="o">==</span> <span class="mf">0.0</span>
+            <span class="n">constants</span> <span class="o">=</span> <span class="n">dframe</span><span class="p">[</span><span class="n">monotone_column</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">digits</span><span class="p">)</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span> <span class="o">==</span> <span class="mf">0.0</span>
 
     <span class="k">return</span> <span class="n">dframe</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">roundlevel</span><span class="p">)</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span>
         <span class="n">sep</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">float_format</span><span class="o">=</span><span class="n">float_format</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span>
