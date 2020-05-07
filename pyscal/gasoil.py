@@ -317,10 +317,10 @@ class GasOil(object):
                 )
             dframe = dframe.replace([np.inf, -np.inf], np.nan)
             dframe.dropna(subset=[pccolname], how="all", inplace=True)
-            # If nonzero, then it must be decreasing:
+            # If nonzero, then it must be increasing:
             if dframe[pccolname].abs().sum() > 0:
-                if not (dframe[pccolname].diff().dropna() < 0.0).all():
-                    raise ValueError("Incoming pc not decreasing")
+                if not (dframe[pccolname].diff().dropna() > 0.0).all():
+                    raise ValueError("Incoming pc not increasing")
             pchip = PchipInterpolator(
                 dframe[sgcolname].astype(float), dframe[pccolname].astype(float)
             )
@@ -750,7 +750,9 @@ class GasOil(object):
             + "\n"
         )
         string += utils.df2str(
-            self.table[["sg", "krg", "krog", "pc"]], monotonecolumn="pc"
+            self.table[["sg", "krg", "krog", "pc"]],
+            monotone_column="pc",
+            monotone_direction="inc",
         )
         string += "/\n"
         return string
@@ -838,7 +840,9 @@ class GasOil(object):
             + "PC".ljust(width)
             + "\n"
         )
-        string += utils.df2str(self.slgof_df(), monotonecolumn="pc")
+        string += utils.df2str(
+            self.slgof_df(), monotone_column="pc", monotone_direction="dec"
+        )
         string += "/\n"
         return string
 
@@ -882,7 +886,11 @@ class GasOil(object):
             + "PC".ljust(width)
             + "\n"
         )
-        string += utils.df2str(self.table[["sg", "krg", "pc"]], monotonecolumn="pc")
+        string += utils.df2str(
+            self.table[["sg", "krg", "pc"]],
+            monotone_column="pc",
+            monotone_direction="inc",
+        )
         string += "/\n"
         return string
 
@@ -928,7 +936,9 @@ class GasOil(object):
             + "\n"
         )
         string += utils.df2str(
-            self.table[["sg", "krg", "krog", "pc"]], monotonecolumn="pc"
+            self.table[["sg", "krg", "krog", "pc"]],
+            monotone_column="pc",
+            monotone_direction="inc",
         )
         return string
 

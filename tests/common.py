@@ -118,7 +118,10 @@ def check_table(dframe):
         assert (dframe["krw"] >= 0).all()
         assert (dframe["krw"] <= 1.0).all()
     if "pc" in dframe:
-        assert series_decreasing(dframe["pc"])
+        if "sw" in dframe:
+            assert series_decreasing(dframe["pc"])
+        if "sg" in dframe:
+            assert series_increasing(dframe["pc"])
     if "krog" in dframe:
         assert series_decreasing(dframe["krog"])
         assert (dframe["krog"] >= 0).all()

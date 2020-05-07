@@ -17,7 +17,14 @@ logging.basicConfig()
 logger = logging.getLogger(__name__)
 
 
-def df2str(dframe, digits=7, roundlevel=9, header=False, monotonecolumn=None):
+def df2str(
+    dframe,
+    digits=7,
+    roundlevel=9,
+    header=False,
+    monotone_column=None,
+    monotone_direction=None,
+):
     """
     Make a string representation of a dataframe with
     proper rounding.
@@ -40,21 +47,34 @@ def df2str(dframe, digits=7, roundlevel=9, header=False, monotonecolumn=None):
         roundlevel (int): To how many digits should we round prior to print.
             Recommended to be > digits + 1, see test code.
         header (bool): If the dataframe column header should be included
-        monotonecolumn: column name for which strict decreasing monotonicity
-            must be preserved in output.
+        monotone_column: column name for which strict monotonicity
+            must be preserved in output. Only one column can be fixed.
+        monotone_direction: Direction of monotonicity, increasing or decreasing,
+            allowed values are '-1', '1', 'inc' or 'dec'
     """
     float_format = "%1." + str(digits) + "f"
 
-    if monotonecolumn is not None and dframe[monotonecolumn].abs().sum() > 0:
+    if monotone_direction is not None:
+        if monotone_direction == 1 or monotone_direction == "inc":
+            sign = 1
+        elif monotone_direction == -1 or monotone_direction == "dec":
+            sign = -1
+        else:
+            raise ValueError("Unknown monotone_direction: " + str(monotone_direction))
+    else:
+        if monotone_column is not None:
+            sign = -1  # Default is decreasing monotonocity
+
+    if monotone_column is not None and dframe[monotone_column].abs().sum() > 0:
         dframe = dframe.copy()
-        constants = dframe[monotonecolumn].round(digits).diff() == 0.0
+        constants = dframe[monotone_column].round(digits).diff() == 0.0
         while constants.any():
             # Substract the smallest value that we can represent where
             # it is needed:
-            dframe.loc[constants, monotonecolumn] = (
-                dframe.loc[constants, monotonecolumn] - 1.0 / 10.0 ** digits
+            dframe.loc[constants, monotone_column] = (
+                dframe.loc[constants, monotone_column] + sign / 10.0 ** digits
             )
-            constants = dframe[monotonecolumn].round(digits).diff() == 0.0
+            constants = dframe[monotone_column].round(digits).diff() == 0.0
 
     return dframe.round(roundlevel).to_csv(
         sep=" ", float_format=float_format, header=header, index=False
