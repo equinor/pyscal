@@ -7,6 +7,8 @@ from __future__ import print_function
 import pandas as pd
 import numpy as np
 
+import pytest
+
 from hypothesis import given, settings
 import hypothesis.strategies as st
 
@@ -107,18 +109,64 @@ def test_df2str_monotone():
 
     # Don't touch all-zero columns
     assert (
-        utils.df2str(pd.DataFrame(data=[0, 0, 0]), digits=2, monotonecolumn=0)
+        utils.df2str(pd.DataFrame(data=[0, 0, 0]), digits=2, monotone_column=0)
         == "0\n0\n0\n"
     )
     # A constant nonzero column, makes no sense as capillary pressure
     # but still we ensure it runs in eclipse:
     assert (
-        utils.df2str(pd.DataFrame(data=[1, 1, 1]), digits=2, monotonecolumn=0)
+        utils.df2str(pd.DataFrame(data=[1, 1, 1]), digits=2, monotone_column=0)
         == "1.00\n0.99\n0.98\n"
     )
+    assert (
+        utils.df2str(
+            pd.DataFrame(data=[1, 1, 1]),
+            digits=2,
+            monotone_column=0,
+            monotone_direction=-1,
+        )
+        == "1.00\n0.99\n0.98\n"
+    )
+    assert (
+        utils.df2str(
+            pd.DataFrame(data=[1, 1, 1]),
+            digits=2,
+            monotone_column=0,
+            monotone_direction="dec",
+        )
+        == "1.00\n0.99\n0.98\n"
+    )
+    assert (
+        utils.df2str(
+            pd.DataFrame(data=[1, 1, 1]),
+            digits=2,
+            monotone_column=0,
+            monotone_direction=1,
+        )
+        == "1.00\n1.01\n1.02\n"
+    )
+    assert (
+        utils.df2str(
+            pd.DataFrame(data=[1, 1, 1]),
+            digits=2,
+            monotone_column=0,
+            monotone_direction="inc",
+        )
+        == "1.00\n1.01\n1.02\n"
+    )
+    with pytest.raises(ValueError):
+        assert (
+            utils.df2str(
+                pd.DataFrame(data=[1, 1, 1]),
+                digits=2,
+                monotone_column=0,
+                monotone_direction="foo",
+            )
+            == "1.00\n1.01\n1.02\n"
+        )
 
     assert (
-        utils.df2str(pd.DataFrame(data=[1, 1, 1]), digits=7, monotonecolumn=0)
+        utils.df2str(pd.DataFrame(data=[1, 1, 1]), digits=7, monotone_column=0)
         == "1.0000000\n0.9999999\n0.9999998\n"
     )
 
@@ -127,7 +175,7 @@ def test_df2str_monotone():
         data=[0.0000027, 0.0000026, 0.0000024, 0.0000024, 0.0000017], columns=["pc"]
     )
     assert (
-        utils.df2str(dframe, monotonecolumn="pc")
+        utils.df2str(dframe, monotone_column="pc")
         == "0.0000027\n0.0000026\n0.0000024\n0.0000023\n0.0000017\n"
     )
 

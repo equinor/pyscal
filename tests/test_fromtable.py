@@ -44,14 +44,14 @@ def test_wo_fromtable_simple():
     assert "pc" in wateroil.table.columns
     assert sum(wateroil.table["krw"]) > 0
     assert sum(wateroil.table["krow"]) > 0
-    assert sum(wateroil.table["pc"]) == 11  # Linearly decreasing PC
+    assert np.isclose(sum(wateroil.table["pc"]), 11)  # Linearly increasing PC
     check_table(wateroil.table)
 
 
 def test_go_fromtable_simple():
     """Test reading of a simple gasoil table"""
     df1 = pd.DataFrame(
-        columns=["SG", "KRG", "KROG", "PC"], data=[[0, 0, 1, 2], [1, 1, 0, 0]]
+        columns=["SG", "KRG", "KROG", "PC"], data=[[0, 0, 1, 0], [1, 1, 0, 2]]
     )
     gasoil = GasOil(h=0.1)
     gasoil.add_fromtable(
@@ -59,7 +59,7 @@ def test_go_fromtable_simple():
     )
     assert sum(gasoil.table["krg"]) > 0
     assert sum(gasoil.table["krog"]) > 0
-    assert sum(gasoil.table["pc"]) == 11  # Linearly decreasing PCOG
+    assert np.isclose(sum(gasoil.table["pc"]), 11)  # Linearly increasing PCOG
     check_table(gasoil.table)
 
 
@@ -92,7 +92,7 @@ def test_wo_fromtable_multiindex():
 def test_go_fromtable_problems():
     """Test loading from a table where there should be problems"""
     df1 = pd.DataFrame(
-        columns=["Sg", "KRG", "KROG", "PCOG"], data=[[0.1, 0, 1, 2], [0.9, 1, 0, 0]]
+        columns=["Sg", "KRG", "KROG", "PCOG"], data=[[0.1, 0, 1, 0], [0.9, 1, 0, 2]]
     )
     # Now sgcr and swl is wrong:
     gasoil = GasOil(h=0.1)
@@ -100,7 +100,7 @@ def test_go_fromtable_problems():
         # Should say sg must start at zero.
         gasoil.add_fromtable(df1, pccolname="PCOG")
     df2 = pd.DataFrame(
-        columns=["Sg", "KRG", "KROG", "PCOG"], data=[[0.0, 0, 1, 2], [0.9, 0.8, 0, 0]]
+        columns=["Sg", "KRG", "KROG", "PCOG"], data=[[0.0, 0, 1, 0], [0.9, 0.8, 0, 2]]
     )
     with pytest.raises(ValueError):
         # should say too large swl for pcog interpolation
@@ -325,7 +325,7 @@ def test_fromtable_types():
     # ruin the numerical interpretation of a column.
     df1 = pd.DataFrame(
         columns=["SW", "KRW", "KROW", "PC"],
-        data=[["0", "0", "1", "2"], ["1", "1", "0", "0"]],
+        data=[["0", "0", "1", "0"], ["1", "1", "0", "0"]],
     )
     wateroil = WaterOil(h=0.1)
     wateroil.add_fromtable(
