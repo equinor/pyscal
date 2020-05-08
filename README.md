@@ -1,4 +1,11 @@
-# pyscal [![Build Status](https://travis-ci.com/equinor/pyscal.svg?branch=master)](https://travis-ci.com/equinor/pyscal) [![Codacy Badge](https://api.codacy.com/project/badge/Grade/11d947d518bd41729dc104d24fce33cd)](https://www.codacy.com/app/berland/pyscal?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=equinor/pyscal&amp;utm_campaign=Badge_Grade)
+[![Build Status](https://img.shields.io/github/workflow/status/equinor/pyscal/pyscal)](https://github.com/equinor/pyscal/actions?query=workflow%3Apyscal)
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/equinor/pyscal.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/equinor/pyscal/context:python)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/equinor/pyscal.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/equinor/pyscal/alerts/)
+[![Python 2.7-3.8](https://img.shields.io/badge/python-2.7%20|%203.6%20|%203.7%20|%203.8-blue.svg)](https://www.python.org)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://black.readthedocs.io/)
+[![License: GPL v3](https://img.shields.io/badge/License-LGPLv3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
+
+# pyscal
 
 ![Pyscal art, interpolation in random Corey curves](docs/images/pyscal-logo.png)
 
