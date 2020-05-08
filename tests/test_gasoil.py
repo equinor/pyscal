@@ -72,6 +72,7 @@ def test_gasoil_tag(tag):
     sat_table_str_ok(gasoil.SGFN())
 
 
+@settings(deadline=500)
 @given(
     st.floats(min_value=0, max_value=0.15),  # swl
     st.floats(min_value=0, max_value=0.3),  # sgcr
