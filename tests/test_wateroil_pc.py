@@ -169,11 +169,8 @@ def test_let_pc_pd():
     wateroil.add_LET_pc_pd(Lp=10, Ep=10, Tp=10, Lt=10, Et=10, Tt=10, Pcmax=5, Pct=2)
     assert np.isclose(wateroil.table["pc"].max(), 5)
     assert np.isclose(wateroil.table["pc"].min(), 0)
-    # On plot: hard-to-see kink at Pc=2. Linear curve from sw=0.6 to 1 due to sorw.
-    assert (
-        len(wateroil.table[(wateroil.table["sw"] >= 0.6) & (wateroil.table["sw"] <= 1)])
-        == 2
-    )
+    # On plot: hard-to-see kink at Pc=2. .
+    # wateroil.plotpc()
     wateroil.add_corey_water()
     wateroil.add_corey_oil()
     sat_table_str_ok(wateroil.SWOF())
@@ -199,6 +196,4 @@ def test_let_pc_imb():
     assert np.isclose(wateroil.table["pc"].min(), 1)
     wateroil.add_corey_water()
     wateroil.add_corey_oil()
-    print(wateroil.SWOF())
-
     sat_table_str_ok(wateroil.SWOF())

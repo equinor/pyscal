@@ -12,7 +12,12 @@ import hypothesis.strategies as st
 from pyscal import WaterOil
 from pyscal.constants import SWINTEGERS
 
-from common import check_table, float_df_checker, sat_table_str_ok
+from common import (
+    check_table,
+    float_df_checker,
+    sat_table_str_ok,
+    check_linear_sections,
+)
 
 
 def check_endpoints(wateroil, krwend, krwmax, kroend, kromax):
@@ -72,6 +77,7 @@ def test_wateroil_corey1(nw, now):
     assert "krw" in wateroil.table
     assert isinstance(wateroil.krwcomment, str)
     check_table(wateroil.table)
+    check_linear_sections(wateroil)
     swofstr = wateroil.SWOF()
     assert len(swofstr) > 100
 
@@ -91,6 +97,7 @@ def test_wateroil_let1(l, e, t, krwend, krwmax):
     assert "krw" in wateroil.table
     assert isinstance(wateroil.krwcomment, str)
     check_table(wateroil.table)
+    check_linear_sections(wateroil)
     swofstr = wateroil.SWOF()
     assert len(swofstr) > 100
 
@@ -130,6 +137,7 @@ def test_wateroil_krendmax(swl, swcr, sorw, kroend, kromax, krwend, krwmax, h, f
     check_table(wateroil.table)
     # Check endpoints for oil curve:
     check_endpoints(wateroil, krwend, krwmax, kroend, kromax)
+    check_linear_sections(wateroil)
     assert 0 < wateroil.crosspoint() < 1
 
 
@@ -142,6 +150,17 @@ def test_swfn():
     assert len(swfnstr) > 15
 
 
+def test_linearsegments():
+    """Made for testing the linear segments during
+    the resolution of issue #163"""
+    wateroil = WaterOil(h=0.01, swl=0.1, swcr=0.3, sorw=0.3)
+    wateroil.add_corey_oil(now=10, kroend=0.5)
+    wateroil.add_corey_water(nw=10, krwend=0.5)
+    check_table(wateroil.table)
+    check_linear_sections(wateroil)
+    # wateroil.plotkrwkrow(marker="*")
+
+
 def test_wateroil_linear():
     """Test linear wateroil curves"""
     wateroil = WaterOil(h=1)
@@ -149,6 +168,7 @@ def test_wateroil_linear():
     wateroil.add_corey_oil()
     swofstr = wateroil.SWOF(header=False)
     check_table(wateroil.table)
+    check_linear_sections(wateroil)
     assert isinstance(swofstr, str)
     assert swofstr
     assert len(wateroil.table) == 2
@@ -161,6 +181,7 @@ def test_wateroil_linear():
     wateroil.add_corey_water()
     wateroil.add_corey_oil()
     check_table(wateroil.table)
+    check_linear_sections(wateroil)
     assert len(wateroil.table) == 2
     assert np.isclose(wateroil.table["sw"].min(), 0.1)
     assert np.isclose(wateroil.table["sw"].max(), 1.0)

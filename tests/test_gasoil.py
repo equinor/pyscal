@@ -10,7 +10,12 @@ import pandas as pd
 from hypothesis import given, settings
 import hypothesis.strategies as st
 
-from common import float_df_checker, check_table, sat_table_str_ok
+from common import (
+    float_df_checker,
+    check_table,
+    sat_table_str_ok,
+    check_linear_sections,
+)
 
 from pyscal import GasOil
 from pyscal.constants import SWINTEGERS
@@ -136,6 +141,7 @@ def test_gasoil_krendmax(swl, sgcr, sorg, kroend, kromax, krgend, krgmax, h, fas
     gasoil.add_corey_oil(kroend=kroend, kromax=kromax)
     gasoil.add_corey_gas(krgend=krgend, krgmax=krgmax)
     check_table(gasoil.table)
+    check_linear_sections(gasoil)
     assert gasoil.selfcheck()
     check_endpoints(gasoil, krgend, krgmax, kroend, kromax)
     assert 0 < gasoil.crosspoint() < 1
@@ -145,6 +151,7 @@ def test_gasoil_krendmax(swl, sgcr, sorg, kroend, kromax, krgend, krgmax, h, fas
     gasoil.add_corey_oil(kroend=kroend, kromax=kromax)
     gasoil.add_corey_gas(krgend=krgend, krgmax=krgmax)
     check_table(gasoil.table)
+    check_linear_sections(gasoil)
     assert gasoil.selfcheck()
     check_endpoints(gasoil, krgend, krgmax, kroend, kromax)
     assert 0 < gasoil.crosspoint() < 1
@@ -154,6 +161,7 @@ def test_gasoil_krendmax(swl, sgcr, sorg, kroend, kromax, krgend, krgmax, h, fas
     gasoil.add_LET_oil(t=1.1, kroend=kroend, kromax=kromax)
     gasoil.add_LET_gas(krgend=krgend, krgmax=krgmax)
     check_table(gasoil.table)
+    check_linear_sections(gasoil)
     assert gasoil.selfcheck()
     check_endpoints(gasoil, krgend, krgmax, kroend, kromax)
     assert 0 < gasoil.crosspoint() < 1
@@ -256,6 +264,7 @@ def test_gasoil_krgendanchor():
     assert gasoil.sorg
     gasoil.add_LET_gas(1, 1, 1.1)
     gasoil.add_LET_oil(1, 1, 1.1)
+    check_linear_sections(gasoil)
     assert 0 < gasoil.crosspoint() < 1
 
     # kg should be 1.0 at 1 - sorg due to krgendanchor == "sorg":
@@ -269,6 +278,7 @@ def test_gasoil_krgendanchor():
     assert gasoil.sorg
     gasoil.add_LET_gas(1, 1, 1.1)
     gasoil.add_LET_oil(1, 1, 1.1)
+    check_linear_sections(gasoil)
     assert gasoil.selfcheck()
 
     # kg should be < 1 at 1 - sorg due to krgendanchor being ""
@@ -279,6 +289,17 @@ def test_gasoil_krgendanchor():
     assert gasoil.table[np.isclose(gasoil.table["sg"], 1.0)]["krg"].values[0] == 1.0
 
 
+def test_linearsegments():
+    """Made for testing the linear segments during
+    the resolution of issue #163"""
+    gasoil = GasOil(h=0.01, swl=0.1, sgcr=0.3, sorg=0.3)
+    gasoil.add_corey_oil(nog=10, kroend=0.5)
+    gasoil.add_corey_gas(ng=10, krgend=0.5)
+    check_table(gasoil.table)
+    check_linear_sections(gasoil)
+    # gasoil.plotkrgkrog(marker="*")
+
+
 def test_kromaxend():
     """Manual testing of kromax and kroend behaviour"""
     gasoil = GasOil(swirr=0.01, sgcr=0.01, h=0.01, swl=0.1, sorg=0.05)
@@ -286,6 +307,7 @@ def test_kromaxend():
     gasoil.add_LET_oil(2, 2, 2.1)
     assert gasoil.table["krog"].max() == 1
     gasoil.add_LET_oil(2, 2, 2.1, kroend=0.5, kromax=0.9)
+    check_linear_sections(gasoil)
     assert gasoil.table["krog"].max() == 0.9
     # Second krog-value should be kroend, values in between will be linearly
     # interpolated in Eclipse
@@ -321,6 +343,7 @@ def test_gasoil_corey1(ng, nog):
 
     gasoil.resetsorg()
     check_table(gasoil.table)
+    check_linear_sections(gasoil)
     sgofstr = gasoil.SGOF()
     assert len(sgofstr) > 100
     sat_table_str_ok(sgofstr)
@@ -341,6 +364,7 @@ def test_gasoil_let1(l, e, t, krgend, krgmax):
     assert "krg" in gasoil.table
     assert isinstance(gasoil.krgcomment, str)
     check_table(gasoil.table)
+    check_linear_sections(gasoil)
     sgofstr = gasoil.SGOF()
     assert len(sgofstr) > 100
     sat_table_str_ok(sgofstr)

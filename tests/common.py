@@ -4,6 +4,8 @@ import numpy as np
 import pandas as pd
 import six
 
+from pyscal import WaterOil, GasOil
+
 
 def series_decreasing(series):
     """Weaker than pd.Series.is_monotonic_decreasing,
@@ -130,6 +132,47 @@ def check_table(dframe):
         assert series_increasing(dframe["krg"])
         assert (dframe["krg"] >= 0).all()
         assert (dframe["krg"] <= 1.0).all()
+
+
+def check_linear_sections(wo_or_go):
+    """Check that the linear segments of a WaterOil or a GasOil
+    object are linear."""
+    if isinstance(wo_or_go, WaterOil):
+        sat_col = "sw"
+        right_start = 1 - wo_or_go.sorw
+        right_end = 1
+        lin_cols = ["krow", "krw"]
+        left_start = wo_or_go.swl
+        left_end = wo_or_go.swcr
+    if isinstance(wo_or_go, GasOil):
+        sat_col = "sg"
+        if wo_or_go.krgendanchor == "sorg":
+            right_start = 1 - wo_or_go.sorg - wo_or_go.swl
+        else:
+            # If not krgendanchor=sorg, then there is no linear
+            # segment to the right.
+            right_start = 1 - wo_or_go.swl
+        right_end = 1 - wo_or_go.swl
+        lin_cols = ["krog", "krg"]
+        left_start = 0
+        left_end = wo_or_go.sgcr
+
+    right_lin_seg = wo_or_go.table[
+        (wo_or_go.table[sat_col] >= right_start)
+        & (wo_or_go.table[sat_col] <= right_end)
+    ]
+    left_lin_seg = wo_or_go.table[
+        (wo_or_go.table[sat_col] >= left_start) & (wo_or_go.table[sat_col] <= left_end)
+    ]
+    if len(right_lin_seg) > 4:
+        for col in lin_cols:
+            # We avoid the first and last row in right_lin_seg, because
+            # this does not always match the constant saturation segment
+            # assumption in this linearity test:
+            assert right_lin_seg.iloc[1:-1][col].diff().std() < 1e-9
+    if len(left_lin_seg) > 4:
+        for col in lin_cols:
+            assert left_lin_seg.iloc[1:-1][col].diff().std() < 1e-9
 
 
 def float_df_checker(dframe, idxcol, value, compcol, answer):
