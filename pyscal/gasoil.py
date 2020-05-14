@@ -1,6 +1,4 @@
-"""
-Representing a GasOil object
-"""
+""" Representing a GasOil object """
 from __future__ import division, absolute_import
 from __future__ import print_function
 
@@ -949,6 +947,7 @@ class GasOil(object):
         alpha=1,
         linewidth=1,
         linestyle="-",
+        marker=None,
         label=None,
         logyscale=False,
     ):
@@ -979,6 +978,7 @@ class GasOil(object):
             label=label,
             linewidth=linewidth,
             linestyle=linestyle,
+            marker=marker,
         )
         self.table.plot(
             ax=useax,
@@ -990,6 +990,7 @@ class GasOil(object):
             label=None,
             linewidth=linewidth,
             linestyle=linestyle,
+            marker=marker,
         )
         if mpl_ax is None:
             plt.show()

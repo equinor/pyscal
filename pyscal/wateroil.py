@@ -95,9 +95,7 @@ class WaterOil(object):
         self.sorw = sorw
         self.tag = tag
         self.fast = fast
-        sw_list = (
-            list(np.arange(self.swl, 1 - sorw, self.h)) + [self.swcr] + [1 - sorw] + [1]
-        )
+        sw_list = list(np.arange(self.swl, 1, self.h)) + [self.swcr] + [1 - sorw] + [1]
         sw_list.sort()  # Using default timsort on nearly sorted data.
         self.table = pd.DataFrame(sw_list, columns=["sw"])
 
@@ -405,21 +403,34 @@ class WaterOil(object):
             krwend (float): krw at 1 - sorwr
             krwmax (float): krw at Sw=1. Default 1.
         """
-        # Avoid machine accuracy problems around sorw (monotonicity):
-        self.table.loc[self.table["krw"] > krwmax, "krw"] = krwmax
+        # The rows and indices involved in the linear section [1-sorw, 1]:
+        linear_section_rows = self.table["sw"] > (1 - self.sorw - epsilon)
+        linear_section_indices = self.table[linear_section_rows].index
+        # (these lists are never empty)
 
-        # We assume there is no points between 1 - sorw and 1, so no
-        # need to excplicitly insert linearly interpolated values.
-        if self.sorw > 1.0 / SWINTEGERS:
-            if not krwmax:
-                krwmax = 1.0
-            self.table.loc[self.table["sw"] > (1 - self.sorw - epsilon), "krw"] = krwmax
+        # Set krwend always (overrides krwmax if sorw=0)
+        self.table.iloc[linear_section_indices[0]]["krw"] = krwend
+
+        if len(linear_section_indices) > 1:
+            if krwmax is None:
+                krwmax = 1
+            self.table.iloc[linear_section_indices[-1]]["krw"] = krwmax
         else:
-            if krwmax and krwmax < 1.0:
-                # Only warn if non-default value
+            if krwmax is not None:
                 logger.warning("krwmax ignored when sorw is zero")
-            self.table.loc[self.table["sw"] > (1 - self.sorw - epsilon), "krw"] = krwend
-        self.table.loc[np.isclose(self.table["sw"], 1 - self.sorw), "krw"] = krwend
+
+        # If the linear section is longer than two rows, do linear
+        # interpolation inside for krw:
+        if len(linear_section_indices) > 2:
+            self.table.loc[linear_section_indices[1:-1], "krw"] = np.nan
+            interp_krw = (
+                self.table[["sw", "krw"]]
+                .set_index("sw")
+                .interpolate(method="index")["krw"]
+            )
+            self.table.loc[:, "krw"] = interp_krw.values
+
+        # Left linear section is all zero:
         self.table.loc[self.table.sw < self.swcr, "krw"] = 0
 
     def set_endpoints_linearpart_krow(self, kroend, kromax=None):
@@ -1250,6 +1261,7 @@ class WaterOil(object):
         alpha=1,
         linewidth=1,
         linestyle="-",
+        marker=None,
         label="",
         logyscale=False,
     ):
@@ -1279,6 +1291,7 @@ class WaterOil(object):
             label=label,
             linewidth=linewidth,
             linestyle=linestyle,
+            marker=marker,
         )
         self.table.plot(
             ax=useax,
@@ -1290,6 +1303,7 @@ class WaterOil(object):
             legend=None,
             linewidth=linewidth,
             linestyle=linestyle,
+            marker=marker,
         )
         if mpl_ax is None:
             plt.show()
