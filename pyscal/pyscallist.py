@@ -272,11 +272,6 @@ class PyscalList(object):
             wog_list.append(
                 scalrec.interpolate(int_params_wo[satnum], int_params_go[satnum], h=h)
             )
-            # Revise (remove?) these 4 lines while solving github issue #105
-            if wog_list.pyscal_list[satnum].wateroil.tag == "":
-                wog_list.pyscal_list[satnum].wateroil.tag = "SATNUM " + str(satnum + 1)
-            if wog_list.pyscal_list[satnum].gasoil.tag == "":
-                wog_list.pyscal_list[satnum].gasoil.tag = "SATNUM " + str(satnum + 1)
         return wog_list
 
     def dump_family_2(self, filename=None):

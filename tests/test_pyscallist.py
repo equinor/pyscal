@@ -346,6 +346,31 @@ def test_capillary_pressure():
     assert "petrophysical" not in swof
 
 
+def test_twophase():
+    """Test interpolation for a two-phase setup water-oil"""
+    # Triggers bug in pyscal <= 0.5.0
+    dframe = pd.DataFrame(
+        columns=["SATNUM", "CASE", "NW", "NOW", "TAG"],
+        data=[
+            [1, "pess", 1, 1, "thetag"],
+            [1, "base", 2, 2, "thetag"],
+            [1, "opt", 3, 3, "thetag"],
+        ],
+    )
+    pyscal_list = PyscalFactory.create_scal_recommendation_list(
+        PyscalFactory.load_relperm_df(dframe)
+    )
+    pyscal_list = pyscal_list.interpolate(-0.5)
+
+    # This works, but provides an error message that Gas.
+    # The correct usage would be to call .SWOF(), but the pyscal
+    # client calls dump_family_1 on two-phase problems.
+    swof = pyscal_list.dump_family_1()
+    assert "thetag" in swof
+    assert "SWOF" in swof
+    assert "SGOF" not in swof
+
+
 def test_explicit_df():
     """Test some dataframes, check the error messages given"""
 
