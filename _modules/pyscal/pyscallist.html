@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal.pyscallist &mdash; pyscal 0.5.0 documentation</title>
+  <title>pyscal.pyscallist &mdash; pyscal 0.5.1 documentation</title>
   
 
   
@@ -62,7 +62,7 @@
             
             
               <div class="version">
-                0.5.0
+                0.5.1
               </div>
             
           
@@ -429,11 +429,6 @@
             <span class="n">wog_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="n">scalrec</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">int_params_wo</span><span class="p">[</span><span class="n">satnum</span><span class="p">],</span> <span class="n">int_params_go</span><span class="p">[</span><span class="n">satnum</span><span class="p">],</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">)</span>
             <span class="p">)</span>
-            <span class="c1"># Revise (remove?) these 4 lines while solving github issue #105</span>
-            <span class="k">if</span> <span class="n">wog_list</span><span class="o">.</span><span class="n">pyscal_list</span><span class="p">[</span><span class="n">satnum</span><span class="p">]</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
-                <span class="n">wog_list</span><span class="o">.</span><span class="n">pyscal_list</span><span class="p">[</span><span class="n">satnum</span><span class="p">]</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">tag</span> <span class="o">=</span> <span class="s2">&quot;SATNUM &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">satnum</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">wog_list</span><span class="o">.</span><span class="n">pyscal_list</span><span class="p">[</span><span class="n">satnum</span><span class="p">]</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span><span class="p">:</span>
-                <span class="n">wog_list</span><span class="o">.</span><span class="n">pyscal_list</span><span class="p">[</span><span class="n">satnum</span><span class="p">]</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">tag</span> <span class="o">=</span> <span class="s2">&quot;SATNUM &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">satnum</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">wog_list</span></div>
 
 <div class="viewcode-block" id="PyscalList.dump_family_2"><a class="viewcode-back" href="../../pyscal.html#pyscal.pyscallist.PyscalList.dump_family_2">[docs]</a>    <span class="k">def</span> <span class="nf">dump_family_2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
