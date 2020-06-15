@@ -17,6 +17,7 @@ import pytest
 from pyscal import (
     WaterOil,
     GasOil,
+    GasWater,
     WaterOilGas,
     PyscalFactory,
     factory,
@@ -81,6 +82,7 @@ def test_factory_wateroil():
     sat_table_str_ok(wateroil.SWOF())
     sat_table_str_ok(wateroil.SWFN())
 
+    # Mixing Corey and LET
     wateroil = factory.create_water_oil(dict(Lw=2, Ew=2, Tw=2, krwend=1, now=4))
     assert isinstance(wateroil, WaterOil)
     assert "krw" in wateroil.table
@@ -211,6 +213,51 @@ def test_factory_gasoil():
     assert "LET krog" in sgof
 
 
+def test_factory_gaswater():
+    """Test that we can create gas-water curves from dictionaries of parameters"""
+    factory = PyscalFactory()
+
+    with pytest.raises(TypeError):
+        factory.create_gas_water(swirr=0.01)  # noqa
+
+    gaswater = factory.create_gas_water(
+        dict(swirr=0.01, swl=0.03, sgrw=0.1, sgcr=0.15, tag="gassy sand", ng=2, nw=2)
+    )
+
+    assert isinstance(gaswater, GasWater)
+
+    assert gaswater.swirr == 0.01
+    assert gaswater.swl == 0.03
+    assert gaswater.sgrw == 0.1
+    assert gaswater.sgcr == 0.15
+    assert gaswater.tag == "gassy sand"
+
+    sgfn = gaswater.SGFN()
+    swfn = gaswater.SWFN()
+    sat_table_str_ok(sgfn)
+    sat_table_str_ok(swfn)
+    check_table(gaswater.wateroil.table)
+    check_table(gaswater.gasoil.table)
+
+    assert "sgrw=0.1" in swfn
+    assert "swirr=0.01" in sgfn
+    assert "swirr=0.01" in swfn
+    assert "sgrw=0.1" in swfn
+    assert "sgcr=0.15" in sgfn
+    assert "nw=2" in swfn
+    assert "ng=2" in sgfn
+    assert "gassy sand" in sgfn
+
+    gaswater = factory.create_gas_water(dict(lg=1, eg=1, tg=1, nw=3))
+
+    sgfn = gaswater.SGFN()
+    swfn = gaswater.SWFN()
+    sat_table_str_ok(sgfn)
+    sat_table_str_ok(swfn)
+    check_table(gaswater.wateroil.table)
+    check_table(gaswater.gasoil.table)
+
+
 def test_factory_wateroilgas():
     """Test creating discrete cases of WaterOilGas from factory"""
     factory = PyscalFactory()
@@ -239,8 +286,8 @@ def test_factory_wateroilgas():
     assert "Corey krow" in swof
 
     # Mangling data
-    with pytest.raises(ValueError):
-        factory.create_water_oil_gas(dict(nw=2, now=3, ng=1))
+    wateroil = factory.create_water_oil_gas(dict(nw=2, now=3, ng=1))
+    assert wateroil.gasoil is None
 
 
 def test_factory_wateroilgas_deprecated_krowgend(caplog):
@@ -417,7 +464,7 @@ def test_create_lists():
 
 
 def test_scalrecommendation():
-    """Testing making SCAL rec from dict of dict"""
+    """Testing making SCAL rec from dict of dict."""
 
     factory = PyscalFactory()
 
@@ -428,7 +475,13 @@ def test_scalrecommendation():
     }
     scal = factory.create_scal_recommendation(scal_input)
     # (not supported yet to make WaterOil only..)
-    scal.interpolate(-0.5).SWOF()
+    interp = scal.interpolate(-0.5)
+    sat_table_str_ok(interp.SWOF())
+    sat_table_str_ok(interp.SGOF())
+    sat_table_str_ok(interp.SLGOF())
+    sat_table_str_ok(interp.SOF3())
+    check_table(interp.wateroil.table)
+    check_table(interp.gasoil.table)
 
     incomplete1 = scal_input.copy()
     del incomplete1["BASE"]
@@ -442,11 +495,26 @@ def test_scalrecommendation():
     assert gasoil.low.wateroil is None
     assert gasoil.base.wateroil is not None
     assert gasoil.high.wateroil is not None
-    interp = scal.interpolate(-0.5)
-    sat_table_str_ok(interp.SWOF())
-    sat_table_str_ok(interp.SGOF())
-    sat_table_str_ok(interp.SLGOF())
-    sat_table_str_ok(interp.SOF3())
+    # SCALrecommendation of gasoil only works as long as you
+    # don't try to ask for water data:
+    assert "SGFN" in gasoil.interpolate(-0.4).SGFN()
+    assert "SWOF" not in gasoil.interpolate(-0.2).SWOF()
+
+
+def test_scalrecommendation_gaswater():
+    """Testing making SCAL rec from dict of dict for gaswater input"""
+
+    factory = PyscalFactory()
+
+    scal_input = {
+        "low": {"nw": 2, "ng": 1},
+        "BASE": {"nw": 3, "ng": 1},
+        "high": {"nw": 4, "ng": 1},
+    }
+    scal = factory.create_scal_recommendation(scal_input, h=0.2)
+    interp = scal.interpolate(-0.5, h=0.2)
+    sat_table_str_ok(interp.SWFN())
+    sat_table_str_ok(interp.SGFN())
     check_table(interp.wateroil.table)
     check_table(interp.gasoil.table)
 
@@ -469,6 +537,17 @@ def test_xls_scalrecommendation():
         scalrec = PyscalFactory.create_scal_recommendation(dictofdict)
         print(scalrec.interpolate(-0.5).SWOF())
         scalrec.interpolate(+0.5)
+
+
+def test_no_gasoil():
+    """The command client does not support two-phase gas-oil, because
+    that is most likely an sign of a user input error.
+    (misspelled other columns f.ex).
+
+    Make sure we fail in that case."""
+    dframe = pd.DataFrame(columns=["SATNUM", "NOW", "NG"], data=[[1, 2, 2]])
+    with pytest.raises(ValueError):
+        PyscalFactory.load_relperm_df(dframe)
 
 
 def test_check_deprecated_krowgend(caplog):
@@ -593,26 +672,48 @@ def test_sufficient_params():
 
     assert factory.sufficient_gas_oil_params({"ng": 0, "nog": 0})
     # If it looks like the user meant to create GasOil, but only provided
-    # data for krg, then we error hard. If the user did not provide
+    # data for krg, then might error hard. If the user did not provide
     # any data for GasOil, then the code returns False
     with pytest.raises(ValueError):
-        factory.sufficient_gas_oil_params({"ng": 0})
+        factory.sufficient_gas_oil_params({"ng": 0}, failhard=True)
+    assert not factory.sufficient_gas_oil_params({"ng": 0}, failhard=False)
     assert not factory.sufficient_gas_oil_params(dict())
     with pytest.raises(ValueError):
-        factory.sufficient_gas_oil_params({"lg": 0})
+        factory.sufficient_gas_oil_params({"lg": 0}, failhard=True)
+    assert not factory.sufficient_gas_oil_params({"lg": 0}, failhard=False)
     assert factory.sufficient_gas_oil_params(
         {"lg": 0, "eg": 0, "Tg": 0, "log": 0, "eog": 0, "tog": 0}
     )
 
     assert factory.sufficient_water_oil_params({"nw": 0, "now": 0})
     with pytest.raises(ValueError):
-        factory.sufficient_water_oil_params({"nw": 0})
+        factory.sufficient_water_oil_params({"nw": 0}, failhard=True)
     assert not factory.sufficient_water_oil_params(dict())
     with pytest.raises(ValueError):
-        factory.sufficient_water_oil_params({"lw": 0})
+        factory.sufficient_water_oil_params({"lw": 0}, failhard=True)
     assert factory.sufficient_water_oil_params(
         {"lw": 0, "ew": 0, "Tw": 0, "low": 0, "eow": 0, "tow": 0}
     )
+
+
+def test_sufficient_params_gaswater():
+    """Test that we can detect sufficient parameters
+    for gas-water only"""
+    assert factory.sufficient_gas_water_params({"nw": 0, "ng": 0})
+    assert not factory.sufficient_gas_water_params({"nw": 0, "nog": 0})
+    assert factory.sufficient_gas_water_params(dict(lw=0, ew=0, tw=0, lg=0, eg=0, tg=0))
+    assert not factory.sufficient_gas_water_params(dict(lw=0))
+    assert not factory.sufficient_gas_water_params(dict(lw=0, lg=0))
+    assert not factory.sufficient_gas_water_params(dict(lw=0, lg=0))
+
+    with pytest.raises(ValueError):
+        factory.sufficient_gas_water_params(dict(lw=0), failhard=True)
+    with pytest.raises(ValueError):
+        factory.sufficient_gas_water_params({"nw": 3}, failhard=True)
+
+    assert factory.sufficient_gas_water_params(dict(lw=0, ew=0, tw=0, ng=0))
+    assert factory.sufficient_gas_water_params(dict(lg=0, eg=0, tg=0, nw=0))
+    assert not factory.sufficient_gas_water_params(dict(lg=0, eg=0, tg=0, ng=0))
 
 
 def test_case_aliasing():

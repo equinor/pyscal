@@ -60,10 +60,22 @@ class WaterOil(object):
     """
 
     def __init__(
-        self, swirr=0.0, swl=0.0, swcr=0.0, sorw=0.0, h=0.01, tag="", fast=False
+        self,
+        swirr=0.0,
+        swl=0.0,
+        swcr=0.0,
+        sorw=0.0,
+        h=0.01,
+        tag="",
+        fast=False,
+        _sgcr=None,
     ):
         """Sets up the saturation range. Swirr is only relevant
-        for the capillary pressure, not for relperm data."""
+        for the capillary pressure, not for relperm data.
+
+        _sgcr is only to be used by the GasWater object.
+        """
+
         assert -epsilon < swirr < 1.0 + epsilon
         assert -epsilon < swl < 1.0 + epsilon
         assert -epsilon < swcr < 1.0 + epsilon
@@ -82,6 +94,9 @@ class WaterOil(object):
             self.h = h_min
         else:
             self.h = h
+
+        if _sgcr is not None:
+            self.sgcr = _sgcr
 
         if not isinstance(tag, six.string_types):
             tag = ""
@@ -136,12 +151,23 @@ class WaterOil(object):
         # Different normalization for Sw used for capillary pressure
         self.table["swnpc"] = (self.table["sw"] - swirr) / (1 - swirr)
 
-        self.swcomment = "-- swirr=%g swl=%g swcr=%g sorw=%g\n" % (
-            self.swirr,
-            self.swl,
-            self.swcr,
-            self.sorw,
-        )
+        if _sgcr is None:
+            self.swcomment = "-- swirr=%g swl=%g swcr=%g sorw=%g\n" % (
+                self.swirr,
+                self.swl,
+                self.swcr,
+                self.sorw,
+            )
+        else:
+            # When _sgcr is defined, this object is in use by GasWater
+            self.swcomment = "-- swirr=%g swl=%g swcr=%g sgrw=%g sgcr=%g\n" % (
+                self.swirr,
+                self.swl,
+                self.swcr,
+                self.sorw,
+                self.sgcr,
+            )
+
         self.krwcomment = ""
         self.krowcomment = ""
         self.pccomment = ""
@@ -417,7 +443,7 @@ class WaterOil(object):
             self.table.iloc[linear_section_indices[-1]]["krw"] = krwmax
         else:
             if krwmax is not None:
-                logger.warning("krwmax ignored when sorw is zero")
+                logger.info("krwmax ignored when sorw is zero")
 
         # If the linear section is longer than two rows, do linear
         # interpolation inside for krw:
@@ -1056,6 +1082,7 @@ class WaterOil(object):
                 and emit the SWOF yourself). Default True
             dataincommentrow (bool): Wheter metadata should
                 be printed. Defualt True
+
         """
         if not self.fast and not self.selfcheck():
             # selfcheck failed and has issued an error message
@@ -1092,8 +1119,26 @@ class WaterOil(object):
         string += "/\n"  # Empty line at the end
         return string
 
-    def SWFN(self, header=True, dataincommentrow=True):
-        """Return a SWFN keyword with data to Eclipse"""
+    def SWFN(self, header=True, dataincommentrow=True, gaswater=False):
+        """Return a SWFN keyword with data to Eclipse
+
+        The columns sw, krw and pc are outputted and formatted
+        accordingly.
+
+        Meta-information for the  tabulated data are printed
+        as Eclipse comments.
+
+        Args:
+            header: boolean for whether the SGOF string should be emitted.
+                If you have multiple satnums, you should have True only
+                for the first (or False for all, and emit the SGOF yourself).
+                Defaults to True.
+            dataincommentrow: boolean for wheter metadata should be printed,
+                defaults to True.
+            gaswater (bool): Hints that this SGFN is to be used for
+                gas-water runs. This will affect which information is
+                given in the header.
+        """
         if not self.selfcheck(mode="SWFN"):
             # selfcheck will print errors/warnings
             return ""
@@ -1106,9 +1151,12 @@ class WaterOil(object):
         string += utils.comment_formatter(self.tag)
         string += "-- pyscal: " + str(pyscal.__version__) + "\n"
         if dataincommentrow:
-            string += self.swcomment
+            if gaswater:
+                string += self.swcomment.replace("sorw", "sgrw")
+            else:
+                string += self.swcomment
             string += self.krwcomment
-            if "krow" in self.table.columns and not self.fast:
+            if not gaswater and "krow" in self.table.columns and not self.fast:
                 string += "-- krw = krow @ sw=%1.5f\n" % self.crosspoint()
             string += self.pccomment
         width = 10

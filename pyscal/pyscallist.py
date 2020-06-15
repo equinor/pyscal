@@ -10,9 +10,9 @@ import logging
 import six
 import pandas as pd
 
-from pyscal import WaterOilGas, WaterOil, GasOil, SCALrecommendation
+from pyscal import WaterOil, GasOil, GasWater, WaterOilGas, SCALrecommendation
 
-PYSCAL_OBJECTS = [WaterOil, GasOil, WaterOilGas, SCALrecommendation]
+PYSCAL_OBJECTS = [WaterOil, GasOil, GasWater, WaterOilGas, SCALrecommendation]
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
@@ -191,17 +191,28 @@ class PyscalList(object):
         if self.pyscaltype == WaterOilGas:
             if not slgof:
                 family_1_str = self.SWOF() + "\n" + self.SGOF()
+                keywords = "SWOF and SGOF"
             else:
                 family_1_str = self.SWOF() + "\n" + self.SLGOF()
+                keywords = "SWOF and SLGOF"
         if self.pyscaltype == WaterOil:
             family_1_str = self.SWOF()
+            keywords = "SWOF"
         if self.pyscaltype == GasOil:
-            family_1_str = self.SGOF
+            family_1_str = self.SGOF()
+            keywords = "SGOF"
             if slgof:
                 logger.warning("SLGOF not meaningful for GasOil. Ignored")
+        if self.pyscaltype == GasWater:
+            msg = "Family 1 output not possible for GasWater"
+            logger.error(msg)
+            raise ValueError(msg)
         if filename is not None:
             logger.info(
-                "Dumping family 1 keywords for %d SATNUMs to %s", len(self), filename
+                "Dumping family 1 keywords (%s) for %d SATNUMs to %s",
+                keywords,
+                len(self),
+                filename,
             )
             directory = os.path.dirname(filename)
             if directory and not os.path.exists(directory):
@@ -209,6 +220,43 @@ class PyscalList(object):
             with open(filename, "w") as file_h:
                 file_h.write(six.ensure_str(family_1_str))
         return family_1_str
+
+    def dump_family_2(self, filename=None):
+        """Dumps family 2 Eclipse saturation tables to one
+        filename. This means SWFN + SGFN + SOF3 (SOF3 only for WaterOilGas)
+
+        Relevant for WaterOilGas and GasWater.
+
+        Args:
+            filename (str): Filename for the output to be given to Eclipse 100
+        """
+        if self.pyscaltype == SCALrecommendation:
+            logger.error(
+                "You need to interpolate before you can dump a SCAL recommendation"
+            )
+            raise TypeError
+        if self.pyscaltype == WaterOilGas:
+            family_2_str = self.SWFN() + "\n" + self.SGFN() + "\n" + self.SOF3()
+            keywords = "SWFN, SGFN and SOF3"
+        elif self.pyscaltype == GasWater:
+            family_2_str = self.SWFN() + "\n" + self.SGFN() + "\n"
+            keywords = "SWFN and SGFN"
+        else:
+            logger.error("Family 2 only supported for WaterOilGas and GasWater")
+            raise ValueError
+        if filename is not None:
+            logger.info(
+                "Dumping family 2 keywords (%s) for %d SATNUMs to %s",
+                keywords,
+                len(self),
+                filename,
+            )
+            directory = os.path.dirname(filename)
+            if directory and not os.path.exists(directory):
+                os.makedirs(directory)
+            with open(filename, "w") as file_h:
+                file_h.write(six.ensure_str(family_2_str))
+        return family_2_str
 
     def interpolate(self, int_params_wo, int_params_go=None, h=None):
         """This function will interpolate each SCALrecommendation
@@ -273,31 +321,7 @@ class PyscalList(object):
             )
         return wog_list
 
-    def dump_family_2(self, filename=None):
-        """Dumps family 2 Eclipse saturation tables to one
-        filename. This means SWFN + SGFN + SOF3
-
-        Args:
-            filename (str): Filename for the output to be given to Eclips 100
-        """
-        if self.pyscaltype == SCALrecommendation:
-            logger.error(
-                "You need to interpolate before you can dump a SCAL recommendation"
-            )
-            raise TypeError
-        if self.pyscaltype != WaterOilGas:
-            logger.error("Family 2 only supported for WaterOilGas")
-            raise ValueError
-        family_2_str = self.SWFN() + "\n" + self.SGFN() + "\n" + self.SOF3()
-        if filename is not None:
-            directory = os.path.dirname(filename)
-            if directory and not os.path.exists(directory):
-                os.makedirs(directory)
-            with open(filename, "w") as file_h:
-                file_h.write(six.ensure_str(family_2_str))
-        return family_2_str
-
-    def make_ecl_output(self, keyword, write_to_filename=None):
+    def make_ecl_output(self, keyword, write_to_filename=None, gaswater=False):
         """Internal helper function for constructing strings and writing to disk"""
         if self.pyscaltype == SCALrecommendation:
             logger.error(
@@ -306,11 +330,17 @@ class PyscalList(object):
             raise TypeError
         first_obj = self.pyscal_list[0]
         outputter = getattr(first_obj, keyword)
-        string = outputter(header=True)
+        if gaswater:
+            string = outputter(header=True, gaswater=gaswater)
+        else:
+            string = outputter(header=True)
         if len(self.pyscal_list) > 1:
             for pyscal_obj in self.pyscal_list[1:]:
                 outputter = getattr(pyscal_obj, keyword)
-                string += outputter(header=False)
+                if gaswater:
+                    string += outputter(header=False, gaswater=gaswater)
+                else:
+                    string += outputter(header=False)
         if write_to_filename:
             directory = os.path.dirname(write_to_filename)
             if directory and not os.path.exists(directory):
@@ -331,13 +361,13 @@ class PyscalList(object):
         """Make SLGOF string and optionally print to file"""
         return self.make_ecl_output("SLGOF", write_to_filename)
 
-    def SGFN(self, write_to_filename=None):
+    def SGFN(self, write_to_filename=None, gaswater=False):
         """Make SGFN string and optionally print to file"""
-        return self.make_ecl_output("SGFN", write_to_filename)
+        return self.make_ecl_output("SGFN", write_to_filename, gaswater=gaswater)
 
-    def SWFN(self, write_to_filename=None):
+    def SWFN(self, write_to_filename=None, gaswater=False):
         """Make SWFN string and optionally print to file"""
-        return self.make_ecl_output("SWFN", write_to_filename)
+        return self.make_ecl_output("SWFN", write_to_filename, gaswater=gaswater)
 
     def SOF3(self, write_to_filename=None):
         """Make SOF3 string and optionally print to file"""

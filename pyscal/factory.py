@@ -9,7 +9,14 @@ import pandas as pd
 import numpy as np
 import xlrd
 
-from pyscal import WaterOil, GasOil, WaterOilGas, SCALrecommendation, PyscalList
+from pyscal import (
+    WaterOil,
+    GasOil,
+    GasWater,
+    WaterOilGas,
+    SCALrecommendation,
+    PyscalList,
+)
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
@@ -54,6 +61,24 @@ GO_COREY_OIL = ["nog"]
 GO_OIL_ENDPOINTS = ["kroend", "krogend"]  # krogend is deprecated in favour of kroend
 GO_LET_GAS = ["lg", "eg", "tg"]
 GO_LET_OIL = ["log", "eog", "tog"]
+
+GW_INIT = ["swirr", "swl", "swcr", "sgrw", "sgcr", "h", "tag"]
+GW_COREY_WATER = ["nw"]
+GW_COREY_GAS = ["ng"]
+GW_WATER_ENDPOINTS = ["krwmax", "krwend"]
+GW_LET_WATER = ["lw", "ew", "tw"]
+GW_LET_GAS = ["lg", "eg", "tg"]
+GW_GAS_ENDPOINTS = ["krgmax", "krgend"]
+GW_SIMPLE_J = ["a", "b", "poro_ref", "perm_ref", "drho"]  # "g" is optional
+GW_NORM_J = ["a", "b", "poro", "perm", "sigma_costau"]
+# 'a' in WO_NORM_J is the same as a_petro, but should possibly kept as is.
+GW_SIMPLE_J_PETRO = [
+    "a_petro",
+    "b_petro",
+    "poro_ref",
+    "perm_ref",
+    "drho",
+]  # "g" is optional
 
 WOG_INIT = ["swirr", "swl", "swcr", "sorw", "sorg", "sgcr", "h", "tag"]
 
@@ -122,6 +147,8 @@ class PyscalFactory(object):
 
         check_deprecated(params)
 
+        sufficient_water_oil_params(params, failhard=True)
+
         # For case insensitiveness, all keys are converted to lower case:
         params = {key.lower(): value for (key, value) in params.items()}
 
@@ -141,7 +168,6 @@ class PyscalFactory(object):
         params_let_water = slicedict(params, WO_LET_WATER + WO_WATER_ENDPOINTS)
         if set(WO_COREY_WATER).issubset(set(params_corey_water)):
             wateroil.add_corey_water(**params_corey_water)
-            usedparams = usedparams.union(set(params_corey_water.keys()))
             logger.debug(
                 "Added Corey water to WaterOil object from parameters %s",
                 str(params_corey_water.keys()),
@@ -151,7 +177,6 @@ class PyscalFactory(object):
             params_let_water["e"] = params_let_water.pop("ew")
             params_let_water["t"] = params_let_water.pop("tw")
             wateroil.add_LET_water(**params_let_water)
-            usedparams = usedparams.union(set(params_let_water.keys()))
             logger.debug(
                 "Added LET water to WaterOil object from parameters %s",
                 str(params_let_water.keys()),
@@ -217,7 +242,7 @@ class PyscalFactory(object):
         elif set(WO_NORM_J).issubset(set(params_norm_j)):
             wateroil.add_normalized_J(**params_norm_j)
         else:
-            logger.warning(
+            logger.info(
                 (
                     "Missing or ambiguous parameters for capillary pressure in "
                     "WaterOil object. Using zero."
@@ -257,6 +282,8 @@ class PyscalFactory(object):
 
         check_deprecated(params)
 
+        sufficient_gas_oil_params(params, failhard=True)
+
         # For case insensitiveness, all keys are converted to lower case:
         params = {key.lower(): value for (key, value) in params.items()}
 
@@ -276,7 +303,6 @@ class PyscalFactory(object):
         params_let_gas = slicedict(params, GO_LET_GAS + GO_GAS_ENDPOINTS)
         if set(GO_COREY_GAS).issubset(set(params_corey_gas)):
             gasoil.add_corey_gas(**params_corey_gas)
-            usedparams = usedparams.union(set(params_corey_gas.keys()))
             logger.debug(
                 "Added Corey gas to GasOil object from parameters %s",
                 str(params_corey_gas.keys()),
@@ -286,7 +312,6 @@ class PyscalFactory(object):
             params_let_gas["e"] = params_let_gas.pop("eg")
             params_let_gas["t"] = params_let_gas.pop("tg")
             gasoil.add_LET_gas(**params_let_gas)
-            usedparams = usedparams.union(set(params_let_gas.keys()))
             logger.debug(
                 "Added LET gas to GasOil object from parameters %s",
                 str(params_let_gas.keys()),
@@ -340,6 +365,10 @@ class PyscalFactory(object):
 
         Check create_water_oil() and create_gas_oil() for lists
         of supported parameters (case insensitive)
+
+        Params:
+            params (dict):  parameteres
+            gaswater (bool): Flag to indicate if is to be used for GasWater
         """
         if not params:
             params = dict()
@@ -351,13 +380,13 @@ class PyscalFactory(object):
         # For case insensitiveness, all keys are converted to lower case:
         params = {key.lower(): value for (key, value) in params.items()}
 
-        if sufficient_water_oil_params(params):
+        if sufficient_water_oil_params(params, failhard=False):
             wateroil = PyscalFactory.create_water_oil(params)
         else:
             logger.info("No wateroil parameters. Assuming only gas-oil in wateroilgas")
             wateroil = None
 
-        if sufficient_gas_oil_params(params):
+        if sufficient_gas_oil_params(params, failhard=False):
             gasoil = PyscalFactory.create_gas_oil(params)
         else:
             logger.info("No gasoil parameters, assuming two-phase oilwatergas")
@@ -377,6 +406,46 @@ class PyscalFactory(object):
         return wateroilgas
 
     @staticmethod
+    def create_gas_water(params=None):
+        """Create a GasWater object.
+
+        Parameterization (Corey/LET) is inferred from presence
+        of certain parameters in the dictionary.
+
+        Args:
+            params (dict): Dictionary with parameters for GasWater.
+
+        Returns:
+            GasWater
+        """
+        if not params:
+            params = dict()
+        if not isinstance(params, dict):
+            raise TypeError("Parameter to create_gas_water must be a dictionary")
+
+        # For case insensitiveness, all keys are converted to lower case:
+        params = {key.lower(): value for (key, value) in params.items()}
+
+        sufficient_gas_water_params(params, failhard=True)
+
+        gw_init_params = slicedict(params, GW_INIT)
+        gaswater = GasWater(**gw_init_params)
+
+        # We are using the create_water_oil_gas factory function
+        # to avoid replicating code. It works because GasWater and
+        # WaterOilGas internally are very similar.
+        wog_params = params.copy()
+        if "sgrw" in params:
+            wog_params["sorw"] = params["sgrw"]
+        # Set some dummy parameters for oil:
+        wog_params["nog"] = 1
+        wog_params["now"] = 1
+        wog = PyscalFactory.create_water_oil_gas(wog_params)
+        gaswater.wateroil = wog.wateroil
+        gaswater.gasoil = wog.gasoil
+        return gaswater
+
+    @staticmethod
     def create_scal_recommendation(params, tag="", h=None):
         """
         Set up a SCAL recommendation curve set from input as a
@@ -390,6 +459,23 @@ class PyscalFactory(object):
         for base and high.
 
         For oil-water only, you may omit the parameters for gas-oil.
+        A WaterOilGas object for each case is created, but only the
+        WaterOil part of it will be used.
+
+        For gas-water, a GasWater object is created for each pess, base
+        and high.
+
+        Args:
+            params (dict): keys low, base and high.
+                The value for "low" must be a new dictionary with saturation
+                endpoints and LET/Corey parameters, as you would feed it to
+                the create_water_oil_gas() factory function, and then similarly
+                for base and high.
+            tag (string): String to be used as the tag, will end up in comments.
+            h (float): Saturation step length
+
+        Returns:
+            SCALrecommendation
         """
         if not isinstance(params, dict):
             raise ValueError("Input must be a dictionary (of dictionaries)")
@@ -416,18 +502,29 @@ class PyscalFactory(object):
             params["base"]["h"] = h
             params["high"]["h"] = h
 
-        wog_low = PyscalFactory.create_water_oil_gas(params["low"])
-        if not wog_low.selfcheck():
-            logger.error("Incomplete parameter set for low case")
-            errored = True
-        wog_base = PyscalFactory.create_water_oil_gas(params["base"])
-        if not wog_base.selfcheck():
-            logger.error("Incomplete parameter set for base case")
-            errored = True
-        wog_high = PyscalFactory.create_water_oil_gas(params["high"])
-        if not wog_high.selfcheck():
-            logger.error("Incomplete parameter set for high case")
-            errored = True
+        # Check parameter availability, in order to determine phase configuration
+        gaswater = all(
+            [sufficient_gas_water_params(params[case]) for case in params.keys()]
+        )
+        gasoil = all(
+            [sufficient_gas_oil_params(params[case]) for case in params.keys()]
+        )
+        wateroil = all(
+            [sufficient_water_oil_params(params[case]) for case in params.keys()]
+        )
+
+        if wateroil or gasoil:
+            wog_low = PyscalFactory.create_water_oil_gas(params["low"])
+            wog_base = PyscalFactory.create_water_oil_gas(params["base"])
+            wog_high = PyscalFactory.create_water_oil_gas(params["high"])
+        elif gaswater:
+            # Note that gaswater will be True in three-phase configs.
+            wog_low = PyscalFactory.create_gas_water(params["low"])
+            wog_base = PyscalFactory.create_gas_water(params["base"])
+            wog_high = PyscalFactory.create_gas_water(params["high"])
+
+        errored = all([not wog.selfcheck() for wog in [wog_low, wog_base, wog_high]])
+
         if errored:
             raise ValueError("Incomplete SCAL recommendation")
 
@@ -453,6 +550,7 @@ class PyscalFactory(object):
             inputfile (str or pd.DataFrame): Filename for XLSX or CSV file, or a
                 pandas DataFrame.
             sheet_name (str): Sheet-name, only used when loading xlsx files.
+
         Returns:
             pd.DataFrame. To be handed over to pyscal list factory methods.
         """
@@ -580,10 +678,13 @@ class PyscalFactory(object):
         try:
             wo_ok = sufficient_water_oil_params(firstrow)
             go_ok = sufficient_gas_oil_params(firstrow)
+            gw_ok = sufficient_gas_water_params(firstrow)
         except ValueError:
             error = True
-        if error or not wo_ok and not go_ok:
-            logger.error("Can't make neither WaterOil or GasOil from the given data.")
+        if error or not wo_ok and not go_ok and not gw_ok:
+            logger.error(
+                "Can't make neither WaterOil, GasOil or GasWater from the given data."
+            )
             logger.error("Check documentation for what you need to supply")
             logger.error("You provided the columns %s", str(input_df.columns.values))
             raise ValueError
@@ -665,7 +766,7 @@ class PyscalFactory(object):
 
     @staticmethod
     def create_pyscal_list(relperm_params_df, h=None):
-        """Create wateroilgas, wateroil or gasoil list
+        """Create WaterOilGas, WaterOil, GasOil or GasWater list
         based on what is available
 
         Args:
@@ -679,12 +780,15 @@ class PyscalFactory(object):
         params = relperm_params_df.loc[0, :]  # first row
         water_oil = sufficient_water_oil_params(params)
         gas_oil = sufficient_gas_oil_params(params)
+        gas_water = sufficient_gas_water_params(params)
         if water_oil and gas_oil:
             return PyscalFactory.create_wateroilgas_list(relperm_params_df, h)
-        elif water_oil:
+        if water_oil:
             return PyscalFactory.create_wateroil_list(relperm_params_df, h)
-        elif gas_oil:
+        if gas_oil:
             return PyscalFactory.create_gasoil_list(relperm_params_df, h)
+        if gas_water:
+            return PyscalFactory.create_gaswater_list(relperm_params_df, h)
         logger.error("Could not determine two or three phase from parameters")
         return None
 
@@ -748,8 +852,28 @@ class PyscalFactory(object):
             gol.append(PyscalFactory.create_gas_oil(params.to_dict()))
         return gol
 
+    @staticmethod
+    def create_gaswater_list(relperm_params_df, h=None):
+        """Create a PyscalList with WaterOilGas objects from
+        a dataframe, to be used for GasWater
 
-def sufficient_water_oil_params(params):
+        Args:
+            relperm_params_df (pd.DataFrame): A valid dataframe with GasWater
+                parameters, processed through load_relperm_df()
+            h (float): Saturation steplength
+
+        Returns:
+            PyscalList, consisting of GasWater objects
+        """
+        gwl = PyscalList()
+        for (_, params) in relperm_params_df.iterrows():
+            if h is not None:
+                params["h"] = h
+            gwl.append(PyscalFactory.create_gas_water(params.to_dict()))
+        return gwl
+
+
+def sufficient_water_oil_params(params, failhard=False):
     """Determine if the supplied parameters are sufficient for
     attempting creating a WaterOil object.
 
@@ -758,30 +882,34 @@ def sufficient_water_oil_params(params):
     undefined (Corey or LET, and which pc?)
 
     Args:
-        params: dict
+        params (dict): Dictionary of parameters to a WaterOil object.
+        failhard (bool): If True, will raise ValueError when
+            parameters are insufficient. If defaulted, no
+            exception is raised.
 
     Returns:
         True if a WaterOil object should be attempted constructed
-        (but no guarantee for validity of numerical values)
+            (but no guarantee for validity of numerical values)
     """
     # pylint: disable=C1801
     # For case insensitiveness, all keys are converted to lower case:
     params = {key.lower(): value for (key, value) in params.items()}
 
-    wo_corey_params = slicedict(params, set(WO_COREY_WATER + WO_COREY_OIL))
-    if len(wo_corey_params) == 1:
-        raise ValueError("Insufficient Corey parameters for WaterOil")
-    if len(wo_corey_params) >= 2:
-        return True
-    wo_let_params = slicedict(params, set(WO_LET_WATER + WO_LET_OIL + WO_LET_OIL_ALT))
-    if 0 < len(wo_let_params) < 6:
-        raise ValueError("Insufficient LET parametres for WaterOil")
-    if len(wo_let_params) >= 6:
-        return True
-    return False
+    water_ok = (
+        len(slicedict(params, set(WO_COREY_WATER))) == 1
+        or len(slicedict(params, set(WO_LET_WATER))) == 3
+    )
+    oil_ok = (
+        len(slicedict(params, set(WO_COREY_OIL))) == 1
+        or len(slicedict(params, set(WO_LET_OIL))) == 3
+        or len(slicedict(params, set(WO_LET_OIL_ALT))) == 3
+    )
+    if failhard and not (water_ok and oil_ok):
+        raise ValueError("Missing WaterOil parameters in " + str(params))
+    return water_ok and oil_ok
 
 
-def sufficient_gas_oil_params(params):
+def sufficient_gas_oil_params(params, failhard=False):
     """Determine if the supplied parameters are sufficient for
     attempting at creating a GasOil object.
 
@@ -790,27 +918,65 @@ def sufficient_gas_oil_params(params):
     undefined (Corey or LET, and which pc?)
 
     Args:
-        params: dict
+        params (dict): Dictionary of parameters to a GasOil object.
+        failhard (bool): If True, will raise ValueError when
+            parameters are insufficient. If defaulted, no
+            exception is raised.
 
     Returns:
         True if a GasOil object should be attempted constructed
-        (but no guarantee for validity of numerical values)
+            (but no guarantee for validity of numerical values)
     """
     # pylint: disable=C1801
     # For case insensitiveness, all keys are converted to lower case:
     params = {key.lower(): value for (key, value) in params.items()}
 
-    go_corey_params = slicedict(params, set(GO_COREY_GAS + GO_COREY_OIL))
-    if len(go_corey_params) == 1:
-        raise ValueError("Insufficient Corey parameters for GasOil")
-    if len(go_corey_params) >= 2:
-        return True
-    go_let_params = slicedict(params, set(GO_LET_GAS + GO_LET_OIL))
-    if 0 < len(go_let_params) < 6:  # noqa
-        raise ValueError("Insufficient LET parameters for GasOil")
-    if len(go_let_params) >= 6:
-        return True
-    return False
+    oil_ok = (
+        len(slicedict(params, set(GO_COREY_OIL))) == 1
+        or len(slicedict(params, set(GO_LET_OIL))) == 3
+    )
+    gas_ok = (
+        len(slicedict(params, set(GO_COREY_GAS))) == 1
+        or len(slicedict(params, set(GO_LET_GAS))) == 3
+    )
+    if failhard and not (oil_ok and gas_ok):
+        raise ValueError("Missing gas-oil parameters in " + str(params))
+    return oil_ok and gas_ok
+
+
+def sufficient_gas_water_params(params, failhard=False):
+    """Determine if the supplied parameters are sufficient for
+    attempting creating a WaterOilGas object to be used for gas water.
+
+    In the factory context, relying on the defaults in the API
+    (wateroilgas.py) is not allowed, as that would leave the tasks
+    for the factory undefined (Corey or LET, and which pc?)
+
+    Args:
+        params (dict): Dictionary of parameters to a GasWater object.
+        failhard (bool): If True, will raise ValueError when
+            parameters are insufficient. If defaulted, no
+            exception is raised.
+
+    Returns:
+        True if a GasWater object should be attempted constructed
+            (but no guarantee for validity of numerical values)
+    """
+    # pylint: disable=C1801
+    # For case insensitiveness, all keys are converted to lower case:
+    params = {key.lower(): value for (key, value) in params.items()}
+
+    water_ok = (
+        len(slicedict(params, set(GW_COREY_WATER))) == 1
+        or len(slicedict(params, set(GW_LET_WATER))) == 3
+    )
+    gas_ok = (
+        len(slicedict(params, set(GW_COREY_GAS))) == 1
+        or len(slicedict(params, set(GW_LET_GAS))) == 3
+    )
+    if failhard and not (water_ok and gas_ok):
+        raise ValueError("Missing gas-water parameters in " + str(params))
+    return water_ok and gas_ok
 
 
 def filter_nan_from_dict(params):

@@ -96,7 +96,7 @@ def crosspoint(dframe, satcol, kr1col, kr2col):
             kr1col == kr2col, when krXcol is linearly interpolated
             as a function of the saturation values.
     """
-    dframe = dframe[[satcol, kr1col, kr2col]]  # Copy
+    dframe = pd.DataFrame(dframe[[satcol, kr1col, kr2col]])  # Copy
     dframe
     dframe.loc[:, "krdiff"] = dframe[kr1col] - dframe[kr2col]
 
