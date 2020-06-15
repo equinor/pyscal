@@ -48,13 +48,29 @@ Saturation and relative permeability endpoints
 
 The endpoints used in the parametrization is shown in the following figure for WaterOil.
 
+Water-Oil
+^^^^^^^^^
+
 .. image:: images/wateroil-endpoints.png
     :width: 600
+
+*Note*: Pyscal prior to 0.6.0 had the oil relperm anchord at swcr, and then used the
+parameters krowend and krowmax. krowmax is now deprecated, and krowend and krogend must be
+equal and renamed to kroend.
+
+Gas-Oil
+^^^^^^^
 
 For GasOil, there is an option of where to anchor ``krgend``, shown in the following figure.
 The red curve is the default, where ``krgendanchor=="sorg"``, and the pink is the other choice.
 
 .. image:: images/gasoil-endpoints.png
+    :width: 600
+
+Gas-Water
+^^^^^^^^^
+
+.. image:: images/gaswater-endpoints.png
     :width: 600
 
 Python API

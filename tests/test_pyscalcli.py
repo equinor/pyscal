@@ -8,6 +8,8 @@ from __future__ import print_function
 import os
 import sys
 
+import pandas as pd
+
 import pytest
 import subprocess
 
@@ -180,8 +182,66 @@ def test_pyscal_client_static(tmpdir):
     sys.argv = ["pyscal", relperm_file, "--int_param_wo", "-0.5"]
 
 
+def test_pyscalcli_gaswater(tmpdir):
+    """Test the command line endpoint on gas-water problems"""
+    tmpdir.chdir()
+    relperm_file = "gaswater.csv"
+    pd.DataFrame(columns=["SATNUM", "nw", "ng"], data=[[1, 2, 3]]).to_csv(
+        relperm_file, index=False
+    )
+
+    sys.argv = [
+        "pyscal",
+        relperm_file,
+        "--output",
+        "gw.inc",
+    ]
+    pyscalcli.main()
+    lines = open("gw.inc").readlines()
+    joined = "\n".join(lines)
+    assert "SWFN" in joined
+    assert "SGFN" in joined
+    assert "SWOF" not in joined
+    assert "sgrw" in joined
+    assert "krgendanchor" not in joined
+    assert "sorw" not in joined
+    assert "sorg" not in joined
+    assert len(lines) > 40
+
+
+def test_pyscalcli_gaswater_scal(tmpdir):
+    """Test the command line endpoint on gas-water problems, with
+    interpolation"""
+    tmpdir.chdir()
+    relperm_file = "gaswater.csv"
+    pd.DataFrame(
+        columns=["SATNUM", "CASE", "nw", "ng"],
+        data=[[1, "pess", 2, 3], [1, "base", 3, 4], [1, "opt", 5, 6]],
+    ).to_csv(relperm_file, index=False)
+
+    sys.argv = [
+        "pyscal",
+        relperm_file,
+        "--int_param_wo",
+        "-0.2",
+        "--output",
+        "gw.inc",
+    ]
+    pyscalcli.main()
+    lines = open("gw.inc").readlines()
+    joined = "\n".join(lines)
+    assert "SWFN" in joined
+    assert "SGFN" in joined
+    assert "SWOF" not in joined
+    assert "sgrw" in joined
+    assert "krgendanchor" not in joined
+    assert "sorw" not in joined
+    assert "sorg" not in joined
+    assert len(lines) > 40
+
+
 def test_pyscal_client_scal(tmpdir):
-    """Test the command line client on SCAL recommendation"""
+    """Test the command line endpoint on SCAL recommendation"""
     if "__file__" in globals():
         # Easen up copying test code into interactive sessions
         testdir = os.path.dirname(os.path.abspath(__file__))
@@ -228,7 +288,7 @@ def test_pyscal_client_scal(tmpdir):
     ]
     pyscalcli.main()
     assert os.path.exists("relperm3.inc")
-    # asserrt someting about three different parameters..
+    # assert someting about three different parameters..
 
     sys.argv = [
         "pyscal",

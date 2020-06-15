@@ -1,10 +1,11 @@
 """SCALrecommendation, container for low, base and high WaterOilGas objects"""
 
+import copy
 import logging
 
 import numpy as np
 
-from pyscal import WaterOilGas, utils
+from pyscal import WaterOilGas, GasWater, utils
 
 
 logging.basicConfig()
@@ -167,6 +168,7 @@ class SCALrecommendation(object):
             self.high.gasoil.add_LET_oil(
                 l=high["Log"], e=high["Eog"], t=high["Tog"], kroend=high[krogend]
             )
+            self.type = WaterOilGas
         elif (
             isinstance(low, WaterOilGas)
             and isinstance(base, WaterOilGas)
@@ -176,6 +178,17 @@ class SCALrecommendation(object):
             self.low = low
             self.base = base
             self.high = high
+            self.type = WaterOilGas
+        elif (
+            isinstance(low, GasWater)
+            and isinstance(base, GasWater)
+            and isinstance(high, GasWater)
+        ):
+
+            self.low = low
+            self.base = base
+            self.high = high
+            self.type = GasWater
         else:
             raise ValueError("Wrong arguments to SCALrecommendation")
 
@@ -197,9 +210,6 @@ class SCALrecommendation(object):
 
     def interpolate(self, parameter, parameter2=None, h=0.02):
         """Interpolate between low, base and high
-        parameter = -1 reproduces low curve
-        parameter = 0 reproduces base curve
-        parameter = 1 reproduces high curve
 
         Endpoints are located for input curves, and interpolated
         individually. Interpolation for the nonlinear part
@@ -212,12 +222,14 @@ class SCALrecommendation(object):
         realized into printed tables. No attempt is made to
         parametrize the interpolant in L,E,T parameter space, or Corey-space.
 
-        If a second parameter is supplied ("parameter2") this is used
-        for the gas-oil interpolation. This enables the gas-oil
-        interpolant to be fully uncorrelated to the water-oil
-        interpolant. CHECK how this affects endpoints and Eclipse
-        consistency!!
-
+        Args:
+            parameter (float): Between -1 and 1, inclusive. -1 reproduces low/
+                pessimistic curve, 0 gives base, 1 gives high/optimistic.
+            parameter2 (float): If not None, used for the gas-oil interpolation,
+                enables having interpolation uncorrelated for WaterOil and
+                GasOil. Ignored for GasWater (no warning).
+            h (float): Saturation step length in generated tables. Does not
+                need to be the same as the tables interpolation is done from.
         """
 
         if parameter2 is not None:
@@ -228,31 +240,38 @@ class SCALrecommendation(object):
         # Either wateroil or gasoil can be None in the low, base, high
         # If they are None, it is a two-phase problem and we
         # should support this.
-        do_wateroil = (
-            self.base.wateroil is not None
-            and self.low.wateroil is not None
-            and self.high.wateroil is not None
-        )
-
-        do_gasoil = (
-            self.base.gasoil is not None
-            and self.low.gasoil is not None
-            and self.high.gasoil is not None
-        )
-
-        if not do_wateroil and not do_gasoil:
-            raise ValueError(
-                "Neither wateroil or gasoil is complete in SCAL recommendation"
+        do_gaswater = False
+        do_wateroil = False
+        do_gasoil = False
+        if self.type == GasWater:
+            do_gaswater = True
+        elif self.type == WaterOilGas:
+            do_wateroil = (
+                self.base.wateroil is not None
+                and self.low.wateroil is not None
+                and self.high.wateroil is not None
             )
 
-        if parameter2 is not None and not do_gasoil:
+            do_gasoil = (
+                self.base.gasoil is not None
+                and self.low.gasoil is not None
+                and self.high.gasoil is not None
+            )
+
+        if not do_gaswater:
+            if not do_wateroil and not do_gasoil:
+                raise ValueError(
+                    "Neither WaterOil or GasOil is complete in SCAL recommendation"
+                )
+
+        if parameter2 is not None and not do_gasoil and not do_gaswater:
             logger.warning("parameter2 is meaningless for water-oil only")
 
         # Initialize wateroil and gasoil curves to be filled with
         # interpolated curves:
 
         tags = set()
-        if do_wateroil:
+        if do_wateroil or do_gaswater:
             tags = tags.union(
                 set(
                     [
@@ -267,10 +286,17 @@ class SCALrecommendation(object):
                 set([self.base.gasoil.tag, self.low.gasoil.tag, self.high.gasoil.tag])
             )
         tagstring = "\n".join(tags)
+        if do_gaswater:
+            interpolant = GasWater(h=h, tag=tagstring)
+            if gasparameter != parameter:
+                logger.warning(
+                    "Different interpolation parameters for Water and for "
+                    "gas in GasWater, this is maybe not what you want"
+                )
+        else:
+            interpolant = WaterOilGas(h=h, tag=tagstring)
 
-        interpolant = WaterOilGas(h=h, tag=tagstring)
-
-        if do_wateroil:
+        if do_wateroil or do_gaswater:
             tag = (
                 "SCAL recommendation interpolation to {}\n".format(parameter)
                 + tagstring
@@ -279,13 +305,13 @@ class SCALrecommendation(object):
                 logger.error("Interpolation parameter must be in [-1,1]")
                 assert abs(parameter) <= 1.0
             elif np.isclose(parameter, 0.0):
-                interpolant.wateroil = self.base.wateroil
+                interpolant.wateroil = copy.deepcopy(self.base.wateroil)
                 interpolant.wateroil.tag = tag
             elif np.isclose(parameter, -1.0):
-                interpolant.wateroil = self.low.wateroil
+                interpolant.wateroil = copy.deepcopy(self.low.wateroil)
                 interpolant.wateroil.tag = tag
             elif np.isclose(parameter, 1.0):
-                interpolant.wateroil = self.high.wateroil
+                interpolant.wateroil = copy.deepcopy(self.high.wateroil)
                 interpolant.wateroil.tag = tag
             elif parameter < 0.0:
                 interpolant.wateroil = utils.interpolate_wo(
@@ -298,7 +324,7 @@ class SCALrecommendation(object):
         else:
             interpolant.wateroil = None
 
-        if do_gasoil:
+        if do_gasoil or do_gaswater:
             tag = (
                 "SCAL recommendation interpolation to {}\n".format(gasparameter)
                 + tagstring
@@ -307,13 +333,13 @@ class SCALrecommendation(object):
                 logger.error("Interpolation parameter must be in [-1,1]")
                 assert abs(gasparameter) <= 1.0
             elif np.isclose(gasparameter, 0.0):
-                interpolant.gasoil = self.base.gasoil
+                interpolant.gasoil = copy.deepcopy(self.base.gasoil)
                 interpolant.gasoil.tag = tag
             elif np.isclose(gasparameter, -1.0):
-                interpolant.gasoil = self.low.gasoil
+                interpolant.gasoil = copy.deepcopy(self.low.gasoil)
                 interpolant.gasoil.tag = tag
             elif np.isclose(gasparameter, 1.0):
-                interpolant.gasoil = self.high.gasoil
+                interpolant.gasoil = copy.deepcopy(self.high.gasoil)
                 interpolant.gasoil.tag = tag
             elif gasparameter < 0.0:
                 interpolant.gasoil = utils.interpolate_go(

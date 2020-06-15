@@ -368,7 +368,7 @@ class GasOil(object):
             ] = tmp.loc[tmp.sg >= (1 - (self.sorg + self.swl + epsilon)), "krg"]
         else:
             self.table.loc[self.table.sg > (1 - (self.swl + epsilon)), "krg"] = krgend
-            if krgmax and krgmax < 1.0:
+            if krgmax and krgmax < 1.0 and self.sorg > 0:
                 # Only warn if something else than default is in use
                 logger.warning("krgmax ignored when not anchoring to sorg")
 
@@ -799,7 +799,7 @@ class GasOil(object):
         string += "/\n"
         return string
 
-    def SGFN(self, header=True, dataincommentrow=True):
+    def SGFN(self, header=True, dataincommentrow=True, gaswater=False):
         """
         Produce SGFN input for Eclipse reservoir simulator.
 
@@ -816,6 +816,9 @@ class GasOil(object):
                 Defaults to True.
             dataincommentrow: boolean for wheter metadata should be printed,
                 defaults to True.
+            gaswater (bool): Hints that this SGFN is to be used for
+                gas-water runs. This will affect the information in
+                the header comments.
         """
         string = ""
         if "pc" not in self.table.columns:
@@ -826,9 +829,13 @@ class GasOil(object):
         string += utils.comment_formatter(self.tag)
         string += "-- pyscal: " + str(pyscal.__version__) + "\n"
         if dataincommentrow:
-            string += self.sgcomment
+            string += (
+                self.sgcomment.replace("sorg", "sgrw")
+                .replace(", krgendanchor=sgrw", "")
+                .replace(", krgendanchor=", "")
+            )
             string += self.krgcomment
-            if "krog" in self.table.columns:
+            if "krog" in self.table.columns and not gaswater:
                 string += "-- krg = krog @ sw=%1.5f\n" % self.crosspoint()
             string += self.pccomment
         width = 10

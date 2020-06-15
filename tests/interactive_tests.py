@@ -14,7 +14,7 @@ import random
 
 import numpy as np
 
-from pyscal import WaterOil, WaterOilGas, GasOil, utils, PyscalFactory
+from pyscal import WaterOil, WaterOilGas, GasOil, GasWater, utils, PyscalFactory
 
 from test_scalrecommendation import LOW_SAMPLE_LET, BASE_SAMPLE_LET, HIGH_SAMPLE_LET
 
@@ -95,14 +95,14 @@ def test_interpolate_wo():
     wo_low.add_simple_J(a=random.uniform(0.1, 2), b=random.uniform(-2, -1))
     wo_high.add_simple_J(a=random.uniform(0.1, 2), b=random.uniform(-2, 1))
     print(
-        " ** Low curve (red):\n"
+        " ** Low curve WaterOil (red):\n"
         + wo_low.swcomment
         + wo_low.krwcomment
         + wo_low.krowcomment
         + wo_low.pccomment
     )
     print(
-        " ** High curve (blue):\n"
+        " ** High curve WaterOil (blue):\n"
         + wo_high.swcomment
         + wo_high.krwcomment
         + wo_high.krowcomment
@@ -168,13 +168,13 @@ def test_interpolate_go():
     go_low.add_corey_oil(nog=random.uniform(1, 3), kroend=random.uniform(0.5, 1))
     go_high.add_corey_oil(nog=random.uniform(1, 3), kroend=random.uniform(0.5, 1))
     print(
-        " ** Low curve (red):\n"
+        " ** Low curve GasOil (red):\n"
         + go_low.sgcomment
         + go_low.krgcomment
         + go_low.krogcomment
     )
     print(
-        " ** High curve (blue):\n"
+        " ** High curve GasOil (blue):\n"
         + go_high.sgcomment
         + go_high.krgcomment
         + go_high.krogcomment
@@ -213,6 +213,69 @@ def test_interpolate_go():
         # go_ip.plotpc(mpl_ax, color="green", logyscale=True)
     # mpl_ax.set_title("GasOil, capillary pressure")
     # plt.show()
+
+
+def test_interpolate_gw():
+    """Discrete test scenarios for gaswater interpolation"""
+    swl_l = random.uniform(0, 0.1)
+    swcr_l = swl_l + random.uniform(0, 0.1)
+    sgrw_l = random.uniform(0, 0.2)
+    sgcr_l = random.uniform(0, 0.3)
+    swl_h = random.uniform(0, 0.1)
+    swcr_h = swl_h + random.uniform(0, 0.1)
+    sgrw_h = random.uniform(0, 0.2)
+    sgcr_h = random.uniform(0, 0.3)
+    gw_low = GasWater(swl=swl_l, swcr=swcr_l, sgrw=sgrw_l, sgcr=sgcr_l, h=0.001)
+    gw_high = GasWater(swl=swl_h, swcr=swcr_h, sgrw=sgrw_h, sgcr=sgcr_h, h=0.001)
+    gw_low.add_corey_water(nw=random.uniform(1, 3), krwend=random.uniform(0.5, 1))
+    gw_high.add_corey_water(nw=random.uniform(1, 3), krwend=random.uniform(0.5, 1))
+    gw_low.add_corey_gas(ng=random.uniform(1, 3), krgend=random.uniform(0.5, 1))
+    gw_high.add_corey_gas(ng=random.uniform(1, 3), krgend=random.uniform(0.5, 1))
+    print(
+        " ** Low curve GasWater (red):\n"
+        + gw_low.swcomment
+        + gw_low.krwcomment
+        + gw_low.krgcomment
+    )
+    print(
+        " ** High curve GasWater (blue):\n"
+        + gw_high.swcomment
+        + gw_high.krwcomment
+        + gw_high.krgcomment
+    )
+
+    from matplotlib import pyplot as plt
+
+    _, mpl_ax = plt.subplots()
+    gw_low.plotkrwkrg(mpl_ax, color="red")
+    gw_high.plotkrwkrg(mpl_ax, color="blue")
+    for tparam in np.arange(0, 1, 0.1):
+        gw_wo_ip = utils.interpolate_wo(
+            gw_low.wateroil, gw_high.wateroil, tparam, h=0.001
+        )
+        gw_go_ip = utils.interpolate_go(gw_low.gasoil, gw_high.gasoil, tparam, h=0.001)
+        gw_ip = GasWater()
+        gw_ip.gasoil = gw_go_ip
+        gw_ip.wateroil = gw_wo_ip
+        gw_ip.plotkrwkrg(mpl_ax, color="green")
+    mpl_ax.set_title("GasWater, random Corey, linear y-scale")
+    plt.show()
+
+    # Plot again with log yscale:
+    _, mpl_ax = plt.subplots()
+    gw_low.plotkrwkrg(mpl_ax, color="red")
+    gw_high.plotkrwkrg(mpl_ax, color="blue")
+    for tparam in np.arange(0, 1, 0.1):
+        gw_wo_ip = utils.interpolate_wo(
+            gw_low.wateroil, gw_high.wateroil, tparam, h=0.001
+        )
+        gw_go_ip = utils.interpolate_go(gw_low.gasoil, gw_high.gasoil, tparam, h=0.001)
+        gw_ip = GasWater()
+        gw_ip.gasoil = gw_go_ip
+        gw_ip.wateroil = gw_wo_ip
+        gw_ip.plotkrwkrg(mpl_ax, color="green", logyscale=True)
+    mpl_ax.set_title("GasWater, random Corey, log y-scale")
+    plt.show()
 
 
 def interpolateplottest():
@@ -480,6 +543,7 @@ def main():
     for _ in range(0, 5):
         test_interpolate_wo()
         test_interpolate_go()
+        test_interpolate_gw()
     print("")
     print("-- ******************************************")
     print("-- Manual visual check of interpolation in LET-space")

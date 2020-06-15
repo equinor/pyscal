@@ -97,7 +97,8 @@ def check_table(dframe):
     has the properties that Eclipse enforces"""
     assert not dframe.empty
     assert not dframe.isnull().values.any()
-    if "sw" in dframe:
+    if "sw" in dframe and "sg" not in dframe:
+        # (avoiding GasWater tables, where sw is an auxiliary column)
         assert len(dframe["sw"].unique()) == len(dframe)
         assert dframe["sw"].is_monotonic
         assert (dframe["sw"] >= 0.0).all()

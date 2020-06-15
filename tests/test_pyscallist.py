@@ -10,7 +10,15 @@ import pandas as pd
 
 import pytest
 
-from pyscal import WaterOil, GasOil, WaterOilGas, PyscalFactory, PyscalList
+from pyscal import (
+    WaterOil,
+    GasOil,
+    GasWater,
+    WaterOilGas,
+    PyscalFactory,
+    PyscalList,
+    SCALrecommendation,
+)
 
 from common import sat_table_str_ok
 
@@ -369,6 +377,46 @@ def test_twophase():
     assert "thetag" in swof
     assert "SWOF" in swof
     assert "SGOF" not in swof
+
+
+def test_gaswater():
+    """Test list of gas-water objects"""
+    dframe = pd.DataFrame(
+        columns=["SATNUM", "NW", "NG", "TAG"],
+        data=[[1, 2, 2, "thetag"], [2, 3, 3, "othertag"]],
+    )
+    pyscal_list = PyscalFactory.create_pyscal_list(
+        PyscalFactory.load_relperm_df(dframe), h=0.1
+    )
+    assert pyscal_list.pyscaltype == GasWater
+    dump = pyscal_list.dump_family_2()
+    assert "SATNUM 2" in dump
+    assert "SATNUM 1" in dump
+    assert "SATNUM 3" not in dump
+    assert "SWFN" in dump
+    assert "SGFN" in dump
+    assert "othertag" in dump
+    assert "thetag" in dump
+
+    with pytest.raises(ValueError):
+        # Does not make sense for GasWater:
+        pyscal_list.dump_family_1()
+
+
+def test_gaswater_scal():
+    """Test list of gas-water objects in scal recommendation"""
+    dframe = pd.DataFrame(
+        columns=["SATNUM", "CASE", "NW", "NG", "TAG"],
+        data=[
+            [1, "pess", 2, 2, "thetag"],
+            [1, "base", 3, 3, "thetag"],
+            [1, "opt", 4, 4, "thetag"],
+        ],
+    )
+    pyscal_list = PyscalFactory.create_scal_recommendation_list(
+        PyscalFactory.load_relperm_df(dframe), h=0.1
+    )
+    assert pyscal_list.pyscaltype == SCALrecommendation
 
 
 def test_explicit_df():

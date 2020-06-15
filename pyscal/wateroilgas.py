@@ -193,6 +193,29 @@ class WaterOilGas(object):
         string += "/\n"
         return string
 
+    @property
+    def swirr(self):
+        return self.wateroil.swirr
+
+    @property
+    def swl(self):
+        return self.wateroil.swl
+
+    @property
+    def sorg(self):
+        return self.gasoil.sorg
+
+    @property
+    def sorw(self):
+        return self.wateroil.sorw
+
+    @property
+    def tag(self):
+        if self.wateroil.tag == self.gasoil.tag:
+            return self.wateroil.tag
+        else:
+            return self.wateroil.tag + " " + self.gasoil.tag
+
     def threephaseconsistency(self):
         """Perform consistency checks on produced curves, similar
         to what Eclipse does at startup.

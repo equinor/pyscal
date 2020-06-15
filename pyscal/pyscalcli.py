@@ -5,7 +5,7 @@ import argparse
 
 import logging
 
-from pyscal import PyscalFactory
+from pyscal import WaterOilGas, GasWater, PyscalFactory
 
 from pyscal import __version__
 
@@ -96,6 +96,7 @@ def get_parser():
             "low, base and high for each SATNUM. "
             "Either one number used for all SATNUM, or a sequence of "
             "length equal to the max SATNUM. Numbers between -1 and 1. "
+            "Also used for GasWater."
         ),
     )
     parser.add_argument(
@@ -109,7 +110,7 @@ def get_parser():
             "Either one number used for all SATNUM, or a sequence "
             "of length equal to the max SATNUM. Numbers between -1 and 1. "
             "If not provided, the water-oil interpolation parameter will be used "
-            "as default."
+            "as default. Do not use for GasWater."
         ),
     )
     parser.add_argument(
@@ -130,7 +131,8 @@ def get_parser():
         default=False,
         help=(
             "Output family 2 keywords, SWFN, SGFN and SOF3/SOF2. "
-            "Family 1 (SWOF + SGOF) is written if this is not set"
+            "Family 1 (SWOF + SGOF) is written if this is not set.  "
+            "Implicit for gas-water input."
         ),
     )
     return parser
@@ -222,12 +224,18 @@ def pyscal_main(
         scalrec_list = PyscalFactory.create_scal_recommendation_list(
             scalinput_df, h=delta_s
         )
-        logger.info(
-            "Interpolating, wateroil=%s, gasoil=%s",
-            str(int_param_wo),
-            str(int_param_go),
-        )
-        wog_list = scalrec_list.interpolate(int_param_wo, int_param_go, h=delta_s)
+        if scalrec_list[1].type == WaterOilGas:
+            logger.info(
+                "Interpolating, wateroil=%s, gasoil=%s",
+                str(int_param_wo),
+                str(int_param_go),
+            )
+            wog_list = scalrec_list.interpolate(int_param_wo, int_param_go, h=delta_s)
+        elif scalrec_list[1].type == GasWater:
+            logger.info(
+                "Interpolating, gaswater=%s", str(int_param_wo),
+            )
+            wog_list = scalrec_list.interpolate(int_param_wo, None, h=delta_s)
     else:
         wog_list = PyscalFactory.create_pyscal_list(
             scalinput_df, h=delta_s
@@ -240,19 +248,20 @@ def pyscal_main(
             "Interpolation parameter provided but no CASE column in input data"
         )
         raise ValueError
-    if not family2:
+
+    if family2 or wog_list.pyscaltype == GasWater:
+        logger.info("Generating family 2 keywords.")
+        if output == "-":
+            print(wog_list.dump_family_2())
+        else:
+            wog_list.dump_family_2(filename=output)
+            print("Written to " + output)
+    else:
         logger.info("Generating family 1 keywords.")
         if output == "-":
             print(wog_list.dump_family_1(slgof=slgof))
         else:
             wog_list.dump_family_1(filename=output, slgof=slgof)
-            print("Written to " + output)
-    else:
-        logger.info("Generating family 2 keywords")
-        if output == "-":
-            print(wog_list.dump_family_2())
-        else:
-            wog_list.dump_family_2(filename=output)
             print("Written to " + output)
 
 

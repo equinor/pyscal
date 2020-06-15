@@ -4,10 +4,12 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import pandas as pd
+
 from hypothesis import given, settings
 import hypothesis.strategies as st
 
-from pyscal import SCALrecommendation, PyscalFactory
+from pyscal import SCALrecommendation, PyscalFactory, GasWater, WaterOilGas
 from pyscal.factory import slicedict
 
 from common import sat_table_str_ok, check_table
@@ -105,6 +107,7 @@ def test_interpolation_deprecated(param_wo, param_go):
     )
 
     rec.add_simple_J()  # Add default pc curve
+    assert rec.type == WaterOilGas
     try:
         interpolant = rec.interpolate(param_wo, param_go, h=0.1)
     except AssertionError:
@@ -245,6 +248,7 @@ def test_make_scalrecommendation_go():
     assert "Lw" not in high_let_go
     high = PyscalFactory.create_water_oil_gas(high_let_go)
     rec = SCALrecommendation(low, base, high)
+    assert rec.type == WaterOilGas
     interpolant = rec.interpolate(-0.5)
     check_table(interpolant.gasoil.table)
     assert interpolant.wateroil is None
@@ -301,29 +305,118 @@ def test_boundary_cases():
         "foo",
         h=0.1,
     )
-    # Object reference equivalence is a little bit strict,
-    # because it would be perfectly fine if interpolate()
-    # retured copied objects. But we don't have an equivalence operator
-    # implemented.
-    assert rec.interpolate(0).wateroil == rec.base.wateroil
-    assert rec.interpolate(-1).wateroil == rec.low.wateroil
-    assert rec.interpolate(1).wateroil == rec.high.wateroil
-    assert rec.interpolate(0).gasoil == rec.base.gasoil
-    assert rec.interpolate(-1).gasoil == rec.low.gasoil
-    assert rec.interpolate(1).gasoil == rec.high.gasoil
+    assert rec.type == WaterOilGas
 
-    assert rec.interpolate(0, 1).wateroil == rec.base.wateroil
-    assert rec.interpolate(-1, 1).wateroil == rec.low.wateroil
-    assert rec.interpolate(1, 1).wateroil == rec.high.wateroil
+    wo_cols = ["sw", "krw", "krow"]  # no Pc in this test data
+    go_cols = ["sg", "krg", "krog"]
+    assert (
+        rec.interpolate(0)
+        .wateroil.table[wo_cols]
+        .equals(rec.base.wateroil.table[wo_cols])
+    )
+    assert (
+        rec.interpolate(-1)
+        .wateroil.table[wo_cols]
+        .equals(rec.low.wateroil.table[wo_cols])
+    )
+    assert (
+        rec.interpolate(1)
+        .wateroil.table[wo_cols]
+        .equals(rec.high.wateroil.table[wo_cols])
+    )
 
-    assert rec.interpolate(0, 1).gasoil == rec.high.gasoil
-    assert rec.interpolate(-1, 1).gasoil == rec.high.gasoil
-    assert rec.interpolate(1, 1).gasoil == rec.high.gasoil
+    assert (
+        rec.interpolate(0).gasoil.table[go_cols].equals(rec.base.gasoil.table[go_cols])
+    )
+    assert (
+        rec.interpolate(-1).gasoil.table[go_cols].equals(rec.low.gasoil.table[go_cols])
+    )
+    assert (
+        rec.interpolate(1).gasoil.table[go_cols].equals(rec.high.gasoil.table[go_cols])
+    )
 
-    assert rec.interpolate(0, 0).gasoil == rec.base.gasoil
-    assert rec.interpolate(-1, 0).gasoil == rec.base.gasoil
-    assert rec.interpolate(1, 0).gasoil == rec.base.gasoil
+    assert (
+        rec.interpolate(0, 1)
+        .wateroil.table[wo_cols]
+        .equals(rec.base.wateroil.table[wo_cols])
+    )
+    assert (
+        rec.interpolate(-1, 1)
+        .wateroil.table[wo_cols]
+        .equals(rec.low.wateroil.table[wo_cols])
+    )
+    assert (
+        rec.interpolate(1, 1)
+        .wateroil.table[wo_cols]
+        .equals(rec.high.wateroil.table[wo_cols])
+    )
 
-    assert rec.interpolate(0, -1).gasoil == rec.low.gasoil
-    assert rec.interpolate(-1, -1).gasoil == rec.low.gasoil
-    assert rec.interpolate(1, -1).gasoil == rec.low.gasoil
+    assert (
+        rec.interpolate(0, 1)
+        .gasoil.table[go_cols]
+        .equals(rec.high.gasoil.table[go_cols])
+    )
+    assert (
+        rec.interpolate(-1, 1)
+        .gasoil.table[go_cols]
+        .equals(rec.high.gasoil.table[go_cols])
+    )
+    assert (
+        rec.interpolate(1, 1)
+        .gasoil.table[go_cols]
+        .equals(rec.high.gasoil.table[go_cols])
+    )
+
+    assert (
+        rec.interpolate(0, 0)
+        .gasoil.table[go_cols]
+        .equals(rec.base.gasoil.table[go_cols])
+    )
+    assert (
+        rec.interpolate(-1, 0)
+        .gasoil.table[go_cols]
+        .equals(rec.base.gasoil.table[go_cols])
+    )
+    assert (
+        rec.interpolate(1, 0)
+        .gasoil.table[go_cols]
+        .equals(rec.base.gasoil.table[go_cols])
+    )
+
+    assert (
+        rec.interpolate(0, -1)
+        .gasoil.table[go_cols]
+        .equals(rec.low.gasoil.table[go_cols])
+    )
+    assert (
+        rec.interpolate(-1, -1)
+        .gasoil.table[go_cols]
+        .equals(rec.low.gasoil.table[go_cols])
+    )
+    assert (
+        rec.interpolate(1, -1)
+        .gasoil.table[go_cols]
+        .equals(rec.low.gasoil.table[go_cols])
+    )
+
+
+def test_gaswater_scal():
+    """Test list of gas-water objects in scal recommendation"""
+    dframe = pd.DataFrame(
+        columns=["SATNUM", "CASE", "NW", "NG", "TAG"],
+        data=[
+            [1, "pess", 2, 2, "thetag"],
+            [1, "base", 3, 3, "thetag"],
+            [1, "opt", 4, 4, "thetag"],
+        ],
+    )
+    rec_list = PyscalFactory.create_scal_recommendation_list(
+        PyscalFactory.load_relperm_df(dframe), h=0.1
+    )
+    assert rec_list.pyscaltype == SCALrecommendation
+    assert rec_list[1].type == GasWater
+    low_list = rec_list.interpolate(-1)
+    str_fam2 = low_list.dump_family_2()
+    assert "SCAL recommendation interpolation to -1" in str_fam2
+    assert "SGFN" in str_fam2
+    assert "SWFN" in str_fam2
