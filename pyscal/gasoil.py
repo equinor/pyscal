@@ -171,7 +171,7 @@ class GasOil(object):
             self.table["sgn"] = (self.table["sg"] - sgcr) / (1 - swl - sgcr)
 
         # Normalized oil saturation should be 0 at 1-sorg, and 1 at swl+sgcr
-        self.table["son"] = (self.table["sl"] - sorg - swl) / (1 - sorg - swl - sgcr)
+        self.table["son"] = (self.table["sl"] - sorg - swl) / (1 - sorg - swl)
         self.sgcomment = "-- swirr=%g, sgcr=%g, swl=%g, sorg=%g, krgendanchor=%s\n" % (
             self.swirr,
             self.sgcr,
@@ -372,36 +372,24 @@ class GasOil(object):
                 # Only warn if something else than default is in use
                 logger.warning("krgmax ignored when not anchoring to sorg")
 
-    def set_endpoints_linearpart_krog(self, kroend, kromax):
+    def set_endpoints_linearpart_krog(self, kroend):
         """Set linear parts of krog outside endpoints.
 
         Zero for sg above 1 - sorg - swl.
-
-        Linear from kromax to kroend from sg in [0, sgcr]
 
         This function is used by add_corey/LET_oil(), and perhaps by other
         utility functions. It should not be necessary for end-users.
 
         Args:
-            kroend (float): krog at sg=sgcr
-            kromax (float): krog at Sg=0. Default 1.
-
+            kroend (float): krog at sg=0
         """
         # Special handling of the part close to sg=1, set to zero.
         self.table.loc[
             self.table["sg"] > 1 - self.sorg - self.swl - epsilon, "krog"
         ] = 0
 
-        # Set kromax at sg=0, but only if sgcr is sufficiently larger than 0.
-        if self.sgcr > 1.0 / SWINTEGERS:
-            if not kromax:
-                kromax = 1
-            self.table.loc[self.table["sg"] < 1.0 / SWINTEGERS, "krog"] = kromax
-        else:
-            if kromax and kromax < 1.0:
-                # Only warn for non-defaulted values
-                logger.warning("kromax ignored when sgcr is close to zero")
-            self.table.loc[self.table["sg"] < 1.0 / SWINTEGERS, "krog"] = kroend
+        # Floating point issues can cause a slight overshoot at sg=0:
+        self.table.loc[self.table["krog"] > kroend, "krog"] = kroend
 
     def add_corey_gas(self, ng=2, krgend=1, krgmax=None):
         """ Add krg data through the Corey parametrization
@@ -431,7 +419,7 @@ class GasOil(object):
             krgmax,
         )
 
-    def add_corey_oil(self, nog=2, kroend=1, kromax=None):
+    def add_corey_oil(self, nog=2, kroend=1):
         """
         Add kro data through the Corey parametrization
 
@@ -440,33 +428,21 @@ class GasOil(object):
 
         All values above 1 - sorg - swl are set to zero.
 
-        kromax is ignored if sgcr is close to zero
-
         Arguments:
             nog (float): Corey exponent for oil
             kroend (float): Value for krog at normalized oil saturation 1
-            kromax (float): Value for krog at gas saturation 0.
 
         Returns:
             None (modifies internal class state)
         """
         assert epsilon < nog < MAX_EXPONENT
-        if kromax:
-            assert 0 < kroend <= kromax <= 1.0
-        else:
-            assert 0 < kroend <= 1.0
+        assert 0 < kroend <= 1.0
 
         self.table["krog"] = kroend * self.table.son ** nog
 
-        self.set_endpoints_linearpart_krog(kroend, kromax)
+        self.set_endpoints_linearpart_krog(kroend)
 
-        if not kromax:
-            kromax = 1
-        self.krogcomment = "-- Corey krog, nog=%g, kroend=%g, kromax=%g\n" % (
-            nog,
-            kroend,
-            kromax,
-        )
+        self.krogcomment = "-- Corey krog, nog=%g, kroend=%g\n" % (nog, kroend,)
 
     def add_LET_gas(self, l=2, e=2, t=2, krgend=1, krgmax=None):
         """
@@ -516,7 +492,7 @@ class GasOil(object):
             krgmax,
         )
 
-    def add_LET_oil(self, l=2, e=2, t=2, kroend=1, kromax=None):
+    def add_LET_oil(self, l=2, e=2, t=2, kroend=1):
         """Add oil (vs gas) relative permeability data through the Corey
         parametrization.
 
@@ -524,22 +500,16 @@ class GasOil(object):
 
         All values where sg > 1 - sorg - swl are set to zero.
 
-        kromax is ignored if sgcr is close to zero
-
         Arguments:
             l (float): L parameter
             e (float): E parameter
             t (float): T parameter
             kroend (float): The value at gas saturation sgcr
-            kromax (float): The value at gas saturation equal to 0.
         """
         assert epsilon < l < MAX_EXPONENT
         assert epsilon < e < MAX_EXPONENT
         assert epsilon < t < MAX_EXPONENT
-        if kromax:
-            assert 0 < kroend <= kromax <= 1.0
-        else:
-            assert 0 < kroend <= 1.0
+        assert 0 < kroend <= 1.0
 
         # LET shape for the interval [sgcr, 1 - swl - sorg]
         self.table["krog"] = (
@@ -550,16 +520,13 @@ class GasOil(object):
         # This equation is undefined for t a float and son=1, set explicitly:
         self.table.loc[np.isclose(self.table["son"], 1.0), "krog"] = kroend
 
-        self.set_endpoints_linearpart_krog(kroend, kromax)
+        self.set_endpoints_linearpart_krog(kroend)
 
-        if not kromax:
-            kromax = 1
-        self.krogcomment = "-- LET krog, l=%g, e=%g, t=%g, kroend=%g, kromax=%g\n" % (
+        self.krogcomment = "-- LET krog, l=%g, e=%g, t=%g, kroend=%g\n" % (
             l,
             e,
             t,
             kroend,
-            kromax,
         )
 
     def estimate_sorg(self):

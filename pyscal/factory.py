@@ -35,7 +35,7 @@ WO_COREY_OIL = ["now"]
 WO_LET_WATER = ["lw", "ew", "tw"]  # Will translated to l, e and t in code below.
 WO_LET_OIL = ["low", "eow", "tow"]
 WO_LET_OIL_ALT = ["lo", "eo", "to"]  # Alternative parameter names.
-WO_OIL_ENDPOINTS = ["kromax", "krowend"]
+WO_OIL_ENDPOINTS = ["krowend"]
 WO_SIMPLE_J = ["a", "b", "poro_ref", "perm_ref", "drho"]  # "g" is optional
 WO_NORM_J = ["a", "b", "poro", "perm", "sigma_costau"]
 # 'a' in WO_NORM_J is the same as a_petro, but should possibly kept as is.
@@ -57,7 +57,7 @@ GO_LET_OIL = ["log", "eog", "tog"]
 
 WOG_INIT = ["swirr", "swl", "swcr", "sorw", "sorg", "sgcr", "h", "tag"]
 
-DEPRECATED = ["kroend"]  # This key will be ignored, as it it ambiguous.
+DEPRECATED = ["kroend", "kromax"]  # This key will be ignored, as it it ambiguous.
 
 
 class PyscalFactory(object):
@@ -103,7 +103,7 @@ class PyscalFactory(object):
 
         Recognized parameters:
           swirr, swl, swcr, sorw, h, tag, nw, now, krwmax, krwend,
-          lw, ew, tw, low, eow, tow, lo, eo, to, kromax, krowend,
+          lw, ew, tw, low, eow, tow, lo, eo, to, krowend,
           a, a_petro, b, b_petro, poro_ref, perm_ref, drho,
           a, b, poro, perm, sigma_costau
 

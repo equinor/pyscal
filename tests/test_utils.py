@@ -349,7 +349,8 @@ def test_normalize_nonlinpart_wo():
     assert np.isclose(kron(0), 0)
     # These do not match when endpoints are wrong
     assert not np.isclose(krwn(1), 0.6)
-    assert not np.isclose(kron(1), 0.8)
+    # This is ok, as kro is anchored at swl
+    assert np.isclose(kron(1), 0.8)
 
     # So fix endpoints!
     wateroil.swl = wateroil.table["sw"].min()
@@ -706,9 +707,9 @@ def test_normalize_nonlinpart_go():
     # These go well still, since we are at zero
     assert np.isclose(krgn(0), 0.0)
     assert np.isclose(kron(0), 0)
+    assert np.isclose(kron(1), 0.8)
     # These do not match when endpoints are wrong
     assert not np.isclose(krgn(1), 0.6)
-    assert not np.isclose(kron(1), 0.8)
 
     # So fix endpoints!
     gasoil.swl = 1 - gasoil.table["sg"].max()
@@ -722,45 +723,42 @@ def test_normalize_nonlinpart_go():
     assert np.isclose(kron(1), 0.8)
 
 
-def test_ip_kromax():
-    """Test behaviour of kroend/kromax under interpolation"""
+def test_ip_krowend():
+    """Test behaviour of kroend under interpolation"""
     wo_low = WaterOil(swl=0, swcr=0.1, sorw=0.2)
     wo_low.add_corey_water(nw=2, krwend=0.5, krwmax=0.7)
-    wo_low.add_corey_oil(now=2, kroend=0.6, kromax=0.9)
+    wo_low.add_corey_oil(now=2, kroend=0.6)
 
     wo_high = WaterOil(swl=0.02, swcr=0.05, sorw=0.1)
     wo_high.add_corey_water(nw=2, krwend=0.5, krwmax=0.72)
-    wo_high.add_corey_oil(now=2, kroend=0.6, kromax=0.8)
+    wo_high.add_corey_oil(now=2, kroend=0.7)
 
     # Interpolate to midpoint between the curves above
     wo_ip = utils.interpolate_wo(wo_low, wo_high, 0.5)
 
-    # kromax at mean swl:
-    assert float_df_checker(wo_ip.table, "sw", 0.01, "krow", 0.85)
-    # kroend is 0.6 in low and high, but swcr has changed:
-    assert float_df_checker(wo_ip.table, "sw", 0.075, "krow", 0.6)
+    # kroend at mean swl:
+    assert float_df_checker(wo_ip.table, "sw", 0.01, "krow", (0.6 + 0.7) / 2.0)
 
     assert float_df_checker(wo_ip.table, "sw", 1, "krw", 0.71)
     assert float_df_checker(wo_ip.table, "sw", 1 - 0.15, "krw", 0.5)
 
 
-def test_ip_krogmax():
-    """Test behaviour of kroend/kromax under interpolation"""
+def test_ip_krogend():
+    """Test behaviour of kroend under interpolation"""
     go_low = GasOil(swl=0, sgcr=0.1, sorg=0.2)
     go_low.add_corey_gas(ng=2, krgend=0.5, krgmax=0.7)
-    go_low.add_corey_oil(nog=2, kroend=0.6, kromax=0.9)
+    go_low.add_corey_oil(nog=2, kroend=0.6)
 
     go_high = GasOil(swl=0.02, sgcr=0.05, sorg=0.1)
     go_high.add_corey_gas(ng=2, krgend=0.5, krgmax=0.72)
-    go_high.add_corey_oil(nog=2, kroend=0.6, kromax=0.8)
+    go_high.add_corey_oil(nog=2, kroend=0.7)
 
     # Interpolate to midpoint between the curves above
     go_ip = utils.interpolate_go(go_low, go_high, 0.5)
 
-    # kromax at sg zero, should be kromax:
-    assert float_df_checker(go_ip.table, "sg", 0.0, "krog", 0.85)
-    # kroend is 0.6 in low and high, but sgcr has changed:
-    assert float_df_checker(go_ip.table, "sg", 0.075, "krog", 0.6)
+    # kroend at sg zero:
+    assert float_df_checker(go_ip.table, "sg", 0.0, "krog", (0.6 + 0.7) / 2.0)
+
     assert np.isclose(go_ip.swl, 0.01)
     assert np.isclose(go_ip.sorg, 0.15)
 
@@ -774,19 +772,17 @@ def test_ip_krogmax():
     go_low.add_corey_gas(ng=5, krgend=0.5, krgmax=0.7)
     # krgmax will trigger warning message, intended, as the 0.7
     # value here will mean nothing.
-    go_low.add_corey_oil(nog=2, kroend=0.6, kromax=0.9)
+    go_low.add_corey_oil(nog=2, kroend=0.6)
 
     go_high = GasOil(swl=0.02, sgcr=0.05, sorg=0.1, krgendanchor="")
     go_high.add_corey_gas(ng=4, krgend=0.5, krgmax=0.72)
     # krgmax will trigger warning message, intended.
-    go_high.add_corey_oil(nog=2, kroend=0.6, kromax=0.8)
+    go_high.add_corey_oil(nog=2, kroend=0.7)
 
     # Interpolate to midpoint between the curves above
     go_ip = utils.interpolate_go(go_low, go_high, 0.5, h=0.1)
 
-    assert float_df_checker(go_ip.table, "sg", 0.0, "krog", 0.85)
-    # kroend is 0.6 in low and high, but swcr has changed:
-    assert float_df_checker(go_ip.table, "sg", 0.075, "krog", 0.6)
+    assert float_df_checker(go_ip.table, "sg", 0.0, "krog", (0.6 + 0.7) / 2.0)
 
     # Activate these line to see a bug, interpolation_go
     # does not honor krgendanchorA:
@@ -803,18 +799,16 @@ def test_ip_krogmax():
     # Do we get into trouble if krgendanchor is different in low and high?
     go_low = GasOil(swl=0, sgcr=0.1, sorg=0.2, krgendanchor="sorg")
     go_low.add_corey_gas(ng=2, krgend=0.5, krgmax=0.7)
-    go_low.add_corey_oil(nog=2, kroend=0.6, kromax=0.9)
+    go_low.add_corey_oil(nog=2, kroend=0.6)
 
     go_high = GasOil(swl=0.02, sgcr=0.05, sorg=0.1, krgendanchor="")
     go_high.add_corey_gas(ng=2, krgend=0.5)
-    go_high.add_corey_oil(nog=2, kroend=0.6, kromax=0.8)
+    go_high.add_corey_oil(nog=2, kroend=0.7)
 
     # Interpolate to midpoint between the curves above
     go_ip = utils.interpolate_go(go_low, go_high, 0.5)
 
-    assert float_df_checker(go_ip.table, "sg", 0.0, "krog", 0.85)
-    # kroend is 0.6 in low and high, but swcr has changed:
-    assert float_df_checker(go_ip.table, "sg", 0.075, "krog", 0.6)
+    assert float_df_checker(go_ip.table, "sg", 0.0, "krog", (0.6 + 0.7) / 2.0)
 
     # max(krg) is here avg of krgmax and krgend from the differnt tables:
     assert float_df_checker(go_ip.table, "sg", 1 - 0.01, "krg", 0.6)
