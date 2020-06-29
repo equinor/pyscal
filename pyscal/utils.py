@@ -157,8 +157,7 @@ def normalize_nonlinpart_wo(curve):
     an assumed linear part from sorw to 1 which we ignore here.
 
     For a WaterOil krow curve, the nonlinear part
-    is from 1 - sorw (mapped to zero) to swcr (mapped to 1). If swcr > swl,
-    there is a linear part from swcr down to swl, ignored here.
+    is from 1 - sorw (mapped to zero) to swl (mapped to 1).
 
     These endpoints must be known the the WaterOil object coming in (the object
     can determine them using functions 'estimate_sorw()' and 'estimate_swcr()'
@@ -201,7 +200,7 @@ def normalize_nonlinpart_wo(curve):
     )
 
     def so_fn(son):
-        return curve.sorw + son * (1.0 - curve.sorw - curve.swcr)
+        return curve.sorw + son * (1.0 - curve.sorw - curve.swl)
 
     def kro_fn(son):
         return kro_interp(so_fn(son))
@@ -214,12 +213,12 @@ def normalize_nonlinpart_go(curve):
     (potentially) nonlinear part of the relperm curves, and with
     a normalized argument (0,1) on that interval.
 
-    For a GasOil krw curve, the nonlinear part
+    For a GasOil krg curve, the nonlinear part
     is from sgcr to sorg. sgcr is mapped to sg=zero, and sg=1 - sorg - swl is mapped
     to 1. Then there is an assumed linear part from sorg to 1 which we ignore here.
 
     For a GasOil krow curve, the nonlinear part
-    is from 1 - sorg (mapped to zero) to sgcr (mapped to 1).
+    is from 1 - sorg (mapped to zero) to sg=0 (mapped to 1).
 
     These endpoints must be known the the GasOil object coming in (the object
     can determine them using functions 'estimate_sorg()' and 'estimate_sgcr()'
@@ -260,11 +259,7 @@ def normalize_nonlinpart_go(curve):
         bounds_error=False,
         fill_value=(0.0, curve.table["krog"].max()),
     )
-    so_fn = (
-        lambda son: curve.swl
-        + curve.sorg
-        + son * (1.0 - curve.swl - curve.sorg - curve.sgcr)
-    )
+    so_fn = lambda son: curve.swl + curve.sorg + son * (1.0 - curve.swl - curve.sorg)
 
     def kro_fn(son):
         return kro_interp(so_fn(son))
@@ -402,12 +397,6 @@ def interpolate_wo(wo_low, wo_high, parameter, h=0.01, tag=None):
 
     # Interpolate kr at saturation endpoints
     krwmax_new = weighted_value(wo_low.table["krw"].max(), wo_high.table["krw"].max())
-    if swcr_new > swl_new + epsilon:
-        kromax_new = weighted_value(
-            wo_low.table["krow"].max(), wo_high.table["krow"].max()
-        )
-    else:
-        kromax_new = None
     krwend_new = weighted_value(krw1(1), krw2(1))
     kroend_new = weighted_value(kro1(1), kro2(1))
 
@@ -424,7 +413,7 @@ def interpolate_wo(wo_low, wo_high, parameter, h=0.01, tag=None):
     )
 
     wo_new.set_endpoints_linearpart_krw(krwend=krwend_new, krwmax=krwmax_new)
-    wo_new.set_endpoints_linearpart_krow(kroend=kroend_new, kromax=kromax_new)
+    wo_new.set_endpoints_linearpart_krow(kroend=kroend_new)
 
     # We need a new fit-for-purpose normalized swnpc, that ignores
     # the initial swnpc (swirr-influenced)
@@ -511,12 +500,6 @@ def interpolate_go(go_low, go_high, parameter, h=0.01, tag=None):
 
     # Interpolate kr at saturation endpoints
     krgmax_new = weighted_value(go_low.table["krg"].max(), go_high.table["krg"].max())
-    if sgcr_new > epsilon:
-        kromax_new = weighted_value(
-            go_low.table["krog"].max(), go_high.table["krog"].max()
-        )
-    else:
-        kromax_new = None
     krgend_new = weighted_value(krg1(1), krg2(1))
     kroend_new = weighted_value(kro1(1), kro2(1))
 
@@ -543,7 +526,7 @@ def interpolate_go(go_low, go_high, parameter, h=0.01, tag=None):
         pc1(go_new.table["sgn_pc_intp"]), pc2(go_new.table["sgn_pc_intp"])
     )
 
-    go_new.set_endpoints_linearpart_krog(kroend=kroend_new, kromax=kromax_new)
+    go_new.set_endpoints_linearpart_krog(kroend=kroend_new)
 
     # Here we should have honored krgendanchor. Check github issue.
     go_new.set_endpoints_linearpart_krg(krgend=krgend_new, krgmax=krgmax_new)

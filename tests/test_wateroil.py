@@ -20,7 +20,7 @@ from common import (
 )
 
 
-def check_endpoints(wateroil, krwend, krwmax, kroend, kromax):
+def check_endpoints(wateroil, krwend, krwmax, kroend):
     """Check that the code produces correct endpoints for
     parametrizations, on discrete cases"""
     swtol = 1 / SWINTEGERS
@@ -31,12 +31,7 @@ def check_endpoints(wateroil, krwend, krwmax, kroend, kromax):
         assert float_df_checker(wateroil.table, "son", 1.0, "krow", kroend)
     # krow at sorw should be zero:
     assert float_df_checker(wateroil.table, "son", 0.0, "krow", 0.0)
-    if wateroil.swcr > wateroil.swl + swtol:
-        # krow at swl should be kromax:
-        assert float_df_checker(wateroil.table, "sw", wateroil.swl, "krow", kromax)
-    else:
-        # kromax not used when swcr is close to swl.
-        assert np.isclose(wateroil.table["krow"].max(), kroend)
+    assert np.isclose(wateroil.table["krow"].max(), kroend)
 
     # Check endpoints for water curve: (np.isclose is only reliable around 1)
     assert float_df_checker(wateroil.table, "swn", 0.0, "krw", 0.0)
@@ -88,7 +83,7 @@ def test_wateroil_let1(l, e, t, krwend, krwmax):
     """Test random LET parameters"""
     wateroil = WaterOil()
     try:
-        wateroil.add_LET_oil(l, e, t, krwend, krwmax)
+        wateroil.add_LET_oil(l, e, t, krwend)
         wateroil.add_LET_water(l, e, t, krwend, krwmax)
     except AssertionError:
         # This happens for negative values f.ex.
@@ -108,35 +103,33 @@ def test_wateroil_let1(l, e, t, krwend, krwmax):
     st.floats(min_value=0, max_value=0.3),
     st.floats(min_value=0, max_value=0.3),
     st.floats(min_value=0.1, max_value=1),
-    st.floats(min_value=0.101, max_value=1),
     st.floats(min_value=0.1, max_value=1),
     st.floats(min_value=0.1, max_value=1),
     st.floats(min_value=0.0001, max_value=1),
     st.booleans(),
 )
-def test_wateroil_krendmax(swl, swcr, sorw, kroend, kromax, krwend, krwmax, h, fast):
+def test_wateroil_krendmax(swl, swcr, sorw, kroend, krwend, krwmax, h, fast):
     """Test endpoints for wateroil using hypothesis testing"""
     try:
         wateroil = WaterOil(swl=swl, swcr=swcr, sorw=sorw, h=h, fast=fast)
     except AssertionError:
         return
-    kroend = min(kroend, kromax)
     krwend = min(krwend, krwmax)
-    wateroil.add_corey_oil(kroend=kroend, kromax=kromax)
+    wateroil.add_corey_oil(kroend=kroend)
     wateroil.add_corey_water(krwend=krwend, krwmax=krwmax)
     check_table(wateroil.table)
     assert wateroil.selfcheck()
     assert 0 < wateroil.crosspoint() < 1
 
-    check_endpoints(wateroil, krwend, krwmax, kroend, kromax)
+    check_endpoints(wateroil, krwend, krwmax, kroend)
     ####################################
     # Do it over again, but with LET:
-    wateroil.add_LET_oil(t=1.1, kroend=kroend, kromax=kromax)
+    wateroil.add_LET_oil(t=1.1, kroend=kroend)
     wateroil.add_LET_water(t=1.1, krwend=krwend, krwmax=krwmax)
     assert wateroil.selfcheck()
     check_table(wateroil.table)
     # Check endpoints for oil curve:
-    check_endpoints(wateroil, krwend, krwmax, kroend, kromax)
+    check_endpoints(wateroil, krwend, krwmax, kroend)
     check_linear_sections(wateroil)
     assert 0 < wateroil.crosspoint() < 1
 

@@ -227,7 +227,11 @@ class WaterOilGas(object):
         if not np.isclose(
             self.wateroil.table["krow"].max(), self.gasoil.table["krog"].max()
         ):
-            logger.warning("Eclipse will fail, max(krow) is not equal to max(krog)")
+            logger.warning(
+                "Eclipse will fail, max(krow)=%g is not equal to max(krog)=%g",
+                self.wateroil.table["krow"].max(),
+                self.gasoil.table["krog"].max(),
+            )
             wog_is_ok = False
 
         # 2: Inconsistent end points in saturation table 1 the maximum

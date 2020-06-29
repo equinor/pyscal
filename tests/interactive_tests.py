@@ -394,9 +394,9 @@ def testplot():
 
     swof = WaterOil(tag="Testcurve", h=0.01, swirr=0.2, swl=0.2, sorw=0.1)
     swof.add_corey_water(nw=5, krwend=0.7, krwmax=0.9)
-    swof.add_corey_oil(now=2, kroend=0.4, kromax=0.95)
+    swof.add_corey_oil(now=2, kroend=0.95)
     swof.add_LET_water(l=2, e=1, t=1.4, krwend=0.7, krwmax=0.9)
-    swof.add_LET_oil(l=2, e=1, t=1.4, kroend=0.7, kromax=0.9)
+    swof.add_LET_oil(l=2, e=1, t=1.4, kroend=0.9)
 
     # Print the first 7 lines of SWOF:
     print("\n".join(swof.SWOF().split("\n")[0:8]))

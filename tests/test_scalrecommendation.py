@@ -121,6 +121,9 @@ def test_interpolation_deprecated(param_wo, param_go):
     assert len(interpolant.wateroil.SWFN()) > 100
     assert len(interpolant.SOF3()) > 100
     assert len(interpolant.wateroil.SWOF()) > 100
+    if not interpolant.threephaseconsistency():
+        print(interpolant.wateroil.SWOF())
+        print(interpolant.gasoil.SGOF())
     assert interpolant.threephaseconsistency()
 
 
