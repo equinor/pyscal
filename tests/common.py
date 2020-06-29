@@ -141,7 +141,8 @@ def check_linear_sections(wo_or_go):
         sat_col = "sw"
         right_start = 1 - wo_or_go.sorw
         right_end = 1
-        lin_cols = ["krow", "krw"]
+        right_lin_cols = ["krow", "krw"]
+        left_lin_cols = ["krw"]
         left_start = wo_or_go.swl
         left_end = wo_or_go.swcr
     if isinstance(wo_or_go, GasOil):
@@ -153,7 +154,8 @@ def check_linear_sections(wo_or_go):
             # segment to the right.
             right_start = 1 - wo_or_go.swl
         right_end = 1 - wo_or_go.swl
-        lin_cols = ["krog", "krg"]
+        right_lin_cols = ["krog", "krg"]
+        left_lin_cols = ["krg"]
         left_start = 0
         left_end = wo_or_go.sgcr
 
@@ -165,13 +167,13 @@ def check_linear_sections(wo_or_go):
         (wo_or_go.table[sat_col] >= left_start) & (wo_or_go.table[sat_col] <= left_end)
     ]
     if len(right_lin_seg) > 4:
-        for col in lin_cols:
+        for col in right_lin_cols:
             # We avoid the first and last row in right_lin_seg, because
             # this does not always match the constant saturation segment
             # assumption in this linearity test:
             assert right_lin_seg.iloc[1:-1][col].diff().std() < 1e-9
     if len(left_lin_seg) > 4:
-        for col in lin_cols:
+        for col in left_lin_cols:
             assert left_lin_seg.iloc[1:-1][col].diff().std() < 1e-9
 
 

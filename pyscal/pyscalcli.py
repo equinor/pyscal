@@ -20,7 +20,7 @@ column called TAG or COMMENT. Column headers are case insensitive.
 
 Saturation endpoints are put in columns 'swirr', 'swl', 'swcr', 'sorw',
 'sgcr' and 'sorg'. Relative permeability endpoints are put in columns
-'krwend', 'krwmax', 'krowend', 'krogend', 'kromax', 'krgend' and 'krgmax'.
+'krwend', 'krwmax', 'krowend', 'krogend', 'krgend' and 'krgmax'.
 These columns are optional and are defaulted to 0 or 1.
 
 Corey or LET parametrization are based on presence of the columns

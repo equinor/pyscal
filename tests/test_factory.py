@@ -460,6 +460,23 @@ def test_xls_scalrecommendation():
         scalrec.interpolate(+0.5)
 
 
+def test_check_deprecated_kromax(caplog):
+    """Up until pyscal 0.5.x, kromax was a parameter to the oil
+    curve parametrization for WaterOil and GasOil, and kro was
+    linear between swl and swcr. From pyscal 0.6, that linear
+    segment is gone, and kromax is not needed as a parameter,
+    only krowend/krogend is used.
+
+    If kromax is encountered in input data, we should warn
+    it is ignored.
+    """
+    wateroil = PyscalFactory.create_water_oil(
+        dict(swl=0.1, nw=2, now=2, kroend=0.4, kromax=0.5)
+    )
+    assert "kromax" in caplog.text
+    assert "deprecated" in caplog.text
+
+
 def parse_gensatfuncline(conf_line):
     """Utility function that emulates how gensatfunc could parse
     its configuration lines in a pyscalfactory compatible fashion

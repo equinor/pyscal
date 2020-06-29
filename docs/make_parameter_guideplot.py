@@ -28,13 +28,12 @@ def make_gasoil_plot(show=True, krgendanchor="sorg"):
     krgend = 0.7
     krgmax = 0.75
     krogend = 0.85
-    kromax = 0.9
     gasoil = GasOil(sgcr=sgcr, sorg=sorg, swl=swl, krgendanchor=krgendanchor)
     gasoil2 = GasOil(sgcr=sgcr, sorg=sorg, swl=swl, krgendanchor=None)
     gasoil.add_corey_gas(ng=3, krgend=krgend, krgmax=krgmax)
     gasoil2.add_corey_gas(ng=3, krgend=krgend)
-    gasoil.add_corey_oil(nog=3, kroend=krogend, kromax=kromax)
-    gasoil2.add_corey_oil(nog=3, kroend=krogend, kromax=kromax)
+    gasoil.add_corey_oil(nog=3, kroend=krogend)
+    gasoil2.add_corey_oil(nog=3, kroend=krogend)
     gasoil2.table.plot(
         ax=axes, x="sg", y="krg", c="pink", alpha=0.7, label="KRG*", linewidth=2
     )
@@ -48,16 +47,10 @@ def make_gasoil_plot(show=True, krgendanchor="sorg"):
     plt.xticks([0, 1])
     plt.yticks([0, 1])
     axes.annotate(
-        "KROMAX",
-        xy=(0, kromax),
-        arrowprops=dict(arrowstyle="->"),
-        xytext=(0 - 0.09, kromax - 0.2),
-    )
-    axes.annotate(
         "KROGEND",
-        xy=(sgcr, krogend),
+        xy=(0, krogend),
         arrowprops=dict(arrowstyle="->"),
-        xytext=(sgcr - 0.1, krogend - 0.3),
+        xytext=(0.1, krogend - 0.2),
     )
     axes.annotate(
         "KRGEND",
@@ -113,10 +106,9 @@ def make_wateroil_plot(show=True):
     krwend = 0.7
     krwmax = 0.75
     krowend = 0.85
-    kromax = 0.9
     wateroil = WaterOil(swirr=swirr, swl=swl, swcr=swcr, sorw=sorw)
     wateroil.add_corey_water(nw=3, krwend=krwend, krwmax=krwmax)
-    wateroil.add_corey_oil(now=3, kroend=krowend, kromax=kromax)
+    wateroil.add_corey_oil(now=3, kroend=krowend)
     wateroil.table.plot(
         ax=axes, x="sw", y="krw", c="blue", alpha=1, label="KRW", linewidth=2
     )
@@ -127,16 +119,10 @@ def make_wateroil_plot(show=True):
     plt.xticks([0, 1])
     plt.yticks([0, 1])
     axes.annotate(
-        "KROMAX",
-        xy=(swl, kromax),
-        arrowprops=dict(arrowstyle="->"),
-        xytext=(swl - 0.09, kromax - 0.2),
-    )
-    axes.annotate(
         "KROWEND",
-        xy=(swcr, krowend),
+        xy=(swl, krowend),
         arrowprops=dict(arrowstyle="->"),
-        xytext=(swcr - 0.1, krowend - 0.3),
+        xytext=(swl - 0.1, krowend - 0.3),
     )
     axes.annotate(
         "KRWEND",
