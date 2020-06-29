@@ -45,7 +45,6 @@ class SCALrecommendation(object):
                 (
                     "Making SCALrecommendation from dicts is deprecated "
                     "and will not be supported in future versions\n"
-                    "Use WaterOilGas objects instead"
                 )
             )
 
@@ -53,10 +52,21 @@ class SCALrecommendation(object):
             self.defaultshandling("swcr", 0.0, [low, base, high])
             self.defaultshandling("sorg", 0.0, [low, base, high])
             self.defaultshandling("sgcr", 0.0, [low, base, high])
-            if "kroend" in low:
-                logger.error("Use krogend or krowend instead of kroend. kroend ignored")
-            self.defaultshandling("krogend", 1.0, [low, base, high])
-            self.defaultshandling("krowend", 1.0, [low, base, high])
+
+            # Special treatment for backwards compatibility:
+            if "krowend" in low:
+                logger.error("krowend is deprecated, use kroend")
+                krowend = "krowend"
+            else:
+                krowend = "kroend"
+
+            if "krogend" in low:
+                logger.error("krogend is deprecated, use kroend")
+                krogend = "krogend"
+            else:
+                krogend = "kroend"
+
+            self.defaultshandling("kroend", 1.0, [low, base, high])
             self.defaultshandling("krwmax", 1.0, [low, base, high])
             self.defaultshandling("krgend", 1.0, [low, base, high])
             self.defaultshandling("krgmax", 1.0, [low, base, high])
@@ -117,13 +127,13 @@ class SCALrecommendation(object):
             )
 
             self.low.wateroil.add_LET_oil(
-                l=low["Lo"], e=low["Eo"], t=low["To"], kroend=low["krowend"]
+                l=low["Lo"], e=low["Eo"], t=low["To"], kroend=low[krowend]
             )
             self.base.wateroil.add_LET_oil(
-                l=base["Lo"], e=base["Eo"], t=base["To"], kroend=base["krowend"]
+                l=base["Lo"], e=base["Eo"], t=base["To"], kroend=base[krowend]
             )
             self.high.wateroil.add_LET_oil(
-                l=high["Lo"], e=high["Eo"], t=high["To"], kroend=high["krowend"]
+                l=high["Lo"], e=high["Eo"], t=high["To"], kroend=high[krowend]
             )
 
             # Add gas and oil curves:
@@ -149,13 +159,13 @@ class SCALrecommendation(object):
                 krgmax=high["krgmax"],
             )
             self.low.gasoil.add_LET_oil(
-                l=low["Log"], e=low["Eog"], t=low["Tog"], kroend=low["krogend"]
+                l=low["Log"], e=low["Eog"], t=low["Tog"], kroend=low[krogend]
             )
             self.base.gasoil.add_LET_oil(
-                l=base["Log"], e=base["Eog"], t=base["Tog"], kroend=base["krogend"]
+                l=base["Log"], e=base["Eog"], t=base["Tog"], kroend=base[krogend]
             )
             self.high.gasoil.add_LET_oil(
-                l=high["Log"], e=high["Eog"], t=high["Tog"], kroend=high["krogend"]
+                l=high["Log"], e=high["Eog"], t=high["Tog"], kroend=high[krogend]
             )
         elif (
             isinstance(low, WaterOilGas)

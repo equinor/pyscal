@@ -259,7 +259,9 @@ def normalize_nonlinpart_go(curve):
         bounds_error=False,
         fill_value=(0.0, curve.table["krog"].max()),
     )
-    so_fn = lambda son: curve.swl + curve.sorg + son * (1.0 - curve.swl - curve.sorg)
+
+    def so_fn(son):
+        return curve.swl + curve.sorg + son * (1.0 - curve.swl - curve.sorg)
 
     def kro_fn(son):
         return kro_interp(so_fn(son))
