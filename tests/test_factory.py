@@ -243,11 +243,31 @@ def test_factory_wateroilgas():
         factory.create_water_oil_gas(dict(nw=2, now=3, ng=1))
 
 
+def test_factory_wateroilgas_deprecated_krowgend(caplog):
+    """Some users will use deprecated  krowend krogend,
+    these values should be translated to kroend"""
+    wog = PyscalFactory.create_water_oil_gas(
+        dict(nw=2, now=3, ng=1, nog=2.5, krowend=0.6, krogend=0.7)
+    )
+    assert "deprecated" in caplog.text
+    swof = wog.SWOF()
+    assert "kroend=0.6" in swof
+    sgof = wog.SGOF()
+    assert "kroend=0.7" in sgof
+    assert not wog.threephaseconsistency()
+    sat_table_str_ok(swof)  # sgof code works for swof also currently
+    sat_table_str_ok(sgof)
+    assert "Corey krg" in sgof
+    assert "Corey krog" in sgof
+    assert "Corey krw" in swof
+    assert "Corey krow" in swof
+
+
 def test_factory_wateroilgas_wo():
     """Test making only wateroil through the wateroilgas factory"""
     factory = PyscalFactory()
     wog = factory.create_water_oil_gas(
-        dict(nw=2, now=3, krowend=0.5, sorw=0.04, swcr=0.1)
+        dict(nw=2, now=3, kroend=0.5, sorw=0.04, swcr=0.1)
     )
     swof = wog.SWOF()
     assert "Corey krw" in swof
@@ -451,6 +471,22 @@ def test_xls_scalrecommendation():
         scalrec.interpolate(+0.5)
 
 
+def test_check_deprecated_krowgend(caplog):
+    """Up until pyscal 0.5.x, krogend and krowend were parameters
+    to the oil curve parametrization for WaterOil and GasOil. From
+    pyscal 0.6.0, krogend and krowend are merged to kroend.
+    """
+    wateroil = PyscalFactory.create_water_oil(dict(swl=0.1, nw=2, now=2, krowend=0.4))
+    assert "krowend" in caplog.text
+    assert "deprecated" in caplog.text
+    assert wateroil.table["krow"].max() == 0.4
+
+    gasoil = PyscalFactory.create_gas_oil(dict(swl=0.1, ng=2, nog=2, krogend=0.4))
+    assert "krogend" in caplog.text
+    assert "deprecated" in caplog.text
+    assert gasoil.table["krog"].max() == 0.4
+
+
 def test_check_deprecated_kromax(caplog):
     """Up until pyscal 0.5.x, kromax was a parameter to the oil
     curve parametrization for WaterOil and GasOil, and kro was
@@ -461,9 +497,7 @@ def test_check_deprecated_kromax(caplog):
     If kromax is encountered in input data, we should warn
     it is ignored.
     """
-    wateroil = PyscalFactory.create_water_oil(
-        dict(swl=0.1, nw=2, now=2, kroend=0.4, kromax=0.5)
-    )
+    PyscalFactory.create_water_oil(dict(swl=0.1, nw=2, now=2, kroend=0.4, kromax=0.5))
     assert "kromax" in caplog.text
     assert "deprecated" in caplog.text
 

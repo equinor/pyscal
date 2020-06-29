@@ -37,8 +37,7 @@ LOW_SAMPLE_LET = {
     "sgcr": 0.15,
     "krgend": 0.9,
     "krgmax": 1,
-    "krowend": 1,
-    "krogend": 1,
+    "kroend": 1,
     "tag": "SATNUM X",
 }
 # Example SCAL recommendation, base case
@@ -63,8 +62,7 @@ BASE_SAMPLE_LET = {
     "sorg": 0.1,
     "sgcr": 0.10,
     "krgend": 0.97,
-    "krowend": 1,
-    "krogend": 1,
+    "kroend": 1,
     "tag": "SATNUM X",
 }
 # Example SCAL recommendation, high case
@@ -89,8 +87,7 @@ HIGH_SAMPLE_LET = {
     "sorg": 0.05,
     "sgcr": 0.0,
     "krgend": 1,
-    "krowend": 1,
-    "krogend": 1,
+    "kroend": 1,
     "tag": "SATNUM X",
 }
 
@@ -125,6 +122,30 @@ def test_interpolation_deprecated(param_wo, param_go):
         print(interpolant.wateroil.SWOF())
         print(interpolant.gasoil.SGOF())
     assert interpolant.threephaseconsistency()
+
+
+def test_deprecated_kroend():
+    """Testing that the deprecated scalrecommendation can take
+    both kroend and krogend/krowend"""
+
+    low_krowend = dict(LOW_SAMPLE_LET)
+    low_krowend["krowend"] = low_krowend["kroend"]
+    del low_krowend["kroend"]
+
+    base_krowend = dict(BASE_SAMPLE_LET)
+    base_krowend["krowend"] = base_krowend["kroend"]
+    del base_krowend["kroend"]
+
+    high_krowend = dict(HIGH_SAMPLE_LET)
+    high_krowend["krowend"] = high_krowend["kroend"]
+    del high_krowend["kroend"]
+
+    rec = SCALrecommendation(low_krowend, base_krowend, high_krowend, "foo", h=0.1)
+
+    rec.add_simple_J()  # Add default pc curve
+    interpolant = rec.interpolate(0.1, 0, h=0.1)
+    check_table(interpolant.wateroil.table)
+    print(interpolant.SWOF())
 
 
 def test_make_scalrecommendation():
@@ -174,7 +195,7 @@ def test_make_scalrecommendation_wo():
         "Lo",
         "Eo",
         "To",
-        "krowend",
+        "kroend",
     ]
 
     low_let_wo = slicedict(LOW_SAMPLE_LET, wo_param_names)
@@ -213,7 +234,7 @@ def test_make_scalrecommendation_go():
         "Log",
         "Eog",
         "Tog",
-        "krogend",
+        "kroend",
     ]
 
     low_let_go = slicedict(LOW_SAMPLE_LET, go_param_names)
