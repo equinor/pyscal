@@ -35,7 +35,7 @@ WO_COREY_OIL = ["now"]
 WO_LET_WATER = ["lw", "ew", "tw"]  # Will translated to l, e and t in code below.
 WO_LET_OIL = ["low", "eow", "tow"]
 WO_LET_OIL_ALT = ["lo", "eo", "to"]  # Alternative parameter names.
-WO_OIL_ENDPOINTS = ["krowend"]
+WO_OIL_ENDPOINTS = ["kroend", "krowend"]  # krowend is deprecated in favour of kroend
 WO_SIMPLE_J = ["a", "b", "poro_ref", "perm_ref", "drho"]  # "g" is optional
 WO_NORM_J = ["a", "b", "poro", "perm", "sigma_costau"]
 # 'a' in WO_NORM_J is the same as a_petro, but should possibly kept as is.
@@ -51,13 +51,17 @@ GO_INIT = ["swirr", "sgcr", "sorg", "swl", "krgendanchor", "h", "tag"]
 GO_COREY_GAS = ["ng"]
 GO_GAS_ENDPOINTS = ["krgend", "krgmax"]
 GO_COREY_OIL = ["nog"]
-GO_OIL_ENDPOINTS = ["krogend"]
+GO_OIL_ENDPOINTS = ["kroend", "krogend"]  # krogend is deprecated in favour of kroend
 GO_LET_GAS = ["lg", "eg", "tg"]
 GO_LET_OIL = ["log", "eog", "tog"]
 
 WOG_INIT = ["swirr", "swl", "swcr", "sorw", "sorg", "sgcr", "h", "tag"]
 
-DEPRECATED = ["kroend", "kromax"]  # This key will be ignored, as it it ambiguous.
+DEPRECATED = {
+    "krogend": "and will be used as kroend",
+    "krowend": "and will be used as kroend",
+    "kromax": "and will be ignored",
+}
 
 
 class PyscalFactory(object):
@@ -103,7 +107,7 @@ class PyscalFactory(object):
 
         Recognized parameters:
           swirr, swl, swcr, sorw, h, tag, nw, now, krwmax, krwend,
-          lw, ew, tw, low, eow, tow, lo, eo, to, krowend,
+          lw, ew, tw, low, eow, tow, lo, eo, to, kroend,
           a, a_petro, b, b_petro, poro_ref, perm_ref, drho,
           a, b, poro, perm, sigma_costau
 
@@ -164,6 +168,7 @@ class PyscalFactory(object):
         )
         if set(WO_COREY_OIL).issubset(set(params_corey_oil)):
             if "krowend" in params_corey_oil:
+                # (deprecation warning is triggered)
                 params_corey_oil["kroend"] = params_corey_oil.pop("krowend")
             wateroil.add_corey_oil(**params_corey_oil)
             logger.info(
@@ -175,6 +180,7 @@ class PyscalFactory(object):
             params_let_oil["e"] = params_let_oil.pop("eow")
             params_let_oil["t"] = params_let_oil.pop("tow")
             if "krowend" in params_let_oil:
+                # (deprecation warning is triggered)
                 params_let_oil["kroend"] = params_let_oil.pop("krowend")
             wateroil.add_LET_oil(**params_let_oil)
             logger.info(
@@ -186,6 +192,7 @@ class PyscalFactory(object):
             params_let_oil["e"] = params_let_oil.pop("eo")
             params_let_oil["t"] = params_let_oil.pop("to")
             if "krowend" in params_let_oil:
+                # (deprecation warning is triggered)
                 params_let_oil["kroend"] = params_let_oil.pop("krowend")
             wateroil.add_LET_oil(**params_let_oil)
             logger.info(
@@ -235,12 +242,11 @@ class PyscalFactory(object):
         NB: the add_LET_* methods have the names 'l', 'e' and 't'
         in their signatures, which is not precise enough in this
         context, so we require e.g. 'Lg' and 'Log' (which both will be
-        translated to 'l'). Also note that in this factory context,
-        kroend is an ambiguous parameter, krogend must be used.
+        translated to 'l').
 
         Recognized parameters:
           swirr, sgcr, sorg, swl, krgendanchor, h, tag,
-          ng, krgend, krgmax, nog, krogend,
+          ng, krgend, krgmax, nog, kroend,
           lg, eg, tg, log, eog, tog
 
         """
@@ -295,6 +301,7 @@ class PyscalFactory(object):
         params_let_oil = slicedict(params, GO_LET_OIL + GO_OIL_ENDPOINTS)
         if set(GO_COREY_OIL).issubset(set(params_corey_oil)):
             if "krogend" in params_corey_oil:
+                # (deprecation warning will be triggered)
                 params_corey_oil["kroend"] = params_corey_oil.pop("krogend")
             gasoil.add_corey_oil(**params_corey_oil)
             logger.info(
@@ -306,6 +313,7 @@ class PyscalFactory(object):
             params_let_oil["e"] = params_let_oil.pop("eog")
             params_let_oil["t"] = params_let_oil.pop("tog")
             if "krogend" in params_corey_oil:
+                # (deprecation warning will be triggered)
                 params_let_oil["kroend"] = params_let_oil.pop("krogend")
             gasoil.add_LET_oil(**params_let_oil)
             logger.info(
@@ -825,5 +833,5 @@ def check_deprecated(params):
     for key in params:
         if key.lower() in DEPRECATED:
             logger.warning(
-                "The key %s to PyscalFactory is deprecated and will be ignored", key
+                "The key %s is deprecated %s", key, DEPRECATED[key.lower()],
             )

@@ -723,7 +723,7 @@ def test_normalize_nonlinpart_go():
     assert np.isclose(kron(1), 0.8)
 
 
-def test_ip_krowend():
+def test_ip_wo_kroend():
     """Test behaviour of kroend under interpolation"""
     wo_low = WaterOil(swl=0, swcr=0.1, sorw=0.2)
     wo_low.add_corey_water(nw=2, krwend=0.5, krwmax=0.7)
@@ -743,7 +743,7 @@ def test_ip_krowend():
     assert float_df_checker(wo_ip.table, "sw", 1 - 0.15, "krw", 0.5)
 
 
-def test_ip_krogend():
+def test_ip_go_kroend():
     """Test behaviour of kroend under interpolation"""
     go_low = GasOil(swl=0, sgcr=0.1, sorg=0.2)
     go_low.add_corey_gas(ng=2, krgend=0.5, krgmax=0.7)

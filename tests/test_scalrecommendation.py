@@ -37,8 +37,7 @@ LOW_SAMPLE_LET = {
     "sgcr": 0.15,
     "krgend": 0.9,
     "krgmax": 1,
-    "krowend": 1,
-    "krogend": 1,
+    "kroend": 1,
     "tag": "SATNUM X",
 }
 # Example SCAL recommendation, base case
@@ -63,8 +62,7 @@ BASE_SAMPLE_LET = {
     "sorg": 0.1,
     "sgcr": 0.10,
     "krgend": 0.97,
-    "krowend": 1,
-    "krogend": 1,
+    "kroend": 1,
     "tag": "SATNUM X",
 }
 # Example SCAL recommendation, high case
@@ -89,8 +87,7 @@ HIGH_SAMPLE_LET = {
     "sorg": 0.05,
     "sgcr": 0.0,
     "krgend": 1,
-    "krowend": 1,
-    "krogend": 1,
+    "kroend": 1,
     "tag": "SATNUM X",
 }
 
@@ -174,7 +171,7 @@ def test_make_scalrecommendation_wo():
         "Lo",
         "Eo",
         "To",
-        "krowend",
+        "kroend",
     ]
 
     low_let_wo = slicedict(LOW_SAMPLE_LET, wo_param_names)
@@ -213,7 +210,7 @@ def test_make_scalrecommendation_go():
         "Log",
         "Eog",
         "Tog",
-        "krogend",
+        "kroend",
     ]
 
     low_let_go = slicedict(LOW_SAMPLE_LET, go_param_names)
