@@ -1,4 +1,4 @@
-"""Test the pyscal endpoint"""
+"""Test the pyscal client"""
 # -*- encoding: utf-8 -*-
 
 from __future__ import absolute_import
@@ -17,13 +17,50 @@ from common import sat_table_str_ok
 
 @pytest.mark.integration
 def test_installed():
-    """Test that the endpoint is installed in PATH and
+    """Test that the command line client is installed in PATH and
     starts up nicely"""
     assert subprocess.check_output(["pyscal", "-h"])
 
 
-def test_pyscal_endpoint_static(tmpdir):
-    """Test pyscal endpoint for static relperm input"""
+def test_log_levels(tmpdir, caplog):
+    """Test that we can control the log level from the command line
+    client, and get log output from modules deep down"""
+    if "__file__" in globals():
+        # Easen up copying test code into interactive sessions
+        testdir = os.path.dirname(os.path.abspath(__file__))
+    else:
+        testdir = os.path.abspath(".")
+
+    relperm_file = testdir + "/data/relperm-input-example.xlsx"
+
+    tmpdir.chdir()
+
+    caplog.clear()
+    sys.argv = ["pyscal", relperm_file]
+    pyscalcli.main()
+    # The following is an INFO statement from factory.py that we should not get:
+    assert all("Loaded input data" not in str(record) for record in caplog.records)
+    # And a debug statement from gasoil.py
+    assert all(
+        "Added Corey gas to GasOil object" not in str(record)
+        for record in caplog.records
+    )
+
+    caplog.clear()
+    sys.argv = ["pyscal", "--verbose", relperm_file]
+    pyscalcli.main()
+    assert any("Loaded input data" in str(record) for record in caplog.records)
+    assert any("Dumping" in str(record) for record in caplog.records)
+
+    caplog.clear()
+    sys.argv = ["pyscal", "--debug", relperm_file]
+    pyscalcli.main()
+    assert any("Initialized GasOil with" in str(record) for record in caplog.records)
+    assert any("Initialized WaterOil with" in str(record) for record in caplog.records)
+
+
+def test_pyscal_client_static(tmpdir):
+    """Test pyscal client for static relperm input"""
     if "__file__" in globals():
         # Easen up copying test code into interactive sessions
         testdir = os.path.dirname(os.path.abspath(__file__))
@@ -143,8 +180,8 @@ def test_pyscal_endpoint_static(tmpdir):
     sys.argv = ["pyscal", relperm_file, "--int_param_wo", "-0.5"]
 
 
-def test_pyscal_endpoint_scal(tmpdir):
-    """Test the command line endpoint on SCAL recommendation"""
+def test_pyscal_client_scal(tmpdir):
+    """Test the command line client on SCAL recommendation"""
     if "__file__" in globals():
         # Easen up copying test code into interactive sessions
         testdir = os.path.dirname(os.path.abspath(__file__))

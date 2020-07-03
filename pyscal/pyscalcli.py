@@ -72,6 +72,9 @@ def get_parser():
         help="Print informational messages while processing input",
     )
     parser.add_argument(
+        "--debug", action="store_true", help="Print debug information",
+    )
+    parser.add_argument(
         "-o",
         "--output",
         default="relperm.inc",
@@ -144,6 +147,7 @@ def main():
         pyscal_main(
             parametertable=args.parametertable,
             verbose=args.verbose,
+            debug=args.debug,
             output=args.output,
             delta_s=args.delta_s,
             int_param_wo=args.int_param_wo,
@@ -160,6 +164,7 @@ def main():
 def pyscal_main(
     parametertable,
     verbose=False,
+    debug=False,
     output="relperm.inc",
     delta_s=None,
     int_param_wo=None,
@@ -183,17 +188,25 @@ def pyscal_main(
         slgof (bool): Use SLGOF
         family2 (bool): Dump family 2 keywords
     """
-    if verbose:
-        # Fixme: Logging level is not inherited in called modules.
-        logger.setLevel(logging.INFO)
 
-    if sheet_name:
-        logger.info("Loading data from %s and sheetname %s", parametertable, sheet_name)
-    else:
-        logger.info("Loading data from %s", parametertable)
+    def set_logger_levels(loglevel):
+        """Set log levels for all modules imported by this script"""
+        logger.setLevel(loglevel)
+        logging.getLogger("pyscal.factory").setLevel(loglevel)
+        logging.getLogger("pyscal.wateroil").setLevel(loglevel)
+        logging.getLogger("pyscal.wateroilgas").setLevel(loglevel)
+        logging.getLogger("pyscal.gasoil").setLevel(loglevel)
+        logging.getLogger("pyscal.utils").setLevel(loglevel)
+        logging.getLogger("pyscal.pyscallist").setLevel(loglevel)
+
+    if verbose:
+        set_logger_levels(logging.INFO)
+    if debug:
+        set_logger_levels(logging.DEBUG)
+
     scalinput_df = PyscalFactory.load_relperm_df(parametertable, sheet_name=sheet_name)
 
-    logger.info("Input data:\n%s", scalinput_df.to_string(index=False))
+    logger.debug("Input data:\n%s", scalinput_df.to_string(index=False))
 
     if int_param_go is not None and int_param_wo is None:
         logger.error("Don't use int_param_go alone, only int_param_wo")

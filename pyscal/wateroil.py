@@ -144,7 +144,7 @@ class WaterOil(object):
         self.krowcomment = ""
         self.pccomment = ""
 
-        logger.info(
+        logger.debug(
             "Initialized WaterOil with %s saturation points", str(len(self.table))
         )
 
@@ -1089,7 +1089,7 @@ class WaterOil(object):
                 error = True
         if error:
             return False
-        logger.info("WaterOil object is checked to be valid")
+        logger.debug("WaterOil object is checked to be valid")
         return True
 
     def SWOF(self, header=True, dataincommentrow=True):

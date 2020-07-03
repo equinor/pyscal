@@ -183,7 +183,6 @@ class PyscalList(object):
             filename (str): Filename for the output to be given to Eclips 100
             slgof (bool): Set to true of SLGOF is wanted instead of SGOF
         """
-        logger.info("FOOBAR")
         if self.pyscaltype == SCALrecommendation:
             logger.error(
                 "You need to interpolate before you can dump a SCAL recommendation"

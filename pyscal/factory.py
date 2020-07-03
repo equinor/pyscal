@@ -128,7 +128,7 @@ class PyscalFactory(object):
         # No requirements to the base objects, defaults are ok.
         wateroil = WaterOil(**slicedict(params, WO_INIT))
         usedparams = usedparams.union(set(slicedict(params, WO_INIT).keys()))
-        logger.info(
+        logger.debug(
             "Initialized WaterOil object from parameters %s", str(list(usedparams))
         )
 
@@ -138,7 +138,7 @@ class PyscalFactory(object):
         if set(WO_COREY_WATER).issubset(set(params_corey_water)):
             wateroil.add_corey_water(**params_corey_water)
             usedparams = usedparams.union(set(params_corey_water.keys()))
-            logger.info(
+            logger.debug(
                 "Added Corey water to WaterOil object from parameters %s",
                 str(params_corey_water.keys()),
             )
@@ -148,7 +148,7 @@ class PyscalFactory(object):
             params_let_water["t"] = params_let_water.pop("tw")
             wateroil.add_LET_water(**params_let_water)
             usedparams = usedparams.union(set(params_let_water.keys()))
-            logger.info(
+            logger.debug(
                 "Added LET water to WaterOil object from parameters %s",
                 str(params_let_water.keys()),
             )
@@ -166,7 +166,7 @@ class PyscalFactory(object):
             if "krowend" in params_corey_oil:
                 params_corey_oil["kroend"] = params_corey_oil.pop("krowend")
             wateroil.add_corey_oil(**params_corey_oil)
-            logger.info(
+            logger.debug(
                 "Added Corey water to WaterOil object from parameters %s",
                 str(params_corey_oil.keys()),
             )
@@ -177,7 +177,7 @@ class PyscalFactory(object):
             if "krowend" in params_let_oil:
                 params_let_oil["kroend"] = params_let_oil.pop("krowend")
             wateroil.add_LET_oil(**params_let_oil)
-            logger.info(
+            logger.debug(
                 "Added LET water to WaterOil object from parameters %s",
                 str(params_let_oil.keys()),
             )
@@ -188,7 +188,7 @@ class PyscalFactory(object):
             if "krowend" in params_let_oil:
                 params_let_oil["kroend"] = params_let_oil.pop("krowend")
             wateroil.add_LET_oil(**params_let_oil)
-            logger.info(
+            logger.debug(
                 "Added LET water to WaterOil object from parameters %s",
                 str(params_let_oil.keys()),
             )
@@ -261,7 +261,7 @@ class PyscalFactory(object):
         # No requirements to the base objects, defaults are ok.
         gasoil = GasOil(**slicedict(params, GO_INIT))
         usedparams = usedparams.union(set(slicedict(params, GO_INIT).keys()))
-        logger.info(
+        logger.debug(
             "Initialized GasOil object from parameters %s", str(list(usedparams))
         )
 
@@ -271,7 +271,7 @@ class PyscalFactory(object):
         if set(GO_COREY_GAS).issubset(set(params_corey_gas)):
             gasoil.add_corey_gas(**params_corey_gas)
             usedparams = usedparams.union(set(params_corey_gas.keys()))
-            logger.info(
+            logger.debug(
                 "Added Corey gas to GasOil object from parameters %s",
                 str(params_corey_gas.keys()),
             )
@@ -281,7 +281,7 @@ class PyscalFactory(object):
             params_let_gas["t"] = params_let_gas.pop("tg")
             gasoil.add_LET_gas(**params_let_gas)
             usedparams = usedparams.union(set(params_let_gas.keys()))
-            logger.info(
+            logger.debug(
                 "Added LET gas to GasOil object from parameters %s",
                 str(params_let_gas.keys()),
             )
@@ -297,7 +297,7 @@ class PyscalFactory(object):
             if "krogend" in params_corey_oil:
                 params_corey_oil["kroend"] = params_corey_oil.pop("krogend")
             gasoil.add_corey_oil(**params_corey_oil)
-            logger.info(
+            logger.debug(
                 "Added Corey gas to GasOil object from parameters %s",
                 str(params_corey_oil.keys()),
             )
@@ -308,7 +308,7 @@ class PyscalFactory(object):
             if "krogend" in params_corey_oil:
                 params_let_oil["kroend"] = params_let_oil.pop("krogend")
             gasoil.add_LET_oil(**params_let_oil)
-            logger.info(
+            logger.debug(
                 "Added LET gas to GasOil object from parameters %s",
                 str(params_let_oil.keys()),
             )
@@ -525,9 +525,9 @@ class PyscalFactory(object):
         allowed_nan_columns = set(["COMMENT"])
         if nan_columns - allowed_nan_columns:
             logger.warning(
-                "Found empty cells in these columns, this might create trouble:"
+                "Found empty cells in these columns, this might create trouble: %s",
+                str(nan_columns - allowed_nan_columns),
             )
-            logger.warning("%s", str(nan_columns - allowed_nan_columns))
 
         # Check that SATNUM's are consecutive and integers:
         try:
@@ -567,13 +567,22 @@ class PyscalFactory(object):
 
         # Check that we are able to make something out of the first row:
         firstrow = input_df.loc[0, :]
-        if not sufficient_water_oil_params(firstrow) and not sufficient_gas_oil_params(
-            firstrow
-        ):
+        error = False
+        try:
+            wo_ok = sufficient_water_oil_params(firstrow)
+            go_ok = sufficient_gas_oil_params(firstrow)
+        except ValueError:
+            error = True
+        if error or not wo_ok and not go_ok:
             logger.error("Can't make neither WaterOil or GasOil from the given data.")
             logger.error("Check documentation for what you need to supply")
-            logger.error("You provided the columns %s", str(input_df.columns))
+            logger.error("You provided the columns %s", str(input_df.columns.values))
             raise ValueError
+        logger.info(
+            "Loaded input data with %s SATNUMS, column %s",
+            str(len(input_df["SATNUM"].unique())),
+            str(input_df.columns.values),
+        )
         return input_df.sort_values("SATNUM")
 
     @staticmethod

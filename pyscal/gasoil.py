@@ -183,7 +183,7 @@ class GasOil(object):
         self.krogcomment = ""
         self.pccomment = ""
 
-        logger.info(
+        logger.debug(
             "Initialized GasOil with %s saturation points", str(len(self.table))
         )
 
@@ -699,7 +699,7 @@ class GasOil(object):
                 error = True
         if error:
             return False
-        logger.info("GasOil object is checked to be valid")
+        logger.debug("GasOil object is checked to be valid")
         return True
 
     def SGOF(self, header=True, dataincommentrow=True):
