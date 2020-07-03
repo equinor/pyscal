@@ -41,6 +41,8 @@ jobs:
         run: |
           pip install black
           black --check pyscal/*py tests/test_*py setup.py docs/conf.py
+          pip install flake8
+          flake8 pyscal tests
 
       - name: Install pyscal with dependencies
         run: |
