@@ -2,7 +2,7 @@
 
 from os import path
 
-from setuptools import setup, find_packages
+from setuptools import setup, find_packages  # noqa
 
 try:
     from sphinx.setup_command import BuildDoc
@@ -54,7 +54,10 @@ setup(
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
-        "License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)",
+        (
+            "License :: OSI Approved :: "
+            "GNU Lesser General Public License v3 or later (LGPLv3+)"
+        ),
         "Natural Language :: English",
         "Programming Language :: Python :: 2",
         "Programming Language :: Python :: 2.7",

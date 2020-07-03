@@ -6,7 +6,6 @@ from __future__ import division
 from __future__ import print_function
 
 import os
-import logging
 
 import six
 
@@ -29,9 +28,6 @@ from common import sat_table_str_ok, check_table
 
 def test_factory_wateroil():
     """Test that we can create curves from dictionaries of parameters"""
-
-    logging.getLogger().setLevel("INFO")
-
     factory = PyscalFactory()
 
     # Factory refuses to create incomplete defaulted objects.
@@ -170,9 +166,6 @@ def test_ambiguity():
 
 def test_factory_gasoil():
     """Test that we can create curves from dictionaries of parameters"""
-
-    logging.getLogger().setLevel("INFO")
-
     factory = PyscalFactory()
 
     with pytest.raises(TypeError):
@@ -220,8 +213,6 @@ def test_factory_gasoil():
 
 def test_factory_wateroilgas():
     """Test creating discrete cases of WaterOilGas from factory"""
-    logging.getLogger().setLevel("INFO")
-
     factory = PyscalFactory()
 
     wog = factory.create_water_oil_gas(dict(nw=2, now=3, ng=1, nog=2.5))
