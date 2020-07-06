@@ -1,7 +1,4 @@
-"""A module for creating relative permeability input curves for
-Eclipse and Nexus.
-"""
-
+"""pyscal"""
 from __future__ import division, absolute_import
 from __future__ import print_function
 

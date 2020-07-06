@@ -63,7 +63,8 @@ jobs:
       - name: Build documentation
         run: |
           sphinx-apidoc -H "API for pyscal" -o docs pyscal
-          python setup.py build_sphinx
+          # Build sphinx with "warning-is-error":
+          python setup.py build_sphinx -W
 
       - name: Update GitHub pages
         if: github.ref == 'refs/heads/master' && matrix.python-version == '3.6'
