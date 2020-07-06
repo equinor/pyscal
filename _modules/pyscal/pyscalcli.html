@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal.pyscalcli &mdash; pyscal 0.5.2.dev1+gdf6133c documentation</title>
+  <title>pyscal.pyscalcli &mdash; pyscal 0.5.2.dev2+gbeb3c2b documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.5.2.dev1+gdf6133c
+                0.5.2.dev2+gbeb3c2b
               </div>
             
           
@@ -232,6 +232,9 @@
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Print informational messages while processing input&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--debug&quot;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Print debug information&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;-o&quot;</span><span class="p">,</span>
         <span class="s2">&quot;--output&quot;</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="s2">&quot;relperm.inc&quot;</span><span class="p">,</span>
@@ -304,6 +307,7 @@
         <span class="n">pyscal_main</span><span class="p">(</span>
             <span class="n">parametertable</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">parametertable</span><span class="p">,</span>
             <span class="n">verbose</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
+            <span class="n">debug</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">debug</span><span class="p">,</span>
             <span class="n">output</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">output</span><span class="p">,</span>
             <span class="n">delta_s</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">delta_s</span><span class="p">,</span>
             <span class="n">int_param_wo</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">int_param_wo</span><span class="p">,</span>
@@ -320,6 +324,7 @@
 <div class="viewcode-block" id="pyscal_main"><a class="viewcode-back" href="../../pyscal.html#pyscal.pyscalcli.pyscal_main">[docs]</a><span class="k">def</span> <span class="nf">pyscal_main</span><span class="p">(</span>
     <span class="n">parametertable</span><span class="p">,</span>
     <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">debug</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="n">output</span><span class="o">=</span><span class="s2">&quot;relperm.inc&quot;</span><span class="p">,</span>
     <span class="n">delta_s</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">int_param_wo</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -343,17 +348,25 @@
 <span class="sd">        slgof (bool): Use SLGOF</span>
 <span class="sd">        family2 (bool): Dump family 2 keywords</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="c1"># Fixme: Logging level is not inherited in called modules.</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">sheet_name</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Loading data from </span><span class="si">%s</span><span class="s2"> and sheetname </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">parametertable</span><span class="p">,</span> <span class="n">sheet_name</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Loading data from </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">parametertable</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">set_logger_levels</span><span class="p">(</span><span class="n">loglevel</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Set log levels for all modules imported by this script&quot;&quot;&quot;</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">loglevel</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;pyscal.factory&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">loglevel</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;pyscal.wateroil&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">loglevel</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;pyscal.wateroilgas&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">loglevel</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;pyscal.gasoil&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">loglevel</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;pyscal.utils&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">loglevel</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s2">&quot;pyscal.pyscallist&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">setLevel</span><span class="p">(</span><span class="n">loglevel</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="n">set_logger_levels</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">INFO</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">debug</span><span class="p">:</span>
+        <span class="n">set_logger_levels</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">DEBUG</span><span class="p">)</span>
+
     <span class="n">scalinput_df</span> <span class="o">=</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">load_relperm_df</span><span class="p">(</span><span class="n">parametertable</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="n">sheet_name</span><span class="p">)</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Input data:</span><span class="se">\n</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">scalinput_df</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Input data:</span><span class="se">\n</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">scalinput_df</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="n">int_param_go</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">int_param_wo</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Don&#39;t use int_param_go alone, only int_param_wo&quot;</span><span class="p">)</span>
