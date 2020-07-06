@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal.gasoil &mdash; pyscal 0.5.2.dev2+gbeb3c2b documentation</title>
+  <title>pyscal.gasoil &mdash; pyscal 0.5.2.dev4+g8d0050e documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.5.2.dev2+gbeb3c2b
+                0.5.2.dev4+g8d0050e
               </div>
             
           
@@ -331,7 +331,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sgn&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sg&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">sgcr</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">swl</span> <span class="o">-</span> <span class="n">sgcr</span><span class="p">)</span>
 
         <span class="c1"># Normalized oil saturation should be 0 at 1-sorg, and 1 at swl+sgcr</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;son&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sl&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">sorg</span> <span class="o">-</span> <span class="n">swl</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">sorg</span> <span class="o">-</span> <span class="n">swl</span> <span class="o">-</span> <span class="n">sgcr</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;son&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sl&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">sorg</span> <span class="o">-</span> <span class="n">swl</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">sorg</span> <span class="o">-</span> <span class="n">swl</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sgcomment</span> <span class="o">=</span> <span class="s2">&quot;-- swirr=</span><span class="si">%g</span><span class="s2">, sgcr=</span><span class="si">%g</span><span class="s2">, swl=</span><span class="si">%g</span><span class="s2">, sorg=</span><span class="si">%g</span><span class="s2">, krgendanchor=</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">swirr</span><span class="p">,</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sgcr</span><span class="p">,</span>
@@ -532,36 +532,24 @@
                 <span class="c1"># Only warn if something else than default is in use</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;krgmax ignored when not anchoring to sorg&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="GasOil.set_endpoints_linearpart_krog"><a class="viewcode-back" href="../../pyscal.html#pyscal.gasoil.GasOil.set_endpoints_linearpart_krog">[docs]</a>    <span class="k">def</span> <span class="nf">set_endpoints_linearpart_krog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kroend</span><span class="p">,</span> <span class="n">kromax</span><span class="p">):</span>
+<div class="viewcode-block" id="GasOil.set_endpoints_linearpart_krog"><a class="viewcode-back" href="../../pyscal.html#pyscal.gasoil.GasOil.set_endpoints_linearpart_krog">[docs]</a>    <span class="k">def</span> <span class="nf">set_endpoints_linearpart_krog</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kroend</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set linear parts of krog outside endpoints.</span>
 
 <span class="sd">        Zero for sg above 1 - sorg - swl.</span>
-
-<span class="sd">        Linear from kromax to kroend from sg in [0, sgcr]</span>
 
 <span class="sd">        This function is used by add_corey/LET_oil(), and perhaps by other</span>
 <span class="sd">        utility functions. It should not be necessary for end-users.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            kroend (float): krog at sg=sgcr</span>
-<span class="sd">            kromax (float): krog at Sg=0. Default 1.</span>
-
+<span class="sd">            kroend (float): krog at sg=0</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Special handling of the part close to sg=1, set to zero.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sg&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorg</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span> <span class="o">-</span> <span class="n">epsilon</span><span class="p">,</span> <span class="s2">&quot;krog&quot;</span>
         <span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
-        <span class="c1"># Set kromax at sg=0, but only if sgcr is sufficiently larger than 0.</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sgcr</span> <span class="o">&gt;</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">SWINTEGERS</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">kromax</span><span class="p">:</span>
-                <span class="n">kromax</span> <span class="o">=</span> <span class="mi">1</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sg&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">SWINTEGERS</span><span class="p">,</span> <span class="s2">&quot;krog&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kromax</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">kromax</span> <span class="ow">and</span> <span class="n">kromax</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
-                <span class="c1"># Only warn for non-defaulted values</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;kromax ignored when sgcr is close to zero&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sg&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">SWINTEGERS</span><span class="p">,</span> <span class="s2">&quot;krog&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kroend</span></div>
+        <span class="c1"># Floating point issues can cause a slight overshoot at sg=0:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krog&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">kroend</span><span class="p">,</span> <span class="s2">&quot;krog&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kroend</span></div>
 
 <div class="viewcode-block" id="GasOil.add_corey_gas"><a class="viewcode-back" href="../../pyscal.html#pyscal.gasoil.GasOil.add_corey_gas">[docs]</a>    <span class="k">def</span> <span class="nf">add_corey_gas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ng</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">krgend</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">krgmax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Add krg data through the Corey parametrization</span>
@@ -591,7 +579,7 @@
             <span class="n">krgmax</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="GasOil.add_corey_oil"><a class="viewcode-back" href="../../pyscal.html#pyscal.gasoil.GasOil.add_corey_oil">[docs]</a>    <span class="k">def</span> <span class="nf">add_corey_oil</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nog</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">kroend</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">kromax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="GasOil.add_corey_oil"><a class="viewcode-back" href="../../pyscal.html#pyscal.gasoil.GasOil.add_corey_oil">[docs]</a>    <span class="k">def</span> <span class="nf">add_corey_oil</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nog</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">kroend</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add kro data through the Corey parametrization</span>
 
@@ -600,33 +588,21 @@
 
 <span class="sd">        All values above 1 - sorg - swl are set to zero.</span>
 
-<span class="sd">        kromax is ignored if sgcr is close to zero</span>
-
 <span class="sd">        Arguments:</span>
 <span class="sd">            nog (float): Corey exponent for oil</span>
 <span class="sd">            kroend (float): Value for krog at normalized oil saturation 1</span>
-<span class="sd">            kromax (float): Value for krog at gas saturation 0.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            None (modifies internal class state)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">nog</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
-        <span class="k">if</span> <span class="n">kromax</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">kroend</span> <span class="o">&lt;=</span> <span class="n">kromax</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">kroend</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
+        <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">kroend</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krog&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kroend</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">son</span> <span class="o">**</span> <span class="n">nog</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_endpoints_linearpart_krog</span><span class="p">(</span><span class="n">kroend</span><span class="p">,</span> <span class="n">kromax</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_endpoints_linearpart_krog</span><span class="p">(</span><span class="n">kroend</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">kromax</span><span class="p">:</span>
-            <span class="n">kromax</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">krogcomment</span> <span class="o">=</span> <span class="s2">&quot;-- Corey krog, nog=</span><span class="si">%g</span><span class="s2">, kroend=</span><span class="si">%g</span><span class="s2">, kromax=</span><span class="si">%g</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
-            <span class="n">nog</span><span class="p">,</span>
-            <span class="n">kroend</span><span class="p">,</span>
-            <span class="n">kromax</span><span class="p">,</span>
-        <span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">krogcomment</span> <span class="o">=</span> <span class="s2">&quot;-- Corey krog, nog=</span><span class="si">%g</span><span class="s2">, kroend=</span><span class="si">%g</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">nog</span><span class="p">,</span> <span class="n">kroend</span><span class="p">,)</span></div>
 
 <div class="viewcode-block" id="GasOil.add_LET_gas"><a class="viewcode-back" href="../../pyscal.html#pyscal.gasoil.GasOil.add_LET_gas">[docs]</a>    <span class="k">def</span> <span class="nf">add_LET_gas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">krgend</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">krgmax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -676,7 +652,7 @@
             <span class="n">krgmax</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="GasOil.add_LET_oil"><a class="viewcode-back" href="../../pyscal.html#pyscal.gasoil.GasOil.add_LET_oil">[docs]</a>    <span class="k">def</span> <span class="nf">add_LET_oil</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">kroend</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">kromax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="GasOil.add_LET_oil"><a class="viewcode-back" href="../../pyscal.html#pyscal.gasoil.GasOil.add_LET_oil">[docs]</a>    <span class="k">def</span> <span class="nf">add_LET_oil</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">kroend</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add oil (vs gas) relative permeability data through the Corey</span>
 <span class="sd">        parametrization.</span>
 
@@ -684,22 +660,16 @@
 
 <span class="sd">        All values where sg &gt; 1 - sorg - swl are set to zero.</span>
 
-<span class="sd">        kromax is ignored if sgcr is close to zero</span>
-
 <span class="sd">        Arguments:</span>
 <span class="sd">            l (float): L parameter</span>
 <span class="sd">            e (float): E parameter</span>
 <span class="sd">            t (float): T parameter</span>
 <span class="sd">            kroend (float): The value at gas saturation sgcr</span>
-<span class="sd">            kromax (float): The value at gas saturation equal to 0.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
         <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">e</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
         <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
-        <span class="k">if</span> <span class="n">kromax</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">kroend</span> <span class="o">&lt;=</span> <span class="n">kromax</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">kroend</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
+        <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">kroend</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
 
         <span class="c1"># LET shape for the interval [sgcr, 1 - swl - sorg]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krog&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
@@ -710,16 +680,13 @@
         <span class="c1"># This equation is undefined for t a float and son=1, set explicitly:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;son&quot;</span><span class="p">],</span> <span class="mf">1.0</span><span class="p">),</span> <span class="s2">&quot;krog&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kroend</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_endpoints_linearpart_krog</span><span class="p">(</span><span class="n">kroend</span><span class="p">,</span> <span class="n">kromax</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_endpoints_linearpart_krog</span><span class="p">(</span><span class="n">kroend</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">kromax</span><span class="p">:</span>
-            <span class="n">kromax</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">krogcomment</span> <span class="o">=</span> <span class="s2">&quot;-- LET krog, l=</span><span class="si">%g</span><span class="s2">, e=</span><span class="si">%g</span><span class="s2">, t=</span><span class="si">%g</span><span class="s2">, kroend=</span><span class="si">%g</span><span class="s2">, kromax=</span><span class="si">%g</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">krogcomment</span> <span class="o">=</span> <span class="s2">&quot;-- LET krog, l=</span><span class="si">%g</span><span class="s2">, e=</span><span class="si">%g</span><span class="s2">, t=</span><span class="si">%g</span><span class="s2">, kroend=</span><span class="si">%g</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
             <span class="n">l</span><span class="p">,</span>
             <span class="n">e</span><span class="p">,</span>
             <span class="n">t</span><span class="p">,</span>
             <span class="n">kroend</span><span class="p">,</span>
-            <span class="n">kromax</span><span class="p">,</span>
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="GasOil.estimate_sorg"><a class="viewcode-back" href="../../pyscal.html#pyscal.gasoil.GasOil.estimate_sorg">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_sorg</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>

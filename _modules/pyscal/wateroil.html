@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal.wateroil &mdash; pyscal 0.5.2.dev2+gbeb3c2b documentation</title>
+  <title>pyscal.wateroil &mdash; pyscal 0.5.2.dev4+g8d0050e documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.5.2.dev2+gbeb3c2b
+                0.5.2.dev4+g8d0050e
               </div>
             
           
@@ -287,9 +287,7 @@
         <span class="c1"># Normalize for krw:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;swn&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">sw</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">swcr</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">swcr</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span><span class="p">)</span>
         <span class="c1"># Normalize for krow:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;son&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">sw</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span>
-            <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">swcr</span>
-        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;son&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">sw</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span><span class="p">)</span>
 
         <span class="c1"># Different normalization for Sw used for capillary pressure</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;swnpc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">sw</span> <span class="o">-</span> <span class="n">swirr</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">swirr</span><span class="p">)</span>
@@ -593,43 +591,23 @@
         <span class="c1"># Left linear section is all zero:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">sw</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">swcr</span><span class="p">,</span> <span class="s2">&quot;krw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span></div>
 
-<div class="viewcode-block" id="WaterOil.set_endpoints_linearpart_krow"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.set_endpoints_linearpart_krow">[docs]</a>    <span class="k">def</span> <span class="nf">set_endpoints_linearpart_krow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kroend</span><span class="p">,</span> <span class="n">kromax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="WaterOil.set_endpoints_linearpart_krow"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.set_endpoints_linearpart_krow">[docs]</a>    <span class="k">def</span> <span class="nf">set_endpoints_linearpart_krow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kroend</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set linear parts of krow outside endpoints</span>
 
-<span class="sd">        Curve will be linear in [swl, swcr] (from kromax to kroend)</span>
-<span class="sd">        and zero in [1 - sorw, 1]</span>
+<span class="sd">        Curve will be zero in [1 - sorw, 1].</span>
 
 <span class="sd">        This function is used by add_corey_water(), and perhaps by other</span>
 <span class="sd">        utility functions. It should not be necessary for end-users.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            kroend (float): value of kro at swcr</span>
-<span class="sd">            kromax (float): maximal value of kro at sw=swl. Default 1</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="c1"># Linear curve between swl and swcr (left part):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;son&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">,</span> <span class="s2">&quot;krow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">swcr</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">kromax</span> <span class="ow">and</span> <span class="n">kromax</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">:</span>
-                <span class="c1"># Only warn if non-default value</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;kromax ignored when swcr is close to swl&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">,</span> <span class="s2">&quot;krow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kroend</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">kromax</span><span class="p">:</span>
-                <span class="n">kromax</span> <span class="o">=</span> <span class="mi">1</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">,</span> <span class="s2">&quot;krow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kromax</span>
-            <span class="n">interp_krow</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;sw&quot;</span><span class="p">,</span> <span class="s2">&quot;krow&quot;</span><span class="p">]]</span>
-                <span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;sw&quot;</span><span class="p">)</span>
-                <span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">)[</span><span class="s2">&quot;krow&quot;</span><span class="p">]</span>
-            <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;krow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">interp_krow</span><span class="o">.</span><span class="n">values</span>
-
-        <span class="c1"># Avoid machine accuracy problems around swcr (monotonicity):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krow&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">kromax</span><span class="p">,</span> <span class="s2">&quot;krow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kromax</span>
-
         <span class="c1"># Set to zero above sorw:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span><span class="p">,</span> <span class="s2">&quot;krow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span><span class="p">,</span> <span class="s2">&quot;krow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># Floating point issues can cause this to have become</span>
+        <span class="c1"># slightly bigger than krowend.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krow&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">kroend</span><span class="p">,</span> <span class="s2">&quot;krow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kroend</span></div>
 
 <div class="viewcode-block" id="WaterOil.add_LET_water"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.add_LET_water">[docs]</a>    <span class="k">def</span> <span class="nf">add_LET_water</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">krwend</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">krwmax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add krw data through LET parametrization</span>
@@ -676,18 +654,15 @@
             <span class="n">krwmax</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="WaterOil.add_LET_oil"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.add_LET_oil">[docs]</a>    <span class="k">def</span> <span class="nf">add_LET_oil</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">kroend</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">kromax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="WaterOil.add_LET_oil"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.add_LET_oil">[docs]</a>    <span class="k">def</span> <span class="nf">add_LET_oil</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">kroend</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add kro data through LET parametrization</span>
-
-<span class="sd">        kromax will be ignored if swcr is close to swl.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            l (float): LET parameter</span>
 <span class="sd">            e (float): LET parameter</span>
 <span class="sd">            t (float): LET parameter</span>
-<span class="sd">            kroend (float): value of kro at swcr</span>
-<span class="sd">            kromax (float): maximal value of kro at sw=swl. Default 1</span>
+<span class="sd">            kroend (float): value of kro at swl</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            None (modifies object)</span>
@@ -695,10 +670,7 @@
         <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
         <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">e</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
         <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
-        <span class="k">if</span> <span class="n">kromax</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">kroend</span> <span class="o">&lt;=</span> <span class="n">kromax</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">kroend</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
+        <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">kroend</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">kroend</span>
@@ -710,52 +682,37 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">sw</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span><span class="p">),</span> <span class="s2">&quot;krow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_endpoints_linearpart_krow</span><span class="p">(</span><span class="n">kroend</span><span class="p">,</span> <span class="n">kromax</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_endpoints_linearpart_krow</span><span class="p">(</span><span class="n">kroend</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">kromax</span><span class="p">:</span>
-            <span class="n">kromax</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">krowcomment</span> <span class="o">=</span> <span class="s2">&quot;-- LET krow, l=</span><span class="si">%g</span><span class="s2">, e=</span><span class="si">%g</span><span class="s2">, t=</span><span class="si">%g</span><span class="s2">, kroend=</span><span class="si">%g</span><span class="s2">, kromax=</span><span class="si">%g</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">krowcomment</span> <span class="o">=</span> <span class="s2">&quot;-- LET krow, l=</span><span class="si">%g</span><span class="s2">, e=</span><span class="si">%g</span><span class="s2">, t=</span><span class="si">%g</span><span class="s2">, kroend=</span><span class="si">%g</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
             <span class="n">l</span><span class="p">,</span>
             <span class="n">e</span><span class="p">,</span>
             <span class="n">t</span><span class="p">,</span>
             <span class="n">kroend</span><span class="p">,</span>
-            <span class="n">kromax</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="WaterOil.add_corey_oil"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.add_corey_oil">[docs]</a>    <span class="k">def</span> <span class="nf">add_corey_oil</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">now</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">kroend</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">kromax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="WaterOil.add_corey_oil"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.add_corey_oil">[docs]</a>    <span class="k">def</span> <span class="nf">add_corey_oil</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">now</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">kroend</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add kro data through the Corey parametrization</span>
 
 <span class="sd">        Corey applies to the interval between swcr and 1 - sorw</span>
 
 <span class="sd">        Curve is linear between swl and swcr, zero above 1 - sorw.</span>
 
-<span class="sd">        kromax will be ignored if swcr is close to swl.</span>
-
 <span class="sd">        Args:</span>
 <span class="sd">            now (float): Corey exponent</span>
 <span class="sd">            kroend (float): kro value at swcr</span>
-<span class="sd">            kromax (float): kro value at swl</span>
 <span class="sd">        Returns:</span>
 <span class="sd">            None (modifies object)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">now</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
-        <span class="k">if</span> <span class="n">kromax</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">kroend</span> <span class="o">&lt;=</span> <span class="n">kromax</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">kroend</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
+        <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">kroend</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kroend</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">son</span> <span class="o">**</span> <span class="n">now</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">sw</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span><span class="p">),</span> <span class="s2">&quot;krow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_endpoints_linearpart_krow</span><span class="p">(</span><span class="n">kroend</span><span class="p">,</span> <span class="n">kromax</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_endpoints_linearpart_krow</span><span class="p">(</span><span class="n">kroend</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">kromax</span><span class="p">:</span>
-            <span class="n">kromax</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">krowcomment</span> <span class="o">=</span> <span class="s2">&quot;-- Corey krow, now=</span><span class="si">%g</span><span class="s2">, kroend=</span><span class="si">%g</span><span class="s2">, kromax=</span><span class="si">%g</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
-            <span class="n">now</span><span class="p">,</span>
-            <span class="n">kroend</span><span class="p">,</span>
-            <span class="n">kromax</span><span class="p">,</span>
-        <span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">krowcomment</span> <span class="o">=</span> <span class="s2">&quot;-- Corey krow, now=</span><span class="si">%g</span><span class="s2">, kroend=</span><span class="si">%g</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">now</span><span class="p">,</span> <span class="n">kroend</span><span class="p">,)</span></div>
 
 <div class="viewcode-block" id="WaterOil.add_simple_J"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.add_simple_J">[docs]</a>    <span class="k">def</span> <span class="nf">add_simple_J</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">b</span><span class="o">=-</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">poro_ref</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">perm_ref</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">drho</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">g</span><span class="o">=</span><span class="mf">9.81</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add capillary pressure function from a simplified J-function</span>
@@ -1143,7 +1100,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="s2">&quot;sw&quot;</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="n">curve</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">&quot;right&quot;</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="WaterOil.estimate_swcr"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.estimate_swcr">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_swcr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">curve</span><span class="o">=</span><span class="s2">&quot;krow&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="WaterOil.estimate_swcr"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.estimate_swcr">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_swcr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">curve</span><span class="o">=</span><span class="s2">&quot;krw&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Estimate swcr of the current krw data.</span>
 
 <span class="sd">        swcr is estimated by searching for a linear part in krw upwards from sw=swl.</span>

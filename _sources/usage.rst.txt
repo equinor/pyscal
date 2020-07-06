@@ -89,7 +89,7 @@ The output from the code above is:
     -- Sw Krw Krow Pc
     -- swirr=0 swl=0.05 swcr=0.05 sorw=0.03
     -- Corey krw, nw=2.1, krwend=0.6, krwmax=1
-    -- Corey krow, now=2.5, kroend=0.9, kromax=1
+    -- Corey krow, now=2.5, kroend=0.9
     -- krw = krow @ sw=0.52365
     -- Simplified J function for Pc;
     --   a=5, b=-1.5, poro_ref=0.25, perm_ref=100 mD, drho=300 kg/m³, g=9.81 m/s²

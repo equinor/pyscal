@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal.scalrecommendation &mdash; pyscal 0.5.2.dev2+gbeb3c2b documentation</title>
+  <title>pyscal.scalrecommendation &mdash; pyscal 0.5.2.dev4+g8d0050e documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.5.2.dev2+gbeb3c2b
+                0.5.2.dev4+g8d0050e
               </div>
             
           
@@ -205,7 +205,6 @@
                 <span class="p">(</span>
                     <span class="s2">&quot;Making SCALrecommendation from dicts is deprecated &quot;</span>
                     <span class="s2">&quot;and will not be supported in future versions</span><span class="se">\n</span><span class="s2">&quot;</span>
-                    <span class="s2">&quot;Use WaterOilGas objects instead&quot;</span>
                 <span class="p">)</span>
             <span class="p">)</span>
 
@@ -213,10 +212,21 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">defaultshandling</span><span class="p">(</span><span class="s2">&quot;swcr&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="p">[</span><span class="n">low</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">high</span><span class="p">])</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">defaultshandling</span><span class="p">(</span><span class="s2">&quot;sorg&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="p">[</span><span class="n">low</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">high</span><span class="p">])</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">defaultshandling</span><span class="p">(</span><span class="s2">&quot;sgcr&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="p">[</span><span class="n">low</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">high</span><span class="p">])</span>
-            <span class="k">if</span> <span class="s2">&quot;kroend&quot;</span> <span class="ow">in</span> <span class="n">low</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Use krogend or krowend instead of kroend. kroend ignored&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">defaultshandling</span><span class="p">(</span><span class="s2">&quot;krogend&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">[</span><span class="n">low</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">high</span><span class="p">])</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">defaultshandling</span><span class="p">(</span><span class="s2">&quot;krowend&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">[</span><span class="n">low</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">high</span><span class="p">])</span>
+
+            <span class="c1"># Special treatment for backwards compatibility:</span>
+            <span class="k">if</span> <span class="s2">&quot;krowend&quot;</span> <span class="ow">in</span> <span class="n">low</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;krowend is deprecated, use kroend&quot;</span><span class="p">)</span>
+                <span class="n">krowend</span> <span class="o">=</span> <span class="s2">&quot;krowend&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">krowend</span> <span class="o">=</span> <span class="s2">&quot;kroend&quot;</span>
+
+            <span class="k">if</span> <span class="s2">&quot;krogend&quot;</span> <span class="ow">in</span> <span class="n">low</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;krogend is deprecated, use kroend&quot;</span><span class="p">)</span>
+                <span class="n">krogend</span> <span class="o">=</span> <span class="s2">&quot;krogend&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">krogend</span> <span class="o">=</span> <span class="s2">&quot;kroend&quot;</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">defaultshandling</span><span class="p">(</span><span class="s2">&quot;kroend&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">[</span><span class="n">low</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">high</span><span class="p">])</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">defaultshandling</span><span class="p">(</span><span class="s2">&quot;krwmax&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">[</span><span class="n">low</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">high</span><span class="p">])</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">defaultshandling</span><span class="p">(</span><span class="s2">&quot;krgend&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">[</span><span class="n">low</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">high</span><span class="p">])</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">defaultshandling</span><span class="p">(</span><span class="s2">&quot;krgmax&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="p">[</span><span class="n">low</span><span class="p">,</span> <span class="n">base</span><span class="p">,</span> <span class="n">high</span><span class="p">])</span>
@@ -277,13 +287,13 @@
             <span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">add_LET_oil</span><span class="p">(</span>
-                <span class="n">l</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="s2">&quot;Lo&quot;</span><span class="p">],</span> <span class="n">e</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="s2">&quot;Eo&quot;</span><span class="p">],</span> <span class="n">t</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="s2">&quot;To&quot;</span><span class="p">],</span> <span class="n">kroend</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="s2">&quot;krowend&quot;</span><span class="p">]</span>
+                <span class="n">l</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="s2">&quot;Lo&quot;</span><span class="p">],</span> <span class="n">e</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="s2">&quot;Eo&quot;</span><span class="p">],</span> <span class="n">t</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="s2">&quot;To&quot;</span><span class="p">],</span> <span class="n">kroend</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="n">krowend</span><span class="p">]</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">add_LET_oil</span><span class="p">(</span>
-                <span class="n">l</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="s2">&quot;Lo&quot;</span><span class="p">],</span> <span class="n">e</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="s2">&quot;Eo&quot;</span><span class="p">],</span> <span class="n">t</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="s2">&quot;To&quot;</span><span class="p">],</span> <span class="n">kroend</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="s2">&quot;krowend&quot;</span><span class="p">]</span>
+                <span class="n">l</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="s2">&quot;Lo&quot;</span><span class="p">],</span> <span class="n">e</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="s2">&quot;Eo&quot;</span><span class="p">],</span> <span class="n">t</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="s2">&quot;To&quot;</span><span class="p">],</span> <span class="n">kroend</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="n">krowend</span><span class="p">]</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">add_LET_oil</span><span class="p">(</span>
-                <span class="n">l</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;Lo&quot;</span><span class="p">],</span> <span class="n">e</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;Eo&quot;</span><span class="p">],</span> <span class="n">t</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;To&quot;</span><span class="p">],</span> <span class="n">kroend</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;krowend&quot;</span><span class="p">]</span>
+                <span class="n">l</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;Lo&quot;</span><span class="p">],</span> <span class="n">e</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;Eo&quot;</span><span class="p">],</span> <span class="n">t</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;To&quot;</span><span class="p">],</span> <span class="n">kroend</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="n">krowend</span><span class="p">]</span>
             <span class="p">)</span>
 
             <span class="c1"># Add gas and oil curves:</span>
@@ -309,13 +319,13 @@
                 <span class="n">krgmax</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;krgmax&quot;</span><span class="p">],</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">add_LET_oil</span><span class="p">(</span>
-                <span class="n">l</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="s2">&quot;Log&quot;</span><span class="p">],</span> <span class="n">e</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="s2">&quot;Eog&quot;</span><span class="p">],</span> <span class="n">t</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="s2">&quot;Tog&quot;</span><span class="p">],</span> <span class="n">kroend</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="s2">&quot;krogend&quot;</span><span class="p">]</span>
+                <span class="n">l</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="s2">&quot;Log&quot;</span><span class="p">],</span> <span class="n">e</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="s2">&quot;Eog&quot;</span><span class="p">],</span> <span class="n">t</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="s2">&quot;Tog&quot;</span><span class="p">],</span> <span class="n">kroend</span><span class="o">=</span><span class="n">low</span><span class="p">[</span><span class="n">krogend</span><span class="p">]</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">add_LET_oil</span><span class="p">(</span>
-                <span class="n">l</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="s2">&quot;Log&quot;</span><span class="p">],</span> <span class="n">e</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="s2">&quot;Eog&quot;</span><span class="p">],</span> <span class="n">t</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="s2">&quot;Tog&quot;</span><span class="p">],</span> <span class="n">kroend</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="s2">&quot;krogend&quot;</span><span class="p">]</span>
+                <span class="n">l</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="s2">&quot;Log&quot;</span><span class="p">],</span> <span class="n">e</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="s2">&quot;Eog&quot;</span><span class="p">],</span> <span class="n">t</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="s2">&quot;Tog&quot;</span><span class="p">],</span> <span class="n">kroend</span><span class="o">=</span><span class="n">base</span><span class="p">[</span><span class="n">krogend</span><span class="p">]</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">add_LET_oil</span><span class="p">(</span>
-                <span class="n">l</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;Log&quot;</span><span class="p">],</span> <span class="n">e</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;Eog&quot;</span><span class="p">],</span> <span class="n">t</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;Tog&quot;</span><span class="p">],</span> <span class="n">kroend</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;krogend&quot;</span><span class="p">]</span>
+                <span class="n">l</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;Log&quot;</span><span class="p">],</span> <span class="n">e</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;Eog&quot;</span><span class="p">],</span> <span class="n">t</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="s2">&quot;Tog&quot;</span><span class="p">],</span> <span class="n">kroend</span><span class="o">=</span><span class="n">high</span><span class="p">[</span><span class="n">krogend</span><span class="p">]</span>
             <span class="p">)</span>
         <span class="k">elif</span> <span class="p">(</span>
             <span class="nb">isinstance</span><span class="p">(</span><span class="n">low</span><span class="p">,</span> <span class="n">WaterOilGas</span><span class="p">)</span>

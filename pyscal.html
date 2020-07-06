@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal package &mdash; pyscal 0.5.2.dev2+gbeb3c2b documentation</title>
+  <title>pyscal package &mdash; pyscal 0.5.2.dev4+g8d0050e documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.5.2.dev2+gbeb3c2b
+                0.5.2.dev4+g8d0050e
               </div>
             
           
@@ -236,11 +236,10 @@ the same time.</p>
 <p>NB: the add_LET_* methods have the names ‘l’, ‘e’ and ‘t’
 in their signatures, which is not precise enough in this
 context, so we require e.g. ‘Lg’ and ‘Log’ (which both will be
-translated to ‘l’). Also note that in this factory context,
-kroend is an ambiguous parameter, krogend must be used.</p>
+translated to ‘l’).</p>
 <dl class="simple">
 <dt>Recognized parameters:</dt><dd><p>swirr, sgcr, sorg, swl, krgendanchor, h, tag,
-ng, krgend, krgmax, nog, krogend,
+ng, krgend, krgmax, nog, kroend,
 lg, eg, tg, log, eog, tog</p>
 </dd>
 </dl>
@@ -331,7 +330,7 @@ context, so we require e.g. ‘Lw’ and ‘Low’ (which both will be
 translated to ‘l’)</p>
 <dl class="simple">
 <dt>Recognized parameters:</dt><dd><p>swirr, swl, swcr, sorw, h, tag, nw, now, krwmax, krwend,
-lw, ew, tw, low, eow, tow, lo, eo, to, kromax, krowend,
+lw, ew, tw, low, eow, tow, lo, eo, to, kroend,
 a, a_petro, b, b_petro, poro_ref, perm_ref, drho,
 a, b, poro, perm, sigma_costau</p>
 </dd>
@@ -670,12 +669,11 @@ sg = 1 - swl. If not, it ends at krgend at sg = 1 - swl.</p>
 
 <dl class="py method">
 <dt id="pyscal.gasoil.GasOil.add_LET_oil">
-<code class="sig-name descname">add_LET_oil</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">l</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">e</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">t</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">kroend</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">kromax</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gasoil.html#GasOil.add_LET_oil"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gasoil.GasOil.add_LET_oil" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_LET_oil</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">l</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">e</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">t</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">kroend</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gasoil.html#GasOil.add_LET_oil"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gasoil.GasOil.add_LET_oil" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add oil (vs gas) relative permeability data through the Corey
 parametrization.</p>
 <p>A column named ‘krog’ will be added, replaced if it exists.</p>
 <p>All values where sg &gt; 1 - sorg - swl are set to zero.</p>
-<p>kromax is ignored if sgcr is close to zero</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -683,7 +681,6 @@ parametrization.</p>
 <li><p><strong>e</strong> (<em>float</em>) – E parameter</p></li>
 <li><p><strong>t</strong> (<em>float</em>) – T parameter</p></li>
 <li><p><strong>kroend</strong> (<em>float</em>) – The value at gas saturation sgcr</p></li>
-<li><p><strong>kromax</strong> (<em>float</em>) – The value at gas saturation equal to 0.</p></li>
 </ul>
 </dd>
 </dl>
@@ -703,18 +700,16 @@ sg = 1 - swl. If not, it ends at krgend at sg = 1 - swl.</p>
 
 <dl class="py method">
 <dt id="pyscal.gasoil.GasOil.add_corey_oil">
-<code class="sig-name descname">add_corey_oil</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nog</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">kroend</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">kromax</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gasoil.html#GasOil.add_corey_oil"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gasoil.GasOil.add_corey_oil" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_corey_oil</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nog</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">kroend</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gasoil.html#GasOil.add_corey_oil"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gasoil.GasOil.add_corey_oil" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add kro data through the Corey parametrization</p>
 <p>A column named ‘kro’ will be added to the internal DataFrame,
 replaced if it exists.</p>
 <p>All values above 1 - sorg - swl are set to zero.</p>
-<p>kromax is ignored if sgcr is close to zero</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>nog</strong> (<em>float</em>) – Corey exponent for oil</p></li>
 <li><p><strong>kroend</strong> (<em>float</em>) – Value for krog at normalized oil saturation 1</p></li>
-<li><p><strong>kromax</strong> (<em>float</em>) – Value for krog at gas saturation 0.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -858,18 +853,14 @@ utility functions. It should not be necessary for end-users.</p>
 
 <dl class="py method">
 <dt id="pyscal.gasoil.GasOil.set_endpoints_linearpart_krog">
-<code class="sig-name descname">set_endpoints_linearpart_krog</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">kroend</span></em>, <em class="sig-param"><span class="n">kromax</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gasoil.html#GasOil.set_endpoints_linearpart_krog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gasoil.GasOil.set_endpoints_linearpart_krog" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set_endpoints_linearpart_krog</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">kroend</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gasoil.html#GasOil.set_endpoints_linearpart_krog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gasoil.GasOil.set_endpoints_linearpart_krog" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set linear parts of krog outside endpoints.</p>
 <p>Zero for sg above 1 - sorg - swl.</p>
-<p>Linear from kromax to kroend from sg in [0, sgcr]</p>
 <p>This function is used by add_corey/LET_oil(), and perhaps by other
 utility functions. It should not be necessary for end-users.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>kroend</strong> (<em>float</em>) – krog at sg=sgcr</p></li>
-<li><p><strong>kromax</strong> (<em>float</em>) – krog at Sg=0. Default 1.</p></li>
-</ul>
+<dd class="field-odd"><p><strong>kroend</strong> (<em>float</em>) – krog at sg=0</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1316,11 +1307,11 @@ will be modified.</p></li>
 <dd><p>Make krg and krog functions that evaluates only on the
 (potentially) nonlinear part of the relperm curves, and with
 a normalized argument (0,1) on that interval.</p>
-<p>For a GasOil krw curve, the nonlinear part
+<p>For a GasOil krg curve, the nonlinear part
 is from sgcr to sorg. sgcr is mapped to sg=zero, and sg=1 - sorg - swl is mapped
 to 1. Then there is an assumed linear part from sorg to 1 which we ignore here.</p>
 <p>For a GasOil krow curve, the nonlinear part
-is from 1 - sorg (mapped to zero) to sgcr (mapped to 1).</p>
+is from 1 - sorg (mapped to zero) to sg=0 (mapped to 1).</p>
 <p>These endpoints must be known the the GasOil object coming in (the object
 can determine them using functions ‘estimate_sorg()’ and ‘estimate_sgcr()’</p>
 <p>If the entire curve is linear, it will not matter for this function, because
@@ -1350,8 +1341,7 @@ a normalized argument (0,1) on that interval.</p>
 swcr is mapped to zero, and 1 - sorw is mapped to 1. Then there is
 an assumed linear part from sorw to 1 which we ignore here.</p>
 <p>For a WaterOil krow curve, the nonlinear part
-is from 1 - sorw (mapped to zero) to swcr (mapped to 1). If swcr &gt; swl,
-there is a linear part from swcr down to swl, ignored here.</p>
+is from 1 - sorw (mapped to zero) to swl (mapped to 1).</p>
 <p>These endpoints must be known the the WaterOil object coming in (the object
 can determine them using functions ‘estimate_sorw()’ and ‘estimate_swcr()’</p>
 <p>If the entire curve is linear, it will not matter for this function, because
@@ -1474,17 +1464,15 @@ be printed. Defualt True</p></li>
 
 <dl class="py method">
 <dt id="pyscal.wateroil.WaterOil.add_LET_oil">
-<code class="sig-name descname">add_LET_oil</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">l</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">e</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">t</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">kroend</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">kromax</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.add_LET_oil"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.add_LET_oil" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_LET_oil</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">l</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">e</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">t</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">kroend</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.add_LET_oil"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.add_LET_oil" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add kro data through LET parametrization</p>
-<p>kromax will be ignored if swcr is close to swl.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>l</strong> (<em>float</em>) – LET parameter</p></li>
 <li><p><strong>e</strong> (<em>float</em>) – LET parameter</p></li>
 <li><p><strong>t</strong> (<em>float</em>) – LET parameter</p></li>
-<li><p><strong>kroend</strong> (<em>float</em>) – value of kro at swcr</p></li>
-<li><p><strong>kromax</strong> (<em>float</em>) – maximal value of kro at sw=swl. Default 1</p></li>
+<li><p><strong>kroend</strong> (<em>float</em>) – value of kro at swl</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1533,17 +1521,15 @@ apply up to 1-sorw.</p>
 
 <dl class="py method">
 <dt id="pyscal.wateroil.WaterOil.add_corey_oil">
-<code class="sig-name descname">add_corey_oil</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">now</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">kroend</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">kromax</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.add_corey_oil"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.add_corey_oil" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_corey_oil</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">now</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">kroend</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.add_corey_oil"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.add_corey_oil" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add kro data through the Corey parametrization</p>
 <p>Corey applies to the interval between swcr and 1 - sorw</p>
 <p>Curve is linear between swl and swcr, zero above 1 - sorw.</p>
-<p>kromax will be ignored if swcr is close to swl.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>now</strong> (<em>float</em>) – Corey exponent</p></li>
 <li><p><strong>kroend</strong> (<em>float</em>) – kro value at swcr</p></li>
-<li><p><strong>kromax</strong> (<em>float</em>) – kro value at swl</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -1760,7 +1746,7 @@ with krow</p>
 
 <dl class="py method">
 <dt id="pyscal.wateroil.WaterOil.estimate_swcr">
-<code class="sig-name descname">estimate_swcr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">curve</span><span class="o">=</span><span class="default_value">'krow'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.estimate_swcr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.estimate_swcr" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">estimate_swcr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">curve</span><span class="o">=</span><span class="default_value">'krw'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.estimate_swcr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.estimate_swcr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Estimate swcr of the current krw data.</p>
 <p>swcr is estimated by searching for a linear part in krw upwards from sw=swl.
 In practice it is impossible to infer swcr = 0, since we are limited by
@@ -1816,18 +1802,14 @@ the error and give an error.</p>
 
 <dl class="py method">
 <dt id="pyscal.wateroil.WaterOil.set_endpoints_linearpart_krow">
-<code class="sig-name descname">set_endpoints_linearpart_krow</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">kroend</span></em>, <em class="sig-param"><span class="n">kromax</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.set_endpoints_linearpart_krow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.set_endpoints_linearpart_krow" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set_endpoints_linearpart_krow</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">kroend</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.set_endpoints_linearpart_krow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.set_endpoints_linearpart_krow" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set linear parts of krow outside endpoints</p>
-<p>Curve will be linear in [swl, swcr] (from kromax to kroend)
-and zero in [1 - sorw, 1]</p>
+<p>Curve will be zero in [1 - sorw, 1].</p>
 <p>This function is used by add_corey_water(), and perhaps by other
 utility functions. It should not be necessary for end-users.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>kroend</strong> (<em>float</em>) – value of kro at swcr</p></li>
-<li><p><strong>kromax</strong> (<em>float</em>) – maximal value of kro at sw=swl. Default 1</p></li>
-</ul>
+<dd class="field-odd"><p><strong>kroend</strong> (<em>float</em>) – value of kro at swcr</p>
 </dd>
 </dl>
 </dd></dl>

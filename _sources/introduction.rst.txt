@@ -49,7 +49,7 @@ from the pyscal command above will look like:
     -- pyscal: v0.4.X
     -- swirr=0 swl=0.1 swcr=0.1 sorw=0.05
     -- Corey krw, nw=2, krwend=1, krwmax=1
-    -- Corey krow, now=3, kroend=1, kromax=1
+    -- Corey krow, now=3, kroend=1
     -- krw = krow @ sw=0.46856
     -- Zero capillary pressure
     -- SW     KRW       KROW      PC

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Usage &mdash; pyscal 0.5.2.dev2+gbeb3c2b documentation</title>
+  <title>Usage &mdash; pyscal 0.5.2.dev4+g8d0050e documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.5.2.dev2+gbeb3c2b
+                0.5.2.dev4+g8d0050e
               </div>
             
           
@@ -179,7 +179,7 @@
 line tool is a short wrapper utilizing the underlying pyscal functionality.</p>
 <div class="section" id="the-command-line-tool">
 <h2>The command line tool<a class="headerlink" href="#the-command-line-tool" title="Permalink to this headline">¶</a></h2>
-<p><p>pyscal (0.5.2.dev2+gbeb3c2b) is a tool to create Eclipse include files for relative permeability input from tabulated parameters.</p>
+<p><p>pyscal (0.5.2.dev4+g8d0050e) is a tool to create Eclipse include files for relative permeability input from tabulated parameters.</p>
 </p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">pyscal</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">debug</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">o</span> <span class="n">OUTPUT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">delta_s</span> <span class="n">DELTA_S</span><span class="p">]</span>
               <span class="p">[</span><span class="o">--</span><span class="n">int_param_wo</span> <span class="n">INT_PARAM_WO</span> <span class="p">[</span><span class="n">INT_PARAM_WO</span> <span class="o">...</span><span class="p">]]</span>
@@ -239,7 +239,7 @@ provides the data for the corresponding SATNUM. Comments are put in a
 column called TAG or COMMENT. Column headers are case insensitive.</p>
 <p>Saturation endpoints are put in columns ‘swirr’, ‘swl’, ‘swcr’, ‘sorw’,
 ‘sgcr’ and ‘sorg’. Relative permeability endpoints are put in columns
-‘krwend’, ‘krwmax’, ‘krowend’, ‘krogend’, ‘kromax’, ‘krgend’ and ‘krgmax’.
+‘krwend’, ‘krwmax’, ‘krowend’, ‘krogend’, ‘krgend’ and ‘krgmax’.
 These columns are optional and are defaulted to 0 or 1.</p>
 <p>Corey or LET parametrization are based on presence of the columns
 ‘Nw’, ‘Now’, ‘Nog’, ‘Ng’, ‘Lw’, ‘Ew’, ‘Tw’, ‘Low’, ‘Eow’, ‘Tow’,
@@ -500,7 +500,7 @@ resolution on the saturation scale.</p>
 <span class="go">-- Sw Krw Krow Pc</span>
 <span class="go">-- swirr=0 swl=0.05 swcr=0.05 sorw=0.03</span>
 <span class="go">-- Corey krw, nw=2.1, krwend=0.6, krwmax=1</span>
-<span class="go">-- Corey krow, now=2.5, kroend=0.9, kromax=1</span>
+<span class="go">-- Corey krow, now=2.5, kroend=0.9</span>
 <span class="go">-- krw = krow @ sw=0.52365</span>
 <span class="go">-- Simplified J function for Pc;</span>
 <span class="go">--   a=5, b=-1.5, poro_ref=0.25, perm_ref=100 mD, drho=300 kg/m³, g=9.81 m/s²</span>
