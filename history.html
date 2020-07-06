@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>History &mdash; pyscal 0.5.2.dev4+g8d0050e documentation</title>
+  <title>History &mdash; pyscal 0.5.2.dev5+g0f851c9 documentation</title>
   
 
   
@@ -37,6 +37,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Contributing to pyscal" href="contribution.html" />
     <link rel="prev" title="pyscal package" href="pyscal.html" /> 
 </head>
 
@@ -64,7 +65,7 @@
             
             
               <div class="version">
-                0.5.2.dev4+g8d0050e
+                0.5.2.dev5+g0f851c9
               </div>
             
           
@@ -95,6 +96,16 @@
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
 <li class="toctree-l1"><a class="reference internal" href="modules.html">API for pyscal</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#release-notes">Release notes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#v0-6-0">v0.6.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v0-5-0">v0.5.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v0-4-0">v0.4.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v0-3-0">v0.3.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v0-2-0">v0.2.0</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#v0-1-0">v0.1.0</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contribution.html">Contributing to pyscal</a></li>
 </ul>
 
             
@@ -165,21 +176,75 @@
 <p>This package was developed internally at Equinor starting in 2017
 based on several internal codes in Python and other
 languages. Open sourced (LGPLv3) in 2019.</p>
-<p>Release history</p>
-<blockquote>
-<div><ul class="simple">
-<li><p>v0.4.0 - Feb 2020 - Added command line tool</p></li>
-<li><p>v0.3.0 - Dec 2019 - Rewritten interpolation code</p></li>
-<li><p>v0.2.0 - Nov 2019 - Includes PyscalFactory for creating objects.</p></li>
-<li><p>v0.1.0 - June 2019 - first open source version</p></li>
-</ul>
-</div></blockquote>
-<p>Detailed release history at</p>
+</div>
+<div class="section" id="release-notes">
+<h1>Release notes<a class="headerlink" href="#release-notes" title="Permalink to this headline">¶</a></h1>
+<p>Detailed release history (with minor releases) at</p>
 <blockquote>
 <div><ul class="simple">
 <li><p><a class="reference external" href="https://github.com/equinor/pyscal/releases">https://github.com/equinor/pyscal/releases</a></p></li>
 </ul>
 </div></blockquote>
+<div class="section" id="v0-6-0">
+<h2>v0.6.0<a class="headerlink" href="#v0-6-0" title="Permalink to this headline">¶</a></h2>
+<dl class="simple">
+<dt><strong>Deprecations</strong></dt><dd><ul class="simple">
+<li><p>kromax is no longer in use by pyscal. The oil relperm curve is anchored
+at kroend (and krowend and krogend are renamed to kroend accordingly, as
+they cannot be different any longer)</p></li>
+</ul>
+</dd>
+<dt><strong>New features</strong></dt><dd><ul class="simple">
+<li><p>Support for GasWater.</p></li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="v0-5-0">
+<h2>v0.5.0<a class="headerlink" href="#v0-5-0" title="Permalink to this headline">¶</a></h2>
+<dl class="simple">
+<dt><strong>New features</strong></dt><dd><ul class="simple">
+<li><p>Adds saturation points between sorw and 1 in WaterOil saturation tables.</p></li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="v0-4-0">
+<h2>v0.4.0<a class="headerlink" href="#v0-4-0" title="Permalink to this headline">¶</a></h2>
+<dl class="simple">
+<dt><strong>New features</strong></dt><dd><ul class="simple">
+<li><p>Added command line tool</p></li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="v0-3-0">
+<h2>v0.3.0<a class="headerlink" href="#v0-3-0" title="Permalink to this headline">¶</a></h2>
+<dl class="simple">
+<dt><strong>Improvements</strong></dt><dd><ul class="simple">
+<li><p>Rewritten interpolation code</p></li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="v0-2-0">
+<h2>v0.2.0<a class="headerlink" href="#v0-2-0" title="Permalink to this headline">¶</a></h2>
+<dl class="simple">
+<dt><strong>New features</strong></dt><dd><ul class="simple">
+<li><p>Includes PyscalFactory for creating objects.</p></li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="v0-1-0">
+<h2>v0.1.0<a class="headerlink" href="#v0-1-0" title="Permalink to this headline">¶</a></h2>
+<dl class="simple">
+<dt><strong>Miscellaneous</strong></dt><dd><ul class="simple">
+<li><p>first open source version</p></li>
+</ul>
+</dd>
+</dl>
+</div>
 </div>
 
 
@@ -189,6 +254,8 @@ languages. Open sourced (LGPLv3) in 2019.</p>
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="contribution.html" class="btn btn-neutral float-right" title="Contributing to pyscal" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="pyscal.html" class="btn btn-neutral float-left" title="pyscal package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
