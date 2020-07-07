@@ -14,7 +14,7 @@ Relative permeability/SCAL support in reservoir simulation.
    usage
    modules
    history
-   contribution
+   contributing
 
 Indices and tables
 ==================
