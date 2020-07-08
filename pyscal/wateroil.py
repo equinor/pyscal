@@ -12,10 +12,11 @@ import pandas as pd
 
 from scipy.interpolate import PchipInterpolator, interp1d
 
-import pyscal
 from pyscal.constants import EPSILON as epsilon
 from pyscal.constants import SWINTEGERS, MAX_EXPONENT
 from pyscal import utils
+
+from .version import version as __version__
 
 
 logging.basicConfig()
@@ -1064,7 +1065,7 @@ class WaterOil(object):
         if header:
             string += "SWOF\n"
         string += utils.comment_formatter(self.tag)
-        string += "-- pyscal: " + str(pyscal.__version__) + "\n"
+        string += "-- pyscal: " + str(__version__) + "\n"
         if "pc" not in self.table.columns:
             self.table["pc"] = 0
             self.pccomment = "-- Zero capillary pressure\n"
@@ -1104,7 +1105,7 @@ class WaterOil(object):
         if header:
             string += "SWFN\n"
         string += utils.comment_formatter(self.tag)
-        string += "-- pyscal: " + str(pyscal.__version__) + "\n"
+        string += "-- pyscal: " + str(__version__) + "\n"
         if dataincommentrow:
             string += self.swcomment
             string += self.krwcomment
@@ -1137,7 +1138,7 @@ class WaterOil(object):
         if header:
             string += "WOTABLE\n"
             string += "SW KRW KROW PC\n"
-        string += "! pyscal: " + str(pyscal.__version__) + "\n"
+        string += "! pyscal: " + str(__version__) + "\n"
         if dataincommentrow:
             string += self.swcomment.replace("--", "!")
             string += self.krwcomment.replace("--", "!")

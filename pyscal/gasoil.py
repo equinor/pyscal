@@ -10,10 +10,11 @@ import pandas as pd
 
 from scipy.interpolate import PchipInterpolator
 
-import pyscal
 from pyscal import utils
 from pyscal.constants import EPSILON as epsilon
 from pyscal.constants import SWINTEGERS, MAX_EXPONENT
+
+from .version import version as __version__
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
@@ -685,7 +686,7 @@ class GasOil(object):
         if header:
             string += "SGOF\n"
         string += utils.comment_formatter(self.tag)
-        string += "-- pyscal: " + str(pyscal.__version__) + "\n"
+        string += "-- pyscal: " + str(__version__) + "\n"
         if dataincommentrow:
             string += self.sgcomment
             string += self.krgcomment
@@ -777,7 +778,7 @@ class GasOil(object):
         if header:
             string += "SLGOF\n"
         string += utils.comment_formatter(self.tag)
-        string += "-- pyscal: " + str(pyscal.__version__) + "\n"
+        string += "-- pyscal: " + str(__version__) + "\n"
         if dataincommentrow:
             string += self.sgcomment
             string += self.krgcomment
@@ -824,7 +825,7 @@ class GasOil(object):
         if header:
             string += "SGFN\n"
         string += utils.comment_formatter(self.tag)
-        string += "-- pyscal: " + str(pyscal.__version__) + "\n"
+        string += "-- pyscal: " + str(__version__) + "\n"
         if dataincommentrow:
             string += self.sgcomment
             string += self.krgcomment
@@ -872,7 +873,7 @@ class GasOil(object):
         if header:
             string += "GOTABLE\n"
             string += "SG KRG KROG PC\n"
-        string += "! pyscal: " + str(pyscal.__version__) + "\n"
+        string += "! pyscal: " + str(__version__) + "\n"
         if dataincommentrow:
             string += self.sgcomment.replace("--", "!")
             string += self.krgcomment.replace("--", "!")

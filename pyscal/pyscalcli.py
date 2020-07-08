@@ -7,7 +7,7 @@ import logging
 
 from pyscal import PyscalFactory
 
-from pyscal import __version__
+from .version import version as __version__
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
