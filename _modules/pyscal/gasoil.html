@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal.gasoil &mdash; pyscal 0.5.2.dev8+g7f9ed8f documentation</title>
+  <title>pyscal.gasoil &mdash; pyscal 0.5.2.dev10+g41871e7 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.5.2.dev8+g7f9ed8f
+                0.5.2.dev10+g41871e7
               </div>
             
           
@@ -169,6 +169,8 @@
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">PchipInterpolator</span>
 
 <span class="kn">import</span> <span class="nn">pyscal</span>
 <span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">utils</span>
@@ -388,8 +390,6 @@
 <span class="sd">        Calling function is responsible for checking if any data was</span>
 <span class="sd">        actually added to the table.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">PchipInterpolator</span>
-
         <span class="c1"># Avoid having to deal with multi-indices:</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dframe</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
@@ -626,6 +626,9 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            None (modifies internal state)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Similar code in wateroil.add_LET_water, but readability</span>
+        <span class="c1"># is better by having them separate</span>
+        <span class="c1"># pylint: disable=duplicate-code</span>
         <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
         <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">e</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
         <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
@@ -750,26 +753,11 @@
 <span class="sd">        when initializing the saturation range (it uses linear</span>
 <span class="sd">        interpolation to solve for the zero)</span>
 
-<span class="sd">        Warning: Code duplication from WaterOil, with</span>
-<span class="sd">        column names changed only</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            float: the gas saturation where krg == krog, for relperm</span>
+<span class="sd">                linearly interpolated in gas saturation.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-
-        <span class="c1"># Make a copy for calculations</span>
-        <span class="n">tmp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;sg&quot;</span><span class="p">,</span> <span class="s2">&quot;krg&quot;</span><span class="p">,</span> <span class="s2">&quot;krog&quot;</span><span class="p">]])</span>
-        <span class="n">tmp</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;krgminuskrog&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span><span class="p">[</span><span class="s2">&quot;krg&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">tmp</span><span class="p">[</span><span class="s2">&quot;krog&quot;</span><span class="p">]</span>
-
-        <span class="c1"># Add a zero value for the difference column, and interpolate</span>
-        <span class="c1"># the sw column to the zero value</span>
-        <span class="n">zerodf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">tmp</span><span class="p">)],</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;krgminuskrog&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">})</span>
-        <span class="n">tmp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">tmp</span><span class="p">,</span> <span class="n">zerodf</span><span class="p">],</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-        <span class="n">tmp</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;krgminuskrog&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">tmp</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Could not compute crosspoint. Bug?&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
-        <span class="n">tmp</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;slinear&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">tmp</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">tmp</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)]</span><span class="o">.</span><span class="n">sg</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+        <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">crosspoint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="s2">&quot;sg&quot;</span><span class="p">,</span> <span class="s2">&quot;krg&quot;</span><span class="p">,</span> <span class="s2">&quot;krog&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="GasOil.selfcheck"><a class="viewcode-back" href="../../pyscal.html#pyscal.gasoil.GasOil.selfcheck">[docs]</a>    <span class="k">def</span> <span class="nf">selfcheck</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;SGOF&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Check validities of the data in the table.</span>

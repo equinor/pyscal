@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal.utils &mdash; pyscal 0.5.2.dev8+g7f9ed8f documentation</title>
+  <title>pyscal.utils &mdash; pyscal 0.5.2.dev10+g41871e7 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.5.2.dev8+g7f9ed8f
+                0.5.2.dev10+g41871e7
               </div>
             
           
@@ -167,6 +167,7 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">six</span>
 
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">interp1d</span>
 
@@ -241,6 +242,39 @@
     <span class="k">return</span> <span class="n">dframe</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">roundlevel</span><span class="p">)</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span>
         <span class="n">sep</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">float_format</span><span class="o">=</span><span class="n">float_format</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span>
     <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="crosspoint"><a class="viewcode-back" href="../../pyscal.html#pyscal.utils.crosspoint">[docs]</a><span class="k">def</span> <span class="nf">crosspoint</span><span class="p">(</span><span class="n">dframe</span><span class="p">,</span> <span class="n">satcol</span><span class="p">,</span> <span class="n">kr1col</span><span class="p">,</span> <span class="n">kr2col</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Locate the crosspoint where kr1col == kr2col</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dframe (pd.DataFrame): Dataframe with at least three columns</span>
+<span class="sd">        satcol (str): Column name for the saturation column</span>
+<span class="sd">        kr1col (str): Column name for first relperm column</span>
+<span class="sd">        kr2col (str): Columnn ame for second column</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float, the saturation value (interpolated) where</span>
+<span class="sd">            kr1col == kr2col, when krXcol is linearly interpolated</span>
+<span class="sd">            as a function of the saturation values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dframe</span> <span class="o">=</span> <span class="n">dframe</span><span class="p">[[</span><span class="n">satcol</span><span class="p">,</span> <span class="n">kr1col</span><span class="p">,</span> <span class="n">kr2col</span><span class="p">]]</span>  <span class="c1"># Copy</span>
+    <span class="n">dframe</span>
+    <span class="n">dframe</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;krdiff&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dframe</span><span class="p">[</span><span class="n">kr1col</span><span class="p">]</span> <span class="o">-</span> <span class="n">dframe</span><span class="p">[</span><span class="n">kr2col</span><span class="p">]</span>
+
+    <span class="c1"># Add a zero value for the difference column, and interpolate</span>
+    <span class="c1"># the saturation column to the zero value</span>
+    <span class="n">zerodf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">dframe</span><span class="p">)],</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;krdiff&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">})</span>
+    <span class="n">dframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">dframe</span><span class="p">,</span> <span class="n">zerodf</span><span class="p">],</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;krdiff&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">dframe</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Could not compute crosspoint. Bug?&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">dframe</span><span class="p">))</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+
+    <span class="n">dframe</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;slinear&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">dframe</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">dframe</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)][</span><span class="n">satcol</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="estimate_diffjumppoint"><a class="viewcode-back" href="../../pyscal.html#pyscal.utils.estimate_diffjumppoint">[docs]</a><span class="k">def</span> <span class="nf">estimate_diffjumppoint</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">):</span>
