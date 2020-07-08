@@ -968,27 +968,12 @@ class WaterOil(object):
 
         Accuracy of this crosspoint depends on the resolution chosen
         when initializing the saturation range
-       """
 
-        # Make a copy for calculations
-        tmp = pd.DataFrame(self.table[["sw", "krw", "krow"]])
-        tmp.loc[:, "krwminuskrow"] = tmp["krw"] - tmp["krow"]
-
-        # Add a zero value for the difference column, and interpolate
-        # the sg column to the zero value
-        zerodf = pd.DataFrame(index=[len(tmp)], data={"krwminuskrow": 0.0})
-        tmp = pd.concat([tmp, zerodf], sort=True)
-        # When Pandas is upgraded for all users:
-        # tmp = pd.concat([tmp, zerodf], sort=True)
-        tmp.set_index("krwminuskrow", inplace=True)
-
-        if tmp.index.isnull().any():
-            logger.warning("Could not compute crosspoint. Bug?")
-            return -1
-
-        tmp.interpolate(method="slinear", inplace=True)
-
-        return tmp[np.isclose(tmp.index, 0.0)].sw.values[0]
+        Returns:
+            float: the water saturation where krw == krow, for relperm
+                linearly interpolated in water saturation.
+        """
+        return utils.crosspoint(self.table, "sw", "krw", "krow")
 
     def selfcheck(self, mode="SWOF"):
         """Check validities of the data in the table.
