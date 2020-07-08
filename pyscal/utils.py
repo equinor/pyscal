@@ -5,6 +5,7 @@ from __future__ import absolute_import
 import logging
 import six
 
+import numpy as np
 import pandas as pd
 from scipy.interpolate import interp1d
 
@@ -79,6 +80,39 @@ def df2str(
     return dframe.round(roundlevel).to_csv(
         sep=" ", float_format=float_format, header=header, index=False
     )
+
+
+def crosspoint(dframe, satcol, kr1col, kr2col):
+    """Locate the crosspoint where kr1col == kr2col
+
+    Args:
+        dframe (pd.DataFrame): Dataframe with at least three columns
+        satcol (str): Column name for the saturation column
+        kr1col (str): Column name for first relperm column
+        kr2col (str): Columnn ame for second column
+
+    Returns:
+        float, the saturation value (interpolated) where
+            kr1col == kr2col, when krXcol is linearly interpolated
+            as a function of the saturation values.
+    """
+    dframe = dframe[[satcol, kr1col, kr2col]]  # Copy
+    dframe
+    dframe.loc[:, "krdiff"] = dframe[kr1col] - dframe[kr2col]
+
+    # Add a zero value for the difference column, and interpolate
+    # the saturation column to the zero value
+    zerodf = pd.DataFrame(index=[len(dframe)], data={"krdiff": 0.0})
+    dframe = pd.concat([dframe, zerodf], sort=True).set_index("krdiff")
+
+    if dframe.index.isnull().any():
+        logger.warning("Could not compute crosspoint. Bug?")
+        logger.debug(str(dframe))
+        return -1
+
+    dframe.interpolate(method="slinear", inplace=True)
+
+    return dframe[np.isclose(dframe.index, 0.0)][satcol].values[0]
 
 
 def estimate_diffjumppoint(table, xcol=None, ycol=None, side="right"):

@@ -588,26 +588,11 @@ class GasOil(object):
         when initializing the saturation range (it uses linear
         interpolation to solve for the zero)
 
-        Warning: Code duplication from WaterOil, with
-        column names changed only
+        Returns:
+            float: the gas saturation where krg == krog, for relperm
+                linearly interpolated in gas saturation.
         """
-
-        # Make a copy for calculations
-        tmp = pd.DataFrame(self.table[["sg", "krg", "krog"]])
-        tmp.loc[:, "krgminuskrog"] = tmp["krg"] - tmp["krog"]
-
-        # Add a zero value for the difference column, and interpolate
-        # the sw column to the zero value
-        zerodf = pd.DataFrame(index=[len(tmp)], data={"krgminuskrog": 0.0})
-        tmp = pd.concat([tmp, zerodf], sort=True)
-
-        tmp.set_index("krgminuskrog", inplace=True)
-        if tmp.index.isnull().any():
-            logger.warning("Could not compute crosspoint. Bug?")
-            return -1
-        tmp.interpolate(method="slinear", inplace=True)
-
-        return tmp[np.isclose(tmp.index, 0.0)].sg.values[0]
+        return utils.crosspoint(self.table, "sg", "krg", "krog")
 
     def selfcheck(self, mode="SGOF"):
         """Check validities of the data in the table.
