@@ -10,6 +10,8 @@ import six
 import numpy as np
 import pandas as pd
 
+from scipy.interpolate import PchipInterpolator, interp1d
+
 import pyscal
 from pyscal.constants import EPSILON as epsilon
 from pyscal.constants import SWINTEGERS, MAX_EXPONENT
@@ -125,12 +127,14 @@ class WaterOil(object):
         self.table = self.table[["sw"]]  # Drop the swint column
 
         # Normalize for krw:
-        self.table["swn"] = (self.table.sw - self.swcr) / (1 - self.swcr - self.sorw)
+        self.table["swn"] = (self.table["sw"] - self.swcr) / (1 - self.swcr - self.sorw)
         # Normalize for krow:
-        self.table["son"] = (1 - self.table.sw - self.sorw) / (1 - self.sorw - self.swl)
+        self.table["son"] = (1 - self.table["sw"] - self.sorw) / (
+            1 - self.sorw - self.swl
+        )
 
         # Different normalization for Sw used for capillary pressure
-        self.table["swnpc"] = (self.table.sw - swirr) / (1 - swirr)
+        self.table["swnpc"] = (self.table["sw"] - swirr) / (1 - swirr)
 
         self.swcomment = "-- swirr=%g swl=%g swcr=%g sorw=%g\n" % (
             self.swirr,
@@ -195,8 +199,6 @@ class WaterOil(object):
             sorw (float): Explicit sorw. If None, it will be estimated from
                 the numbers in krw (or krow)
         """
-        from scipy.interpolate import PchipInterpolator, interp1d
-
         # Avoid having to deal with multi-indices:
         if len(dframe.index.names) > 1:
             logger.warning(
@@ -376,7 +378,7 @@ class WaterOil(object):
         else:
             assert 0 < krwend <= 1.0
 
-        self.table["krw"] = krwend * self.table.swn ** nw
+        self.table["krw"] = krwend * self.table["swn"] ** nw
 
         self.set_endpoints_linearpart_krw(krwend, krwmax)
 
@@ -429,7 +431,7 @@ class WaterOil(object):
             self.table.loc[:, "krw"] = interp_krw.values
 
         # Left linear section is all zero:
-        self.table.loc[self.table.sw < self.swcr, "krw"] = 0
+        self.table.loc[self.table["sw"] < self.swcr, "krw"] = 0
 
     def set_endpoints_linearpart_krow(self, kroend):
         """Set linear parts of krow outside endpoints
@@ -466,6 +468,9 @@ class WaterOil(object):
             krwend (float): value of krw at 1 - sorw
             krwmax (float): maximal value at Sw=1. Default 1
         """
+        # Similar code in gasoil.add_LET_gas, but readability is
+        # better by having them separate.
+        # pylint: disable=duplicate-code
         assert epsilon < l < MAX_EXPONENT
         assert epsilon < e < MAX_EXPONENT
         assert epsilon < t < MAX_EXPONENT
@@ -476,8 +481,8 @@ class WaterOil(object):
 
         self.table["krw"] = (
             krwend
-            * self.table.swn ** l
-            / ((self.table.swn ** l) + e * (1 - self.table.swn) ** t)
+            * self.table["swn"] ** l
+            / ((self.table["swn"] ** l) + e * (1 - self.table["swn"]) ** t)
         )
         # This equation is undefined for t a float and swn=1, set explicitly:
         self.table.loc[np.isclose(self.table["swn"], 1.0), "krw"] = krwend
@@ -514,13 +519,13 @@ class WaterOil(object):
 
         self.table["krow"] = (
             kroend
-            * self.table.son ** l
-            / ((self.table.son ** l) + e * (1 - self.table.son) ** t)
+            * self.table["son"] ** l
+            / ((self.table["son"] ** l) + e * (1 - self.table["son"]) ** t)
         )
         # This equation is undefined for t a float and son=1, set explicitly:
         self.table.loc[np.isclose(self.table["son"], 1.0), "krow"] = kroend
 
-        self.table.loc[self.table.sw >= (1 - self.sorw), "krow"] = 0
+        self.table.loc[self.table["sw"] >= (1 - self.sorw), "krow"] = 0
 
         self.set_endpoints_linearpart_krow(kroend)
 
@@ -547,8 +552,8 @@ class WaterOil(object):
         assert epsilon < now < MAX_EXPONENT
         assert 0 < kroend <= 1.0
 
-        self.table["krow"] = kroend * self.table.son ** now
-        self.table.loc[self.table.sw >= (1 - self.sorw), "krow"] = 0
+        self.table["krow"] = kroend * self.table["son"] ** now
+        self.table.loc[self.table["sw"] >= (1 - self.sorw), "krow"] = 0
 
         self.set_endpoints_linearpart_krow(kroend)
 
@@ -611,10 +616,10 @@ class WaterOil(object):
         # swnpc is a normalized saturation, but normalized with
         # respect to swirr, not to swl (the swirr here is sometimes
         # called 'swirra' - asymptotic swirr)
-        self.table["J"] = a * self.table.swnpc ** b
-        self.table["H"] = self.table.J * math.sqrt(poro_ref / perm_ref)
+        self.table["J"] = a * self.table["swnpc"] ** b
+        self.table["H"] = self.table["J"] * math.sqrt(poro_ref / perm_ref)
         # Scale drho and g from SI units to g/cc and m/s²100
-        self.table["pc"] = self.table.H * drho / 1000 * g / 100.0
+        self.table["pc"] = self.table["H"] * drho / 1000 * g / 100.0
         self.pccomment = (
             "-- Simplified J-function for Pc; rms version, in bar\n--   "
             + "a=%g, b=%g, poro_ref=%g, perm_ref=%g mD, drho=%g kg/m^3, g=%g m/s^2\n"
@@ -763,7 +768,7 @@ class WaterOil(object):
         swirr and sorw. Only use different values here if you know
         what you are doing.
 
-        Modifies or adds self.table.pc if succesful.
+        Modifies or adds self.table["pc"] if succesful.
         Returns false if error occured.
 
         """  # noqa
@@ -809,20 +814,20 @@ class WaterOil(object):
 
         # swnpc is generated upon object initialization, but overwritten
         # here to most likely the same values.
-        self.table["swnpc"] = (self.table.sw - swr) / (1 - swr)
+        self.table["swnpc"] = (self.table["sw"] - swr) / (1 - swr)
 
         # sonpc is almost like 'son', but swl is not used here:
-        self.table["sonpc"] = (1 - self.table.sw - sor) / (1 - sor)
+        self.table["sonpc"] = (1 - self.table["sw"] - sor) / (1 - sor)
 
         # The Skjæveland correlation
-        self.table.loc[self.table.sw < 1 - sor, "pc"] = cw / (
-            self.table.swnpc ** aw
-        ) + co / (self.table.sonpc ** ao)
+        self.table.loc[self.table["sw"] < 1 - sor, "pc"] = cw / (
+            self.table["swnpc"] ** aw
+        ) + co / (self.table["sonpc"] ** ao)
 
         # From 1-sor, the pc is not defined. We want to extrapolate constantly,
         # but with a twist as Eclipse does not non-monotone capillary pressure:
-        self.table["pc"].fillna(value=self.table.pc.min(), inplace=True)
-        nanrows = self.table.sw > 1 - sor - epsilon
+        self.table["pc"].fillna(value=self.table["pc"].min(), inplace=True)
+        nanrows = self.table["sw"] > 1 - sor - epsilon
         self.table.loc[nanrows, "pc"] = (
             self.table.loc[nanrows, "pc"] - self.table.loc[nanrows, "sw"]
         )  # Just deduct sw to make it monotone..
@@ -880,7 +885,7 @@ class WaterOil(object):
         assert Pcmin <= Pct <= Pcmax
 
         # Normalized water saturation including sorw
-        self.table["swnpco"] = (self.table.sw - self.swirr) / (
+        self.table["swnpco"] = (self.table["sw"] - self.swirr) / (
             1 - self.sorw - self.swirr
         )
 
