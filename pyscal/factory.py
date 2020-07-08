@@ -610,7 +610,7 @@ class PyscalFactory(object):
         """
         accepted = ["low", "base", "high"]
         aliases = {
-            "pessismistic": "low",
+            "pessimistic": "low",
             "pess": "low",
             "optimistic": "high",
             "opt": "high",

@@ -623,11 +623,22 @@ def test_case_aliasing():
         data=[
             [1, "pess", 2, 2, 1, 1],
             [1, "base", 3, 1, 1, 1],
-            [1, "optIMIstiC", 3, 1, 1, 1],
+            [1, "opt", 3, 1, 1, 1],
         ],
     )
     relperm_data = PyscalFactory.load_relperm_df(dframe)
     PyscalFactory.create_scal_recommendation_list(relperm_data, h=0.2).interpolate(-0.4)
+    dframe = pd.DataFrame(
+        columns=["SATNUM", "CASE", "Nw", "Now", "Ng", "Nog"],
+        data=[
+            [1, "pessimistic", 2, 2, 1, 1],
+            [1, "base", 3, 1, 1, 1],
+            [1, "optiMISTIc", 3, 1, 1, 1],
+        ],
+    )
+    relperm_data = PyscalFactory.load_relperm_df(dframe)
+    PyscalFactory.create_scal_recommendation_list(relperm_data, h=0.2).interpolate(-0.4)
+
     with pytest.raises(ValueError):
         PyscalFactory.load_relperm_df(
             pd.DataFrame(
