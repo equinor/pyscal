@@ -8,6 +8,8 @@ import six
 import numpy as np
 import pandas as pd
 
+from scipy.interpolate import PchipInterpolator
+
 import pyscal
 from pyscal import utils
 from pyscal.constants import EPSILON as epsilon
@@ -226,8 +228,6 @@ class GasOil(object):
         Calling function is responsible for checking if any data was
         actually added to the table.
         """
-        from scipy.interpolate import PchipInterpolator
-
         # Avoid having to deal with multi-indices:
         if len(dframe.index.names) > 1:
             logger.warning(
@@ -464,6 +464,9 @@ class GasOil(object):
         Returns:
             None (modifies internal state)
         """
+        # Similar code in wateroil.add_LET_water, but readability
+        # is better by having them separate
+        # pylint: disable=duplicate-code
         assert epsilon < l < MAX_EXPONENT
         assert epsilon < e < MAX_EXPONENT
         assert epsilon < t < MAX_EXPONENT
