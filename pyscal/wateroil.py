@@ -380,15 +380,13 @@ class WaterOil(object):
             self.pccomment = "-- pc from tabular input" + pccomment + "\n"
 
     def add_corey_water(self, nw=2, krwend=1, krwmax=None):
-        """ Add krw data through the Corey parametrization
+        """Add krw data through the Corey parametrization
 
         A column named 'krw' will be added. If it exists, it will
         be replaced.
 
-        It is assumed that there are no sw points between
-        sw=1-sorw and sw=1, which should give linear
-        interpolations in simulators. The corey parameter
-        applies up to 1-sorw.
+        The Corey model applies for sw < 1 - sorw. For higher
+        water saturations, krw is linear between krwend and krwmax.
 
         krwmax will be ignored if sorw is close to zero
 
@@ -396,7 +394,6 @@ class WaterOil(object):
             nw (float): Corey parameter for water.
             krwend (float): value of krw at 1 - sorw.
             krwmax (float): maximal value at Sw=1. Default 1
-
         """
         assert epsilon < nw < MAX_EXPONENT
         if krwmax:
@@ -480,10 +477,8 @@ class WaterOil(object):
     def add_LET_water(self, l=2, e=2, t=2, krwend=1, krwmax=None):
         """Add krw data through LET parametrization
 
-        It is assumed that there are no sw points between
-        sw=1-sorw and sw=1, which should give linear
-        interpolations in simulators. The LET parameters
-        apply up to 1-sorw.
+        The LET model applies for sw < 1 - sgrw. For higher
+        water saturations, krw is linear between krwend and krwmax.
 
         krwmax will be ignored if sorw is close to zero.
 
@@ -1125,17 +1120,17 @@ class WaterOil(object):
         The columns sw, krw and pc are outputted and formatted
         accordingly.
 
-        Meta-information for the  tabulated data are printed
+        Meta-information for the tabulated data are printed
         as Eclipse comments.
 
         Args:
-            header: boolean for whether the SGOF string should be emitted.
+            header: boolean for whether the SWFN string should be emitted.
                 If you have multiple satnums, you should have True only
-                for the first (or False for all, and emit the SGOF yourself).
+                for the first (or False for all, and emit the SWFN yourself).
                 Defaults to True.
             dataincommentrow: boolean for wheter metadata should be printed,
                 defaults to True.
-            gaswater (bool): Hints that this SGFN is to be used for
+            gaswater (bool): Hints that this SWFN is to be used for
                 gas-water runs. This will affect which information is
                 given in the header.
         """
