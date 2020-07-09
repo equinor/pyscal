@@ -304,6 +304,46 @@ def test_gasoil_corey1(ng, nog):
     sat_table_str_ok(sgofstr)
 
 
+def test_comments():
+    """Test that the outputters include endpoints in comments"""
+    gasoil = GasOil(h=0.3)
+    gasoil.add_corey_gas()
+    gasoil.add_corey_oil()
+    sgfn = gasoil.SGFN()
+    assert "--" in sgfn
+    assert "pyscal: " in sgfn  # part of version string
+    assert "swirr=0" in sgfn
+    assert "sgcr=0" in sgfn
+    assert "swl=0" in sgfn
+    assert "sorg=0" in sgfn
+    assert "ng=2" in sgfn
+    assert "krgend=1" in sgfn
+    assert "Corey" in sgfn
+    assert "krg = krog @ sg=0.5" in sgfn
+    assert "Zero capillary pressure" in sgfn
+    assert "SG" in sgfn
+    assert "KRG" in sgfn
+    assert "PC" in sgfn
+
+    sgof = gasoil.SGOF()
+    assert "--" in sgof
+    assert "pyscal: " in sgof  # part of version string
+    assert "swirr=0" in sgof
+    assert "sgcr=0" in sgof
+    assert "swl=0" in sgof
+    assert "sorg=0" in sgof
+    assert "ng=2" in sgof
+    assert "nog=2" in sgof
+    assert "krgend=1" in sgof
+    assert "Corey" in sgof
+    assert "krg = krog @ sg=0.5" in sgof
+    assert "Zero capillary pressure" in sgof
+    assert "SG" in sgof
+    assert "KRG" in sgof
+    assert "KROG" in sgof
+    assert "PC" in sgof
+
+
 @settings(deadline=1000)
 @given(st.floats(), st.floats(), st.floats(), st.floats(), st.floats())
 def test_gasoil_let1(l, e, t, krgend, krgmax):

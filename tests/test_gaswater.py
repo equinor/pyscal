@@ -264,3 +264,43 @@ def test_gaswater_pc():
     swfn = gaswater.SWFN()
     assert "petrophysical version" in swfn
     assert "0.1000000 0.0000000 0.014715" in swfn  # first row
+
+
+def test_comments():
+    """Test that the outputters include endpoints in comments"""
+    gaswater = GasWater(h=0.3)
+    gaswater.add_corey_water()
+    gaswater.add_corey_gas()
+    swfn = gaswater.SWFN()
+    assert "--" in swfn
+    assert "pyscal: " in swfn  # part of version string
+    assert "swirr=0" in swfn
+    assert "swcr=0" in swfn
+    assert "swl=0" in swfn
+    assert "sgrw=0" in swfn
+    assert "sgcr=0" in swfn
+    assert "nw=2" in swfn
+    assert "krwend=1" in swfn
+    assert "Corey" in swfn
+    assert "krw = krg @ sw=0.5" in swfn
+    assert "Zero capillary pressure" in swfn
+    assert "SW" in swfn
+    assert "KRW" in swfn
+    assert "KRGW" not in swfn
+    assert "PC" in swfn
+
+    sgfn = gaswater.SGFN()
+    assert "--" in sgfn
+    assert "pyscal: " in sgfn  # part of version string
+    assert "swirr=0" in sgfn
+    assert "sgcr=0" in sgfn
+    assert "swl=0" in sgfn
+    assert "ng=2" in sgfn
+    assert "krgend=1" in sgfn
+    assert "Corey" in sgfn
+    assert "krw = krg @ sw=0.5" in sgfn
+    assert "Zero capillary pressure" in sgfn
+    assert "SG" in sgfn
+    assert "KRW" not in sgfn
+    assert "KRG" in sgfn
+    assert "PC" in sgfn
