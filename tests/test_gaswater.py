@@ -92,7 +92,7 @@ def test_gaswater_let1(l, e, t, krwend, krwmax):
     """Test random LET parameters"""
     gaswater = GasWater()
     try:
-        gaswater.add_LET_gas(l, e, t, krwend, krwmax)
+        gaswater.add_LET_gas(l, e, t, krwend)
         gaswater.add_LET_water(l, e, t, krwend, krwmax)
     except AssertionError:
         # This happens for negative values f.ex.
@@ -202,3 +202,65 @@ def test_gaswater_linear():
     assert np.isclose(gaswater.wateroil.table["sw"].min(), 0.1)
     assert np.isclose(gaswater.wateroil.table["sw"].max(), 1.0)
     # assert np.isclose(gaswater.crosspoint(), 0.55)
+
+
+def test_crosspoint():
+    """Test the crosspoint computation (on edge cases)"""
+    gaswater = GasWater(swl=0.0, sgrw=0.0, sgcr=0.0, h=0.1)
+    gaswater.add_corey_water(nw=1)
+    gaswater.add_corey_gas(ng=1)
+    assert np.isclose(gaswater.crosspoint(), 0.5)
+
+    gaswater = GasWater(swl=0.5, sgrw=0.0, sgcr=0.0, h=0.1)
+    gaswater.add_corey_water(nw=1)
+    gaswater.add_corey_gas(ng=1)
+    assert np.isclose(gaswater.crosspoint(), 0.75)
+
+    gaswater = GasWater(swl=0.0, sgrw=0.5, sgcr=0.0, h=0.1)
+    gaswater.add_corey_water(nw=1)
+    gaswater.add_corey_gas(ng=1)
+    assert np.isclose(gaswater.crosspoint(), 0.3333333)
+
+    gaswater = GasWater(swl=0.0, sgrw=0.5, sgcr=0.5, h=0.1)
+    gaswater.add_corey_water(nw=1)
+    gaswater.add_corey_gas(ng=1)
+    assert np.isclose(gaswater.crosspoint(), 0.25)
+
+    gaswater = GasWater(swl=0.0, sgrw=0.5, sgcr=0.5, h=0.1)
+    gaswater.add_corey_water(nw=1, krwend=0.5)
+    gaswater.add_corey_gas(ng=1, krgend=0.5)
+    assert np.isclose(gaswater.crosspoint(), 0.25)
+
+
+def test_gaswater_pc():
+    """Test that capillary pressure can be added to GasWater.
+
+    The GasWater object is calling up the code in WaterOil, which is
+    tested more thorougly, in this test function we need to make
+    sure the functionality is in place."""
+    gaswater = GasWater(swl=0.1, h=0.2)
+    gaswater.add_corey_water()
+    gaswater.add_corey_gas()
+    gaswater.add_simple_J()
+    assert gaswater.wateroil.table["pc"].abs().sum() > 0
+    swfn = gaswater.SWFN()
+    assert "Simplified J-function" in swfn
+    assert "0.1000000 0.0000000 0.23266" in swfn  # this is the first row.
+    sat_table_str_ok(swfn)
+
+    sgfn = gaswater.SGFN()
+    # Capillary pressure in SGFN must always be zero for GasWater.
+    assert "Zero capillary pressure" in sgfn
+    sat_table_str_ok(sgfn)
+
+    # Overwrite to zero:
+    gaswater.add_simple_J(drho=0)
+    swfn = gaswater.SWFN()
+    assert "0.1000000 0.0000000 0.0000000" in swfn  # first row
+    sat_table_str_ok(sgfn)
+
+    # Petrophysical pc:
+    gaswater.add_simple_J_petro(a=1, b=-1)
+    swfn = gaswater.SWFN()
+    assert "petrophysical version" in swfn
+    assert "0.1000000 0.0000000 0.014715" in swfn  # first row
