@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal package &mdash; pyscal 0.5.2.dev10+g41871e7 documentation</title>
+  <title>pyscal package &mdash; pyscal 0.5.2.dev11+g08c2014 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.5.2.dev10+g41871e7
+                0.5.2.dev11+g08c2014
               </div>
             
           
@@ -100,6 +100,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#module-pyscal.constants">pyscal.constants module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pyscal.factory">pyscal.factory module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pyscal.gasoil">pyscal.gasoil module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-pyscal.gaswater">pyscal.gaswater module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pyscal.pyscalcli">pyscal.pyscalcli module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pyscal.pyscallist">pyscal.pyscallist module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pyscal.scalrecommendation">pyscal.scalrecommendation module</a></li>
@@ -248,6 +249,22 @@ lg, eg, tg, log, eog, tog</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="pyscal.factory.PyscalFactory.create_gas_water">
+<em class="property">static </em><code class="sig-name descname">create_gas_water</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_gas_water"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_gas_water" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a GasWater object.</p>
+<p>Parameterization (Corey/LET) is inferred from presence
+of certain parameters in the dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>params</strong> (<em>dict</em>) – Dictionary with parameters for GasWater.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>GasWater</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="pyscal.factory.PyscalFactory.create_gasoil_list">
 <em class="property">static </em><code class="sig-name descname">create_gasoil_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">relperm_params_df</span></em>, <em class="sig-param"><span class="n">h</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_gasoil_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_gasoil_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a PyscalList with GasOil objects from
@@ -267,9 +284,28 @@ processed through load_relperm_df()</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt id="pyscal.factory.PyscalFactory.create_gaswater_list">
+<em class="property">static </em><code class="sig-name descname">create_gaswater_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">relperm_params_df</span></em>, <em class="sig-param"><span class="n">h</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_gaswater_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_gaswater_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a PyscalList with WaterOilGas objects from
+a dataframe, to be used for GasWater</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>relperm_params_df</strong> (<em>pd.DataFrame</em>) – A valid dataframe with GasWater
+parameters, processed through load_relperm_df()</p></li>
+<li><p><strong>h</strong> (<em>float</em>) – Saturation steplength</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>PyscalList, consisting of GasWater objects</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="pyscal.factory.PyscalFactory.create_pyscal_list">
 <em class="property">static </em><code class="sig-name descname">create_pyscal_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">relperm_params_df</span></em>, <em class="sig-param"><span class="n">h</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_pyscal_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_pyscal_list" title="Permalink to this definition">¶</a></dt>
-<dd><p>Create wateroilgas, wateroil or gasoil list
+<dd><p>Create WaterOilGas, WaterOil, GasOil or GasWater list
 based on what is available</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -295,7 +331,27 @@ dictionary of dictionary.</p>
 endpoints and LET/Corey parameters, as you would feed it to
 the create_water_oil_gas() factory function, and then similarly
 for base and high.</p>
-<p>For oil-water only, you may omit the parameters for gas-oil.</p>
+<p>For oil-water only, you may omit the parameters for gas-oil.
+A WaterOilGas object for each case is created, but only the
+WaterOil part of it will be used.</p>
+<p>For gas-water, a GasWater object is created for each pess, base
+and high.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>dict</em>) – keys low, base and high.
+The value for “low” must be a new dictionary with saturation
+endpoints and LET/Corey parameters, as you would feed it to
+the create_water_oil_gas() factory function, and then similarly
+for base and high.</p></li>
+<li><p><strong>tag</strong> (<em>string</em>) – String to be used as the tag, will end up in comments.</p></li>
+<li><p><strong>h</strong> (<em>float</em>) – Saturation step length</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>SCALrecommendation</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -353,6 +409,11 @@ the WaterOil object.</p>
 of certain parameters in the dictionary.</p>
 <p>Check create_water_oil() and create_gas_oil() for lists
 of supported parameters (case insensitive)</p>
+<dl class="simple">
+<dt>Params:</dt><dd><p>params (dict):  parameteres
+gaswater (bool): Flag to indicate if is to be used for GasWater</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -473,7 +534,7 @@ Keys not existing will be ignored.</p>
 
 <dl class="py function">
 <dt id="pyscal.factory.sufficient_gas_oil_params">
-<code class="sig-prename descclassname">pyscal.factory.</code><code class="sig-name descname">sufficient_gas_oil_params</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#sufficient_gas_oil_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.sufficient_gas_oil_params" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pyscal.factory.</code><code class="sig-name descname">sufficient_gas_oil_params</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span></em>, <em class="sig-param"><span class="n">failhard</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#sufficient_gas_oil_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.sufficient_gas_oil_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Determine if the supplied parameters are sufficient for
 attempting at creating a GasOil object.</p>
 <p>In the factory context, relying on the defaults in the API
@@ -481,18 +542,53 @@ is not allowed, as that would leave the tasks for the factory
 undefined (Corey or LET, and which pc?)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>params</strong> – dict</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>dict</em>) – Dictionary of parameters to a GasOil object.</p></li>
+<li><p><strong>failhard</strong> (<em>bool</em>) – If True, will raise ValueError when
+parameters are insufficient. If defaulted, no
+exception is raised.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>True if a GasOil object should be attempted constructed
-(but no guarantee for validity of numerical values)</p>
+<dd class="field-even"><p><dl class="simple">
+<dt>True if a GasOil object should be attempted constructed</dt><dd><p>(but no guarantee for validity of numerical values)</p>
+</dd>
+</dl>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyscal.factory.sufficient_gas_water_params">
+<code class="sig-prename descclassname">pyscal.factory.</code><code class="sig-name descname">sufficient_gas_water_params</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span></em>, <em class="sig-param"><span class="n">failhard</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#sufficient_gas_water_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.sufficient_gas_water_params" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine if the supplied parameters are sufficient for
+attempting creating a WaterOilGas object to be used for gas water.</p>
+<p>In the factory context, relying on the defaults in the API
+(wateroilgas.py) is not allowed, as that would leave the tasks
+for the factory undefined (Corey or LET, and which pc?)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>dict</em>) – Dictionary of parameters to a GasWater object.</p></li>
+<li><p><strong>failhard</strong> (<em>bool</em>) – If True, will raise ValueError when
+parameters are insufficient. If defaulted, no
+exception is raised.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>True if a GasWater object should be attempted constructed</dt><dd><p>(but no guarantee for validity of numerical values)</p>
+</dd>
+</dl>
+</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt id="pyscal.factory.sufficient_water_oil_params">
-<code class="sig-prename descclassname">pyscal.factory.</code><code class="sig-name descname">sufficient_water_oil_params</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#sufficient_water_oil_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.sufficient_water_oil_params" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pyscal.factory.</code><code class="sig-name descname">sufficient_water_oil_params</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span></em>, <em class="sig-param"><span class="n">failhard</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#sufficient_water_oil_params"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.sufficient_water_oil_params" title="Permalink to this definition">¶</a></dt>
 <dd><p>Determine if the supplied parameters are sufficient for
 attempting creating a WaterOil object.</p>
 <p>In the factory context, relying on the defaults in the API
@@ -500,11 +596,19 @@ is not allowed, as that would leave the tasks for the factory
 undefined (Corey or LET, and which pc?)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>params</strong> – dict</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>dict</em>) – Dictionary of parameters to a WaterOil object.</p></li>
+<li><p><strong>failhard</strong> (<em>bool</em>) – If True, will raise ValueError when
+parameters are insufficient. If defaulted, no
+exception is raised.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>True if a WaterOil object should be attempted constructed
-(but no guarantee for validity of numerical values)</p>
+<dd class="field-even"><p><dl class="simple">
+<dt>True if a WaterOil object should be attempted constructed</dt><dd><p>(but no guarantee for validity of numerical values)</p>
+</dd>
+</dl>
+</p>
 </dd>
 </dl>
 </dd></dl>
@@ -581,7 +685,7 @@ defaults to True.</p></li>
 
 <dl class="py method">
 <dt id="pyscal.gasoil.GasOil.SGFN">
-<code class="sig-name descname">SGFN</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">dataincommentrow</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gasoil.html#GasOil.SGFN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gasoil.GasOil.SGFN" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">SGFN</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">dataincommentrow</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">gaswater</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gasoil.html#GasOil.SGFN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gasoil.GasOil.SGFN" title="Permalink to this definition">¶</a></dt>
 <dd><p>Produce SGFN input for Eclipse reservoir simulator.</p>
 <p>The columns sg, krg, and pc are outputted and
 formatted accordingly.</p>
@@ -596,6 +700,9 @@ for the first (or False for all, and emit the SGOF yourself).
 Defaults to True.</p></li>
 <li><p><strong>dataincommentrow</strong> – boolean for wheter metadata should be printed,
 defaults to True.</p></li>
+<li><p><strong>gaswater</strong> (<em>bool</em>) – Hints that this SGFN is to be used for
+gas-water runs. This will affect the information in
+the header comments.</p></li>
 </ul>
 </dd>
 </dl>
@@ -888,6 +995,150 @@ extracted as a single function to facilitate testing.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="module-pyscal.gaswater">
+<span id="pyscal-gaswater-module"></span><h2>pyscal.gaswater module<a class="headerlink" href="#module-pyscal.gaswater" title="Permalink to this headline">¶</a></h2>
+<p>Object to represent GasWater, implemented as a Container
+object for one WaterOil and one GasOil object</p>
+<dl class="py class">
+<dt id="pyscal.gaswater.GasWater">
+<em class="property">class </em><code class="sig-prename descclassname">pyscal.gaswater.</code><code class="sig-name descname">GasWater</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">swirr</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">swl</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">swcr</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">sgrw</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">sgcr</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">h</span><span class="o">=</span><span class="default_value">0.01</span></em>, <em class="sig-param"><span class="n">tag</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">fast</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gaswater.html#GasWater"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gaswater.GasWater" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>A representation of two-phase properties for gas-water</p>
+<p>Internally, this class handles gas-water by using one WaterOil
+object and one GasOil object, with dummy parameters for oil.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>swirr</strong> (<em>float</em>) – Irreducible water saturation for capillary pressure</p></li>
+<li><p><strong>swl</strong> (<em>float</em>) – First water saturation point in outputted tables.</p></li>
+<li><p><strong>swcr</strong> (<em>float</em>) – Critical water saturation, water is immobile below this</p></li>
+<li><p><strong>sgrw</strong> (<em>float</em>) – Residual gas saturation after water flooding.</p></li>
+<li><p><strong>sgcr</strong> (<em>float</em>) – Critical gas saturation, gas is immobile below this</p></li>
+<li><p><strong>h</strong> (<em>float</em>) – Saturation intervals in generated tables.</p></li>
+<li><p><strong>tag</strong> (<em>str</em>) – Optional text that will be included as comments.</p></li>
+<li><p><strong>fast</strong> (<em>bool</em>) – Set to True if you prefer speed over robustness. Not recommended,
+pyscal will not guarantee valid output in this mode.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="pyscal.gaswater.GasWater.SGFN">
+<code class="sig-name descname">SGFN</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">dataincommentrow</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gaswater.html#GasWater.SGFN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gaswater.GasWater.SGFN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a SGFN string. Delegated to the gasoil object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyscal.gaswater.GasWater.SGWFN">
+<code class="sig-name descname">SGWFN</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">dataincommentrow</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gaswater.html#GasWater.SGWFN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gaswater.GasWater.SGWFN" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyscal.gaswater.GasWater.SWFN">
+<code class="sig-name descname">SWFN</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">dataincommentrow</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gaswater.html#GasWater.SWFN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gaswater.GasWater.SWFN" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return a SWFN string. Delegated to the wateroil object.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyscal.gaswater.GasWater.add_LET_gas">
+<code class="sig-name descname">add_LET_gas</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">l</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">e</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">t</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">krgend</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">krgmax</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gaswater.html#GasWater.add_LET_gas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gaswater.GasWater.add_LET_gas" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyscal.gaswater.GasWater.add_LET_water">
+<code class="sig-name descname">add_LET_water</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">l</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">e</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">t</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">krwend</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">krwmax</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gaswater.html#GasWater.add_LET_water"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gaswater.GasWater.add_LET_water" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyscal.gaswater.GasWater.add_corey_gas">
+<code class="sig-name descname">add_corey_gas</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ng</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">krgend</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">krgmax</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gaswater.html#GasWater.add_corey_gas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gaswater.GasWater.add_corey_gas" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyscal.gaswater.GasWater.add_corey_water">
+<code class="sig-name descname">add_corey_water</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nw</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">krwend</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">krwmax</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gaswater.html#GasWater.add_corey_water"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gaswater.GasWater.add_corey_water" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyscal.gaswater.GasWater.add_fromtable">
+<code class="sig-name descname">add_fromtable</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gaswater.html#GasWater.add_fromtable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gaswater.GasWater.add_fromtable" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyscal.gaswater.GasWater.add_simple_J">
+<code class="sig-name descname">add_simple_J</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">b</span><span class="o">=</span><span class="default_value">- 1.5</span></em>, <em class="sig-param"><span class="n">poro_ref</span><span class="o">=</span><span class="default_value">0.25</span></em>, <em class="sig-param"><span class="n">perm_ref</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">drho</span><span class="o">=</span><span class="default_value">300</span></em>, <em class="sig-param"><span class="n">g</span><span class="o">=</span><span class="default_value">9.81</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gaswater.html#GasWater.add_simple_J"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gaswater.GasWater.add_simple_J" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyscal.gaswater.GasWater.add_simple_J_petro">
+<code class="sig-name descname">add_simple_J_petro</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">poro_ref</span><span class="o">=</span><span class="default_value">0.25</span></em>, <em class="sig-param"><span class="n">perm_ref</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">drho</span><span class="o">=</span><span class="default_value">300</span></em>, <em class="sig-param"><span class="n">g</span><span class="o">=</span><span class="default_value">9.81</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gaswater.html#GasWater.add_simple_J_petro"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gaswater.GasWater.add_simple_J_petro" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyscal.gaswater.GasWater.crosspoint">
+<code class="sig-name descname">crosspoint</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gaswater.html#GasWater.crosspoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gaswater.GasWater.crosspoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyscal.gaswater.GasWater.krgcomment">
+<em class="property">property </em><code class="sig-name descname">krgcomment</code><a class="headerlink" href="#pyscal.gaswater.GasWater.krgcomment" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyscal.gaswater.GasWater.krwcomment">
+<em class="property">property </em><code class="sig-name descname">krwcomment</code><a class="headerlink" href="#pyscal.gaswater.GasWater.krwcomment" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyscal.gaswater.GasWater.plotkrwkrg">
+<code class="sig-name descname">plotkrwkrg</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mpl_ax</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">color</span><span class="o">=</span><span class="default_value">'blue'</span></em>, <em class="sig-param"><span class="n">alpha</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">linewidth</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">linestyle</span><span class="o">=</span><span class="default_value">'-'</span></em>, <em class="sig-param"><span class="n">marker</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">label</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">logyscale</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gaswater.html#GasWater.plotkrwkrg"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gaswater.GasWater.plotkrwkrg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Plot krw and krg</p>
+<p>If the argument ‘mpl_ax’ is not supplied, a new plot
+window will be made. If supplied, it will draw on
+the specified axis.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyscal.gaswater.GasWater.selfcheck">
+<code class="sig-name descname">selfcheck</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gaswater.html#GasWater.selfcheck"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gaswater.GasWater.selfcheck" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run selfcheck on the data.</p>
+<p>Performs tests if necessary data is ready in the object for
+printing Eclipse include files, and checks some numerical
+properties (direction and monotonocity)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyscal.gaswater.GasWater.swcomment">
+<em class="property">property </em><code class="sig-name descname">swcomment</code><a class="headerlink" href="#pyscal.gaswater.GasWater.swcomment" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyscal.gaswater.GasWater.swcr">
+<em class="property">property </em><code class="sig-name descname">swcr</code><a class="headerlink" href="#pyscal.gaswater.GasWater.swcr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyscal.gaswater.GasWater.swirr">
+<em class="property">property </em><code class="sig-name descname">swirr</code><a class="headerlink" href="#pyscal.gaswater.GasWater.swirr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyscal.gaswater.GasWater.swl">
+<em class="property">property </em><code class="sig-name descname">swl</code><a class="headerlink" href="#pyscal.gaswater.GasWater.swl" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyscal.gaswater.GasWater.tag">
+<em class="property">property </em><code class="sig-name descname">tag</code><a class="headerlink" href="#pyscal.gaswater.GasWater.tag" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
 <div class="section" id="module-pyscal.pyscalcli">
 <span id="pyscal-pyscalcli-module"></span><h2>pyscal.pyscalcli module<a class="headerlink" href="#module-pyscal.pyscalcli" title="Permalink to this headline">¶</a></h2>
 <p>Command line tool for pyscal</p>
@@ -952,7 +1203,7 @@ and it will call SWOF on each element succesively.</p>
 </dl>
 <dl class="py method">
 <dt id="pyscal.pyscallist.PyscalList.SGFN">
-<code class="sig-name descname">SGFN</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">write_to_filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/pyscallist.html#PyscalList.SGFN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.pyscallist.PyscalList.SGFN" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">SGFN</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">write_to_filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">gaswater</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/pyscallist.html#PyscalList.SGFN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.pyscallist.PyscalList.SGFN" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make SGFN string and optionally print to file</p>
 </dd></dl>
 
@@ -976,7 +1227,7 @@ and it will call SWOF on each element succesively.</p>
 
 <dl class="py method">
 <dt id="pyscal.pyscallist.PyscalList.SWFN">
-<code class="sig-name descname">SWFN</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">write_to_filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/pyscallist.html#PyscalList.SWFN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.pyscallist.PyscalList.SWFN" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">SWFN</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">write_to_filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">gaswater</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/pyscallist.html#PyscalList.SWFN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.pyscallist.PyscalList.SWFN" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make SWFN string and optionally print to file</p>
 </dd></dl>
 
@@ -1035,10 +1286,11 @@ filename. This means SWOF + SGOF (SGOF only if relevant)</p>
 <dt id="pyscal.pyscallist.PyscalList.dump_family_2">
 <code class="sig-name descname">dump_family_2</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/pyscallist.html#PyscalList.dump_family_2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.pyscallist.PyscalList.dump_family_2" title="Permalink to this definition">¶</a></dt>
 <dd><p>Dumps family 2 Eclipse saturation tables to one
-filename. This means SWFN + SGFN + SOF3</p>
+filename. This means SWFN + SGFN + SOF3 (SOF3 only for WaterOilGas)</p>
+<p>Relevant for WaterOilGas and GasWater.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – Filename for the output to be given to Eclips 100</p>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – Filename for the output to be given to Eclipse 100</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1069,7 +1321,7 @@ be used for GasOil interpolation.</p></li>
 
 <dl class="py method">
 <dt id="pyscal.pyscallist.PyscalList.make_ecl_output">
-<code class="sig-name descname">make_ecl_output</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">keyword</span></em>, <em class="sig-param"><span class="n">write_to_filename</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/pyscallist.html#PyscalList.make_ecl_output"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.pyscallist.PyscalList.make_ecl_output" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">make_ecl_output</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">keyword</span></em>, <em class="sig-param"><span class="n">write_to_filename</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">gaswater</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/pyscallist.html#PyscalList.make_ecl_output"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.pyscallist.PyscalList.make_ecl_output" title="Permalink to this definition">¶</a></dt>
 <dd><p>Internal helper function for constructing strings and writing to disk</p>
 </dd></dl>
 
@@ -1116,10 +1368,7 @@ when __init__ no longer supports dicts as arguments.</p>
 <dl class="py method">
 <dt id="pyscal.scalrecommendation.SCALrecommendation.interpolate">
 <code class="sig-name descname">interpolate</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">parameter</span></em>, <em class="sig-param"><span class="n">parameter2</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">h</span><span class="o">=</span><span class="default_value">0.02</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/scalrecommendation.html#SCALrecommendation.interpolate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.scalrecommendation.SCALrecommendation.interpolate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Interpolate between low, base and high
-parameter = -1 reproduces low curve
-parameter = 0 reproduces base curve
-parameter = 1 reproduces high curve</p>
+<dd><p>Interpolate between low, base and high</p>
 <p>Endpoints are located for input curves, and interpolated
 individually. Interpolation for the nonlinear part
 is done on a normalized interval between the endpoints</p>
@@ -1128,11 +1377,19 @@ linear in log-relperm-direction</p>
 <p>This method returns an WaterOilGas object which can be
 realized into printed tables. No attempt is made to
 parametrize the interpolant in L,E,T parameter space, or Corey-space.</p>
-<p>If a second parameter is supplied (“parameter2”) this is used
-for the gas-oil interpolation. This enables the gas-oil
-interpolant to be fully uncorrelated to the water-oil
-interpolant. CHECK how this affects endpoints and Eclipse
-consistency!!</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>parameter</strong> (<em>float</em>) – Between -1 and 1, inclusive. -1 reproduces low/
+pessimistic curve, 0 gives base, 1 gives high/optimistic.</p></li>
+<li><p><strong>parameter2</strong> (<em>float</em>) – If not None, used for the gas-oil interpolation,
+enables having interpolation uncorrelated for WaterOil and
+GasOil. Ignored for GasWater (no warning).</p></li>
+<li><p><strong>h</strong> (<em>float</em>) – Saturation step length in generated tables. Does not
+need to be the same as the tables interpolation is done from.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -1424,7 +1681,7 @@ the normalized interval [0,1]</p>
 <p>Wateroil module</p>
 <dl class="py class">
 <dt id="pyscal.wateroil.WaterOil">
-<em class="property">class </em><code class="sig-prename descclassname">pyscal.wateroil.</code><code class="sig-name descname">WaterOil</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">swirr</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">swl</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">swcr</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">sorw</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">h</span><span class="o">=</span><span class="default_value">0.01</span></em>, <em class="sig-param"><span class="n">tag</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">fast</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">pyscal.wateroil.</code><code class="sig-name descname">WaterOil</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">swirr</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">swl</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">swcr</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">sorw</span><span class="o">=</span><span class="default_value">0.0</span></em>, <em class="sig-param"><span class="n">h</span><span class="o">=</span><span class="default_value">0.01</span></em>, <em class="sig-param"><span class="n">tag</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">fast</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">_sgcr</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A representation of two-phase properties for oil-water.</p>
 <p>Can hold relative permeability data, and capillary pressure.</p>
@@ -1466,8 +1723,27 @@ runs, as speed is seldom crucial. Default False</p></li>
 </dl>
 <dl class="py method">
 <dt id="pyscal.wateroil.WaterOil.SWFN">
-<code class="sig-name descname">SWFN</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">dataincommentrow</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.SWFN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.SWFN" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">SWFN</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">dataincommentrow</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">gaswater</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.SWFN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.SWFN" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a SWFN keyword with data to Eclipse</p>
+<p>The columns sw, krw and pc are outputted and formatted
+accordingly.</p>
+<p>Meta-information for the  tabulated data are printed
+as Eclipse comments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>header</strong> – boolean for whether the SGOF string should be emitted.
+If you have multiple satnums, you should have True only
+for the first (or False for all, and emit the SGOF yourself).
+Defaults to True.</p></li>
+<li><p><strong>dataincommentrow</strong> – boolean for wheter metadata should be printed,
+defaults to True.</p></li>
+<li><p><strong>gaswater</strong> (<em>bool</em>) – Hints that this SGFN is to be used for
+gas-water runs. This will affect which information is
+given in the header.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1972,6 +2248,31 @@ being None, only the relevant is checked.</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py method">
+<dt id="pyscal.wateroilgas.WaterOilGas.sorg">
+<em class="property">property </em><code class="sig-name descname">sorg</code><a class="headerlink" href="#pyscal.wateroilgas.WaterOilGas.sorg" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyscal.wateroilgas.WaterOilGas.sorw">
+<em class="property">property </em><code class="sig-name descname">sorw</code><a class="headerlink" href="#pyscal.wateroilgas.WaterOilGas.sorw" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyscal.wateroilgas.WaterOilGas.swirr">
+<em class="property">property </em><code class="sig-name descname">swirr</code><a class="headerlink" href="#pyscal.wateroilgas.WaterOilGas.swirr" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyscal.wateroilgas.WaterOilGas.swl">
+<em class="property">property </em><code class="sig-name descname">swl</code><a class="headerlink" href="#pyscal.wateroilgas.WaterOilGas.swl" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="pyscal.wateroilgas.WaterOilGas.tag">
+<em class="property">property </em><code class="sig-name descname">tag</code><a class="headerlink" href="#pyscal.wateroilgas.WaterOilGas.tag" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt id="pyscal.wateroilgas.WaterOilGas.threephaseconsistency">

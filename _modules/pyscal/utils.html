@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal.utils &mdash; pyscal 0.5.2.dev10+g41871e7 documentation</title>
+  <title>pyscal.utils &mdash; pyscal 0.5.2.dev11+g08c2014 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.5.2.dev10+g41871e7
+                0.5.2.dev11+g08c2014
               </div>
             
           
@@ -258,7 +258,7 @@
 <span class="sd">            kr1col == kr2col, when krXcol is linearly interpolated</span>
 <span class="sd">            as a function of the saturation values.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">dframe</span> <span class="o">=</span> <span class="n">dframe</span><span class="p">[[</span><span class="n">satcol</span><span class="p">,</span> <span class="n">kr1col</span><span class="p">,</span> <span class="n">kr2col</span><span class="p">]]</span>  <span class="c1"># Copy</span>
+    <span class="n">dframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">dframe</span><span class="p">[[</span><span class="n">satcol</span><span class="p">,</span> <span class="n">kr1col</span><span class="p">,</span> <span class="n">kr2col</span><span class="p">]])</span>  <span class="c1"># Copy</span>
     <span class="n">dframe</span>
     <span class="n">dframe</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;krdiff&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dframe</span><span class="p">[</span><span class="n">kr1col</span><span class="p">]</span> <span class="o">-</span> <span class="n">dframe</span><span class="p">[</span><span class="n">kr2col</span><span class="p">]</span>
 

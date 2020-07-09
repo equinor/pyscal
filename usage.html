@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Usage &mdash; pyscal 0.5.2.dev10+g41871e7 documentation</title>
+  <title>Usage &mdash; pyscal 0.5.2.dev11+g08c2014 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.5.2.dev10+g41871e7
+                0.5.2.dev11+g08c2014
               </div>
             
           
@@ -99,7 +99,12 @@
 <li class="toctree-l3"><a class="reference internal" href="#Named Arguments">Named Arguments</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#saturation-and-relative-permeability-endpoints">Saturation and relative permeability endpoints</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#saturation-and-relative-permeability-endpoints">Saturation and relative permeability endpoints</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#water-oil">Water-Oil</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#gas-oil">Gas-Oil</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#gas-water">Gas-Water</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#python-api">Python API</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#gas-oil-curve">Gas-oil curve</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#water-oil-gas">Water-oil-gas</a></li>
@@ -181,7 +186,7 @@
 line tool is a short wrapper utilizing the underlying pyscal functionality.</p>
 <div class="section" id="the-command-line-tool">
 <h2>The command line tool<a class="headerlink" href="#the-command-line-tool" title="Permalink to this headline">¶</a></h2>
-<p><p>pyscal (0.5.2.dev10+g41871e7) is a tool to create Eclipse include files for relative permeability input from tabulated parameters.</p>
+<p><p>pyscal (0.5.2.dev11+g08c2014) is a tool to create Eclipse include files for relative permeability input from tabulated parameters.</p>
 </p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">pyscal</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">debug</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">o</span> <span class="n">OUTPUT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">delta_s</span> <span class="n">DELTA_S</span><span class="p">]</span>
               <span class="p">[</span><span class="o">--</span><span class="n">int_param_wo</span> <span class="n">INT_PARAM_WO</span> <span class="p">[</span><span class="n">INT_PARAM_WO</span> <span class="o">...</span><span class="p">]]</span>
@@ -217,10 +222,10 @@ line tool is a short wrapper utilizing the underlying pyscal functionality.</p>
 <dd><p>Saturation table step-length for sw/sg. Default 0.01</p>
 </dd>
 <dt><kbd>--int_param_wo</kbd></dt>
-<dd><p>Interpolation parameters for water-oil, if the parametertable contains low, base and high for each SATNUM. Either one number used for all SATNUM, or a sequence of length equal to the max SATNUM. Numbers between -1 and 1.</p>
+<dd><p>Interpolation parameters for water-oil, if the parametertable contains low, base and high for each SATNUM. Either one number used for all SATNUM, or a sequence of length equal to the max SATNUM. Numbers between -1 and 1. Also used for GasWater.</p>
 </dd>
 <dt><kbd>--int_param_go</kbd></dt>
-<dd><p>Interpolation parameters for gas-oil, if the parametertable contains low, base and high for each SATNUM. Either one number used for all SATNUM, or a sequence of length equal to the max SATNUM. Numbers between -1 and 1. If not provided, the water-oil interpolation parameter will be used as default.</p>
+<dd><p>Interpolation parameters for gas-oil, if the parametertable contains low, base and high for each SATNUM. Either one number used for all SATNUM, or a sequence of length equal to the max SATNUM. Numbers between -1 and 1. If not provided, the water-oil interpolation parameter will be used as default. Do not use for GasWater.</p>
 </dd>
 <dt><kbd>--sheet_name</kbd></dt>
 <dd><p>Sheet name if reading XLSX file. Defaults to first sheet</p>
@@ -230,7 +235,7 @@ line tool is a short wrapper utilizing the underlying pyscal functionality.</p>
 <p>Default: False</p>
 </dd>
 <dt><kbd>--family2</kbd></dt>
-<dd><p>Output family 2 keywords, SWFN, SGFN and SOF3/SOF2. Family 1 (SWOF + SGOF) is written if this is not set</p>
+<dd><p>Output family 2 keywords, SWFN, SGFN and SOF3/SOF2. Family 1 (SWOF + SGOF) is written if this is not set.  Implicit for gas-water input.</p>
 <p>Default: False</p>
 </dd>
 </dl>
@@ -472,10 +477,23 @@ data set contains a CASE column.</p>
 <div class="section" id="saturation-and-relative-permeability-endpoints">
 <h2>Saturation and relative permeability endpoints<a class="headerlink" href="#saturation-and-relative-permeability-endpoints" title="Permalink to this headline">¶</a></h2>
 <p>The endpoints used in the parametrization is shown in the following figure for WaterOil.</p>
+<div class="section" id="water-oil">
+<h3>Water-Oil<a class="headerlink" href="#water-oil" title="Permalink to this headline">¶</a></h3>
 <a class="reference internal image-reference" href="_images/wateroil-endpoints.png"><img alt="_images/wateroil-endpoints.png" src="_images/wateroil-endpoints.png" style="width: 600px;" /></a>
+<p><em>Note</em>: Pyscal prior to 0.6.0 had the oil relperm anchord at swcr, and then used the
+parameters krowend and krowmax. krowmax is now deprecated, and krowend and krogend must be
+equal and renamed to kroend.</p>
+</div>
+<div class="section" id="gas-oil">
+<h3>Gas-Oil<a class="headerlink" href="#gas-oil" title="Permalink to this headline">¶</a></h3>
 <p>For GasOil, there is an option of where to anchor <code class="docutils literal notranslate"><span class="pre">krgend</span></code>, shown in the following figure.
 The red curve is the default, where <code class="docutils literal notranslate"><span class="pre">krgendanchor==&quot;sorg&quot;</span></code>, and the pink is the other choice.</p>
 <a class="reference internal image-reference" href="_images/gasoil-endpoints.png"><img alt="_images/gasoil-endpoints.png" src="_images/gasoil-endpoints.png" style="width: 600px;" /></a>
+</div>
+<div class="section" id="gas-water">
+<h3>Gas-Water<a class="headerlink" href="#gas-water" title="Permalink to this headline">¶</a></h3>
+<a class="reference internal image-reference" href="_images/gaswater-endpoints.png"><img alt="_images/gaswater-endpoints.png" src="_images/gaswater-endpoints.png" style="width: 600px;" /></a>
+</div>
 </div>
 <div class="section" id="python-api">
 <h2>Python API<a class="headerlink" href="#python-api" title="Permalink to this headline">¶</a></h2>

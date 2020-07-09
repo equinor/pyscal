@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal.pyscalcli &mdash; pyscal 0.5.2.dev10+g41871e7 documentation</title>
+  <title>pyscal.pyscalcli &mdash; pyscal 0.5.2.dev11+g08c2014 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.5.2.dev10+g41871e7
+                0.5.2.dev11+g08c2014
               </div>
             
           
@@ -167,7 +167,7 @@
 
 <span class="kn">import</span> <span class="nn">logging</span>
 
-<span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">PyscalFactory</span>
+<span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">WaterOilGas</span><span class="p">,</span> <span class="n">GasWater</span><span class="p">,</span> <span class="n">PyscalFactory</span>
 
 <span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">__version__</span>
 
@@ -258,6 +258,7 @@
             <span class="s2">&quot;low, base and high for each SATNUM. &quot;</span>
             <span class="s2">&quot;Either one number used for all SATNUM, or a sequence of &quot;</span>
             <span class="s2">&quot;length equal to the max SATNUM. Numbers between -1 and 1. &quot;</span>
+            <span class="s2">&quot;Also used for GasWater.&quot;</span>
         <span class="p">),</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
@@ -271,7 +272,7 @@
             <span class="s2">&quot;Either one number used for all SATNUM, or a sequence &quot;</span>
             <span class="s2">&quot;of length equal to the max SATNUM. Numbers between -1 and 1. &quot;</span>
             <span class="s2">&quot;If not provided, the water-oil interpolation parameter will be used &quot;</span>
-            <span class="s2">&quot;as default.&quot;</span>
+            <span class="s2">&quot;as default. Do not use for GasWater.&quot;</span>
         <span class="p">),</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
@@ -292,7 +293,8 @@
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="p">(</span>
             <span class="s2">&quot;Output family 2 keywords, SWFN, SGFN and SOF3/SOF2. &quot;</span>
-            <span class="s2">&quot;Family 1 (SWOF + SGOF) is written if this is not set&quot;</span>
+            <span class="s2">&quot;Family 1 (SWOF + SGOF) is written if this is not set.  &quot;</span>
+            <span class="s2">&quot;Implicit for gas-water input.&quot;</span>
         <span class="p">),</span>
     <span class="p">)</span>
     <span class="k">return</span> <span class="n">parser</span></div>
@@ -384,12 +386,18 @@
         <span class="n">scalrec_list</span> <span class="o">=</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_scal_recommendation_list</span><span class="p">(</span>
             <span class="n">scalinput_df</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">delta_s</span>
         <span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-            <span class="s2">&quot;Interpolating, wateroil=</span><span class="si">%s</span><span class="s2">, gasoil=</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
-            <span class="nb">str</span><span class="p">(</span><span class="n">int_param_wo</span><span class="p">),</span>
-            <span class="nb">str</span><span class="p">(</span><span class="n">int_param_go</span><span class="p">),</span>
-        <span class="p">)</span>
-        <span class="n">wog_list</span> <span class="o">=</span> <span class="n">scalrec_list</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">int_param_wo</span><span class="p">,</span> <span class="n">int_param_go</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">delta_s</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">scalrec_list</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">WaterOilGas</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;Interpolating, wateroil=</span><span class="si">%s</span><span class="s2">, gasoil=</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">int_param_wo</span><span class="p">),</span>
+                <span class="nb">str</span><span class="p">(</span><span class="n">int_param_go</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="n">wog_list</span> <span class="o">=</span> <span class="n">scalrec_list</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">int_param_wo</span><span class="p">,</span> <span class="n">int_param_go</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">delta_s</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">scalrec_list</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">GasWater</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                <span class="s2">&quot;Interpolating, gaswater=</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">int_param_wo</span><span class="p">),</span>
+            <span class="p">)</span>
+            <span class="n">wog_list</span> <span class="o">=</span> <span class="n">scalrec_list</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">int_param_wo</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">delta_s</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">wog_list</span> <span class="o">=</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_pyscal_list</span><span class="p">(</span>
             <span class="n">scalinput_df</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">delta_s</span>
@@ -402,19 +410,20 @@
             <span class="s2">&quot;Interpolation parameter provided but no CASE column in input data&quot;</span>
         <span class="p">)</span>
         <span class="k">raise</span> <span class="ne">ValueError</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">family2</span><span class="p">:</span>
+
+    <span class="k">if</span> <span class="n">family2</span> <span class="ow">or</span> <span class="n">wog_list</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">==</span> <span class="n">GasWater</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Generating family 2 keywords.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">wog_list</span><span class="o">.</span><span class="n">dump_family_2</span><span class="p">())</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">wog_list</span><span class="o">.</span><span class="n">dump_family_2</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">output</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Written to &quot;</span> <span class="o">+</span> <span class="n">output</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Generating family 1 keywords.&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">wog_list</span><span class="o">.</span><span class="n">dump_family_1</span><span class="p">(</span><span class="n">slgof</span><span class="o">=</span><span class="n">slgof</span><span class="p">))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">wog_list</span><span class="o">.</span><span class="n">dump_family_1</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">output</span><span class="p">,</span> <span class="n">slgof</span><span class="o">=</span><span class="n">slgof</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Written to &quot;</span> <span class="o">+</span> <span class="n">output</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Generating family 2 keywords&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">wog_list</span><span class="o">.</span><span class="n">dump_family_2</span><span class="p">())</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">wog_list</span><span class="o">.</span><span class="n">dump_family_2</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">output</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Written to &quot;</span> <span class="o">+</span> <span class="n">output</span><span class="p">)</span></div>
 
 

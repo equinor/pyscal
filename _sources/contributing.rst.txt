@@ -3,6 +3,7 @@ Contributing to pyscal
 =========================
 
 * The code is hosted on https://github.com/equinor/pyscal
+* Submit bugs on github
 * Pull requests are welcome!
 
 Code style
