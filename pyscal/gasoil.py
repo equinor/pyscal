@@ -691,7 +691,7 @@ class GasOil(object):
             string += self.krgcomment
             string += self.krogcomment
             if not self.fast:
-                string += "-- krg = krog @ sw=%1.5f\n" % self.crosspoint()
+                string += "-- krg = krog @ sg=%1.5f\n" % self.crosspoint()
             string += self.pccomment
         width = 10
         string += (
@@ -782,7 +782,7 @@ class GasOil(object):
             string += self.sgcomment
             string += self.krgcomment
             string += self.krogcomment
-            string += "-- krg = krog @ sw=%1.5f\n" % self.crosspoint()
+            string += "-- krg = krog @ sg=%1.5f\n" % self.crosspoint()
             string += self.pccomment
         width = 10
         string += (
@@ -799,7 +799,9 @@ class GasOil(object):
         string += "/\n"
         return string
 
-    def SGFN(self, header=True, dataincommentrow=True, gaswater=False):
+    def SGFN(
+        self, header=True, dataincommentrow=True, sgcomment=None, crosspointcomment=None
+    ):
         """
         Produce SGFN input for Eclipse reservoir simulator.
 
@@ -816,9 +818,12 @@ class GasOil(object):
                 Defaults to True.
             dataincommentrow: boolean for wheter metadata should be printed,
                 defaults to True.
-            gaswater (bool): Hints that this SGFN is to be used for
-                gas-water runs. This will affect the information in
-                the header comments.
+            sgcomment (str): Provide the string to include in the comment
+                section for describing the saturation endpoints. Used
+                by GasWater.
+            crosspointcomment (str): String to be used for crosspoint comment
+                string, overrides what this object can provide. Used by GasWater.
+                If None, it will be computed, use empty string to avoid.
         """
         string = ""
         if "pc" not in self.table.columns:
@@ -829,14 +834,16 @@ class GasOil(object):
         string += utils.comment_formatter(self.tag)
         string += "-- pyscal: " + str(pyscal.__version__) + "\n"
         if dataincommentrow:
-            string += (
-                self.sgcomment.replace("sorg", "sgrw")
-                .replace(", krgendanchor=sgrw", "")
-                .replace(", krgendanchor=", "")
-            )
+            if sgcomment is not None:
+                string += sgcomment
+            else:
+                string += self.sgcomment
             string += self.krgcomment
-            if "krog" in self.table.columns and not gaswater:
-                string += "-- krg = krog @ sw=%1.5f\n" % self.crosspoint()
+            if crosspointcomment is None:
+                if "krog" in self.table.columns:
+                    string += "-- krg = krog @ sg=%1.5f\n" % self.crosspoint()
+            else:
+                string += crosspointcomment
             string += self.pccomment
         width = 10
         string += (

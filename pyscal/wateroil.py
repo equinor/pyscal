@@ -1114,7 +1114,9 @@ class WaterOil(object):
         string += "/\n"  # Empty line at the end
         return string
 
-    def SWFN(self, header=True, dataincommentrow=True, gaswater=False):
+    def SWFN(
+        self, header=True, dataincommentrow=True, swcomment=None, crosspointcomment=None
+    ):
         """Return a SWFN keyword with data to Eclipse
 
         The columns sw, krw and pc are outputted and formatted
@@ -1130,9 +1132,11 @@ class WaterOil(object):
                 Defaults to True.
             dataincommentrow: boolean for wheter metadata should be printed,
                 defaults to True.
-            gaswater (bool): Hints that this SWFN is to be used for
-                gas-water runs. This will affect which information is
-                given in the header.
+            swcomment (str): String to be used for swcomment, overrides what
+                this object can provide. Used by GasWater
+            crosspointcomment (str): String to be used for crosspoint comment
+                string, overrides what this object can provide. Used by GasWater.
+                If None, it will be computed, use empty string to avoid.
         """
         if not self.selfcheck(mode="SWFN"):
             # selfcheck will print errors/warnings
@@ -1146,13 +1150,16 @@ class WaterOil(object):
         string += utils.comment_formatter(self.tag)
         string += "-- pyscal: " + str(pyscal.__version__) + "\n"
         if dataincommentrow:
-            if gaswater:
-                string += self.swcomment.replace("sorw", "sgrw")
+            if swcomment is not None:
+                string += swcomment
             else:
                 string += self.swcomment
             string += self.krwcomment
-            if not gaswater and "krow" in self.table.columns and not self.fast:
-                string += "-- krw = krow @ sw=%1.5f\n" % self.crosspoint()
+            if crosspointcomment is None:
+                if "krow" in self.table.columns and not self.fast:
+                    string += "-- krw = krow @ sw=%1.5f\n" % self.crosspoint()
+            else:
+                string += crosspointcomment
             string += self.pccomment
         width = 10
         string += (

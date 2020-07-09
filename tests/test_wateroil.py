@@ -179,3 +179,44 @@ def test_wateroil_linear():
     assert np.isclose(wateroil.table["sw"].min(), 0.1)
     assert np.isclose(wateroil.table["sw"].max(), 1.0)
     assert np.isclose(wateroil.crosspoint(), 0.55)
+
+
+def test_comments():
+    """Test that the outputters include endpoints in comments"""
+    wateroil = WaterOil(h=0.3)
+    wateroil.add_corey_water()
+    wateroil.add_corey_oil()
+    swfn = wateroil.SWFN()
+    assert "--" in swfn
+    assert "pyscal: " in swfn  # part of version string
+    assert "swirr=0" in swfn
+    assert "swcr=0" in swfn
+    assert "swl=0" in swfn
+    assert "sorw=0" in swfn
+    assert "nw=2" in swfn
+    assert "krwend=1" in swfn
+    assert "Corey" in swfn
+    assert "krw = krow @ sw=0.5" in swfn
+    assert "Zero capillary pressure" in swfn
+    assert "SW" in swfn
+    assert "KRW" in swfn
+    assert "KROW" not in swfn
+    assert "PC" in swfn
+
+    swof = wateroil.SWOF()
+    assert "--" in swof
+    assert "pyscal: " in swof  # part of version string
+    assert "swirr=0" in swof
+    assert "swcr=0" in swof
+    assert "swl=0" in swof
+    assert "sorw=0" in swof
+    assert "nw=2" in swof
+    assert "now=2" in swof
+    assert "krwend=1" in swof
+    assert "Corey" in swof
+    assert "krw = krow @ sw=0.5" in swof
+    assert "Zero capillary pressure" in swof
+    assert "SW" in swof
+    assert "KRW" in swof
+    assert "KROW" in swof
+    assert "PC" in swof

@@ -182,11 +182,20 @@ class GasWater(object):
             dataincommentrow: boolean for wheter metadata should be printed,
                 defaults to True.
         """
-        # Delegated to the wateroil object by providing gaswater=True:
-        if self.wateroil is not None:
-            return self.wateroil.SWFN(header, dataincommentrow, gaswater=True)
-        logger.error("Bug, no WaterOil object in this GasWater object")
-        return ""
+        if self.fast:
+            crosspointcomment = ""
+        else:
+            crosspoint_value = self.crosspoint()
+            if crosspoint_value is not None:
+                crosspointcomment = "-- krw = krg @ sw=%1.5f\n" % crosspoint_value
+            else:
+                crosspointcomment = ""
+        return self.wateroil.SWFN(
+            header,
+            dataincommentrow,
+            swcomment=self.swcomment,
+            crosspointcomment=crosspointcomment,
+        )
 
     def SGFN(self, header=True, dataincommentrow=True):
         """Produce SGFN input for Eclipse reservoir simulator.
@@ -203,11 +212,20 @@ class GasWater(object):
             dataincommentrow: boolean for wheter metadata should be printed,
                 defaults to True.
         """
-        # Delegated to the gasoil object by providing gaswater=True:
-        if self.gasoil is not None:
-            return self.gasoil.SGFN(header, dataincommentrow, gaswater=True)
-        logger.error("Bug, no GasOil object in this GasWater object")
-        return ""
+        if self.fast:
+            crosspointcomment = ""
+        else:
+            crosspoint_value = self.crosspoint()
+            if crosspoint_value is not None:
+                crosspointcomment = "-- krw = krg @ sw=%1.5f\n" % crosspoint_value
+            else:
+                crosspointcomment = ""
+        return self.gasoil.SGFN(
+            header,
+            dataincommentrow,
+            sgcomment=self.sgcomment,
+            crosspointcomment=crosspointcomment,
+        )
 
     def crosspoint(self):
         """Calculate the sw value where krg == krw.
@@ -220,6 +238,12 @@ class GasWater(object):
             float: the gas saturation where krw == krg, for relperm
                 linearly interpolated in water saturation.
         """
+        if not {"sw", "krw"}.issubset(self.wateroil.table.columns):
+            logger.warning("Can't compute crosspoint when krw is not present")
+            return None
+        if not {"sl", "krg"}.issubset(self.gasoil.table.columns):
+            logger.warning("Can't compute crosspoint when krg is not present")
+            return None
         dframe = pd.concat(
             [self.wateroil.table[["sw", "krw"]], self.gasoil.table[["sl", "krg"]]],
             sort=False,
@@ -308,7 +332,15 @@ class GasWater(object):
 
     @property
     def swcomment(self):
-        return self.wateroil.swcomment
+        return self.wateroil.swcomment.replace("sorw", "sgrw")
+
+    @property
+    def sgcomment(self):
+        return (
+            self.gasoil.sgcomment.replace("sorg", "sgrw")
+            .replace(", krgendanchor=sgrw", "")
+            .replace(", krgendanchor=", "")
+        )
 
     @property
     def krwcomment(self):
