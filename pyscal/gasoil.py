@@ -810,9 +810,9 @@ class GasOil(object):
         as Eclipse comments.
 
         Args:
-            header: boolean for whether the SGOF string should be emitted.
+            header: boolean for whether the SGFN string should be emitted.
                 If you have multiple satnums, you should have True only
-                for the first (or False for all, and emit the SGOF yourself).
+                for the first (or False for all, and emit the SGFN yourself).
                 Defaults to True.
             dataincommentrow: boolean for wheter metadata should be printed,
                 defaults to True.

@@ -12,6 +12,16 @@ logging.basicConfig()
 logger = logging.getLogger(__name__)
 
 
+def is_documented_by(original):
+    """Decorator to avoid duplicating function docstrings"""
+
+    def wrapper(target):
+        target.__doc__ = original.__doc__
+        return target
+
+    return wrapper
+
+
 class GasWater(object):
 
     """A representation of two-phase properties for gas-water
@@ -84,40 +94,124 @@ class GasWater(object):
         logger.error("None objects in GasWater (bug)")
         return False
 
-    def add_fromtable(self):
-        raise NotImplementedError
-
-    def add_corey_gas(self, ng=2, krgend=1, krgmax=None):
-        self.gasoil.add_corey_gas(ng, krgend, krgmax)
-
     def add_corey_water(self, nw=2, krwend=1, krwmax=None):
+        """Add krw data through the Corey parametrization
+
+        A column named 'krw' will be added. If it exists, it will
+        be replaced.
+
+        The Corey model applies for sw < 1 - sgrw. For higher
+        water saturations, krw is linear between krwend and krwmax.
+
+        krwmax will be ignored if sgrw is close to zero
+
+        Args:
+            nw (float): Corey parameter for water.
+            krwend (float): value of krw at 1 - sorw.
+            krwmax (float): maximal value at Sw=1. Default 1
+        """
         self.wateroil.add_corey_water(nw, krwend, krwmax)
 
+    def add_corey_gas(self, ng=2, krgend=1):
+        """Add krg data through the Corey parametrization
+
+        A column named 'krg' will be added. If it exists, it will
+        be replaced.
+
+        Args:
+            ng (float): Corey parameter for gas
+            krgend (float): value of krg at swl.
+        """
+        self.gasoil.add_corey_gas(ng, krgend, krgmax=None)
+
     def add_LET_water(self, l=2, e=2, t=2, krwend=1, krwmax=None):
+        """Add krw data through LET parametrization
+
+        The LET model applies for sw < 1 - sgrw. For higher
+        water saturations, krw is linear between krwend and krwmax.
+
+        krwmax will be ignored if sorw is close to zero.
+
+        Args:
+            l (float): LET parameter
+            e (float): LET parameter
+            t (float): LET parameter
+            krwend (float): value of krw at 1 - sorw
+            krwmax (float): maximal value at Sw=1. Default 1
+        """
         self.wateroil.add_LET_water(l, e, t, krwend, krwmax)
 
-    def add_LET_gas(self, l=2, e=2, t=2, krgend=1, krgmax=None):
-        self.gasoil.add_LET_gas(l, e, t, krgend, krgmax)
+    def add_LET_gas(self, l=2, e=2, t=2, krgend=1):
+        """Add krg data through the LET parametrization
 
+        A column named 'krg' will be added. If it exists, it will
+        be replaced.
+
+        Args:
+            l (float): LET parameter
+            e (float): LET parameter
+            t (float): LET parameter
+            krgend (float): value of krg at swl
+        """
+        self.gasoil.add_LET_gas(l, e, t, krgend, krgmax=None)
+
+    @is_documented_by(WaterOil.add_simple_J)
     def add_simple_J(self, a=5, b=-1.5, poro_ref=0.25, perm_ref=100, drho=300, g=9.81):
         self.wateroil.add_simple_J(a, b, poro_ref, perm_ref, drho, g)
 
+    @is_documented_by(WaterOil.add_simple_J_petro)
     def add_simple_J_petro(self, a, b, poro_ref=0.25, perm_ref=100, drho=300, g=9.81):
         self.wateroil.add_simple_J_petro(a, b, poro_ref, perm_ref, drho, g)
 
+    def SWFN(self, header=True, dataincommentrow=True):
+        """Produce SWFN input to Eclipse
+
+        The columns sw, krw and pc are outputted and formatted
+        accordingly.
+
+        Meta-information for the tabulated data are printed
+        as Eclipse comments.
+
+        Args:
+            header: boolean for whether the SWFN string should be emitted.
+                If you have multiple satnums, you should have True only
+                for the first (or False for all, and emit the SWFN yourself).
+                Defaults to True.
+            dataincommentrow: boolean for wheter metadata should be printed,
+                defaults to True.
+        """
+        # Delegated to the wateroil object by providing gaswater=True:
+        if self.wateroil is not None:
+            return self.wateroil.SWFN(header, dataincommentrow, gaswater=True)
+        logger.error("Bug, no WaterOil object in this GasWater object")
+        return ""
+
     def SGFN(self, header=True, dataincommentrow=True):
-        """Return a SGFN string. Delegated to the gasoil object."""
+        """Produce SGFN input for Eclipse reservoir simulator.
+
+        The columns sg and krg are outputted and formatted accordingly.
+
+        Meta-information for the tabulated data are printed as Eclipse comments.
+
+        Args:
+            header: boolean for whether the SGFN string should be emitted.
+                If you have multiple satnums, you should have True only
+                for the first (or False for all, and emit the SGFN yourself).
+                Defaults to True.
+            dataincommentrow: boolean for wheter metadata should be printed,
+                defaults to True.
+        """
+        # Delegated to the gasoil object by providing gaswater=True:
         if self.gasoil is not None:
             return self.gasoil.SGFN(header, dataincommentrow, gaswater=True)
         logger.error("Bug, no GasOil object in this GasWater object")
         return ""
 
-    def SWFN(self, header=True, dataincommentrow=True):
-        """Return a SWFN string. Delegated to the wateroil object."""
-        if self.wateroil is not None:
-            return self.wateroil.SWFN(header, dataincommentrow, gaswater=True)
-        logger.error("Bug, no WaterOil object in this GasWater object")
-        return ""
+    def crosspoint(self):
+        """Calculate the sw value where krg == krw.
+
+        Not implemented yet."""
+        raise NotImplementedError
 
     def plotkrwkrg(
         self,
@@ -173,12 +267,6 @@ class GasWater(object):
         plt.xlabel("sw")
         if mpl_ax is None:
             plt.show()
-
-    def crosspoint(self):
-        raise NotImplementedError
-
-    def SGWFN(self, header=True, dataincommentrow=True):
-        raise NotImplementedError
 
     @property
     def swirr(self):

@@ -179,11 +179,25 @@ dictionary as argument.
 
 For plotting, ``GasOil`` object has a function ``.plotkrgkrog()``.
 
+Gas-Water
+---------
+
+Two-phase gas-water is similar, with typical usage:
+
+.. code-block:: python
+
+   from pyscal import GasWater
+
+   gw = GasWater(swl=0.05, sgrw=0.1, sgcr=0.2)
+   gw.add_corey_water()
+   gw.add_corey_gas()
+
+A GasWater object can export family 2 keywords, ``SWFN`` and ``SGFN``.
 
 Water-oil-gas
 -------------
 
-For three-phase, saturation endpoints must match to make sense in a reservoir simualation.
+For three-phase, saturation endpoints must match to make sense in a reservoir simulation.
 The ``WaterOilGas`` object acts as a container for both a ``WaterOil`` object and a ``GasOil``
 object to aid in consistency. Saturation endpoints is only input once during initialization.
 
@@ -199,16 +213,15 @@ Typical usage could be:
     wog.gasoil.add_corey_gas()
     wog.gasoil.add_corey_water()
 
-As seen in the example, the object members ``wateroil`` and ``gasoil`` are ``WaterOil`` and ``GasOil`` objects
-having been initialized by the ``WaterOilGas`` initialization.
+As seen in the example, the object members ``wateroil`` and ``gasoil`` are
+``WaterOil`` and ``GasOil`` objects having been initialized by the
+``WaterOilGas`` initialization.
 
-Alternatively, there is a
-The ``WaterOilGas`` objects can write ``SWOF`` tables (which is directly delegated to the ``WaterOil`` object, but
-it can also write a ``SOF3`` table.
+The ``WaterOilGas`` objects can write ``SWOF`` tables or ``SOF3`` tables.
 
-A method ``.selfcheck()`` can be run on the object to determine if there are any known consistency issues (which would
-crash a reservoir simulator) with the tabulated data.
-
+A method ``.selfcheck()`` can be run on the object to determine if there are any
+known consistency issues (which would crash a reservoir simulator) with the
+tabulated data, this is by default run on every output attempt.
 
 Interpolation in a SCAL recommendation
 --------------------------------------
@@ -226,6 +239,10 @@ if they are believed to be independent.
 SCAL recommendations are initialized from three distinct
 ``WaterOilGas`` objects, which are then recommended constructed using
 the corresponding factory method.
+
+For two-phase water-oil setups, WaterOilGas objects are still used
+in the SCAL recommendation object with an empty GasOil reference. For gas-water,
+the SCAL recommendation holds three GasWater objects, but works similarly.
 
 .. code-block:: python
 
