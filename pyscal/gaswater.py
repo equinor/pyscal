@@ -5,8 +5,11 @@ from __future__ import print_function
 
 import logging
 
+import pandas as pd
+
 from .wateroil import WaterOil
 from .gasoil import GasOil
+from . import utils
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
@@ -23,7 +26,6 @@ def is_documented_by(original):
 
 
 class GasWater(object):
-
     """A representation of two-phase properties for gas-water
 
     Internally, this class handles gas-water by using one WaterOil
@@ -210,8 +212,32 @@ class GasWater(object):
     def crosspoint(self):
         """Calculate the sw value where krg == krw.
 
-        Not implemented yet."""
-        raise NotImplementedError
+        Accuracy of this crosspoint depends on the resolution chosen
+        when initializing the saturation range (it uses linear
+        interpolation to solve for the zero)
+
+        Returns:
+            float: the gas saturation where krw == krg, for relperm
+                linearly interpolated in water saturation.
+        """
+        dframe = pd.concat(
+            [self.wateroil.table[["sw", "krw"]], self.gasoil.table[["sl", "krg"]]],
+            sort=False,
+        )
+        # The  "sl" column in the GasOil object corresponds exactly to "sw" in WaterOil
+        # but since they are floating point, we do not want to "merge" dataframes on it,
+        # rather concatenate and let linear interpolation fill in values.
+        dframe["sw"].fillna(value=0, inplace=True)
+        dframe["sl"].fillna(value=0, inplace=True)
+        dframe["sat"] = dframe["sl"] + dframe["sw"]
+        dframe = (
+            dframe.set_index("sat")
+            .sort_index()
+            .interpolate(method="slinear")
+            .dropna()
+            .reset_index()
+        )
+        return utils.crosspoint(dframe, "sat", "krw", "krg")
 
     def plotkrwkrg(
         self,

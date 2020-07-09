@@ -97,7 +97,6 @@ def crosspoint(dframe, satcol, kr1col, kr2col):
             as a function of the saturation values.
     """
     dframe = pd.DataFrame(dframe[[satcol, kr1col, kr2col]])  # Copy
-    dframe
     dframe.loc[:, "krdiff"] = dframe[kr1col] - dframe[kr2col]
 
     # Add a zero value for the difference column, and interpolate
