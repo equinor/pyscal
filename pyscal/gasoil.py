@@ -372,7 +372,7 @@ class GasOil(object):
                 # Only warn if something else than default is in use
                 logger.warning("krgmax ignored when not anchoring to sorg")
 
-    def set_endpoints_linearpart_krog(self, kroend):
+    def set_endpoints_linearpart_krog(self, kroend, kromax=None):
         """Set linear parts of krog outside endpoints.
 
         Zero for sg above 1 - sorg - swl.
@@ -383,6 +383,9 @@ class GasOil(object):
         Args:
             kroend (float): krog at sg=0
         """
+        if kromax is not None:
+            logger.error("kromax is DEPRECATED, ignored")
+
         # Special handling of the part close to sg=1, set to zero.
         self.table.loc[
             self.table["sg"] > 1 - self.sorg - self.swl - epsilon, "krog"
@@ -419,7 +422,7 @@ class GasOil(object):
             krgmax,
         )
 
-    def add_corey_oil(self, nog=2, kroend=1):
+    def add_corey_oil(self, nog=2, kroend=1, kromax=None):
         """
         Add kro data through the Corey parametrization
 
@@ -437,6 +440,9 @@ class GasOil(object):
         """
         assert epsilon < nog < MAX_EXPONENT
         assert 0 < kroend <= 1.0
+
+        if kromax is not None:
+            logger.error("kromax is DEPRECATED, ignored")
 
         self.table["krog"] = kroend * self.table.son ** nog
 
@@ -495,7 +501,7 @@ class GasOil(object):
             krgmax,
         )
 
-    def add_LET_oil(self, l=2, e=2, t=2, kroend=1):
+    def add_LET_oil(self, l=2, e=2, t=2, kroend=1, kromax=None):
         """Add oil (vs gas) relative permeability data through the Corey
         parametrization.
 
@@ -513,6 +519,9 @@ class GasOil(object):
         assert epsilon < e < MAX_EXPONENT
         assert epsilon < t < MAX_EXPONENT
         assert 0 < kroend <= 1.0
+
+        if kromax is not None:
+            logger.error("kromax is DEPRECATED, ignored")
 
         # LET shape for the interval [sgcr, 1 - swl - sorg]
         self.table["krog"] = (
