@@ -60,6 +60,9 @@ class PyscalList(object):
             raise ValueError("Not a pyscal object: " + str(pyscal_obj))
         if not self.pyscaltype:
             self.pyscaltype = type(pyscal_obj)
+            # Beware, this list can be of type WaterOilGas, with
+            # WaterOilGas objects where gasoil is None, effectively
+            # making that object a WaterOil object.
         if not isinstance(pyscal_obj, self.pyscaltype):
             logger.error(
                 "Trying to add %s to list of %s objects",
@@ -189,7 +192,15 @@ class PyscalList(object):
             )
             raise TypeError
         if self.pyscaltype == WaterOilGas:
-            if not slgof:
+            # WaterOilGas can be of type WaterOil when it emerges
+            # from a SCAL recommendation, do a fragile test:
+            if self.pyscal_list[0].gasoil is None:
+                family_1_str = self.SWOF()
+                keywords = "SWOF"
+            elif self.pyscal_list[0].wateroil is None:
+                family_1_str = self.SGOF()
+                keywords = "SGOF"
+            elif not slgof:
                 family_1_str = self.SWOF() + "\n" + self.SGOF()
                 keywords = "SWOF and SGOF"
             else:
@@ -284,8 +295,6 @@ class PyscalList(object):
             int_params_wo = [int_params_wo] * self.__len__()
         if isinstance(int_params_wo, list) and len(int_params_wo) == 1:
             int_params_wo = int_params_wo * self.__len__()
-        if int_params_go is None:
-            int_params_go = int_params_wo
         if not isinstance(int_params_go, list):
             int_params_go = [int_params_go] * len(self)
         if isinstance(int_params_go, list) and len(int_params_go) == 1:
