@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal package &mdash; pyscal 0.5.2.dev11+g08c2014 documentation</title>
+  <title>pyscal package &mdash; pyscal 0.5.2.dev17+g393d51f documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.5.2.dev11+g08c2014
+                0.5.2.dev17+g393d51f
               </div>
             
           
@@ -685,7 +685,7 @@ defaults to True.</p></li>
 
 <dl class="py method">
 <dt id="pyscal.gasoil.GasOil.SGFN">
-<code class="sig-name descname">SGFN</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">dataincommentrow</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">gaswater</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gasoil.html#GasOil.SGFN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gasoil.GasOil.SGFN" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">SGFN</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">dataincommentrow</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">sgcomment</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">crosspointcomment</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gasoil.html#GasOil.SGFN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gasoil.GasOil.SGFN" title="Permalink to this definition">¶</a></dt>
 <dd><p>Produce SGFN input for Eclipse reservoir simulator.</p>
 <p>The columns sg, krg, and pc are outputted and
 formatted accordingly.</p>
@@ -694,15 +694,18 @@ as Eclipse comments.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>header</strong> – boolean for whether the SGOF string should be emitted.
+<li><p><strong>header</strong> – boolean for whether the SGFN string should be emitted.
 If you have multiple satnums, you should have True only
-for the first (or False for all, and emit the SGOF yourself).
+for the first (or False for all, and emit the SGFN yourself).
 Defaults to True.</p></li>
 <li><p><strong>dataincommentrow</strong> – boolean for wheter metadata should be printed,
 defaults to True.</p></li>
-<li><p><strong>gaswater</strong> (<em>bool</em>) – Hints that this SGFN is to be used for
-gas-water runs. This will affect the information in
-the header comments.</p></li>
+<li><p><strong>sgcomment</strong> (<em>str</em>) – Provide the string to include in the comment
+section for describing the saturation endpoints. Used
+by GasWater.</p></li>
+<li><p><strong>crosspointcomment</strong> (<em>str</em>) – String to be used for crosspoint comment
+string, overrides what this object can provide. Used by GasWater.
+If None, it will be computed, use empty string to avoid.</p></li>
 </ul>
 </dd>
 </dl>
@@ -778,7 +781,7 @@ sg = 1 - swl. If not, it ends at krgend at sg = 1 - swl.</p>
 
 <dl class="py method">
 <dt id="pyscal.gasoil.GasOil.add_LET_oil">
-<code class="sig-name descname">add_LET_oil</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">l</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">e</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">t</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">kroend</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gasoil.html#GasOil.add_LET_oil"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gasoil.GasOil.add_LET_oil" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_LET_oil</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">l</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">e</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">t</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">kroend</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">kromax</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gasoil.html#GasOil.add_LET_oil"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gasoil.GasOil.add_LET_oil" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add oil (vs gas) relative permeability data through the Corey
 parametrization.</p>
 <p>A column named ‘krog’ will be added, replaced if it exists.</p>
@@ -809,7 +812,7 @@ sg = 1 - swl. If not, it ends at krgend at sg = 1 - swl.</p>
 
 <dl class="py method">
 <dt id="pyscal.gasoil.GasOil.add_corey_oil">
-<code class="sig-name descname">add_corey_oil</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nog</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">kroend</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gasoil.html#GasOil.add_corey_oil"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gasoil.GasOil.add_corey_oil" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_corey_oil</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nog</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">kroend</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">kromax</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gasoil.html#GasOil.add_corey_oil"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gasoil.GasOil.add_corey_oil" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add kro data through the Corey parametrization</p>
 <p>A column named ‘kro’ will be added to the internal DataFrame,
 replaced if it exists.</p>
@@ -972,7 +975,7 @@ utility functions. It should not be necessary for end-users.</p>
 
 <dl class="py method">
 <dt id="pyscal.gasoil.GasOil.set_endpoints_linearpart_krog">
-<code class="sig-name descname">set_endpoints_linearpart_krog</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">kroend</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gasoil.html#GasOil.set_endpoints_linearpart_krog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gasoil.GasOil.set_endpoints_linearpart_krog" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set_endpoints_linearpart_krog</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">kroend</span></em>, <em class="sig-param"><span class="n">kromax</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gasoil.html#GasOil.set_endpoints_linearpart_krog"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gasoil.GasOil.set_endpoints_linearpart_krog" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set linear parts of krog outside endpoints.</p>
 <p>Zero for sg above 1 - sorg - swl.</p>
 <p>This function is used by add_corey/LET_oil(), and perhaps by other
@@ -1024,59 +1027,206 @@ pyscal will not guarantee valid output in this mode.</p></li>
 <dl class="py method">
 <dt id="pyscal.gaswater.GasWater.SGFN">
 <code class="sig-name descname">SGFN</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">dataincommentrow</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gaswater.html#GasWater.SGFN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gaswater.GasWater.SGFN" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a SGFN string. Delegated to the gasoil object.</p>
+<dd><p>Produce SGFN input for Eclipse reservoir simulator.</p>
+<p>The columns sg and krg are outputted and formatted accordingly.</p>
+<p>Meta-information for the tabulated data are printed as Eclipse comments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>header</strong> – boolean for whether the SGFN string should be emitted.
+If you have multiple satnums, you should have True only
+for the first (or False for all, and emit the SGFN yourself).
+Defaults to True.</p></li>
+<li><p><strong>dataincommentrow</strong> – boolean for wheter metadata should be printed,
+defaults to True.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
-
-<dl class="py method">
-<dt id="pyscal.gaswater.GasWater.SGWFN">
-<code class="sig-name descname">SGWFN</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">dataincommentrow</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gaswater.html#GasWater.SGWFN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gaswater.GasWater.SGWFN" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
 
 <dl class="py method">
 <dt id="pyscal.gaswater.GasWater.SWFN">
 <code class="sig-name descname">SWFN</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">dataincommentrow</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gaswater.html#GasWater.SWFN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gaswater.GasWater.SWFN" title="Permalink to this definition">¶</a></dt>
-<dd><p>Return a SWFN string. Delegated to the wateroil object.</p>
+<dd><p>Produce SWFN input to Eclipse</p>
+<p>The columns sw, krw and pc are outputted and formatted
+accordingly.</p>
+<p>Meta-information for the tabulated data are printed
+as Eclipse comments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>header</strong> – boolean for whether the SWFN string should be emitted.
+If you have multiple satnums, you should have True only
+for the first (or False for all, and emit the SWFN yourself).
+Defaults to True.</p></li>
+<li><p><strong>dataincommentrow</strong> – boolean for wheter metadata should be printed,
+defaults to True.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="pyscal.gaswater.GasWater.add_LET_gas">
-<code class="sig-name descname">add_LET_gas</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">l</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">e</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">t</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">krgend</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">krgmax</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gaswater.html#GasWater.add_LET_gas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gaswater.GasWater.add_LET_gas" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">add_LET_gas</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">l</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">e</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">t</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">krgend</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gaswater.html#GasWater.add_LET_gas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gaswater.GasWater.add_LET_gas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add krg data through the LET parametrization</p>
+<p>A column named ‘krg’ will be added. If it exists, it will
+be replaced.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>l</strong> (<em>float</em>) – LET parameter</p></li>
+<li><p><strong>e</strong> (<em>float</em>) – LET parameter</p></li>
+<li><p><strong>t</strong> (<em>float</em>) – LET parameter</p></li>
+<li><p><strong>krgend</strong> (<em>float</em>) – value of krg at swl</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pyscal.gaswater.GasWater.add_LET_water">
 <code class="sig-name descname">add_LET_water</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">l</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">e</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">t</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">krwend</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">krwmax</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gaswater.html#GasWater.add_LET_water"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gaswater.GasWater.add_LET_water" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Add krw data through LET parametrization</p>
+<p>The LET model applies for sw &lt; 1 - sgrw. For higher
+water saturations, krw is linear between krwend and krwmax.</p>
+<p>krwmax will be ignored if sorw is close to zero.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>l</strong> (<em>float</em>) – LET parameter</p></li>
+<li><p><strong>e</strong> (<em>float</em>) – LET parameter</p></li>
+<li><p><strong>t</strong> (<em>float</em>) – LET parameter</p></li>
+<li><p><strong>krwend</strong> (<em>float</em>) – value of krw at 1 - sorw</p></li>
+<li><p><strong>krwmax</strong> (<em>float</em>) – maximal value at Sw=1. Default 1</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pyscal.gaswater.GasWater.add_corey_gas">
-<code class="sig-name descname">add_corey_gas</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ng</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">krgend</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">krgmax</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gaswater.html#GasWater.add_corey_gas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gaswater.GasWater.add_corey_gas" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<code class="sig-name descname">add_corey_gas</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ng</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">krgend</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gaswater.html#GasWater.add_corey_gas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gaswater.GasWater.add_corey_gas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add krg data through the Corey parametrization</p>
+<p>A column named ‘krg’ will be added. If it exists, it will
+be replaced.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ng</strong> (<em>float</em>) – Corey parameter for gas</p></li>
+<li><p><strong>krgend</strong> (<em>float</em>) – value of krg at swl.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pyscal.gaswater.GasWater.add_corey_water">
 <code class="sig-name descname">add_corey_water</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">nw</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">krwend</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">krwmax</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gaswater.html#GasWater.add_corey_water"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gaswater.GasWater.add_corey_water" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py method">
-<dt id="pyscal.gaswater.GasWater.add_fromtable">
-<code class="sig-name descname">add_fromtable</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gaswater.html#GasWater.add_fromtable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gaswater.GasWater.add_fromtable" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Add krw data through the Corey parametrization</p>
+<p>A column named ‘krw’ will be added. If it exists, it will
+be replaced.</p>
+<p>The Corey model applies for sw &lt; 1 - sgrw. For higher
+water saturations, krw is linear between krwend and krwmax.</p>
+<p>krwmax will be ignored if sgrw is close to zero</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>nw</strong> (<em>float</em>) – Corey parameter for water.</p></li>
+<li><p><strong>krwend</strong> (<em>float</em>) – value of krw at 1 - sorw.</p></li>
+<li><p><strong>krwmax</strong> (<em>float</em>) – maximal value at Sw=1. Default 1</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pyscal.gaswater.GasWater.add_simple_J">
 <code class="sig-name descname">add_simple_J</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span><span class="o">=</span><span class="default_value">5</span></em>, <em class="sig-param"><span class="n">b</span><span class="o">=</span><span class="default_value">- 1.5</span></em>, <em class="sig-param"><span class="n">poro_ref</span><span class="o">=</span><span class="default_value">0.25</span></em>, <em class="sig-param"><span class="n">perm_ref</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">drho</span><span class="o">=</span><span class="default_value">300</span></em>, <em class="sig-param"><span class="n">g</span><span class="o">=</span><span class="default_value">9.81</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gaswater.html#GasWater.add_simple_J"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gaswater.GasWater.add_simple_J" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Add capillary pressure function from a simplified J-function</p>
+<p>This is the RMS version of the coefficients <em>a</em> and <em>b</em>, the formula
+used is</p>
+<div class="math notranslate nohighlight">
+\[J = a S_w^b\]</div>
+<p><em>J</em> is not dimensionless in this equation. The capillary pressure
+be in bars.</p>
+<p>This is identical to the also seen formula</p>
+<div class="math notranslate nohighlight">
+\[J = 10^{b \log(S_w) + \log(a)}\]</div>
+<p><span class="math notranslate nohighlight">\(S_w\)</span> in this formula is normalized with respect to the <em>swirr</em> variable
+of the WaterOil object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<em>float</em>) – a coefficient</p></li>
+<li><p><strong>b</strong> (<em>float</em>) – b coefficient</p></li>
+<li><p><strong>poro_ref</strong> (<em>float</em>) – Reference porosity for scaling to Pc, between 0 and 1</p></li>
+<li><p><strong>perm_ref</strong> (<em>float</em>) – Reference permeability for scaling to Pc, in milliDarcy</p></li>
+<li><p><strong>drho</strong> (<em>float</em>) – Density difference between water and oil, in SI units kg/m³.
+Default value is 300</p></li>
+<li><p><strong>g</strong> (<em>float</em>) – Gravitational acceleration, in SI units m/s²,
+default value is 9.81</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None. Modifies pc column in self.table, using bar as pressure unit.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pyscal.gaswater.GasWater.add_simple_J_petro">
 <code class="sig-name descname">add_simple_J_petro</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">a</span></em>, <em class="sig-param"><span class="n">b</span></em>, <em class="sig-param"><span class="n">poro_ref</span><span class="o">=</span><span class="default_value">0.25</span></em>, <em class="sig-param"><span class="n">perm_ref</span><span class="o">=</span><span class="default_value">100</span></em>, <em class="sig-param"><span class="n">drho</span><span class="o">=</span><span class="default_value">300</span></em>, <em class="sig-param"><span class="n">g</span><span class="o">=</span><span class="default_value">9.81</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gaswater.html#GasWater.add_simple_J_petro"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gaswater.GasWater.add_simple_J_petro" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Add capillary pressure function from a simplified J-function</p>
+<p>This is the <em>petrophysical</em> version of the coefficients <em>a</em> and <em>b</em>, the formula
+used is</p>
+<div class="math notranslate nohighlight">
+\[J = \left(\frac{S_w}{a}\right)^{\frac{1}{b}}\]</div>
+<p>which is identical to</p>
+<div class="math notranslate nohighlight">
+\[J = 10^\frac{\log(S_w) - \log(a)}{b}\]</div>
+<p><em>J</em> is not dimensionless in this equation.</p>
+<p><span class="math notranslate nohighlight">\(S_w\)</span> in this formula is normalized with respect to the <em>swirr</em> variable
+of the WaterOil object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>a</strong> (<em>float</em>) – a coefficient, petrophysical version</p></li>
+<li><p><strong>b</strong> (<em>float</em>) – b coefficient, petrophysical version</p></li>
+<li><p><strong>poro_ref</strong> (<em>float</em>) – Reference porosity for scaling to Pc, between 0 and 1</p></li>
+<li><p><strong>perm_ref</strong> (<em>float</em>) – Reference permeability for scaling to Pc, in milliDarcy</p></li>
+<li><p><strong>drho</strong> (<em>float</em>) – Density difference between water and oil, in SI units kg/m³.
+Default value is 300</p></li>
+<li><p><strong>g</strong> (<em>float</em>) – Gravitational acceleration, in SI units m/s²,
+default value is 9.81</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None. Modifies pc column in self.table, using bar as pressure unit.</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pyscal.gaswater.GasWater.crosspoint">
 <code class="sig-name descname">crosspoint</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gaswater.html#GasWater.crosspoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gaswater.GasWater.crosspoint" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Calculate the sw value where krg == krw.</p>
+<p>Accuracy of this crosspoint depends on the resolution chosen
+when initializing the saturation range (it uses linear
+interpolation to solve for the zero)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>the gas saturation where krw == krg, for relperm</dt><dd><p>linearly interpolated in water saturation.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>float</p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pyscal.gaswater.GasWater.krgcomment">
@@ -1112,6 +1262,11 @@ properties (direction and monotonocity)</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="pyscal.gaswater.GasWater.sgcomment">
+<em class="property">property </em><code class="sig-name descname">sgcomment</code><a class="headerlink" href="#pyscal.gaswater.GasWater.sgcomment" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
 <dt id="pyscal.gaswater.GasWater.swcomment">
 <em class="property">property </em><code class="sig-name descname">swcomment</code><a class="headerlink" href="#pyscal.gaswater.GasWater.swcomment" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
@@ -1136,6 +1291,12 @@ properties (direction and monotonocity)</p>
 <em class="property">property </em><code class="sig-name descname">tag</code><a class="headerlink" href="#pyscal.gaswater.GasWater.tag" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyscal.gaswater.is_documented_by">
+<code class="sig-prename descclassname">pyscal.gaswater.</code><code class="sig-name descname">is_documented_by</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">original</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gaswater.html#is_documented_by"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gaswater.is_documented_by" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decorator to avoid duplicating function docstrings</p>
 </dd></dl>
 
 </div>
@@ -1723,24 +1884,26 @@ runs, as speed is seldom crucial. Default False</p></li>
 </dl>
 <dl class="py method">
 <dt id="pyscal.wateroil.WaterOil.SWFN">
-<code class="sig-name descname">SWFN</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">dataincommentrow</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">gaswater</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.SWFN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.SWFN" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">SWFN</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">dataincommentrow</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="n">swcomment</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">crosspointcomment</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.SWFN"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.SWFN" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a SWFN keyword with data to Eclipse</p>
 <p>The columns sw, krw and pc are outputted and formatted
 accordingly.</p>
-<p>Meta-information for the  tabulated data are printed
+<p>Meta-information for the tabulated data are printed
 as Eclipse comments.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>header</strong> – boolean for whether the SGOF string should be emitted.
+<li><p><strong>header</strong> – boolean for whether the SWFN string should be emitted.
 If you have multiple satnums, you should have True only
-for the first (or False for all, and emit the SGOF yourself).
+for the first (or False for all, and emit the SWFN yourself).
 Defaults to True.</p></li>
 <li><p><strong>dataincommentrow</strong> – boolean for wheter metadata should be printed,
 defaults to True.</p></li>
-<li><p><strong>gaswater</strong> (<em>bool</em>) – Hints that this SGFN is to be used for
-gas-water runs. This will affect which information is
-given in the header.</p></li>
+<li><p><strong>swcomment</strong> (<em>str</em>) – String to be used for swcomment, overrides what
+this object can provide. Used by GasWater</p></li>
+<li><p><strong>crosspointcomment</strong> (<em>str</em>) – String to be used for crosspoint comment
+string, overrides what this object can provide. Used by GasWater.
+If None, it will be computed, use empty string to avoid.</p></li>
 </ul>
 </dd>
 </dl>
@@ -1776,7 +1939,7 @@ be printed. Defualt True</p></li>
 
 <dl class="py method">
 <dt id="pyscal.wateroil.WaterOil.add_LET_oil">
-<code class="sig-name descname">add_LET_oil</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">l</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">e</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">t</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">kroend</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.add_LET_oil"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.add_LET_oil" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_LET_oil</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">l</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">e</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">t</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">kroend</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">kromax</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.add_LET_oil"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.add_LET_oil" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add kro data through LET parametrization</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1813,10 +1976,8 @@ there are no saturation points in that interval.</p>
 <dt id="pyscal.wateroil.WaterOil.add_LET_water">
 <code class="sig-name descname">add_LET_water</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">l</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">e</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">t</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">krwend</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">krwmax</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.add_LET_water"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.add_LET_water" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add krw data through LET parametrization</p>
-<p>It is assumed that there are no sw points between
-sw=1-sorw and sw=1, which should give linear
-interpolations in simulators. The LET parameters
-apply up to 1-sorw.</p>
+<p>The LET model applies for sw &lt; 1 - sgrw. For higher
+water saturations, krw is linear between krwend and krwmax.</p>
 <p>krwmax will be ignored if sorw is close to zero.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -1833,7 +1994,7 @@ apply up to 1-sorw.</p>
 
 <dl class="py method">
 <dt id="pyscal.wateroil.WaterOil.add_corey_oil">
-<code class="sig-name descname">add_corey_oil</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">now</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">kroend</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.add_corey_oil"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.add_corey_oil" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">add_corey_oil</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">now</span><span class="o">=</span><span class="default_value">2</span></em>, <em class="sig-param"><span class="n">kroend</span><span class="o">=</span><span class="default_value">1</span></em>, <em class="sig-param"><span class="n">kromax</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.add_corey_oil"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.add_corey_oil" title="Permalink to this definition">¶</a></dt>
 <dd><p>Add kro data through the Corey parametrization</p>
 <p>Corey applies to the interval between swcr and 1 - sorw</p>
 <p>Curve is linear between swl and swcr, zero above 1 - sorw.</p>
@@ -1856,10 +2017,8 @@ apply up to 1-sorw.</p>
 <dd><p>Add krw data through the Corey parametrization</p>
 <p>A column named ‘krw’ will be added. If it exists, it will
 be replaced.</p>
-<p>It is assumed that there are no sw points between
-sw=1-sorw and sw=1, which should give linear
-interpolations in simulators. The corey parameter
-applies up to 1-sorw.</p>
+<p>The Corey model applies for sw &lt; 1 - sorw. For higher
+water saturations, krw is linear between krwend and krwmax.</p>
 <p>krwmax will be ignored if sorw is close to zero</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -2126,7 +2285,7 @@ the error and give an error.</p>
 
 <dl class="py method">
 <dt id="pyscal.wateroil.WaterOil.set_endpoints_linearpart_krow">
-<code class="sig-name descname">set_endpoints_linearpart_krow</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">kroend</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.set_endpoints_linearpart_krow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.set_endpoints_linearpart_krow" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">set_endpoints_linearpart_krow</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">kroend</span></em>, <em class="sig-param"><span class="n">kromax</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.set_endpoints_linearpart_krow"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.set_endpoints_linearpart_krow" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set linear parts of krow outside endpoints</p>
 <p>Curve will be zero in [1 - sorw, 1].</p>
 <p>This function is used by add_corey_water(), and perhaps by other

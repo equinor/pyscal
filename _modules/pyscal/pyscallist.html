@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal.pyscallist &mdash; pyscal 0.5.2.dev11+g08c2014 documentation</title>
+  <title>pyscal.pyscallist &mdash; pyscal 0.5.2.dev17+g393d51f documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.5.2.dev11+g08c2014
+                0.5.2.dev17+g393d51f
               </div>
             
           
@@ -222,6 +222,9 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Not a pyscal object: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">pyscal_obj</span><span class="p">))</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscaltype</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">pyscal_obj</span><span class="p">)</span>
+            <span class="c1"># Beware, this list can be of type WaterOilGas, with</span>
+            <span class="c1"># WaterOilGas objects where gasoil is None, effectively</span>
+            <span class="c1"># making that object a WaterOil object.</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pyscal_obj</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscaltype</span><span class="p">):</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
                 <span class="s2">&quot;Trying to add </span><span class="si">%s</span><span class="s2"> to list of </span><span class="si">%s</span><span class="s2"> objects&quot;</span><span class="p">,</span>
@@ -351,7 +354,15 @@
             <span class="p">)</span>
             <span class="k">raise</span> <span class="ne">TypeError</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">==</span> <span class="n">WaterOilGas</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">slgof</span><span class="p">:</span>
+            <span class="c1"># WaterOilGas can be of type WaterOil when it emerges</span>
+            <span class="c1"># from a SCAL recommendation, do a fragile test:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscal_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">gasoil</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">family_1_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SWOF</span><span class="p">()</span>
+                <span class="n">keywords</span> <span class="o">=</span> <span class="s2">&quot;SWOF&quot;</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscal_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">wateroil</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">family_1_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SGOF</span><span class="p">()</span>
+                <span class="n">keywords</span> <span class="o">=</span> <span class="s2">&quot;SGOF&quot;</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="n">slgof</span><span class="p">:</span>
                 <span class="n">family_1_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SWOF</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">SGOF</span><span class="p">()</span>
                 <span class="n">keywords</span> <span class="o">=</span> <span class="s2">&quot;SWOF and SGOF&quot;</span>
             <span class="k">else</span><span class="p">:</span>
@@ -446,8 +457,6 @@
             <span class="n">int_params_wo</span> <span class="o">=</span> <span class="p">[</span><span class="n">int_params_wo</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__len__</span><span class="p">()</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">int_params_wo</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">int_params_wo</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">int_params_wo</span> <span class="o">=</span> <span class="n">int_params_wo</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__len__</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">int_params_go</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">int_params_go</span> <span class="o">=</span> <span class="n">int_params_wo</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">int_params_go</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="n">int_params_go</span> <span class="o">=</span> <span class="p">[</span><span class="n">int_params_go</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">int_params_go</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">int_params_go</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>

@@ -24,4 +24,4 @@ Internally in Equinor
 
 pyscal is distributed through Komodo_.
 
-.. _Komodo: http://github.com/equinor/komodo
+.. _Komodo: https://fmu-docs.equinor.com/docs/komodo/equinor_komodo_usage.html

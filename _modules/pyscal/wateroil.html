@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal.wateroil &mdash; pyscal 0.5.2.dev11+g08c2014 documentation</title>
+  <title>pyscal.wateroil &mdash; pyscal 0.5.2.dev17+g393d51f documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.5.2.dev11+g08c2014
+                0.5.2.dev17+g393d51f
               </div>
             
           
@@ -542,15 +542,13 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">pccomment</span> <span class="o">=</span> <span class="s2">&quot;-- pc from tabular input&quot;</span> <span class="o">+</span> <span class="n">pccomment</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span></div>
 
 <div class="viewcode-block" id="WaterOil.add_corey_water"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.add_corey_water">[docs]</a>    <span class="k">def</span> <span class="nf">add_corey_water</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">krwend</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">krwmax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Add krw data through the Corey parametrization</span>
+        <span class="sd">&quot;&quot;&quot;Add krw data through the Corey parametrization</span>
 
 <span class="sd">        A column named &#39;krw&#39; will be added. If it exists, it will</span>
 <span class="sd">        be replaced.</span>
 
-<span class="sd">        It is assumed that there are no sw points between</span>
-<span class="sd">        sw=1-sorw and sw=1, which should give linear</span>
-<span class="sd">        interpolations in simulators. The corey parameter</span>
-<span class="sd">        applies up to 1-sorw.</span>
+<span class="sd">        The Corey model applies for sw &lt; 1 - sorw. For higher</span>
+<span class="sd">        water saturations, krw is linear between krwend and krwmax.</span>
 
 <span class="sd">        krwmax will be ignored if sorw is close to zero</span>
 
@@ -558,7 +556,6 @@
 <span class="sd">            nw (float): Corey parameter for water.</span>
 <span class="sd">            krwend (float): value of krw at 1 - sorw.</span>
 <span class="sd">            krwmax (float): maximal value at Sw=1. Default 1</span>
-
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">nw</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
         <span class="k">if</span> <span class="n">krwmax</span><span class="p">:</span>
@@ -621,7 +618,7 @@
         <span class="c1"># Left linear section is all zero:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">swcr</span><span class="p">,</span> <span class="s2">&quot;krw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span></div>
 
-<div class="viewcode-block" id="WaterOil.set_endpoints_linearpart_krow"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.set_endpoints_linearpart_krow">[docs]</a>    <span class="k">def</span> <span class="nf">set_endpoints_linearpart_krow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kroend</span><span class="p">):</span>
+<div class="viewcode-block" id="WaterOil.set_endpoints_linearpart_krow"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.set_endpoints_linearpart_krow">[docs]</a>    <span class="k">def</span> <span class="nf">set_endpoints_linearpart_krow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kroend</span><span class="p">,</span> <span class="n">kromax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Set linear parts of krow outside endpoints</span>
 
 <span class="sd">        Curve will be zero in [1 - sorw, 1].</span>
@@ -632,6 +629,9 @@
 <span class="sd">        Args:</span>
 <span class="sd">            kroend (float): value of kro at swcr</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">kromax</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;kromax is DEPRECATED, ignored&quot;</span><span class="p">)</span>
+
         <span class="c1"># Set to zero above sorw:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span><span class="p">,</span> <span class="s2">&quot;krow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
 
@@ -642,10 +642,8 @@
 <div class="viewcode-block" id="WaterOil.add_LET_water"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.add_LET_water">[docs]</a>    <span class="k">def</span> <span class="nf">add_LET_water</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">krwend</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">krwmax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add krw data through LET parametrization</span>
 
-<span class="sd">        It is assumed that there are no sw points between</span>
-<span class="sd">        sw=1-sorw and sw=1, which should give linear</span>
-<span class="sd">        interpolations in simulators. The LET parameters</span>
-<span class="sd">        apply up to 1-sorw.</span>
+<span class="sd">        The LET model applies for sw &lt; 1 - sgrw. For higher</span>
+<span class="sd">        water saturations, krw is linear between krwend and krwmax.</span>
 
 <span class="sd">        krwmax will be ignored if sorw is close to zero.</span>
 
@@ -687,7 +685,7 @@
             <span class="n">krwmax</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="WaterOil.add_LET_oil"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.add_LET_oil">[docs]</a>    <span class="k">def</span> <span class="nf">add_LET_oil</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">kroend</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="WaterOil.add_LET_oil"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.add_LET_oil">[docs]</a>    <span class="k">def</span> <span class="nf">add_LET_oil</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">kroend</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">kromax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Add kro data through LET parametrization</span>
 
@@ -704,6 +702,9 @@
         <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">e</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
         <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
         <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">kroend</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
+
+        <span class="k">if</span> <span class="n">kromax</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;kromax is DEPRECATED, ignored&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">kroend</span>
@@ -724,7 +725,7 @@
             <span class="n">kroend</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="WaterOil.add_corey_oil"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.add_corey_oil">[docs]</a>    <span class="k">def</span> <span class="nf">add_corey_oil</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">now</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">kroend</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<div class="viewcode-block" id="WaterOil.add_corey_oil"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.add_corey_oil">[docs]</a>    <span class="k">def</span> <span class="nf">add_corey_oil</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">now</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">kroend</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">kromax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add kro data through the Corey parametrization</span>
 
 <span class="sd">        Corey applies to the interval between swcr and 1 - sorw</span>
@@ -739,6 +740,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">now</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
         <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">kroend</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
+
+        <span class="k">if</span> <span class="n">kromax</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;kromax is DEPRECATED, ignored&quot;</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kroend</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;son&quot;</span><span class="p">]</span> <span class="o">**</span> <span class="n">now</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span><span class="p">),</span> <span class="s2">&quot;krow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
@@ -1281,25 +1285,29 @@
         <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;/</span><span class="se">\n</span><span class="s2">&quot;</span>  <span class="c1"># Empty line at the end</span>
         <span class="k">return</span> <span class="n">string</span></div>
 
-<div class="viewcode-block" id="WaterOil.SWFN"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.SWFN">[docs]</a>    <span class="k">def</span> <span class="nf">SWFN</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">gaswater</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="WaterOil.SWFN"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.SWFN">[docs]</a>    <span class="k">def</span> <span class="nf">SWFN</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">swcomment</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">crosspointcomment</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Return a SWFN keyword with data to Eclipse</span>
 
 <span class="sd">        The columns sw, krw and pc are outputted and formatted</span>
 <span class="sd">        accordingly.</span>
 
-<span class="sd">        Meta-information for the  tabulated data are printed</span>
+<span class="sd">        Meta-information for the tabulated data are printed</span>
 <span class="sd">        as Eclipse comments.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            header: boolean for whether the SGOF string should be emitted.</span>
+<span class="sd">            header: boolean for whether the SWFN string should be emitted.</span>
 <span class="sd">                If you have multiple satnums, you should have True only</span>
-<span class="sd">                for the first (or False for all, and emit the SGOF yourself).</span>
+<span class="sd">                for the first (or False for all, and emit the SWFN yourself).</span>
 <span class="sd">                Defaults to True.</span>
 <span class="sd">            dataincommentrow: boolean for wheter metadata should be printed,</span>
 <span class="sd">                defaults to True.</span>
-<span class="sd">            gaswater (bool): Hints that this SGFN is to be used for</span>
-<span class="sd">                gas-water runs. This will affect which information is</span>
-<span class="sd">                given in the header.</span>
+<span class="sd">            swcomment (str): String to be used for swcomment, overrides what</span>
+<span class="sd">                this object can provide. Used by GasWater</span>
+<span class="sd">            crosspointcomment (str): String to be used for crosspoint comment</span>
+<span class="sd">                string, overrides what this object can provide. Used by GasWater.</span>
+<span class="sd">                If None, it will be computed, use empty string to avoid.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">selfcheck</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;SWFN&quot;</span><span class="p">):</span>
             <span class="c1"># selfcheck will print errors/warnings</span>
@@ -1313,13 +1321,16 @@
         <span class="n">string</span> <span class="o">+=</span> <span class="n">utils</span><span class="o">.</span><span class="n">comment_formatter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
         <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;-- pyscal: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">pyscal</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">if</span> <span class="n">dataincommentrow</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">gaswater</span><span class="p">:</span>
-                <span class="n">string</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">swcomment</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;sorw&quot;</span><span class="p">,</span> <span class="s2">&quot;sgrw&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">swcomment</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">string</span> <span class="o">+=</span> <span class="n">swcomment</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">string</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">swcomment</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">krwcomment</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">gaswater</span> <span class="ow">and</span> <span class="s2">&quot;krow&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">fast</span><span class="p">:</span>
-                <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;-- krw = krow @ sw=</span><span class="si">%1.5f</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">crosspoint</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">crosspointcomment</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="s2">&quot;krow&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">fast</span><span class="p">:</span>
+                    <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;-- krw = krow @ sw=</span><span class="si">%1.5f</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">crosspoint</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">string</span> <span class="o">+=</span> <span class="n">crosspointcomment</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pccomment</span>
         <span class="n">width</span> <span class="o">=</span> <span class="mi">10</span>
         <span class="n">string</span> <span class="o">+=</span> <span class="p">(</span>

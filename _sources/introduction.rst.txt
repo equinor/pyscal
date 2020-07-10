@@ -8,13 +8,13 @@ Introduction to pyscal
 curves for Eclipse, Flow (OPM) and Nexus. Curves are parametrized
 using Corey or LET.
 
-SCAL recommendations are curve sets consisting of "low", "base" and "high curves,
+SCAL recommendations are curve sets consisting of "low", "base" and "high" curves,
 each parametrized individually. Pyscal has support for interpolating between
 such enveloping curves.
 
-Pyscal can be used both for sensitivy tests on relative permeability parameters,
+Pyscal can be used both for sensitivity tests on relative permeability parameters,
 and for sensitivity tests of a SCAL recommendation. For history matching, matching
-interpolation parameters in a SCAL recommendation is recommended.
+interpolation parameters in a SCAL recommendation is the recommended practice.
 
 Relative permeability data can also be parsed from tabulated data and
 then used for interpolation.
@@ -24,8 +24,9 @@ Capillary pressure is supported through a selected number of parametrizations.
 Command line tool
 -----------------
 
-The command line tool is installed as `pyscal` and takes a table in a CSV file or XLSX
-file as the main input. Each SATNUM is represented by one row of data in the table.
+The command line tool is installed as ``pyscal`` and takes a table in a CSV file
+or in an XLSX file as the main input. Each SATNUM is represented by one row of
+data in the table.
 
 Example use with CSV input for one SATNUM:
 
@@ -46,7 +47,7 @@ from the pyscal command above will look like:
     $ cat relperm.inc
     SWOF
     -- SATNUM 1
-    -- pyscal: v0.4.X
+    -- pyscal: v0.6.X
     -- swirr=0 swl=0.1 swcr=0.1 sorw=0.05
     -- Corey krw, nw=2, krwend=1, krwmax=1
     -- Corey krow, now=3, kroend=1
@@ -92,16 +93,23 @@ WaterOil
   Represents the data for water-oil relative permeability and
   capillary pressure. Essentially the data for SWOF plus metadata.
   All tabular data is built up in the interal object member ``table``
-  (pandas DataFrame) which can be viewed for debugging.
+  (a pandas DataFrame) which can be viewed for debugging. The
+  object contains export functions for Eclipse keywords, SWOF, SWFN
+  etc.
 
 GasOil
   Ditto for gas-oil relative permeability
+
+GasWater
+  Ditto for gas-water relative permeability
 
 WaterOilGas
   Container object for one ``WaterOil`` and one ``GasOil``. Useful
   for making SOF3 output, and for ensuring endpoint consistency
   in three-phase simulations. The objects members ``wateroil`` and
-  ``gasoil`` refer to the contained objects.
+  ``gasoil`` refer to the contained objects. It is allowed to use
+  this container for two-phase only, if used for oil-water, the
+  gasoil reference would be ``None``.
 
 SCALrecommendation
   Container object for three ``WaterOilGas`` objects which are tagged
@@ -114,9 +122,9 @@ PyscalFactory
   or XLSX-file), PyscalList objects are constructed.
 
 PyscalList
-  Container for a sequence of WaterOil, GasOil, WaterOilGas or
-  SCALrecommendation objects. Objects of this class can make up
-  the entire relative permeability input to Eclipse through f.ex.
-  the function ``dump_family_1()``.
+  Container for a sequence of WaterOil, GasOil, GasWater, WaterOilGas or
+  SCALrecommendation objects. Objects of this class can make up the entire
+  relative permeability input to Eclipse through f.ex.  the function
+  ``dump_family_1()``.
 
 .. _relative permeability: http://en.wikipedia.org/wiki/Relative_permeability

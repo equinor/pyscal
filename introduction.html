@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Introduction to pyscal &mdash; pyscal 0.5.2.dev11+g08c2014 documentation</title>
+  <title>Introduction to pyscal &mdash; pyscal 0.5.2.dev17+g393d51f documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.5.2.dev11+g08c2014
+                0.5.2.dev17+g393d51f
               </div>
             
           
@@ -176,19 +176,20 @@
 <p><em>pyscal</em> is a Python tool and module for creating <a class="reference external" href="http://en.wikipedia.org/wiki/Relative_permeability">relative permeability</a> input
 curves for Eclipse, Flow (OPM) and Nexus. Curves are parametrized
 using Corey or LET.</p>
-<p>SCAL recommendations are curve sets consisting of “low”, “base” and “high curves,
+<p>SCAL recommendations are curve sets consisting of “low”, “base” and “high” curves,
 each parametrized individually. Pyscal has support for interpolating between
 such enveloping curves.</p>
-<p>Pyscal can be used both for sensitivy tests on relative permeability parameters,
+<p>Pyscal can be used both for sensitivity tests on relative permeability parameters,
 and for sensitivity tests of a SCAL recommendation. For history matching, matching
-interpolation parameters in a SCAL recommendation is recommended.</p>
+interpolation parameters in a SCAL recommendation is the recommended practice.</p>
 <p>Relative permeability data can also be parsed from tabulated data and
 then used for interpolation.</p>
 <p>Capillary pressure is supported through a selected number of parametrizations.</p>
 <div class="section" id="command-line-tool">
 <h2>Command line tool<a class="headerlink" href="#command-line-tool" title="Permalink to this headline">¶</a></h2>
-<p>The command line tool is installed as <cite>pyscal</cite> and takes a table in a CSV file or XLSX
-file as the main input. Each SATNUM is represented by one row of data in the table.</p>
+<p>The command line tool is installed as <code class="docutils literal notranslate"><span class="pre">pyscal</span></code> and takes a table in a CSV file
+or in an XLSX file as the main input. Each SATNUM is represented by one row of
+data in the table.</p>
 <p>Example use with CSV input for one SATNUM:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> cat relperminput.csv  <span class="c1"># Show example input file</span>
 <span class="go">SATNUM, swl, sorw, Nw, Now</span>
@@ -203,7 +204,7 @@ from the pyscal command above will look like:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> cat relperm.inc
 <span class="go">SWOF</span>
 <span class="go">-- SATNUM 1</span>
-<span class="go">-- pyscal: v0.4.X</span>
+<span class="go">-- pyscal: v0.6.X</span>
 <span class="go">-- swirr=0 swl=0.1 swcr=0.1 sorw=0.05</span>
 <span class="go">-- Corey krw, nw=2, krwend=1, krwmax=1</span>
 <span class="go">-- Corey krow, now=3, kroend=1</span>
@@ -243,14 +244,20 @@ solutions. An example recreating the the same table as above is given by:</p>
 <dt>WaterOil</dt><dd><p>Represents the data for water-oil relative permeability and
 capillary pressure. Essentially the data for SWOF plus metadata.
 All tabular data is built up in the interal object member <code class="docutils literal notranslate"><span class="pre">table</span></code>
-(pandas DataFrame) which can be viewed for debugging.</p>
+(a pandas DataFrame) which can be viewed for debugging. The
+object contains export functions for Eclipse keywords, SWOF, SWFN
+etc.</p>
 </dd>
 <dt>GasOil</dt><dd><p>Ditto for gas-oil relative permeability</p>
+</dd>
+<dt>GasWater</dt><dd><p>Ditto for gas-water relative permeability</p>
 </dd>
 <dt>WaterOilGas</dt><dd><p>Container object for one <code class="docutils literal notranslate"><span class="pre">WaterOil</span></code> and one <code class="docutils literal notranslate"><span class="pre">GasOil</span></code>. Useful
 for making SOF3 output, and for ensuring endpoint consistency
 in three-phase simulations. The objects members <code class="docutils literal notranslate"><span class="pre">wateroil</span></code> and
-<code class="docutils literal notranslate"><span class="pre">gasoil</span></code> refer to the contained objects.</p>
+<code class="docutils literal notranslate"><span class="pre">gasoil</span></code> refer to the contained objects. It is allowed to use
+this container for two-phase only, if used for oil-water, the
+gasoil reference would be <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p>
 </dd>
 <dt>SCALrecommendation</dt><dd><p>Container object for three <code class="docutils literal notranslate"><span class="pre">WaterOilGas</span></code> objects which are tagged
 as low, base and high. Useful for interpolating between low and high,
@@ -260,10 +267,10 @@ going from -1 (low) through 0 (base) to 1 (high).</p>
 Python dictionaries. If provided a table input (Pandas DataFrame, CSV-
 or XLSX-file), PyscalList objects are constructed.</p>
 </dd>
-<dt>PyscalList</dt><dd><p>Container for a sequence of WaterOil, GasOil, WaterOilGas or
-SCALrecommendation objects. Objects of this class can make up
-the entire relative permeability input to Eclipse through f.ex.
-the function <code class="docutils literal notranslate"><span class="pre">dump_family_1()</span></code>.</p>
+<dt>PyscalList</dt><dd><p>Container for a sequence of WaterOil, GasOil, GasWater, WaterOilGas or
+SCALrecommendation objects. Objects of this class can make up the entire
+relative permeability input to Eclipse through f.ex.  the function
+<code class="docutils literal notranslate"><span class="pre">dump_family_1()</span></code>.</p>
 </dd>
 </dl>
 </div>
