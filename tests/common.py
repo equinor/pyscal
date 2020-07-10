@@ -1,8 +1,10 @@
 """Common functions and mock data for usage in pyscal testing"""
 
+
 import numpy as np
 import pandas as pd
 import six
+
 
 from pyscal import WaterOil, GasOil
 

@@ -264,8 +264,11 @@ class SCALrecommendation(object):
                     "Neither WaterOil or GasOil is complete in SCAL recommendation"
                 )
 
-        if parameter2 is not None and not do_gasoil and not do_gaswater:
-            logger.warning("parameter2 is meaningless for water-oil only")
+        if parameter2 is not None:
+            if not do_gasoil:
+                logger.warning("parameter2 is meaningless for water-oil only")
+            if do_gaswater:
+                logger.warning("parameter2 is meaningless for gas-water")
 
         # Initialize wateroil and gasoil curves to be filled with
         # interpolated curves:
