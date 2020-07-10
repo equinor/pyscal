@@ -73,8 +73,11 @@ Gas-Water
 .. image:: images/gaswater-endpoints.png
     :width: 600
 
-Python API
-----------
+Python API examples
+-------------------
+
+Water-Oil
+^^^^^^^^^
 
 To generate SWOF input for Eclipse or flow (OPM) with certain
 saturation endpoints and certain relative permeability endpoints, you
@@ -83,7 +86,7 @@ may run the following code:
 .. code-block:: python
 
     from pyscal import WaterOil
-    wo = WaterOil(swl=0.05, sorw=0.03, h=0.1)
+    wo = WaterOil(swl=0.05, sorw=0.03, h=0.1, tag="Foobarites")
     wo.add_corey_water(nw=2.1, krwend=0.6)
     wo.add_corey_oil(now=2.5, kroend=0.9)
     wo.add_simple_J()
@@ -101,14 +104,15 @@ The output from the code above is:
 .. code-block:: console
 
     SWOF
-    --
-    -- Sw Krw Krow Pc
+    -- Foobarites
+    -- pyscal: 0.6.x
     -- swirr=0 swl=0.05 swcr=0.05 sorw=0.03
     -- Corey krw, nw=2.1, krwend=0.6, krwmax=1
     -- Corey krow, now=2.5, kroend=0.9
     -- krw = krow @ sw=0.52365
-    -- Simplified J function for Pc;
+    -- Simplified J function for Pc; rms version, in bar
     --   a=5, b=-1.5, poro_ref=0.25, perm_ref=100 mD, drho=300 kg/m³, g=9.81 m/s²
+    -- SW     KRW       KROW      PC
     0.0500000 0.0000000 0.9000000 0.6580748
     0.1500000 0.0056780 0.6750059 0.1266466
     0.2500000 0.0243422 0.4876455 0.0588600
@@ -135,7 +139,8 @@ equivalent to the code lines above (except for capillary pressure) is then:
 .. code-block:: python
 
     from pyscal import PyscalFactory
-    params = dict(swl=0.05, sorw=0.03, h=0.1, nw=2.1, krwend=0.6, now=2.5, krowend=0.9, h=0.05)
+    params = dict(swl=0.05, sorw=0.03, h=0.1, nw=2.1, krwend=0.6,
+                  now=2.5, kroend=0.9, tag="Foobarites")
     wo = PyscalFactory.create_water_oil(params)
     print(wo.SWOF())
 
@@ -150,14 +155,15 @@ the factory. ``kroend`` makes sense for ``WaterOil.add_corey_oil()`` but
 is ambiguous in the factory where both water-oil and gas-oil are accounted for.
 In the factory the names ``krowend`` and ``krogend`` must be used.
 
-Similarly for the LET parameters, where `l` is valid for the low-level functions, while
-in the factory context you must state `Lo`, `Lw`, `Lg` or `Log` (case-insensitive).
+Similarly for the LET parameters, where `l` is valid for the low-level
+functions, while in the factory context you must state `Lo`, `Lw`, `Lg` or `Log`
+(case-insensitive).
 
 For visual inspection, there is a function ``.plotkrwkrow()`` which will
 make a simple plot of the relative permeability curves using matplotlib.
 
 Gas-oil curve
--------------
+^^^^^^^^^^^^^
 
 For a corresponding gas-oil curve, the API is analogous,
 
@@ -169,10 +175,10 @@ For a corresponding gas-oil curve, the API is analogous,
     go.add_corey_oil(nog=1.9)
     print(go.SGOF())
 
-If you want to use your SGOF data together with a SWOF, it makes sense
-to share some of the saturation endpoints, as there are compatibility constraints.
-For this reason, it is recommended to initialize both the ``WaterOil`` and ``GasOil``
-objects trough a ``WaterOilGas`` object.
+If you want to use your SGOF data together with a SWOF, it makes sense to share
+some of the saturation endpoints, as there are compatibility constraints.  For
+this reason, it is recommended to initialize both the ``WaterOil`` and
+``GasOil`` objects trough a ``WaterOilGas`` object.
 
 There is a corresponding ``PyscalFactory.create_gas_oil()`` support function with
 dictionary as argument.
@@ -180,7 +186,7 @@ dictionary as argument.
 For plotting, ``GasOil`` object has a function ``.plotkrgkrog()``.
 
 Gas-Water
----------
+^^^^^^^^^
 
 Two-phase gas-water is similar, with typical usage:
 
@@ -195,11 +201,12 @@ Two-phase gas-water is similar, with typical usage:
 A GasWater object can export family 2 keywords, ``SWFN`` and ``SGFN``.
 
 Water-oil-gas
--------------
+^^^^^^^^^^^^^
 
-For three-phase, saturation endpoints must match to make sense in a reservoir simulation.
-The ``WaterOilGas`` object acts as a container for both a ``WaterOil`` object and a ``GasOil``
-object to aid in consistency. Saturation endpoints is only input once during initialization.
+For three-phase, saturation endpoints must match to make sense in a reservoir
+simulation.  The ``WaterOilGas`` object acts as a container for both a
+``WaterOil`` object and a ``GasOil`` object to aid in consistency. Saturation
+endpoints is only input once during initialization.
 
 Typical usage could be:
 
@@ -224,7 +231,7 @@ known consistency issues (which would crash a reservoir simulator) with the
 tabulated data, this is by default run on every output attempt.
 
 Interpolation in a SCAL recommendation
---------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 A SCAL recommendation in this context is nothing but a container
 of three ``WaterOilGas`` objects, representing a `low`, a `base` and a
