@@ -456,7 +456,7 @@ class WaterOil(object):
         # Left linear section is all zero:
         self.table.loc[self.table["sw"] < self.swcr, "krw"] = 0
 
-    def set_endpoints_linearpart_krow(self, kroend):
+    def set_endpoints_linearpart_krow(self, kroend, kromax=None):
         """Set linear parts of krow outside endpoints
 
         Curve will be zero in [1 - sorw, 1].
@@ -467,6 +467,9 @@ class WaterOil(object):
         Args:
             kroend (float): value of kro at swcr
         """
+        if kromax is not None:
+            logger.error("kromax is DEPRECATED, ignored")
+
         # Set to zero above sorw:
         self.table.loc[self.table["sw"] > 1 - self.sorw, "krow"] = 0
 
@@ -520,7 +523,7 @@ class WaterOil(object):
             krwmax,
         )
 
-    def add_LET_oil(self, l=2, e=2, t=2, kroend=1):
+    def add_LET_oil(self, l=2, e=2, t=2, kroend=1, kromax=None):
         """
         Add kro data through LET parametrization
 
@@ -537,6 +540,9 @@ class WaterOil(object):
         assert epsilon < e < MAX_EXPONENT
         assert epsilon < t < MAX_EXPONENT
         assert 0 < kroend <= 1.0
+
+        if kromax is not None:
+            logger.error("kromax is DEPRECATED, ignored")
 
         self.table["krow"] = (
             kroend
@@ -557,7 +563,7 @@ class WaterOil(object):
             kroend,
         )
 
-    def add_corey_oil(self, now=2, kroend=1):
+    def add_corey_oil(self, now=2, kroend=1, kromax=None):
         """Add kro data through the Corey parametrization
 
         Corey applies to the interval between swcr and 1 - sorw
@@ -572,6 +578,9 @@ class WaterOil(object):
         """
         assert epsilon < now < MAX_EXPONENT
         assert 0 < kroend <= 1.0
+
+        if kromax is not None:
+            logger.error("kromax is DEPRECATED, ignored")
 
         self.table["krow"] = kroend * self.table["son"] ** now
         self.table.loc[self.table["sw"] >= (1 - self.sorw), "krow"] = 0
