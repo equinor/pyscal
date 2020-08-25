@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>History &mdash; pyscal 0.6.0 documentation</title>
+  <title>History &mdash; pyscal 0.6.1.dev1+g2f8e763 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.6.0
+                0.6.1.dev1+g2f8e763
               </div>
             
           
@@ -188,6 +188,18 @@ languages. Open sourced (LGPLv3) in 2019.</p>
 <div class="section" id="v0-6-0">
 <h2>v0.6.0<a class="headerlink" href="#v0-6-0" title="Permalink to this headline">¶</a></h2>
 <dl class="simple">
+<dt><strong>Changes</strong></dt><dd><ul class="simple">
+<li><p>In previous versions, the oil relperm curve in WaterOil started with
+<code class="docutils literal notranslate"><span class="pre">kro(swcr)</span> <span class="pre">=</span> <span class="pre">kroend</span></code>. Now it starts with <code class="docutils literal notranslate"><span class="pre">kro(swl)</span> <span class="pre">=</span> <span class="pre">kroend</span></code>. Thus,
+if <code class="docutils literal notranslate"><span class="pre">swcr</span> <span class="pre">&gt;</span> <span class="pre">swl</span></code>, your oil relperm will change when moving to Pyscal 0.6.x.</p></li>
+<li><p>In previous versions, the oil relperm curve in GasOil started with
+<code class="docutils literal notranslate"><span class="pre">kro(sgcr)</span> <span class="pre">=</span> <span class="pre">kroend</span></code>. Now it starts with <code class="docutils literal notranslate"><span class="pre">kro(0)</span> <span class="pre">=</span> <span class="pre">kroend</span></code>. Thus,
+if <code class="docutils literal notranslate"><span class="pre">sgcr</span> <span class="pre">&gt;</span> <span class="pre">0</span></code> (more common than <code class="docutils literal notranslate"><span class="pre">swcr</span> <span class="pre">&gt;</span> <span class="pre">swl</span></code>), your oil relperm will
+change when moving to Pyscal 0.6.x. The oil relative permeability will
+in general be lowered through this change, and the change can be
+significant for large <code class="docutils literal notranslate"><span class="pre">sgcr</span></code>.</p></li>
+</ul>
+</dd>
 <dt><strong>Deprecations</strong></dt><dd><ul class="simple">
 <li><p>kromax is no longer in use by pyscal. The oil relperm curve is anchored
 at kroend (and krowend and krogend are renamed to kroend accordingly, as
