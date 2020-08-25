@@ -22,6 +22,16 @@ Detailed release history (with minor releases) at
 
 v0.6.0
 ------
+**Changes**
+  - In previous versions, the oil relperm curve in WaterOil started with
+    ``kro(swcr) = kroend``. Now it starts with ``kro(swl) = kroend``. Thus,
+    if ``swcr > swl``, your oil relperm will change when moving to Pyscal 0.6.x.
+  - In previous versions, the oil relperm curve in GasOil started with
+    ``kro(sgcr) = kroend``. Now it starts with ``kro(0) = kroend``. Thus,
+    if ``sgcr > 0`` (more common than ``swcr > swl``), your oil relperm will
+    change when moving to Pyscal 0.6.x. The oil relative permeability will
+    in general be lowered through this change, and the change can be
+    significant for large ``sgcr``.
 **Deprecations**
   - kromax is no longer in use by pyscal. The oil relperm curve is anchored
     at kroend (and krowend and krogend are renamed to kroend accordingly, as
