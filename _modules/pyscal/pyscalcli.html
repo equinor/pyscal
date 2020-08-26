@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal.pyscalcli &mdash; pyscal 0.6.1.dev3+g0e5aaf0 documentation</title>
+  <title>pyscal.pyscalcli &mdash; pyscal 0.6.1.dev4+g8e2c302 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.6.1.dev3+g0e5aaf0
+                0.6.1.dev4+g8e2c302
               </div>
             
           
@@ -239,6 +239,11 @@
         <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Print debug information&quot;</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--version&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;version&quot;</span><span class="p">,</span>
+        <span class="n">version</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%(prog)s</span><span class="s2"> (version &quot;</span> <span class="o">+</span> <span class="n">__version__</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;-o&quot;</span><span class="p">,</span>
         <span class="s2">&quot;--output&quot;</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="s2">&quot;relperm.inc&quot;</span><span class="p">,</span>
@@ -346,6 +351,7 @@
 <span class="sd">    Args:</span>
 <span class="sd">        parametertable (string): Filename (CSV or XLSX) to load</span>
 <span class="sd">        verbose (bool): verbose or not</span>
+<span class="sd">        debug (bool): debug mode or not</span>
 <span class="sd">        output (string): Output filename</span>
 <span class="sd">        delta_s (float): Saturation step-length</span>
 <span class="sd">        int_param_wo (list): Interpolation params for wateroil</span>
