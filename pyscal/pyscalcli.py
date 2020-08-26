@@ -77,6 +77,11 @@ def get_parser():
         help="Print debug information",
     )
     parser.add_argument(
+        "--version",
+        action="version",
+        version="%(prog)s (version " + __version__ + ")",
+    )
+    parser.add_argument(
         "-o",
         "--output",
         default="relperm.inc",
@@ -184,6 +189,7 @@ def pyscal_main(
     Args:
         parametertable (string): Filename (CSV or XLSX) to load
         verbose (bool): verbose or not
+        debug (bool): debug mode or not
         output (string): Output filename
         delta_s (float): Saturation step-length
         int_param_wo (list): Interpolation params for wateroil
