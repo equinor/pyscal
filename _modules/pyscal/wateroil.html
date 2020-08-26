@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal.wateroil &mdash; pyscal 0.6.1.dev1+g2f8e763 documentation</title>
+  <title>pyscal.wateroil &mdash; pyscal 0.6.1.dev3+g0e5aaf0 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.6.1.dev1+g2f8e763
+                0.6.1.dev3+g0e5aaf0
               </div>
             
           
@@ -749,7 +749,10 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">set_endpoints_linearpart_krow</span><span class="p">(</span><span class="n">kroend</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">krowcomment</span> <span class="o">=</span> <span class="s2">&quot;-- Corey krow, now=</span><span class="si">%g</span><span class="s2">, kroend=</span><span class="si">%g</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">now</span><span class="p">,</span> <span class="n">kroend</span><span class="p">,)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">krowcomment</span> <span class="o">=</span> <span class="s2">&quot;-- Corey krow, now=</span><span class="si">%g</span><span class="s2">, kroend=</span><span class="si">%g</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="n">now</span><span class="p">,</span>
+            <span class="n">kroend</span><span class="p">,</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="WaterOil.add_simple_J"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.add_simple_J">[docs]</a>    <span class="k">def</span> <span class="nf">add_simple_J</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">b</span><span class="o">=-</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">poro_ref</span><span class="o">=</span><span class="mf">0.25</span><span class="p">,</span> <span class="n">perm_ref</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">drho</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">g</span><span class="o">=</span><span class="mf">9.81</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Add capillary pressure function from a simplified J-function</span>

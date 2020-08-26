@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal.gasoil &mdash; pyscal 0.6.1.dev1+g2f8e763 documentation</title>
+  <title>pyscal.gasoil &mdash; pyscal 0.6.1.dev3+g0e5aaf0 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.6.1.dev1+g2f8e763
+                0.6.1.dev3+g0e5aaf0
               </div>
             
           
@@ -557,7 +557,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krog&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">kroend</span><span class="p">,</span> <span class="s2">&quot;krog&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kroend</span></div>
 
 <div class="viewcode-block" id="GasOil.add_corey_gas"><a class="viewcode-back" href="../../pyscal.html#pyscal.gasoil.GasOil.add_corey_gas">[docs]</a>    <span class="k">def</span> <span class="nf">add_corey_gas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ng</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">krgend</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">krgmax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot; Add krg data through the Corey parametrization</span>
+        <span class="sd">&quot;&quot;&quot;Add krg data through the Corey parametrization</span>
 
 <span class="sd">        A column called &#39;krg&#39; will be added. If it exists, it will</span>
 <span class="sd">        be replaced.</span>
@@ -610,7 +610,10 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">set_endpoints_linearpart_krog</span><span class="p">(</span><span class="n">kroend</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">krogcomment</span> <span class="o">=</span> <span class="s2">&quot;-- Corey krog, nog=</span><span class="si">%g</span><span class="s2">, kroend=</span><span class="si">%g</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">nog</span><span class="p">,</span> <span class="n">kroend</span><span class="p">,)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">krogcomment</span> <span class="o">=</span> <span class="s2">&quot;-- Corey krog, nog=</span><span class="si">%g</span><span class="s2">, kroend=</span><span class="si">%g</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="n">nog</span><span class="p">,</span>
+            <span class="n">kroend</span><span class="p">,</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="GasOil.add_LET_gas"><a class="viewcode-back" href="../../pyscal.html#pyscal.gasoil.GasOil.add_LET_gas">[docs]</a>    <span class="k">def</span> <span class="nf">add_LET_gas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">l</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">krgend</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">krgmax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>

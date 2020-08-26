@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal.gaswater &mdash; pyscal 0.6.1.dev1+g2f8e763 documentation</title>
+  <title>pyscal.gaswater &mdash; pyscal 0.6.1.dev3+g0e5aaf0 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.6.1.dev1+g2f8e763
+                0.6.1.dev3+g0e5aaf0
               </div>
             
           
@@ -203,10 +203,18 @@
 <span class="sd">        tag (str): Optional text that will be included as comments.</span>
 <span class="sd">        fast (bool): Set to True if you prefer speed over robustness. Not recommended,</span>
 <span class="sd">            pyscal will not guarantee valid output in this mode.</span>
-<span class="sd">   &quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">swirr</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">swl</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">swcr</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">sgrw</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">sgcr</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">swirr</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">swl</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">swcr</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">sgrw</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">sgcr</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">h</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+        <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Sets up the saturation range for a GasWater object,</span>
 <span class="sd">        by initializing one WaterOil and one GasOil object, with</span>
