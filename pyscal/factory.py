@@ -1009,5 +1009,7 @@ def check_deprecated(params):
     for key in params:
         if key.lower() in DEPRECATED:
             logger.warning(
-                "The key %s is deprecated %s", key, DEPRECATED[key.lower()],
+                "The key %s is deprecated %s",
+                key,
+                DEPRECATED[key.lower()],
             )

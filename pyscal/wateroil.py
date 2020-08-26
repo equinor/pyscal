@@ -587,7 +587,10 @@ class WaterOil(object):
 
         self.set_endpoints_linearpart_krow(kroend)
 
-        self.krowcomment = "-- Corey krow, now=%g, kroend=%g\n" % (now, kroend,)
+        self.krowcomment = "-- Corey krow, now=%g, kroend=%g\n" % (
+            now,
+            kroend,
+        )
 
     def add_simple_J(self, a=5, b=-1.5, poro_ref=0.25, perm_ref=100, drho=300, g=9.81):
         """Add capillary pressure function from a simplified J-function
