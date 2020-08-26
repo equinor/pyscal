@@ -41,10 +41,18 @@ class GasWater(object):
         tag (str): Optional text that will be included as comments.
         fast (bool): Set to True if you prefer speed over robustness. Not recommended,
             pyscal will not guarantee valid output in this mode.
-   """
+    """
 
     def __init__(
-        self, swirr=0, swl=0.0, swcr=0.0, sgrw=0.0, sgcr=0, h=0.01, tag="", fast=False,
+        self,
+        swirr=0,
+        swl=0.0,
+        swcr=0.0,
+        sgrw=0.0,
+        sgcr=0,
+        h=0.01,
+        tag="",
+        fast=False,
     ):
         """Sets up the saturation range for a GasWater object,
         by initializing one WaterOil and one GasOil object, with

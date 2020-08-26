@@ -72,7 +72,9 @@ def get_parser():
         help="Print informational messages while processing input",
     )
     parser.add_argument(
-        "--debug", action="store_true", help="Print debug information",
+        "--debug",
+        action="store_true",
+        help="Print debug information",
     )
     parser.add_argument(
         "-o",
@@ -233,7 +235,8 @@ def pyscal_main(
             wog_list = scalrec_list.interpolate(int_param_wo, int_param_go, h=delta_s)
         elif scalrec_list[1].type == GasWater:
             logger.info(
-                "Interpolating, gaswater=%s", str(int_param_wo),
+                "Interpolating, gaswater=%s",
+                str(int_param_wo),
             )
             wog_list = scalrec_list.interpolate(int_param_wo, None, h=delta_s)
     else:

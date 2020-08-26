@@ -242,7 +242,7 @@ def normalize_nonlinpart_wo(curve):
 
 
 def normalize_nonlinpart_go(curve):
-    """ Make krg and krog functions that evaluates only on the
+    """Make krg and krog functions that evaluates only on the
     (potentially) nonlinear part of the relperm curves, and with
     a normalized argument (0,1) on that interval.
 

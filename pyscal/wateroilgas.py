@@ -42,7 +42,7 @@ class WaterOilGas(object):
         tag (str): Optional text that will be included as comments.
         fast (bool): Set to True if you prefer speed over robustness. Not recommended,
             pyscal will not guarantee valid output in this mode.
-   """
+    """
 
     def __init__(
         self,

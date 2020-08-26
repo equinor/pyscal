@@ -395,7 +395,7 @@ class GasOil(object):
         self.table.loc[self.table["krog"] > kroend, "krog"] = kroend
 
     def add_corey_gas(self, ng=2, krgend=1, krgmax=None):
-        """ Add krg data through the Corey parametrization
+        """Add krg data through the Corey parametrization
 
         A column called 'krg' will be added. If it exists, it will
         be replaced.
@@ -448,7 +448,10 @@ class GasOil(object):
 
         self.set_endpoints_linearpart_krog(kroend)
 
-        self.krogcomment = "-- Corey krog, nog=%g, kroend=%g\n" % (nog, kroend,)
+        self.krogcomment = "-- Corey krog, nog=%g, kroend=%g\n" % (
+            nog,
+            kroend,
+        )
 
     def add_LET_gas(self, l=2, e=2, t=2, krgend=1, krgmax=None):
         """
