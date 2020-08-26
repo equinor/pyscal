@@ -26,6 +26,8 @@ REQUIREMENTS = [
     "xlrd",
 ]
 TEST_REQUIREMENTS = [
+    "black>=20.8b0; python_version >= '3'",
+    "flake8",
     "hypothesis",
     "pytest",
     "sphinx",
