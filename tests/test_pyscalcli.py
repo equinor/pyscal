@@ -24,6 +24,10 @@ def test_installed():
     """Test that the command line client is installed in PATH and
     starts up nicely"""
     assert subprocess.check_output(["pyscal", "-h"])
+    assert subprocess.check_output(["pyscal", "--help"])
+
+    # On Py2, the version output is sent to stderr:
+    assert subprocess.check_output(["pyscal", "--version"], stderr=subprocess.STDOUT)
 
 
 def test_log_levels(tmpdir, caplog, default_loglevel):
