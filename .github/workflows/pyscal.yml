@@ -67,7 +67,7 @@ jobs:
           python setup.py build_sphinx -W
 
       - name: Update GitHub pages
-        if: github.ref == 'refs/heads/master' && matrix.python-version == '3.6'
+        if: github.repository == 'equinor' && github.ref == 'refs/heads/master' && matrix.python-version == '3.6'
         run: |
             cp -R ./build/sphinx/html ../html
 
