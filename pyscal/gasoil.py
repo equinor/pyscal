@@ -269,6 +269,12 @@ class GasOil(object):
                 swlfrominput,
             )
             logger.warning("         Do not trust the result near the endpoint.")
+
+        if 0 < swlfrominput - self.swl < epsilon:
+            # Perturb max sg in incoming dataframe when we are this close,
+            # or we will get into floating trouble when interpolating.
+            dframe.loc[dframe[sgcolname].idxmax(), sgcolname] += swlfrominput - self.swl
+
         if krgcolname in dframe:
             if not (dframe[krgcolname].diff().dropna() > -epsilon).all():
                 raise ValueError("Incoming krg not increasing")

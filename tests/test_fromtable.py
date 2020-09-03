@@ -12,7 +12,7 @@ import pytest
 from hypothesis import given, settings
 import hypothesis.strategies as st
 
-from pyscal import WaterOil, GasOil
+from pyscal import WaterOil, GasOil, WaterOilGas
 
 from common import check_table, float_df_checker
 
@@ -184,6 +184,24 @@ def test_wo_singlecolumns():
     wateroil = WaterOil(h=0.1)
     wateroil.add_fromtable(pc5)
     assert wateroil.table["pc"].sum() == 0
+
+
+def test_ieee_754():
+    wateroilgas = WaterOilGas(swl=0.18)
+    # For this particular swl value, we get:
+    # wateroilgas.gasoil.table.sg.max()
+    # Out[18]: 0.8200000000000001  # = (1 - 0.18)
+
+    # Can we then interpolate from a table that goes up to 0.82?
+    sgof = pd.DataFrame(
+        columns=["Sg", "krg", "krog", "pcog"], data=[[0, 0, 1, 0], [0.82, 1, 0, 0]]
+    )
+    # Note, replacing 0.82 in the table above with 1-0.18 *is not the same*
+    wateroilgas.gasoil.add_fromtable(sgof)
+    assert wateroilgas.gasoil.table["krg"].max() == 1.0
+    assert wateroilgas.gasoil.table["krog"].min() == 0.0
+    assert wateroilgas.gasoil.table["pc"].min() == 0.0
+    assert wateroilgas.gasoil.table["pc"].max() == 0.0
 
 
 def test_wo_invalidcurves():
