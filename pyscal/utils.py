@@ -23,6 +23,7 @@ def df2str(
     digits=7,
     roundlevel=9,
     header=False,
+    monotonocity=None,
     monotone_column=None,
     monotone_direction=None,
 ):
@@ -31,7 +32,7 @@ def df2str(
     proper rounding.
 
     This is used to print the tables in the SWOF/SGOF include files,
-    explicit rounding is necessary to avoid monotonicity errors
+    explicit rounding is necessary to avoid monotonocity errors
     from truncation. Examples in test code.
 
     Capillary pressure must be strictly monotone if nonzero, and if a
@@ -48,38 +49,134 @@ def df2str(
         roundlevel (int): To how many digits should we round prior to print.
             Recommended to be > digits + 1, see test code.
         header (bool): If the dataframe column header should be included
-        monotone_column: column name for which strict monotonicity
-            must be preserved in output. Only one column can be fixed.
-        monotone_direction: Direction of monotonicity, increasing or decreasing,
-            allowed values are '-1', '1', 'inc' or 'dec'
+        monotonocity (dict): Settings for monotonocity in output. A dict
+            with column names as keys, with values being a dict with keys
+            "sign" (-1 or +1 integer) for direction,  "upper" and "lower" for
+            lower and upper limits (non-strict monotonocity is allowed at
+            these upper and lower limits).
+        monotone_columns (list of str): column names for which strict
+            monotonocity must be preserved in output. Deprecated.
+        monotone_directions (list of str): Direction of monotonocity, increasing
+            or decreasing, allowed values are '-1', '1', 'inc' or 'dec'. If
+            multiple columns, specify for each. Deprecated.
     """
     float_format = "%1." + str(digits) + "f"
 
-    if monotone_direction is not None:
-        if monotone_direction == 1 or monotone_direction == "inc":
-            sign = 1
-        elif monotone_direction == -1 or monotone_direction == "dec":
-            sign = -1
-        else:
-            raise ValueError("Unknown monotone_direction: " + str(monotone_direction))
-    else:
-        if monotone_column is not None:
-            sign = -1  # Default is decreasing monotonocity
+    if monotonocity is not None and monotone_column is not None:
+        raise ValueError("Do not mix new and deprecated API")
 
-    if monotone_column is not None and dframe[monotone_column].abs().sum() > 0:
-        dframe = dframe.copy()
-        constants = dframe[monotone_column].round(digits).diff() == 0.0
-        while constants.any():
-            # Substract the smallest value that we can represent where
-            # it is needed:
-            dframe.loc[constants, monotone_column] = (
-                dframe.loc[constants, monotone_column] + sign / 10.0 ** digits
-            )
-            constants = dframe[monotone_column].round(digits).diff() == 0.0
+    if monotonocity is None and monotone_column is not None:
+        logger.warning("monotone_column is deprecated, use monotonocity")
+        monotonocity = remap_deprecated_monotonocity(
+            monotone_column, monotone_direction
+        )
+
+    if monotonocity is not None:
+        dframe = modify_dframe_monotonocity(dframe, monotonocity, digits)
 
     return dframe.round(roundlevel).to_csv(
         sep=" ", float_format=float_format, header=header, index=False
     )
+
+
+def modify_dframe_monotonocity(dframe, monotonocity, digits):
+    """Modify a dataframe for monotonicity.
+
+    Columns in the dataframe are modified in-place.
+
+    Args:
+        dframe (pd.DataFrame): Data to modify.
+        monotonocity (dict): see df2str() for syntax.
+        digits (int): Number of digits to ensure monotonocity for.
+    """
+    validate_monotonocity_arg(monotonocity, dframe.columns)
+
+    def rows_to_be_fixed(series, column_monotonocity, digits):
+        constants = series.round(digits).diff() == 0.0
+        if "upper" in column_monotonocity:
+            constants = constants & (series < column_monotonocity["upper"])
+        if "lower" in column_monotonocity:
+            constants = constants & (series > column_monotonocity["lower"])
+        return constants
+
+    for col in monotonocity:
+        if dframe[col].dtype != np.float64:
+            dframe.loc[:, col] = dframe[col].astype(float)
+        sign = monotonocity[col]["sign"]
+        sign = sign / abs(sign)
+        if dframe[col].abs().sum() < epsilon:
+            continue
+        if (
+            "upper" in monotonocity[col]
+            and (dframe[col] > monotonocity[col]["upper"]).any()
+        ):
+            raise ValueError("Values larger than upper limit in column {}".format(col))
+        if (
+            "lower" in monotonocity[col]
+            and (dframe[col] < monotonocity[col]["lower"]).any()
+        ):
+            raise ValueError("Values larger than upper limit in column {}".format(col))
+
+        # Only strict monotonocity is supported. Non-strict
+        # monotonicity is only allowed at upper and lower limit.
+        constants = rows_to_be_fixed(dframe[col], monotonocity[col], digits)
+        while constants.any():
+            # Substract (or add) the smallest value that we can represent where
+            # it is needed:
+            dframe.loc[constants, col] = (
+                dframe.loc[constants, col] + sign / 10.0 ** digits
+            )
+            constants = rows_to_be_fixed(dframe[col], monotonocity[col], digits)
+        if sign > 0:
+            if (dframe[col].round(digits).diff() < 0).any():
+                raise ValueError("Not possible to make colum monotonic")
+        if sign < 0:
+            if (dframe[col].round(digits).diff() > 0).any():
+                raise ValueError("Not possible to make colum monotonic")
+    return dframe
+
+
+def validate_monotonocity_arg(monotonocity, dframe_colnames):
+    valid_keys = ["sign", "upper", "lower"]
+    if monotonocity is None:
+        return
+    if not isinstance(monotonocity, dict):
+        raise ValueError("monotonocity must be a dict")
+    for col in monotonocity:
+        if not isinstance(monotonocity[col], dict):
+            raise ValueError("monotononicity must be a dict of dicts")
+        if not set(monotonocity[col].keys()).issubset(valid_keys):
+            raise ValueError(
+                "Unknown keys in monotonocity {}".format(monotonocity[col].keys())
+            )
+        if col not in dframe_colnames:
+            raise ValueError("Column %s does not exist in dataframe", str(col))
+        if "sign" not in monotonocity[col]:
+            raise ValueError("Monotonocity sign not specified for {}".format(col))
+        try:
+            signvalue = float(monotonocity[col]["sign"])
+        except ValueError:
+            raise ValueError(
+                "Monotonocity sign {} not valid".format(monotonocity[col]["sign"])
+            )
+        if "upper" in monotonocity[col]:
+            float(monotonocity[col]["upper"])
+        if "lower" in monotonocity[col]:
+            float(monotonocity[col]["lower"])
+        if abs(signvalue) > 1:
+            raise ValueError("Monotonocity sign must be -1 or +1, not larger/smaller")
+
+
+def remap_deprecated_monotonocity(monotone_column, monotone_direction):
+    """Remove this function around pyscal 0.9"""
+    signs = {"1": 1, "+1": 1, "inc": 1, "-1": -1, "dec": -1}
+    if monotone_column is not None and monotone_direction is None:
+        return {monotone_column: {"sign": -1}}
+    if monotone_column is not None and monotone_direction is not None:
+        if str(monotone_direction) not in signs:
+            raise ValueError("Invalid monotone_direction {}".format(monotone_direction))
+        return {monotone_column: {"sign": signs[str(monotone_direction)]}}
+    return {}
 
 
 def crosspoint(dframe, satcol, kr1col, kr2col):

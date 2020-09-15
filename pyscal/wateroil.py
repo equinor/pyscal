@@ -1100,7 +1100,7 @@ class WaterOil(object):
         string += utils.comment_formatter(self.tag)
         string += "-- pyscal: " + str(pyscal.__version__) + "\n"
         if "pc" not in self.table.columns:
-            self.table["pc"] = 0
+            self.table["pc"] = 0.0
             self.pccomment = "-- Zero capillary pressure\n"
         if dataincommentrow:
             string += self.swcomment
@@ -1119,9 +1119,7 @@ class WaterOil(object):
             + "\n"
         )
         string += utils.df2str(
-            self.table[["sw", "krw", "krow", "pc"]],
-            monotone_column="pc",
-            monotone_direction="dec",
+            self.table[["sw", "krw", "krow", "pc"]], monotonocity={"pc": {"sign": -1}}
         )
         string += "/\n"  # Empty line at the end
         return string
@@ -1155,7 +1153,7 @@ class WaterOil(object):
             return ""
         string = ""
         if "pc" not in self.table.columns:
-            self.table["pc"] = 0
+            self.table["pc"] = 0.0
             self.pccomment = "-- Zero capillary pressure\n"
         if header:
             string += "SWFN\n"
@@ -1182,9 +1180,7 @@ class WaterOil(object):
             + "\n"
         )
         string += utils.df2str(
-            self.table[["sw", "krw", "pc"]],
-            monotone_column="pc",
-            monotone_direction="dec",
+            self.table[["sw", "krw", "pc"]], monotonocity={"pc": {"sign": -1}}
         )
         string += "/\n"  # Empty line at the end
         return string
@@ -1193,7 +1189,7 @@ class WaterOil(object):
         """Return a string for a Nexus WOTABLE"""
         string = ""
         if "pc" not in self.table.columns:
-            self.table["pc"] = 0
+            self.table["pc"] = 0.0
             self.pccomment = "-- Zero capillary pressure\n"
 
         if header:
@@ -1217,9 +1213,7 @@ class WaterOil(object):
             + "\n"
         )
         string += utils.df2str(
-            self.table[["sw", "krw", "krow", "pc"]],
-            monotone_column="pc",
-            monotone_direction="dec",
+            self.table[["sw", "krw", "krow", "pc"]], monotonocity={"pc": {"sign": -1}}
         )
         return string
 

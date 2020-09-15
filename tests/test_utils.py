@@ -64,7 +64,7 @@ def test_df2str():
         utils.df2str(
             pd.DataFrame(data=[0.003499999999998]), digits=3, roundlevel=20
         ).strip()
-        == "0.003"  # Wrong
+        == "0.003"  # "Wrong" due to IEE754 truncation.
     )
     # If we round straight to out output, we are not getting the chance to correct for
     # the representation error:
@@ -110,7 +110,7 @@ def test_df2str_monotone():
     # Don't touch all-zero columns
     assert (
         utils.df2str(pd.DataFrame(data=[0, 0, 0]), digits=2, monotone_column=0)
-        == "0\n0\n0\n"
+        == "0.00\n0.00\n0.00\n"
     )
     # A constant nonzero column, makes no sense as capillary pressure
     # but still we ensure it runs in eclipse:
@@ -154,20 +154,16 @@ def test_df2str_monotone():
         )
         == "1.00\n1.01\n1.02\n"
     )
-    with pytest.raises(ValueError):
-        assert (
-            utils.df2str(
-                pd.DataFrame(data=[1, 1, 1]),
-                digits=2,
-                monotone_column=0,
-                monotone_direction="foo",
-            )
-            == "1.00\n1.01\n1.02\n"
-        )
-
     assert (
         utils.df2str(pd.DataFrame(data=[1, 1, 1]), digits=7, monotone_column=0)
         == "1.0000000\n0.9999999\n0.9999998\n"
+    )
+
+    # For strict monotonicity we will introduce negativity:
+    dframe = pd.DataFrame(data=[0.00001, 0.0, 0.0, 0.0], columns=["pc"])
+    assert (
+        utils.df2str(dframe, monotone_column="pc")
+        == "0.0000100\n0.0000000\n-0.0000001\n-0.0000002\n"
     )
 
     # Actual data that has occured:
@@ -178,6 +174,91 @@ def test_df2str_monotone():
         utils.df2str(dframe, monotone_column="pc")
         == "0.0000027\n0.0000026\n0.0000024\n0.0000023\n0.0000017\n"
     )
+
+
+@pytest.mark.parametrize(
+    "series, monotonocity, expected",
+    [
+        (
+            [0.02, 0.01, 0.01, 0.00, 0.00],
+            {0: {"sign": -1, "lower": 0}},
+            ["0.02", "0.01", "0.00", "0.00", "0.00"],
+        ),
+        (
+            [0.02, 0.01, 0.01, 0.00, 0.00],
+            {0: {"sign": -1}},
+            ["0.02", "0.01", "0.00", "-0.01", "-0.02"],
+        ),
+        ([1.0, 1.0, 1.0], {0: {"sign": 1, "upper": 1}}, ["1.00", "1.00", "1.00"]),
+        ([1, 1, 1], {0: {"sign": 1}}, ["1.00", "1.01", "1.02"]),
+        ([1, 1, 1], {0: {"sign": -1, "upper": 1}}, ["1.00", "1.00", "1.00"]),
+        ([1, 1, 1], {0: {"sign": -1}}, ["1.00", "0.99", "0.98"]),
+        ([1, 1, 1], {0: {"sign": -1, "lower": 1}}, ["1.00", "1.00", "1.00"]),
+        (
+            [1, 1, 0.5, 0.01, 0.01, 0, 0],
+            {0: {"sign": -1, "lower": 0, "upper": 1}},
+            ["1.00", "1.00", "0.50", "0.01", "0.00", "0.00", "0.00"],
+        ),
+        (
+            [0, 0, 0.01, 0.01, 0.5, 1, 1],
+            {0: {"sign": 1, "lower": 0, "upper": 1}},
+            ["0.00", "0.00", "0.01", "0.02", "0.50", "1.00", "1.00"],
+        ),
+        ([0], {0: {"sign": -1, "upper": -1}}, ["0.00"]),
+        # Test two columns at the same time:
+        (
+            [[0, 0], [0, 0], [0, 0]],
+            {0: {"sign": -1}, 1: {"sign": -1}},
+            ["0.00 0.00", "0.00 0.00", "0.00 0.00"],
+        ),
+        (
+            [[1, 1], [1, 1], [1, 1]],
+            {0: {"sign": -1}, 1: {"sign": 1}},
+            ["1.00 1.00", "0.99 1.01", "0.98 1.02"],
+        ),
+    ],
+)
+def test_df2str_nonstrict_monotonocity(series, monotonocity, expected):
+    """Test that we can have non-strict monotonocity at upper and/or lower limits"""
+    assert (
+        utils.df2str(
+            pd.DataFrame(data=series),
+            digits=2,
+            monotonocity=monotonocity,
+        ).splitlines()
+        == expected
+    )
+
+
+@pytest.mark.parametrize(
+    "series, monotonocity",
+    [
+        (
+            [0, 1],
+            {0: {"sign": -1}},
+        ),
+        ([0, 0.5, 1], {0: {"sign": -1}}),
+        (
+            [0, 1],
+            {0: {"sign": -1, "lower": 0, "upper": 1}},
+        ),
+        ([0, 0.5, 1], {0: {"sign": -1, "lower": 0, "upper": 1}}),
+        ([0, 1], {1: "foo"}),  # not a dict of dict
+        ([0, 1], {0: {}}),  # sign is required
+        ([0, 1], {0: {"sgn": 1}}),  # sign is required
+        ([0, 1], {0: {"sign": 2}}),  # sign have abs = 1
+        ([0, 1], {0: {"sign": 1, "lower": "a"}}),
+        ([0, 1], {0: {"sign": 1, "lower": 2}}),
+        ([0, 1], {0: {"sign": 1, "upper": -2}}),
+    ],
+)
+def test_df2str_nonstrict_monotonocity_valueerror(series, monotonocity):
+    with pytest.raises(ValueError):
+        utils.df2str(
+            pd.DataFrame(data=series),
+            digits=2,
+            monotonocity=monotonocity,
+        )
 
 
 def test_diffjumppoint():

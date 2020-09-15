@@ -698,7 +698,7 @@ class GasOil(object):
             return ""
         string = ""
         if "pc" not in self.table:
-            self.table["pc"] = 0
+            self.table["pc"] = 0.0
             self.pccomment = "-- Zero capillary pressure\n"
         if header:
             string += "SGOF\n"
@@ -721,9 +721,7 @@ class GasOil(object):
             + "\n"
         )
         string += utils.df2str(
-            self.table[["sg", "krg", "krog", "pc"]],
-            monotone_column="pc",
-            monotone_direction="inc",
+            self.table[["sg", "krg", "krog", "pc"]], monotonocity={"pc": {"sign": 1}}
         )
         string += "/\n"
         return string
@@ -735,7 +733,7 @@ class GasOil(object):
         extracted as a single function to facilitate testing."""
         if "pc" not in self.table.columns:
             # Only happens when the SLGOF function is skipped (test code)
-            self.table["pc"] = 0
+            self.table["pc"] = 0.0
         slgof = (
             self.table[
                 self.table["sg"] <= 1 - self.sorg - self.swl + 1.0 / float(SWINTEGERS)
@@ -790,7 +788,7 @@ class GasOil(object):
             return ""
         string = ""
         if "pc" not in self.table:
-            self.table["pc"] = 0
+            self.table["pc"] = 0.0
             self.pccomment = "-- Zero capillary pressure\n"
         if header:
             string += "SLGOF\n"
@@ -811,9 +809,7 @@ class GasOil(object):
             + "PC".ljust(width)
             + "\n"
         )
-        string += utils.df2str(
-            self.slgof_df(), monotone_column="pc", monotone_direction="dec"
-        )
+        string += utils.df2str(self.slgof_df(), monotonocity={"pc": {"sign": -1}})
         string += "/\n"
         return string
 
@@ -845,7 +841,7 @@ class GasOil(object):
         """
         string = ""
         if "pc" not in self.table.columns:
-            self.table["pc"] = 0
+            self.table["pc"] = 0.0
             self.pccomment = "-- Zero capillary pressure\n"
         if header:
             string += "SGFN\n"
@@ -872,9 +868,7 @@ class GasOil(object):
             + "\n"
         )
         string += utils.df2str(
-            self.table[["sg", "krg", "pc"]],
-            monotone_column="pc",
-            monotone_direction="inc",
+            self.table[["sg", "krg", "pc"]], monotonocity={"pc": {"sign": 1}}
         )
         string += "/\n"
         return string
@@ -899,7 +893,7 @@ class GasOil(object):
         """
         string = ""
         if "pc" not in self.table.columns:
-            self.table["pc"] = 0
+            self.table["pc"] = 0.0
             self.pccomment = "-- Zero capillary pressure\n"
         if header:
             string += "GOTABLE\n"
