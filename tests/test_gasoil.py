@@ -65,6 +65,7 @@ def test_gasoil_init():
     assert np.isclose(gasoil.table["sg"].max(), 0.9)
 
 
+@settings(deadline=300)
 @given(st.text())
 def test_gasoil_tag(tag):
     """Test tagging of GasOil objects,
@@ -344,7 +345,7 @@ def test_comments():
     assert "PC" in sgof
 
 
-@settings(deadline=1000)
+@settings(deadline=1500)
 @given(st.floats(), st.floats(), st.floats(), st.floats(), st.floats())
 def test_gasoil_let1(l, e, t, krgend, krgmax):
     """Test the LET formulation, take 1"""

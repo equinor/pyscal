@@ -395,7 +395,7 @@ class WaterOil(object):
             krwend (float): value of krw at 1 - sorw.
             krwmax (float): maximal value at Sw=1. Default 1
         """
-        assert epsilon < nw < MAX_EXPONENT
+        assert 10 * epsilon < nw < MAX_EXPONENT
         if krwmax:
             assert 0 < krwend <= krwmax <= 1.0
         else:
@@ -1119,7 +1119,12 @@ class WaterOil(object):
             + "\n"
         )
         string += utils.df2str(
-            self.table[["sw", "krw", "krow", "pc"]], monotonocity={"pc": {"sign": -1}}
+            self.table[["sw", "krw", "krow", "pc"]],
+            monotonocity={
+                "krow": {"sign": -1, "lower": 0, "upper": 1},
+                "krw": {"sign": 1, "lower": 0, "upper": 1},
+                "pc": {"sign": -1, "allowzero": True},
+            },
         )
         string += "/\n"  # Empty line at the end
         return string
@@ -1180,7 +1185,11 @@ class WaterOil(object):
             + "\n"
         )
         string += utils.df2str(
-            self.table[["sw", "krw", "pc"]], monotonocity={"pc": {"sign": -1}}
+            self.table[["sw", "krw", "pc"]],
+            monotonocity={
+                "krw": {"sign": 1, "lower": 0, "upper": 1},
+                "pc": {"sign": -1, "allowzero": True},
+            },
         )
         string += "/\n"  # Empty line at the end
         return string
@@ -1213,7 +1222,12 @@ class WaterOil(object):
             + "\n"
         )
         string += utils.df2str(
-            self.table[["sw", "krw", "krow", "pc"]], monotonocity={"pc": {"sign": -1}}
+            self.table[["sw", "krw", "krow", "pc"]],
+            monotonocity={
+                "krow": {"sign": -1, "lower": 0, "upper": 1},
+                "krw": {"sign": 1, "lower": 0, "upper": 1},
+                "pc": {"sign": -1, "allowzero": True},
+            },
         )
         return string
 
