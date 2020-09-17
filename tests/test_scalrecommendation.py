@@ -259,7 +259,7 @@ def test_make_scalrecommendation_go():
     assert not interpolant.SWOF()
 
 
-@settings(max_examples=10, deadline=1500)
+@settings(max_examples=10, deadline=2000)
 @given(
     st.floats(min_value=-1.1, max_value=1.1), st.floats(min_value=-1.1, max_value=1.1)
 )

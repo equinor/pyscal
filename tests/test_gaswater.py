@@ -50,6 +50,7 @@ def check_endpoints(gaswater, krwend, krwmax, krgend):
         assert np.isclose(gaswater.wateroil.table["krw"].max(), krwend)
 
 
+@settings(deadline=400)
 @given(st.text())
 def test_gaswater_tag(tag):
     """Test that we are unlikely to crash Eclipse

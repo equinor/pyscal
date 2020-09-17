@@ -721,7 +721,12 @@ class GasOil(object):
             + "\n"
         )
         string += utils.df2str(
-            self.table[["sg", "krg", "krog", "pc"]], monotonocity={"pc": {"sign": 1}}
+            self.table[["sg", "krg", "krog", "pc"]],
+            monotonocity={
+                "krog": {"sign": -1, "lower": 0, "upper": 1},
+                "krg": {"sign": 1, "lower": 0, "upper": 1},
+                "pc": {"sign": 1, "allowzero": True},
+            },
         )
         string += "/\n"
         return string
@@ -809,7 +814,14 @@ class GasOil(object):
             + "PC".ljust(width)
             + "\n"
         )
-        string += utils.df2str(self.slgof_df(), monotonocity={"pc": {"sign": -1}})
+        string += utils.df2str(
+            self.slgof_df(),
+            monotonocity={
+                "krog": {"sign": 1, "lower": 0, "upper": 1},
+                "krg": {"sign": -1, "lower": 0, "upper": 1},
+                "pc": {"sign": -1, "allowzero": True},
+            },
+        )
         string += "/\n"
         return string
 
@@ -868,7 +880,11 @@ class GasOil(object):
             + "\n"
         )
         string += utils.df2str(
-            self.table[["sg", "krg", "pc"]], monotonocity={"pc": {"sign": 1}}
+            self.table[["sg", "krg", "pc"]],
+            monotonocity={
+                "krg": {"sign": 1, "lower": 0, "upper": 1},
+                "pc": {"sign": 1, "allowzero": True},
+            },
         )
         string += "/\n"
         return string
@@ -916,8 +932,11 @@ class GasOil(object):
         )
         string += utils.df2str(
             self.table[["sg", "krg", "krog", "pc"]],
-            monotone_column="pc",
-            monotone_direction="inc",
+            monotonocity={
+                "krog": {"sign": -1, "lower": 0, "upper": 1},
+                "krg": {"sign": 1, "lower": 0, "upper": 1},
+                "pc": {"sign": 1, "allowzero": True},
+            },
         )
         return string
 
