@@ -3,7 +3,6 @@ from __future__ import division, absolute_import
 from __future__ import print_function
 
 
-from .utils import interpolator  # noqa
 from .wateroil import WaterOil  # noqa
 from .wateroilgas import WaterOilGas  # noqa
 from .gasoil import GasOil  # noqa

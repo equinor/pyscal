@@ -1,336 +1,25 @@
-"""Test module for pyscal.utils"""
+"""Test module for relperm interpolation support code"""
 
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import pandas as pd
 import numpy as np
 
-import pytest
 
 from hypothesis import given, settings
 import hypothesis.strategies as st
 
 
-from pyscal import utils, WaterOil, GasOil
+from pyscal import WaterOil, GasOil
 from common import check_table, float_df_checker, sat_table_str_ok
-
-
-def test_df2str():
-    """Test handling of roundoff issues when printing dataframes
-
-    See also test_gasoil.py::test_roundoff()
-    """
-    # Easy cases:
-    assert utils.df2str(pd.DataFrame(data=[0.1]), digits=1).strip() == "0.1"
-    assert utils.df2str(pd.DataFrame(data=[0.1]), digits=3).strip() == "0.100"
-    assert (
-        utils.df2str(pd.DataFrame(data=[0.1]), digits=3, roundlevel=3).strip()
-        == "0.100"
-    )
-    assert (
-        utils.df2str(pd.DataFrame(data=[0.1]), digits=3, roundlevel=4).strip()
-        == "0.100"
-    )
-    assert (
-        utils.df2str(pd.DataFrame(data=[0.1]), digits=3, roundlevel=5).strip()
-        == "0.100"
-    )
-    assert (
-        utils.df2str(pd.DataFrame(data=[0.01]), digits=3, roundlevel=2).strip()
-        == "0.010"
-    )
-
-    # Here roundlevel will ruin the result:
-    assert (
-        utils.df2str(pd.DataFrame(data=[0.01]), digits=3, roundlevel=1).strip()
-        == "0.000"
-    )
-
-    # Tricky ones:
-    # This one should be rounded down:
-    assert utils.df2str(pd.DataFrame(data=[0.0034999]), digits=3).strip() == "0.003"
-    # But if we are on the 9999 side due to representation error, the
-    # number probably represents 0.0035 so it should be rounded up
-    assert (
-        utils.df2str(
-            pd.DataFrame(data=[0.003499999999998]), digits=3, roundlevel=5
-        ).strip()
-        == "0.004"
-    )
-    # If we round to more digits than we have in IEE754, we end up truncating:
-    assert (
-        utils.df2str(
-            pd.DataFrame(data=[0.003499999999998]), digits=3, roundlevel=20
-        ).strip()
-        == "0.003"  # "Wrong" due to IEE754 truncation.
-    )
-    # If we round straight to out output, we are not getting the chance to correct for
-    # the representation error:
-    assert (
-        utils.df2str(
-            pd.DataFrame(data=[0.003499999999998]), digits=3, roundlevel=3
-        ).strip()
-        == "0.003"  # Wrong
-    )
-    # So roundlevel > digits
-    assert (
-        utils.df2str(
-            pd.DataFrame(data=[0.003499999999998]), digits=3, roundlevel=4
-        ).strip()
-        == "0.004"
-    )
-    # But digits < roundlevel < 15 works:
-    assert (
-        utils.df2str(
-            pd.DataFrame(data=[0.003499999999998]), digits=3, roundlevel=14
-        ).strip()
-        == "0.004"
-    )
-    assert (
-        utils.df2str(
-            pd.DataFrame(data=[0.003499999999998]), digits=3, roundlevel=15
-        ).strip()
-        == "0.003"  # Wrong
-    )
-
-    # Double rounding is a potential issue, as:
-    assert round(0.0034445, 5) == 0.00344
-    assert round(round(0.0034445, 6), 5) == 0.00345  # Wrong
-    # So if pd.to_csv would later round instead of truncate, we could be victim
-    # of this, having roundlevel >  digits + 1 would avoid that:
-    assert round(round(0.0034445, 7), 5) == 0.00344
-    # (this is the rationale for roundlevel > digits + 1)
-
-
-def test_df2str_monotone():
-    """Test the monotonocity enforcement in df2str()"""
-
-    # A constant nonzero column, makes no sense as capillary pressure
-    # but still we ensure it runs in eclipse:
-    assert (
-        utils.df2str(pd.DataFrame(data=[1, 1, 1]), digits=2, monotone_column=0)
-        == "1.00\n0.99\n0.98\n"
-    )
-    assert (
-        utils.df2str(
-            pd.DataFrame(data=[1, 1, 1]),
-            digits=2,
-            monotone_column=0,
-            monotone_direction=-1,
-        )
-        == "1.00\n0.99\n0.98\n"
-    )
-    assert (
-        utils.df2str(
-            pd.DataFrame(data=[1, 1, 1]),
-            digits=2,
-            monotone_column=0,
-            monotone_direction="dec",
-        )
-        == "1.00\n0.99\n0.98\n"
-    )
-    assert (
-        utils.df2str(
-            pd.DataFrame(data=[1, 1, 1]),
-            digits=2,
-            monotone_column=0,
-            monotone_direction=1,
-        )
-        == "1.00\n1.01\n1.02\n"
-    )
-    assert (
-        utils.df2str(
-            pd.DataFrame(data=[1, 1, 1]),
-            digits=2,
-            monotone_column=0,
-            monotone_direction="inc",
-        )
-        == "1.00\n1.01\n1.02\n"
-    )
-    assert (
-        utils.df2str(pd.DataFrame(data=[1, 1, 1]), digits=7, monotone_column=0)
-        == "1.0000000\n0.9999999\n0.9999998\n"
-    )
-
-    # For strict monotonicity we will introduce negativity:
-    dframe = pd.DataFrame(data=[0.00001, 0.0, 0.0, 0.0], columns=["pc"])
-    assert (
-        utils.df2str(dframe, monotone_column="pc")
-        == "0.0000100\n0.0000000\n-0.0000001\n-0.0000002\n"
-    )
-
-    # Actual data that has occured:
-    dframe = pd.DataFrame(
-        data=[0.0000027, 0.0000026, 0.0000024, 0.0000024, 0.0000017], columns=["pc"]
-    )
-    assert (
-        utils.df2str(dframe, monotone_column="pc")
-        == "0.0000027\n0.0000026\n0.0000024\n0.0000023\n0.0000017\n"
-    )
-
-
-@pytest.mark.parametrize(
-    "series, monotonocity, expected",
-    [
-        (
-            [0.00, 0.0002, 0.01, 0.010001, 0.0100001, 0.01, 0.99, 1.0001, 1.00],
-            {0: {"sign": 1, "lower": 0, "upper": 1}},
-            ["0.00", "0.00", "0.01", "0.02", "0.03", "0.04", "0.99", "1.00", "1.00"],
-        ),
-        (
-            [0.02, 0.01, 0.01, 0.00, 0.00],
-            {0: {"sign": -1, "lower": 0}},
-            ["0.02", "0.01", "0.00", "0.00", "0.00"],
-        ),
-        (
-            [0.02, 0.01, 0.01, 0.00, 0.00],
-            {0: {"sign": -1}},
-            ["0.02", "0.01", "-0.00", "-0.01", "-0.02"],
-            #                 ^ this sign is optional, allowed when negative is allowed
-        ),
-        ([1.0, 1.0, 1.0], {0: {"sign": 1, "upper": 1}}, ["1.00", "1.00", "1.00"]),
-        ([1, 1, 1], {0: {"sign": 1}}, ["1.00", "1.01", "1.02"]),
-        ([1, 1, 1], {0: {"sign": -1, "upper": 1}}, ["1.00", "1.00", "1.00"]),
-        ([1, 1, 1], {0: {"sign": -1}}, ["1.00", "0.99", "0.98"]),
-        ([1, 1, 1], {0: {"sign": -1, "lower": 1}}, ["1.00", "1.00", "1.00"]),
-        ([0, 0, 0], {0: {"sign": -1, "allowzero": True}}, ["0.00", "0.00", "0.00"]),
-        ([0, 0, 0], {0: {"sign": 1, "allowzero": True}}, ["0.00", "0.00", "0.00"]),
-        (
-            [1, 1, 0.5, 0.01, 0.01, 0, 0],
-            {0: {"sign": -1, "lower": 0, "upper": 1}},
-            ["1.00", "1.00", "0.50", "0.01", "0.00", "0.00", "0.00"],
-        ),
-        (
-            [0, 0, 0.01, 0.01, 0.5, 1, 1],
-            {0: {"sign": 1, "lower": 0, "upper": 1}},
-            ["0.00", "0.00", "0.01", "0.02", "0.50", "1.00", "1.00"],
-        ),
-        (
-            [1, 0.01, 1e-3, 0],
-            {0: {"sign": -1, "lower": 0, "upper": 1}},
-            ["1.00", "0.01", "0.00", "0.00"],
-        ),
-        (
-            [1, 0.01, 1e-9, 1e-10, 0],  # Tricky due to epsilon
-            {0: {"sign": -1, "lower": 0, "upper": 1}},
-            ["1.00", "0.01", "0.00", "0.00", "0.00"],
-        ),
-        (
-            [1, 0.01, 4.66e-8, 1.56e-8, 4.09e-9, 1e-10, 0],  # Tricky due to epsilon
-            {0: {"sign": -1, "lower": 0, "upper": 1}},
-            ["1.00", "0.01", "0.00", "0.00", "0.00", "0.00", "0.00"],
-        ),
-        (
-            [1, 0.01, 4.78e-8, 2.09e-8, 4.09e-9, 1e-10, 0],  # Tricky due to epsilon
-            {0: {"sign": -1, "lower": 0, "upper": 1}},
-            ["1.00", "0.01", "0.00", "0.00", "0.00", "0.00", "0.00"],
-        ),
-        # Test two columns at the same time:
-        (
-            [[0, 0], [0, 0], [0, 0]],
-            {0: {"sign": -1, "allowzero": True}, 1: {"sign": -1, "allowzero": True}},
-            ["0.00 0.00", "0.00 0.00", "0.00 0.00"],
-        ),
-        (
-            [[1, 1], [1, 1], [1, 1]],
-            {0: {"sign": -1}, 1: {"sign": 1}},
-            ["1.00 1.00", "0.99 1.01", "0.98 1.02"],
-        ),
-    ],
+from pyscal.utils.interpolation import (
+    normalize_nonlinpart_wo,
+    normalize_nonlinpart_go,
+    normalize_pc,
+    interpolate_wo,
+    interpolate_go,
 )
-def test_df2str_nonstrict_monotonocity(series, monotonocity, expected):
-    """Test that we can have non-strict monotonocity at upper and/or lower limits"""
-    assert (
-        utils.df2str(
-            pd.DataFrame(data=series),
-            digits=2,
-            monotonocity=monotonocity,
-        ).splitlines()
-        == expected
-    )
-
-
-@pytest.mark.parametrize(
-    "series, monotonocity",
-    [
-        (
-            [0, 1],
-            {0: {"sign": -1}},
-        ),
-        ([0, 0.5, 1], {0: {"sign": -1}}),
-        (
-            [0, 1],
-            {0: {"sign": -1, "lower": 0, "upper": 1}},
-        ),
-        ([0, 0.5, 1], {0: {"sign": -1, "lower": 0, "upper": 1}}),
-        ([0, 1], {1: "foo"}),  # not a dict of dict
-        ([0, 1], {0: {}}),  # sign is required
-        ([0, 1], {0: {"sgn": 1}}),  # sign is required
-        ([0, 1], {0: {"sign": 2}}),  # sign have abs = 1
-        ([0, 1], {0: {"sign": 1, "lower": "a"}}),
-        ([0, 1], {0: {"sign": 1, "lower": 2}}),
-        ([0, 1], {0: {"sign": 1, "upper": -2}}),
-        ([0], {0: {"sign": -1, "upper": -1}}),
-        ([0], {0: {"sign": -1, "lower": 1}}),
-        ([0], {0: {"sign": 1, "upper": -1}}),
-        ([0], {0: {"sign": 1, "lower": 1}}),
-    ],
-)
-def test_df2str_nonstrict_monotonocity_valueerror(series, monotonocity):
-    with pytest.raises(ValueError):
-        utils.df2str(
-            pd.DataFrame(data=series),
-            digits=2,
-            monotonocity=monotonocity,
-        )
-
-
-def test_diffjumppoint():
-    """Test estimator for the jump in first derivative for some manually set up cases.
-
-    This code is also extensively tested throuth test_addfromtable"""
-
-    dframe = pd.DataFrame(columns=["x", "y"], data=[[0, 0], [0.3, 0.2], [1, 1]])
-
-    assert utils.estimate_diffjumppoint(dframe, side="right") == 0.3
-    assert utils.estimate_diffjumppoint(dframe, side="left") == 0.3
-
-    dframe = pd.DataFrame(columns=["x", "y"], data=[[0, 0], [1, 1]])
-    # We don't really care what gets printed from this, just don't crash..
-    assert 0 <= utils.estimate_diffjumppoint(dframe, side="right") <= 1
-    assert 0 <= utils.estimate_diffjumppoint(dframe, side="left") <= 1
-
-    dframe = pd.DataFrame(
-        columns=["x", "y"],
-        data=[
-            [0, 0],
-            [0.1, 0.1],
-            [0.2, 0.2],  # Linear until here
-            [0.3, 0.4],  # Nonlinear region
-            [0.4, 0.45],  # Nonlinear region
-            [0.7, 0.7],  # Linear from here
-            [0.8, 0.8],
-            [1, 1],
-        ],
-    )
-    assert utils.estimate_diffjumppoint(dframe, side="left") == 0.2
-    assert utils.estimate_diffjumppoint(dframe, side="right") == 0.7
-
-    dframe = pd.DataFrame(
-        columns=["x", "y"],
-        data=[
-            [0, 0],
-            [0.1, 0.0],
-            [0.2, 0.0],  # Linear until here
-            [0.3, 0.4],  # Nonlinear region
-            [0.9, 1],  # Start linear region again
-            [1, 1],
-        ],
-    )
-    assert utils.estimate_diffjumppoint(dframe, side="left") == 0.2
-    assert utils.estimate_diffjumppoint(dframe, side="right") == 0.9
 
 
 @settings(deadline=1000)
@@ -364,13 +53,13 @@ def test_normalize_nonlinpart_wo_hypo(
     wo_low.add_corey_oil(now=now1, kroend=kroend1)
     wo_high.add_corey_oil(now=now2, kroend=kroend2)
 
-    krwn1, kron1 = utils.normalize_nonlinpart_wo(wo_low)
+    krwn1, kron1 = normalize_nonlinpart_wo(wo_low)
     assert np.isclose(krwn1(0), 0)
     assert np.isclose(krwn1(1), krwend1)
     assert np.isclose(kron1(0), 0)
     assert np.isclose(kron1(1), kroend1)
 
-    krwn2, kron2 = utils.normalize_nonlinpart_wo(wo_high)
+    krwn2, kron2 = normalize_nonlinpart_wo(wo_high)
     assert np.isclose(krwn2(0), 0)
     assert np.isclose(krwn2(1), krwend2)
     assert np.isclose(kron2(0), 0)
@@ -388,7 +77,7 @@ def test_normalize_pc(swirr, dswl):
     pc_max = wateroil.table["pc"].max()
     pc_min = wateroil.table["pc"].min()
 
-    pc_fn = utils.normalize_pc(wateroil)
+    pc_fn = normalize_pc(wateroil)
     assert np.isclose(pc_fn(0), pc_max)
     assert np.isclose(pc_fn(1), pc_min)
 
@@ -397,23 +86,23 @@ def test_normalize_emptypc():
     """Test that we can normalize both
     when pc is missing, and when it is all zero"""
     wateroil = WaterOil()
-    pc_fn = utils.normalize_pc(wateroil)
+    pc_fn = normalize_pc(wateroil)
     assert np.isclose(pc_fn(0), 0)
     assert np.isclose(pc_fn(1), 0)
 
     wateroil = WaterOil(swl=0.01)
     wateroil.add_simple_J(g=0)
-    pc_fn = utils.normalize_pc(wateroil)
+    pc_fn = normalize_pc(wateroil)
     assert np.isclose(pc_fn(0), 0)
     assert np.isclose(pc_fn(1), 0)
 
 
 def test_normalize_nonlinpart_wo():
-    """Manual tests for utils.normalize_nonlinpart_wo"""
+    """Manual tests for normalize_nonlinpart_wo"""
     wateroil = WaterOil(swl=0.1, swcr=0.12, sorw=0.05, h=0.05)
     wateroil.add_corey_water(nw=2.1, krwend=0.9)
     wateroil.add_corey_oil(now=3, kroend=0.8)
-    krwn, kron = utils.normalize_nonlinpart_wo(wateroil)
+    krwn, kron = normalize_nonlinpart_wo(wateroil)
 
     assert np.isclose(krwn(0), 0)
     assert np.isclose(krwn(1), 0.9)
@@ -427,7 +116,7 @@ def test_normalize_nonlinpart_wo():
     wateroil = WaterOil(swl=h, swcr=h, sorw=h, h=h)
     wateroil.add_corey_water(nw=2.1, krwend=0.9)
     wateroil.add_corey_oil(now=3, kroend=0.8)
-    krwn, kron = utils.normalize_nonlinpart_wo(wateroil)
+    krwn, kron = normalize_nonlinpart_wo(wateroil)
     assert np.isclose(krwn(0), 0.0)
     assert np.isclose(krwn(1), 0.9)
     assert np.isclose(kron(0), 0)
@@ -437,7 +126,7 @@ def test_normalize_nonlinpart_wo():
     wateroil = WaterOil(swl=0, swcr=0, sorw=0, h=0.01)
     wateroil.add_corey_water(nw=2.1, krwend=0.9)
     wateroil.add_corey_oil(now=3, kroend=0.8)
-    krwn, kron = utils.normalize_nonlinpart_wo(wateroil)
+    krwn, kron = normalize_nonlinpart_wo(wateroil)
     assert np.isclose(krwn(0), 0.0)
     assert np.isclose(krwn(1), 0.9)
     assert np.isclose(kron(0), 0)
@@ -450,7 +139,7 @@ def test_normalize_nonlinpart_wo():
     wateroil.swl = 0
     wateroil.swcr = 0
     wateroil.sorw = 0
-    krwn, kron = utils.normalize_nonlinpart_wo(wateroil)
+    krwn, kron = normalize_nonlinpart_wo(wateroil)
     # These go well still, since we are at zero
     assert np.isclose(krwn(0), 0.0)
     assert np.isclose(kron(0), 0)
@@ -464,27 +153,11 @@ def test_normalize_nonlinpart_wo():
     wateroil.swcr = wateroil.estimate_swcr()
     wateroil.sorw = wateroil.estimate_sorw()
     # Try again
-    krwn, kron = utils.normalize_nonlinpart_wo(wateroil)
+    krwn, kron = normalize_nonlinpart_wo(wateroil)
     assert np.isclose(krwn(0), 0.0)
     assert np.isclose(kron(0), 0)
     assert np.isclose(krwn(1), 0.6)
     assert np.isclose(kron(1), 0.8)
-
-
-def test_comment_formatter():
-    """Test the comment formatter
-
-    This is also tested through hypothesis.text()
-    in test_wateroil and test_gasoil, there is it tested
-    through the use of tag formatting
-    """
-    assert utils.comment_formatter(None) == "-- \n"
-    assert utils.comment_formatter("\n") == "-- \n"
-    assert utils.comment_formatter("\r\n") == "-- \n"
-    assert utils.comment_formatter("\r") == "-- \n"
-    assert utils.comment_formatter("foo") == "-- foo\n"
-    assert utils.comment_formatter("foo", prefix="gaa") == "gaafoo\n"
-    assert utils.comment_formatter("foo\nbar") == "-- foo\n-- bar\n"
 
 
 def test_tag_preservation():
@@ -495,12 +168,12 @@ def test_tag_preservation():
     wo_high.add_corey_water(nw=3)
     wo_low.add_corey_oil(now=2)
     wo_high.add_corey_oil(now=3)
-    interpolant1 = utils.interpolate_wo(wo_low, wo_high, parameter=0.1, h=0.2)
+    interpolant1 = interpolate_wo(wo_low, wo_high, parameter=0.1, h=0.2)
     assert "Interpolated to 0.1" in interpolant1.tag
     sat_table_str_ok(interpolant1.SWOF())
 
     wo_high.tag = "FOOBAR"
-    interpolant2 = utils.interpolate_wo(wo_low, wo_high, parameter=0.1, h=0.2)
+    interpolant2 = interpolate_wo(wo_low, wo_high, parameter=0.1, h=0.2)
     assert "Interpolated to 0.1" in interpolant2.tag
     assert "between" in interpolant2.tag
     assert wo_high.tag in interpolant2.tag
@@ -509,20 +182,20 @@ def test_tag_preservation():
 
     # When wo_log and wo_high has the same tag:
     wo_low.tag = "FOOBAR"
-    interpolant3 = utils.interpolate_wo(wo_low, wo_high, parameter=0.1, h=0.2)
+    interpolant3 = interpolate_wo(wo_low, wo_high, parameter=0.1, h=0.2)
     assert "Interpolated to 0.1" in interpolant3.tag
     assert "between" not in interpolant3.tag
     assert wo_high.tag in interpolant3.tag
     sat_table_str_ok(interpolant3.SWOF())
 
     # Explicit tag:
-    interpolant4 = utils.interpolate_wo(
+    interpolant4 = interpolate_wo(
         wo_low, wo_high, parameter=0.1, h=0.2, tag="Explicit tag"
     )
     assert interpolant4.tag == "Explicit tag"
 
     # Tag with newline
-    interpolant6 = utils.interpolate_wo(
+    interpolant6 = interpolate_wo(
         wo_low, wo_high, parameter=0.1, h=0.2, tag="Explicit tag\non two lines"
     )
     assert "Explicit tag" in interpolant6.tag
@@ -530,7 +203,7 @@ def test_tag_preservation():
     sat_table_str_ok(interpolant6.SWOF())
 
     # Empty tag:
-    interpolant5 = utils.interpolate_wo(wo_low, wo_high, parameter=0.1, h=0.2, tag="")
+    interpolant5 = interpolate_wo(wo_low, wo_high, parameter=0.1, h=0.2, tag="")
     assert interpolant5.tag == ""
 
     # Also sample check for GasOil (calls the same code)
@@ -540,7 +213,7 @@ def test_tag_preservation():
     go_high.add_corey_gas(ng=3)
     go_low.add_corey_oil(nog=2)
     go_high.add_corey_oil(nog=3)
-    interpolant1 = utils.interpolate_go(go_low, go_high, parameter=0.1, h=0.2)
+    interpolant1 = interpolate_go(go_low, go_high, parameter=0.1, h=0.2)
     assert "Interpolated to 0.1" in interpolant1.tag
     sat_table_str_ok(interpolant1.SGOF())
 
@@ -591,7 +264,7 @@ def test_interpolate_wo(
     ips = []
     ip_dist = 0.05
     for tparam in np.arange(0, 1 + ip_dist, ip_dist):
-        wo_ip = utils.interpolate_wo(wo_low, wo_high, tparam)
+        wo_ip = interpolate_wo(wo_low, wo_high, tparam)
         check_table(wo_ip.table)
         assert wo_ip.tag
         ips.append(wo_ip)
@@ -669,7 +342,7 @@ def test_interpolate_wo_pc(swl, dswcr, dswlhigh, sorw, a_l, a_h, b_l, b_h):
     ips = []
     ip_dist = 0.05
     for t in np.arange(0, 1 + ip_dist, ip_dist):
-        wo_ip = utils.interpolate_wo(wo_low, wo_high, t)
+        wo_ip = interpolate_wo(wo_low, wo_high, t)
         check_table(wo_ip.table)
         ips.append(wo_ip)
         assert 0 < wo_ip.crosspoint() < 1
@@ -755,13 +428,13 @@ def test_normalize_nonlinpart_go_hypo(
     go_low.add_corey_oil(nog=nog1, kroend=kroend1)
     go_high.add_corey_oil(nog=nog2, kroend=kroend2)
 
-    krgn1, kron1 = utils.normalize_nonlinpart_go(go_low)
+    krgn1, kron1 = normalize_nonlinpart_go(go_low)
     assert np.isclose(krgn1(0), 0)
     assert np.isclose(krgn1(1), krgend1)
     assert np.isclose(kron1(0), 0)
     assert np.isclose(kron1(1), kroend1)
 
-    krgn2, kron2 = utils.normalize_nonlinpart_go(go_high)
+    krgn2, kron2 = normalize_nonlinpart_go(go_high)
     assert np.isclose(krgn2(0), 0)
     assert np.isclose(krgn2(1), krgend2)
     assert np.isclose(kron2(0), 0)
@@ -769,11 +442,11 @@ def test_normalize_nonlinpart_go_hypo(
 
 
 def test_normalize_nonlinpart_go():
-    """Manual tests for utils.normalize_nonlinpart_go"""
+    """Manual tests for normalize_nonlinpart_go"""
     gasoil = GasOil(swl=0.1, sgcr=0.12, sorg=0.05, h=0.05)
     gasoil.add_corey_gas(ng=2.1, krgend=0.9)
     gasoil.add_corey_oil(nog=3, kroend=0.8)
-    krgn, kron = utils.normalize_nonlinpart_go(gasoil)
+    krgn, kron = normalize_nonlinpart_go(gasoil)
 
     assert np.isclose(krgn(0), 0)
     assert np.isclose(krgn(1), 0.9)
@@ -787,7 +460,7 @@ def test_normalize_nonlinpart_go():
     gasoil = GasOil(swl=h, sgcr=h, sorg=h, h=h)
     gasoil.add_corey_gas(ng=2.1, krgend=0.9)
     gasoil.add_corey_oil(nog=3, kroend=0.8)
-    krgn, kron = utils.normalize_nonlinpart_go(gasoil)
+    krgn, kron = normalize_nonlinpart_go(gasoil)
     assert np.isclose(krgn(0), 0.0)
     assert np.isclose(krgn(1), 0.9)
     assert np.isclose(kron(0), 0)
@@ -797,7 +470,7 @@ def test_normalize_nonlinpart_go():
     gasoil = GasOil(swl=0, sgcr=0, sorg=0, h=0.01)
     gasoil.add_corey_gas(ng=2.1, krgend=0.9)
     gasoil.add_corey_oil(nog=3, kroend=0.8)
-    krgn, kron = utils.normalize_nonlinpart_go(gasoil)
+    krgn, kron = normalize_nonlinpart_go(gasoil)
     assert np.isclose(krgn(0), 0.0)
     assert np.isclose(krgn(1), 0.9)
     assert np.isclose(kron(0), 0)
@@ -810,7 +483,7 @@ def test_normalize_nonlinpart_go():
     gasoil.swl = 0
     gasoil.sgcr = 0
     gasoil.sorg = 0
-    krgn, kron = utils.normalize_nonlinpart_go(gasoil)
+    krgn, kron = normalize_nonlinpart_go(gasoil)
     # These go well still, since we are at zero
     assert np.isclose(krgn(0), 0.0)
     assert np.isclose(kron(0), 0)
@@ -823,7 +496,7 @@ def test_normalize_nonlinpart_go():
     gasoil.sgcr = gasoil.estimate_sgcr()
     gasoil.sorg = gasoil.estimate_sorg()
     # Try again
-    krgn, kron = utils.normalize_nonlinpart_go(gasoil)
+    krgn, kron = normalize_nonlinpart_go(gasoil)
     assert np.isclose(krgn(0), 0.0)
     assert np.isclose(kron(0), 0)
     assert np.isclose(krgn(1), 0.6)
@@ -841,7 +514,7 @@ def test_ip_wo_kroend():
     wo_high.add_corey_oil(now=2, kroend=0.7)
 
     # Interpolate to midpoint between the curves above
-    wo_ip = utils.interpolate_wo(wo_low, wo_high, 0.5)
+    wo_ip = interpolate_wo(wo_low, wo_high, 0.5)
 
     # kroend at mean swl:
     assert float_df_checker(wo_ip.table, "sw", 0.01, "krow", (0.6 + 0.7) / 2.0)
@@ -861,7 +534,7 @@ def test_ip_go_kroend():
     go_high.add_corey_oil(nog=2, kroend=0.7)
 
     # Interpolate to midpoint between the curves above
-    go_ip = utils.interpolate_go(go_low, go_high, 0.5)
+    go_ip = interpolate_go(go_low, go_high, 0.5)
 
     # kroend at sg zero:
     assert float_df_checker(go_ip.table, "sg", 0.0, "krog", (0.6 + 0.7) / 2.0)
@@ -887,7 +560,7 @@ def test_ip_go_kroend():
     go_high.add_corey_oil(nog=2, kroend=0.7)
 
     # Interpolate to midpoint between the curves above
-    go_ip = utils.interpolate_go(go_low, go_high, 0.5, h=0.1)
+    go_ip = interpolate_go(go_low, go_high, 0.5, h=0.1)
 
     assert float_df_checker(go_ip.table, "sg", 0.0, "krog", (0.6 + 0.7) / 2.0)
 
@@ -913,7 +586,7 @@ def test_ip_go_kroend():
     go_high.add_corey_oil(nog=2, kroend=0.7)
 
     # Interpolate to midpoint between the curves above
-    go_ip = utils.interpolate_go(go_low, go_high, 0.5)
+    go_ip = interpolate_go(go_low, go_high, 0.5)
 
     assert float_df_checker(go_ip.table, "sg", 0.0, "krog", (0.6 + 0.7) / 2.0)
 
@@ -972,7 +645,7 @@ def test_interpolate_go(
     ips = []
     ip_dist = 0.05
     for t in np.arange(0, 1 + ip_dist, ip_dist):
-        go_ip = utils.interpolate_go(go_low, go_high, t)
+        go_ip = interpolate_go(go_low, go_high, t)
         check_table(go_ip.table)
         ips.append(go_ip)
         assert 0 < go_ip.crosspoint() < 1

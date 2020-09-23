@@ -9,9 +9,9 @@ import pandas as pd
 import pyscal
 from pyscal.constants import SWINTEGERS
 
-from pyscal import utils
 from .wateroil import WaterOil
 from .gasoil import GasOil
+from pyscal.utils.string import df2str, comment_formatter
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
@@ -166,8 +166,8 @@ class WaterOilGas(object):
         string = ""
         if header:
             string += "SOF3\n"
-        wo_tag = utils.comment_formatter(self.wateroil.tag)
-        go_tag = utils.comment_formatter(self.gasoil.tag)
+        wo_tag = comment_formatter(self.wateroil.tag)
+        go_tag = comment_formatter(self.gasoil.tag)
         if wo_tag != go_tag:
             string += wo_tag
             string += go_tag
@@ -189,7 +189,7 @@ class WaterOilGas(object):
             + "KROG".ljust(width)
             + "\n"
         )
-        string += utils.df2str(sof3table[["so", "krow", "krog"]])
+        string += df2str(sof3table[["so", "krow", "krog"]])
         string += "/\n"
         return string
 

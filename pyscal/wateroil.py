@@ -13,9 +13,10 @@ import pandas as pd
 from scipy.interpolate import PchipInterpolator, interp1d
 
 import pyscal
+from pyscal.utils.relperm import estimate_diffjumppoint, crosspoint
+from pyscal.utils.string import df2str, comment_formatter
 from pyscal.constants import EPSILON as epsilon
 from pyscal.constants import SWINTEGERS, MAX_EXPONENT
-from pyscal import utils
 
 
 logging.basicConfig()
@@ -260,7 +261,7 @@ class WaterOil(object):
             raise ValueError("sw data not sorted")
         if krwcolname in dframe:
             if not sorw:
-                sorw = dframe[swcolname].max() - utils.estimate_diffjumppoint(
+                sorw = dframe[swcolname].max() - estimate_diffjumppoint(
                     dframe, xcol=swcolname, ycol=krwcolname, side="right"
                 )
                 logger.info("Estimated sorw in tabular data to %f", sorw)
@@ -309,7 +310,7 @@ class WaterOil(object):
 
         if krowcolname in dframe:
             if not sorw:
-                sorw = dframe[swcolname].max() - utils.estimate_diffjumppoint(
+                sorw = dframe[swcolname].max() - estimate_diffjumppoint(
                     dframe, xcol=swcolname, ycol=krowcolname, side="right"
                 )
                 logger.info("Estimated sorw in tabular data from krow to %s", sorw)
@@ -974,7 +975,7 @@ class WaterOil(object):
         """
         assert curve in self.table
         assert self.table[curve].sum() > 0
-        return self.table["sw"].max() - utils.estimate_diffjumppoint(
+        return self.table["sw"].max() - estimate_diffjumppoint(
             self.table, xcol="sw", ycol=curve, side="right"
         )
 
@@ -997,9 +998,7 @@ class WaterOil(object):
         """
         assert curve in self.table
         assert self.table[curve].sum() > 0
-        return utils.estimate_diffjumppoint(
-            self.table, xcol="sw", ycol=curve, side="left"
-        )
+        return estimate_diffjumppoint(self.table, xcol="sw", ycol=curve, side="left")
 
     def crosspoint(self):
         """Locate and return the saturation point where krw = krow
@@ -1011,7 +1010,7 @@ class WaterOil(object):
             float: the water saturation where krw == krow, for relperm
                 linearly interpolated in water saturation.
         """
-        return utils.crosspoint(self.table, "sw", "krw", "krow")
+        return crosspoint(self.table, "sw", "krw", "krow")
 
     def selfcheck(self, mode="SWOF"):
         """Check validities of the data in the table.
@@ -1097,7 +1096,7 @@ class WaterOil(object):
         string = ""
         if header:
             string += "SWOF\n"
-        string += utils.comment_formatter(self.tag)
+        string += comment_formatter(self.tag)
         string += "-- pyscal: " + str(pyscal.__version__) + "\n"
         if "pc" not in self.table.columns:
             self.table["pc"] = 0.0
@@ -1118,7 +1117,7 @@ class WaterOil(object):
             + "PC".ljust(width)
             + "\n"
         )
-        string += utils.df2str(
+        string += df2str(
             self.table[["sw", "krw", "krow", "pc"]],
             monotonocity={
                 "krow": {"sign": -1, "lower": 0, "upper": 1},
@@ -1162,7 +1161,7 @@ class WaterOil(object):
             self.pccomment = "-- Zero capillary pressure\n"
         if header:
             string += "SWFN\n"
-        string += utils.comment_formatter(self.tag)
+        string += comment_formatter(self.tag)
         string += "-- pyscal: " + str(pyscal.__version__) + "\n"
         if dataincommentrow:
             if swcomment is not None:
@@ -1184,7 +1183,7 @@ class WaterOil(object):
             + "PC".ljust(width)
             + "\n"
         )
-        string += utils.df2str(
+        string += df2str(
             self.table[["sw", "krw", "pc"]],
             monotonocity={
                 "krw": {"sign": 1, "lower": 0, "upper": 1},
@@ -1221,7 +1220,7 @@ class WaterOil(object):
             + "PC".ljust(width)
             + "\n"
         )
-        string += utils.df2str(
+        string += df2str(
             self.table[["sw", "krw", "krow", "pc"]],
             monotonocity={
                 "krow": {"sign": -1, "lower": 0, "upper": 1},

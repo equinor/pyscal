@@ -9,14 +9,12 @@ import pandas as pd
 import numpy as np
 import xlrd
 
-from pyscal import (
-    WaterOil,
-    GasOil,
-    GasWater,
-    WaterOilGas,
-    SCALrecommendation,
-    PyscalList,
-)
+from .wateroil import WaterOil
+from .gasoil import GasOil
+from .gaswater import GasWater
+from .wateroilgas import WaterOilGas
+from .scalrecommendation import SCALrecommendation
+from .pyscallist import PyscalList
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)

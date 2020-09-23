@@ -9,7 +9,7 @@ import pandas as pd
 
 from .wateroil import WaterOil
 from .gasoil import GasOil
-from . import utils
+from pyscal.utils.relperm import crosspoint
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
@@ -269,7 +269,7 @@ class GasWater(object):
             .dropna()
             .reset_index()
         )
-        return utils.crosspoint(dframe, "sat", "krw", "krg")
+        return crosspoint(dframe, "sat", "krw", "krg")
 
     def plotkrwkrg(
         self,
