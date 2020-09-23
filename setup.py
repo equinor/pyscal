@@ -2,7 +2,7 @@
 
 from os import path
 
-from setuptools import setup, find_packages  # noqa
+from setuptools import setup, find_packages
 
 try:
     from sphinx.setup_command import BuildDoc
@@ -19,6 +19,7 @@ with open(path.join(this_directory, "README.md")) as f_handle:
 
 
 REQUIREMENTS = [
+    "matplotlib",
     "numpy",
     "pandas",
     "scipy",
@@ -69,7 +70,7 @@ setup(
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
     ],
-    packages=["pyscal"],
+    packages=find_packages(),
     zip_safe=False,
     test_suite="tests",
     install_requires=REQUIREMENTS,

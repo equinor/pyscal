@@ -5,8 +5,9 @@ import argparse
 
 import logging
 
-from pyscal import WaterOilGas, GasWater, PyscalFactory
-
+from .wateroilgas import WaterOilGas
+from .gaswater import GasWater
+from .factory import PyscalFactory
 from pyscal import __version__
 
 logging.basicConfig()

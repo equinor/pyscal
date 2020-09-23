@@ -14,6 +14,9 @@ import random
 
 import numpy as np
 
+from matplotlib import pyplot as plt
+import matplotlib
+
 from pyscal import WaterOil, WaterOilGas, GasOil, GasWater, utils, PyscalFactory
 
 from test_scalrecommendation import LOW_SAMPLE_LET, BASE_SAMPLE_LET, HIGH_SAMPLE_LET
@@ -21,8 +24,6 @@ from test_scalrecommendation import LOW_SAMPLE_LET, BASE_SAMPLE_LET, HIGH_SAMPLE
 
 def interpolation_art(repeats=50, interpolants=30, curvetype="corey"):
     """This code was used to create the Pyscal logo"""
-    from matplotlib import pyplot as plt
-
     cmap = plt.get_cmap("viridis")
     _, mpl_ax = plt.subplots()
     for _ in range(repeats):
@@ -73,7 +74,9 @@ def interpolation_art(repeats=50, interpolants=30, curvetype="corey"):
             print("ERROR, wrong curvetype")
         color = cmap(random.random())
         for tparam in np.arange(0, 1, 1.0 / interpolants):
-            wo_ip = utils.interpolate_wo(wo_low, wo_high, tparam)
+            wo_ip = utils.interpolation.interpolate_wo(
+                wo_low, wo_high, tparam
+            )
             wo_ip.plotkrwkrow(mpl_ax, color=color, alpha=0.3)
     plt.show()
 
@@ -109,13 +112,11 @@ def test_interpolate_wo():
         + wo_high.pccomment
     )
 
-    from matplotlib import pyplot as plt
-
     _, mpl_ax = plt.subplots()
     wo_low.plotkrwkrow(mpl_ax, color="red")
     wo_high.plotkrwkrow(mpl_ax, color="blue")
     for tparam in np.arange(0, 1, 0.1):
-        wo_ip = utils.interpolate_wo(wo_low, wo_high, tparam, h=0.001)
+        wo_ip = utils.interpolation.interpolate_wo(wo_low, wo_high, tparam, h=0.001)
         wo_ip.plotkrwkrow(mpl_ax, color="green")
     mpl_ax.set_title("WaterOil, random Corey, linear y-scale")
     plt.show()
@@ -125,7 +126,7 @@ def test_interpolate_wo():
     wo_low.plotkrwkrow(mpl_ax, color="red")
     wo_high.plotkrwkrow(mpl_ax, color="blue")
     for tparam in np.arange(0, 1, 0.1):
-        wo_ip = utils.interpolate_wo(wo_low, wo_high, tparam, h=0.001)
+        wo_ip = utils.interpolation.interpolate_wo(wo_low, wo_high, tparam, h=0.001)
         wo_ip.plotkrwkrow(mpl_ax, color="green", logyscale=True)
     mpl_ax.set_title("WaterOil, random Corey, log y-scale")
     plt.show()
@@ -135,7 +136,7 @@ def test_interpolate_wo():
     wo_low.plotpc(mpl_ax, color="red", logyscale=True)
     wo_high.plotpc(mpl_ax, color="blue", logyscale=True)
     for tparam in np.arange(0, 1, 0.1):
-        wo_ip = utils.interpolate_wo(wo_low, wo_high, tparam, h=0.001)
+        wo_ip = utils.interpolation.interpolate_wo(wo_low, wo_high, tparam, h=0.001)
         wo_ip.plotpc(mpl_ax, color="green", logyscale=True)
     mpl_ax.set_title("WaterOil, capillary pressure")
     plt.show()
@@ -180,14 +181,12 @@ def test_interpolate_go():
         + go_high.krogcomment
     )
 
-    from matplotlib import pyplot as plt
-
     _, mpl_ax = plt.subplots()
     go_low.plotkrgkrog(mpl_ax, color="red")
     go_high.plotkrgkrog(mpl_ax, color="blue")
 
     for tparam in np.arange(0, 1, 0.1):
-        go_ip = utils.interpolate_go(go_low, go_high, tparam)
+        go_ip = utils.interpolation.interpolate_go(go_low, go_high, tparam)
         go_ip.plotkrgkrog(mpl_ax, color="green")
     mpl_ax.set_title("GasOil, random Corey, linear y-scale")
     plt.show()
@@ -197,7 +196,7 @@ def test_interpolate_go():
     go_high.plotkrgkrog(mpl_ax, color="blue")
     # Plot again with log yscale:
     for tparam in np.arange(0, 1, 0.1):
-        go_ip = utils.interpolate_go(go_low, go_high, tparam)
+        go_ip = utils.interpolation.interpolate_go(go_low, go_high, tparam)
         go_ip.plotkrgkrog(mpl_ax, color="green", logyscale=True)
     mpl_ax.set_title("GasOil, random Corey, log y-scale")
     plt.show()
@@ -209,7 +208,7 @@ def test_interpolate_go():
     # go_low.plotpc(mpl_ax, color="red", logyscale=True)
     # go_high.plotpc(mpl_ax, color="blue", logyscale=True)
     for tparam in np.arange(0, 1, 0.1):
-        go_ip = utils.interpolate_go(go_low, go_high, tparam, h=0.001)
+        go_ip = utils.interpolation.interpolate_go(go_low, go_high, tparam, h=0.001)
         # go_ip.plotpc(mpl_ax, color="green", logyscale=True)
     # mpl_ax.set_title("GasOil, capillary pressure")
     # plt.show()
@@ -244,16 +243,16 @@ def test_interpolate_gw():
         + gw_high.krgcomment
     )
 
-    from matplotlib import pyplot as plt
-
     _, mpl_ax = plt.subplots()
     gw_low.plotkrwkrg(mpl_ax, color="red")
     gw_high.plotkrwkrg(mpl_ax, color="blue")
     for tparam in np.arange(0, 1, 0.1):
-        gw_wo_ip = utils.interpolate_wo(
+        gw_wo_ip = utils.interpolation.interpolate_wo(
             gw_low.wateroil, gw_high.wateroil, tparam, h=0.001
         )
-        gw_go_ip = utils.interpolate_go(gw_low.gasoil, gw_high.gasoil, tparam, h=0.001)
+        gw_go_ip = utils.interpolation.interpolate_go(
+            gw_low.gasoil, gw_high.gasoil, tparam, h=0.001
+        )
         gw_ip = GasWater()
         gw_ip.gasoil = gw_go_ip
         gw_ip.wateroil = gw_wo_ip
@@ -266,10 +265,12 @@ def test_interpolate_gw():
     gw_low.plotkrwkrg(mpl_ax, color="red")
     gw_high.plotkrwkrg(mpl_ax, color="blue")
     for tparam in np.arange(0, 1, 0.1):
-        gw_wo_ip = utils.interpolate_wo(
+        gw_wo_ip = utils.interpolation.interpolate_wo(
             gw_low.wateroil, gw_high.wateroil, tparam, h=0.001
         )
-        gw_go_ip = utils.interpolate_go(gw_low.gasoil, gw_high.gasoil, tparam, h=0.001)
+        gw_go_ip = utils.interpolation.interpolate_go(
+            gw_low.gasoil, gw_high.gasoil, tparam, h=0.001
+        )
         gw_ip = GasWater()
         gw_ip.gasoil = gw_go_ip
         gw_ip.wateroil = gw_wo_ip
@@ -280,9 +281,6 @@ def test_interpolate_gw():
 
 def interpolateplottest():
     """Demonstration of interpolation pointwise between LET curves"""
-    import matplotlib.pyplot as plt
-    import matplotlib
-
     matplotlib.style.use("ggplot")
 
     rec = PyscalFactory.create_scal_recommendation(
@@ -376,9 +374,6 @@ def letspan():
 
     """
 
-    import matplotlib.pyplot as plt
-    import matplotlib
-
     matplotlib.style.use("ggplot")
 
     let_w = {
@@ -453,8 +448,6 @@ def testplot():
 
     Use this as a template function.
     """
-    import matplotlib.pyplot as plt
-
     swof = WaterOil(tag="Testcurve", h=0.01, swirr=0.2, swl=0.2, sorw=0.1)
     swof.add_corey_water(nw=5, krwend=0.7, krwmax=0.9)
     swof.add_corey_oil(now=2, kroend=0.95)
@@ -498,8 +491,6 @@ def multiplesatnums():
 
 def testgascurves():
     """test of gas-oil curves"""
-    import matplotlib.pyplot as plt
-
     sgof = GasOil(tag="Testcurve", h=0.02, swirr=0.18, swl=0.31, sorg=0.09, sgcr=0.04)
     sgof.add_corey_gas(ng=1.5, krgend=0.7)
     sgof.add_corey_oil(nog=2, kroend=0.4)

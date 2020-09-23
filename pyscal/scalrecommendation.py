@@ -5,8 +5,8 @@ import logging
 
 import numpy as np
 
-from pyscal import WaterOilGas, GasWater, utils
-
+from pyscal import WaterOilGas, GasWater
+from pyscal.utils.interpolation import interpolate_wo, interpolate_go
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
@@ -317,11 +317,11 @@ class SCALrecommendation(object):
                 interpolant.wateroil = copy.deepcopy(self.high.wateroil)
                 interpolant.wateroil.tag = tag
             elif parameter < 0.0:
-                interpolant.wateroil = utils.interpolate_wo(
+                interpolant.wateroil = interpolate_wo(
                     self.base.wateroil, self.low.wateroil, -parameter, h=h, tag=tag
                 )
             elif parameter > 0.0:
-                interpolant.wateroil = utils.interpolate_wo(
+                interpolant.wateroil = interpolate_wo(
                     self.base.wateroil, self.high.wateroil, parameter, h=h, tag=tag
                 )
         else:
@@ -345,11 +345,11 @@ class SCALrecommendation(object):
                 interpolant.gasoil = copy.deepcopy(self.high.gasoil)
                 interpolant.gasoil.tag = tag
             elif gasparameter < 0.0:
-                interpolant.gasoil = utils.interpolate_go(
+                interpolant.gasoil = interpolate_go(
                     self.base.gasoil, self.low.gasoil, -1 * gasparameter, h=h, tag=tag
                 )
             elif gasparameter > 0.0:
-                interpolant.gasoil = utils.interpolate_go(
+                interpolant.gasoil = interpolate_go(
                     self.base.gasoil, self.high.gasoil, gasparameter, h=h, tag=tag
                 )
         else:

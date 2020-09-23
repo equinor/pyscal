@@ -11,7 +11,8 @@ import pandas as pd
 from scipy.interpolate import PchipInterpolator
 
 import pyscal
-from pyscal import utils
+from pyscal.utils.relperm import estimate_diffjumppoint, crosspoint
+from pyscal.utils.string import df2str, comment_formatter
 from pyscal.constants import EPSILON as epsilon
 from pyscal.constants import SWINTEGERS, MAX_EXPONENT
 
@@ -572,12 +573,12 @@ class GasOil(object):
         if self.krgendanchor == "sorg":
             assert "krg" in self.table
             assert self.table["krg"].sum() > 0
-            return self.table["sg"].max() - utils.estimate_diffjumppoint(
+            return self.table["sg"].max() - estimate_diffjumppoint(
                 self.table, xcol="sg", ycol="krg", side="right"
             )
         assert "krog" in self.table
         assert self.table["krog"].sum() > 0
-        return self.table["sg"].max() - utils.estimate_diffjumppoint(
+        return self.table["sg"].max() - estimate_diffjumppoint(
             self.table, xcol="sg", ycol="krog", side="right"
         )
 
@@ -598,9 +599,7 @@ class GasOil(object):
         """
         assert curve in self.table
         assert self.table[curve].sum() > 0
-        return utils.estimate_diffjumppoint(
-            self.table, xcol="sg", ycol=curve, side="left"
-        )
+        return estimate_diffjumppoint(self.table, xcol="sg", ycol=curve, side="left")
 
     def crosspoint(self):
         """Locate and return the saturation point where krg = krog
@@ -613,7 +612,7 @@ class GasOil(object):
             float: the gas saturation where krg == krog, for relperm
                 linearly interpolated in gas saturation.
         """
-        return utils.crosspoint(self.table, "sg", "krg", "krog")
+        return crosspoint(self.table, "sg", "krg", "krog")
 
     def selfcheck(self, mode="SGOF"):
         """Check validities of the data in the table.
@@ -702,7 +701,7 @@ class GasOil(object):
             self.pccomment = "-- Zero capillary pressure\n"
         if header:
             string += "SGOF\n"
-        string += utils.comment_formatter(self.tag)
+        string += comment_formatter(self.tag)
         string += "-- pyscal: " + str(pyscal.__version__) + "\n"
         if dataincommentrow:
             string += self.sgcomment
@@ -720,7 +719,7 @@ class GasOil(object):
             + "PC".ljust(width)
             + "\n"
         )
-        string += utils.df2str(
+        string += df2str(
             self.table[["sg", "krg", "krog", "pc"]],
             monotonocity={
                 "krog": {"sign": -1, "lower": 0, "upper": 1},
@@ -797,7 +796,7 @@ class GasOil(object):
             self.pccomment = "-- Zero capillary pressure\n"
         if header:
             string += "SLGOF\n"
-        string += utils.comment_formatter(self.tag)
+        string += comment_formatter(self.tag)
         string += "-- pyscal: " + str(pyscal.__version__) + "\n"
         if dataincommentrow:
             string += self.sgcomment
@@ -814,7 +813,7 @@ class GasOil(object):
             + "PC".ljust(width)
             + "\n"
         )
-        string += utils.df2str(
+        string += df2str(
             self.slgof_df(),
             monotonocity={
                 "krog": {"sign": 1, "lower": 0, "upper": 1},
@@ -857,7 +856,7 @@ class GasOil(object):
             self.pccomment = "-- Zero capillary pressure\n"
         if header:
             string += "SGFN\n"
-        string += utils.comment_formatter(self.tag)
+        string += comment_formatter(self.tag)
         string += "-- pyscal: " + str(pyscal.__version__) + "\n"
         if dataincommentrow:
             if sgcomment is not None:
@@ -879,7 +878,7 @@ class GasOil(object):
             + "PC".ljust(width)
             + "\n"
         )
-        string += utils.df2str(
+        string += df2str(
             self.table[["sg", "krg", "pc"]],
             monotonocity={
                 "krg": {"sign": 1, "lower": 0, "upper": 1},
@@ -930,7 +929,7 @@ class GasOil(object):
             + "PC".ljust(width)
             + "\n"
         )
-        string += utils.df2str(
+        string += df2str(
             self.table[["sg", "krg", "krog", "pc"]],
             monotonocity={
                 "krog": {"sign": -1, "lower": 0, "upper": 1},
