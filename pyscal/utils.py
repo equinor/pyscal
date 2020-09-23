@@ -7,6 +7,8 @@ import six
 
 import numpy as np
 import pandas as pd
+import numpy as np
+
 from scipy.interpolate import interp1d
 
 import pyscal
@@ -552,8 +554,11 @@ def interpolate_wo(wo_low, wo_high, parameter, h=0.01, tag=None):
     wo_new.table["swn_pc_intp"] = (wo_new.table["sw"] - wo_new.table["sw"].min()) / (
         wo_new.table["sw"].max() - wo_new.table["sw"].min()
     )
-    wo_new.table["pc"] = weighted_value(
-        pc1(wo_new.table["swn_pc_intp"]), pc2(wo_new.table["swn_pc_intp"])
+    wo_new.table["pc"] = np.exp(
+        weighted_value(
+            np.log(pc1(wo_new.table["swn_pc_intp"])),
+            np.log(pc2(wo_new.table["swn_pc_intp"])),
+        )
     )
 
     wo_new.tag = _interpolate_tags(wo_low, wo_high, parameter, tag)
@@ -654,8 +659,11 @@ def interpolate_go(go_low, go_high, parameter, h=0.01, tag=None):
     go_new.table["sgn_pc_intp"] = (go_new.table["sg"] - go_new.table["sg"].min()) / (
         go_new.table["sg"].max() - go_new.table["sg"].min()
     )
-    go_new.table["pc"] = weighted_value(
-        pc1(go_new.table["sgn_pc_intp"]), pc2(go_new.table["sgn_pc_intp"])
+    go_new.table["pc"] = np.exp(
+        weighted_value(
+            np.log(pc1(go_new.table["sgn_pc_intp"])),
+            np.log(pc2(go_new.table["sgn_pc_intp"])),
+        )
     )
 
     go_new.set_endpoints_linearpart_krog(kroend=kroend_new)
