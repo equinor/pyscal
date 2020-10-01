@@ -146,6 +146,23 @@ def test_df2str_monotone():
             {0: {"sign": -1}, 1: {"sign": 1}},
             ["1.00 1.00", "0.99 1.01", "0.98 1.02"],
         ),
+        # Example in docstring for modify_dframe_monotonocity()
+        (
+            [0.00, 0.0002, 0.01, 0.010001, 0.0100001, 0.01, 0.99, 0.999, 1.0001, 1.00],
+            {0: {"sign": 1, "lower": 0, "upper": 1}},
+            [
+                "0.00",
+                "0.00",
+                "0.01",
+                "0.02",
+                "0.03",
+                "0.04",
+                "0.99",
+                "1.00",
+                "1.00",
+                "1.00",
+            ],
+        ),
     ],
 )
 def test_df2str_nonstrict_monotonocity(series, monotonocity, expected):
@@ -154,6 +171,79 @@ def test_df2str_nonstrict_monotonocity(series, monotonocity, expected):
         df2str(
             pd.DataFrame(data=series),
             digits=2,
+            monotonocity=monotonocity,
+        ).splitlines()
+        == expected
+    )
+
+
+# Test similarly for digits=1:
+@pytest.mark.parametrize(
+    "series, monotonocity, expected",
+    [
+        (
+            [0.00, 0.0002, 0.01, 0.010001, 0.0100001, 0.01, 0.99, 1.0001, 1.00],
+            {0: {"sign": 1, "lower": 0, "upper": 1}},
+            ["0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "1.0", "1.0", "1.0"],
+        ),
+        (
+            [0.2, 0.1, 0.1, 0.0, 0.0],
+            {0: {"sign": -1, "lower": 0}},
+            ["0.2", "0.1", "0.0", "0.0", "0.0"],
+        ),
+        (
+            [0.2, 0.1, 0.1, 0.0, 0.0],
+            {0: {"sign": -1}},
+            ["0.2", "0.1", "-0.0", "-0.1", "-0.2"],
+            #               ^ this sign is optional, allowed when negative is allowed
+        ),
+        ([1.0, 1.0, 1.0], {0: {"sign": 1, "upper": 1}}, ["1.0", "1.0", "1.0"]),
+        ([1, 1, 1], {0: {"sign": 1}}, ["1.0", "1.1", "1.2"]),
+        ([1, 1, 1], {0: {"sign": -1, "upper": 1}}, ["1.0", "1.0", "1.0"]),
+        ([1, 1, 1], {0: {"sign": -1}}, ["1.0", "0.9", "0.8"]),
+        ([1, 1, 1], {0: {"sign": -1, "lower": 1}}, ["1.0", "1.0", "1.0"]),
+        ([0, 0, 0], {0: {"sign": -1, "allowzero": True}}, ["0.0", "0.0", "0.0"]),
+        ([0, 0, 0], {0: {"sign": 1, "allowzero": True}}, ["0.0", "0.0", "0.0"]),
+        (
+            [1, 1, 0.5, 0.01, 0.01, 0, 0],
+            {0: {"sign": -1, "lower": 0, "upper": 1}},
+            ["1.0", "1.0", "0.5", "0.0", "0.0", "0.0", "0.0"],
+        ),
+        (
+            [0, 0, 0.1, 0.1, 0.5, 1, 1],
+            {0: {"sign": 1, "lower": 0, "upper": 1}},
+            ["0.0", "0.0", "0.1", "0.2", "0.5", "1.0", "1.0"],
+        ),
+        (
+            [1, 0.1, 1e-2, 0],
+            {0: {"sign": -1, "lower": 0, "upper": 1}},
+            ["1.0", "0.1", "0.0", "0.0"],
+        ),
+        # Example in docstring for modify_dframe_monotonocity()
+        (
+            [0.00, 0.0002, 0.01, 0.010001, 0.0100001, 0.01, 0.99, 0.999, 1.0001, 1.00],
+            {0: {"sign": 1, "lower": 0, "upper": 1}},
+            [
+                "0.0",
+                "0.0",
+                "0.0",
+                "0.0",
+                "0.0",
+                "0.0",
+                "1.0",
+                "1.0",
+                "1.0",
+                "1.0",
+            ],
+        ),
+    ],
+)
+def test_df2str_nonstrict_monotonocity_digits1(series, monotonocity, expected):
+    """Test that we can have non-strict monotonocity at upper and/or lower limits"""
+    assert (
+        df2str(
+            pd.DataFrame(data=series),
+            digits=1,
             monotonocity=monotonocity,
         ).splitlines()
         == expected
