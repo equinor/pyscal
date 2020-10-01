@@ -277,7 +277,7 @@ def test_kroend():
     assert gasoil.table["krog"].max() == 0.5
 
 
-@settings(deadline=1000)
+@settings(deadline=1500)
 @given(st.floats(), st.floats())
 def test_gasoil_corey1(ng, nog):
     """Test the Corey formulation for gasoil"""
