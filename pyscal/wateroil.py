@@ -307,6 +307,7 @@ class WaterOil(object):
             self.table["krw"].clip(lower=0.0, upper=1.0, inplace=True)
             self.sorw = sorw
             self.krwcomment = "-- krw from tabular input" + krwcomment + "\n"
+            self.swcr = self.estimate_swcr()
 
         if krowcolname in dframe:
             if not sorw:
@@ -988,7 +989,7 @@ class WaterOil(object):
     def estimate_swcr(self, curve="krw"):
         """Estimate swcr of the current krw data.
 
-        swcr is estimated by searching for a linear part in krw upwards from sw=swl.
+        kwcr is estimated by searching for a linear part in krw upwards from sw=swl.
         In practice it is impossible to infer swcr = 0, since we are limited by
         h, and the first segment is assumed linear anyways.
 
