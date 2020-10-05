@@ -17,9 +17,9 @@ import numpy as np
 from matplotlib import pyplot as plt
 import matplotlib
 
-from pyscal import WaterOil, WaterOilGas, GasOil, GasWater, utils, PyscalFactory
-
 from test_scalrecommendation import LOW_SAMPLE_LET, BASE_SAMPLE_LET, HIGH_SAMPLE_LET
+
+from pyscal import WaterOil, WaterOilGas, GasOil, GasWater, utils, PyscalFactory
 
 
 def interpolation_art(repeats=50, interpolants=30, curvetype="corey"):
@@ -74,9 +74,7 @@ def interpolation_art(repeats=50, interpolants=30, curvetype="corey"):
             print("ERROR, wrong curvetype")
         color = cmap(random.random())
         for tparam in np.arange(0, 1, 1.0 / interpolants):
-            wo_ip = utils.interpolation.interpolate_wo(
-                wo_low, wo_high, tparam
-            )
+            wo_ip = utils.interpolation.interpolate_wo(wo_low, wo_high, tparam)
             wo_ip.plotkrwkrow(mpl_ax, color=color, alpha=0.3)
     plt.show()
 

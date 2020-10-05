@@ -1,5 +1,5 @@
 """Common functions and mock data for usage in pyscal testing"""
-
+from __future__ import absolute_import
 
 import numpy as np
 import pandas as pd

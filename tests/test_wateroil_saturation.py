@@ -10,7 +10,7 @@ import hypothesis.strategies as st
 from pyscal import WaterOil
 from pyscal.constants import SWINTEGERS
 
-from .common import float_df_checker, check_table
+from pyscal.utils.testing import float_df_checker, check_table
 
 
 @given(

@@ -16,7 +16,7 @@ import pytest
 
 from pyscal import pyscalcli
 
-from .common import sat_table_str_ok
+from pyscal.utils.testing import sat_table_str_ok
 
 
 @pytest.mark.integration
