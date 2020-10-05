@@ -24,7 +24,7 @@ from pyscal import (
     SCALrecommendation,
 )
 
-from .common import sat_table_str_ok, check_table
+from pyscal.utils.testing import sat_table_str_ok, check_table
 
 
 def test_factory_wateroil():

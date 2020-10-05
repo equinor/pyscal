@@ -43,7 +43,15 @@ class GasWater(object):
     """
 
     def __init__(
-        self, swirr=0, swl=0.0, swcr=0.0, sgrw=0.0, sgcr=0, h=0.01, tag="", fast=False,
+        self,
+        swirr=0,
+        swl=0.0,
+        swcr=0.0,
+        sgrw=0.0,
+        sgcr=0,
+        h=0.01,
+        tag="",
+        fast=False,
     ):
         """Sets up the saturation range for a GasWater object,
         by initializing one WaterOil and one GasOil object, with

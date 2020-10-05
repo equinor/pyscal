@@ -21,7 +21,7 @@ from pyscal.utils.interpolation import (
     interpolate_go,
 )
 
-from .common import check_table, float_df_checker, sat_table_str_ok
+from pyscal.utils.testing import check_table, float_df_checker, sat_table_str_ok
 
 
 @settings(deadline=1000)

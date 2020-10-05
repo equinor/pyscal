@@ -14,7 +14,7 @@ import hypothesis.strategies as st
 
 from pyscal import WaterOil, GasOil, WaterOilGas
 
-from .common import check_table, float_df_checker
+from pyscal.utils.testing import check_table, float_df_checker
 
 
 def test_wo_fromtable_simple():

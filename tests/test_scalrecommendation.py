@@ -11,8 +11,7 @@ import hypothesis.strategies as st
 
 from pyscal import SCALrecommendation, PyscalFactory, GasWater, WaterOilGas
 from pyscal.factory import slicedict
-
-from .common import sat_table_str_ok, check_table
+from pyscal.utils.testing import sat_table_str_ok, check_table
 
 
 # Example SCAL recommendation, low case

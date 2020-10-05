@@ -13,7 +13,7 @@ import hypothesis.strategies as st
 from pyscal import GasOil
 from pyscal.constants import SWINTEGERS
 
-from .common import (
+from pyscal.utils.testing import (
     float_df_checker,
     check_table,
     sat_table_str_ok,

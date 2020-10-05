@@ -14,7 +14,7 @@ import hypothesis.strategies as st
 from pyscal import WaterOil
 from pyscal.constants import MAX_EXPONENT
 
-from .common import float_df_checker, check_table, sat_table_str_ok
+from pyscal.utils.testing import float_df_checker, check_table, sat_table_str_ok
 
 
 def test_simple_j():
