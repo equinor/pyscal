@@ -12,7 +12,7 @@ import numpy as np
 from pyscal import WaterOilGas, GasOil
 from pyscal.constants import SWINTEGERS, EPSILON
 
-from common import sat_table_str_ok
+from .common import sat_table_str_ok
 
 
 def check_table(dframe):

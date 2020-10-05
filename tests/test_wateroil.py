@@ -12,7 +12,7 @@ import hypothesis.strategies as st
 from pyscal import WaterOil
 from pyscal.constants import SWINTEGERS
 
-from common import (
+from .common import (
     check_table,
     float_df_checker,
     sat_table_str_ok,
@@ -99,9 +99,9 @@ def test_wateroil_let1(l, e, t, krwend, krwmax):
 
 @settings(deadline=500)
 @given(
-    st.floats(min_value=0, max_value=0.3),
-    st.floats(min_value=0, max_value=0.3),
-    st.floats(min_value=0, max_value=0.3),
+    st.floats(min_value=0, max_value=0.4),
+    st.floats(min_value=0, max_value=0.4),
+    st.floats(min_value=0, max_value=0.4),
     st.floats(min_value=0.1, max_value=1),
     st.floats(min_value=0.1, max_value=1),
     st.floats(min_value=0.1, max_value=1),

@@ -455,10 +455,7 @@ class GasOil(object):
 
         self.set_endpoints_linearpart_krog(kroend)
 
-        self.krogcomment = "-- Corey krog, nog=%g, kroend=%g\n" % (
-            nog,
-            kroend,
-        )
+        self.krogcomment = "-- Corey krog, nog=%g, kroend=%g\n" % (nog, kroend,)
 
     def add_LET_gas(self, l=2, e=2, t=2, krgend=1, krgmax=None):
         """
@@ -956,9 +953,10 @@ class GasOil(object):
         matplotlib axis to plot on, if None, a fresh plot
         will be made.
         """
+        # pylint: disable=import-outside-toplevel
+        # Lazy import of matplotlib for speed reasons
         import matplotlib.pyplot as plt
         import matplotlib
-
         if mpl_ax is None:
             matplotlib.style.use("ggplot")
             _, useax = matplotlib.pyplot.subplots()

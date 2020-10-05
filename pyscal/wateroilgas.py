@@ -9,9 +9,9 @@ import pandas as pd
 import pyscal
 from pyscal.constants import SWINTEGERS
 
+from pyscal.utils.string import df2str, comment_formatter
 from .wateroil import WaterOil
 from .gasoil import GasOil
-from pyscal.utils.string import df2str, comment_formatter
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
@@ -78,9 +78,9 @@ class WaterOilGas(object):
         """
         if self.wateroil is not None and self.gasoil is not None:
             return self.wateroil.selfcheck() and self.gasoil.selfcheck()
-        elif self.wateroil is not None:
+        if self.wateroil is not None:
             return self.wateroil.selfcheck()
-        elif self.gasoil is not None:
+        if self.gasoil is not None:
             return self.gasoil.selfcheck()
         logger.error("Both wateroil and gasoil are None in WaterOilGas")
         return False
@@ -195,26 +195,31 @@ class WaterOilGas(object):
 
     @property
     def swirr(self):
+        """Get the swirr used for the WaterOil object"""
         return self.wateroil.swirr
 
     @property
     def swl(self):
+        """Get the swl used for the WaterOil object"""
         return self.wateroil.swl
 
     @property
     def sorg(self):
+        """Get the sorg used in the GasOil object"""
         return self.gasoil.sorg
 
     @property
     def sorw(self):
+        """Get the sorw used for the WaterOil object"""
         return self.wateroil.sorw
 
     @property
     def tag(self):
+        """Get the tag, a combination of the tags in WaterOil
+        and GasOil only if they are different"""
         if self.wateroil.tag == self.gasoil.tag:
             return self.wateroil.tag
-        else:
-            return self.wateroil.tag + " " + self.gasoil.tag
+        return self.wateroil.tag + " " + self.gasoil.tag
 
     def threephaseconsistency(self):
         """Perform consistency checks on produced curves, similar
@@ -277,6 +282,9 @@ class WaterOilGas(object):
     def run_eclipse_test(self):
         """Start the Eclipse simulator on a minimal deck in order to
         test the properties of the current WaterOilGas deck"""
+
+        # pylint: disable=import-outside-toplevel
+        # Lazy import for speed reasons, this function is seldom used.
         import tempfile
         import os
         import subprocess

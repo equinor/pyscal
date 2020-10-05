@@ -14,7 +14,7 @@ import hypothesis.strategies as st
 
 from pyscal import WaterOil, GasOil, WaterOilGas
 
-from common import check_table, float_df_checker
+from .common import check_table, float_df_checker
 
 
 def test_wo_fromtable_simple():
@@ -187,6 +187,8 @@ def test_wo_singlecolumns():
 
 
 def test_ieee_754():
+    """Test difficult values from experienced bugs related to
+    IEE754 representation errors"""
     wateroilgas = WaterOilGas(swl=0.18)
     # For this particular swl value, we get:
     # wateroilgas.gasoil.table.sg.max()

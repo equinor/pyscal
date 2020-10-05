@@ -6,13 +6,13 @@ from __future__ import print_function
 
 import numpy as np
 
+from matplotlib import pyplot as plt
 
 from hypothesis import given, settings
 import hypothesis.strategies as st
 
 
 from pyscal import WaterOil, GasOil
-from common import check_table, float_df_checker, sat_table_str_ok
 from pyscal.utils.interpolation import (
     normalize_nonlinpart_wo,
     normalize_nonlinpart_go,
@@ -20,6 +20,8 @@ from pyscal.utils.interpolation import (
     interpolate_wo,
     interpolate_go,
 )
+
+from .common import check_table, float_df_checker, sat_table_str_ok
 
 
 @settings(deadline=1000)
@@ -40,6 +42,7 @@ from pyscal.utils.interpolation import (
 def test_normalize_nonlinpart_wo_hypo(
     swl, dswcr, dswlhigh, sorw, nw1, krwend1, now1, kroend1, nw2, krwend2, now2, kroend2
 ):
+    # pylint: disable=too-many-arguments,too-many-locals
     """Test the normalization code in utils.
 
     In particular the fill_value argument to scipy has been tuned to
@@ -247,6 +250,7 @@ def test_interpolate_wo(
     kroend_l,
     kroend_h,
 ):
+    # pylint: disable=too-many-arguments,too-many-locals
     """
     Generate two random WaterOil curves, interpolate between them
     and check that the difference between each interpolant is small,
@@ -297,7 +301,6 @@ def test_interpolate_wo(
     if ip_dist_std > 1.0:  # Found by trial and error
         print("ip_dist_std: {}".format(ip_dist_std))
         print(dists)
-        from matplotlib import pyplot as plt
 
         _, mpl_ax = plt.subplots()
         wo_low.plotkrwkrow(mpl_ax=mpl_ax, color="red")
@@ -329,6 +332,7 @@ def test_interpolate_wo_pc(swl, dswcr, dswlhigh, sorw, a_l, a_h, b_l, b_h):
     this essentially checks that we can go continously between the
     two functions.
     """
+    # pylint: disable=too-many-locals
     wo_low = WaterOil(swl=swl, swcr=swl + dswcr, sorw=sorw)
     wo_high = WaterOil(
         swl=swl + dswlhigh, swcr=swl + dswlhigh + dswcr, sorw=max(sorw - 0.01, 0)
@@ -370,8 +374,6 @@ def test_interpolate_wo_pc(swl, dswcr, dswlhigh, sorw, a_l, a_h, b_l, b_h):
     if ip_dist_std > 1.0:  # Found by trial and error
         print("ip_dist_std: {}".format(ip_dist_std))
         print(dists)
-        from matplotlib import pyplot as plt
-
         _, mpl_ax = plt.subplots()
         wo_low.plotpc(mpl_ax=mpl_ax, color="red", logyscale=True)
         wo_high.plotpc(mpl_ax=mpl_ax, color="blue", logyscale=True)
@@ -417,6 +419,7 @@ def test_normalize_nonlinpart_go_hypo(
     nog2,
     kroend2,
 ):
+    # pylint: disable=too-many-arguments,too-many-locals
     """Test the normalization code in utils.
 
     In particular the fill_value argument to scipy has been tuned to
@@ -566,7 +569,6 @@ def test_ip_go_kroend():
 
     # Activate these line to see a bug, interpolation_go
     # does not honor krgendanchorA:
-    # from matplotlib import pyplot as plt
     # _, mpl_ax = plt.subplots()
     # go_low.plotkrgkrog(mpl_ax=mpl_ax, color="red")
     # go_high.plotkrgkrog(mpl_ax=mpl_ax, color="blue")
@@ -634,6 +636,7 @@ def test_interpolate_go(
     kroend_l,
     kroend_h,
 ):
+    # pylint: disable=too-many-arguments,too-many-locals
     """Test many possible combinations of interpolation between two
     Corey gasoil curves, looking for numerical corner cases"""
     go_low = GasOil(swl=swl, sgcr=sgcr, sorg=sorg)
@@ -671,8 +674,6 @@ def test_interpolate_go(
     if ip_dist_std > 1.0:  # number found from trial and error.
         print("ip_dist_std: {}".format(ip_dist_std))
         print(dists)
-        from matplotlib import pyplot as plt
-
         _, mpl_ax = plt.subplots()
         go_low.plotkrgkrog(mpl_ax=mpl_ax, color="red")
         go_high.plotkrgkrog(mpl_ax=mpl_ax, color="blue")

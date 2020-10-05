@@ -7,16 +7,16 @@ from __future__ import print_function
 
 import os
 import sys
-
+import subprocess
 import logging
 
 import pandas as pd
 
 import pytest
-import subprocess
 
 from pyscal import pyscalcli
-from common import sat_table_str_ok
+
+from .common import sat_table_str_ok
 
 
 @pytest.mark.integration
@@ -30,7 +30,7 @@ def test_installed():
     assert subprocess.check_output(["pyscal", "--version"], stderr=subprocess.STDOUT)
 
 
-def test_log_levels(tmpdir, caplog, default_loglevel):
+def test_log_levels(tmpdir, caplog):
     """Test that we can control the log level from the command line
     client, and get log output from modules deep down"""
     if "__file__" in globals():
@@ -76,6 +76,8 @@ def test_log_levels(tmpdir, caplog, default_loglevel):
 
 
 def test_pyscal_client_static(tmpdir, caplog, default_loglevel):
+    # pylint: disable=unused-argument
+    # default_loglevel fixture is in conftest.py
     """Test pyscal client for static relperm input"""
     if "__file__" in globals():
         # Easen up copying test code into interactive sessions
@@ -223,7 +225,7 @@ def test_pyscal_client_static(tmpdir, caplog, default_loglevel):
     assert linecount2 > linecount1 * 4  # since we don't filter out non-numerical lines
 
 
-def test_pyscalcli_oilwater(tmpdir, caplog, default_loglevel):
+def test_pyscalcli_oilwater(tmpdir, caplog):
     """Test the command line client in two-phase oil-water"""
     tmpdir.chdir()
     relperm_file = "oilwater.csv"
@@ -268,7 +270,7 @@ def test_pyscalcli_oilwater(tmpdir, caplog, default_loglevel):
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
 
 
-def test_pyscalcli_gaswater(tmpdir, caplog, default_loglevel):
+def test_pyscalcli_gaswater(tmpdir, caplog):
     """Test the command line endpoint on gas-water problems"""
     tmpdir.chdir()
     relperm_file = "gaswater.csv"
@@ -297,7 +299,7 @@ def test_pyscalcli_gaswater(tmpdir, caplog, default_loglevel):
     assert len(lines) > 40
 
 
-def test_pyscalcli_gaswater_scal(tmpdir, caplog, default_loglevel):
+def test_pyscalcli_gaswater_scal(tmpdir, caplog):
     """Test the command line endpoint on gas-water problems, with
     interpolation"""
     tmpdir.chdir()
@@ -333,6 +335,8 @@ def test_pyscalcli_gaswater_scal(tmpdir, caplog, default_loglevel):
 
 
 def test_pyscal_client_scal(tmpdir, caplog, default_loglevel):
+    # pylint: disable=unused-argument
+    # default_loglevel fixture is in conftest.py
     """Test the command line endpoint on SCAL recommendation"""
     if "__file__" in globals():
         # Easen up copying test code into interactive sessions

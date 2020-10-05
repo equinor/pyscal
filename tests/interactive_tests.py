@@ -216,6 +216,7 @@ def test_interpolate_go():
 
 def test_interpolate_gw():
     """Discrete test scenarios for gaswater interpolation"""
+    # pylint: disable=too-many-locals
     swl_l = random.uniform(0, 0.1)
     swcr_l = swl_l + random.uniform(0, 0.1)
     sgrw_l = random.uniform(0, 0.2)

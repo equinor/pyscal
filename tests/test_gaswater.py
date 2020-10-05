@@ -12,7 +12,7 @@ import hypothesis.strategies as st
 from pyscal import GasWater
 from pyscal.constants import SWINTEGERS
 
-from common import (
+from .common import (
     check_table,
     float_df_checker,
     sat_table_str_ok,
