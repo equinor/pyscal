@@ -5,6 +5,7 @@ from __future__ import division
 from __future__ import print_function
 
 import numpy as np
+import pandas as pd
 
 from matplotlib import pyplot as plt
 
@@ -20,7 +21,6 @@ from pyscal.utils.interpolation import (
     interpolate_wo,
     interpolate_go,
 )
-
 from pyscal.utils.testing import check_table, float_df_checker, sat_table_str_ok
 
 
@@ -578,6 +578,9 @@ def test_ip_go_kroend():
     # krgmax is irrelevant, krgend is used here:
     assert float_df_checker(go_ip.table, "sg", 1 - 0.01, "krg", 0.5)
 
+    # Also check that estimated new sgcr is between the inputs:
+    assert 0.05 <= go_ip.estimate_sgcr() <= 0.1
+
     # Do we get into trouble if krgendanchor is different in low and high?
     go_low = GasOil(swl=0, sgcr=0.1, sorg=0.2, krgendanchor="sorg")
     go_low.add_corey_gas(ng=2, krgend=0.5, krgmax=0.7)
@@ -639,8 +642,11 @@ def test_interpolate_go(
     # pylint: disable=too-many-arguments,too-many-locals
     """Test many possible combinations of interpolation between two
     Corey gasoil curves, looking for numerical corner cases"""
-    go_low = GasOil(swl=swl, sgcr=sgcr, sorg=sorg)
-    go_high = GasOil(swl=swl + dswlhigh, sgcr=sgcr + dsgcr, sorg=max(sorg - dsorg, 0))
+    h = 0.01
+    go_low = GasOil(swl=swl, sgcr=sgcr, sorg=sorg, h=h)
+    go_high = GasOil(
+        swl=swl + dswlhigh, sgcr=sgcr + dsgcr, sorg=max(sorg - dsorg, 0), h=h
+    )
     go_low.add_corey_gas(ng=ng_l, krgend=krgend_l)
     go_high.add_corey_gas(ng=ng_h, krgend=krgend_h)
     go_low.add_corey_oil(nog=nog_l, kroend=kroend_l)
@@ -653,6 +659,14 @@ def test_interpolate_go(
         ips.append(go_ip)
         assert 0 < go_ip.crosspoint() < 1
 
+        # Don't assert directly on input sgcr, because corey exponents
+        # may be so high that sgcr becomes higher due to floating point
+        # accuracy.
+        assert (
+            go_low.estimate_sgcr() - h
+            < go_ip.estimate_sgcr()
+            < go_high.estimate_sgcr() + h
+        )
     # Distances between low and interpolants:
     dists = [
         (go_low.table - interp.table)[["krg", "krog"]].sum().sum() for interp in ips
@@ -684,3 +698,88 @@ def test_interpolate_go(
 
     # If this fails, there is a combination of parameters that might
     # trigger a discontinuity in the interpolants, which we don't want.
+
+
+def test_interpolations_go_fromtable():
+    """Test based on bug exposed in pyscal 0.6.1, where sgcr
+    was underestimated in interpolations following add_fromtable().
+    """
+    base = pd.DataFrame(
+        columns=["Sg", "krg", "krog"],
+        data=[
+            [0.0, 0.0, 1.0],
+            [0.1, 0.0, 1.0],
+            [0.2, 0.0, 1.0],  # sgcr
+            [0.3, 0.1, 0.9],
+            [0.8, 0.8, 0.0],  # sorg
+            [0.9, 0.9, 0.0],
+            [1.0, 1.0, 0.0],
+        ],
+    )
+    opt = pd.DataFrame(
+        columns=["Sg", "krg", "krog"],
+        data=[
+            [0.0, 0.0, 1.0],
+            [0.1, 0.0, 1.0],
+            [0.3, 0.0, 1.0],
+            [0.4, 0.1, 0.2],  # sgcr
+            [0.9, 0.9, 0.0],  # sorg
+            [0.95, 0.95, 0.0],
+            [1.0, 1.0, 0.0],
+        ],
+    )
+    go_base = GasOil(h=0.01)
+    go_base.add_fromtable(base)
+    assert np.isclose(go_base.estimate_sgcr(), 0.2)
+    assert np.isclose(go_base.estimate_sorg(), 0.2)
+    go_opt = GasOil(h=0.01)
+    go_opt.add_fromtable(opt)
+    assert np.isclose(go_opt.estimate_sgcr(), 0.3)
+    assert np.isclose(go_opt.estimate_sorg(), 0.1)
+
+    go_ip = interpolate_go(go_base, go_opt, 0.5, h=0.01)
+    assert np.isclose(go_ip.estimate_sgcr(), 0.25)
+    assert np.isclose(go_ip.estimate_sorg(), 0.15)
+
+
+def test_interpolations_wo_fromtable():
+    """Analog test as test_interpolations_go_fromtable().
+
+    Pyscal 0.6.1 and earlier fails this test sorw.
+    """
+    base = pd.DataFrame(
+        columns=["Sw", "krw", "krow"],
+        data=[
+            [0.0, 0.0, 1.0],
+            [0.1, 0.0, 1.0],
+            [0.2, 0.0, 1.0],  # swcr
+            [0.3, 0.1, 0.9],
+            [0.8, 0.8, 0.0],  # sorw
+            [0.9, 0.9, 0.0],
+            [1.0, 1.0, 0.0],
+        ],
+    )
+    opt = pd.DataFrame(
+        columns=["Sw", "krw", "krow"],
+        data=[
+            [0.0, 0.0, 1.0],
+            [0.1, 0.0, 1.0],
+            [0.3, 0.0, 1.0],
+            [0.4, 0.1, 0.2],  # swcr
+            [0.9, 0.9, 0.0],  # sorw
+            [0.95, 0.95, 0.0],
+            [1.0, 1.0, 0.0],
+        ],
+    )
+    wo_base = WaterOil(h=0.01)
+    wo_base.add_fromtable(base)
+    assert np.isclose(wo_base.estimate_swcr(), 0.2)
+    assert np.isclose(wo_base.estimate_sorw(), 0.2)
+    wo_opt = WaterOil(h=0.01)
+    wo_opt.add_fromtable(opt)
+    assert np.isclose(wo_opt.estimate_swcr(), 0.3)
+    assert np.isclose(wo_opt.estimate_sorw(), 0.1)
+
+    wo_ip = interpolate_wo(wo_base, wo_opt, 0.5, h=0.01)
+    assert np.isclose(wo_ip.estimate_swcr(), 0.25)
+    assert np.isclose(wo_ip.estimate_sorw(), 0.15)

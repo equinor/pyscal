@@ -292,6 +292,7 @@ class GasOil(object):
             self.table["krg"].fillna(method="bfill", inplace=True)
             self.table["krg"].clip(lower=0.0, upper=1.0, inplace=True)
             self.krgcomment = "-- krg from tabular input" + krgcomment + "\n"
+            self.sgcr = self.estimate_sgcr()
         if krogcolname in dframe:
             if not (dframe[krogcolname].diff().dropna() < epsilon).all():
                 raise ValueError("Incoming krogcolname not decreasing")
@@ -307,6 +308,7 @@ class GasOil(object):
             self.table["krog"].fillna(method="bfill", inplace=True)
             self.table["krog"].clip(lower=0.0, upper=1.0, inplace=True)
             self.krogcomment = "-- krog from tabular input" + krogcomment + "\n"
+            self.sorg = self.estimate_sorg()
         if pccolname in dframe:
             # Incoming dataframe must cover the range:
             if dframe[sgcolname].min() > self.table["sg"].min():
@@ -557,16 +559,14 @@ class GasOil(object):
         sorg is estimated by searching for a linear part in krg downwards
         from sg=1-swl. In practice it is impossible to infer sorg = 0,
         since we are limited by h, and the last segment from sg=1-swl-h
-        to sg=1-swl can always be assumed linear.
-
-        If krgend is anchored to sorg, krg data is used to infer sorg. If not,
-        krg cannot be used for this, and krog is used. sorg might be overestimated
-        when krog is used if it very close to zero before reaching sorw.
+        to sg=1-swl must always be assumed linear.
 
         If the curve is linear everywhere, sorg will be returned as sgcr + h
 
-        Args:
-            None
+        If krgend is anchored to sorg, krg data is used to infer sorg. If not,
+        krg cannot be used for this, and krog is used. sorg might be overestimated
+        when krog is used if it very close to zero before reaching sorg.
+
         Returns:
             float: The estimated sorg.
         """
@@ -582,24 +582,16 @@ class GasOil(object):
             self.table, xcol="sg", ycol="krog", side="right"
         )
 
-    def estimate_sgcr(self, curve="krog"):
+    def estimate_sgcr(self):
         """Estimate sgcr of the current krog data.
 
-        sgcr is estimated by searching for a linear part in krog upwards from sg=0.
-        In practice it is impossible to infer sgcr = 0, since we are limited by
-        h, and we always have to assume that the first segment is linear.
+        sgcr is the largest gas saturation for which the gas relative
+        permeability is zero.
 
-        If the curve is linear everywhere, sgcr will be returned as the right endpoint.
-
-        Args:
-            curve (str): Column name to use for search for linearity. Default is krog,
-                if all of that is linear, you may try krg instead.
         Returns:
             float: The estimated sgcr.
         """
-        assert curve in self.table
-        assert self.table[curve].sum() > 0
-        return estimate_diffjumppoint(self.table, xcol="sg", ycol=curve, side="left")
+        return self.table[self.table["krg"] < epsilon]["sg"].max()
 
     def crosspoint(self):
         """Locate and return the saturation point where krg = krog
