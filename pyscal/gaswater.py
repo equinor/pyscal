@@ -6,10 +6,9 @@ from __future__ import print_function
 import logging
 
 import pandas as pd
-
+from pyscal.utils.relperm import crosspoint
 from .wateroil import WaterOil
 from .gasoil import GasOil
-from pyscal.utils.relperm import crosspoint
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
@@ -44,15 +43,7 @@ class GasWater(object):
     """
 
     def __init__(
-        self,
-        swirr=0,
-        swl=0.0,
-        swcr=0.0,
-        sgrw=0.0,
-        sgcr=0,
-        h=0.01,
-        tag="",
-        fast=False,
+        self, swirr=0, swl=0.0, swcr=0.0, sgrw=0.0, sgcr=0, h=0.01, tag="", fast=False,
     ):
         """Sets up the saturation range for a GasWater object,
         by initializing one WaterOil and one GasOil object, with
@@ -167,10 +158,13 @@ class GasWater(object):
 
     @is_documented_by(WaterOil.add_simple_J)
     def add_simple_J(self, a=5, b=-1.5, poro_ref=0.25, perm_ref=100, drho=300, g=9.81):
+        """Add a simple J-function, handed over to the WaterOil object"""
         self.wateroil.add_simple_J(a, b, poro_ref, perm_ref, drho, g)
 
     @is_documented_by(WaterOil.add_simple_J_petro)
     def add_simple_J_petro(self, a, b, poro_ref=0.25, perm_ref=100, drho=300, g=9.81):
+        """Add a simple petrophysical variant of the J-function, handed
+        over to the WaterOil object"""
         self.wateroil.add_simple_J_petro(a, b, poro_ref, perm_ref, drho, g)
 
     def SWFN(self, header=True, dataincommentrow=True):
@@ -287,6 +281,9 @@ class GasWater(object):
         If the argument 'mpl_ax' is not supplied, a new plot
         window will be made. If supplied, it will draw on
         the specified axis."""
+
+        # pylint: disable=import-outside-toplevel
+        # Lazy import of matplotlib for speed reasons.
         import matplotlib.pyplot as plt
         import matplotlib
 
@@ -328,22 +325,27 @@ class GasWater(object):
 
     @property
     def swirr(self):
+        """Get the swirr, irreducible water saturation used for pc-init"""
         return self.wateroil.swirr
 
     @property
     def swl(self):
+        """Get the swl"""
         return self.wateroil.swl
 
     @property
     def swcr(self):
+        """Get the swcr"""
         return self.wateroil.swcr
 
     @property
     def swcomment(self):
+        """Get a string representation of the endpoints used for water"""
         return self.wateroil.swcomment.replace("sorw", "sgrw")
 
     @property
     def sgcomment(self):
+        """Get a string representation of the endpoints used for gas"""
         return (
             self.gasoil.sgcomment.replace("sorg", "sgrw")
             .replace(", krgendanchor=sgrw", "")
@@ -352,15 +354,17 @@ class GasWater(object):
 
     @property
     def krwcomment(self):
+        """Get a string representation describing krw"""
         return self.wateroil.krwcomment
 
     @property
     def krgcomment(self):
+        """Get a string representation describing krg"""
         return self.gasoil.krgcomment
 
     @property
     def tag(self):
+        """Get the user configured tag"""
         if self.wateroil.tag == self.gasoil.tag:
             return self.wateroil.tag
-        else:
-            raise ValueError("Internal tag-inconsistency in GasWater")
+        raise ValueError("Internal tag-inconsistency in GasWater")

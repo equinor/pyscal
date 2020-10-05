@@ -10,15 +10,15 @@ import pandas as pd
 from hypothesis import given, settings
 import hypothesis.strategies as st
 
-from common import (
+from pyscal import GasOil
+from pyscal.constants import SWINTEGERS
+
+from .common import (
     float_df_checker,
     check_table,
     sat_table_str_ok,
     check_linear_sections,
 )
-
-from pyscal import GasOil
-from pyscal.constants import SWINTEGERS
 
 
 def test_gasoil_init():

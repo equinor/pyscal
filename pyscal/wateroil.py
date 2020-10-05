@@ -588,12 +588,10 @@ class WaterOil(object):
 
         self.set_endpoints_linearpart_krow(kroend)
 
-        self.krowcomment = "-- Corey krow, now=%g, kroend=%g\n" % (
-            now,
-            kroend,
-        )
+        self.krowcomment = "-- Corey krow, now=%g, kroend=%g\n" % (now, kroend,)
 
     def add_simple_J(self, a=5, b=-1.5, poro_ref=0.25, perm_ref=100, drho=300, g=9.81):
+        # pylint: disable=anomalous-backslash-in-string
         """Add capillary pressure function from a simplified J-function
 
         This is the RMS version of the coefficients *a* and *b*, the formula
@@ -661,6 +659,7 @@ class WaterOil(object):
         )
 
     def add_simple_J_petro(self, a, b, poro_ref=0.25, perm_ref=100, drho=300, g=9.81):
+        # pylint: disable=anomalous-backslash-in-string
         """Add capillary pressure function from a simplified J-function
 
         This is the *petrophysical* version of the coefficients *a* and *b*, the formula
@@ -728,6 +727,7 @@ class WaterOil(object):
     def add_normalized_J(self, a, b, poro, perm, sigma_costau):
         # Don't make this a raw string to avoid the \l warning,
         # it destroys the Latex-formatting in sphinx
+        # pylint: disable=anomalous-backslash-in-string
         """
         Add capillary pressure in bar through a normalized J-function.
 
@@ -791,6 +791,7 @@ class WaterOil(object):
         )
 
     def add_skjaeveland_pc(self, cw, co, aw, ao, swr=None, sor=None):
+        # pylint: disable=line-too-long
         """Add capillary pressure from the Skjæveland correlation,
 
         Doc: https://wiki.equinor.com/wiki/index.php/Res:The_Skjaeveland_correlation_for_capillary_pressure
@@ -867,6 +868,7 @@ class WaterOil(object):
         )  # Just deduct sw to make it monotone..
 
     def add_LET_pc_pd(self, Lp, Ep, Tp, Lt, Et, Tt, Pcmax, Pct):
+        # pylint: disable=line-too-long
         """Add a primary drainage LET capillary pressure curve.
 
         Docs: https://wiki.equinor.com/wiki/index.php/Res:The_LET_correlation_for_capillary_pressure
@@ -906,6 +908,7 @@ class WaterOil(object):
         )
 
     def add_LET_pc_imb(self, Ls, Es, Ts, Lf, Ef, Tf, Pcmax, Pcmin, Pct):
+        # pylint: disable=line-too-long
         """Add an imbition LET capillary pressure curve.
 
         Docs: https://wiki.equinor.com/wiki/index.php/Res:The_LET_correlation_for_capillary_pressure
@@ -1245,6 +1248,8 @@ class WaterOil(object):
         If mpl_ax is supplied, the curve will be drawn on
         that, if not, a new axis (plot) will be made
         """
+        # pylint: disable=import-outside-toplevel
+        # Lazy import for speed reaons.
         import matplotlib.pyplot as plt
         import matplotlib
 
@@ -1286,6 +1291,8 @@ class WaterOil(object):
         If the argument 'mpl_ax' is not supplied, a new plot
         window will be made. If supplied, it will draw on
         the specified axis."""
+        # pylint: disable=import-outside-toplevel
+        # Lazy import for speed reaons.
         import matplotlib.pyplot as plt
         import matplotlib
 

@@ -20,7 +20,7 @@ from pyscal import (
     SCALrecommendation,
 )
 
-from common import sat_table_str_ok
+from .common import sat_table_str_ok
 
 try:
     import ecl2df

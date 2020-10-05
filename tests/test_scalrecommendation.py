@@ -12,7 +12,7 @@ import hypothesis.strategies as st
 from pyscal import SCALrecommendation, PyscalFactory, GasWater, WaterOilGas
 from pyscal.factory import slicedict
 
-from common import sat_table_str_ok, check_table
+from .common import sat_table_str_ok, check_table
 
 
 # Example SCAL recommendation, low case
@@ -405,9 +405,9 @@ def test_gaswater_scal():
     dframe = pd.DataFrame(
         columns=["SATNUM", "CASE", "NW", "NG", "TAG"],
         data=[
-            [1, "pess", 2, 2, "thetag"],
-            [1, "base", 3, 3, "thetag"],
-            [1, "opt", 4, 4, "thetag"],
+            [1, "pess", 2, 2, "sometag"],
+            [1, "base", 3, 3, "sometag"],
+            [1, "opt", 4, 4, "sometag"],
         ],
     )
     rec_list = PyscalFactory.create_scal_recommendation_list(

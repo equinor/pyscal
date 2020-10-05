@@ -5,10 +5,10 @@ import argparse
 
 import logging
 
+from pyscal import __version__
 from .wateroilgas import WaterOilGas
 from .gaswater import GasWater
 from .factory import PyscalFactory
-from pyscal import __version__
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)

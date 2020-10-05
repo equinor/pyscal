@@ -277,6 +277,7 @@ def test_df2str_nonstrict_monotonocity_digits1(series, monotonocity, expected):
     ],
 )
 def test_df2str_nonstrict_monotonocity_valueerror(series, monotonocity):
+    """Check we get ValueError in the correct circumstances"""
     with pytest.raises(ValueError):
         df2str(
             pd.DataFrame(data=series),

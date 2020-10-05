@@ -15,31 +15,32 @@ import pandas as pd
 import pytest
 
 from pyscal import (
+    factory,
     WaterOil,
     GasOil,
     GasWater,
     WaterOilGas,
     PyscalFactory,
-    factory,
     SCALrecommendation,
 )
 
-from common import sat_table_str_ok, check_table
+from .common import sat_table_str_ok, check_table
 
 
 def test_factory_wateroil():
     """Test that we can create curves from dictionaries of parameters"""
-    factory = PyscalFactory()
+    pyscal_factory = PyscalFactory()
 
     # Factory refuses to create incomplete defaulted objects.
     with pytest.raises(ValueError):
-        factory.create_water_oil()
+        pyscal_factory.create_water_oil()
 
     with pytest.raises(TypeError):
         # (it must be a dictionary)
-        factory.create_water_oil(swirr=0.01)  # noqa
+        # pylint: disable=unexpected-keyword-arg
+        pyscal_factory.create_water_oil(swirr=0.01)  # noqa
 
-    wateroil = factory.create_water_oil(
+    wateroil = pyscal_factory.create_water_oil(
         dict(
             swirr=0.01,
             swl=0.1,
@@ -62,7 +63,7 @@ def test_factory_wateroil():
     sat_table_str_ok(wateroil.SWOF())
     sat_table_str_ok(wateroil.SWFN())
 
-    wateroil = factory.create_water_oil(
+    wateroil = pyscal_factory.create_water_oil(
         dict(nw=3, now=2, sorw=0.1, krwend=0.2, krwmax=0.5)
     )
     assert isinstance(wateroil, WaterOil)
@@ -75,7 +76,7 @@ def test_factory_wateroil():
 
     # Ambiguous works, but we don't guarantee that this results
     # in LET or Corey.
-    wateroil = factory.create_water_oil(dict(nw=3, Lw=2, Ew=2, Tw=2, now=3))
+    wateroil = pyscal_factory.create_water_oil(dict(nw=3, Lw=2, Ew=2, Tw=2, now=3))
     assert "krw" in wateroil.table
     assert "Corey" in wateroil.krwcomment or "LET" in wateroil.krwcomment
     check_table(wateroil.table)
@@ -83,7 +84,7 @@ def test_factory_wateroil():
     sat_table_str_ok(wateroil.SWFN())
 
     # Mixing Corey and LET
-    wateroil = factory.create_water_oil(dict(Lw=2, Ew=2, Tw=2, krwend=1, now=4))
+    wateroil = pyscal_factory.create_water_oil(dict(Lw=2, Ew=2, Tw=2, krwend=1, now=4))
     assert isinstance(wateroil, WaterOil)
     assert "krw" in wateroil.table
     assert wateroil.table["krw"].max() == 1.0
@@ -92,7 +93,7 @@ def test_factory_wateroil():
     sat_table_str_ok(wateroil.SWOF())
     sat_table_str_ok(wateroil.SWFN())
 
-    wateroil = factory.create_water_oil(
+    wateroil = pyscal_factory.create_water_oil(
         dict(Lw=2, Ew=2, Tw=2, Low=3, Eow=3, Tow=3, krwend=0.5)
     )
     assert isinstance(wateroil, WaterOil)
@@ -107,7 +108,7 @@ def test_factory_wateroil():
     sat_table_str_ok(wateroil.SWFN())
 
     # Add capillary pressure
-    wateroil = factory.create_water_oil(
+    wateroil = pyscal_factory.create_water_oil(
         dict(swl=0.1, nw=1, now=1, a=2, b=-1, poro_ref=0.2, perm_ref=100, drho=200)
     )
     assert "pc" in wateroil.table
@@ -118,7 +119,7 @@ def test_factory_wateroil():
     sat_table_str_ok(wateroil.SWFN())
 
     # Test that the optional gravity g is picked up:
-    wateroil = factory.create_water_oil(
+    wateroil = pyscal_factory.create_water_oil(
         dict(swl=0.1, nw=1, now=1, a=2, b=-1, poro_ref=0.2, perm_ref=100, drho=200, g=0)
     )
     assert "pc" in wateroil.table
@@ -128,7 +129,7 @@ def test_factory_wateroil():
     sat_table_str_ok(wateroil.SWFN())
 
     # Test petrophysical simple J:
-    wateroil = factory.create_water_oil(
+    wateroil = pyscal_factory.create_water_oil(
         dict(
             swl=0.1,
             nw=1,
@@ -148,7 +149,7 @@ def test_factory_wateroil():
     sat_table_str_ok(wateroil.SWFN())
 
     # One pc param missing:
-    wateroil = factory.create_water_oil(
+    wateroil = pyscal_factory.create_water_oil(
         dict(swl=0.1, nw=1, now=1, a=2, b=-1, perm_ref=100, drho=200, g=0)
     )
     assert "pc" not in wateroil.table
@@ -157,8 +158,8 @@ def test_factory_wateroil():
 def test_ambiguity():
     """Test how the factory handles ambiguity between Corey and LET
     parameters"""
-    factory = PyscalFactory()
-    wateroil = factory.create_water_oil(
+    pyscal_factory = PyscalFactory()
+    wateroil = pyscal_factory.create_water_oil(
         dict(swl=0.1, nw=10, Lw=1, Ew=1, Tw=1, now=2, h=0.1, no=2)
     )
     # Corey is picked here.
@@ -168,13 +169,14 @@ def test_ambiguity():
 
 def test_factory_gasoil():
     """Test that we can create curves from dictionaries of parameters"""
-    factory = PyscalFactory()
+    pyscal_factory = PyscalFactory()
 
     with pytest.raises(TypeError):
         # (this must be a dictionary)
-        factory.create_gas_oil(swirr=0.01)  # noqa
+        # pylint: disable=unexpected-keyword-arg
+        pyscal_factory.create_gas_oil(swirr=0.01)  # noqa
 
-    gasoil = factory.create_gas_oil(
+    gasoil = pyscal_factory.create_gas_oil(
         dict(swirr=0.01, swl=0.1, sgcr=0.05, tag="Good sand", ng=1, nog=2)
     )
     assert isinstance(gasoil, GasOil)
@@ -189,7 +191,7 @@ def test_factory_gasoil():
     assert "Corey krog" in sgof
     assert "Zero capillary pressure" in sgof
 
-    gasoil = factory.create_gas_oil(
+    gasoil = pyscal_factory.create_gas_oil(
         dict(ng=1.2, nog=2, krgend=0.8, krgmax=0.9, krogend=0.6)
     )
     sgof = gasoil.SGOF()
@@ -198,14 +200,14 @@ def test_factory_gasoil():
     assert "krgend=0.8" in sgof
     check_table(gasoil.table)
 
-    gasoil = factory.create_gas_oil(dict(ng=1.3, Log=2, Eog=2, Tog=2))
+    gasoil = pyscal_factory.create_gas_oil(dict(ng=1.3, Log=2, Eog=2, Tog=2))
     sgof = gasoil.SGOF()
     check_table(gasoil.table)
     sat_table_str_ok(sgof)
     assert "Corey krg" in sgof
     assert "LET krog" in sgof
 
-    gasoil = factory.create_gas_oil(dict(Lg=1, Eg=1, Tg=1, Log=2, Eog=2, Tog=2))
+    gasoil = pyscal_factory.create_gas_oil(dict(Lg=1, Eg=1, Tg=1, Log=2, Eog=2, Tog=2))
     sgof = gasoil.SGOF()
     sat_table_str_ok(sgof)
     check_table(gasoil.table)
@@ -215,12 +217,13 @@ def test_factory_gasoil():
 
 def test_factory_gaswater():
     """Test that we can create gas-water curves from dictionaries of parameters"""
-    factory = PyscalFactory()
+    pyscal_factory = PyscalFactory()
 
     with pytest.raises(TypeError):
-        factory.create_gas_water(swirr=0.01)  # noqa
+        # pylint: disable=unexpected-keyword-arg
+        pyscal_factory.create_gas_water(swirr=0.01)  # noqa
 
-    gaswater = factory.create_gas_water(
+    gaswater = pyscal_factory.create_gas_water(
         dict(swirr=0.01, swl=0.03, sgrw=0.1, sgcr=0.15, tag="gassy sand", ng=2, nw=2)
     )
 
@@ -248,7 +251,7 @@ def test_factory_gaswater():
     assert "ng=2" in sgfn
     assert "gassy sand" in sgfn
 
-    gaswater = factory.create_gas_water(dict(lg=1, eg=1, tg=1, nw=3))
+    gaswater = pyscal_factory.create_gas_water(dict(lg=1, eg=1, tg=1, nw=3))
 
     sgfn = gaswater.SGFN()
     swfn = gaswater.SWFN()
@@ -260,9 +263,9 @@ def test_factory_gaswater():
 
 def test_factory_wateroilgas():
     """Test creating discrete cases of WaterOilGas from factory"""
-    factory = PyscalFactory()
+    pyscal_factory = PyscalFactory()
 
-    wog = factory.create_water_oil_gas(dict(nw=2, now=3, ng=1, nog=2.5))
+    wog = pyscal_factory.create_water_oil_gas(dict(nw=2, now=3, ng=1, nog=2.5))
     swof = wog.SWOF()
     sgof = wog.SGOF()
     sat_table_str_ok(swof)  # sgof code works for swof also currently
@@ -275,7 +278,7 @@ def test_factory_wateroilgas():
     check_table(wog.wateroil.table)
 
     # Some users will mess up lower vs upper case:
-    wog = factory.create_water_oil_gas(dict(NW=2, NOW=3, NG=1, nog=2.5))
+    wog = pyscal_factory.create_water_oil_gas(dict(NW=2, NOW=3, NG=1, nog=2.5))
     swof = wog.SWOF()
     sgof = wog.SGOF()
     sat_table_str_ok(swof)  # sgof code works for swof also currently
@@ -286,7 +289,7 @@ def test_factory_wateroilgas():
     assert "Corey krow" in swof
 
     # Mangling data
-    wateroil = factory.create_water_oil_gas(dict(nw=2, now=3, ng=1))
+    wateroil = pyscal_factory.create_water_oil_gas(dict(nw=2, now=3, ng=1))
     assert wateroil.gasoil is None
 
 
@@ -312,8 +315,8 @@ def test_factory_wateroilgas_deprecated_krowgend(caplog):
 
 def test_factory_wateroilgas_wo():
     """Test making only wateroil through the wateroilgas factory"""
-    factory = PyscalFactory()
-    wog = factory.create_water_oil_gas(
+    pyscal_factory = PyscalFactory()
+    wog = pyscal_factory.create_water_oil_gas(
         dict(nw=2, now=3, kroend=0.5, sorw=0.04, swcr=0.1)
     )
     swof = wog.SWOF()
@@ -466,14 +469,14 @@ def test_create_lists():
 def test_scalrecommendation():
     """Testing making SCAL rec from dict of dict."""
 
-    factory = PyscalFactory()
+    pyscal_factory = PyscalFactory()
 
     scal_input = {
         "low": {"nw": 2, "now": 4, "ng": 1, "nog": 2},
         "BASE": {"nw": 3, "NOW": 3, "ng": 1, "nog": 2},
         "high": {"nw": 4, "now": 2, "ng": 1, "nog": 3},
     }
-    scal = factory.create_scal_recommendation(scal_input)
+    scal = pyscal_factory.create_scal_recommendation(scal_input)
     # (not supported yet to make WaterOil only..)
     interp = scal.interpolate(-0.5)
     sat_table_str_ok(interp.SWOF())
@@ -486,12 +489,12 @@ def test_scalrecommendation():
     incomplete1 = scal_input.copy()
     del incomplete1["BASE"]
     with pytest.raises(ValueError):
-        factory.create_scal_recommendation(incomplete1)
+        pyscal_factory.create_scal_recommendation(incomplete1)
 
     go_only = scal_input.copy()
     del go_only["low"]["now"]
     del go_only["low"]["nw"]
-    gasoil = factory.create_scal_recommendation(go_only)
+    gasoil = pyscal_factory.create_scal_recommendation(go_only)
     assert gasoil.low.wateroil is None
     assert gasoil.base.wateroil is not None
     assert gasoil.high.wateroil is not None
@@ -504,14 +507,14 @@ def test_scalrecommendation():
 def test_scalrecommendation_gaswater():
     """Testing making SCAL rec from dict of dict for gaswater input"""
 
-    factory = PyscalFactory()
+    pyscal_factory = PyscalFactory()
 
     scal_input = {
         "low": {"nw": 2, "ng": 1},
         "BASE": {"nw": 3, "ng": 1},
         "high": {"nw": 4, "ng": 1},
     }
-    scal = factory.create_scal_recommendation(scal_input, h=0.2)
+    scal = pyscal_factory.create_scal_recommendation(scal_input, h=0.2)
     interp = scal.interpolate(-0.5, h=0.2)
     sat_table_str_ok(interp.SWFN())
     sat_table_str_ok(interp.SGFN())
@@ -635,12 +638,12 @@ def test_gensatfunc():
     """Test how the external tool gen_satfunc could use
     the factory functionality"""
 
-    factory = PyscalFactory()
+    pyscal_factory = PyscalFactory()
 
     # Example config line for gen_satfunc:
     conf_line_pc = "RELPERM 4 2 1 3 2 1 0.15 0.10 0.5 20 100 0.2 0.22 -0.5 30"
 
-    wateroil = factory.create_water_oil(parse_gensatfuncline(conf_line_pc))
+    wateroil = pyscal_factory.create_water_oil(parse_gensatfuncline(conf_line_pc))
     swof = wateroil.SWOF()
     assert "0.17580" in swof  # krw at sw=0.65
     assert "0.0127" in swof  # krow at sw=0.65
@@ -648,7 +651,7 @@ def test_gensatfunc():
     assert "2.0669" in swof  # pc at swl
 
     conf_line_min = "RELPERM 1 2 3 1 2 3 0.1 0.15 0.5 20"
-    wateroil = factory.create_water_oil(parse_gensatfuncline(conf_line_min))
+    wateroil = pyscal_factory.create_water_oil(parse_gensatfuncline(conf_line_min))
     swof = wateroil.SWOF()
     assert "Zero capillary pressure" in swof
 
@@ -658,7 +661,9 @@ def test_gensatfunc():
 
     # sigma_costau is missing here:
     conf_line_almost_pc = "RELPERM 4 2 1 3 2 1 0.15 0.10 0.5 20 100 0.2 0.22 -0.5"
-    wateroil = factory.create_water_oil(parse_gensatfuncline(conf_line_almost_pc))
+    wateroil = pyscal_factory.create_water_oil(
+        parse_gensatfuncline(conf_line_almost_pc)
+    )
     swof = wateroil.SWOF()
     # The factory will not recognize the normalized J-function
     # when costau is missing. Any error message would be the responsibility
