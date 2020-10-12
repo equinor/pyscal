@@ -22,6 +22,7 @@ from pyscal.utils.interpolation import (
     interpolate_go,
 )
 from pyscal.utils.testing import check_table, float_df_checker, sat_table_str_ok
+from pyscal.constants import EPSILON as epsilon
 
 
 @settings(deadline=1000)
@@ -662,10 +663,12 @@ def test_interpolate_go(
         # Don't assert directly on input sgcr, because corey exponents
         # may be so high that sgcr becomes higher due to floating point
         # accuracy.
+        go_low_sgcr = go_low.estimate_sgcr()
+        go_high_sgcr = go_high.estimate_sgcr()
         assert (
-            go_low.estimate_sgcr() - h
+            min(go_low_sgcr, go_high_sgcr) - h - epsilon
             < go_ip.estimate_sgcr()
-            < go_high.estimate_sgcr() + h
+            < max(go_low_sgcr, go_high_sgcr) + h + epsilon
         )
     # Distances between low and interpolants:
     dists = [
