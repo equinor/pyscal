@@ -607,7 +607,6 @@ def test_ip_go_kroend():
     assert float_df_checker(go_ip.table, "sg", 1 - 0.01 - 0.15, "krog", 0)
 
 
-# @reproduce_failure("5.37.1", b"AXicY1yv0cG9h4mBVMBTzXZXRriQCJUAHLkENA==")
 @settings(max_examples=50, deadline=5000)
 @given(
     st.floats(min_value=0, max_value=0.1),  # swl
@@ -663,7 +662,9 @@ def test_interpolate_go(
 
         # sgcr is non-trivial, if exponents are high, an effective sgcr might
         # be larger than the value used to initialize the curve. Try to be
-        # permissive enough here.
+        # permissive enough here. This can even cause the interpolant to be
+        # outside the low-high envelope, but it is the way it is supposed to
+        # be when sgcr is interpolated separately.
         sgcr_low = min(
             go_low.sgcr, go_low.estimate_sgcr(), go_high.sgcr, go_high.estimate_sgcr()
         )
