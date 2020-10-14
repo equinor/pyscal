@@ -586,12 +586,14 @@ class GasOil(object):
         """Estimate sgcr of the current krog data.
 
         sgcr is the largest gas saturation for which the gas relative
-        permeability is zero.
+        permeability is approximately zero, where approximately zero is
+        roughly equivalent to how many digits are outputted
+        by SGOF().
 
         Returns:
             float: The estimated sgcr.
         """
-        return self.table[self.table["krg"] < epsilon]["sg"].max()
+        return self.table[self.table["krg"] < 10 * epsilon]["sg"].max()
 
     def crosspoint(self):
         """Locate and return the saturation point where krg = krog

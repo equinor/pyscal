@@ -342,9 +342,13 @@ def interpolate_go(go_low, go_high, parameter, h=0.01, tag=None):
     def weighted_value(a, b):
         return a * (1.0 - parameter) + b * parameter
 
-    # Interpolate saturation endpoints
+    # Interpolate saturation endpoints.
+    ## For sgcr is more robust to re-estimate to avoid corner cases
+    ## where sgcr is initially zero, but with an effectively higher
+    ## sgcr due to high Corey exponent.
     swl_new = weighted_value(go_low.swl, go_high.swl)
     sgcr_new = weighted_value(go_low.sgcr, go_high.sgcr)
+    #sgcr_new = weighted_value(go_low.estimate_sgcr(), go_high.estimate_sgcr())
     sorg_new = weighted_value(go_low.sorg, go_high.sorg)
 
     # Interpolate kr at saturation endpoints

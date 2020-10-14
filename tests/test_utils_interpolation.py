@@ -607,6 +607,7 @@ def test_ip_go_kroend():
     assert float_df_checker(go_ip.table, "sg", 1 - 0.01 - 0.15, "krog", 0)
 
 
+# @reproduce_failure("5.37.1", b"AXicY1yv0cG9h4mBVMBTzXZXRriQCJUAHLkENA==")
 @settings(max_examples=50, deadline=5000)
 @given(
     st.floats(min_value=0, max_value=0.1),  # swl
@@ -660,16 +661,24 @@ def test_interpolate_go(
         ips.append(go_ip)
         assert 0 < go_ip.crosspoint() < 1
 
-        # Don't assert directly on input sgcr, because corey exponents
-        # may be so high that sgcr becomes higher due to floating point
-        # accuracy.
-        go_low_sgcr = go_low.estimate_sgcr()
-        go_high_sgcr = go_high.estimate_sgcr()
-        assert (
-            min(go_low_sgcr, go_high_sgcr) - h - epsilon
-            < go_ip.estimate_sgcr()
-            < max(go_low_sgcr, go_high_sgcr) + h + epsilon
+        # sgcr is non-trivial, if exponents are high, an effective sgcr might
+        # be larger than the value used to initialize the curve. Try to be
+        # permissive enough here.
+        sgcr_low = min(
+            go_low.sgcr, go_low.estimate_sgcr(), go_high.sgcr, go_high.estimate_sgcr()
         )
+        sgcr_high = max(
+            go_low.sgcr, go_low.estimate_sgcr(), go_high.sgcr, go_high.estimate_sgcr()
+        )
+
+        sgcr_ip = go_ip.estimate_sgcr()
+
+        sgcr_lower_bound_ok = sgcr_low - h - epsilon < sgcr_ip
+        sgcr_upper_bound_ok = sgcr_ip < sgcr_high + h + epsilon
+
+        assert sgcr_lower_bound_ok
+        assert sgcr_upper_bound_ok
+
     # Distances between low and interpolants:
     dists = [
         (go_low.table - interp.table)[["krg", "krog"]].sum().sum() for interp in ips
