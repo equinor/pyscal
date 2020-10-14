@@ -22,6 +22,7 @@ from pyscal.utils.interpolation import (
     interpolate_go,
 )
 from pyscal.utils.testing import check_table, float_df_checker, sat_table_str_ok
+from pyscal.constants import EPSILON as epsilon
 
 
 @settings(deadline=1000)
@@ -659,14 +660,26 @@ def test_interpolate_go(
         ips.append(go_ip)
         assert 0 < go_ip.crosspoint() < 1
 
-        # Don't assert directly on input sgcr, because corey exponents
-        # may be so high that sgcr becomes higher due to floating point
-        # accuracy.
-        assert (
-            go_low.estimate_sgcr() - h
-            < go_ip.estimate_sgcr()
-            < go_high.estimate_sgcr() + h
+        # sgcr is non-trivial, if exponents are high, an effective sgcr might
+        # be larger than the value used to initialize the curve. Try to be
+        # permissive enough here. This can even cause the interpolant to be
+        # outside the low-high envelope, but it is the way it is supposed to
+        # be when sgcr is interpolated separately.
+        sgcr_low = min(
+            go_low.sgcr, go_low.estimate_sgcr(), go_high.sgcr, go_high.estimate_sgcr()
         )
+        sgcr_high = max(
+            go_low.sgcr, go_low.estimate_sgcr(), go_high.sgcr, go_high.estimate_sgcr()
+        )
+
+        sgcr_ip = go_ip.estimate_sgcr()
+
+        sgcr_lower_bound_ok = sgcr_low - h - epsilon < sgcr_ip
+        sgcr_upper_bound_ok = sgcr_ip < sgcr_high + h + epsilon
+
+        assert sgcr_lower_bound_ok
+        assert sgcr_upper_bound_ok
+
     # Distances between low and interpolants:
     dists = [
         (go_low.table - interp.table)[["krg", "krog"]].sum().sum() for interp in ips
