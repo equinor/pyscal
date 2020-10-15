@@ -15,6 +15,7 @@ from scipy.interpolate import PchipInterpolator, interp1d
 import pyscal
 from pyscal.utils.relperm import estimate_diffjumppoint, crosspoint
 from pyscal.utils.string import df2str, comment_formatter
+from pyscal.utils.capillarypressure import simple_J
 from pyscal.constants import EPSILON as epsilon
 from pyscal.constants import SWINTEGERS, MAX_EXPONENT
 
@@ -605,7 +606,7 @@ class WaterOil(object):
 
             J = a S_w^b
 
-        *J* is not dimensionless in this equation. The capillary pressure
+        *J* is not dimensionless in this equation. The capillary pressure will
         be in bars.
 
         This is identical to the also seen formula
@@ -647,15 +648,13 @@ class WaterOil(object):
                 "positive b will give increasing capillary pressure with saturation"
             )
 
-        # drho = rwo_w - rho_o, in units g/cc
-
         # swnpc is a normalized saturation, but normalized with
         # respect to swirr, not to swl (the swirr here is sometimes
         # called 'swirra' - asymptotic swirr)
-        self.table["J"] = a * self.table["swnpc"] ** b
-        self.table["H"] = self.table["J"] * math.sqrt(poro_ref / perm_ref)
-        # Scale drho and g from SI units to g/cc and m/s²100
-        self.table["pc"] = self.table["H"] * drho / 1000 * g / 100.0
+
+        self.table["pc"] = simple_J(
+            self.table["swnpc"], a, b, poro_ref, perm_ref, drho, g
+        )
         self.pccomment = (
             "-- Simplified J-function for Pc; rms version, in bar\n--   "
             + "a=%g, b=%g, poro_ref=%g, perm_ref=%g mD, drho=%g kg/m^3, g=%g m/s^2\n"
