@@ -105,7 +105,7 @@ The output from the code above is:
 
     SWOF
     -- Foobarites
-    -- pyscal: 0.6.x
+    -- pyscal: 0.7.x
     -- swirr=0 swl=0.05 swcr=0.05 sorw=0.03
     -- Corey krw, nw=2.1, krwend=0.6, krwmax=1
     -- Corey krow, now=2.5, kroend=0.9
