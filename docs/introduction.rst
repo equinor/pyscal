@@ -47,7 +47,7 @@ from the pyscal command above will look like:
     $ cat relperm.inc
     SWOF
     -- SATNUM 1
-    -- pyscal: v0.6.X
+    -- pyscal: v0.7.X
     -- swirr=0 swl=0.1 swcr=0.1 sorw=0.05
     -- Corey krw, nw=2, krwend=1, krwmax=1
     -- Corey krow, now=3, kroend=1

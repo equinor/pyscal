@@ -155,6 +155,31 @@ def test_factory_wateroil():
     assert "pc" not in wateroil.table
 
 
+def test_init_with_swlheight():
+    """With sufficient parameters, swl will be calculated on the fly
+    when initializing the WaterOil object"""
+    pyscal_factory = PyscalFactory()
+    wateroil = pyscal_factory.create_water_oil(
+        dict(
+            swlheight=200,
+            nw=1,
+            now=1,
+            swirr=0.01,
+            a=1,
+            b=-2,
+            poro_ref=0.2,
+            perm_ref=100,
+            drho=200,
+        )
+    )
+    assert np.isclose(wateroil.swl, 0.02480395)
+    assert "swl=0.024" in wateroil.SWOF()
+
+    with pytest.raises(ValueError):
+        # This should fail because capillary pressure parameters are not provided.
+        pyscal_factory.create_water_oil(dict(swlheight=200, nw=1, now=1))
+
+
 def test_ambiguity():
     """Test how the factory handles ambiguity between Corey and LET
     parameters"""

@@ -9,6 +9,7 @@ import pandas as pd
 import numpy as np
 import xlrd
 
+from pyscal.utils import capillarypressure
 from .wateroil import WaterOil
 from .gasoil import GasOil
 from .gaswater import GasWater
@@ -42,6 +43,8 @@ WO_LET_OIL = ["low", "eow", "tow"]
 WO_LET_OIL_ALT = ["lo", "eo", "to"]  # Alternative parameter names.
 WO_OIL_ENDPOINTS = ["kroend", "krowend"]  # krowend is deprecated in favour of kroend
 WO_SIMPLE_J = ["a", "b", "poro_ref", "perm_ref", "drho"]  # "g" is optional
+WO_SWLHEIGHT = ["swlheight"]
+WO_SWL_FROM_HEIGHT = WO_SWLHEIGHT + ["swirr", "a", "b", "poro_ref", "perm_ref"]
 WO_NORM_J = ["a", "b", "poro", "perm", "sigma_costau"]
 # 'a' in WO_NORM_J is the same as a_petro, but should possibly kept as is.
 WO_SIMPLE_J_PETRO = [
@@ -135,8 +138,7 @@ class PyscalFactory(object):
           a, b, poro, perm, sigma_costau
 
         Args:
-            params (dict): Dictionary with parameters describing
-                the WaterOil object.
+            params (dict): Dictionary with parameters describing the WaterOil object.
         """
         if not params:
             params = dict()
@@ -154,6 +156,26 @@ class PyscalFactory(object):
         params = filter_nan_from_dict(params)
 
         usedparams = set()
+
+        # Check if we should initialize swl from a swlheight parameter:
+        if set(WO_SWL_FROM_HEIGHT).issubset(params):
+            if "swl" in params:
+                raise ValueError(
+                    "Do not provide both swl and swlheight at the same time"
+                )
+            params_swl_from_height = slicedict(params, WO_SWL_FROM_HEIGHT)
+            params["swl"] = capillarypressure.swl_from_height_simpleJ(
+                **params_swl_from_height
+            )
+        elif set(WO_SWLHEIGHT).issubset(params):
+            raise ValueError(
+                (
+                    "Can't initialize from SWLHEIGHT without "
+                    "sufficient simple-J parameters, all of: "
+                    "{}".format(WO_SWL_FROM_HEIGHT)
+                )
+            )
+
         # No requirements to the base objects, defaults are ok.
         wateroil = WaterOil(**slicedict(params, WO_INIT))
         usedparams = usedparams.union(set(slicedict(params, WO_INIT).keys()))
@@ -383,6 +405,11 @@ class PyscalFactory(object):
         else:
             logger.info("No wateroil parameters. Assuming only gas-oil in wateroilgas")
             wateroil = None
+
+        # If the swl in WaterOil was initialized with swlheight,
+        # ensure that result is passed on to the GasOil object:
+        if "swl" not in params and "swlheight" in params:
+            params["swl"] = wateroil.swl
 
         if sufficient_gas_oil_params(params, failhard=False):
             gasoil = PyscalFactory.create_gas_oil(params)

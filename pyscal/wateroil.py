@@ -597,7 +597,7 @@ class WaterOil(object):
 
     def add_simple_J(self, a=5, b=-1.5, poro_ref=0.25, perm_ref=100, drho=300, g=9.81):
         # pylint: disable=anomalous-backslash-in-string
-        """Add capillary pressure function from a simplified J-function
+        r"""Add capillary pressure function from a simplified J-function
 
         This is the RMS version of the coefficients *a* and *b*, the formula
         used is
@@ -663,21 +663,21 @@ class WaterOil(object):
 
     def add_simple_J_petro(self, a, b, poro_ref=0.25, perm_ref=100, drho=300, g=9.81):
         # pylint: disable=anomalous-backslash-in-string
-        """Add capillary pressure function from a simplified J-function
+        r"""Add capillary pressure function from a simplified J-function
 
         This is the *petrophysical* version of the coefficients *a* and *b*, the formula
         used is
 
         .. math::
 
-            J = \left(\\frac{S_w}{a}\\right)^{\\frac{1}{b}}
+            J = \left(\frac{S_w}{a}\right)^{\frac{1}{b}}
 
 
         which is identical to
 
         .. math::
 
-            J = 10^\\frac{\log(S_w) - \log(a)}{b}
+            J = 10^\frac{\log(S_w) - \log(a)}{b}
 
         *J* is not dimensionless in this equation.
 
@@ -731,13 +731,13 @@ class WaterOil(object):
         # Don't make this a raw string to avoid the \l warning,
         # it destroys the Latex-formatting in sphinx
         # pylint: disable=anomalous-backslash-in-string
-        """
+        r"""
         Add capillary pressure in bar through a normalized J-function.
 
         .. math::
 
-            p_c = \\frac{\left(\\frac{S_w}{a}\\right)^{\\frac{1}{b}}
-            \sigma \cos \\tau}{\sqrt{\\frac{k}{\phi}}}
+            p_c = \frac{\left(\frac{S_w}{a}\right)^{\frac{1}{b}}
+            \sigma \cos \tau}{\sqrt{\frac{k}{\phi}}}
 
         The :math:`S_w` saturation used in the formula is normalized with respect
         to the swirr parameter.

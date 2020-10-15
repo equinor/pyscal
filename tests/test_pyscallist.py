@@ -6,6 +6,7 @@ from __future__ import print_function
 
 import os
 
+import numpy as np
 import pandas as pd
 
 import pytest
@@ -352,6 +353,101 @@ def test_capillary_pressure():
     assert "normalized J-function" in swof
     assert "sigma_costau" in swof
     assert "petrophysical" not in swof
+
+
+def test_swl_from_height():
+    """Test that can initialize swl from capillary pressure height"""
+    df_columns = [
+        "SATNUM",
+        "nw",
+        "now",
+        "swl",
+        "swlheight",
+        "swirr",
+        "a",
+        "b",
+        "PORO_reF",
+        "PERM_ref",
+        "drho",
+    ]
+    dframe = pd.DataFrame(
+        columns=df_columns,
+        data=[[1, 1, 1, np.nan, 300, 0.00, 3.6, -3.5, 0.25, 15, 150]],
+    )
+    pyscal_list = PyscalFactory.create_pyscal_list(
+        PyscalFactory.load_relperm_df(dframe)
+    )
+
+    # Mix swlheight init and direct swl-init:
+    assert np.isclose(pyscal_list[1].swl, 0.157461)
+    dframe = pd.DataFrame(
+        columns=df_columns,
+        data=[
+            [1, 1, 1, np.nan, 300, 0.00, 3.6, -3.5, 0.25, 15, 150],
+            [2, 1, 1, 0.3, np.nan, 0.00, 3.6, -3.5, 0.25, 15, 150],
+        ],
+    )
+    pyscal_list = PyscalFactory.create_pyscal_list(
+        PyscalFactory.load_relperm_df(dframe)
+    )
+    assert np.isclose(pyscal_list[1].swl, 0.157461)
+    assert np.isclose(pyscal_list[2].swl, 0.3)
+
+    # Ambiguous, swl and swlheight both supplied:
+    dframe = pd.DataFrame(
+        columns=df_columns,
+        data=[[1, 1, 1, 0.3, 300, 0.00, 3.6, -3.5, 0.25, 15, 150]],
+    )
+    with pytest.raises(ValueError):
+        PyscalFactory.create_pyscal_list(PyscalFactory.load_relperm_df(dframe))
+
+    # WaterOilGas (gasoil is also dependant on the computed swl)
+    df_wog_columns = [
+        "SATNUM",
+        "nw",
+        "now",
+        "ng",
+        "nog",
+        "swlheight",
+        "swirr",
+        "a",
+        "b",
+        "PORO_reF",
+        "PERM_ref",
+        "drho",
+    ]
+    dframe = pd.DataFrame(
+        columns=df_wog_columns,
+        data=[[1, 1, 1, 2, 2, 300, 0.00, 3.6, -3.5, 0.25, 15, 150]],
+    )
+    pyscal_list = PyscalFactory.create_pyscal_list(
+        PyscalFactory.load_relperm_df(dframe)
+    )
+    assert np.isclose(pyscal_list[1].wateroil.swl, 0.157461)
+    assert np.isclose(pyscal_list[1].gasoil.swl, 0.157461)
+
+    # Test for GasWater:
+    df_gw_columns = [
+        "SATNUM",
+        "nw",
+        "ng",
+        "swlheight",
+        "swirr",
+        "a",
+        "b",
+        "PORO_REF",
+        "PERM_REF",
+        "drho",
+    ]
+    dframe = pd.DataFrame(
+        columns=df_gw_columns,
+        data=[[1, 2, 3, 300, 0.00, 3.6, -3.5, 0.25, 15, 150]],
+    )
+    pyscal_list = PyscalFactory.create_pyscal_list(
+        PyscalFactory.load_relperm_df(dframe)
+    )
+    assert np.isclose(pyscal_list[1].wateroil.swl, 0.157461)
+    assert np.isclose(pyscal_list[1].swl, 0.157461)
 
 
 def test_twophase():

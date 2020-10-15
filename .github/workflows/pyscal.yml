@@ -68,7 +68,7 @@ jobs:
 
       - name: Build documentation
         run: |
-          sphinx-apidoc -H "API for pyscal" -o docs pyscal
+          sphinx-apidoc -f -H "API for pyscal" -o docs pyscal
           # Build sphinx with "warning-is-error":
           python setup.py build_sphinx -W
 
