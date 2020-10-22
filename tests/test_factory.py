@@ -218,6 +218,79 @@ def test_init_with_swlheight():
     assert wateroil.swcr == 0.3
     assert "swcr=0.3" in wateroil.SWOF()
 
+    # Test that GasWater also can be initialized with swlheight:
+    gaswater = pyscal_factory.create_gas_water(
+        dict(
+            swlheight=200,
+            nw=1,
+            ng=1,
+            swirr=0.01,
+            swcr=0.3,
+            a=1,
+            b=-2,
+            poro_ref=0.2,
+            perm_ref=100,
+            drho=200,
+        )
+    )
+    assert "swl=0.024" in gaswater.SWFN()
+    assert gaswater.swcr > gaswater.swl
+    assert gaswater.swcr == 0.3
+    assert "swcr=0.3" in gaswater.SWFN()
+
+
+def test_relative_swcr():
+    """swcr can be initialized relative to swl
+
+    Relevant when swl is initialized from swlheight."""
+    pyscal_factory = PyscalFactory()
+
+    with pytest.raises(ValueError, match="swl must be provided"):
+        pyscal_factory.create_water_oil(dict(swcr_add=0.1, nw=1, now=1, swirr=0.01))
+    with pytest.raises(ValueError, match="swcr and swcr_add at the same time"):
+        pyscal_factory.create_water_oil(
+            dict(swcr_add=0.1, swcr=0.1, swl=0.1, nw=1, now=1, swirr=0.01)
+        )
+    wateroil = pyscal_factory.create_water_oil(
+        dict(swcr_add=0.1, swl=0.1, nw=1, now=1, swirr=0.01)
+    )
+    assert wateroil.swcr == 0.2
+
+    # Test when relative to swlheight:
+    wateroil = pyscal_factory.create_water_oil(
+        dict(
+            swlheight=200,
+            swcr_add=0.01,
+            nw=1,
+            now=1,
+            swirr=0.01,
+            a=1,
+            b=-2,
+            poro_ref=0.2,
+            perm_ref=100,
+            drho=200,
+        )
+    )
+    assert np.isclose(wateroil.swl, 0.02480395)
+    assert np.isclose(wateroil.swcr, 0.02480395 + 0.01)
+
+    gaswater = pyscal_factory.create_gas_water(
+        dict(
+            swlheight=200,
+            nw=1,
+            ng=1,
+            swirr=0.01,
+            swcr_add=0.1,
+            a=1,
+            b=-2,
+            poro_ref=0.2,
+            perm_ref=100,
+            drho=200,
+        )
+    )
+    assert np.isclose(gaswater.swl, 0.02480395)
+    assert np.isclose(gaswater.swcr, 0.02480395 + 0.1)
+
 
 def test_ambiguity():
     """Test how the factory handles ambiguity between Corey and LET

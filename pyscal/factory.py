@@ -44,6 +44,7 @@ WO_LET_OIL_ALT = ["lo", "eo", "to"]  # Alternative parameter names.
 WO_OIL_ENDPOINTS = ["kroend", "krowend"]  # krowend is deprecated in favour of kroend
 WO_SIMPLE_J = ["a", "b", "poro_ref", "perm_ref", "drho"]  # "g" is optional
 WO_SWLHEIGHT = ["swlheight"]
+WO_SWCR_ADD = ["swcr_add"]  # Relevant when swlheight is in use.
 WO_SWL_FROM_HEIGHT = WO_SWLHEIGHT + ["swirr", "a", "b", "poro_ref", "perm_ref"]
 WO_NORM_J = ["a", "b", "poro", "perm", "sigma_costau"]
 # 'a' in WO_NORM_J is the same as a_petro, but should possibly kept as is.
@@ -181,6 +182,21 @@ class PyscalFactory(object):
                     "{}".format(WO_SWL_FROM_HEIGHT)
                 )
             )
+
+        # Should we have a swcr relative to swl?
+        if set(WO_SWCR_ADD).issubset(params):
+            if "swl" not in params:
+                raise ValueError(
+                    (
+                        "If swcr should be relative to swl, "
+                        "both swcr_add and swl must be provided"
+                    )
+                )
+            if "swcr" in params:
+                raise ValueError(
+                    "Do not provide both swcr and swcr_add at the same time"
+                )
+            params["swcr"] = params["swl"] + params[WO_SWCR_ADD[0]]
 
         # No requirements to the base objects, defaults are ok.
         wateroil = WaterOil(**slicedict(params, WO_INIT))
