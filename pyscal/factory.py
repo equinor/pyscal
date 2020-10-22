@@ -167,6 +167,12 @@ class PyscalFactory(object):
             params["swl"] = capillarypressure.swl_from_height_simpleJ(
                 **params_swl_from_height
             )
+            if "swcr" in params and params["swcr"] < params["swl"]:
+                raise ValueError(
+                    "Provided swcr={} is lower than computed swl={}".format(
+                        params["swcr"], params["swl"]
+                    )
+                )
         elif set(WO_SWLHEIGHT).issubset(params):
             raise ValueError(
                 (
