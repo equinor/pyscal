@@ -175,9 +175,48 @@ def test_init_with_swlheight():
     assert np.isclose(wateroil.swl, 0.02480395)
     assert "swl=0.024" in wateroil.SWOF()
 
-    with pytest.raises(ValueError):
+    with pytest.raises(
+        ValueError,
+        match="Can't initialize from SWLHEIGHT without sufficient simple-J parameters",
+    ):
         # This should fail because capillary pressure parameters are not provided.
         pyscal_factory.create_water_oil(dict(swlheight=200, nw=1, now=1))
+
+    # swcr must be larger than swl:
+    with pytest.raises(ValueError, match="lower than computed swl"):
+        pyscal_factory.create_water_oil(
+            dict(
+                swlheight=200,
+                nw=1,
+                now=1,
+                swirr=0.01,
+                swcr=0.0101,
+                a=1,
+                b=-2,
+                poro_ref=0.2,
+                perm_ref=100,
+                drho=200,
+            )
+        )
+
+    # If swcr is large enough, it will pass:
+    wateroil = pyscal_factory.create_water_oil(
+        dict(
+            swlheight=200,
+            nw=1,
+            now=1,
+            swirr=0.01,
+            swcr=0.3,
+            a=1,
+            b=-2,
+            poro_ref=0.2,
+            perm_ref=100,
+            drho=200,
+        )
+    )
+    assert wateroil.swcr > wateroil.swl
+    assert wateroil.swcr == 0.3
+    assert "swcr=0.3" in wateroil.SWOF()
 
 
 def test_ambiguity():
