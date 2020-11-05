@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal.gasoil &mdash; pyscal 0.6.1.dev4+g8e2c302 documentation</title>
+  <title>pyscal.gasoil &mdash; pyscal 0.7.1.dev1+g31473e8 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.6.1.dev4+g8e2c302
+                0.7.1.dev1+g31473e8
               </div>
             
           
@@ -173,7 +173,8 @@
 <span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">PchipInterpolator</span>
 
 <span class="kn">import</span> <span class="nn">pyscal</span>
-<span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">pyscal.utils.relperm</span> <span class="kn">import</span> <span class="n">estimate_diffjumppoint</span><span class="p">,</span> <span class="n">crosspoint</span>
+<span class="kn">from</span> <span class="nn">pyscal.utils.string</span> <span class="kn">import</span> <span class="n">df2str</span><span class="p">,</span> <span class="n">comment_formatter</span>
 <span class="kn">from</span> <span class="nn">pyscal.constants</span> <span class="kn">import</span> <span class="n">EPSILON</span> <span class="k">as</span> <span class="n">epsilon</span>
 <span class="kn">from</span> <span class="nn">pyscal.constants</span> <span class="kn">import</span> <span class="n">SWINTEGERS</span><span class="p">,</span> <span class="n">MAX_EXPONENT</span>
 
@@ -431,6 +432,12 @@
                 <span class="n">swlfrominput</span><span class="p">,</span>
             <span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;         Do not trust the result near the endpoint.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">swlfrominput</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">:</span>
+            <span class="c1"># Perturb max sg in incoming dataframe when we are this close,</span>
+            <span class="c1"># or we will get into floating trouble when interpolating.</span>
+            <span class="n">dframe</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">dframe</span><span class="p">[</span><span class="n">sgcolname</span><span class="p">]</span><span class="o">.</span><span class="n">idxmax</span><span class="p">(),</span> <span class="n">sgcolname</span><span class="p">]</span> <span class="o">+=</span> <span class="n">swlfrominput</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span>
+
         <span class="k">if</span> <span class="n">krgcolname</span> <span class="ow">in</span> <span class="n">dframe</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="n">krgcolname</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span> <span class="o">&gt;</span> <span class="o">-</span><span class="n">epsilon</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Incoming krg not increasing&quot;</span><span class="p">)</span>
@@ -447,6 +454,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krg&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;bfill&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krg&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">lower</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">krgcomment</span> <span class="o">=</span> <span class="s2">&quot;-- krg from tabular input&quot;</span> <span class="o">+</span> <span class="n">krgcomment</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sgcr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">estimate_sgcr</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">krogcolname</span> <span class="ow">in</span> <span class="n">dframe</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="n">krogcolname</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Incoming krogcolname not decreasing&quot;</span><span class="p">)</span>
@@ -462,6 +470,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krog&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;bfill&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krog&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">lower</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">krogcomment</span> <span class="o">=</span> <span class="s2">&quot;-- krog from tabular input&quot;</span> <span class="o">+</span> <span class="n">krogcomment</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sorg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">estimate_sorg</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">pccolname</span> <span class="ow">in</span> <span class="n">dframe</span><span class="p">:</span>
             <span class="c1"># Incoming dataframe must cover the range:</span>
             <span class="k">if</span> <span class="n">dframe</span><span class="p">[</span><span class="n">sgcolname</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sg&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">():</span>
@@ -712,51 +721,41 @@
 <span class="sd">        sorg is estimated by searching for a linear part in krg downwards</span>
 <span class="sd">        from sg=1-swl. In practice it is impossible to infer sorg = 0,</span>
 <span class="sd">        since we are limited by h, and the last segment from sg=1-swl-h</span>
-<span class="sd">        to sg=1-swl can always be assumed linear.</span>
-
-<span class="sd">        If krgend is anchored to sorg, krg data is used to infer sorg. If not,</span>
-<span class="sd">        krg cannot be used for this, and krog is used. sorg might be overestimated</span>
-<span class="sd">        when krog is used if it very close to zero before reaching sorw.</span>
+<span class="sd">        to sg=1-swl must always be assumed linear.</span>
 
 <span class="sd">        If the curve is linear everywhere, sorg will be returned as sgcr + h</span>
 
-<span class="sd">        Args:</span>
-<span class="sd">            None</span>
+<span class="sd">        If krgend is anchored to sorg, krg data is used to infer sorg. If not,</span>
+<span class="sd">        krg cannot be used for this, and krog is used. sorg might be overestimated</span>
+<span class="sd">        when krog is used if it very close to zero before reaching sorg.</span>
+
 <span class="sd">        Returns:</span>
 <span class="sd">            float: The estimated sorg.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">krgendanchor</span> <span class="o">==</span> <span class="s2">&quot;sorg&quot;</span><span class="p">:</span>
             <span class="k">assert</span> <span class="s2">&quot;krg&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span>
             <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krg&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sg&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">utils</span><span class="o">.</span><span class="n">estimate_diffjumppoint</span><span class="p">(</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sg&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">estimate_diffjumppoint</span><span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="s2">&quot;sg&quot;</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="s2">&quot;krg&quot;</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">&quot;right&quot;</span>
             <span class="p">)</span>
         <span class="k">assert</span> <span class="s2">&quot;krog&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krog&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sg&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">utils</span><span class="o">.</span><span class="n">estimate_diffjumppoint</span><span class="p">(</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sg&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">estimate_diffjumppoint</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="s2">&quot;sg&quot;</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="s2">&quot;krog&quot;</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">&quot;right&quot;</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="GasOil.estimate_sgcr"><a class="viewcode-back" href="../../pyscal.html#pyscal.gasoil.GasOil.estimate_sgcr">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_sgcr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">curve</span><span class="o">=</span><span class="s2">&quot;krog&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="GasOil.estimate_sgcr"><a class="viewcode-back" href="../../pyscal.html#pyscal.gasoil.GasOil.estimate_sgcr">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_sgcr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Estimate sgcr of the current krog data.</span>
 
-<span class="sd">        sgcr is estimated by searching for a linear part in krog upwards from sg=0.</span>
-<span class="sd">        In practice it is impossible to infer sgcr = 0, since we are limited by</span>
-<span class="sd">        h, and we always have to assume that the first segment is linear.</span>
+<span class="sd">        sgcr is the largest gas saturation for which the gas relative</span>
+<span class="sd">        permeability is approximately zero, where approximately zero is</span>
+<span class="sd">        roughly equivalent to how many digits are outputted</span>
+<span class="sd">        by SGOF().</span>
 
-<span class="sd">        If the curve is linear everywhere, sgcr will be returned as the right endpoint.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            curve (str): Column name to use for search for linearity. Default is krog,</span>
-<span class="sd">                if all of that is linear, you may try krg instead.</span>
 <span class="sd">        Returns:</span>
 <span class="sd">            float: The estimated sgcr.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="n">curve</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span>
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">curve</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span>
-        <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">estimate_diffjumppoint</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="s2">&quot;sg&quot;</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="n">curve</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span>
-        <span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krg&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">epsilon</span><span class="p">][</span><span class="s2">&quot;sg&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span></div>
 
 <div class="viewcode-block" id="GasOil.crosspoint"><a class="viewcode-back" href="../../pyscal.html#pyscal.gasoil.GasOil.crosspoint">[docs]</a>    <span class="k">def</span> <span class="nf">crosspoint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Locate and return the saturation point where krg = krog</span>
@@ -769,7 +768,7 @@
 <span class="sd">            float: the gas saturation where krg == krog, for relperm</span>
 <span class="sd">                linearly interpolated in gas saturation.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">crosspoint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="s2">&quot;sg&quot;</span><span class="p">,</span> <span class="s2">&quot;krg&quot;</span><span class="p">,</span> <span class="s2">&quot;krog&quot;</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">crosspoint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="s2">&quot;sg&quot;</span><span class="p">,</span> <span class="s2">&quot;krg&quot;</span><span class="p">,</span> <span class="s2">&quot;krog&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="GasOil.selfcheck"><a class="viewcode-back" href="../../pyscal.html#pyscal.gasoil.GasOil.selfcheck">[docs]</a>    <span class="k">def</span> <span class="nf">selfcheck</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;SGOF&quot;</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Check validities of the data in the table.</span>
@@ -854,11 +853,11 @@
             <span class="k">return</span> <span class="s2">&quot;&quot;</span>
         <span class="n">string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">if</span> <span class="s2">&quot;pc&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pccomment</span> <span class="o">=</span> <span class="s2">&quot;-- Zero capillary pressure</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">if</span> <span class="n">header</span><span class="p">:</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;SGOF</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">string</span> <span class="o">+=</span> <span class="n">utils</span><span class="o">.</span><span class="n">comment_formatter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="n">comment_formatter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
         <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;-- pyscal: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">pyscal</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">if</span> <span class="n">dataincommentrow</span><span class="p">:</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sgcomment</span>
@@ -876,10 +875,13 @@
             <span class="o">+</span> <span class="s2">&quot;PC&quot;</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>
             <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="p">)</span>
-        <span class="n">string</span> <span class="o">+=</span> <span class="n">utils</span><span class="o">.</span><span class="n">df2str</span><span class="p">(</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="n">df2str</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;sg&quot;</span><span class="p">,</span> <span class="s2">&quot;krg&quot;</span><span class="p">,</span> <span class="s2">&quot;krog&quot;</span><span class="p">,</span> <span class="s2">&quot;pc&quot;</span><span class="p">]],</span>
-            <span class="n">monotone_column</span><span class="o">=</span><span class="s2">&quot;pc&quot;</span><span class="p">,</span>
-            <span class="n">monotone_direction</span><span class="o">=</span><span class="s2">&quot;inc&quot;</span><span class="p">,</span>
+            <span class="n">monotonocity</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;krog&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;sign&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;lower&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;upper&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+                <span class="s2">&quot;krg&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;sign&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;lower&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;upper&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+                <span class="s2">&quot;pc&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;sign&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;allowzero&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+            <span class="p">},</span>
         <span class="p">)</span>
         <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;/</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="n">string</span></div>
@@ -891,7 +893,7 @@
 <span class="sd">        extracted as a single function to facilitate testing.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="s2">&quot;pc&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
             <span class="c1"># Only happens when the SLGOF function is skipped (test code)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="n">slgof</span> <span class="o">=</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sg&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorg</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span> <span class="o">+</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">SWINTEGERS</span><span class="p">)</span>
@@ -946,11 +948,11 @@
             <span class="k">return</span> <span class="s2">&quot;&quot;</span>
         <span class="n">string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">if</span> <span class="s2">&quot;pc&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pccomment</span> <span class="o">=</span> <span class="s2">&quot;-- Zero capillary pressure</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">if</span> <span class="n">header</span><span class="p">:</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;SLGOF</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">string</span> <span class="o">+=</span> <span class="n">utils</span><span class="o">.</span><span class="n">comment_formatter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="n">comment_formatter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
         <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;-- pyscal: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">pyscal</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">if</span> <span class="n">dataincommentrow</span><span class="p">:</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sgcomment</span>
@@ -967,8 +969,13 @@
             <span class="o">+</span> <span class="s2">&quot;PC&quot;</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>
             <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="p">)</span>
-        <span class="n">string</span> <span class="o">+=</span> <span class="n">utils</span><span class="o">.</span><span class="n">df2str</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">slgof_df</span><span class="p">(),</span> <span class="n">monotone_column</span><span class="o">=</span><span class="s2">&quot;pc&quot;</span><span class="p">,</span> <span class="n">monotone_direction</span><span class="o">=</span><span class="s2">&quot;dec&quot;</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="n">df2str</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">slgof_df</span><span class="p">(),</span>
+            <span class="n">monotonocity</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;krog&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;sign&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;lower&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;upper&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+                <span class="s2">&quot;krg&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;sign&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;lower&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;upper&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+                <span class="s2">&quot;pc&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;sign&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;allowzero&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+            <span class="p">},</span>
         <span class="p">)</span>
         <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;/</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="n">string</span></div>
@@ -1001,11 +1008,11 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">if</span> <span class="s2">&quot;pc&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pccomment</span> <span class="o">=</span> <span class="s2">&quot;-- Zero capillary pressure</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">if</span> <span class="n">header</span><span class="p">:</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;SGFN</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">string</span> <span class="o">+=</span> <span class="n">utils</span><span class="o">.</span><span class="n">comment_formatter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="n">comment_formatter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
         <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;-- pyscal: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">pyscal</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">if</span> <span class="n">dataincommentrow</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">sgcomment</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -1027,10 +1034,12 @@
             <span class="o">+</span> <span class="s2">&quot;PC&quot;</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>
             <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="p">)</span>
-        <span class="n">string</span> <span class="o">+=</span> <span class="n">utils</span><span class="o">.</span><span class="n">df2str</span><span class="p">(</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="n">df2str</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;sg&quot;</span><span class="p">,</span> <span class="s2">&quot;krg&quot;</span><span class="p">,</span> <span class="s2">&quot;pc&quot;</span><span class="p">]],</span>
-            <span class="n">monotone_column</span><span class="o">=</span><span class="s2">&quot;pc&quot;</span><span class="p">,</span>
-            <span class="n">monotone_direction</span><span class="o">=</span><span class="s2">&quot;inc&quot;</span><span class="p">,</span>
+            <span class="n">monotonocity</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;krg&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;sign&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;lower&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;upper&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+                <span class="s2">&quot;pc&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;sign&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;allowzero&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+            <span class="p">},</span>
         <span class="p">)</span>
         <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;/</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="n">string</span></div>
@@ -1055,7 +1064,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">if</span> <span class="s2">&quot;pc&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pccomment</span> <span class="o">=</span> <span class="s2">&quot;-- Zero capillary pressure</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">if</span> <span class="n">header</span><span class="p">:</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;GOTABLE</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -1076,10 +1085,13 @@
             <span class="o">+</span> <span class="s2">&quot;PC&quot;</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>
             <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="p">)</span>
-        <span class="n">string</span> <span class="o">+=</span> <span class="n">utils</span><span class="o">.</span><span class="n">df2str</span><span class="p">(</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="n">df2str</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;sg&quot;</span><span class="p">,</span> <span class="s2">&quot;krg&quot;</span><span class="p">,</span> <span class="s2">&quot;krog&quot;</span><span class="p">,</span> <span class="s2">&quot;pc&quot;</span><span class="p">]],</span>
-            <span class="n">monotone_column</span><span class="o">=</span><span class="s2">&quot;pc&quot;</span><span class="p">,</span>
-            <span class="n">monotone_direction</span><span class="o">=</span><span class="s2">&quot;inc&quot;</span><span class="p">,</span>
+            <span class="n">monotonocity</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;krog&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;sign&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;lower&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;upper&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+                <span class="s2">&quot;krg&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;sign&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;lower&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;upper&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+                <span class="s2">&quot;pc&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;sign&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;allowzero&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+            <span class="p">},</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">string</span></div>
 
@@ -1100,6 +1112,8 @@
 <span class="sd">        matplotlib axis to plot on, if None, a fresh plot</span>
 <span class="sd">        will be made.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># pylint: disable=import-outside-toplevel</span>
+        <span class="c1"># Lazy import of matplotlib for speed reasons</span>
         <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
         <span class="kn">import</span> <span class="nn">matplotlib</span>
 

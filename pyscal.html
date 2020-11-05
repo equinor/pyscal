@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal package &mdash; pyscal 0.6.1.dev4+g8e2c302 documentation</title>
+  <title>pyscal package &mdash; pyscal 0.7.1.dev1+g31473e8 documentation</title>
   
 
   
@@ -37,7 +37,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="History" href="history.html" />
+    <link rel="next" title="pyscal.utils package" href="pyscal.utils.html" />
     <link rel="prev" title="API for pyscal" href="modules.html" /> 
 </head>
 
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.6.1.dev4+g8e2c302
+                0.7.1.dev1+g31473e8
               </div>
             
           
@@ -96,6 +96,10 @@
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="modules.html">API for pyscal</a><ul class="current">
 <li class="toctree-l2 current"><a class="current reference internal" href="#">pyscal package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pyscal.utils.html">pyscal.utils package</a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pyscal.constants">pyscal.constants module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pyscal.factory">pyscal.factory module</a></li>
@@ -104,7 +108,6 @@
 <li class="toctree-l3"><a class="reference internal" href="#module-pyscal.pyscalcli">pyscal.pyscalcli module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pyscal.pyscallist">pyscal.pyscallist module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pyscal.scalrecommendation">pyscal.scalrecommendation module</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#module-pyscal.utils">pyscal.utils module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pyscal.wateroil">pyscal.wateroil module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pyscal.wateroilgas">pyscal.wateroilgas module</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#module-pyscal">Module contents</a></li>
@@ -184,6 +187,24 @@
             
   <div class="section" id="pyscal-package">
 <h1>pyscal package<a class="headerlink" href="#pyscal-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="pyscal.utils.html">pyscal.utils package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyscal.utils.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyscal.utils.html#module-pyscal.utils.capillarypressure">pyscal.utils.capillarypressure module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyscal.utils.html#module-pyscal.utils.interpolation">pyscal.utils.interpolation module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyscal.utils.html#module-pyscal.utils.monotonocity">pyscal.utils.monotonocity module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyscal.utils.html#module-pyscal.utils.relperm">pyscal.utils.relperm module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyscal.utils.html#module-pyscal.utils.string">pyscal.utils.string module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyscal.utils.html#module-pyscal.utils.testing">pyscal.utils.testing module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyscal.utils.html#module-pyscal.utils">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
 </div>
@@ -395,8 +416,7 @@ a, b, poro, perm, sigma_costau</p>
 </dl>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>params</strong> (<em>dict</em>) – Dictionary with parameters describing
-the WaterOil object.</p>
+<dd class="field-odd"><p><strong>params</strong> (<em>dict</em>) – Dictionary with parameters describing the WaterOil object.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -872,22 +892,18 @@ interpolation to solve for the zero)</p>
 
 <dl class="py method">
 <dt id="pyscal.gasoil.GasOil.estimate_sgcr">
-<code class="sig-name descname">estimate_sgcr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">curve</span><span class="o">=</span><span class="default_value">'krog'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gasoil.html#GasOil.estimate_sgcr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gasoil.GasOil.estimate_sgcr" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">estimate_sgcr</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/gasoil.html#GasOil.estimate_sgcr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.gasoil.GasOil.estimate_sgcr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Estimate sgcr of the current krog data.</p>
-<p>sgcr is estimated by searching for a linear part in krog upwards from sg=0.
-In practice it is impossible to infer sgcr = 0, since we are limited by
-h, and we always have to assume that the first segment is linear.</p>
-<p>If the curve is linear everywhere, sgcr will be returned as the right endpoint.</p>
+<p>sgcr is the largest gas saturation for which the gas relative
+permeability is approximately zero, where approximately zero is
+roughly equivalent to how many digits are outputted
+by SGOF().</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>curve</strong> (<em>str</em>) – Column name to use for search for linearity. Default is krog,
-if all of that is linear, you may try krg instead.</p>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The estimated sgcr.</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The estimated sgcr.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>float</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>float</p>
 </dd>
 </dl>
 </dd></dl>
@@ -899,20 +915,17 @@ if all of that is linear, you may try krg instead.</p>
 <p>sorg is estimated by searching for a linear part in krg downwards
 from sg=1-swl. In practice it is impossible to infer sorg = 0,
 since we are limited by h, and the last segment from sg=1-swl-h
-to sg=1-swl can always be assumed linear.</p>
+to sg=1-swl must always be assumed linear.</p>
+<p>If the curve is linear everywhere, sorg will be returned as sgcr + h</p>
 <p>If krgend is anchored to sorg, krg data is used to infer sorg. If not,
 krg cannot be used for this, and krog is used. sorg might be overestimated
-when krog is used if it very close to zero before reaching sorw.</p>
-<p>If the curve is linear everywhere, sorg will be returned as sgcr + h</p>
+when krog is used if it very close to zero before reaching sorg.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>None</strong> – </p>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The estimated sorg.</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The estimated sorg.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>float</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>float</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1148,7 +1161,7 @@ water saturations, krw is linear between krwend and krwmax.</p>
 used is</p>
 <div class="math notranslate nohighlight">
 \[J = a S_w^b\]</div>
-<p><em>J</em> is not dimensionless in this equation. The capillary pressure
+<p><em>J</em> is not dimensionless in this equation. The capillary pressure will
 be in bars.</p>
 <p>This is identical to the also seen formula</p>
 <div class="math notranslate nohighlight">
@@ -1231,12 +1244,14 @@ interpolation to solve for the zero)</p>
 <dl class="py method">
 <dt id="pyscal.gaswater.GasWater.krgcomment">
 <em class="property">property </em><code class="sig-name descname">krgcomment</code><a class="headerlink" href="#pyscal.gaswater.GasWater.krgcomment" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get a string representation describing krg</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pyscal.gaswater.GasWater.krwcomment">
 <em class="property">property </em><code class="sig-name descname">krwcomment</code><a class="headerlink" href="#pyscal.gaswater.GasWater.krwcomment" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get a string representation describing krw</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pyscal.gaswater.GasWater.plotkrwkrg">
@@ -1264,32 +1279,38 @@ properties (direction and monotonocity)</p>
 <dl class="py method">
 <dt id="pyscal.gaswater.GasWater.sgcomment">
 <em class="property">property </em><code class="sig-name descname">sgcomment</code><a class="headerlink" href="#pyscal.gaswater.GasWater.sgcomment" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get a string representation of the endpoints used for gas</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pyscal.gaswater.GasWater.swcomment">
 <em class="property">property </em><code class="sig-name descname">swcomment</code><a class="headerlink" href="#pyscal.gaswater.GasWater.swcomment" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get a string representation of the endpoints used for water</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pyscal.gaswater.GasWater.swcr">
 <em class="property">property </em><code class="sig-name descname">swcr</code><a class="headerlink" href="#pyscal.gaswater.GasWater.swcr" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get the swcr</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pyscal.gaswater.GasWater.swirr">
 <em class="property">property </em><code class="sig-name descname">swirr</code><a class="headerlink" href="#pyscal.gaswater.GasWater.swirr" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get the swirr, irreducible water saturation used for pc-init</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pyscal.gaswater.GasWater.swl">
 <em class="property">property </em><code class="sig-name descname">swl</code><a class="headerlink" href="#pyscal.gaswater.GasWater.swl" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get the swl</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pyscal.gaswater.GasWater.tag">
 <em class="property">property </em><code class="sig-name descname">tag</code><a class="headerlink" href="#pyscal.gaswater.GasWater.tag" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get the user configured tag</p>
+</dd></dl>
 
 </dd></dl>
 
@@ -1554,287 +1575,6 @@ need to be the same as the tables interpolation is done from.</p></li>
 </dl>
 </dd></dl>
 
-</dd></dl>
-
-</div>
-<div class="section" id="module-pyscal.utils">
-<span id="pyscal-utils-module"></span><h2>pyscal.utils module<a class="headerlink" href="#module-pyscal.utils" title="Permalink to this headline">¶</a></h2>
-<p>Utility function for pyscal</p>
-<dl class="py function">
-<dt id="pyscal.utils.comment_formatter">
-<code class="sig-prename descclassname">pyscal.utils.</code><code class="sig-name descname">comment_formatter</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">multiline</span></em>, <em class="sig-param"><span class="n">prefix</span><span class="o">=</span><span class="default_value">'-- '</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils.html#comment_formatter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.utils.comment_formatter" title="Permalink to this definition">¶</a></dt>
-<dd><p>Prepends comment characters to every line in input</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>multiline</strong> (<em>str</em>) – String that can contain newlines</p></li>
-<li><p><strong>prefix</strong> (<em>str</em>) – Comment characters to prepend every line with
-Default is the Eclipse comment syntax ‘– ‘</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>string, with newlines preserved, and where each line</dt><dd><p>starts with the given prefix. Always ends with a newline.</p>
-</dd>
-</dl>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyscal.utils.crosspoint">
-<code class="sig-prename descclassname">pyscal.utils.</code><code class="sig-name descname">crosspoint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dframe</span></em>, <em class="sig-param"><span class="n">satcol</span></em>, <em class="sig-param"><span class="n">kr1col</span></em>, <em class="sig-param"><span class="n">kr2col</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils.html#crosspoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.utils.crosspoint" title="Permalink to this definition">¶</a></dt>
-<dd><p>Locate the crosspoint where kr1col == kr2col</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>dframe</strong> (<em>pd.DataFrame</em>) – Dataframe with at least three columns</p></li>
-<li><p><strong>satcol</strong> (<em>str</em>) – Column name for the saturation column</p></li>
-<li><p><strong>kr1col</strong> (<em>str</em>) – Column name for first relperm column</p></li>
-<li><p><strong>kr2col</strong> (<em>str</em>) – Columnn ame for second column</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>float, the saturation value (interpolated) where</dt><dd><p>kr1col == kr2col, when krXcol is linearly interpolated
-as a function of the saturation values.</p>
-</dd>
-</dl>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyscal.utils.df2str">
-<code class="sig-prename descclassname">pyscal.utils.</code><code class="sig-name descname">df2str</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dframe</span></em>, <em class="sig-param"><span class="n">digits</span><span class="o">=</span><span class="default_value">7</span></em>, <em class="sig-param"><span class="n">roundlevel</span><span class="o">=</span><span class="default_value">9</span></em>, <em class="sig-param"><span class="n">header</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">monotone_column</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">monotone_direction</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils.html#df2str"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.utils.df2str" title="Permalink to this definition">¶</a></dt>
-<dd><p>Make a string representation of a dataframe with
-proper rounding.</p>
-<p>This is used to print the tables in the SWOF/SGOF include files,
-explicit rounding is necessary to avoid monotonicity errors
-from truncation. Examples in test code.</p>
-<p>Capillary pressure must be strictly monotone if nonzero, and if a
-column name is provided, the string representation of that column is
-ensured to be strictly monotone decreasing</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>dframe</strong> (<em>pd.DataFrame</em>) – A dataframe to print, all columns
-are included</p></li>
-<li><p><strong>digits</strong> (<em>int</em>) – Number of digits used in floating point format f.ex “.7f”
-It is not recommended to deviate from the default 7 uncritically
-for pyscal output, other code have to be tuned to ensure
-numerical robustness to the deviation.</p></li>
-<li><p><strong>roundlevel</strong> (<em>int</em>) – To how many digits should we round prior to print.
-Recommended to be &gt; digits + 1, see test code.</p></li>
-<li><p><strong>header</strong> (<em>bool</em>) – If the dataframe column header should be included</p></li>
-<li><p><strong>monotone_column</strong> – column name for which strict monotonicity
-must be preserved in output. Only one column can be fixed.</p></li>
-<li><p><strong>monotone_direction</strong> – Direction of monotonicity, increasing or decreasing,
-allowed values are ‘-1’, ‘1’, ‘inc’ or ‘dec’</p></li>
-</ul>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyscal.utils.estimate_diffjumppoint">
-<code class="sig-prename descclassname">pyscal.utils.</code><code class="sig-name descname">estimate_diffjumppoint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">table</span></em>, <em class="sig-param"><span class="n">xcol</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">ycol</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">side</span><span class="o">=</span><span class="default_value">'right'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils.html#estimate_diffjumppoint"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.utils.estimate_diffjumppoint" title="Permalink to this definition">¶</a></dt>
-<dd><p>Estimate the point where the y-data jumps from being linear
-in x to being nonlinear, or where it shift from one linear domain
-to another (for a piecewise linear function)</p>
-<p>If xcol is sw, and ycol is krw, and side is ‘right’, this
-will typically estimate sorw for you. If side is ‘left’ it will
-give you swcr.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>table</strong> (<em>pd.DataFrame</em>) – A Dataframe with x and y data</p></li>
-<li><p><strong>xcol</strong> (<em>string</em>) – The name of the column in table containing x-data. If
-None (default) the first column in table will be used.</p></li>
-<li><p><strong>ycol</strong> (<em>string</em>) – The name of the column in table containing y-data.
-If None (default) the second column in the table will be used.</p></li>
-<li><p><strong>side</strong> (<em>string</em>) – Must be ‘left’ or ‘right’. Decides whether to look from
-the right side of the x-interval or from the left side for the
-linear domain.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The x value where the start-linear domain ends.</p>
-</dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>float</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyscal.utils.interpolate_go">
-<code class="sig-prename descclassname">pyscal.utils.</code><code class="sig-name descname">interpolate_go</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">go_low</span></em>, <em class="sig-param"><span class="n">go_high</span></em>, <em class="sig-param"><span class="n">parameter</span></em>, <em class="sig-param"><span class="n">h</span><span class="o">=</span><span class="default_value">0.01</span></em>, <em class="sig-param"><span class="n">tag</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils.html#interpolate_go"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.utils.interpolate_go" title="Permalink to this definition">¶</a></dt>
-<dd><p>Interpolates between two gas-oil curves.</p>
-<p>The saturation endpoints for the curves must be known
-by the objects. They can be estimated by estimate_sorg() etc.
-or can be set manually for finer control.</p>
-<p>The interpolation algorithm is different left and right
-for saturation endpoints, and saturation endpoints are
-interpolated individually.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>go_low</strong> (<a class="reference internal" href="#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><em>GasOil</em></a>) – a “low” case</p></li>
-<li><p><strong>go_high</strong> (<a class="reference internal" href="#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><em>GasOil</em></a>) – a “high” case</p></li>
-<li><p><strong>parameter</strong> (<em>float</em>) – Between 0 and 1. 0 will return the low case, 1 will return
-the high case. Any number in between will return an interpolated curve</p></li>
-<li><p><strong>h</strong> (<em>float</em>) – Saturation step-size in interpolant. If defaulted, a value
-smaller than in the input curves are used, to preserve information.</p></li>
-<li><p><strong>tag</strong> (<em>string</em>) – Tag to associate to the constructed object. If None
-it will be automatically filled. Set to empty string to ensure no tag.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A new gas-oil curve</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyscal.utils.interpolate_wo">
-<code class="sig-prename descclassname">pyscal.utils.</code><code class="sig-name descname">interpolate_wo</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wo_low</span></em>, <em class="sig-param"><span class="n">wo_high</span></em>, <em class="sig-param"><span class="n">parameter</span></em>, <em class="sig-param"><span class="n">h</span><span class="o">=</span><span class="default_value">0.01</span></em>, <em class="sig-param"><span class="n">tag</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils.html#interpolate_wo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.utils.interpolate_wo" title="Permalink to this definition">¶</a></dt>
-<dd><p>Interpolates between two water-oil curves.</p>
-<p>The saturation endpoints for the curves must be known
-by the objects. They can be estimated by estimate_sorw() etc.
-or can be set manually for finer control.</p>
-<p>The interpolation algorithm is different left and right
-for saturation endpoints, and saturation endpoints are
-interpolated individually.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>wo_low</strong> (<a class="reference internal" href="#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><em>WaterOil</em></a>) – a “low” case</p></li>
-<li><p><strong>wo_high</strong> (<a class="reference internal" href="#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><em>WaterOil</em></a>) – a “high” case</p></li>
-<li><p><strong>parameter</strong> (<em>float</em>) – Between 0 and 1. 0 will return the low case, 1 will return
-the high case. Any number in between will return an interpolated curve</p></li>
-<li><p><strong>h</strong> (<em>float</em>) – Saturation step-size in interpolant. If defaulted, a value
-smaller than in the input curves are used, to preserve information.</p></li>
-<li><p><strong>tag</strong> (<em>string</em>) – Tag to associate to the constructed object. If None
-it will be automatically filled. Set to empty string to ensure no tag.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A new oil-water curve</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyscal.utils.interpolator">
-<code class="sig-prename descclassname">pyscal.utils.</code><code class="sig-name descname">interpolator</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">tableobject</span></em>, <em class="sig-param"><span class="n">wo_low</span></em>, <em class="sig-param"><span class="n">wo_high</span></em>, <em class="sig-param"><span class="n">parameter</span></em>, <em class="sig-param"><span class="n">sat</span><span class="o">=</span><span class="default_value">'sw'</span></em>, <em class="sig-param"><span class="n">kr1</span><span class="o">=</span><span class="default_value">'krw'</span></em>, <em class="sig-param"><span class="n">kr2</span><span class="o">=</span><span class="default_value">'krow'</span></em>, <em class="sig-param"><span class="n">pc</span><span class="o">=</span><span class="default_value">'pc'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils.html#interpolator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.utils.interpolator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Interpolates between two curves.</p>
-<p>DEPRECATED FUNCTION!</p>
-<p>The interpolation parameter is 0 through 1,
-irrespective of phases or low-base/base-high/low-high.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>tabjeobject</strong> (<a class="reference internal" href="#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><em>WaterOil</em></a><em> or </em><a class="reference internal" href="#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><em>GasOil</em></a>) – A partially setup object where
-relperm and pc columns are to be filled with numbers.</p></li>
-<li><p><strong>wo_low</strong> (<a class="reference internal" href="#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><em>WaterOil</em></a><em> or </em><a class="reference internal" href="#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><em>GasOil</em></a>) – “Low” case of interpolation (relates
-to interpolation parameter 0). Must be copies, as they
-will be modified.</p></li>
-<li><p><strong>wo_high</strong> – Ditto, relates to interpolation parameter 1</p></li>
-<li><p><strong>parameter</strong> (<em>float</em>) – Between 0 and 1, what you want to interpolate to.</p></li>
-<li><p><strong>sat</strong> (<em>str</em>) – Name of the saturation column, typically ‘sw’ or ‘sg’</p></li>
-<li><p><strong>kr1</strong> (<em>str</em>) – Name of the first relperm column (‘krw’ or ‘krg’)</p></li>
-<li><p><strong>kr2</strong> (<em>str</em>) – Name of the second relperm column (‘krow’ or ‘krog’)</p></li>
-<li><p><strong>pc</strong> (<em>str</em>) – Name of the capillary pressure column (‘pc’)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>None, but modifies the first argument.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyscal.utils.normalize_nonlinpart_go">
-<code class="sig-prename descclassname">pyscal.utils.</code><code class="sig-name descname">normalize_nonlinpart_go</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">curve</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils.html#normalize_nonlinpart_go"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.utils.normalize_nonlinpart_go" title="Permalink to this definition">¶</a></dt>
-<dd><p>Make krg and krog functions that evaluates only on the
-(potentially) nonlinear part of the relperm curves, and with
-a normalized argument (0,1) on that interval.</p>
-<p>For a GasOil krg curve, the nonlinear part
-is from sgcr to sorg. sgcr is mapped to sg=zero, and sg=1 - sorg - swl is mapped
-to 1. Then there is an assumed linear part from sorg to 1 which we ignore here.</p>
-<p>For a GasOil krow curve, the nonlinear part
-is from 1 - sorg (mapped to zero) to sg=0 (mapped to 1).</p>
-<p>These endpoints must be known the the GasOil object coming in (the object
-can determine them using functions ‘estimate_sorg()’ and ‘estimate_sgcr()’</p>
-<p>If the entire curve is linear, it will not matter for this function, because
-this function only deals with the presumably known endpoints.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>curve</strong> (<a class="reference internal" href="#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><em>GasOil</em></a>) – incoming gasoil curve set (krg and krog)</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>tuple of functions. The first will evaluate krg on</dt><dd><p>the normalized Sg interval [0,1], the second will
-evaluate krog on the normalized So interval [0,1].</p>
-</dd>
-</dl>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyscal.utils.normalize_nonlinpart_wo">
-<code class="sig-prename descclassname">pyscal.utils.</code><code class="sig-name descname">normalize_nonlinpart_wo</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">curve</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils.html#normalize_nonlinpart_wo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.utils.normalize_nonlinpart_wo" title="Permalink to this definition">¶</a></dt>
-<dd><p>Make krw and krow functions that evaluate only on the
-(potentially) nonlinear part of the relperm curves, and with
-a normalized argument (0,1) on that interval.</p>
-<p>For a WaterOil krw curve, the nonlinear part is from swcr to sorw.
-swcr is mapped to zero, and 1 - sorw is mapped to 1. Then there is
-an assumed linear part from sorw to 1 which we ignore here.</p>
-<p>For a WaterOil krow curve, the nonlinear part
-is from 1 - sorw (mapped to zero) to swl (mapped to 1).</p>
-<p>These endpoints must be known the the WaterOil object coming in (the object
-can determine them using functions ‘estimate_sorw()’ and ‘estimate_swcr()’</p>
-<p>If the entire curve is linear, it will not matter for this function, because
-this function only deals with the presumably known endpoints.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>curve</strong> (<a class="reference internal" href="#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><em>WaterOil</em></a>) – incoming oilwater curve set (krw and krow)</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>tuple of lambda functions. The first will evaluate krw on</dt><dd><p>the normalized Sw interval [0,1], the second will
-evaluate krow on the normalized So interval [0,1].</p>
-</dd>
-</dl>
-</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyscal.utils.normalize_pc">
-<code class="sig-prename descclassname">pyscal.utils.</code><code class="sig-name descname">normalize_pc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">curve</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils.html#normalize_pc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.utils.normalize_pc" title="Permalink to this definition">¶</a></dt>
-<dd><p>Normalize the capillary pressure curve.</p>
-<p>This is only normalized with respect to the
-smallest and largest saturation present in the table,
-not to the could-be-uncertain swirr
-that the object could contain, because we then have
-to make assumptions on the equations used to generate
-the data in the table.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>curve</strong> (<a class="reference internal" href="#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><em>WaterOil</em></a><em> or </em><a class="reference internal" href="#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><em>GasOil</em></a>) – An object with a table with a pc column</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>a lambda function that will evaluate pc on
-the normalized interval [0,1]</p>
-</dd>
-</dl>
 </dd></dl>
 
 </div>
@@ -2106,7 +1846,7 @@ to the swirr parameter.</p>
 used is</p>
 <div class="math notranslate nohighlight">
 \[J = a S_w^b\]</div>
-<p><em>J</em> is not dimensionless in this equation. The capillary pressure
+<p><em>J</em> is not dimensionless in this equation. The capillary pressure will
 be in bars.</p>
 <p>This is identical to the also seen formula</p>
 <div class="math notranslate nohighlight">
@@ -2232,7 +1972,7 @@ with krow</p>
 <dt id="pyscal.wateroil.WaterOil.estimate_swcr">
 <code class="sig-name descname">estimate_swcr</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">curve</span><span class="o">=</span><span class="default_value">'krw'</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/wateroil.html#WaterOil.estimate_swcr"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.estimate_swcr" title="Permalink to this definition">¶</a></dt>
 <dd><p>Estimate swcr of the current krw data.</p>
-<p>swcr is estimated by searching for a linear part in krw upwards from sw=swl.
+<p>kwcr is estimated by searching for a linear part in krw upwards from sw=swl.
 In practice it is impossible to infer swcr = 0, since we are limited by
 h, and the first segment is assumed linear anyways.</p>
 <p>If the curve is linear everywhere, swcr can end up at the right end
@@ -2412,27 +2152,33 @@ being None, only the relevant is checked.</p>
 <dl class="py method">
 <dt id="pyscal.wateroilgas.WaterOilGas.sorg">
 <em class="property">property </em><code class="sig-name descname">sorg</code><a class="headerlink" href="#pyscal.wateroilgas.WaterOilGas.sorg" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get the sorg used in the GasOil object</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pyscal.wateroilgas.WaterOilGas.sorw">
 <em class="property">property </em><code class="sig-name descname">sorw</code><a class="headerlink" href="#pyscal.wateroilgas.WaterOilGas.sorw" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get the sorw used for the WaterOil object</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pyscal.wateroilgas.WaterOilGas.swirr">
 <em class="property">property </em><code class="sig-name descname">swirr</code><a class="headerlink" href="#pyscal.wateroilgas.WaterOilGas.swirr" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get the swirr used for the WaterOil object</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pyscal.wateroilgas.WaterOilGas.swl">
 <em class="property">property </em><code class="sig-name descname">swl</code><a class="headerlink" href="#pyscal.wateroilgas.WaterOilGas.swl" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get the swl used for the WaterOil object</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pyscal.wateroilgas.WaterOilGas.tag">
 <em class="property">property </em><code class="sig-name descname">tag</code><a class="headerlink" href="#pyscal.wateroilgas.WaterOilGas.tag" title="Permalink to this definition">¶</a></dt>
-<dd></dd></dl>
+<dd><p>Get the tag, a combination of the tags in WaterOil
+and GasOil only if they are different</p>
+</dd></dl>
 
 <dl class="py method">
 <dt id="pyscal.wateroilgas.WaterOilGas.threephaseconsistency">
@@ -2474,7 +2220,7 @@ not have breaking consequences.</p>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="history.html" class="btn btn-neutral float-right" title="History" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="pyscal.utils.html" class="btn btn-neutral float-right" title="pyscal.utils package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="modules.html" class="btn btn-neutral float-left" title="API for pyscal" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

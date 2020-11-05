@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal.factory &mdash; pyscal 0.6.1.dev4+g8e2c302 documentation</title>
+  <title>pyscal.factory &mdash; pyscal 0.7.1.dev1+g31473e8 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.6.1.dev4+g8e2c302
+                0.7.1.dev1+g31473e8
               </div>
             
           
@@ -171,14 +171,13 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">xlrd</span>
 
-<span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="p">(</span>
-    <span class="n">WaterOil</span><span class="p">,</span>
-    <span class="n">GasOil</span><span class="p">,</span>
-    <span class="n">GasWater</span><span class="p">,</span>
-    <span class="n">WaterOilGas</span><span class="p">,</span>
-    <span class="n">SCALrecommendation</span><span class="p">,</span>
-    <span class="n">PyscalList</span><span class="p">,</span>
-<span class="p">)</span>
+<span class="kn">from</span> <span class="nn">pyscal.utils</span> <span class="kn">import</span> <span class="n">capillarypressure</span>
+<span class="kn">from</span> <span class="nn">.wateroil</span> <span class="kn">import</span> <span class="n">WaterOil</span>
+<span class="kn">from</span> <span class="nn">.gasoil</span> <span class="kn">import</span> <span class="n">GasOil</span>
+<span class="kn">from</span> <span class="nn">.gaswater</span> <span class="kn">import</span> <span class="n">GasWater</span>
+<span class="kn">from</span> <span class="nn">.wateroilgas</span> <span class="kn">import</span> <span class="n">WaterOilGas</span>
+<span class="kn">from</span> <span class="nn">.scalrecommendation</span> <span class="kn">import</span> <span class="n">SCALrecommendation</span>
+<span class="kn">from</span> <span class="nn">.pyscallist</span> <span class="kn">import</span> <span class="n">PyscalList</span>
 
 <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">()</span>
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -206,6 +205,9 @@
 <span class="n">WO_LET_OIL_ALT</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;lo&quot;</span><span class="p">,</span> <span class="s2">&quot;eo&quot;</span><span class="p">,</span> <span class="s2">&quot;to&quot;</span><span class="p">]</span>  <span class="c1"># Alternative parameter names.</span>
 <span class="n">WO_OIL_ENDPOINTS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;kroend&quot;</span><span class="p">,</span> <span class="s2">&quot;krowend&quot;</span><span class="p">]</span>  <span class="c1"># krowend is deprecated in favour of kroend</span>
 <span class="n">WO_SIMPLE_J</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;poro_ref&quot;</span><span class="p">,</span> <span class="s2">&quot;perm_ref&quot;</span><span class="p">,</span> <span class="s2">&quot;drho&quot;</span><span class="p">]</span>  <span class="c1"># &quot;g&quot; is optional</span>
+<span class="n">WO_SWLHEIGHT</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;swlheight&quot;</span><span class="p">]</span>
+<span class="n">WO_SWCR_ADD</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;swcr_add&quot;</span><span class="p">]</span>  <span class="c1"># Relevant when swlheight is in use.</span>
+<span class="n">WO_SWL_FROM_HEIGHT</span> <span class="o">=</span> <span class="n">WO_SWLHEIGHT</span> <span class="o">+</span> <span class="p">[</span><span class="s2">&quot;swirr&quot;</span><span class="p">,</span> <span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;poro_ref&quot;</span><span class="p">,</span> <span class="s2">&quot;perm_ref&quot;</span><span class="p">]</span>
 <span class="n">WO_NORM_J</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;poro&quot;</span><span class="p">,</span> <span class="s2">&quot;perm&quot;</span><span class="p">,</span> <span class="s2">&quot;sigma_costau&quot;</span><span class="p">]</span>
 <span class="c1"># &#39;a&#39; in WO_NORM_J is the same as a_petro, but should possibly kept as is.</span>
 <span class="n">WO_SIMPLE_J_PETRO</span> <span class="o">=</span> <span class="p">[</span>
@@ -299,8 +301,7 @@
 <span class="sd">          a, b, poro, perm, sigma_costau</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            params (dict): Dictionary with parameters describing</span>
-<span class="sd">                the WaterOil object.</span>
+<span class="sd">            params (dict): Dictionary with parameters describing the WaterOil object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">params</span><span class="p">:</span>
             <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
@@ -318,6 +319,47 @@
         <span class="n">params</span> <span class="o">=</span> <span class="n">filter_nan_from_dict</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
 
         <span class="n">usedparams</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+        <span class="c1"># Check if we should initialize swl from a swlheight parameter:</span>
+        <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">WO_SWL_FROM_HEIGHT</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+            <span class="k">if</span> <span class="s2">&quot;swl&quot;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Do not provide both swl and swlheight at the same time&quot;</span>
+                <span class="p">)</span>
+            <span class="n">params_swl_from_height</span> <span class="o">=</span> <span class="n">slicedict</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">WO_SWL_FROM_HEIGHT</span><span class="p">)</span>
+            <span class="n">params</span><span class="p">[</span><span class="s2">&quot;swl&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">capillarypressure</span><span class="o">.</span><span class="n">swl_from_height_simpleJ</span><span class="p">(</span>
+                <span class="o">**</span><span class="n">params_swl_from_height</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;swcr&quot;</span> <span class="ow">in</span> <span class="n">params</span> <span class="ow">and</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;swcr&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;swl&quot;</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Provided swcr=</span><span class="si">{}</span><span class="s2"> is lower than computed swl=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">params</span><span class="p">[</span><span class="s2">&quot;swcr&quot;</span><span class="p">],</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;swl&quot;</span><span class="p">]</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">set</span><span class="p">(</span><span class="n">WO_SWLHEIGHT</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="p">(</span>
+                    <span class="s2">&quot;Can&#39;t initialize from SWLHEIGHT without &quot;</span>
+                    <span class="s2">&quot;sufficient simple-J parameters, all of: &quot;</span>
+                    <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">WO_SWL_FROM_HEIGHT</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Should we have a swcr relative to swl?</span>
+        <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">WO_SWCR_ADD</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+            <span class="k">if</span> <span class="s2">&quot;swl&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="p">(</span>
+                        <span class="s2">&quot;If swcr should be relative to swl, &quot;</span>
+                        <span class="s2">&quot;both swcr_add and swl must be provided&quot;</span>
+                    <span class="p">)</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;swcr&quot;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Do not provide both swcr and swcr_add at the same time&quot;</span>
+                <span class="p">)</span>
+            <span class="n">params</span><span class="p">[</span><span class="s2">&quot;swcr&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;swl&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">params</span><span class="p">[</span><span class="n">WO_SWCR_ADD</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+
         <span class="c1"># No requirements to the base objects, defaults are ok.</span>
         <span class="n">wateroil</span> <span class="o">=</span> <span class="n">WaterOil</span><span class="p">(</span><span class="o">**</span><span class="n">slicedict</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">WO_INIT</span><span class="p">))</span>
         <span class="n">usedparams</span> <span class="o">=</span> <span class="n">usedparams</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">slicedict</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">WO_INIT</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
@@ -547,6 +589,11 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No wateroil parameters. Assuming only gas-oil in wateroilgas&quot;</span><span class="p">)</span>
             <span class="n">wateroil</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># If the swl in WaterOil was initialized with swlheight,</span>
+        <span class="c1"># ensure that result is passed on to the GasOil object:</span>
+        <span class="k">if</span> <span class="s2">&quot;swl&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">params</span> <span class="ow">and</span> <span class="s2">&quot;swlheight&quot;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+            <span class="n">params</span><span class="p">[</span><span class="s2">&quot;swl&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wateroil</span><span class="o">.</span><span class="n">swl</span>
 
         <span class="k">if</span> <span class="n">sufficient_gas_oil_params</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">failhard</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
             <span class="n">gasoil</span> <span class="o">=</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_gas_oil</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>

@@ -7,12 +7,12 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal.utils &mdash; pyscal 0.6.1.dev4+g8e2c302 documentation</title>
+  <title>pyscal.utils.interpolation &mdash; pyscal 0.7.1.dev1+g31473e8 documentation</title>
   
 
   
-  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
 
   
   
@@ -21,22 +21,22 @@
 
   
   <!--[if lt IE 9]>
-    <script src="../../_static/js/html5shiv.min.js"></script>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
     
-      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/language_data.js"></script>
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
         <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     
-    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
 
     
-    <link rel="index" title="Index" href="../../genindex.html" />
-    <link rel="search" title="Search" href="../../search.html" /> 
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -50,12 +50,12 @@
           
 
           
-            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> pyscal
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> pyscal
           
 
           
             
-            <img src="../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
+            <img src="../../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           
           </a>
 
@@ -63,14 +63,14 @@
             
             
               <div class="version">
-                0.6.1.dev4+g8e2c302
+                0.7.1.dev1+g31473e8
               </div>
             
           
 
           
 <div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
@@ -89,13 +89,13 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction to pyscal</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API for pyscal</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../history.html#release-notes">Release notes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to pyscal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Introduction to pyscal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API for pyscal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../history.html">History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../history.html#release-notes">Release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to pyscal</a></li>
 </ul>
 
             
@@ -111,7 +111,7 @@
       <nav class="wy-nav-top" aria-label="top navigation">
         
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../../index.html">pyscal</a>
+          <a href="../../../index.html">pyscal</a>
         
       </nav>
 
@@ -140,11 +140,11 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
         
-          <li><a href="../index.html">Module code</a> &raquo;</li>
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>pyscal.utils</li>
+      <li>pyscal.utils.interpolation</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -159,190 +159,25 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for pyscal.utils</h1><div class="highlight"><pre>
+  <h1>Source code for pyscal.utils.interpolation</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Utility function for pyscal</span>
 <span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">six</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">interp1d</span>
 
 <span class="kn">import</span> <span class="nn">pyscal</span>
-<span class="kn">from</span> <span class="nn">.constants</span> <span class="kn">import</span> <span class="n">SWINTEGERS</span>
-<span class="kn">from</span> <span class="nn">.constants</span> <span class="kn">import</span> <span class="n">EPSILON</span> <span class="k">as</span> <span class="n">epsilon</span>
+<span class="kn">from</span> <span class="nn">..constants</span> <span class="kn">import</span> <span class="n">SWINTEGERS</span>
 
 
 <span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">()</span>
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="df2str"><a class="viewcode-back" href="../../pyscal.html#pyscal.utils.df2str">[docs]</a><span class="k">def</span> <span class="nf">df2str</span><span class="p">(</span>
-    <span class="n">dframe</span><span class="p">,</span>
-    <span class="n">digits</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
-    <span class="n">roundlevel</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span>
-    <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">monotone_column</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">monotone_direction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Make a string representation of a dataframe with</span>
-<span class="sd">    proper rounding.</span>
-
-<span class="sd">    This is used to print the tables in the SWOF/SGOF include files,</span>
-<span class="sd">    explicit rounding is necessary to avoid monotonicity errors</span>
-<span class="sd">    from truncation. Examples in test code.</span>
-
-<span class="sd">    Capillary pressure must be strictly monotone if nonzero, and if a</span>
-<span class="sd">    column name is provided, the string representation of that column is</span>
-<span class="sd">    ensured to be strictly monotone decreasing</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        dframe (pd.DataFrame): A dataframe to print, all columns</span>
-<span class="sd">            are included</span>
-<span class="sd">        digits (int): Number of digits used in floating point format f.ex &quot;.7f&quot;</span>
-<span class="sd">            It is not recommended to deviate from the default 7 uncritically</span>
-<span class="sd">            for pyscal output, other code have to be tuned to ensure</span>
-<span class="sd">            numerical robustness to the deviation.</span>
-<span class="sd">        roundlevel (int): To how many digits should we round prior to print.</span>
-<span class="sd">            Recommended to be &gt; digits + 1, see test code.</span>
-<span class="sd">        header (bool): If the dataframe column header should be included</span>
-<span class="sd">        monotone_column: column name for which strict monotonicity</span>
-<span class="sd">            must be preserved in output. Only one column can be fixed.</span>
-<span class="sd">        monotone_direction: Direction of monotonicity, increasing or decreasing,</span>
-<span class="sd">            allowed values are &#39;-1&#39;, &#39;1&#39;, &#39;inc&#39; or &#39;dec&#39;</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">float_format</span> <span class="o">=</span> <span class="s2">&quot;%1.&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">digits</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;f&quot;</span>
-
-    <span class="k">if</span> <span class="n">monotone_direction</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">monotone_direction</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">monotone_direction</span> <span class="o">==</span> <span class="s2">&quot;inc&quot;</span><span class="p">:</span>
-            <span class="n">sign</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="k">elif</span> <span class="n">monotone_direction</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">or</span> <span class="n">monotone_direction</span> <span class="o">==</span> <span class="s2">&quot;dec&quot;</span><span class="p">:</span>
-            <span class="n">sign</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unknown monotone_direction: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">monotone_direction</span><span class="p">))</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">monotone_column</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">sign</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>  <span class="c1"># Default is decreasing monotonocity</span>
-
-    <span class="k">if</span> <span class="n">monotone_column</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">dframe</span><span class="p">[</span><span class="n">monotone_column</span><span class="p">]</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="n">dframe</span> <span class="o">=</span> <span class="n">dframe</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">constants</span> <span class="o">=</span> <span class="n">dframe</span><span class="p">[</span><span class="n">monotone_column</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">digits</span><span class="p">)</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span> <span class="o">==</span> <span class="mf">0.0</span>
-        <span class="k">while</span> <span class="n">constants</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-            <span class="c1"># Substract the smallest value that we can represent where</span>
-            <span class="c1"># it is needed:</span>
-            <span class="n">dframe</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">constants</span><span class="p">,</span> <span class="n">monotone_column</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">dframe</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">constants</span><span class="p">,</span> <span class="n">monotone_column</span><span class="p">]</span> <span class="o">+</span> <span class="n">sign</span> <span class="o">/</span> <span class="mf">10.0</span> <span class="o">**</span> <span class="n">digits</span>
-            <span class="p">)</span>
-            <span class="n">constants</span> <span class="o">=</span> <span class="n">dframe</span><span class="p">[</span><span class="n">monotone_column</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">digits</span><span class="p">)</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span> <span class="o">==</span> <span class="mf">0.0</span>
-
-    <span class="k">return</span> <span class="n">dframe</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">roundlevel</span><span class="p">)</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span>
-        <span class="n">sep</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">float_format</span><span class="o">=</span><span class="n">float_format</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span>
-    <span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="crosspoint"><a class="viewcode-back" href="../../pyscal.html#pyscal.utils.crosspoint">[docs]</a><span class="k">def</span> <span class="nf">crosspoint</span><span class="p">(</span><span class="n">dframe</span><span class="p">,</span> <span class="n">satcol</span><span class="p">,</span> <span class="n">kr1col</span><span class="p">,</span> <span class="n">kr2col</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Locate the crosspoint where kr1col == kr2col</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        dframe (pd.DataFrame): Dataframe with at least three columns</span>
-<span class="sd">        satcol (str): Column name for the saturation column</span>
-<span class="sd">        kr1col (str): Column name for first relperm column</span>
-<span class="sd">        kr2col (str): Columnn ame for second column</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        float, the saturation value (interpolated) where</span>
-<span class="sd">            kr1col == kr2col, when krXcol is linearly interpolated</span>
-<span class="sd">            as a function of the saturation values.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">dframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">dframe</span><span class="p">[[</span><span class="n">satcol</span><span class="p">,</span> <span class="n">kr1col</span><span class="p">,</span> <span class="n">kr2col</span><span class="p">]])</span>  <span class="c1"># Copy</span>
-    <span class="n">dframe</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;krdiff&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dframe</span><span class="p">[</span><span class="n">kr1col</span><span class="p">]</span> <span class="o">-</span> <span class="n">dframe</span><span class="p">[</span><span class="n">kr2col</span><span class="p">]</span>
-
-    <span class="c1"># Add a zero value for the difference column, and interpolate</span>
-    <span class="c1"># the saturation column to the zero value</span>
-    <span class="n">zerodf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">dframe</span><span class="p">)],</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;krdiff&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">})</span>
-    <span class="n">dframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">dframe</span><span class="p">,</span> <span class="n">zerodf</span><span class="p">],</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;krdiff&quot;</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">dframe</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Could not compute crosspoint. Bug?&quot;</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">dframe</span><span class="p">))</span>
-        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
-
-    <span class="n">dframe</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;slinear&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">dframe</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">dframe</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)][</span><span class="n">satcol</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
-
-
-<div class="viewcode-block" id="estimate_diffjumppoint"><a class="viewcode-back" href="../../pyscal.html#pyscal.utils.estimate_diffjumppoint">[docs]</a><span class="k">def</span> <span class="nf">estimate_diffjumppoint</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Estimate the point where the y-data jumps from being linear</span>
-<span class="sd">    in x to being nonlinear, or where it shift from one linear domain</span>
-<span class="sd">    to another (for a piecewise linear function)</span>
-
-<span class="sd">    If xcol is sw, and ycol is krw, and side is &#39;right&#39;, this</span>
-<span class="sd">    will typically estimate sorw for you. If side is &#39;left&#39; it will</span>
-<span class="sd">    give you swcr.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        table (pd.DataFrame): A Dataframe with x and y data</span>
-<span class="sd">        xcol (string): The name of the column in table containing x-data. If</span>
-<span class="sd">            None (default) the first column in table will be used.</span>
-<span class="sd">        ycol (string): The name of the column in table containing y-data.</span>
-<span class="sd">            If None (default) the second column in the table will be used.</span>
-<span class="sd">        side (string): Must be &#39;left&#39; or &#39;right&#39;. Decides whether to look from</span>
-<span class="sd">            the right side of the x-interval or from the left side for the</span>
-<span class="sd">            linear domain.</span>
-<span class="sd">    Returns:</span>
-<span class="sd">        float: The x value where the start-linear domain ends.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">xcol</span><span class="p">:</span>
-        <span class="n">xcol</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">ycol</span><span class="p">:</span>
-        <span class="n">ycol</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ycol</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">xcol</span><span class="p">,</span> <span class="n">six</span><span class="o">.</span><span class="n">string_types</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">side</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;side cannot be None, use left or right&quot;</span><span class="p">)</span>
-    <span class="n">side</span> <span class="o">=</span> <span class="n">side</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-    <span class="k">assert</span> <span class="n">side</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">]</span>
-
-    <span class="c1"># Compute the derivative:</span>
-    <span class="n">table</span><span class="p">[</span><span class="s2">&quot;_deriv&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="n">ycol</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span> <span class="o">/</span> <span class="n">table</span><span class="p">[</span><span class="n">xcol</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span>
-    <span class="c1"># The first becomes NaN, extrapolate from the second row:</span>
-    <span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;_deriv&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;_deriv&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-
-    <span class="c1"># Pick the derivative at the first or last segment:</span>
-    <span class="n">iloc</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;left&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">}</span>
-    <span class="n">lin_a</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;_deriv&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">iloc</span><span class="p">[</span><span class="n">side</span><span class="p">]]</span>
-
-    <span class="c1"># Make a linear extrapolation from the last segment, starting at max x</span>
-    <span class="n">table</span><span class="p">[</span><span class="s2">&quot;_linear&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="n">xcol</span><span class="p">]</span> <span class="o">-</span> <span class="n">table</span><span class="p">[</span><span class="n">xcol</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">iloc</span><span class="p">[</span><span class="n">side</span><span class="p">]])</span> <span class="o">*</span> <span class="n">lin_a</span> <span class="o">+</span> <span class="n">table</span><span class="p">[</span>
-        <span class="n">ycol</span>
-    <span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">iloc</span><span class="p">[</span><span class="n">side</span><span class="p">]]</span>
-    <span class="k">assert</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;_linear&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">iloc</span><span class="p">[</span><span class="n">side</span><span class="p">]]</span> <span class="o">==</span> <span class="n">table</span><span class="p">[</span><span class="n">ycol</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="n">iloc</span><span class="p">[</span><span class="n">side</span><span class="p">]]</span>
-
-    <span class="c1"># Compute how much krw deviates from the linear krw:</span>
-    <span class="n">table</span><span class="p">[</span><span class="s2">&quot;_lindev&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="n">ycol</span><span class="p">]</span> <span class="o">-</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;_linear&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span>
-
-    <span class="c1"># Use the cumulative sum to determine the onset of non-zero deviation</span>
-    <span class="c1"># starting from sw=1:</span>
-    <span class="n">table</span><span class="p">[</span><span class="s2">&quot;_lindevcumsum&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;_lindev&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
-
-    <span class="k">if</span> <span class="n">side</span> <span class="o">==</span> <span class="s2">&quot;right&quot;</span><span class="p">:</span>
-        <span class="n">maxcumsum</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;_lindevcumsum&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-        <span class="n">linearpart</span> <span class="o">=</span> <span class="n">table</span><span class="p">[(</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;_lindevcumsum&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">maxcumsum</span><span class="p">)</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">]</span>
-        <span class="k">return</span> <span class="n">linearpart</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">xcol</span><span class="p">]</span>
-    <span class="c1"># else:</span>
-    <span class="n">linearpart</span> <span class="o">=</span> <span class="n">table</span><span class="p">[(</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;_lindevcumsum&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">)]</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">linearpart</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">linearpart</span> <span class="o">=</span> <span class="n">table</span><span class="p">[(</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;_lindevcumsum&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">)]</span>
-    <span class="k">return</span> <span class="n">linearpart</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">xcol</span><span class="p">]</span></div>
-
-
-<div class="viewcode-block" id="normalize_nonlinpart_wo"><a class="viewcode-back" href="../../pyscal.html#pyscal.utils.normalize_nonlinpart_wo">[docs]</a><span class="k">def</span> <span class="nf">normalize_nonlinpart_wo</span><span class="p">(</span><span class="n">curve</span><span class="p">):</span>
+<div class="viewcode-block" id="normalize_nonlinpart_wo"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.interpolation.normalize_nonlinpart_wo">[docs]</a><span class="k">def</span> <span class="nf">normalize_nonlinpart_wo</span><span class="p">(</span><span class="n">curve</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Make krw and krow functions that evaluate only on the</span>
 <span class="sd">    (potentially) nonlinear part of the relperm curves, and with</span>
 <span class="sd">    a normalized argument (0,1) on that interval.</span>
@@ -403,7 +238,7 @@
     <span class="k">return</span> <span class="p">(</span><span class="n">krw_fn</span><span class="p">,</span> <span class="n">kro_fn</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="normalize_nonlinpart_go"><a class="viewcode-back" href="../../pyscal.html#pyscal.utils.normalize_nonlinpart_go">[docs]</a><span class="k">def</span> <span class="nf">normalize_nonlinpart_go</span><span class="p">(</span><span class="n">curve</span><span class="p">):</span>
+<div class="viewcode-block" id="normalize_nonlinpart_go"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.interpolation.normalize_nonlinpart_go">[docs]</a><span class="k">def</span> <span class="nf">normalize_nonlinpart_go</span><span class="p">(</span><span class="n">curve</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Make krg and krog functions that evaluates only on the</span>
 <span class="sd">    (potentially) nonlinear part of the relperm curves, and with</span>
 <span class="sd">    a normalized argument (0,1) on that interval.</span>
@@ -464,7 +299,7 @@
     <span class="k">return</span> <span class="p">(</span><span class="n">krg_fn</span><span class="p">,</span> <span class="n">kro_fn</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="normalize_pc"><a class="viewcode-back" href="../../pyscal.html#pyscal.utils.normalize_pc">[docs]</a><span class="k">def</span> <span class="nf">normalize_pc</span><span class="p">(</span><span class="n">curve</span><span class="p">):</span>
+<div class="viewcode-block" id="normalize_pc"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.interpolation.normalize_pc">[docs]</a><span class="k">def</span> <span class="nf">normalize_pc</span><span class="p">(</span><span class="n">curve</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Normalize the capillary pressure curve.</span>
 
 <span class="sd">    This is only normalized with respect to the</span>
@@ -544,7 +379,7 @@
     <span class="k">return</span> <span class="n">tag</span>
 
 
-<div class="viewcode-block" id="interpolate_wo"><a class="viewcode-back" href="../../pyscal.html#pyscal.utils.interpolate_wo">[docs]</a><span class="k">def</span> <span class="nf">interpolate_wo</span><span class="p">(</span><span class="n">wo_low</span><span class="p">,</span> <span class="n">wo_high</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="interpolate_wo"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.interpolation.interpolate_wo">[docs]</a><span class="k">def</span> <span class="nf">interpolate_wo</span><span class="p">(</span><span class="n">wo_low</span><span class="p">,</span> <span class="n">wo_high</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Interpolates between two water-oil curves.</span>
 
 <span class="sd">    The saturation endpoints for the curves must be known</span>
@@ -626,28 +461,7 @@
     <span class="k">return</span> <span class="n">wo_new</span></div>
 
 
-<div class="viewcode-block" id="comment_formatter"><a class="viewcode-back" href="../../pyscal.html#pyscal.utils.comment_formatter">[docs]</a><span class="k">def</span> <span class="nf">comment_formatter</span><span class="p">(</span><span class="n">multiline</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;-- &quot;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Prepends comment characters to every line in input</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        multiline (str): String that can contain newlines</span>
-<span class="sd">        prefix (str): Comment characters to prepend every line with</span>
-<span class="sd">            Default is the Eclipse comment syntax &#39;-- &#39;</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        string, with newlines preserved, and where each line</span>
-<span class="sd">            starts with the given prefix. Always ends with a newline.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">multiline</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">multiline</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
-        <span class="c1"># Ensure we indicate that there is placeholder for something.</span>
-        <span class="k">return</span> <span class="s2">&quot;-- </span><span class="se">\n</span><span class="s2">&quot;</span>
-    <span class="k">return</span> <span class="p">(</span>
-        <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">prefix</span> <span class="o">+</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">multiline</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()])</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-    <span class="p">)</span></div>
-
-
-<div class="viewcode-block" id="interpolate_go"><a class="viewcode-back" href="../../pyscal.html#pyscal.utils.interpolate_go">[docs]</a><span class="k">def</span> <span class="nf">interpolate_go</span><span class="p">(</span><span class="n">go_low</span><span class="p">,</span> <span class="n">go_high</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="interpolate_go"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.interpolation.interpolate_go">[docs]</a><span class="k">def</span> <span class="nf">interpolate_go</span><span class="p">(</span><span class="n">go_low</span><span class="p">,</span> <span class="n">go_high</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Interpolates between two gas-oil curves.</span>
 
 <span class="sd">    The saturation endpoints for the curves must be known</span>
@@ -733,7 +547,7 @@
     <span class="k">return</span> <span class="n">go_new</span></div>
 
 
-<div class="viewcode-block" id="interpolator"><a class="viewcode-back" href="../../pyscal.html#pyscal.utils.interpolator">[docs]</a><span class="k">def</span> <span class="nf">interpolator</span><span class="p">(</span>
+<div class="viewcode-block" id="interpolator"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.interpolation.interpolator">[docs]</a><span class="k">def</span> <span class="nf">interpolator</span><span class="p">(</span>
     <span class="n">tableobject</span><span class="p">,</span> <span class="n">wo_low</span><span class="p">,</span> <span class="n">wo_high</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">sat</span><span class="o">=</span><span class="s2">&quot;sw&quot;</span><span class="p">,</span> <span class="n">kr1</span><span class="o">=</span><span class="s2">&quot;krw&quot;</span><span class="p">,</span> <span class="n">kr2</span><span class="o">=</span><span class="s2">&quot;krow&quot;</span><span class="p">,</span> <span class="n">pc</span><span class="o">=</span><span class="s2">&quot;pc&quot;</span>
 <span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Interpolates between two curves.</span>

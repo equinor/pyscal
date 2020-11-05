@@ -1,0 +1,317 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pyscal.utils.string &mdash; pyscal 0.7.1.dev1+g31473e8 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> pyscal
+          
+
+          
+            
+            <img src="../../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7.1.dev1+g31473e8
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Introduction to pyscal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API for pyscal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../history.html">History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../history.html#release-notes">Release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to pyscal</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pyscal</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pyscal.utils.string</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyscal.utils.string</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Utility functions for creating strings from pyscal&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">absolute_import</span>
+
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="kn">from</span> <span class="nn">.monotonocity</span> <span class="kn">import</span> <span class="n">modify_dframe_monotonocity</span><span class="p">,</span> <span class="n">remap_deprecated_monotonocity</span>
+
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">()</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="df2str"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.string.df2str">[docs]</a><span class="k">def</span> <span class="nf">df2str</span><span class="p">(</span>
+    <span class="n">dframe</span><span class="p">,</span>
+    <span class="n">digits</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
+    <span class="n">roundlevel</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span>
+    <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">monotonocity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">monotone_column</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">monotone_direction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Make a string representation of a dataframe with</span>
+<span class="sd">    proper rounding.</span>
+
+<span class="sd">    This is used to print the tables in the SWOF/SGOF include files,</span>
+<span class="sd">    explicit rounding is necessary to avoid monotonocity errors</span>
+<span class="sd">    from truncation. Examples in test code.</span>
+
+<span class="sd">    Capillary pressure must be strictly monotone if nonzero, and if a</span>
+<span class="sd">    column name is provided, the string representation of that column is</span>
+<span class="sd">    ensured to be strictly monotone decreasing</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        dframe (pd.DataFrame): A dataframe to print, all columns</span>
+<span class="sd">            are included</span>
+<span class="sd">        digits (int): Number of digits used in floating point format f.ex &quot;.7f&quot;</span>
+<span class="sd">            It is not recommended to deviate from the default 7 uncritically</span>
+<span class="sd">            for pyscal output, other code have to be tuned to ensure</span>
+<span class="sd">            numerical robustness to the deviation.</span>
+<span class="sd">        roundlevel (int): To how many digits should we round prior to print.</span>
+<span class="sd">            Recommended to be &gt; digits + 1, see test code.</span>
+<span class="sd">        header (bool): If the dataframe column header should be included</span>
+<span class="sd">        monotonocity (dict): Settings for monotonocity in output. A dict</span>
+<span class="sd">            with column names as keys, with values being a dict with keys</span>
+<span class="sd">            &quot;sign&quot; (-1 or +1 integer) for direction,  &quot;upper&quot; and &quot;lower&quot; for</span>
+<span class="sd">            lower and upper limits (non-strict monotonocity is allowed at</span>
+<span class="sd">            these upper and lower limits).</span>
+<span class="sd">        monotone_columns (list of str): column names for which strict</span>
+<span class="sd">            monotonocity must be preserved in output. Deprecated.</span>
+<span class="sd">        monotone_directions (list of str): Direction of monotonocity, increasing</span>
+<span class="sd">            or decreasing, allowed values are &#39;-1&#39;, &#39;1&#39;, &#39;inc&#39; or &#39;dec&#39;. If</span>
+<span class="sd">            multiple columns, specify for each. Deprecated.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">float_format</span> <span class="o">=</span> <span class="s2">&quot;%1.&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">digits</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;f&quot;</span>
+
+    <span class="k">if</span> <span class="n">monotonocity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">monotone_column</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Do not mix new and deprecated API&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">monotonocity</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">monotone_column</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;monotone_column is deprecated, use monotonocity&quot;</span><span class="p">)</span>
+        <span class="n">monotonocity</span> <span class="o">=</span> <span class="n">remap_deprecated_monotonocity</span><span class="p">(</span>
+            <span class="n">monotone_column</span><span class="p">,</span> <span class="n">monotone_direction</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">monotonocity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dframe</span> <span class="o">=</span> <span class="n">modify_dframe_monotonocity</span><span class="p">(</span><span class="n">dframe</span><span class="p">,</span> <span class="n">monotonocity</span><span class="p">,</span> <span class="n">digits</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">dframe</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">roundlevel</span><span class="p">)</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span>
+        <span class="n">sep</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">float_format</span><span class="o">=</span><span class="n">float_format</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="comment_formatter"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.string.comment_formatter">[docs]</a><span class="k">def</span> <span class="nf">comment_formatter</span><span class="p">(</span><span class="n">multiline</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;-- &quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Prepends comment characters to every line in input</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        multiline (str): String that can contain newlines</span>
+<span class="sd">        prefix (str): Comment characters to prepend every line with</span>
+<span class="sd">            Default is the Eclipse comment syntax &#39;-- &#39;</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        string, with newlines preserved, and where each line</span>
+<span class="sd">            starts with the given prefix. Always ends with a newline.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">multiline</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">multiline</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
+        <span class="c1"># Ensure we indicate that there is placeholder for something.</span>
+        <span class="k">return</span> <span class="s2">&quot;-- </span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">prefix</span> <span class="o">+</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">multiline</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()])</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+    <span class="p">)</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright Equinor 2019-2020
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+    
+
+  <style>
+    /* Sidebar header (and topbar for mobile) */
+    .wy-side-nav-search, .wy-nav-top {
+      background: #ff1243;
+    }
+    /* Sidebar */
+    .wy-nav-side {
+      background: #474747;
+    }
+    .wy-side-nav-search > div.version {
+      color: white;
+    }
+  </style>
+
+
+</body>
+</html>

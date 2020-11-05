@@ -46,7 +46,10 @@ data set contains a CASE column.
 Saturation and relative permeability endpoints
 ----------------------------------------------
 
-The endpoints used in the parametrization is shown in the following figure for WaterOil.
+The endpoints used in the parametrization. These parameters usually
+correspond to API argument names for WaterOil, OilGas and GasWater objects,
+where they must be given in lower-case version. When provided through
+PyscalFactory (xlsx or csv input), the parameter are case-insensitive.
 
 Water-Oil
 ^^^^^^^^^
@@ -57,6 +60,10 @@ Water-Oil
 *Note*: Pyscal prior to 0.6.0 had the oil relperm anchord at swcr, and then used the
 parameters krowend and krowmax. krowmax is now deprecated, and krowend and krogend must be
 equal and renamed to kroend.
+
+When initialized through xlsx/csv (through PyscalFactory) a parameter called
+``swcr_add`` is available. If ``swcr_add`` is provided, ``swcr`` will be
+calculated as ``swl`` plus this delta value.
 
 Gas-Oil
 ^^^^^^^
@@ -72,6 +79,49 @@ Gas-Water
 
 .. image:: images/gaswater-endpoints.png
     :width: 600
+
+Capillary pressure
+------------------
+
+Capillary pressures can be added to the saturation tables through additional
+parameters. The formulas for capillary pressure are evaluated on a saturation
+parameter normalized in the interval [*swirr*, 1], as opposed to the normalized
+saturation used for relative permeability.
+
+Supported capillary pressure parametrizations are
+
+ 1. :func:`Simple J <pyscal.wateroil.WaterOil.add_simple_J>`,
+    "RMS" version of the coefficients *a* and *b*.
+    Required parameters:  ``a``, ``b``, ``poro_ref``, ``perm_ref``, ``drho``.
+ 2. :func:`Simple J, petrophysical version <pyscal.wateroil.WaterOil.add_simple_J_petro>`,
+    different definition of *a* and *b*
+    compared to simple J.
+    Required parameters:  ``a_petro``, ``b_petro``, ``poro_ref``, ``perm_ref``, ``drho``.
+ 3. :func:`Normalized J <pyscal.wateroil.WaterOil.add_normalized_J>`,
+    different definition of *a* and *b*
+    Required parameters:  ``a``, ``b``, ``sigma_costau``.
+ 4. :func:`Skjæveland correlation <pyscal.wateroil.WaterOil.add_skjaeveland_pc>`
+ 5. :func:`LET primary drainage <pyscal.wateroil.WaterOil.add_LET_pc_pd>`
+ 6. :func:`LET imbibition <pyscal.wateroil.WaterOil.add_LET_pc_imb>`
+
+Only the three first are available when initializing through xlsx/csv input on
+the command line. Each parametrization is then triggered by the presence of the
+listed required parametrers.  For the last three a custom Python code utilizing
+the API must be written.
+
+Additionally, *g* can be given as the gravitational acceleration where relevant,
+otherwise defaulted to 9.81 m/s².
+
+For *simple J*, it is also possible to initialize *swl* from a height above free
+water level, by providing ``swl_height`` (in meters) as a parameter instead of
+``swl``. In that case, it is also recommended to use ``swcr_add`` instead of
+``swcr``.
+
+GasWater objects support the simple J and its petrophysical version.
+
+There is currently no support functions for adding capillary pressure to GasOil
+objects, but it is possible to modify the ``pc`` column of the ``gasoil.table``
+dataframe property and it will be included in the output.
 
 Python API examples
 -------------------
@@ -105,7 +155,7 @@ The output from the code above is:
 
     SWOF
     -- Foobarites
-    -- pyscal: 0.6.x
+    -- pyscal: 0.7.x
     -- swirr=0 swl=0.05 swcr=0.05 sorw=0.03
     -- Corey krw, nw=2.1, krwend=0.6, krwmax=1
     -- Corey krow, now=2.5, kroend=0.9

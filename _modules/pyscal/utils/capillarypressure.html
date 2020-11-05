@@ -1,0 +1,366 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>pyscal.utils.capillarypressure &mdash; pyscal 0.7.1.dev1+g31473e8 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> pyscal
+          
+
+          
+            
+            <img src="../../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7.1.dev1+g31473e8
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Introduction to pyscal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API for pyscal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../history.html">History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../history.html#release-notes">Release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to pyscal</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">pyscal</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>pyscal.utils.capillarypressure</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for pyscal.utils.capillarypressure</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Support functions for capillary pressure&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">math</span>
+
+<span class="kn">from</span> <span class="nn">pyscal.constants</span> <span class="kn">import</span> <span class="n">MAX_EXPONENT</span>
+
+
+<div class="viewcode-block" id="simple_J"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.capillarypressure.simple_J">[docs]</a><span class="k">def</span> <span class="nf">simple_J</span><span class="p">(</span><span class="n">sw</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">poro_ref</span><span class="p">,</span> <span class="n">perm_ref</span><span class="p">,</span> <span class="n">drho</span><span class="p">,</span> <span class="n">g</span><span class="o">=</span><span class="mf">9.81</span><span class="p">):</span>
+    <span class="c1"># pylint: disable=invalid-name,anomalous-backslash-in-string</span>
+    <span class="sa">r</span><span class="sd">&quot;&quot;&quot;Calculate capillary pressure with bar as unit</span>
+
+<span class="sd">    RMS version:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        J = a S_w^b</span>
+
+<span class="sd">    *J* is not dimensionless in this equation.</span>
+
+<span class="sd">    This is identical to the also seen formula</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">       J = 10^{b \log(S_w) + \log(a)}</span>
+
+
+<span class="sd">    Args:</span>
+<span class="sd">        sw: float, np.array or similar, water saturation value to be used.</span>
+<span class="sd">            Normalize when needed.</span>
+<span class="sd">        a (float): a coefficient</span>
+<span class="sd">        b (float): b coefficient</span>
+<span class="sd">        poro_ref (float): Reference porosity for scaling to Pc, between 0 and 1</span>
+<span class="sd">        perm_ref (float): Reference permeability for scaling to Pc, in milliDarcy</span>
+<span class="sd">        drho (float): Density difference between water and oil, in SI units kg/m³.</span>
+<span class="sd">            Default value is 300</span>
+<span class="sd">        g (float): Gravitational acceleration, in SI units m/s²,</span>
+<span class="sd">            default value is 9.81</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        capillary pressure, same type as swnpc input argument.</span>
+<span class="sd">    &quot;&quot;&quot;</span>  <span class="c1"># noqa</span>
+    <span class="k">assert</span> <span class="n">g</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+    <span class="k">assert</span> <span class="n">b</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
+    <span class="k">assert</span> <span class="n">b</span> <span class="o">&gt;</span> <span class="o">-</span><span class="n">MAX_EXPONENT</span>
+    <span class="k">assert</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">poro_ref</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
+    <span class="k">assert</span> <span class="n">perm_ref</span> <span class="o">&gt;</span> <span class="mf">0.0</span>
+
+    <span class="n">J</span> <span class="o">=</span> <span class="n">_sw_to_simpleJ</span><span class="p">(</span><span class="n">sw</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+    <span class="n">height</span> <span class="o">=</span> <span class="n">_simpleJ_to_height</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="n">poro_ref</span><span class="p">,</span> <span class="n">perm_ref</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_height_to_pc</span><span class="p">(</span><span class="n">height</span><span class="p">,</span> <span class="n">drho</span><span class="p">,</span> <span class="n">g</span><span class="p">)</span></div>
+
+
+<span class="k">def</span> <span class="nf">_height_to_pc</span><span class="p">(</span><span class="n">height</span><span class="p">,</span> <span class="n">drho</span><span class="p">,</span> <span class="n">g</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;From height above free water level, multiplication</span>
+<span class="sd">    with density difference and gravity gives capillary pressure.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        height (float): Height above free water level in meters.</span>
+<span class="sd">        drho (float): density difference in g/cc</span>
+<span class="sd">        g (float): gravitational acceleration, in m/s²</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        float: capillary pressure at given height, in bars.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">height</span> <span class="o">*</span> <span class="n">drho</span> <span class="o">/</span> <span class="mi">1000</span> <span class="o">*</span> <span class="n">g</span> <span class="o">/</span> <span class="mf">100.0</span>
+
+
+<span class="k">def</span> <span class="nf">_sw_to_simpleJ</span><span class="p">(</span><span class="n">sw</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert a water saturation value to the associated J-value,</span>
+<span class="sd">    using RMS simple-J&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">*</span> <span class="n">sw</span> <span class="o">**</span> <span class="nb">float</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_simpleJ_to_sw</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert a J-function-value to a water saturation value,</span>
+<span class="sd">    using RMS simple-J&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">J</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">b</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">_simpleJ_to_height</span><span class="p">(</span><span class="n">J</span><span class="p">,</span> <span class="n">poro_ref</span><span class="p">,</span> <span class="n">perm_ref</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert a J-function value to a height-value in meters</span>
+
+<span class="sd">    This scales the J-value with the inverse of characteristic</span>
+<span class="sd">    length of the capillaries radii, estimated as sqrt(k/phi).</span>
+
+<span class="sd">    https://en.wikipedia.org/wiki/Leverett_J-function</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        J (float): J-function value.</span>
+<span class="sd">        poro_ref (float): Porosity between 0 and 1</span>
+<span class="sd">        perm_ref (float): Permeability in milliDarcy</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">J</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">poro_ref</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">perm_ref</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">_height_to_simpleJ</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">poro_ref</span><span class="p">,</span> <span class="n">perm_ref</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Convert a height value (in meters) to a corresponding J-function</span>
+
+<span class="sd">    This scales the J-value with the characteristic</span>
+<span class="sd">    length of the capillaries radii, estimated as sqrt(k/phi).</span>
+
+<span class="sd">    https://en.wikipedia.org/wiki/Leverett_J-function</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        H (float): Height in meters.</span>
+<span class="sd">        poro_ref (float): Porosity between 0 and 1</span>
+<span class="sd">        perm_ref (float): Permeability in milliDarcy</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">H</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">perm_ref</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">poro_ref</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="swl_from_height_simpleJ"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.capillarypressure.swl_from_height_simpleJ">[docs]</a><span class="k">def</span> <span class="nf">swl_from_height_simpleJ</span><span class="p">(</span><span class="n">swlheight</span><span class="p">,</span> <span class="n">swirr</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">poro_ref</span><span class="p">,</span> <span class="n">perm_ref</span><span class="p">):</span>
+    <span class="c1"># pylint: disable=invalid-name</span>
+    <span class="sd">&quot;&quot;&quot;Calculate a swl value based on a height parameter.</span>
+
+<span class="sd">    The height parameter is typically meters above free water level (FWL)</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        swlheight (float): Height above free water level, in meters,</span>
+<span class="sd">            where we want swl to be.</span>
+<span class="sd">        swirr (float): Asymptotic irreducible water saturation. This is</span>
+<span class="sd">            used to normalized the outputted swl.</span>
+<span class="sd">        a (float): a coefficient in RMS simplified J function</span>
+<span class="sd">        b (float): b coefficient in RMS simplified J function</span>
+<span class="sd">        poro_ref (float): Reference porosity for scaling to Pc, between 0 and 1</span>
+<span class="sd">        perm_ref (float): Reference permeability for scaling to Pc, in milliDarcy</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        swl (float): A value that can be used for swl.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Calculate the value of J() far above free water level:</span>
+    <span class="n">j_value_at_swlheight</span> <span class="o">=</span> <span class="n">_height_to_simpleJ</span><span class="p">(</span><span class="n">swlheight</span><span class="p">,</span> <span class="n">poro_ref</span><span class="p">,</span> <span class="n">perm_ref</span><span class="p">)</span>
+
+    <span class="c1"># Calculate the water saturation value that corresponds to this J-value,</span>
+    <span class="c1"># un-normalized:</span>
+    <span class="n">swn_swlheight</span> <span class="o">=</span> <span class="n">_simpleJ_to_sw</span><span class="p">(</span><span class="n">j_value_at_swlheight</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+
+    <span class="c1"># Normalize with respect the the asymptotic swirr and return</span>
+    <span class="k">return</span> <span class="n">swirr</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">swirr</span><span class="p">)</span> <span class="o">*</span> <span class="n">swn_swlheight</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright Equinor 2019-2020
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+    
+
+  <style>
+    /* Sidebar header (and topbar for mobile) */
+    .wy-side-nav-search, .wy-nav-top {
+      background: #ff1243;
+    }
+    /* Sidebar */
+    .wy-nav-side {
+      background: #474747;
+    }
+    .wy-side-nav-search > div.version {
+      color: white;
+    }
+  </style>
+
+
+</body>
+</html>

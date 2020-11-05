@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal.wateroilgas &mdash; pyscal 0.6.1.dev4+g8e2c302 documentation</title>
+  <title>pyscal.wateroilgas &mdash; pyscal 0.7.1.dev1+g31473e8 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.6.1.dev4+g8e2c302
+                0.7.1.dev1+g31473e8
               </div>
             
           
@@ -171,7 +171,7 @@
 <span class="kn">import</span> <span class="nn">pyscal</span>
 <span class="kn">from</span> <span class="nn">pyscal.constants</span> <span class="kn">import</span> <span class="n">SWINTEGERS</span>
 
-<span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">utils</span>
+<span class="kn">from</span> <span class="nn">pyscal.utils.string</span> <span class="kn">import</span> <span class="n">df2str</span><span class="p">,</span> <span class="n">comment_formatter</span>
 <span class="kn">from</span> <span class="nn">.wateroil</span> <span class="kn">import</span> <span class="n">WaterOil</span>
 <span class="kn">from</span> <span class="nn">.gasoil</span> <span class="kn">import</span> <span class="n">GasOil</span>
 
@@ -240,9 +240,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">selfcheck</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">selfcheck</span><span class="p">()</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">selfcheck</span><span class="p">()</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">selfcheck</span><span class="p">()</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Both wateroil and gasoil are None in WaterOilGas&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">False</span></div>
@@ -328,8 +328,8 @@
         <span class="n">string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">if</span> <span class="n">header</span><span class="p">:</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;SOF3</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">wo_tag</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">comment_formatter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
-        <span class="n">go_tag</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">comment_formatter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
+        <span class="n">wo_tag</span> <span class="o">=</span> <span class="n">comment_formatter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
+        <span class="n">go_tag</span> <span class="o">=</span> <span class="n">comment_formatter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">wo_tag</span> <span class="o">!=</span> <span class="n">go_tag</span><span class="p">:</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="n">wo_tag</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="n">go_tag</span>
@@ -351,32 +351,37 @@
             <span class="o">+</span> <span class="s2">&quot;KROG&quot;</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>
             <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="p">)</span>
-        <span class="n">string</span> <span class="o">+=</span> <span class="n">utils</span><span class="o">.</span><span class="n">df2str</span><span class="p">(</span><span class="n">sof3table</span><span class="p">[[</span><span class="s2">&quot;so&quot;</span><span class="p">,</span> <span class="s2">&quot;krow&quot;</span><span class="p">,</span> <span class="s2">&quot;krog&quot;</span><span class="p">]])</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="n">df2str</span><span class="p">(</span><span class="n">sof3table</span><span class="p">[[</span><span class="s2">&quot;so&quot;</span><span class="p">,</span> <span class="s2">&quot;krow&quot;</span><span class="p">,</span> <span class="s2">&quot;krog&quot;</span><span class="p">]])</span>
         <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;/</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="n">string</span></div>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">swirr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the swirr used for the WaterOil object&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">swirr</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">swl</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the swl used for the WaterOil object&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">swl</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">sorg</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the sorg used in the GasOil object&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">sorg</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">sorw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the sorw used for the WaterOil object&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">sorw</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">tag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Get the tag, a combination of the tags in WaterOil</span>
+<span class="sd">        and GasOil only if they are different&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">tag</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">tag</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">tag</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">tag</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">tag</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">tag</span>
 
 <div class="viewcode-block" id="WaterOilGas.threephaseconsistency"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroilgas.WaterOilGas.threephaseconsistency">[docs]</a>    <span class="k">def</span> <span class="nf">threephaseconsistency</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Perform consistency checks on produced curves, similar</span>
@@ -439,6 +444,9 @@
 <div class="viewcode-block" id="WaterOilGas.run_eclipse_test"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroilgas.WaterOilGas.run_eclipse_test">[docs]</a>    <span class="k">def</span> <span class="nf">run_eclipse_test</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Start the Eclipse simulator on a minimal deck in order to</span>
 <span class="sd">        test the properties of the current WaterOilGas deck&quot;&quot;&quot;</span>
+
+        <span class="c1"># pylint: disable=import-outside-toplevel</span>
+        <span class="c1"># Lazy import for speed reasons, this function is seldom used.</span>
         <span class="kn">import</span> <span class="nn">tempfile</span>
         <span class="kn">import</span> <span class="nn">os</span>
         <span class="kn">import</span> <span class="nn">subprocess</span>
