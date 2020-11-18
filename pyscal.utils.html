@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal.utils package &mdash; pyscal 0.7.1.dev3+g71046cb documentation</title>
+  <title>pyscal.utils package &mdash; pyscal 0.7.1.dev4+g0b2006d documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.7.1.dev3+g71046cb
+                0.7.1.dev4+g0b2006d
               </div>
             
           
@@ -440,7 +440,7 @@ to constant or monotone in a certain direction.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>series</strong> (<em>pd.Series</em>) – Vector of numbers</p></li>
 <li><p><strong>digits</strong> (<em>int</em>) – </p></li>
-<li><p><strong>sign</strong> (<em>int</em>) – direction</p></li>
+<li><p><strong>sign</strong> (<em>int</em>) – direction. &gt;0 means positive</p></li>
 </ul>
 </dd>
 </dl>
@@ -459,6 +459,8 @@ when everything is ok.</p>
 <li><p><strong>series</strong> (<em>pd.Series</em>) – Vector of numbers to check</p></li>
 <li><p><strong>monotonocity</strong> (<em>dict</em>) – Keys ‘upper’ and ‘lower’ are optional
 and point to numerical limits.</p></li>
+<li><p><strong>colname</strong> (<em>str</em>) – Optional string for a column name that will be
+included in any error message.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -532,14 +534,15 @@ for all-zero vectors if that option is activated.</p>
 
 <dl class="py function">
 <dt id="pyscal.utils.monotonocity.rows_to_be_fixed">
-<code class="sig-prename descclassname">pyscal.utils.monotonocity.</code><code class="sig-name descname">rows_to_be_fixed</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">series</span></em>, <em class="sig-param"><span class="n">column_monotonocity</span></em>, <em class="sig-param"><span class="n">digits</span></em>, <em class="sig-param"><span class="n">sign</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils/monotonocity.html#rows_to_be_fixed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.utils.monotonocity.rows_to_be_fixed" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname">pyscal.utils.monotonocity.</code><code class="sig-name descname">rows_to_be_fixed</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">series</span></em>, <em class="sig-param"><span class="n">monotonocity</span></em>, <em class="sig-param"><span class="n">digits</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils/monotonocity.html#rows_to_be_fixed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.utils.monotonocity.rows_to_be_fixed" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute boolean array of rows that must be modified</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>series</strong> (<em>pd.Series</em>) – </p></li>
-<li><p><strong>column_monotonocity</strong> (<em>dict</em>) – Can contain “upper” or “lower”
-numerical bounds.</p></li>
+<li><p><strong>monotonocity</strong> (<em>dict</em>) – Can contain “upper” or “lower”
+numerical bounds, and “sign”, where &gt;0 means positive.
+“sign” is mandatory.</p></li>
 <li><p><strong>digits</strong> (<em>int</em>) – Accuracy required, how many digits
 that are to be printed, and to which we should relate
 constancy to.</p></li>
