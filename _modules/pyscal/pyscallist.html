@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal.pyscallist &mdash; pyscal 0.7.1.dev1+g31473e8 documentation</title>
+  <title>pyscal.pyscallist &mdash; pyscal 0.7.1.dev2+gec421f1 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.7.1.dev1+g31473e8
+                0.7.1.dev2+gec421f1
               </div>
             
           
@@ -162,14 +162,9 @@
   <h1>Source code for pyscal.pyscallist</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Container class for list of Pyscal objects&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">absolute_import</span>
-<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">print_function</span>
-
 <span class="kn">import</span> <span class="nn">os</span>
-
 <span class="kn">import</span> <span class="nn">logging</span>
 
-<span class="kn">import</span> <span class="nn">six</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 <span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">WaterOil</span><span class="p">,</span> <span class="n">GasOil</span><span class="p">,</span> <span class="n">GasWater</span><span class="p">,</span> <span class="n">WaterOilGas</span><span class="p">,</span> <span class="n">SCALrecommendation</span>
@@ -391,7 +386,7 @@
             <span class="k">if</span> <span class="n">directory</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_h</span><span class="p">:</span>
-                <span class="n">file_h</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">six</span><span class="o">.</span><span class="n">ensure_str</span><span class="p">(</span><span class="n">family_1_str</span><span class="p">))</span>
+                <span class="n">file_h</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">family_1_str</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">family_1_str</span></div>
 
 <div class="viewcode-block" id="PyscalList.dump_family_2"><a class="viewcode-back" href="../../pyscal.html#pyscal.pyscallist.PyscalList.dump_family_2">[docs]</a>    <span class="k">def</span> <span class="nf">dump_family_2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -428,7 +423,7 @@
             <span class="k">if</span> <span class="n">directory</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_h</span><span class="p">:</span>
-                <span class="n">file_h</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">six</span><span class="o">.</span><span class="n">ensure_str</span><span class="p">(</span><span class="n">family_2_str</span><span class="p">))</span>
+                <span class="n">file_h</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">family_2_str</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">family_2_str</span></div>
 
 <div class="viewcode-block" id="PyscalList.interpolate"><a class="viewcode-back" href="../../pyscal.html#pyscal.pyscallist.PyscalList.interpolate">[docs]</a>    <span class="k">def</span> <span class="nf">interpolate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">int_params_wo</span><span class="p">,</span> <span class="n">int_params_go</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
@@ -517,7 +512,7 @@
             <span class="k">if</span> <span class="n">directory</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">directory</span><span class="p">):</span>
                 <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
             <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">write_to_filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file_h</span><span class="p">:</span>
-                <span class="n">file_h</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">six</span><span class="o">.</span><span class="n">ensure_str</span><span class="p">(</span><span class="n">string</span><span class="p">))</span>
+                <span class="n">file_h</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">string</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">string</span></div>
 
 <div class="viewcode-block" id="PyscalList.SWOF"><a class="viewcode-back" href="../../pyscal.html#pyscal.pyscallist.PyscalList.SWOF">[docs]</a>    <span class="k">def</span> <span class="nf">SWOF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
