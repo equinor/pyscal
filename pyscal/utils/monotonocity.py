@@ -3,8 +3,9 @@
 import logging
 
 import numpy as np
+import pandas as pd
 
-from ..constants import EPSILON as epsilon
+from pyscal.constants import EPSILON as epsilon
 
 
 logging.basicConfig()
@@ -69,8 +70,6 @@ def modify_dframe_monotonocity(dframe, monotonocity, digits):
 
     # Modify data for monotonocity:
     for col in monotonocity:
-        sign = monotonocity[col]["sign"]
-
         accuracy = 1.0 / 10.0 ** digits - epsilon
 
         if "allowzero" in monotonocity[col]:
@@ -79,8 +78,9 @@ def modify_dframe_monotonocity(dframe, monotonocity, digits):
             if max_value < accuracy and monotonocity[col]["allowzero"]:
                 continue
 
-        constants = rows_to_be_fixed(dframe[col], monotonocity[col], digits, sign)
+        constants = rows_to_be_fixed(dframe[col], monotonocity[col], digits)
         iterations = 0
+        sign = monotonocity[col]["sign"]
         while constants.any():
             iterations += 1
             if iterations > 2 * len(dframe[col]):
@@ -94,7 +94,7 @@ def modify_dframe_monotonocity(dframe, monotonocity, digits):
             dframe[col] = clip_accumulate(dframe[col], monotonocity[col])
 
             # Evaluate what is left to fix:
-            constants = rows_to_be_fixed(dframe[col], monotonocity[col], digits, sign)
+            constants = rows_to_be_fixed(dframe[col], monotonocity[col], digits)
 
         # Warn if more iterations than 5% of the rows
         # (number of iterations do not necessarily correspond with
@@ -132,6 +132,8 @@ def clip_accumulate(series, monotonocity):
     Returns:
         np.array, copy of original.
     """
+    if isinstance(series, (list, np.ndarray)):
+        series = pd.Series(series, dtype="float64")
     if monotonocity["sign"] > 0:
         series = np.maximum.accumulate(series)
     else:
@@ -159,43 +161,50 @@ def check_limits(series, monotonocity, colname=""):
         series (pd.Series): Vector of numbers to check
         monotonocity (dict): Keys 'upper' and 'lower' are optional
             and point to numerical limits.
+        colname (str): Optional string for a column name that will be
+            included in any error message.
     Returns:
         None
     """
+    if isinstance(series, (list, np.ndarray)):
+        series = pd.Series(series, dtype="float64")
     if series.empty:
         return
     if "upper" in monotonocity and (series > monotonocity["upper"]).any():
         raise ValueError("Values larger than upper limit in column {}".format(colname))
     if "lower" in monotonocity and (series < monotonocity["lower"]).any():
-        raise ValueError("Values larger than upper limit in column {}".format(colname))
+        raise ValueError("Values smaller than lower limit in column {}".format(colname))
 
 
-def rows_to_be_fixed(series, column_monotonocity, digits, sign):
+def rows_to_be_fixed(series, monotonocity, digits):
     """Compute boolean array of rows that must be modified
 
     Args:
         series (pd.Series):
-        column_monotonocity (dict): Can contain "upper" or "lower"
-            numerical bounds.
+        monotonocity (dict): Can contain "upper" or "lower"
+            numerical bounds, and "sign", where >0 means positive.
+            "sign" is mandatory.
         digits (int): Accuracy required, how many digits
             that are to be printed, and to which we should relate
             constancy to.
-
     Returns:
         boolean series.
     """
+    if isinstance(series, (list, np.ndarray)):
+        series = pd.Series(series, dtype="float64")
+
     # minus epsilon is critical to avoid being greedy
     accuracy = 1.0 / 10.0 ** digits - epsilon
-    if sign > 0:
+    if monotonocity["sign"] > 0:
         constants = series.round(digits + 1).diff() < accuracy
     else:
         constants = series.round(digits + 1).diff() > -accuracy
 
     # Allow constants at the lower and upper limits.
-    if "upper" in column_monotonocity:
-        constants = constants & (series < (column_monotonocity["upper"] - accuracy))
-    if "lower" in column_monotonocity:
-        constants = constants & (series > (column_monotonocity["lower"] + accuracy))
+    if "upper" in monotonocity:
+        constants = constants & (series < (monotonocity["upper"] - accuracy))
+    if "lower" in monotonocity:
+        constants = constants & (series > (monotonocity["lower"] + accuracy))
     return constants
 
 
@@ -206,15 +215,18 @@ def check_almost_monotone(series, digits, sign):
     Args:
         series (pd.Series): Vector of numbers
         digits (int):
-        sign (int): direction
+        sign (int): direction. >0 means positive
     """
+    if isinstance(series, (list, np.ndarray)):
+        series = pd.Series(series, dtype="float64")
+
     allowance = 1.0 / 10.0 ** (digits - 1)
     if sign > 0:
         if series.diff().min() < -allowance:
             raise ValueError("Series is not almost monotone")
     else:
         if series.diff().max() > allowance:
-            raise ValueError("Series not not almost monotone")
+            raise ValueError("Series is not almost monotone")
 
 
 def validate_monotonocity_arg(monotonocity, dframe_colnames):
@@ -237,24 +249,24 @@ def validate_monotonocity_arg(monotonocity, dframe_colnames):
     if monotonocity is None:
         return
     if not isinstance(monotonocity, dict):
-        raise ValueError("monotonocity must be a dict")
+        raise ValueError("monotonocity argument must be a dict")
     for col in monotonocity:
         if not isinstance(monotonocity[col], dict):
-            raise ValueError("monotononicity must be a dict of dicts")
+            raise ValueError("monotonocity argument must be a dict of dicts")
         if not set(monotonocity[col].keys()).issubset(valid_keys):
             raise ValueError(
                 "Unknown keys in monotonocity {}".format(monotonocity[col].keys())
             )
         if col not in dframe_colnames:
-            raise ValueError("Column %s does not exist in dataframe", str(col))
+            raise ValueError("Column {} does not exist in dataframe".format(col))
         if "sign" not in monotonocity[col]:
             raise ValueError("Monotonocity sign not specified for {}".format(col))
         try:
             signvalue = float(monotonocity[col]["sign"])
-        except ValueError:
+        except ValueError as err:
             raise ValueError(
                 "Monotonocity sign {} not valid".format(monotonocity[col]["sign"])
-            )
+            ) from err
         if "upper" in monotonocity[col]:
             float(monotonocity[col]["upper"])
         if "lower" in monotonocity[col]:
