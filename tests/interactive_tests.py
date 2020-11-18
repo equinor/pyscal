@@ -8,8 +8,6 @@ If you want to run individual tests, import this module in
 a Python session and run the functions manually.
 """
 
-from __future__ import print_function
-
 import random
 
 import numpy as np

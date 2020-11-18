@@ -1,8 +1,4 @@
 """Test the PyscalList module"""
-# -*- encoding: utf-8 -*-
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 
 import os
 
@@ -66,11 +62,7 @@ def test_pyscallist_basic():
 
 def test_load_scalrec():
     """Load a SATNUM range from xlsx"""
-    if "__file__" in globals():
-        # Easen up copying test code into interactive sessions
-        testdir = os.path.dirname(os.path.abspath(__file__))
-    else:
-        testdir = os.path.abspath(".")
+    testdir = os.path.dirname(os.path.abspath(__file__))
 
     scalrec_data = PyscalFactory.load_relperm_df(
         testdir + "/data/scal-pc-input-example.xlsx"
@@ -108,11 +100,7 @@ def test_load_scalrec():
 
 def test_df():
     """Test dataframe dumps"""
-    if "__file__" in globals():
-        # Easen up copying test code into interactive sessions
-        testdir = os.path.dirname(os.path.abspath(__file__))
-    else:
-        testdir = os.path.abspath(".")
+    testdir = os.path.dirname(os.path.abspath(__file__))
 
     scalrec_data = PyscalFactory.load_relperm_df(
         testdir + "/data/scal-pc-input-example.xlsx"
@@ -206,11 +194,7 @@ def test_df():
 
 def test_load_scalrec_tags():
     """Test tag handling for a SCAL recommendation with SATNUM range"""
-    if "__file__" in globals():
-        # Easen up copying test code into interactive sessions
-        testdir = os.path.dirname(os.path.abspath(__file__))
-    else:
-        testdir = os.path.abspath(".")
+    testdir = os.path.dirname(os.path.abspath(__file__))
 
     scalrec_data = PyscalFactory.load_relperm_df(
         testdir + "/data/scal-pc-input-example.xlsx"
@@ -270,11 +254,7 @@ def test_load_scalrec_tags():
 
 def test_dump():
     """Test dumping Eclipse include data to file"""
-    if "__file__" in globals():
-        # Easen up copying test code into interactive sessions
-        testdir = os.path.dirname(os.path.abspath(__file__))
-    else:
-        testdir = os.path.abspath(".")
+    testdir = os.path.dirname(os.path.abspath(__file__))
 
     relperm_data = PyscalFactory.load_relperm_df(
         testdir + "/data/relperm-input-example.xlsx"
@@ -603,9 +583,7 @@ def test_explicit_df():
 
 
 def test_comments_df():
-    """Test that we support a tag column in the dataframe, and
-    that we are able to handle UTF-8 stuff nicely in py2-3
-    """
+    """Test that we support a tag column in the dataframe."""
     dframe = pd.DataFrame(
         columns=["SATNUM", "tag", "Nw", "Now", "ng", "nOG"],
         data=[[1, "thisisacomment", 2, 2, 2, 2]],

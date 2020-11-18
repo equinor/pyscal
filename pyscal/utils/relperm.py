@@ -1,8 +1,6 @@
 """Utility functions for computations on relative permeability curves"""
-from __future__ import absolute_import
 
 import logging
-import six
 
 import numpy as np
 import pandas as pd
@@ -72,8 +70,8 @@ def estimate_diffjumppoint(table, xcol=None, ycol=None, side="right"):
         xcol = table.columns[0]
     if not ycol:
         ycol = table.columns[1]
-    assert isinstance(ycol, six.string_types)
-    assert isinstance(xcol, six.string_types)
+    assert isinstance(ycol, str)
+    assert isinstance(xcol, str)
     if not side:
         raise ValueError("side cannot be None, use left or right")
     side = side.lower()

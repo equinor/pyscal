@@ -1,9 +1,6 @@
 """ Representing a GasOil object """
-from __future__ import division, absolute_import
-from __future__ import print_function
 
 import logging
-import six
 
 import numpy as np
 import pandas as pd
@@ -77,12 +74,12 @@ class GasOil(object):
         assert -epsilon < sgcr < 1
         assert -epsilon < swl < 1
         assert -epsilon < sorg < 1
-        if not isinstance(tag, six.string_types):
+        if not isinstance(tag, str):
             tag = ""
         if krgendanchor is None:
             krgendanchor = ""
 
-        assert isinstance(krgendanchor, six.string_types)
+        assert isinstance(krgendanchor, str)
 
         h_min = 1.0 / float(SWINTEGERS)
         if h < h_min:

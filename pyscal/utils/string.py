@@ -1,5 +1,4 @@
 """Utility functions for creating strings from pyscal"""
-from __future__ import absolute_import
 
 import logging
 

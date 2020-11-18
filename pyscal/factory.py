@@ -3,7 +3,6 @@
 import logging
 
 import os
-import six
 
 import pandas as pd
 import numpy as np
@@ -1039,7 +1038,7 @@ def filter_nan_from_dict(params):
     """
     cleaned_params = {}
     for key, value in params.items():
-        if isinstance(value, six.string_types):
+        if isinstance(value, str):
             cleaned_params[key] = value
         else:
             if not np.isnan(value):
