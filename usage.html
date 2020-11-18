@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Usage &mdash; pyscal 0.7.1.dev2+gec421f1 documentation</title>
+  <title>Usage &mdash; pyscal 0.7.1.dev3+g71046cb documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.7.1.dev2+gec421f1
+                0.7.1.dev3+g71046cb
               </div>
             
           
@@ -107,9 +107,9 @@
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#capillary-pressure">Capillary pressure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#python-api-examples">Python API examples</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#id1">Water-Oil</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#water-oil-curve">Water-oil curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#gas-oil-curve">Gas-oil curve</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#id2">Gas-Water</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#gas-water-curve">Gas-Water curve</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#water-oil-gas">Water-oil-gas</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#interpolation-in-a-scal-recommendation">Interpolation in a SCAL recommendation</a></li>
 </ul>
@@ -191,7 +191,7 @@
 line tool is a short wrapper utilizing the underlying pyscal functionality.</p>
 <div class="section" id="the-command-line-tool">
 <h2>The command line tool<a class="headerlink" href="#the-command-line-tool" title="Permalink to this headline">¶</a></h2>
-<p><p>pyscal (0.7.1.dev2+gec421f1) is a tool to create Eclipse include files for relative permeability input from tabulated parameters.</p>
+<p><p>pyscal (0.7.1.dev3+g71046cb) is a tool to create Eclipse include files for relative permeability input from tabulated parameters.</p>
 </p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">pyscal</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">debug</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">version</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">o</span> <span class="n">OUTPUT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">delta_s</span> <span class="n">DELTA_S</span><span class="p">]</span>
               <span class="p">[</span><span class="o">--</span><span class="n">int_param_wo</span> <span class="n">INT_PARAM_WO</span> <span class="p">[</span><span class="n">INT_PARAM_WO</span> <span class="o">...</span><span class="p">]]</span>
@@ -277,32 +277,31 @@ if individual interpolation for each SATNUM is needed.</p>
 <colgroup>
 <col style="width: 5%" />
 <col style="width: 6%" />
-<col style="width: 3%" />
-<col style="width: 3%" />
-<col style="width: 5%" />
-<col style="width: 2%" />
-<col style="width: 2%" />
-<col style="width: 2%" />
-<col style="width: 3%" />
-<col style="width: 3%" />
-<col style="width: 3%" />
-<col style="width: 2%" />
-<col style="width: 2%" />
-<col style="width: 2%" />
-<col style="width: 3%" />
-<col style="width: 3%" />
-<col style="width: 3%" />
-<col style="width: 3%" />
+<col style="width: 4%" />
 <col style="width: 3%" />
 <col style="width: 5%" />
+<col style="width: 2%" />
+<col style="width: 2%" />
+<col style="width: 2%" />
+<col style="width: 3%" />
+<col style="width: 3%" />
+<col style="width: 3%" />
+<col style="width: 2%" />
+<col style="width: 2%" />
+<col style="width: 2%" />
+<col style="width: 3%" />
+<col style="width: 3%" />
+<col style="width: 3%" />
+<col style="width: 4%" />
+<col style="width: 4%" />
 <col style="width: 5%" />
 <col style="width: 5%" />
 <col style="width: 4%" />
 <col style="width: 3%" />
-<col style="width: 3%" />
+<col style="width: 4%" />
 <col style="width: 6%" />
 <col style="width: 6%" />
-<col style="width: 3%" />
+<col style="width: 4%" />
 </colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>SATNUM</p></th>
@@ -325,8 +324,7 @@ if individual interpolation for each SATNUM is needed.</p>
 <th class="head"><p>sorg</p></th>
 <th class="head"><p>sgcr</p></th>
 <th class="head"><p>krgend</p></th>
-<th class="head"><p>krogend</p></th>
-<th class="head"><p>krowend</p></th>
+<th class="head"><p>kroend</p></th>
 <th class="head"><p>swirr</p></th>
 <th class="head"><p>a</p></th>
 <th class="head"><p>b</p></th>
@@ -357,7 +355,6 @@ if individual interpolation for each SATNUM is needed.</p>
 <td><p>0.01</p></td>
 <td><p>0.87</p></td>
 <td><p>1</p></td>
-<td><p>1</p></td>
 <td><p>0.01</p></td>
 <td><p>0.321</p></td>
 <td><p>-1.283</p></td>
@@ -386,7 +383,6 @@ if individual interpolation for each SATNUM is needed.</p>
 <td><p>0.01</p></td>
 <td><p>0.9</p></td>
 <td><p>1</p></td>
-<td><p>1</p></td>
 <td><p>0.01</p></td>
 <td><p>0.321</p></td>
 <td><p>-1.283</p></td>
@@ -414,7 +410,6 @@ if individual interpolation for each SATNUM is needed.</p>
 <td><p>0.04</p></td>
 <td><p>0.01</p></td>
 <td><p>0.93</p></td>
-<td><p>1</p></td>
 <td><p>1</p></td>
 <td><p>0.01</p></td>
 <td><p>0.321</p></td>
@@ -449,32 +444,32 @@ vice versa. An example table could be</p>
 <tr class="row-even"><td><p>1</p></td>
 <td><p>low</p></td>
 <td><p>2.1</p></td>
-<td><p>…</p></td>
+<td></td>
 </tr>
 <tr class="row-odd"><td><p>1</p></td>
 <td><p>base</p></td>
 <td><p>1.8</p></td>
-<td><p>…</p></td>
+<td></td>
 </tr>
 <tr class="row-even"><td><p>1</p></td>
 <td><p>high</p></td>
 <td><p>1.5</p></td>
-<td><p>…</p></td>
+<td></td>
 </tr>
 <tr class="row-odd"><td><p>2</p></td>
 <td><p>pess</p></td>
 <td><p>2.4</p></td>
-<td><p>…</p></td>
+<td></td>
 </tr>
 <tr class="row-even"><td><p>2</p></td>
 <td><p>base</p></td>
 <td><p>1.9</p></td>
-<td><p>…</p></td>
+<td></td>
 </tr>
 <tr class="row-odd"><td><p>2</p></td>
 <td><p>opt</p></td>
 <td><p>1.2</p></td>
-<td><p>…</p></td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -550,8 +545,8 @@ dataframe property and it will be included in the output.</p>
 </div>
 <div class="section" id="python-api-examples">
 <h2>Python API examples<a class="headerlink" href="#python-api-examples" title="Permalink to this headline">¶</a></h2>
-<div class="section" id="id1">
-<h3>Water-Oil<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="water-oil-curve">
+<h3>Water-oil curve<a class="headerlink" href="#water-oil-curve" title="Permalink to this headline">¶</a></h3>
 <p>To generate SWOF input for Eclipse or flow (OPM) with certain
 saturation endpoints and certain relative permeability endpoints, you
 may run the following code:</p>
@@ -641,8 +636,8 @@ this reason, it is recommended to initialize both the <code class="docutils lite
 dictionary as argument.</p>
 <p>For plotting, <code class="docutils literal notranslate"><span class="pre">GasOil</span></code> object has a function <code class="docutils literal notranslate"><span class="pre">.plotkrgkrog()</span></code>.</p>
 </div>
-<div class="section" id="id2">
-<h3>Gas-Water<a class="headerlink" href="#id2" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="gas-water-curve">
+<h3>Gas-Water curve<a class="headerlink" href="#gas-water-curve" title="Permalink to this headline">¶</a></h3>
 <p>Two-phase gas-water is similar, with typical usage:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">GasWater</span>
 
