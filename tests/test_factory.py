@@ -1,6 +1,6 @@
 """Test the PyscalFactory module"""
 
-import os
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -461,9 +461,9 @@ def test_factory_wateroilgas_wo():
 
 def test_load_relperm_df(tmpdir):
     """Test loading of dataframes with validation from excel or from csv"""
-    testdir = os.path.dirname(os.path.abspath(__file__))
+    testdir = Path(__file__).absolute().parent
 
-    scalfile_xls = testdir + "/data/scal-pc-input-example.xlsx"
+    scalfile_xls = testdir / "data/scal-pc-input-example.xlsx"
 
     scaldata = PyscalFactory.load_relperm_df(scalfile_xls)
     with pytest.raises(IOError):
@@ -509,7 +509,7 @@ def test_load_relperm_df(tmpdir):
     with pytest.raises(ValueError):
         PyscalFactory.load_relperm_df(mergedcase)
 
-    relpermfile_xls = testdir + "/data/relperm-input-example.xlsx"
+    relpermfile_xls = testdir / "data/relperm-input-example.xlsx"
     relpermdata = PyscalFactory.load_relperm_df(relpermfile_xls)
     assert "TAG" in relpermdata
     assert "SATNUM" in relpermdata
@@ -534,10 +534,9 @@ def test_xls_factory():
     This test function predates the load_relperm_df() function, but can
     still be in here.
     """
+    testdir = Path(__file__).absolute().parent
 
-    testdir = os.path.dirname(os.path.abspath(__file__))
-
-    xlsxfile = testdir + "/data/scal-pc-input-example.xlsx"
+    xlsxfile = testdir / "data/scal-pc-input-example.xlsx"
 
     scalinput = pd.read_excel(xlsxfile).set_index(["SATNUM", "CASE"])
 
@@ -556,9 +555,9 @@ def test_xls_factory():
 
 def test_create_lists():
     """Test the factory methods for making pyscal lists"""
-    testdir = os.path.dirname(os.path.abspath(__file__))
+    testdir = Path(__file__).absolute().parent
 
-    scalfile_xls = testdir + "/data/scal-pc-input-example.xlsx"
+    scalfile_xls = testdir / "data/scal-pc-input-example.xlsx"
     scaldata = PyscalFactory.load_relperm_df(scalfile_xls)
     scalrec_list = PyscalFactory.create_scal_recommendation_list(scaldata)
     assert len(scalrec_list) == 3
@@ -586,7 +585,6 @@ def test_create_lists():
 
 def test_scalrecommendation():
     """Testing making SCAL rec from dict of dict."""
-
     pyscal_factory = PyscalFactory()
 
     scal_input = {
@@ -624,7 +622,6 @@ def test_scalrecommendation():
 
 def test_scalrecommendation_gaswater():
     """Testing making SCAL rec from dict of dict for gaswater input"""
-
     pyscal_factory = PyscalFactory()
 
     scal_input = {
@@ -642,10 +639,9 @@ def test_scalrecommendation_gaswater():
 
 def test_xls_scalrecommendation():
     """Test making SCAL recommendations from xls data"""
+    testdir = Path(__file__).absolute().parent
 
-    testdir = os.path.dirname(os.path.abspath(__file__))
-
-    xlsxfile = testdir + "/data/scal-pc-input-example.xlsx"
+    xlsxfile = testdir / "data/scal-pc-input-example.xlsx"
     scalinput = pd.read_excel(xlsxfile).set_index(["SATNUM", "CASE"])
     print(scalinput)
     for satnum in scalinput.index.levels[0].values:
