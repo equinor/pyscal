@@ -1,15 +1,26 @@
 """Test module for monotonocity support functions in pyscal"""
 
+import numpy as np
 import pandas as pd
 
 import pytest
 
-
 from pyscal.utils.string import df2str
+from pyscal.utils.monotonocity import (
+    clip_accumulate,
+    check_limits,
+    rows_to_be_fixed,
+    check_almost_monotone,
+    validate_monotonocity_arg,
+)
 
 
 def test_df2str_monotone():
-    """Test the monotonocity enforcement in df2str()"""
+    """Test the monotonocity enforcement in df2str()
+
+    This test function essentially tests the function
+    utils/monotonicity.py::modify_dframe_monotonocity
+    """
 
     # A constant nonzero column, makes no sense as capillary pressure
     # but still we ensure it runs in eclipse:
@@ -280,3 +291,131 @@ def test_df2str_nonstrict_monotonocity_valueerror(series, monotonocity):
             digits=2,
             monotonocity=monotonocity,
         )
+
+
+@pytest.mark.parametrize(
+    "series, monotonocity, expected_series",
+    [
+        ([], {"sign": 1}, []),
+        ([0], {"sign": 1}, [0]),
+        ([0, 0], {"sign": 1}, [0, 0]),
+        ([0, -0.1], {"sign": 1}, [0, 0]),
+        ([0, -0.1, -0.1], {"sign": 1}, [0, 0, 0]),
+        ([0, -0.1], {"sign": -1}, [0, -0.1]),
+        ([0, -0.1, -0.1], {"sign": -1}, [0, -0.1, -0.1]),
+        (np.array([0, 2]), {"sign": 1, "upper": 1}, [0, 1]),
+        ([0, 2], {"sign": 1, "upper": 1, "lower": 0.1}, [0.1, 1]),
+        ([0, 2], {"sign": -1, "upper": 1, "lower": 0.1}, [0.1, 0.1]),
+    ],
+)
+def test_clip_accumulate(series, monotonocity, expected_series):
+    """Test that we are able to clip to upper and lower limits, and
+    use numpy's accumulate to ensure non-strict monotonocity"""
+    assert (clip_accumulate(series, monotonocity) == expected_series).all()
+
+
+@pytest.mark.parametrize(
+    "series, monotonocity, colname, error_str",
+    [
+        ([], {}, "", None),
+        ([], {}, "foo", None),
+        ([2], {"upper": 1}, "foobar", "larger than upper limit in column foobar"),
+        ([2], {"upper": 1}, "", "larger than upper limit in column"),
+        ([2], {"upper": 1}, None, "larger than upper limit in column None"),
+        ([2], {"lower": 3}, "foobar", "smaller than lower limit in column foobar"),
+    ],
+)
+def test_check_limits(series, monotonocity, colname, error_str):
+    """Test that we can check upper and lower limits in series
+    with proper error messages."""
+    if error_str is not None:
+        with pytest.raises(ValueError) as err:
+            check_limits(series, monotonocity, colname)
+        assert error_str in str(err)
+    else:
+        check_limits(series, monotonocity, colname)
+
+
+@pytest.mark.parametrize(
+    "series, monotonocity, digits, expected",
+    [
+        ([], {"sign": 1}, 0, []),
+        ([], {"sign": 1}, 2, []),
+        ([0], {"sign": 1}, 2, [False]),
+        #
+        ([0, 0.1], {"sign": 1}, 2, [False, False]),
+        ([0, 0.1], {"sign": 1}, 1, [False, False]),
+        ([0, 0.1], {"sign": 1}, 0, [False, True]),
+        #
+        ([0.1, 0], {"sign": -1}, 2, [False, False]),
+        ([0.1, 0], {"sign": -2}, 1, [False, False]),
+        ([0.1, 0], {"sign": -1}, 0, [False, True]),
+        # But this is allowed if at limits:
+        ([0, 0.1], {"sign": 2, "upper": 0.1}, 0, [False, False]),
+        ([0.1, 0], {"sign": -1, "lower": 0}, 0, [False, False]),
+    ],
+)
+def test_rows_to_be_fixed(series, monotonocity, digits, expected):
+    """Check that we can make a boolean array of which elements must be fixed for
+    monotonocity"""
+    assert (rows_to_be_fixed(series, monotonocity, digits) == expected).all()
+
+
+@pytest.mark.parametrize(
+    "series, digits, sign, expected_error",
+    [
+        ([], 0, 1, None),
+        ([0], 0, 1, None),
+        ([0, -1], 0, 1, None),
+        ([0, -1], 1, 1, None),  # Assumed constant with digits=1
+        ([0, -1.001], 1, 1, ValueError),  # Just not constant enough
+        ([0, -1], 2, 1, ValueError),
+        ([0, 1], 2, -1, ValueError),
+        ([0, 1], 1, -1, None),
+    ],
+)
+def test_check_almost_monotone(series, digits, sign, expected_error):
+    """Test that we have a way to determine if a series is almost monotone, that
+    is with respect to how many digits is to be looked at."""
+    if expected_error is not None:
+        with pytest.raises(ValueError):
+            check_almost_monotone(series, digits, sign)
+    else:
+        check_almost_monotone(series, digits, sign)
+
+
+@pytest.mark.parametrize(
+    "monotonocity, dframe_colnames, error_str",
+    [
+        ({}, [], None),
+        ("sign", [], "monotonocity argument must be a dict"),
+        ({"sign": 1}, [], "monotonocity argument must be a dict of dicts"),
+        ({"foo": {"sign": 1}}, [], "Column foo does not exist in dataframe"),
+        ({"foo": {"sign": 1}}, ["foo"], None),
+        ({"foo": {"sgn": 1}}, ["foo"], "Unknown keys in monotonocity dict"),
+        ({"foo": {"upper": 1}}, ["foo"], "Monotonocity sign not specified for foo"),
+        ({"foo": {"sign": 1, "upper": 1}}, ["foo"], None),
+        ({"foo": {"sign": 1, "lower": 1}}, ["foo"], None),
+        ({"foo": {"sign": 1, "allowzero": True}}, ["foo"], None),
+        (
+            {"foo": {"sign": 1, "allowzero": "yes"}},
+            ["foo"],
+            "allowzero in monotonocity argument must be True/False",
+        ),
+        (
+            {"foo": {"sign": "positive"}},
+            ["foo"],
+            "Monotonocity sign positive not valid",
+        ),
+        ({"foo": {"sign": 2}}, ["foo"], "Monotonocity sign must be -1 or +1"),
+        ({"foo": {"sign": -2}}, ["foo"], "Monotonocity sign must be -1 or +1"),
+    ],
+)
+def test_validate_monotonocity_arg(monotonocity, dframe_colnames, error_str):
+    """Check error messages for monotonocity dictionaries"""
+    if error_str is not None:
+        with pytest.raises(ValueError) as err:
+            validate_monotonocity_arg(monotonocity, dframe_colnames)
+        assert error_str in str(err)
+    else:
+        validate_monotonocity_arg(monotonocity, dframe_colnames)
