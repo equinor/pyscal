@@ -1,11 +1,7 @@
-# -*- coding: utf-8 -*-
 """Wateroil module"""
-from __future__ import division, absolute_import
-from __future__ import print_function
 
 import math
 import logging
-import six
 
 import numpy as np
 import pandas as pd
@@ -100,7 +96,7 @@ class WaterOil(object):
         if _sgcr is not None:
             self.sgcr = _sgcr
 
-        if not isinstance(tag, six.string_types):
+        if not isinstance(tag, str):
             tag = ""
         self.swirr = swirr
         self.swl = max(swl, swirr)  # Cannot allow swl < swirr. Warn?

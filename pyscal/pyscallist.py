@@ -1,13 +1,8 @@
 """Container class for list of Pyscal objects"""
 
-from __future__ import division, absolute_import
-from __future__ import print_function
-
 import os
-
 import logging
 
-import six
 import pandas as pd
 
 from pyscal import WaterOil, GasOil, GasWater, WaterOilGas, SCALrecommendation
@@ -229,7 +224,7 @@ class PyscalList(object):
             if directory and not os.path.exists(directory):
                 os.makedirs(directory)
             with open(filename, "w") as file_h:
-                file_h.write(six.ensure_str(family_1_str))
+                file_h.write(str(family_1_str))
         return family_1_str
 
     def dump_family_2(self, filename=None):
@@ -266,7 +261,7 @@ class PyscalList(object):
             if directory and not os.path.exists(directory):
                 os.makedirs(directory)
             with open(filename, "w") as file_h:
-                file_h.write(six.ensure_str(family_2_str))
+                file_h.write(str(family_2_str))
         return family_2_str
 
     def interpolate(self, int_params_wo, int_params_go=None, h=None):
@@ -355,7 +350,7 @@ class PyscalList(object):
             if directory and not os.path.exists(directory):
                 os.makedirs(directory)
             with open(write_to_filename, "w") as file_h:
-                file_h.write(six.ensure_str(string))
+                file_h.write(str(string))
         return string
 
     def SWOF(self, write_to_filename=None):

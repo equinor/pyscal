@@ -1,9 +1,5 @@
 """Test module for SLGOF export from GasOil"""
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 from hypothesis import given, settings
 import hypothesis.strategies as st
 

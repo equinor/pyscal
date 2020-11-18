@@ -1,6 +1,4 @@
 """pyscal"""
-from __future__ import division, absolute_import
-from __future__ import print_function
 
 
 from .wateroil import WaterOil  # noqa

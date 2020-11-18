@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """Support functions for capillary pressure"""
 
 import math

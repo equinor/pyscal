@@ -1,5 +1,3 @@
-# coding: utf-8
-
 from os import path
 
 from setuptools import setup, find_packages
@@ -23,11 +21,10 @@ REQUIREMENTS = [
     "numpy",
     "pandas",
     "scipy",
-    "six>=1.12.0",
     "xlrd",
 ]
 TEST_REQUIREMENTS = [
-    "black>=20.8b0; python_version >= '3'",
+    "black>=20.8b0",
     "flake8",
     "hypothesis",
     "pytest",
@@ -62,10 +59,7 @@ setup(
             "GNU Lesser General Public License v3 or later (LGPLv3+)"
         ),
         "Natural Language :: English",
-        "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
-        "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",

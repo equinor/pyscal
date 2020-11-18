@@ -1,6 +1,4 @@
 """Container object for one WaterOil and one GasOil object"""
-from __future__ import division, absolute_import
-from __future__ import print_function
 
 import logging
 import numpy as np

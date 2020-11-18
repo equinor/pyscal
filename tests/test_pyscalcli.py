@@ -1,9 +1,4 @@
 """Test the pyscal client"""
-# -*- encoding: utf-8 -*-
-
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 
 import os
 import sys
@@ -26,18 +21,13 @@ def test_installed():
     assert subprocess.check_output(["pyscal", "-h"])
     assert subprocess.check_output(["pyscal", "--help"])
 
-    # On Py2, the version output is sent to stderr:
-    assert subprocess.check_output(["pyscal", "--version"], stderr=subprocess.STDOUT)
+    assert subprocess.check_output(["pyscal", "--version"])
 
 
 def test_log_levels(tmpdir, caplog):
     """Test that we can control the log level from the command line
     client, and get log output from modules deep down"""
-    if "__file__" in globals():
-        # Easen up copying test code into interactive sessions
-        testdir = os.path.dirname(os.path.abspath(__file__))
-    else:
-        testdir = os.path.abspath(".")
+    testdir = os.path.dirname(os.path.abspath(__file__))
 
     relperm_file = testdir + "/data/relperm-input-example.xlsx"
 
@@ -79,11 +69,7 @@ def test_pyscal_client_static(tmpdir, caplog, default_loglevel):
     # pylint: disable=unused-argument
     # default_loglevel fixture is in conftest.py
     """Test pyscal client for static relperm input"""
-    if "__file__" in globals():
-        # Easen up copying test code into interactive sessions
-        testdir = os.path.dirname(os.path.abspath(__file__))
-    else:
-        testdir = os.path.abspath(".")
+    testdir = os.path.dirname(os.path.abspath(__file__))
 
     relperm_file = testdir + "/data/relperm-input-example.xlsx"
 
@@ -338,11 +324,7 @@ def test_pyscal_client_scal(tmpdir, caplog, default_loglevel):
     # pylint: disable=unused-argument
     # default_loglevel fixture is in conftest.py
     """Test the command line endpoint on SCAL recommendation"""
-    if "__file__" in globals():
-        # Easen up copying test code into interactive sessions
-        testdir = os.path.dirname(os.path.abspath(__file__))
-    else:
-        testdir = os.path.abspath(".")
+    testdir = os.path.dirname(os.path.abspath(__file__))
 
     scalrec_file = testdir + "/data/scal-pc-input-example.xlsx"
 

@@ -9,7 +9,6 @@ Contributing to pyscal
 Code style
 ----------
 
-* Must work in both Python 2 and 3.
 * Use the black formatter to format your code
 
   * ``pip install black``

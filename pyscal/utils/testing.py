@@ -1,9 +1,8 @@
 """Common functions and mock data for usage in pyscal testing"""
-from __future__ import absolute_import
 
+import io
 import numpy as np
 import pandas as pd
-import six
 
 
 from pyscal import WaterOil, GasOil
@@ -80,7 +79,7 @@ def sat_table_str_ok(sat_table_str):
     assert list(set(floats_pr_line))[0] in [3, 4]
 
     # So we should be able to parse this to a dataframe:
-    dframe = pd.read_csv(six.StringIO("\n".join(number_lines)), sep=" ", header=None)
+    dframe = pd.read_csv(io.StringIO("\n".join(number_lines)), sep=" ", header=None)
     assert len(dframe) == len(number_lines)
 
     # The first column holds saturations, for pyscal test-data that
