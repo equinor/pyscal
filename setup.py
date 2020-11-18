@@ -28,6 +28,7 @@ TEST_REQUIREMENTS = [
     "flake8",
     "hypothesis",
     "pytest",
+    "rstcheck",
     "sphinx",
     "sphinx-argparse",
     "sphinx_rtd_theme",

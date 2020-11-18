@@ -60,11 +60,14 @@ jobs:
           python -c "import pyscal"
           pytest tests/
 
+      - name: Syntax check documentation
+        run: |
+          rstcheck -r docs
+
       - name: Build documentation
         run: |
           sphinx-apidoc -f -H "API for pyscal" -o docs pyscal
-          # Build sphinx with "warning-is-error":
-          python setup.py build_sphinx -W
+          python setup.py build_sphinx
 
       - name: Update GitHub pages
         # if: github.event_name == 'release' && ....   # Possibly add this back later

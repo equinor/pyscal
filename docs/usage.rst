@@ -13,13 +13,14 @@ The command line tool
 
 An example input table could look like:
 
-========  ==========  ======  =====  ========  ====  ====  ====  =====  =====  =====  ====  ====  ====  =====  =====  =====  ======  ======  ========  =========  =========  =======  =====  ======  ==========  ==========  ======
-  SATNUM  comment      sorw    swl    krwend    Lw    Ew    Tw    Low    Eow    Tow    Lg    Eg    Tg    Log    Eog    Tog    sorg    sgcr    krgend    krogend    krowend    swirr      a       b    poro_ref    perm_ref    drho
-========  ==========  ======  =====  ========  ====  ====  ====  =====  =====  =====  ====  ====  ====  =====  =====  =====  ======  ======  ========  =========  =========  =======  =====  ======  ==========  ==========  ======
-       1  Sognefj      0.19    0.12      0.39  2.53  2.37  0.99   2.5    1.92   1.14  1.71  1.27  1.03   2.92   3.22   1.28    0.07    0.01      0.87          1          1     0.01  0.321  -1.283        0.25        1000     300
-       2  Myolites     0.19    0.16      0.3   2.63  1.94  0.97   2.38   2.2    1.22  1.78  1.13  1.01   2.71   3.62   1.42    0.06    0.01      0.9           1          1     0.01  0.321  -1.283        0.18         300     300
-       3  Foobarites   0.28    0.23      0.18  2.81  1.24  0.93   2.12   3.02   1.4   1.91  0.91  0.96   2.4    4.79   1.8     0.04    0.01      0.93          1          1     0.01  0.321  -1.283        0.1            1     300
-========  ==========  ======  =====  ========  ====  ====  ====  =====  =====  =====  ====  ====  ====  =====  =====  =====  ======  ======  ========  =========  =========  =======  =====  ======  ==========  ==========  ======
+========  ==========  ======  =====  ========  ====  ====  ====  =====  =====  =====  ====  ====  ====  =====  =====  =====  ======  ======  ========  =========  =======  =====  ======  ==========  ==========  ======
+  SATNUM  comment      sorw    swl    krwend    Lw    Ew    Tw    Low    Eow    Tow    Lg    Eg    Tg    Log    Eog    Tog    sorg    sgcr    krgend    kroend     swirr      a       b    poro_ref    perm_ref    drho
+========  ==========  ======  =====  ========  ====  ====  ====  =====  =====  =====  ====  ====  ====  =====  =====  =====  ======  ======  ========  =========  =======  =====  ======  ==========  ==========  ======
+       1  Sognefj      0.19    0.12      0.39  2.53  2.37  0.99   2.5    1.92   1.14  1.71  1.27  1.03   2.92   3.22   1.28    0.07    0.01      0.87          1     0.01  0.321  -1.283        0.25        1000     300
+       2  Myolites     0.19    0.16      0.3   2.63  1.94  0.97   2.38   2.2    1.22  1.78  1.13  1.01   2.71   3.62   1.42    0.06    0.01      0.9           1     0.01  0.321  -1.283        0.18         300     300
+       3  Foobarites   0.28    0.23      0.18  2.81  1.24  0.93   2.12   3.02   1.4   1.91  0.91  0.96   2.4    4.79   1.8     0.04    0.01      0.93          1     0.01  0.321  -1.283        0.1            1     300
+========  ==========  ======  =====  ========  ====  ====  ====  =====  =====  =====  ====  ====  ====  =====  =====  =====  ======  ======  ========  =========  =======  =====  ======  ==========  ==========  ======
+
 
 For SCAL recommendation where the intention is to interpolate between a pessimistic,
 through a base case and to a optimistic curve set, this is accomplished
@@ -31,12 +32,12 @@ vice versa. An example table could be
 ======= ===== ====== ======
  SATNUM CASE     nw   etc..
 ======= ===== ====== ======
-      1 low      2.1    ...
-      1 base     1.8    ...
-      1 high     1.5    ...
-      2 pess     2.4    ...
-      2 base     1.9    ...
-      2 opt      1.2    ...
+      1 low      2.1    ..
+      1 base     1.8    ..
+      1 high     1.5    ..
+      2 pess     2.4    ..
+      2 base     1.9    ..
+      2 opt      1.2    ..
 ======= ===== ====== ======
 
 The values in the CASE column are also case-insensitive. Remember to always
@@ -126,8 +127,8 @@ dataframe property and it will be included in the output.
 Python API examples
 -------------------
 
-Water-Oil
-^^^^^^^^^
+Water-oil curve
+^^^^^^^^^^^^^^^
 
 To generate SWOF input for Eclipse or flow (OPM) with certain
 saturation endpoints and certain relative permeability endpoints, you
@@ -235,8 +236,8 @@ dictionary as argument.
 
 For plotting, ``GasOil`` object has a function ``.plotkrgkrog()``.
 
-Gas-Water
-^^^^^^^^^
+Gas-Water curve
+^^^^^^^^^^^^^^^
 
 Two-phase gas-water is similar, with typical usage:
 
