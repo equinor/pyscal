@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal.wateroilgas &mdash; pyscal 0.7.1.dev4+g0b2006d documentation</title>
+  <title>pyscal.wateroilgas &mdash; pyscal 0.7.1.dev5+gd2b604e documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.7.1.dev4+g0b2006d
+                0.7.1.dev5+gd2b604e
               </div>
             
           
@@ -165,6 +165,7 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 
 <span class="kn">import</span> <span class="nn">pyscal</span>
 <span class="kn">from</span> <span class="nn">pyscal.constants</span> <span class="kn">import</span> <span class="n">SWINTEGERS</span>
@@ -446,7 +447,6 @@
         <span class="c1"># pylint: disable=import-outside-toplevel</span>
         <span class="c1"># Lazy import for speed reasons, this function is seldom used.</span>
         <span class="kn">import</span> <span class="nn">tempfile</span>
-        <span class="kn">import</span> <span class="nn">os</span>
         <span class="kn">import</span> <span class="nn">subprocess</span>
 
         <span class="n">ecldeckbeforeprops</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;RUNSPEC</span>
@@ -500,7 +500,7 @@
         <span class="n">ecldeck</span> <span class="o">=</span> <span class="n">ecldeckbeforeprops</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">SWOF</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">SGOF</span><span class="p">()</span> <span class="o">+</span> <span class="n">ecldeckafterprops</span>
 
         <span class="n">tmpdir</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">()</span>
-        <span class="n">eclfile</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">,</span> <span class="s2">&quot;RELPERMTEST.DATA&quot;</span><span class="p">)</span>
+        <span class="n">eclfile</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">tmpdir</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;RELPERMTEST.DATA&quot;</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">eclfile</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">eclfileh</span><span class="p">:</span>
             <span class="n">eclfileh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">ecldeck</span><span class="p">)</span>
         <span class="n">ecloutput</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span>
