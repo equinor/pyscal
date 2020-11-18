@@ -1,6 +1,6 @@
 """Container class for list of Pyscal objects"""
 
-import os
+from pathlib import Path
 import logging
 
 import pandas as pd
@@ -220,11 +220,8 @@ class PyscalList(object):
                 len(self),
                 filename,
             )
-            directory = os.path.dirname(filename)
-            if directory and not os.path.exists(directory):
-                os.makedirs(directory)
-            with open(filename, "w") as file_h:
-                file_h.write(str(family_1_str))
+            Path(filename).parent.mkdir(exist_ok=True, parents=True)
+            Path(filename).write_text(family_1_str, encoding="utf-8")
         return family_1_str
 
     def dump_family_2(self, filename=None):
@@ -257,11 +254,8 @@ class PyscalList(object):
                 len(self),
                 filename,
             )
-            directory = os.path.dirname(filename)
-            if directory and not os.path.exists(directory):
-                os.makedirs(directory)
-            with open(filename, "w") as file_h:
-                file_h.write(str(family_2_str))
+            Path(filename).parent.mkdir(exist_ok=True, parents=True)
+            Path(filename).write_text(family_2_str, encoding="utf-8")
         return family_2_str
 
     def interpolate(self, int_params_wo, int_params_go=None, h=None):
@@ -346,11 +340,8 @@ class PyscalList(object):
                 else:
                     string += outputter(header=False)
         if write_to_filename:
-            directory = os.path.dirname(write_to_filename)
-            if directory and not os.path.exists(directory):
-                os.makedirs(directory)
-            with open(write_to_filename, "w") as file_h:
-                file_h.write(str(string))
+            Path(write_to_filename).parent.mkdir(parents=True, exist_ok=True)
+            Path(write_to_filename).write_text(string, encoding="utf-8")
         return string
 
     def SWOF(self, write_to_filename=None):

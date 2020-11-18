@@ -1,6 +1,6 @@
 """Test the PyscalList module"""
 
-import os
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -62,10 +62,10 @@ def test_pyscallist_basic():
 
 def test_load_scalrec():
     """Load a SATNUM range from xlsx"""
-    testdir = os.path.dirname(os.path.abspath(__file__))
+    testdir = Path(__file__).absolute().parent
 
     scalrec_data = PyscalFactory.load_relperm_df(
-        testdir + "/data/scal-pc-input-example.xlsx"
+        testdir / "data/scal-pc-input-example.xlsx"
     )
     scalrec_list = PyscalFactory.create_scal_recommendation_list(scalrec_data)
     wog_list = scalrec_list.interpolate(-0.3)
@@ -100,10 +100,10 @@ def test_load_scalrec():
 
 def test_df():
     """Test dataframe dumps"""
-    testdir = os.path.dirname(os.path.abspath(__file__))
+    testdir = Path(__file__).absolute().parent
 
     scalrec_data = PyscalFactory.load_relperm_df(
-        testdir + "/data/scal-pc-input-example.xlsx"
+        testdir / "data/scal-pc-input-example.xlsx"
     )
     scalrec_list = PyscalFactory.create_scal_recommendation_list(scalrec_data)
     wog_list = scalrec_list.interpolate(-0.3)
@@ -194,10 +194,10 @@ def test_df():
 
 def test_load_scalrec_tags():
     """Test tag handling for a SCAL recommendation with SATNUM range"""
-    testdir = os.path.dirname(os.path.abspath(__file__))
+    testdir = Path(__file__).absolute().parent
 
     scalrec_data = PyscalFactory.load_relperm_df(
-        testdir + "/data/scal-pc-input-example.xlsx"
+        testdir / "data/scal-pc-input-example.xlsx"
     )
     scalrec_list = PyscalFactory.create_scal_recommendation_list(scalrec_data)
 
@@ -254,10 +254,10 @@ def test_load_scalrec_tags():
 
 def test_dump():
     """Test dumping Eclipse include data to file"""
-    testdir = os.path.dirname(os.path.abspath(__file__))
+    testdir = Path(__file__).absolute().parent
 
     relperm_data = PyscalFactory.load_relperm_df(
-        testdir + "/data/relperm-input-example.xlsx"
+        testdir / "data/relperm-input-example.xlsx"
     )
     pyscal_list = PyscalFactory.create_pyscal_list(relperm_data)
 

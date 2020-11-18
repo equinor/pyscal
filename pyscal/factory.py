@@ -1,8 +1,7 @@
 """Factory functions for creating the pyscal objects"""
 
 import logging
-
-import os
+from pathlib import Path
 
 import pandas as pd
 import numpy as np
@@ -600,8 +599,8 @@ class PyscalFactory(object):
         Returns:
             pd.DataFrame. To be handed over to pyscal list factory methods.
         """
-        if isinstance(inputfile, str) and os.path.exists(inputfile):
-            if inputfile.lower().endswith("csv") and sheet_name is not None:
+        if isinstance(inputfile, (str, Path)) and Path(inputfile).is_file():
+            if str(inputfile).lower().endswith("csv") and sheet_name is not None:
                 logger.warning(
                     "Sheet name only relevant for XLSX files, ignoring %s", sheet_name
                 )
@@ -632,7 +631,7 @@ class PyscalFactory(object):
         elif isinstance(inputfile, pd.DataFrame):
             input_df = inputfile
         else:
-            if isinstance(inputfile, str) and not os.path.exists(inputfile):
+            if isinstance(inputfile, str) and not Path(inputfile).is_file():
                 raise IOError("File not found " + str(inputfile))
             raise ValueError("Unsupported argument " + str(inputfile))
         assert isinstance(input_df, pd.DataFrame)

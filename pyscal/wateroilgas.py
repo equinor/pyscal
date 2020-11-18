@@ -3,6 +3,7 @@
 import logging
 import numpy as np
 import pandas as pd
+from pathlib import Path
 
 import pyscal
 from pyscal.constants import SWINTEGERS
@@ -284,7 +285,6 @@ class WaterOilGas(object):
         # pylint: disable=import-outside-toplevel
         # Lazy import for speed reasons, this function is seldom used.
         import tempfile
-        import os
         import subprocess
 
         ecldeckbeforeprops = """RUNSPEC
@@ -338,7 +338,7 @@ EQUIL
         ecldeck = ecldeckbeforeprops + self.SWOF() + self.SGOF() + ecldeckafterprops
 
         tmpdir = tempfile.mkdtemp()
-        eclfile = os.path.join(tmpdir, "RELPERMTEST.DATA")
+        eclfile = Path(tmpdir) / "RELPERMTEST.DATA"
         with open(eclfile, "w") as eclfileh:
             eclfileh.write(ecldeck)
         ecloutput = subprocess.check_output(

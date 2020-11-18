@@ -1,9 +1,9 @@
 """Test the pyscal client"""
 
-import os
 import sys
 import subprocess
 import logging
+from pathlib import Path
 
 import pandas as pd
 
@@ -27,14 +27,12 @@ def test_installed():
 def test_log_levels(tmpdir, caplog):
     """Test that we can control the log level from the command line
     client, and get log output from modules deep down"""
-    testdir = os.path.dirname(os.path.abspath(__file__))
-
-    relperm_file = testdir + "/data/relperm-input-example.xlsx"
+    relperm_file = Path(__file__).absolute().parent / "data/relperm-input-example.xlsx"
 
     tmpdir.chdir()
 
     caplog.clear()
-    sys.argv = ["pyscal", relperm_file]
+    sys.argv = ["pyscal", str(relperm_file)]
     pyscalcli.main()
 
     # Ensure we have no INFO logging:
@@ -49,7 +47,7 @@ def test_log_levels(tmpdir, caplog):
     )
 
     caplog.clear()
-    sys.argv = ["pyscal", "--verbose", relperm_file]
+    sys.argv = ["pyscal", "--verbose", str(relperm_file)]
     pyscalcli.main()
     assert not any(record.levelno == logging.DEBUG for record in caplog.records)
     assert any(record.levelno == logging.INFO for record in caplog.records)
@@ -58,7 +56,7 @@ def test_log_levels(tmpdir, caplog):
     assert any("Dumping" in str(record) for record in caplog.records)
 
     caplog.clear()
-    sys.argv = ["pyscal", "--debug", relperm_file]
+    sys.argv = ["pyscal", "--debug", str(relperm_file)]
     pyscalcli.main()
     assert any(record.levelno == logging.DEBUG for record in caplog.records)
     assert any("Initialized GasOil with" in str(record) for record in caplog.records)
@@ -69,16 +67,15 @@ def test_pyscal_client_static(tmpdir, caplog, default_loglevel):
     # pylint: disable=unused-argument
     # default_loglevel fixture is in conftest.py
     """Test pyscal client for static relperm input"""
-    testdir = os.path.dirname(os.path.abspath(__file__))
-
-    relperm_file = testdir + "/data/relperm-input-example.xlsx"
+    testdir = Path(__file__).absolute().parent
+    relperm_file = testdir / "data/relperm-input-example.xlsx"
 
     tmpdir.chdir()
 
     caplog.clear()
-    sys.argv = ["pyscal", relperm_file]
+    sys.argv = ["pyscal", str(relperm_file)]
     pyscalcli.main()
-    assert os.path.exists("relperm.inc")
+    assert Path("relperm.inc").is_file()
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
     assert not any(record.levelno == logging.INFO for record in caplog.records)
 
@@ -93,22 +90,22 @@ def test_pyscal_client_static(tmpdir, caplog, default_loglevel):
     sat_table_str_ok(relpermlines)
 
     caplog.clear()
-    sys.argv = ["pyscal", relperm_file, "--output", "alt2relperm.inc"]
+    sys.argv = ["pyscal", str(relperm_file), "--output", "alt2relperm.inc"]
     pyscalcli.main()
-    assert os.path.exists("alt2relperm.inc")
+    assert Path("alt2relperm.inc").is_file()
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
 
     caplog.clear()
-    sys.argv = ["pyscal", relperm_file, "-o", "altrelperm.inc"]
+    sys.argv = ["pyscal", str(relperm_file), "-o", "altrelperm.inc"]
     pyscalcli.main()
-    assert os.path.exists("altrelperm.inc")
+    assert Path("altrelperm.inc").is_file()
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
 
     caplog.clear()
-    sys.argv = ["pyscal", relperm_file, "--family2", "-o", "relperm-fam2.inc"]
+    sys.argv = ["pyscal", str(relperm_file), "--family2", "-o", "relperm-fam2.inc"]
     pyscalcli.main()
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
-    assert os.path.exists("relperm-fam2.inc")
+    assert Path("relperm-fam2.inc").is_file()
     relpermlines = "\n".join(open("relperm-fam2.inc").readlines())
     assert "SWFN" in relpermlines
     assert "SGFN" in relpermlines
@@ -118,10 +115,10 @@ def test_pyscal_client_static(tmpdir, caplog, default_loglevel):
     sat_table_str_ok(relpermlines)
 
     caplog.clear()
-    sys.argv = ["pyscal", relperm_file, "--slgof", "--output", "relperm-slgof.inc"]
+    sys.argv = ["pyscal", str(relperm_file), "--slgof", "--output", "relperm-slgof.inc"]
     pyscalcli.main()
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
-    assert os.path.exists("relperm-slgof.inc")
+    assert Path("relperm-slgof.inc").is_file()
     relpermlines = "\n".join(open("relperm-slgof.inc").readlines())
     assert "SWOF" in relpermlines
     assert "SGOF" not in relpermlines
@@ -133,26 +130,26 @@ def test_pyscal_client_static(tmpdir, caplog, default_loglevel):
     # Dump to deep directory structure that does not exists
     sys.argv = [
         "pyscal",
-        relperm_file,
+        str(relperm_file),
         "--family2",
         "-o",
         "eclipse/include/props/relperm-fam2.inc",
     ]
     pyscalcli.main()
-    assert os.path.exists("eclipse/include/props/relperm-fam2.inc")
+    assert Path("eclipse/include/props/relperm-fam2.inc").is_file()
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
 
     caplog.clear()
-    sys.argv = ["pyscal", relperm_file, "-o", "include/props/relperm.inc"]
+    sys.argv = ["pyscal", str(relperm_file), "-o", "include/props/relperm.inc"]
     pyscalcli.main()
-    assert os.path.exists("include/props/relperm.inc")
+    assert Path("include/props/relperm.inc").is_file()
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
 
     caplog.clear()
     # Check that we can read specific sheets
     sys.argv = [
         "pyscal",
-        relperm_file,
+        str(relperm_file),
         "--sheet_name",
         "relperm",
         "--output",
@@ -170,7 +167,7 @@ def test_pyscal_client_static(tmpdir, caplog, default_loglevel):
     caplog.clear()
     sys.argv = [
         "pyscal",
-        relperm_file,
+        str(relperm_file),
         "--sheet_name",
         "simple",
         "--output",
@@ -187,7 +184,7 @@ def test_pyscal_client_static(tmpdir, caplog, default_loglevel):
     caplog.clear()
     sys.argv = [
         "pyscal",
-        relperm_file,
+        str(relperm_file),
         "--sheet_name",
         u"NOTEXISTINGÆÅ",
         "--output",
@@ -195,16 +192,23 @@ def test_pyscal_client_static(tmpdir, caplog, default_loglevel):
     ]
     with pytest.raises(SystemExit):
         pyscalcli.main()
-    assert not os.path.exists("relperm-empty.inc")
+    assert not Path("relperm-empty.inc").is_file()
 
     caplog.clear()
-    sys.argv = ["pyscal", relperm_file, "--delta_s", "0.1", "-o", "deltas0p1.inc"]
+    sys.argv = ["pyscal", str(relperm_file), "--delta_s", "0.1", "-o", "deltas0p1.inc"]
     pyscalcli.main()
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
     linecount1 = len(open("deltas0p1.inc").readlines())
 
     caplog.clear()
-    sys.argv = ["pyscal", relperm_file, "--delta_s", "0.01", "-o", "deltas0p01.inc"]
+    sys.argv = [
+        "pyscal",
+        str(relperm_file),
+        "--delta_s",
+        "0.01",
+        "-o",
+        "deltas0p01.inc",
+    ]
     pyscalcli.main()
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
     linecount2 = len(open("deltas0p01.inc").readlines())
@@ -324,18 +328,16 @@ def test_pyscal_client_scal(tmpdir, caplog, default_loglevel):
     # pylint: disable=unused-argument
     # default_loglevel fixture is in conftest.py
     """Test the command line endpoint on SCAL recommendation"""
-    testdir = os.path.dirname(os.path.abspath(__file__))
-
-    scalrec_file = testdir + "/data/scal-pc-input-example.xlsx"
+    scalrec_file = Path(__file__).absolute().parent / "data/scal-pc-input-example.xlsx"
 
     tmpdir.chdir()
 
-    sys.argv = ["pyscal", scalrec_file]
+    sys.argv = ["pyscal", str(scalrec_file)]
     with pytest.raises(SystemExit):
         pyscalcli.main()
 
     caplog.clear()
-    sys.argv = ["pyscal", scalrec_file, "--int_param_wo", 0, "-o", "relperm1.inc"]
+    sys.argv = ["pyscal", str(scalrec_file), "--int_param_wo", 0, "-o", "relperm1.inc"]
     pyscalcli.main()
     assert not any(record.levelno == logging.INFO for record in caplog.records)
     assert not any(record.levelno == logging.WARNING for record in caplog.records)
@@ -350,7 +352,14 @@ def test_pyscal_client_scal(tmpdir, caplog, default_loglevel):
     # assert "int_param_wo: 0\n" in relpermlines  # this should be in the tag.
 
     caplog.clear()
-    sys.argv = ["pyscal", scalrec_file, "--int_param_wo", "-0.5", "-o", "relperm2.inc"]
+    sys.argv = [
+        "pyscal",
+        str(scalrec_file),
+        "--int_param_wo",
+        "-0.5",
+        "-o",
+        "relperm2.inc",
+    ]
     pyscalcli.main()
     assert not any(record.levelno == logging.INFO for record in caplog.records)
     assert not any(record.levelno == logging.WARNING for record in caplog.records)
@@ -358,14 +367,14 @@ def test_pyscal_client_scal(tmpdir, caplog, default_loglevel):
     # assert something about -0.5 in the comments
 
     # Only two interpolation parameters for three satnums:
-    sys.argv = ["pyscal", scalrec_file, "--int_param_wo", "-0.5", "0"]
+    sys.argv = ["pyscal", str(scalrec_file), "--int_param_wo", "-0.5", "0"]
     with pytest.raises(SystemExit):
         pyscalcli.main()
 
     caplog.clear()
     sys.argv = [
         "pyscal",
-        scalrec_file,
+        str(scalrec_file),
         "--int_param_wo",
         "-0.5",
         "0.0",
@@ -377,12 +386,12 @@ def test_pyscal_client_scal(tmpdir, caplog, default_loglevel):
     assert not any(record.levelno == logging.INFO for record in caplog.records)
     assert not any(record.levelno == logging.WARNING for record in caplog.records)
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
-    assert os.path.exists("relperm3.inc")
+    assert Path("relperm3.inc").is_file()
     # assert someting about three different parameters..
 
     sys.argv = [
         "pyscal",
-        scalrec_file,
+        str(scalrec_file),
         "--int_param_wo",
         "-0.5",
         "0",
@@ -393,11 +402,11 @@ def test_pyscal_client_scal(tmpdir, caplog, default_loglevel):
         "relperm4.inc",
     ]
     pyscalcli.main()
-    assert os.path.exists("relperm4.inc")
+    assert Path("relperm4.inc").is_file()
 
     sys.argv = [
         "pyscal",
-        scalrec_file,
+        str(scalrec_file),
         "--int_param_wo",
         "-0.5",
         "0",
@@ -410,7 +419,7 @@ def test_pyscal_client_scal(tmpdir, caplog, default_loglevel):
         pyscalcli.main()
     sys.argv = [
         "pyscal",
-        scalrec_file,
+        str(scalrec_file),
         "--int_param_wo",
         "-0.5",
         "0",
@@ -423,5 +432,5 @@ def test_pyscal_client_scal(tmpdir, caplog, default_loglevel):
         "relperm5.inc",
     ]
     pyscalcli.main()
-    assert os.path.exists("relperm5.inc")
+    assert Path("relperm5.inc").is_file()
     # check that interpolation parameters have been used.
