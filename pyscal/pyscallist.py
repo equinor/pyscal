@@ -9,7 +9,6 @@ from pyscal import WaterOil, GasOil, GasWater, WaterOilGas, SCALrecommendation
 
 PYSCAL_OBJECTS = [WaterOil, GasOil, GasWater, WaterOilGas, SCALrecommendation]
 
-logging.basicConfig()
 logger = logging.getLogger(__name__)
 
 

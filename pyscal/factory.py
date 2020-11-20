@@ -15,7 +15,6 @@ from .wateroilgas import WaterOilGas
 from .scalrecommendation import SCALrecommendation
 from .pyscallist import PyscalList
 
-logging.basicConfig()
 logger = logging.getLogger(__name__)
 
 

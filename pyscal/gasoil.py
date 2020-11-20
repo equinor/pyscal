@@ -13,7 +13,6 @@ from pyscal.utils.string import df2str, comment_formatter
 from pyscal.constants import EPSILON as epsilon
 from pyscal.constants import SWINTEGERS, MAX_EXPONENT
 
-logging.basicConfig()
 logger = logging.getLogger(__name__)
 
 

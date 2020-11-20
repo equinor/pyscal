@@ -4,7 +4,6 @@ import logging
 
 from .monotonocity import modify_dframe_monotonocity, remap_deprecated_monotonocity
 
-logging.basicConfig()
 logger = logging.getLogger(__name__)
 
 

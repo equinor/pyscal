@@ -8,7 +8,6 @@ import numpy as np
 from pyscal import WaterOilGas, GasWater
 from pyscal.utils.interpolation import interpolate_wo, interpolate_go
 
-logging.basicConfig()
 logger = logging.getLogger(__name__)
 
 

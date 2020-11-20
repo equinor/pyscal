@@ -8,7 +8,6 @@ from pyscal.utils.relperm import crosspoint
 from .wateroil import WaterOil
 from .gasoil import GasOil
 
-logging.basicConfig()
 logger = logging.getLogger(__name__)
 
 

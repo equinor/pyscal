@@ -10,7 +10,6 @@ from .wateroilgas import WaterOilGas
 from .gaswater import GasWater
 from .factory import PyscalFactory
 
-logging.basicConfig()
 logger = logging.getLogger(__name__)
 
 EPILOG = """

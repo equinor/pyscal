@@ -10,7 +10,6 @@ import pyscal
 from ..constants import SWINTEGERS
 
 
-logging.basicConfig()
 logger = logging.getLogger(__name__)
 
 
