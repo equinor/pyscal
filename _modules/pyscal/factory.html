@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal.factory &mdash; pyscal 0.7.1.dev5+gd2b604e documentation</title>
+  <title>pyscal.factory &mdash; pyscal 0.7.1.dev6+g29f8751 documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.7.1.dev5+gd2b604e
+                0.7.1.dev6+g29f8751
               </div>
             
           
@@ -880,7 +880,7 @@
         <span class="p">)</span>
 
         <span class="c1"># Check that we are able to make something out of the first row:</span>
-        <span class="n">firstrow</span> <span class="o">=</span> <span class="n">input_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">firstrow</span> <span class="o">=</span> <span class="n">input_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
         <span class="n">error</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">wo_ok</span> <span class="o">=</span> <span class="n">sufficient_water_oil_params</span><span class="p">(</span><span class="n">firstrow</span><span class="p">)</span>
@@ -984,7 +984,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            PyscalList, consisting of either WaterOil, GasOil or WaterOilGas objects</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="n">relperm_params_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>  <span class="c1"># first row</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">relperm_params_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>  <span class="c1"># first row</span>
         <span class="n">water_oil</span> <span class="o">=</span> <span class="n">sufficient_water_oil_params</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="n">gas_oil</span> <span class="o">=</span> <span class="n">sufficient_gas_oil_params</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="n">gas_water</span> <span class="o">=</span> <span class="n">sufficient_gas_water_params</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
