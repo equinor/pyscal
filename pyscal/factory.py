@@ -718,7 +718,7 @@ class PyscalFactory(object):
         )
 
         # Check that we are able to make something out of the first row:
-        firstrow = input_df.loc[0, :]
+        firstrow = input_df.iloc[0, :]
         error = False
         try:
             wo_ok = sufficient_water_oil_params(firstrow)
@@ -822,7 +822,7 @@ class PyscalFactory(object):
         Returns:
             PyscalList, consisting of either WaterOil, GasOil or WaterOilGas objects
         """
-        params = relperm_params_df.loc[0, :]  # first row
+        params = relperm_params_df.iloc[0, :]  # first row
         water_oil = sufficient_water_oil_params(params)
         gas_oil = sufficient_gas_oil_params(params)
         gas_water = sufficient_gas_water_params(params)

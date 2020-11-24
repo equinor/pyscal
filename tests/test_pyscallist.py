@@ -97,6 +97,13 @@ def test_load_scalrec():
     with pytest.raises(ValueError):
         scalrec_list.interpolate(1, [-1, 1, 0, 0])
 
+    # Test slicing the scalrec to base, this is relevant for
+    # API usage.
+    base_data = scalrec_data[scalrec_data["CASE"] == "base"].drop("CASE", axis=1)
+    PyscalFactory.load_relperm_df(base_data)  # Ensure no errors.
+    pyscal_list = PyscalFactory.create_pyscal_list(base_data)
+    assert "LET" in pyscal_list.dump_family_1()
+
 
 def test_df():
     """Test dataframe dumps"""
