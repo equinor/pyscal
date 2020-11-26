@@ -16,7 +16,6 @@ from pyscal.constants import EPSILON as epsilon
 from pyscal.constants import SWINTEGERS, MAX_EXPONENT
 
 
-logging.basicConfig()
 logger = logging.getLogger(__name__)
 
 

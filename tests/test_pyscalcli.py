@@ -24,43 +24,38 @@ def test_installed():
     assert subprocess.check_output(["pyscal", "--version"])
 
 
-def test_log_levels(tmpdir, caplog):
+@pytest.mark.skipif(sys.version_info < (3, 7), reason="Requires Python 3.7 or higher")
+@pytest.mark.parametrize("verbosity_flag", [None, "--verbose", "--debug"])
+def test_log_levels(tmpdir, verbosity_flag):
     """Test that we can control the log level from the command line
     client, and get log output from modules deep down"""
-    relperm_file = Path(__file__).absolute().parent / "data/relperm-input-example.xlsx"
 
-    tmpdir.chdir()
-
-    caplog.clear()
-    sys.argv = ["pyscal", str(relperm_file)]
-    pyscalcli.main()
-
-    # Ensure we have no INFO logging:
-    assert not any(record.levelno == logging.INFO for record in caplog.records)
-
-    # The following is an INFO statement from factory.py that we should not get:
-    assert all("Loaded input data" not in str(record) for record in caplog.records)
-    # And a debug statement from gasoil.py
-    assert all(
-        "Added Corey gas to GasOil object" not in str(record)
-        for record in caplog.records
+    relperm_file = str(
+        Path(__file__).absolute().parent / "data" / "relperm-input-example.xlsx"
     )
 
-    caplog.clear()
-    sys.argv = ["pyscal", "--verbose", str(relperm_file)]
-    pyscalcli.main()
-    assert not any(record.levelno == logging.DEBUG for record in caplog.records)
-    assert any(record.levelno == logging.INFO for record in caplog.records)
-    assert not any(record.levelno == logging.ERROR for record in caplog.records)
-    assert any("Loaded input data" in str(record) for record in caplog.records)
-    assert any("Dumping" in str(record) for record in caplog.records)
+    commands = ["pyscal", relperm_file]
+    if verbosity_flag is not None:
+        commands.append(verbosity_flag)
 
-    caplog.clear()
-    sys.argv = ["pyscal", "--debug", str(relperm_file)]
-    pyscalcli.main()
-    assert any(record.levelno == logging.DEBUG for record in caplog.records)
-    assert any("Initialized GasOil with" in str(record) for record in caplog.records)
-    assert any("Initialized WaterOil with" in str(record) for record in caplog.records)
+    result = subprocess.run(commands, cwd=tmpdir, capture_output=True, check=True)
+    output = result.stdout.decode() + result.stderr.decode()
+
+    if verbosity_flag is None:
+        assert "INFO:" not in output
+        assert "DEBUG:" not in output
+    elif verbosity_flag == "--verbose":
+        assert "INFO:" in output
+        assert "DEBUG:" not in output
+        assert "Loaded input data" in output
+        assert "Dumping" in output
+    elif verbosity_flag == "--debug":
+        assert "INFO:" in output
+        assert "DEBUG:" in output
+        assert "Initialized GasOil with" in output
+        assert "Initialized WaterOil with" in output
+    else:
+        raise ValueError("Unknown value for 'verbosity_flag'")
 
 
 def test_pyscal_client_static(tmpdir, caplog, default_loglevel):

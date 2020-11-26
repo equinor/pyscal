@@ -10,7 +10,6 @@ from .wateroilgas import WaterOilGas
 from .gaswater import GasWater
 from .factory import PyscalFactory
 
-logging.basicConfig()
 logger = logging.getLogger(__name__)
 
 EPILOG = """
@@ -200,20 +199,10 @@ def pyscal_main(
         family2 (bool): Dump family 2 keywords
     """
 
-    def set_logger_levels(loglevel):
-        """Set log levels for all modules imported by this script"""
-        logger.setLevel(loglevel)
-        logging.getLogger("pyscal.factory").setLevel(loglevel)
-        logging.getLogger("pyscal.wateroil").setLevel(loglevel)
-        logging.getLogger("pyscal.wateroilgas").setLevel(loglevel)
-        logging.getLogger("pyscal.gasoil").setLevel(loglevel)
-        logging.getLogger("pyscal.utils").setLevel(loglevel)
-        logging.getLogger("pyscal.pyscallist").setLevel(loglevel)
-
     if verbose:
-        set_logger_levels(logging.INFO)
+        logging.basicConfig(level=logging.INFO)
     if debug:
-        set_logger_levels(logging.DEBUG)
+        logging.basicConfig(level=logging.DEBUG)
 
     scalinput_df = PyscalFactory.load_relperm_df(parametertable, sheet_name=sheet_name)
 

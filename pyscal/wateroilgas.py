@@ -12,7 +12,6 @@ from pyscal.utils.string import df2str, comment_formatter
 from .wateroil import WaterOil
 from .gasoil import GasOil
 
-logging.basicConfig()
 logger = logging.getLogger(__name__)
 
 

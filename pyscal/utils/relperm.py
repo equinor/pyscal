@@ -8,7 +8,6 @@ import pandas as pd
 from ..constants import EPSILON as epsilon
 
 
-logging.basicConfig()
 logger = logging.getLogger(__name__)
 
 
