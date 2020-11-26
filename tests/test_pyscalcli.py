@@ -30,7 +30,9 @@ def test_log_levels(tmpdir, verbosity_flag):
     """Test that we can control the log level from the command line
     client, and get log output from modules deep down"""
 
-    relperm_file = str(Path(__file__).absolute().parent / "data" / "relperm-input-example.xlsx")
+    relperm_file = str(
+        Path(__file__).absolute().parent / "data" / "relperm-input-example.xlsx"
+    )
 
     commands = ["pyscal", relperm_file]
     if verbosity_flag is not None:
@@ -54,6 +56,7 @@ def test_log_levels(tmpdir, verbosity_flag):
         assert "Initialized WaterOil with" in output
     else:
         raise ValueError("Unknown value for 'verbosity_flag'")
+
 
 def test_pyscal_client_static(tmpdir, caplog, default_loglevel):
     # pylint: disable=unused-argument
