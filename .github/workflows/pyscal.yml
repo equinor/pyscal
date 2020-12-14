@@ -37,7 +37,6 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Check code style
-        if: matrix.python-version != '2.7'
         run: |
           pip install black
           black --check pyscal/*py tests/test_*py setup.py docs/conf.py
@@ -79,7 +78,7 @@ jobs:
             git config --local user.name "pyscal-github-action"
             git fetch origin gh-pages
             git checkout --track origin/gh-pages
-            git clean -f -f -d -x
+            git clean -f -f -d -x  # Double -f is intentional
             git rm -r *
 
             cp -R ../html/* .

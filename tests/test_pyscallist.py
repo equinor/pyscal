@@ -60,13 +60,20 @@ def test_pyscallist_basic():
     assert len(p_list) == 2
 
 
-def test_load_scalrec():
+def test_load_scalrec(tmpdir):
     """Load a SATNUM range from xlsx"""
     testdir = Path(__file__).absolute().parent
 
     scalrec_data = PyscalFactory.load_relperm_df(
         testdir / "data/scal-pc-input-example.xlsx"
     )
+
+    # Also check that we can read the old excel format
+    scalrec_data_legacy_xls = PyscalFactory.load_relperm_df(
+        testdir / "data/scal-pc-input-example.xls"
+    )
+    pd.testing.assert_frame_equal(scalrec_data, scalrec_data_legacy_xls)
+
     scalrec_list = PyscalFactory.create_scal_recommendation_list(scalrec_data)
     wog_list = scalrec_list.interpolate(-0.3)
 

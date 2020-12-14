@@ -6,6 +6,7 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 import xlrd
+import openpyxl
 
 from pyscal.utils import capillarypressure
 from .wateroil import WaterOil
@@ -597,36 +598,45 @@ class PyscalFactory(object):
 
         Returns:
             pd.DataFrame. To be handed over to pyscal list factory methods.
+            Empty dataframe in case of errors (messages will be logged).
         """
         if isinstance(inputfile, (str, Path)) and Path(inputfile).is_file():
-            if str(inputfile).lower().endswith("csv") and sheet_name is not None:
+            tabular_file_format = infer_tabular_file_format(inputfile)
+            if not tabular_file_format:
+                # Error message emitted by infer_file_format()
+                return pd.DataFrame()
+
+            if tabular_file_format == "csv" and sheet_name is not None:
                 logger.warning(
                     "Sheet name only relevant for XLSX files, ignoring %s", sheet_name
                 )
-            try:
-                if sheet_name:
-                    input_df = pd.read_excel(inputfile, sheet_name=sheet_name)
-                    logger.info("Parsed XLSX file %s, sheet %s", inputfile, sheet_name)
-                else:
-                    input_df = pd.read_excel(inputfile)
-                    logger.info("Parsed XLSX file %s", inputfile)
-            except xlrd.XLRDError as xlserror:
-                if inputfile.lower().endswith("xlsx") or inputfile.lower().endswith(
-                    "xls"
-                ):
-                    logger.error(xlserror)
+            excel_engines = {"xls": "xlrd", "xlsx": "openpyxl"}
+            if sheet_name:
                 try:
-                    input_df = pd.read_csv(inputfile, skipinitialspace=True)
-                    logger.info("Parsed CSV file %s", inputfile)
-                except pd.errors.ParserError as csverror:
-                    logger.error("Could not parse %s as XLSX or CSV", inputfile)
-                    logger.error("Error message from csv-parser: %s", str(csverror))
-                    input_df = pd.DataFrame()
-                except ValueError:
-                    # We end here when we use csv reader on xls files, that
-                    # means that xls parsing failed in the first place. Other
-                    # error messages have been, and will be printed.
-                    input_df = pd.DataFrame()
+                    input_df = pd.read_excel(
+                        inputfile,
+                        sheet_name=sheet_name,
+                        engine=excel_engines[tabular_file_format],
+                    )
+                    logger.info(
+                        "Parsed %s file %s, sheet %s",
+                        tabular_file_format.upper(),
+                        inputfile,
+                        sheet_name,
+                    )
+                except KeyError as error:
+                    logger.error("Non-existing sheet-name %s provided?", sheet_name)
+                    logger.error(str(error))
+                    return pd.DataFrame()
+            elif tabular_file_format.startswith("xls"):
+                input_df = pd.read_excel(
+                    inputfile, engine=excel_engines[tabular_file_format]
+                )
+                logger.info("Parsed %s file %s", tabular_file_format.upper(), inputfile)
+            else:
+                input_df = pd.read_csv(inputfile, skipinitialspace=True)
+                logger.info("Parsed CSV file %s", inputfile)
+
         elif isinstance(inputfile, pd.DataFrame):
             input_df = inputfile
         else:
@@ -634,6 +644,7 @@ class PyscalFactory(object):
                 raise IOError("File not found " + str(inputfile))
             raise ValueError("Unsupported argument " + str(inputfile))
         assert isinstance(input_df, pd.DataFrame)
+
         if input_df.empty:
             logger.error("Relperm input dataframe is empty!")
 
@@ -1042,6 +1053,46 @@ def filter_nan_from_dict(params):
             if not np.isnan(value):
                 cleaned_params[key] = value
     return cleaned_params
+
+
+def infer_tabular_file_format(filename):
+    """Determine the file format of a file containing tabular data,
+    distinguishes between csv, xls and xlsx
+
+    Args:
+        filename (str): Path to file, possibley pathlib Path object.
+
+    Returns:
+        str: One of "csv", "xlsx" or "xls". Empty string if nothing found out.
+    """
+    try:
+        pd.read_excel(filename, engine="openpyxl")
+        return "xlsx"
+    except openpyxl.utils.exceptions.InvalidFileException:
+        # We get here for both CSV and XLS files.
+        pass
+    try:
+        pd.read_excel(filename, engine="xlrd")
+        return "xls"
+    except xlrd.biffh.XLRDError:
+        # We get here for both CSV and XLSX files.
+        pass
+    try:
+        dframe = pd.read_csv(filename)
+        if not dframe.empty:
+            return "csv"
+    except UnicodeDecodeError:
+        # (xls and xlsx files)
+        pass
+    except pd.parser.ParserError as csverror:
+        logger.error("Message from CSV parser: %s", str(csverror))
+        # Some text file that is not CSV
+        pass
+
+    logger.error(
+        "Impossible to infer file format for %s, not CSV/XLS/XLSX", str(filename)
+    )
+    return ""
 
 
 def check_deprecated(params):
