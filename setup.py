@@ -19,6 +19,7 @@ with open(path.join(this_directory, "README.md")) as f_handle:
 REQUIREMENTS = [
     "matplotlib",
     "numpy",
+    "openpyxl",
     "pandas",
     "scipy",
     "xlrd",

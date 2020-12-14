@@ -538,7 +538,7 @@ def test_xls_factory():
 
     xlsxfile = testdir / "data/scal-pc-input-example.xlsx"
 
-    scalinput = pd.read_excel(xlsxfile).set_index(["SATNUM", "CASE"])
+    scalinput = pd.read_excel(xlsxfile, engine="openpyxl").set_index(["SATNUM", "CASE"])
 
     for ((satnum, _), params) in scalinput.iterrows():
         assert satnum
@@ -642,7 +642,7 @@ def test_xls_scalrecommendation():
     testdir = Path(__file__).absolute().parent
 
     xlsxfile = testdir / "data/scal-pc-input-example.xlsx"
-    scalinput = pd.read_excel(xlsxfile).set_index(["SATNUM", "CASE"])
+    scalinput = pd.read_excel(xlsxfile, engine="openpyxl").set_index(["SATNUM", "CASE"])
     print(scalinput)
     for satnum in scalinput.index.levels[0].values:
         dictofdict = scalinput.loc[satnum, :].to_dict(orient="index")
