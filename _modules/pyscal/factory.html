@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal.factory &mdash; pyscal 0.7.1 documentation</title>
+  <title>pyscal.factory &mdash; pyscal 0.7.2.dev1+g2b1518e documentation</title>
   
 
   
@@ -63,7 +63,7 @@
             
             
               <div class="version">
-                0.7.1
+                0.7.2.dev1+g2b1518e
               </div>
             
           
@@ -168,6 +168,7 @@
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">xlrd</span>
+<span class="kn">import</span> <span class="nn">openpyxl</span>
 
 <span class="kn">from</span> <span class="nn">pyscal.utils</span> <span class="kn">import</span> <span class="n">capillarypressure</span>
 <span class="kn">from</span> <span class="nn">.wateroil</span> <span class="kn">import</span> <span class="n">WaterOil</span>
@@ -759,36 +760,45 @@
 
 <span class="sd">        Returns:</span>
 <span class="sd">            pd.DataFrame. To be handed over to pyscal list factory methods.</span>
+<span class="sd">            Empty dataframe in case of errors (messages will be logged).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputfile</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">))</span> <span class="ow">and</span> <span class="n">Path</span><span class="p">(</span><span class="n">inputfile</span><span class="p">)</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
-            <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">inputfile</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;csv&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="n">sheet_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">tabular_file_format</span> <span class="o">=</span> <span class="n">infer_tabular_file_format</span><span class="p">(</span><span class="n">inputfile</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">tabular_file_format</span><span class="p">:</span>
+                <span class="c1"># Error message emitted by infer_file_format()</span>
+                <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">tabular_file_format</span> <span class="o">==</span> <span class="s2">&quot;csv&quot;</span> <span class="ow">and</span> <span class="n">sheet_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                     <span class="s2">&quot;Sheet name only relevant for XLSX files, ignoring </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">sheet_name</span>
                 <span class="p">)</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">sheet_name</span><span class="p">:</span>
-                    <span class="n">input_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">inputfile</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="n">sheet_name</span><span class="p">)</span>
-                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Parsed XLSX file </span><span class="si">%s</span><span class="s2">, sheet </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">,</span> <span class="n">sheet_name</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">input_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">inputfile</span><span class="p">)</span>
-                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Parsed XLSX file </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">)</span>
-            <span class="k">except</span> <span class="n">xlrd</span><span class="o">.</span><span class="n">XLRDError</span> <span class="k">as</span> <span class="n">xlserror</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;xlsx&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">inputfile</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span>
-                    <span class="s2">&quot;xls&quot;</span>
-                <span class="p">):</span>
-                    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">xlserror</span><span class="p">)</span>
+            <span class="n">excel_engines</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;xls&quot;</span><span class="p">:</span> <span class="s2">&quot;xlrd&quot;</span><span class="p">,</span> <span class="s2">&quot;xlsx&quot;</span><span class="p">:</span> <span class="s2">&quot;openpyxl&quot;</span><span class="p">}</span>
+            <span class="k">if</span> <span class="n">sheet_name</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
-                    <span class="n">input_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">inputfile</span><span class="p">,</span> <span class="n">skipinitialspace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Parsed CSV file </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">)</span>
-                <span class="k">except</span> <span class="n">pd</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">ParserError</span> <span class="k">as</span> <span class="n">csverror</span><span class="p">:</span>
-                    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Could not parse </span><span class="si">%s</span><span class="s2"> as XLSX or CSV&quot;</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">)</span>
-                    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Error message from csv-parser: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">csverror</span><span class="p">))</span>
-                    <span class="n">input_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
-                <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-                    <span class="c1"># We end here when we use csv reader on xls files, that</span>
-                    <span class="c1"># means that xls parsing failed in the first place. Other</span>
-                    <span class="c1"># error messages have been, and will be printed.</span>
-                    <span class="n">input_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+                    <span class="n">input_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span>
+                        <span class="n">inputfile</span><span class="p">,</span>
+                        <span class="n">sheet_name</span><span class="o">=</span><span class="n">sheet_name</span><span class="p">,</span>
+                        <span class="n">engine</span><span class="o">=</span><span class="n">excel_engines</span><span class="p">[</span><span class="n">tabular_file_format</span><span class="p">],</span>
+                    <span class="p">)</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                        <span class="s2">&quot;Parsed </span><span class="si">%s</span><span class="s2"> file </span><span class="si">%s</span><span class="s2">, sheet </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+                        <span class="n">tabular_file_format</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span>
+                        <span class="n">inputfile</span><span class="p">,</span>
+                        <span class="n">sheet_name</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Non-existing sheet-name </span><span class="si">%s</span><span class="s2"> provided?&quot;</span><span class="p">,</span> <span class="n">sheet_name</span><span class="p">)</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">))</span>
+                    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+            <span class="k">elif</span> <span class="n">tabular_file_format</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;xls&quot;</span><span class="p">):</span>
+                <span class="n">input_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span>
+                    <span class="n">inputfile</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="n">excel_engines</span><span class="p">[</span><span class="n">tabular_file_format</span><span class="p">]</span>
+                <span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Parsed </span><span class="si">%s</span><span class="s2"> file </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">tabular_file_format</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span> <span class="n">inputfile</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">input_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">inputfile</span><span class="p">,</span> <span class="n">skipinitialspace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Parsed CSV file </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">)</span>
+
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputfile</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
             <span class="n">input_df</span> <span class="o">=</span> <span class="n">inputfile</span>
         <span class="k">else</span><span class="p">:</span>
@@ -796,6 +806,7 @@
                 <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;File not found &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">inputfile</span><span class="p">))</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unsupported argument &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">inputfile</span><span class="p">))</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">input_df</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Relperm input dataframe is empty!&quot;</span><span class="p">)</span>
 
@@ -1204,6 +1215,46 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
                 <span class="n">cleaned_params</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
     <span class="k">return</span> <span class="n">cleaned_params</span></div>
+
+
+<div class="viewcode-block" id="infer_tabular_file_format"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.infer_tabular_file_format">[docs]</a><span class="k">def</span> <span class="nf">infer_tabular_file_format</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Determine the file format of a file containing tabular data,</span>
+<span class="sd">    distinguishes between csv, xls and xlsx</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        filename (str): Path to file, possibley pathlib Path object.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        str: One of &quot;csv&quot;, &quot;xlsx&quot; or &quot;xls&quot;. Empty string if nothing found out.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;openpyxl&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;xlsx&quot;</span>
+    <span class="k">except</span> <span class="n">openpyxl</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">InvalidFileException</span><span class="p">:</span>
+        <span class="c1"># We get here for both CSV and XLS files.</span>
+        <span class="k">pass</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;xlrd&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;xls&quot;</span>
+    <span class="k">except</span> <span class="n">xlrd</span><span class="o">.</span><span class="n">biffh</span><span class="o">.</span><span class="n">XLRDError</span><span class="p">:</span>
+        <span class="c1"># We get here for both CSV and XLSX files.</span>
+        <span class="k">pass</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">dframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">dframe</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;csv&quot;</span>
+    <span class="k">except</span> <span class="ne">UnicodeDecodeError</span><span class="p">:</span>
+        <span class="c1"># (xls and xlsx files)</span>
+        <span class="k">pass</span>
+    <span class="k">except</span> <span class="n">pd</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">ParserError</span> <span class="k">as</span> <span class="n">csverror</span><span class="p">:</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Message from CSV parser: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">csverror</span><span class="p">))</span>
+        <span class="c1"># Some text file that is not CSV</span>
+        <span class="k">pass</span>
+
+    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+        <span class="s2">&quot;Impossible to infer file format for </span><span class="si">%s</span><span class="s2">, not CSV/XLS/XLSX&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="s2">&quot;&quot;</span></div>
 
 
 <div class="viewcode-block" id="check_deprecated"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.check_deprecated">[docs]</a><span class="k">def</span> <span class="nf">check_deprecated</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>

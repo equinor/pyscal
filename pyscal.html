@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal package &mdash; pyscal 0.7.1 documentation</title>
+  <title>pyscal package &mdash; pyscal 0.7.2.dev1+g2b1518e documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.7.1
+                0.7.2.dev1+g2b1518e
               </div>
             
           
@@ -495,7 +495,8 @@ pandas DataFrame.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>pd.DataFrame. To be handed over to pyscal list factory methods.</p>
+<dd class="field-even"><p>pd.DataFrame. To be handed over to pyscal list factory methods.
+Empty dataframe in case of errors (messages will be logged).</p>
 </dd>
 </dl>
 </dd></dl>
@@ -541,6 +542,24 @@ if we don’t have exactly three unique values.</p>
 </dl>
 <dl class="simple">
 <dt>Returns</dt><dd><p>dict, with as many or fewer keys.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="pyscal.factory.infer_tabular_file_format">
+<code class="sig-prename descclassname">pyscal.factory.</code><code class="sig-name descname">infer_tabular_file_format</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">filename</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#infer_tabular_file_format"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.infer_tabular_file_format" title="Permalink to this definition">¶</a></dt>
+<dd><p>Determine the file format of a file containing tabular data,
+distinguishes between csv, xls and xlsx</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>filename</strong> (<em>str</em>) – Path to file, possibley pathlib Path object.</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>One of “csv”, “xlsx” or “xls”. Empty string if nothing found out.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>str</p>
 </dd>
 </dl>
 </dd></dl>
