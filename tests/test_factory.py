@@ -1,5 +1,5 @@
 """Test the PyscalFactory module"""
-
+import os
 from pathlib import Path
 
 import numpy as np
@@ -915,3 +915,38 @@ def test_corey_let_mix():
     assert "Corey krow" in swof1
     assert "LET krw" in swof2
     assert "Corey krow" in swof2
+
+
+def test_infer_tabular_file_format(tmpdir, caplog):
+
+    testdir = Path(__file__).absolute().parent
+    assert (
+        factory.infer_tabular_file_format(testdir / "data/scal-pc-input-example.xlsx")
+        == "xlsx"
+    )
+    assert (
+        factory.infer_tabular_file_format(
+            str(testdir / "data/scal-pc-input-example.xlsx")
+        )
+        == "xlsx"
+    )
+    assert (
+        factory.infer_tabular_file_format(testdir / "data/scal-pc-input-example.xls")
+        == "xls"
+    )
+    tmpdir.chdir()
+    pd.DataFrame([{"SATNUM": 1, "NW": 2}]).to_csv("some.csv", index=False)
+    assert factory.infer_tabular_file_format("some.csv") == "csv"
+
+    Path("empty.csv").write_text("")
+    assert factory.infer_tabular_file_format("empty.csv") == ""
+    # Ensure Pandas's error message got through:
+    assert "No columns to parse from file" in caplog.text
+    # Ensure factory.py's error message got through:
+    assert "Impossible to infer file format for empty.csv" in caplog.text
+
+    # Write 10 random bytes to a file, this should with very
+    # little probability give a valid xlsx/xls/csv file.
+    Path("wrong.csv").write_bytes(os.urandom(10))
+    assert factory.infer_tabular_file_format("wrong.csv") == ""
+    assert "Impossible to infer file format for wrong.csv" in caplog.text
