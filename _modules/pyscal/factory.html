@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>pyscal.factory &mdash; pyscal 0.7.2.dev1+g2b1518e documentation</title>
+  <title>pyscal.factory &mdash; pyscal 0.7.2.dev2+gb42541e documentation</title>
   
 
   
@@ -62,7 +62,7 @@
             
             
               <div class="version">
-                0.7.2.dev1+g2b1518e
+                0.7.2.dev2+gb42541e
               </div>
             
           
@@ -1245,10 +1245,9 @@
     <span class="k">except</span> <span class="ne">UnicodeDecodeError</span><span class="p">:</span>
         <span class="c1"># (xls and xlsx files)</span>
         <span class="k">pass</span>
-    <span class="k">except</span> <span class="n">pd</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">ParserError</span> <span class="k">as</span> <span class="n">csverror</span><span class="p">:</span>
+    <span class="k">except</span> <span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">ParserError</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">errors</span><span class="o">.</span><span class="n">EmptyDataError</span><span class="p">)</span> <span class="k">as</span> <span class="n">csverror</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Message from CSV parser: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">csverror</span><span class="p">))</span>
-        <span class="c1"># Some text file that is not CSV</span>
-        <span class="k">pass</span>
+        <span class="c1"># (Some text file that is not CSV)</span>
 
     <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
         <span class="s2">&quot;Impossible to infer file format for </span><span class="si">%s</span><span class="s2">, not CSV/XLS/XLSX&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
