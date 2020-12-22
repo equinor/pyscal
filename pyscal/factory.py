@@ -1084,10 +1084,9 @@ def infer_tabular_file_format(filename):
     except UnicodeDecodeError:
         # (xls and xlsx files)
         pass
-    except pd.parser.ParserError as csverror:
+    except (pd.errors.ParserError, pd.errors.EmptyDataError) as csverror:
         logger.error("Message from CSV parser: %s", str(csverror))
-        # Some text file that is not CSV
-        pass
+        # (Some text file that is not CSV)
 
     logger.error(
         "Impossible to infer file format for %s, not CSV/XLS/XLSX", str(filename)
