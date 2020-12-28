@@ -2,6 +2,8 @@ repos:
 - repo: https://github.com/pre-commit/pre-commit-hooks
   rev: v3.4.0
   hooks:
+  - id:  no-commit-to-branch
+    args: ['--branch', 'master']
   - id: check-yaml
   - id: debug-statements
   - id: end-of-file-fixer
