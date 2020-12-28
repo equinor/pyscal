@@ -1068,13 +1068,15 @@ def infer_tabular_file_format(filename):
     try:
         pd.read_excel(filename, engine="openpyxl")
         return "xlsx"
-    except openpyxl.utils.exceptions.InvalidFileException:
-        # We get here for both CSV and XLS files.
+    except (ValueError, OSError, openpyxl.utils.exceptions.InvalidFileException):
+        # < Pandas 1.2, we get InvalidFileException from openpyxl
+        # >= Pandas 1.2.0: CSV gives ValueError,
+        #                  XLS gives OSError
         pass
     try:
         pd.read_excel(filename, engine="xlrd")
         return "xls"
-    except xlrd.biffh.XLRDError:
+    except (ValueError, xlrd.biffh.XLRDError):
         # We get here for both CSV and XLSX files.
         pass
     try:
