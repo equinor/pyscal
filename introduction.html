@@ -195,17 +195,17 @@ then used for interpolation.</p>
 or in an XLSX file as the main input. Each SATNUM is represented by one row of
 data in the table.</p>
 <p>Example use with CSV input for one SATNUM:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> cat relperminput.csv  <span class="c1"># Show example input file</span>
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>cat relperminput.csv  <span class="c1"># Show example input file</span>
 <span class="go">SATNUM, swl, sorw, Nw, Now</span>
 <span class="go">1,      0.1, 0.05, 2, 3</span>
-<span class="gp">$</span> <span class="c1"># Run pyscal on example input:</span>
-<span class="gp">$</span> pyscal relperminput.csv --delta_s <span class="m">0</span>.2 -o relperm.inc
+<span class="gp">$ </span><span class="c1"># Run pyscal on example input:</span>
+<span class="gp">$ </span>pyscal relperminput.csv --delta_s <span class="m">0</span>.2 -o relperm.inc
 <span class="go">Written to relperm.inc</span>
 </pre></div>
 </div>
 <p>Exactly the same table in an XLSX file would give identical results. The output
 from the pyscal command above will look like:</p>
-<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$</span> cat relperm.inc
+<div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>cat relperm.inc
 <span class="go">SWOF</span>
 <span class="go">-- SATNUM 1</span>
 <span class="go">-- pyscal: v0.7.X</span>
