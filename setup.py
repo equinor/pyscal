@@ -28,6 +28,7 @@ TEST_REQUIREMENTS = [
     "black>=20.8b0",
     "flake8",
     "hypothesis",
+    "pre-commit",
     "pytest",
     "pytest-cov",
     "rstcheck",
