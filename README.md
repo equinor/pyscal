@@ -2,7 +2,7 @@
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/equinor/pyscal.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/equinor/pyscal/context:python)
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/equinor/pyscal.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/equinor/pyscal/alerts/)
 [![codecov](https://codecov.io/gh/equinor/pyscal/branch/master/graph/badge.svg)](https://codecov.io/gh/equinor/pyscal)
-[![Python 3.6-3.8](https://img.shields.io/badge/python-3.6%20|%203.7%20|%203.8-blue.svg)](https://www.python.org)
+[![Python 3.6-3.9](https://img.shields.io/badge/python-3.6%20|%203.7%20|%203.8%20|%203.9-blue.svg)](https://www.python.org)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://black.readthedocs.io/)
 [![PyPI version](https://badge.fury.io/py/pyscal.svg)](https://badge.fury.io/py/pyscal)
 [![Downloads](https://pepy.tech/badge/pyscal)](https://pepy.tech/project/pyscal)
