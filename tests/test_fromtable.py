@@ -21,8 +21,7 @@ def test_wo_fromtable_simple():
     wateroil = WaterOil(h=0.1)
     # With wrong names:
     with pytest.raises(ValueError):
-        # Here we also get a deprecation warning
-        wateroil.add_oilwater_fromtable(df1)
+        wateroil.add_fromtable(df1)
 
     # Set names:
     wateroil.add_fromtable(df1, swcolname="SW")
