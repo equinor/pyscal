@@ -29,6 +29,7 @@ TEST_REQUIREMENTS = [
     "flake8",
     "hypothesis",
     "pytest",
+    "pytest-cov",
     "rstcheck",
     "sphinx",
     "sphinx-argparse",
