@@ -130,6 +130,42 @@ def test_wateroil_krendmax(swl, swcr, sorw, kroend, krwend, krwmax, h, fast):
     assert 0 < wateroil.crosspoint() < 1
 
 
+def test_fast():
+    """Test the fast option"""
+    # First without fast:
+    wateroil = WaterOil(h=0.1)
+    wateroil.add_corey_water()
+    wateroil.add_corey_oil()
+    # This crosspoint computation is only present for fast=False:
+    assert "-- krw = krow @ sw=0.5" in wateroil.SWOF()
+
+    # Provoke non-strict-monotone krow:
+    wateroil.table.loc[0:2, "krow"] = [1.00, 0.81, 0.81]
+    # (this is valid in non-imbibition, but pyscal will correct it for all
+    # curves)
+    assert "0.1000000 0.0100000 0.8100000 0.0000000" in wateroil.SWOF()
+    assert "0.2000000 0.0400000 0.8099999 0.0000000" in wateroil.SWOF()
+    #   monotonocity correction:   ^^^^^^
+
+    # Now redo with fast option:
+    wateroil = WaterOil(h=0.1, fast=True)
+    wateroil.add_corey_water()
+    wateroil.add_corey_oil()
+    # This crosspoint computation is only present for fast=False:
+    assert "-- krw = krow" not in wateroil.SWOF()
+
+    # Provoke non-strict-monotone krow, in fast-mode
+    # this slips through:
+    wateroil.table.loc[0:2, "krow"] = [1.00, 0.81, 0.81]
+    assert "0.1000000 0.0100000 0.8100000 0.0000000" in wateroil.SWOF()
+    assert "0.2000000 0.0400000 0.8100000 0.0000000" in wateroil.SWOF()
+    # not corrected:               ^^^^^^
+
+    wateroil.table.loc[0:2, "krw"] = [0.00, 0.01, 0.01]
+    assert "0.1000000 0.0100000" in wateroil.SWFN()
+    assert "0.2000000 0.0100000" in wateroil.SWFN()
+
+
 def test_swfn():
     """Test that we can dump SWFN without giving oil relperm"""
     wateroil = WaterOil(h=0.1)

@@ -372,6 +372,42 @@ def test_sgfn():
     print(sgfn_str)
 
 
+def test_fast():
+    """Test the fast option"""
+    # First without fast-mode:
+    gasoil = GasOil(h=0.1)
+    gasoil.add_corey_gas()
+    gasoil.add_corey_oil()
+    # This crosspoint computation is only present for fast=False:
+    assert "-- krg = krog @ sg=0.5" in gasoil.SGOF()
+
+    # Provoke non-strict-monotone krow:
+    gasoil.table.loc[0:2, "krog"] = [1.00, 0.81, 0.81]
+    # (this is valid in non-imbibition, but pyscal will correct it for all
+    # curves)
+    assert "0.1000000 0.0100000 0.8100000 0.0000000" in gasoil.SGOF()
+    assert "0.2000000 0.0400000 0.8099999 0.0000000" in gasoil.SGOF()
+    #   monotonocity correction:   ^^^^^^
+
+    # Now redo with fast option:
+    gasoil = GasOil(h=0.1, fast=True)
+    gasoil.add_corey_gas()
+    gasoil.add_corey_oil()
+    # This crosspoint computation is only present for fast=False:
+    assert "-- krg = krog" not in gasoil.SGOF()
+
+    # Provoke non-strict-monotone krow, in fast-mode
+    # this slips through:
+    gasoil.table.loc[0:2, "krog"] = [1.00, 0.81, 0.81]
+    assert "0.1000000 0.0100000 0.8100000 0.0000000" in gasoil.SGOF()
+    assert "0.2000000 0.0400000 0.8100000 0.0000000" in gasoil.SGOF()
+    # not corrected:               ^^^^^^
+
+    gasoil.table.loc[0:2, "krg"] = [0.00, 0.01, 0.01]
+    assert "0.1000000 0.0100000" in gasoil.SGFN()
+    assert "0.2000000 0.0100000" in gasoil.SGFN()
+
+
 def test_roundoff():
     """Test robustness to monotonicity issues arising from
     representation errors
