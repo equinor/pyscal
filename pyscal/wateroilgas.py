@@ -3,7 +3,6 @@
 import logging
 import numpy as np
 import pandas as pd
-from pathlib import Path
 
 import pyscal
 from pyscal.constants import SWINTEGERS
@@ -85,40 +84,53 @@ class WaterOilGas(object):
 
     def SWOF(self, header=True, dataincommentrow=True):
         """Return a SWOF string. Delegated to the wateroil object"""
-        if self.wateroil is not None:
-            return self.wateroil.SWOF(header, dataincommentrow)
-        logger.error("No WaterOil object in this WaterOilGas object")
-        return ""
+        if self.wateroil is None:
+            logger.error("No WaterOil object in this WaterOilGas object")
+            return ""
+        if "krw" not in self.wateroil.table or "krow" not in self.wateroil.table:
+            logger.error("Missing krw/krow curves in WaterOilGas object")
+            return ""
+        return self.wateroil.SWOF(header, dataincommentrow)
 
     def SGOF(self, header=True, dataincommentrow=True):
         """Return a SGOF string. Delegated to the gasoil object."""
-        self.threephaseconsistency()
-        if self.gasoil is not None:
-            return self.gasoil.SGOF(header, dataincommentrow)
-        logger.error("No GasOil object in this WaterOilGas object")
-        return ""
+        if self.gasoil is None:
+            logger.error("No GasOil object in this WaterOilGas object")
+            return ""
+        if "krg" not in self.gasoil.table or "krog" not in self.gasoil.table:
+            logger.error("Missing krg/krog curves in WaterOilGas object")
+            return ""
+        return self.gasoil.SGOF(header, dataincommentrow)
 
     def SLGOF(self, header=True, dataincommentrow=True):
         """Return a SLGOF string. Delegated to the gasoil object."""
-        self.threephaseconsistency()
-        if self.gasoil is not None:
-            return self.gasoil.SLGOF(header, dataincommentrow)
-        logger.error("No GasOil object in this WaterOilGas object")
-        return ""
+        if self.gasoil is None:
+            logger.error("No GasOil object in this WaterOilGas object")
+            return ""
+        if "krg" not in self.gasoil.table or "krog" not in self.gasoil.table:
+            logger.error("Missing krg/krog in WaterOilGas object")
+            return ""
+        return self.gasoil.SLGOF(header, dataincommentrow)
 
     def SGFN(self, header=True, dataincommentrow=True):
         """Return a SGFN string. Delegated to the gasoil object."""
-        if self.gasoil is not None:
-            return self.gasoil.SGFN(header, dataincommentrow)
-        logger.error("No GasOil object in this WaterOilGas object")
-        return ""
+        if self.gasoil is None:
+            logger.error("No GasOil object in this WaterOilGas object")
+            return ""
+        if "krg" not in self.gasoil.table:
+            logger.error("Missing krg in WaterOilGas object")
+            return ""
+        return self.gasoil.SGFN(header, dataincommentrow)
 
     def SWFN(self, header=True, dataincommentrow=True):
         """Return a SWFN string. Delegated to the wateroil object."""
-        if self.wateroil is not None:
-            return self.wateroil.SWFN(header, dataincommentrow)
-        logger.error("No WaterOil object in this WaterOilGas object")
-        return ""
+        if self.wateroil is None:
+            logger.error("No WaterOil object in this WaterOilGas object")
+            return ""
+        if "krw" not in self.wateroil.table:
+            logger.error("Missing krw in WaterOilGas object")
+            return ""
+        return self.wateroil.SWFN(header, dataincommentrow)
 
     def SOF3(self, header=True, dataincommentrow=True):
         """Return a SOF3 string, combining data from the wateroil and
@@ -127,8 +139,8 @@ class WaterOilGas(object):
         So - the oil saturation ranges from 0 to 1-swl. The saturation points
         from the WaterOil object is used to generate these
         """
-        if self.wateroil is None or self.gasoil is None:
-            logger.error("Both WaterOil and GasOil is needed for SOF3")
+        if "krow" not in self.wateroil.table or "krog" not in self.gasoil.table:
+            logger.error("Both WaterOil and GasOil krow/krog is needed for SOF3")
             return ""
         self.threephaseconsistency()
 
@@ -276,72 +288,3 @@ class WaterOilGas(object):
         # swl=0.45, (1-swl) = 0.55
 
         return wog_is_ok
-
-    def run_eclipse_test(self):
-        """Start the Eclipse simulator on a minimal deck in order to
-        test the properties of the current WaterOilGas deck"""
-
-        # pylint: disable=import-outside-toplevel
-        # Lazy import for speed reasons, this function is seldom used.
-        import tempfile
-        import subprocess
-
-        ecldeckbeforeprops = """RUNSPEC
-DIMENS
-  1 1 1 /
-OIL
-WATER
-GAS
-START
-  1 'JAN' 2100 /
-TABDIMS
-   2* 10000 /
-GRID
-DX
-   10 /
-DY
-   10 /
-DZ
-   50 /
-TOPS
-   1000 /
-PORO
-   0.3 /
-PERMX
-   100 /
-PERMY
-   100 /
-PERMZ
-   100 /
-
-PROPS
-"""
-        ecldeckafterprops = """
-DENSITY
-  800 1000 1.2 /
-PVTW
-  1 1 0.0001 0.2 0.00001 /
-PVDO
-   100 1   1
-   150 0.9 1 /
-PVDG
-   100 1 1
-   150 0.9 1 /
-ROCK
-  100 0.0001 /
-SOLUTION
-EQUIL
-   1000    100     1040    0   1010      0 /"""
-
-        # Generate the finished Eclipse deck.
-        ecldeck = ecldeckbeforeprops + self.SWOF() + self.SGOF() + ecldeckafterprops
-
-        tmpdir = tempfile.mkdtemp()
-        eclfile = Path(tmpdir) / "RELPERMTEST.DATA"
-        with open(eclfile, "w") as eclfileh:
-            eclfileh.write(ecldeck)
-        ecloutput = subprocess.check_output(
-            ["/project/res/bin/runeclipse", "-i", eclfile]
-        )
-        ecloutputlines = ecloutput.split("\n")
-        logger.error([x for x in ecloutputlines if "Error" in x or "ERROR" in x])

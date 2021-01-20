@@ -107,24 +107,3 @@ def estimate_diffjumppoint(table, xcol=None, ycol=None, side="right"):
     if len(linearpart) == 1:
         linearpart = table[(table["_lindevcumsum"].shift(1) < epsilon)]
     return linearpart.iloc[-1][xcol]
-
-
-def comment_formatter(multiline, prefix="-- "):
-    """Prepends comment characters to every line in input
-
-    Args:
-        multiline (str): String that can contain newlines
-        prefix (str): Comment characters to prepend every line with
-            Default is the Eclipse comment syntax '-- '
-
-    Returns:
-        string, with newlines preserved, and where each line
-            starts with the given prefix. Always ends with a newline.
-    """
-    if multiline is None or not multiline.strip():
-        # Ensure we indicate that there is placeholder for something.
-        return "-- \n"
-    return (
-        "\n".join([prefix + line.strip() for line in multiline.splitlines()]).strip()
-        + "\n"
-    )

@@ -1,6 +1,11 @@
 """Test module for the WaterOil object"""
+import io
 
+import pandas as pd
 import numpy as np
+
+import matplotlib
+import matplotlib.pyplot
 
 from hypothesis import given, settings
 import hypothesis.strategies as st
@@ -147,7 +152,17 @@ def test_linearsegments():
     wateroil.add_corey_water(nw=10, krwend=0.5)
     check_table(wateroil.table)
     check_linear_sections(wateroil)
-    # wateroil.plotkrwkrow(marker="*")
+
+
+def test_plotting():
+    """Test that plotting code pass through (nothing displayed)"""
+    wateroil = WaterOil(swl=0.1, h=0.1)
+    wateroil.add_corey_water()
+    wateroil.add_corey_oil()
+    wateroil.plotkrwkrow(mpl_ax=matplotlib.pyplot.subplots()[1])
+
+    wateroil.add_simple_J()
+    wateroil.plotpc(mpl_ax=matplotlib.pyplot.subplots()[1])
 
 
 def test_wateroil_linear():
@@ -216,3 +231,38 @@ def test_comments():
     assert "KRW" in swof
     assert "KROW" in swof
     assert "PC" in swof
+
+
+def test_nexus():
+    """Test the Nexus export"""
+    wateroil = WaterOil(h=0.01, swl=0.1, swcr=0.3, sorw=0.3)
+    wateroil.add_corey_oil(now=10, kroend=0.5)
+    wateroil.add_corey_water(nw=10, krwend=0.5)
+    nexus_lines = wateroil.WOTABLE().splitlines()
+    non_comments = [
+        line for line in nexus_lines if not line.startswith("!") or not len(line)
+    ]
+    assert non_comments[0] == "WOTABLE"
+    assert non_comments[1] == "SW KRW KROW PC"
+    df = pd.read_table(
+        io.StringIO("\n".join(non_comments[2:])),
+        engine="python",
+        sep=r"\s+",
+        header=None,
+    )
+    assert (df.values <= 1.0).all()
+    assert (df.values >= 0.0).all()
+
+
+def test_skjaeveland_pc():
+    """Simple test of Skjæveland capillary pressure correlation"""
+    wateroil = WaterOil(h=0.3, swl=0.2)
+    wateroil.add_skjaeveland_pc(swr=0.1, cw=0.1, co=-0.1, aw=0.1, ao=0.1)
+    check_table(wateroil.table)
+
+    # Add with wrong numbers
+    wateroil = WaterOil(h=0.3, swl=0.2, sorw=0.3)
+    wateroil.add_skjaeveland_pc(swr=0.8, cw=-0.1, co=0.1, aw=-0.1, ao=-0.1)
+    # (the code returns None when errors occur, no Exception)
+    assert wateroil.pccomment == ""
+    assert "pc" not in wateroil.table

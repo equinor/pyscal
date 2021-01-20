@@ -805,7 +805,7 @@ class WaterOil(object):
         Returns false if error occured.
 
         """  # noqa
-        inputerror = False
+        inputerror = False  # Flag to be able to catch all errors
         if cw < 0:
             logger.error("cw must be larger or equal to zero")
             inputerror = True

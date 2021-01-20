@@ -27,6 +27,7 @@ jobs:
       run: |
         pip install pip -U
         pip install .[tests]
+        pip install opm  # (extra package for more tests)
 
     - name: Generate coverage report
       run: |
