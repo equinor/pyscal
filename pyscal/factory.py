@@ -559,14 +559,32 @@ class PyscalFactory(object):
         )
 
         if wateroil or gasoil:
-            wog_low = PyscalFactory.create_water_oil_gas(params["low"])
-            wog_base = PyscalFactory.create_water_oil_gas(params["base"])
-            wog_high = PyscalFactory.create_water_oil_gas(params["high"])
+            try:
+                wog_low = PyscalFactory.create_water_oil_gas(params["low"])
+            except ValueError as err:
+                raise ValueError(f"Problem with low/pess case: {err}") from err
+            try:
+                wog_base = PyscalFactory.create_water_oil_gas(params["base"])
+            except ValueError as err:
+                raise ValueError(f"Problem with base case: {err}") from err
+            try:
+                wog_high = PyscalFactory.create_water_oil_gas(params["high"])
+            except ValueError as err:
+                raise ValueError(f"Problem with high/opt case: {err}") from err
         elif gaswater:
             # Note that gaswater will be True in three-phase configs.
-            wog_low = PyscalFactory.create_gas_water(params["low"])
-            wog_base = PyscalFactory.create_gas_water(params["base"])
-            wog_high = PyscalFactory.create_gas_water(params["high"])
+            try:
+                wog_low = PyscalFactory.create_gas_water(params["low"])
+            except ValueError as err:
+                raise ValueError(f"Problem with low/pess case: {err}") from err
+            try:
+                wog_base = PyscalFactory.create_gas_water(params["base"])
+            except ValueError as err:
+                raise ValueError(f"Problem with base case: {err}") from err
+            try:
+                wog_high = PyscalFactory.create_gas_water(params["high"])
+            except ValueError as err:
+                raise ValueError(f"Problem with high/opt case: {err}") from err
 
         errored = all([not wog.selfcheck() for wog in [wog_low, wog_base, wog_high]])
 
@@ -812,11 +830,15 @@ class PyscalFactory(object):
             if len(scalinput.loc[satnum, :]) < 3:
                 logger.error("Too few cases supplied for SATNUM %s", str(satnum))
                 raise ValueError
-            scal_l.append(
-                PyscalFactory.create_scal_recommendation(
-                    scalinput.loc[satnum, :].to_dict(orient="index"), h=h
+            try:
+                scal_l.append(
+                    PyscalFactory.create_scal_recommendation(
+                        scalinput.loc[satnum, :].to_dict(orient="index"), h=h
+                    )
                 )
-            )
+            except ValueError as err:
+                raise ValueError(f"Error for SATNUM {satnum}: {str(err)}") from err
+
         return scal_l
 
     @staticmethod
@@ -861,10 +883,13 @@ class PyscalFactory(object):
             PyscalList, consisting of WaterOilGas objects
         """
         wogl = PyscalList()
-        for (_, params) in relperm_params_df.iterrows():
+        for (row_idx, params) in relperm_params_df.sort_values("SATNUM").iterrows():
             if h is not None:
                 params["h"] = h
-            wogl.append(PyscalFactory.create_water_oil_gas(params.to_dict()))
+            try:
+                wogl.append(PyscalFactory.create_water_oil_gas(params.to_dict()))
+            except (AssertionError, ValueError, TypeError) as err:
+                raise ValueError(f"Error for SATNUM {row_idx+1}: {str(err)}") from err
         return wogl
 
     @staticmethod
@@ -884,7 +909,12 @@ class PyscalFactory(object):
         for (_, params) in relperm_params_df.iterrows():
             if h is not None:
                 params["h"] = h
-            wol.append(PyscalFactory.create_water_oil(params.to_dict()))
+            try:
+                wol.append(PyscalFactory.create_water_oil(params.to_dict()))
+            except (AssertionError, ValueError, TypeError) as err:
+                raise ValueError(
+                    f"Error for SATNUM {params['SATNUM']}: {str(err)}"
+                ) from err
         return wol
 
     @staticmethod
@@ -904,7 +934,12 @@ class PyscalFactory(object):
         for (_, params) in relperm_params_df.iterrows():
             if h is not None:
                 params["h"] = h
-            gol.append(PyscalFactory.create_gas_oil(params.to_dict()))
+            try:
+                gol.append(PyscalFactory.create_gas_oil(params.to_dict()))
+            except (AssertionError, ValueError, TypeError) as err:
+                raise ValueError(
+                    f"Error for SATNUM {params['SATNUM']}: {str(err)}"
+                ) from err
         return gol
 
     @staticmethod
@@ -924,7 +959,12 @@ class PyscalFactory(object):
         for (_, params) in relperm_params_df.iterrows():
             if h is not None:
                 params["h"] = h
-            gwl.append(PyscalFactory.create_gas_water(params.to_dict()))
+            try:
+                gwl.append(PyscalFactory.create_gas_water(params.to_dict()))
+            except (AssertionError, ValueError, TypeError) as err:
+                raise ValueError(
+                    f"Error for SATNUM {params['SATNUM']}: {str(err)}"
+                ) from err
         return gwl
 
 

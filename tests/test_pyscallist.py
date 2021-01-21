@@ -634,3 +634,68 @@ def test_comments_df():
     relperm_data = PyscalFactory.load_relperm_df(dframe)
     p_list = PyscalFactory.create_pyscal_list(relperm_data, h=0.2)
     assert p_list.dump_family_1().count("æøå") == 2
+
+
+def test_error_messages_pr_satnum(caplog):
+    """When errors are somewhere in a big dataframe, we should
+    provide hints to the user for where to look"""
+
+    # A string instead of a number in SATNUM 2
+    dframe = pd.DataFrame(
+        columns=["SATNUM", "nw", "now"], data=[[1, 1, 1], [2, "foo", 1]]
+    )
+    with pytest.raises(ValueError, match="SATNUM 2"):
+        PyscalFactory.create_pyscal_list(dframe, h=0.2)
+
+    dframe = pd.DataFrame(
+        columns=["SATNUM", "nw", "now"], data=[[1, 1, 1], [2, np.nan, 1]]
+    )
+    with pytest.raises(ValueError, match="SATNUM 2"):
+        PyscalFactory.create_pyscal_list(dframe, h=0.2)
+
+    # Mixed up order:
+    dframe = pd.DataFrame(
+        columns=["SATNUM", "nw", "now"], data=[[2, np.nan, 1], [1, 1, 1]]
+    )
+    with pytest.raises(ValueError, match="SATNUM 2"):
+        PyscalFactory.create_pyscal_list(dframe, h=0.2)
+
+    # Gasoil list
+    dframe = pd.DataFrame(
+        columns=["SATNUM", "ng", "nog"], data=[[1, 1, 1], [2, np.nan, 1]]
+    )
+    with pytest.raises(ValueError, match="SATNUM 2"):
+        PyscalFactory.create_pyscal_list(dframe, h=0.2)
+
+    # Gaswater list:
+    dframe = pd.DataFrame(
+        columns=["SATNUM", "ng", "nw"], data=[[1, 1, 1], [2, np.nan, 1]]
+    )
+    with pytest.raises(ValueError, match="SATNUM 2"):
+        PyscalFactory.create_pyscal_list(dframe, h=0.2)
+
+    # Wateroilgas list:
+    dframe = pd.DataFrame(
+        columns=["SATNUM", "nw", "now", "ng", "nog"],
+        data=[[1, 1, 1, 1, 1], [2, np.nan, 1, 2, 3]],
+    )
+    with pytest.raises(ValueError, match="SATNUM 2"):
+        PyscalFactory.create_pyscal_list(dframe, h=0.2)
+
+    # SCAL rec list:
+    dframe = pd.DataFrame(
+        columns=["SATNUM", "CASE", "nw", "now", "ng", "nog"],
+        data=[
+            [1, "low", 1, 1, 1, 1],
+            [1, "base", 1, 1, 1, 1],
+            [1, "high", 1, 1, 1, 1],
+            [2, "low", np.nan, 1, 2, 3],
+            [2, "base", 2, 1, 2, 3],
+            [2, "high", 3, 1, 2, 3],
+        ],
+    )
+    # The error should hint both to SATNUM and to low/base/high
+    with pytest.raises(ValueError, match="SATNUM 2"):
+        PyscalFactory.create_scal_recommendation_list(dframe, h=0.2)
+    with pytest.raises(ValueError, match="Problem with low"):
+        PyscalFactory.create_scal_recommendation_list(dframe, h=0.2)
