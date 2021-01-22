@@ -1,7 +1,13 @@
 """Test module for GasOil objects"""
+import io
 
 import numpy as np
 import pandas as pd
+
+import matplotlib
+import matplotlib.pyplot
+
+import pytest
 
 from hypothesis import given, settings
 import hypothesis.strategies as st
@@ -18,9 +24,7 @@ from pyscal.utils.testing import (
 
 
 def test_gasoil_init():
-    """Check the __init__ method for GasOil
-
-    are arguments handled correctly?"""
+    """Test features in the constructor"""
     gasoil = GasOil()
     assert isinstance(gasoil, GasOil)
     assert gasoil.swirr == 0.0
@@ -59,6 +63,29 @@ def test_gasoil_init():
     assert np.isclose(gasoil.crosspoint(), 0.45)
     assert np.isclose(gasoil.table["sg"].min(), 0)
     assert np.isclose(gasoil.table["sg"].max(), 0.9)
+
+    # Test too small h:
+    gasoil = GasOil(swl=0.1, h=0.00000000000000000001)
+    # (a warning is printed that h is truncated)
+    assert gasoil.h == 1 / SWINTEGERS
+
+
+def test_errors():
+    """Test some error situations for the constructor"""
+    with pytest.raises(ValueError, match="No saturation range left"):
+        GasOil(swl=0.3, sorg=0.8)
+
+    with pytest.warns(DeprecationWarning):
+        gasoil = GasOil(tag=dict())
+    assert gasoil.tag == ""
+
+
+def test_plotting():
+    """Test that plotting code pass through (nothing displayed)"""
+    gasoil = GasOil(swl=0.1, h=0.1)
+    gasoil.add_corey_gas()
+    gasoil.add_corey_oil()
+    gasoil.plotkrgkrog(mpl_ax=matplotlib.pyplot.subplots()[1])
 
 
 @settings(deadline=300)
@@ -244,6 +271,27 @@ def test_gasoil_krgendanchor():
     assert gasoil.table[np.isclose(gasoil.table["sg"], 1.0)]["krg"].values[0] == 1.0
 
 
+def test_nexus():
+    """Test the Nexus export"""
+    gasoil = GasOil(h=0.01, swl=0.1, sgcr=0.3, sorg=0.3)
+    gasoil.add_corey_oil(nog=10, kroend=0.5)
+    gasoil.add_corey_gas(ng=10, krgend=0.5)
+    nexus_lines = gasoil.GOTABLE().splitlines()
+    non_comments = [
+        line for line in nexus_lines if not line.startswith("!") or not len(line)
+    ]
+    assert non_comments[0] == "GOTABLE"
+    assert non_comments[1] == "SG KRG KROG PC"
+    df = pd.read_table(
+        io.StringIO("\n".join(non_comments[2:])),
+        engine="python",
+        sep=r"\s+",
+        header=None,
+    )
+    assert (df.values <= 1.0).all()
+    assert (df.values >= 0.0).all()
+
+
 def test_linearsegments():
     """Made for testing the linear segments during
     the resolution of issue #163"""
@@ -252,7 +300,6 @@ def test_linearsegments():
     gasoil.add_corey_gas(ng=10, krgend=0.5)
     check_table(gasoil.table)
     check_linear_sections(gasoil)
-    # gasoil.plotkrgkrog(marker="*")
 
 
 def test_kroend():

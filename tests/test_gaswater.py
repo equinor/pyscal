@@ -5,6 +5,11 @@ import numpy as np
 from hypothesis import given, settings
 import hypothesis.strategies as st
 
+import matplotlib
+import matplotlib.pyplot
+
+import pytest
+
 from pyscal import GasWater
 from pyscal.constants import SWINTEGERS
 
@@ -44,6 +49,33 @@ def check_endpoints(gaswater, krwend, krwmax, krgend):
         assert np.isclose(gaswater.wateroil.table["krw"].max(), krwmax)
     else:
         assert np.isclose(gaswater.wateroil.table["krw"].max(), krwend)
+
+
+def test_constructor():
+    """Test that object attributes are set upon intialization"""
+    gaswater = GasWater()
+    gaswater.add_corey_gas()
+    gaswater.add_corey_water()
+    assert "Corey" in gaswater.krwcomment
+    assert "Corey" in gaswater.krgcomment
+
+    # Trigger tag inconsistency:
+    gaswater.wateroil.tag = "Foo"
+    gaswater.gasoil.tag = "Bar"
+    with pytest.raises(ValueError, match="Internal tag-inconsistency in GasWater"):
+        gaswater.tag
+
+
+def test_fast():
+    """Test the fast mode, skipping some computations"""
+    gaswater = GasWater(fast=True)
+    assert gaswater.fast
+    gaswater.add_corey_gas()
+    gaswater.add_corey_water()
+    swfn = gaswater.SWFN()
+    assert "krw = krg" not in swfn  # Crosspoint should not be present
+    sgfn = gaswater.SGFN()
+    assert "krw = krg" not in sgfn  # Crosspoint should not be present
 
 
 @settings(deadline=400)
@@ -208,6 +240,8 @@ def test_crosspoint():
     gaswater.add_corey_gas(ng=1)
     assert np.isclose(gaswater.crosspoint(), 0.5)
 
+    assert "-- krw = krg @ sw=0.5" in gaswater.SWFN()
+
     gaswater = GasWater(swl=0.5, sgrw=0.0, sgcr=0.0, h=0.1)
     gaswater.add_corey_water(nw=1)
     gaswater.add_corey_gas(ng=1)
@@ -227,6 +261,10 @@ def test_crosspoint():
     gaswater.add_corey_water(nw=1, krwend=0.5)
     gaswater.add_corey_gas(ng=1, krgend=0.5)
     assert np.isclose(gaswater.crosspoint(), 0.25)
+
+    # Test warning/error situation:
+    del gaswater.wateroil.table["krw"]
+    assert gaswater.crosspoint() is None
 
 
 def test_gaswater_pc():
@@ -261,6 +299,14 @@ def test_gaswater_pc():
     swfn = gaswater.SWFN()
     assert "petrophysical version" in swfn
     assert "0.1000000 0.0000000 0.014715" in swfn  # first row
+
+
+def test_plotting():
+    """Test that plotting code pass through (nothing displayed)"""
+    gaswater = GasWater(swl=0.1, h=0.1)
+    gaswater.add_corey_gas()
+    gaswater.add_corey_water()
+    gaswater.plotkrwkrg(mpl_ax=matplotlib.pyplot.subplots()[1])
 
 
 def test_comments():

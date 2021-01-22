@@ -5,6 +5,8 @@ import hypothesis.strategies as st
 
 import numpy as np
 
+import pytest
+
 from pyscal import WaterOilGas, GasOil
 from pyscal.constants import SWINTEGERS, EPSILON
 
@@ -56,13 +58,21 @@ def test_slgof(swl, sorg, sgcr):
     assert np.isclose(slgof["krog"].values[0], 0)
 
 
-def test_gasoil_slgof():
-    """Test fine-tuned numerics for slgof"""
+@pytest.mark.parametrize(
+    "swl, sorg, sgcr",
+    [
+        # Parameter combinations exposed by pytest.hypothesis:
+        (0.029950000000000105, 0.0, 0.01994999999999992),
+        (0.285053445121882, 0.24900257734119435, 0.1660017182274629),
+    ],
+)
+def test_numerical_problems(swl, sorg, sgcr):
+    """Test fine-tuned numerics for slgof, this function should
+    trigger the code path in slgof_df() where slgof_sl_mismatch is small.
 
-    # Parameter set found by hypothesis
-    swl = 0.029950000000000105
-    sorg = 0.0
-    sgcr = 0.01994999999999992
+    Note: The code path taken may depend on hardware/OS etc.
+    """
+
     # Because we cut away some saturation points due to SWINTEGERS, we easily
     # end in a situation where the wrong saturation point of to "equal" ones
     # is removed (because in SLGOF, sg is flipped to sl)

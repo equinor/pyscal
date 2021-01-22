@@ -1,6 +1,7 @@
-""" Representing a GasOil object """
+"""Representing a GasOil object"""
 
 import logging
+import warnings
 
 import numpy as np
 import pandas as pd
@@ -69,16 +70,20 @@ class GasOil(object):
     ):
         if h is None:
             h = 0.01
-        assert -epsilon < swirr < 1.0 + epsilon
-        assert -epsilon < sgcr < 1
-        assert -epsilon < swl < 1
-        assert -epsilon < sorg < 1
+        assert -epsilon < swirr < 1.0 + epsilon, "0 <= swirr <= 1 is required"
+        assert -epsilon < sgcr < 1, "0 <= sgcr < 1 is required"
+        assert -epsilon < swl < 1, "0 <= swl < 1 is required"
+        assert -epsilon < sorg < 1, "0 <= sorg <  1 is required"
         if not isinstance(tag, str):
+            warnings.warn(
+                "tag must be a string, this will be a hard failure later",
+                DeprecationWarning,
+            )
             tag = ""
         if krgendanchor is None:
             krgendanchor = ""
 
-        assert isinstance(krgendanchor, str)
+        assert isinstance(krgendanchor, str), "krgendanchor must be a string"
 
         h_min = 1.0 / float(SWINTEGERS)
         if h < h_min:
@@ -102,7 +107,7 @@ class GasOil(object):
         self.tag = tag
 
         if not 1 - sorg - swl > 0:
-            raise Exception(
+            raise ValueError(
                 "No saturation range left " + "after endpoints, check input"
             )
         if krgendanchor in ["sorg", ""]:
