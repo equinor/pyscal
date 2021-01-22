@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.factory &mdash; pyscal 0.7.3.dev6+g896c022 documentation</title>
+  <title>pyscal.factory &mdash; pyscal 0.7.3.dev7+g24daae8 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.7.3.dev6+g896c022
+                0.7.3.dev7+g24daae8
               </div>
             
           
@@ -279,7 +279,7 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="PyscalFactory.create_water_oil"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_water_oil">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">create_water_oil</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create_water_oil</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Create a WaterOil object from a dictionary of parameters.</span>
 
 <span class="sd">        Parameterization (Corey/LET) is inferred from presence</span>
@@ -304,6 +304,7 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            params (dict): Dictionary with parameters describing the WaterOil object.</span>
+<span class="sd">            fast (bool): If fast-mode should be set for constructed object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">params</span><span class="p">:</span>
             <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
@@ -363,7 +364,7 @@
             <span class="n">params</span><span class="p">[</span><span class="s2">&quot;swcr&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;swl&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">params</span><span class="p">[</span><span class="n">WO_SWCR_ADD</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
 
         <span class="c1"># No requirements to the base objects, defaults are ok.</span>
-        <span class="n">wateroil</span> <span class="o">=</span> <span class="n">WaterOil</span><span class="p">(</span><span class="o">**</span><span class="n">slicedict</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">WO_INIT</span><span class="p">))</span>
+        <span class="n">wateroil</span> <span class="o">=</span> <span class="n">WaterOil</span><span class="p">(</span><span class="o">**</span><span class="n">slicedict</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">WO_INIT</span><span class="p">),</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">)</span>
         <span class="n">usedparams</span> <span class="o">=</span> <span class="n">usedparams</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">slicedict</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">WO_INIT</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
             <span class="s2">&quot;Initialized WaterOil object from parameters </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">usedparams</span><span class="p">))</span>
@@ -461,7 +462,7 @@
         <span class="k">return</span> <span class="n">wateroil</span></div>
 
 <div class="viewcode-block" id="PyscalFactory.create_gas_oil"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_gas_oil">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">create_gas_oil</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create_gas_oil</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Create a GasOil object from a dictionary of parameters.</span>
 
 <span class="sd">        Parameterization (Corey/LET) is inferred from presence</span>
@@ -480,6 +481,12 @@
 <span class="sd">          ng, krgend, krgmax, nog, kroend,</span>
 <span class="sd">          lg, eg, tg, log, eog, tog</span>
 
+<span class="sd">        Args:</span>
+<span class="sd">            params (dict): Dictionary with parameters describing the GasOil object.</span>
+<span class="sd">            fast (bool): If fast-mode should be set for constructed object.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            GasOil</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">params</span><span class="p">:</span>
             <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
@@ -498,7 +505,7 @@
 
         <span class="n">usedparams</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="c1"># No requirements to the base objects, defaults are ok.</span>
-        <span class="n">gasoil</span> <span class="o">=</span> <span class="n">GasOil</span><span class="p">(</span><span class="o">**</span><span class="n">slicedict</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">GO_INIT</span><span class="p">))</span>
+        <span class="n">gasoil</span> <span class="o">=</span> <span class="n">GasOil</span><span class="p">(</span><span class="o">**</span><span class="n">slicedict</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">GO_INIT</span><span class="p">),</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">)</span>
         <span class="n">usedparams</span> <span class="o">=</span> <span class="n">usedparams</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">slicedict</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">GO_INIT</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
             <span class="s2">&quot;Initialized GasOil object from parameters </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">usedparams</span><span class="p">))</span>
@@ -563,7 +570,7 @@
         <span class="k">return</span> <span class="n">gasoil</span></div>
 
 <div class="viewcode-block" id="PyscalFactory.create_water_oil_gas"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_water_oil_gas">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">create_water_oil_gas</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create_water_oil_gas</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Create a WaterOilGas object from a dictionary of parameters</span>
 
 <span class="sd">        Parameterization (Corey/LET) is inferred from presence</span>
@@ -573,8 +580,8 @@
 <span class="sd">        of supported parameters (case insensitive)</span>
 
 <span class="sd">        Params:</span>
-<span class="sd">            params (dict):  parameteres</span>
-<span class="sd">            gaswater (bool): Flag to indicate if is to be used for GasWater</span>
+<span class="sd">            params (dict): Dictionary with parameters describing the WaterOilGas object.</span>
+<span class="sd">            fast (bool): If fast-mode should be set for constructed object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">params</span><span class="p">:</span>
             <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
@@ -587,7 +594,7 @@
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="n">value</span> <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 
         <span class="k">if</span> <span class="n">sufficient_water_oil_params</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">failhard</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-            <span class="n">wateroil</span> <span class="o">=</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_water_oil</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+            <span class="n">wateroil</span> <span class="o">=</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_water_oil</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No wateroil parameters. Assuming only gas-oil in wateroilgas&quot;</span><span class="p">)</span>
             <span class="n">wateroil</span> <span class="o">=</span> <span class="kc">None</span>
@@ -598,13 +605,13 @@
             <span class="n">params</span><span class="p">[</span><span class="s2">&quot;swl&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wateroil</span><span class="o">.</span><span class="n">swl</span>
 
         <span class="k">if</span> <span class="n">sufficient_gas_oil_params</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">failhard</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-            <span class="n">gasoil</span> <span class="o">=</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_gas_oil</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+            <span class="n">gasoil</span> <span class="o">=</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_gas_oil</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;No gasoil parameters, assuming two-phase oilwatergas&quot;</span><span class="p">)</span>
             <span class="n">gasoil</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="n">wog_init_params</span> <span class="o">=</span> <span class="n">slicedict</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">WOG_INIT</span><span class="p">)</span>
-        <span class="n">wateroilgas</span> <span class="o">=</span> <span class="n">WaterOilGas</span><span class="p">(</span><span class="o">**</span><span class="n">wog_init_params</span><span class="p">)</span>
+        <span class="n">wateroilgas</span> <span class="o">=</span> <span class="n">WaterOilGas</span><span class="p">(</span><span class="o">**</span><span class="n">wog_init_params</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">)</span>
         <span class="c1"># The wateroilgas __init__ has already created WaterOil and GasOil objects</span>
         <span class="c1"># but we overwrite the references with newly created ones, this factory function</span>
         <span class="c1"># must then guarantee that they are compatible.</span>
@@ -617,7 +624,7 @@
         <span class="k">return</span> <span class="n">wateroilgas</span></div>
 
 <div class="viewcode-block" id="PyscalFactory.create_gas_water"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_gas_water">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">create_gas_water</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create_gas_water</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Create a GasWater object.</span>
 
 <span class="sd">        Parameterization (Corey/LET) is inferred from presence</span>
@@ -625,6 +632,7 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            params (dict): Dictionary with parameters for GasWater.</span>
+<span class="sd">            fast (bool): If fast-mode should be set for constructed object.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            GasWater</span>
@@ -640,7 +648,7 @@
         <span class="n">sufficient_gas_water_params</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">failhard</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="n">gw_init_params</span> <span class="o">=</span> <span class="n">slicedict</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">GW_INIT</span><span class="p">)</span>
-        <span class="n">gaswater</span> <span class="o">=</span> <span class="n">GasWater</span><span class="p">(</span><span class="o">**</span><span class="n">gw_init_params</span><span class="p">)</span>
+        <span class="n">gaswater</span> <span class="o">=</span> <span class="n">GasWater</span><span class="p">(</span><span class="o">**</span><span class="n">gw_init_params</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">)</span>
 
         <span class="c1"># We are using the create_water_oil_gas factory function</span>
         <span class="c1"># to avoid replicating code. It works because GasWater and</span>
@@ -651,13 +659,14 @@
         <span class="c1"># Set some dummy parameters for oil:</span>
         <span class="n">wog_params</span><span class="p">[</span><span class="s2">&quot;nog&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="n">wog_params</span><span class="p">[</span><span class="s2">&quot;now&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="n">wog</span> <span class="o">=</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_water_oil_gas</span><span class="p">(</span><span class="n">wog_params</span><span class="p">)</span>
+        <span class="n">wog</span> <span class="o">=</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_water_oil_gas</span><span class="p">(</span><span class="n">wog_params</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">)</span>
         <span class="n">gaswater</span><span class="o">.</span><span class="n">wateroil</span> <span class="o">=</span> <span class="n">wog</span><span class="o">.</span><span class="n">wateroil</span>
         <span class="n">gaswater</span><span class="o">.</span><span class="n">gasoil</span> <span class="o">=</span> <span class="n">wog</span><span class="o">.</span><span class="n">gasoil</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">gaswater</span><span class="o">.</span><span class="n">fast</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">gaswater</span></div>
 
 <div class="viewcode-block" id="PyscalFactory.create_scal_recommendation"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_scal_recommendation">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">create_scal_recommendation</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create_scal_recommendation</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set up a SCAL recommendation curve set from input as a</span>
 <span class="sd">        dictionary of dictionary.</span>
@@ -684,6 +693,7 @@
 <span class="sd">                for base and high.</span>
 <span class="sd">            tag (string): String to be used as the tag, will end up in comments.</span>
 <span class="sd">            h (float): Saturation step length</span>
+<span class="sd">            fast (bool): If fast-mode should be set for constructed object.</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            SCALrecommendation</span>
@@ -726,29 +736,29 @@
 
         <span class="k">if</span> <span class="n">wateroil</span> <span class="ow">or</span> <span class="n">gasoil</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">wog_low</span> <span class="o">=</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_water_oil_gas</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;low&quot;</span><span class="p">])</span>
+                <span class="n">wog_low</span> <span class="o">=</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_water_oil_gas</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;low&quot;</span><span class="p">],</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Problem with low/pess case: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">err</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">wog_base</span> <span class="o">=</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_water_oil_gas</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;base&quot;</span><span class="p">])</span>
+                <span class="n">wog_base</span> <span class="o">=</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_water_oil_gas</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;base&quot;</span><span class="p">],</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Problem with base case: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">err</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">wog_high</span> <span class="o">=</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_water_oil_gas</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;high&quot;</span><span class="p">])</span>
+                <span class="n">wog_high</span> <span class="o">=</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_water_oil_gas</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;high&quot;</span><span class="p">],</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Problem with high/opt case: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">err</span>
         <span class="k">elif</span> <span class="n">gaswater</span><span class="p">:</span>
             <span class="c1"># Note that gaswater will be True in three-phase configs.</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">wog_low</span> <span class="o">=</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_gas_water</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;low&quot;</span><span class="p">])</span>
+                <span class="n">wog_low</span> <span class="o">=</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_gas_water</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;low&quot;</span><span class="p">],</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Problem with low/pess case: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">err</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">wog_base</span> <span class="o">=</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_gas_water</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;base&quot;</span><span class="p">])</span>
+                <span class="n">wog_base</span> <span class="o">=</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_gas_water</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;base&quot;</span><span class="p">],</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Problem with base case: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">err</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">wog_high</span> <span class="o">=</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_gas_water</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;high&quot;</span><span class="p">])</span>
+                <span class="n">wog_high</span> <span class="o">=</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_gas_water</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;high&quot;</span><span class="p">],</span> <span class="n">fast</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Problem with high/opt case: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">err</span>
 

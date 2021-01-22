@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal package &mdash; pyscal 0.7.3.dev6+g896c022 documentation</title>
+  <title>pyscal package &mdash; pyscal 0.7.3.dev7+g24daae8 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.7.3.dev6+g896c022
+                0.7.3.dev7+g24daae8
               </div>
             
           
@@ -255,7 +255,7 @@ users when input is written in a different context, like an Excel
 spreadsheet.</p>
 <dl class="py method">
 <dt id="pyscal.factory.PyscalFactory.create_gas_oil">
-<em class="property">static </em><code class="sig-name descname">create_gas_oil</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_gas_oil"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_gas_oil" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">create_gas_oil</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fast</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_gas_oil"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_gas_oil" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a GasOil object from a dictionary of parameters.</p>
 <p>Parameterization (Corey/LET) is inferred from presence
 of certain parameters in the dictionary.</p>
@@ -271,17 +271,31 @@ ng, krgend, krgmax, nog, kroend,
 lg, eg, tg, log, eog, tog</p>
 </dd>
 </dl>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>dict</em>) – Dictionary with parameters describing the GasOil object.</p></li>
+<li><p><strong>fast</strong> (<em>bool</em>) – If fast-mode should be set for constructed object.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>GasOil</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="pyscal.factory.PyscalFactory.create_gas_water">
-<em class="property">static </em><code class="sig-name descname">create_gas_water</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_gas_water"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_gas_water" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">create_gas_water</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fast</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_gas_water"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_gas_water" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a GasWater object.</p>
 <p>Parameterization (Corey/LET) is inferred from presence
 of certain parameters in the dictionary.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>params</strong> (<em>dict</em>) – Dictionary with parameters for GasWater.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>dict</em>) – Dictionary with parameters for GasWater.</p></li>
+<li><p><strong>fast</strong> (<em>bool</em>) – If fast-mode should be set for constructed object.</p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>GasWater</p>
@@ -348,7 +362,7 @@ through load_relperm_df().</p></li>
 
 <dl class="py method">
 <dt id="pyscal.factory.PyscalFactory.create_scal_recommendation">
-<em class="property">static </em><code class="sig-name descname">create_scal_recommendation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span></em>, <em class="sig-param"><span class="n">tag</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">h</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_scal_recommendation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_scal_recommendation" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">create_scal_recommendation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span></em>, <em class="sig-param"><span class="n">tag</span><span class="o">=</span><span class="default_value">''</span></em>, <em class="sig-param"><span class="n">h</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fast</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_scal_recommendation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_scal_recommendation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set up a SCAL recommendation curve set from input as a
 dictionary of dictionary.</p>
 <p>The keys in in the dictionary <em>must</em> be “low”, “base” and “high”.</p>
@@ -371,6 +385,7 @@ the create_water_oil_gas() factory function, and then similarly
 for base and high.</p></li>
 <li><p><strong>tag</strong> (<em>string</em>) – String to be used as the tag, will end up in comments.</p></li>
 <li><p><strong>h</strong> (<em>float</em>) – Saturation step length</p></li>
+<li><p><strong>fast</strong> (<em>bool</em>) – If fast-mode should be set for constructed object.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -399,7 +414,7 @@ through load_relperm_df().</p></li>
 
 <dl class="py method">
 <dt id="pyscal.factory.PyscalFactory.create_water_oil">
-<em class="property">static </em><code class="sig-name descname">create_water_oil</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_water_oil"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_water_oil" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">create_water_oil</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fast</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_water_oil"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_water_oil" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a WaterOil object from a dictionary of parameters.</p>
 <p>Parameterization (Corey/LET) is inferred from presence
 of certain parameters in the dictionary.</p>
@@ -420,22 +435,25 @@ a, b, poro, perm, sigma_costau</p>
 </dl>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>params</strong> (<em>dict</em>) – Dictionary with parameters describing the WaterOil object.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> (<em>dict</em>) – Dictionary with parameters describing the WaterOil object.</p></li>
+<li><p><strong>fast</strong> (<em>bool</em>) – If fast-mode should be set for constructed object.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt id="pyscal.factory.PyscalFactory.create_water_oil_gas">
-<em class="property">static </em><code class="sig-name descname">create_water_oil_gas</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_water_oil_gas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_water_oil_gas" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">create_water_oil_gas</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">params</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fast</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_water_oil_gas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_water_oil_gas" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a WaterOilGas object from a dictionary of parameters</p>
 <p>Parameterization (Corey/LET) is inferred from presence
 of certain parameters in the dictionary.</p>
 <p>Check create_water_oil() and create_gas_oil() for lists
 of supported parameters (case insensitive)</p>
 <dl class="simple">
-<dt>Params:</dt><dd><p>params (dict):  parameteres
-gaswater (bool): Flag to indicate if is to be used for GasWater</p>
+<dt>Params:</dt><dd><p>params (dict): Dictionary with parameters describing the WaterOilGas object.
+fast (bool): If fast-mode should be set for constructed object.</p>
 </dd>
 </dl>
 </dd></dl>
