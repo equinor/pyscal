@@ -215,7 +215,7 @@ def _interpolate_tags(low, high, parameter, tag):
     return tag
 
 
-def interpolate_wo(wo_low, wo_high, parameter, h=0.01, tag=None):
+def interpolate_wo(wo_low, wo_high, parameter, h=0.01, tag=None, fast=False):
     """Interpolates between two water-oil curves.
 
     The saturation endpoints for the curves must be known
@@ -235,6 +235,8 @@ def interpolate_wo(wo_low, wo_high, parameter, h=0.01, tag=None):
             smaller than in the input curves are used, to preserve information.
         tag (string): Tag to associate to the constructed object. If None
             it will be automatically filled. Set to empty string to ensure no tag.
+        fast (bool): If fast-mode should be set for constructed object
+
     Returns:
         A new oil-water curve
 
@@ -270,7 +272,7 @@ def interpolate_wo(wo_low, wo_high, parameter, h=0.01, tag=None):
 
     # Construct the new WaterOil object, with interpolated
     # endpoints:
-    wo_new = pyscal.WaterOil(swl=swl_new, swcr=swcr_new, sorw=sorw_new, h=h)
+    wo_new = pyscal.WaterOil(swl=swl_new, swcr=swcr_new, sorw=sorw_new, h=h, fast=fast)
 
     # Add interpolated relperm data in nonlinear parts:
     wo_new.table["krw"] = weighted_value(
@@ -297,7 +299,7 @@ def interpolate_wo(wo_low, wo_high, parameter, h=0.01, tag=None):
     return wo_new
 
 
-def interpolate_go(go_low, go_high, parameter, h=0.01, tag=None):
+def interpolate_go(go_low, go_high, parameter, h=0.01, tag=None, fast=False):
     """Interpolates between two gas-oil curves.
 
     The saturation endpoints for the curves must be known
@@ -317,6 +319,8 @@ def interpolate_go(go_low, go_high, parameter, h=0.01, tag=None):
             smaller than in the input curves are used, to preserve information.
         tag (string): Tag to associate to the constructed object. If None
             it will be automatically filled. Set to empty string to ensure no tag.
+        fast (bool): If fast-mode should be set for constructed object
+
     Returns:
         A new gas-oil curve
 
@@ -352,7 +356,7 @@ def interpolate_go(go_low, go_high, parameter, h=0.01, tag=None):
 
     # Construct the new GasOil object, with interpolated
     # endpoints:
-    go_new = pyscal.GasOil(swl=swl_new, sgcr=sgcr_new, sorg=sorg_new, h=h)
+    go_new = pyscal.GasOil(swl=swl_new, sgcr=sgcr_new, sorg=sorg_new, h=h, fast=fast)
 
     # Add interpolated relperm data in nonlinear parts:
     go_new.table["krg"] = weighted_value(

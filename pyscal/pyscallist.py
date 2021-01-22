@@ -257,7 +257,7 @@ class PyscalList(object):
             Path(filename).write_text(family_2_str, encoding="utf-8")
         return family_2_str
 
-    def interpolate(self, int_params_wo, int_params_go=None, h=None):
+    def interpolate(self, int_params_wo, int_params_go=None, fast=False, h=None):
         """This function will interpolate each SCALrecommendation
         object to the chosen parameters
 
@@ -271,6 +271,7 @@ class PyscalList(object):
             int_params_go (float or list of float): If specified, will
                 be used for GasOil interpolation.
             h (float): Saturation step-length
+            fast (bool): If fast-mode should be set for interpolation
 
         Returns:
             PyscalList of type WaterOilGas, with the same length.
@@ -314,7 +315,7 @@ class PyscalList(object):
         wog_list = PyscalList()
         for (satnum, scalrec) in enumerate(self.pyscal_list):
             wog_list.append(
-                scalrec.interpolate(int_params_wo[satnum], int_params_go[satnum], h=h)
+                scalrec.interpolate(int_params_wo[satnum], int_params_go[satnum], h=h, fast=fast)
             )
         return wog_list
 
