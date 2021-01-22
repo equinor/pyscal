@@ -1124,7 +1124,9 @@ class WaterOil(object):
                 "krow": {"sign": -1, "lower": 0, "upper": 1},
                 "krw": {"sign": 1, "lower": 0, "upper": 1},
                 "pc": {"sign": -1, "allowzero": True},
-            },
+            }
+            if not self.fast
+            else None,
         )
         string += "/\n"  # Empty line at the end
         return string
@@ -1189,7 +1191,9 @@ class WaterOil(object):
             monotonocity={
                 "krw": {"sign": 1, "lower": 0, "upper": 1},
                 "pc": {"sign": -1, "allowzero": True},
-            },
+            }
+            if not self.fast
+            else None,
         )
         string += "/\n"  # Empty line at the end
         return string
@@ -1227,7 +1231,9 @@ class WaterOil(object):
                 "krow": {"sign": -1, "lower": 0, "upper": 1},
                 "krw": {"sign": 1, "lower": 0, "upper": 1},
                 "pc": {"sign": -1, "allowzero": True},
-            },
+            }
+            if not self.fast
+            else None,
         )
         return string
 

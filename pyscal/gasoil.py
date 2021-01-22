@@ -715,7 +715,9 @@ class GasOil(object):
                 "krog": {"sign": -1, "lower": 0, "upper": 1},
                 "krg": {"sign": 1, "lower": 0, "upper": 1},
                 "pc": {"sign": 1, "allowzero": True},
-            },
+            }
+            if not self.fast
+            else None,
         )
         string += "/\n"
         return string
@@ -809,7 +811,9 @@ class GasOil(object):
                 "krog": {"sign": 1, "lower": 0, "upper": 1},
                 "krg": {"sign": -1, "lower": 0, "upper": 1},
                 "pc": {"sign": -1, "allowzero": True},
-            },
+            }
+            if not self.fast
+            else None,
         )
         string += "/\n"
         return string
@@ -873,7 +877,9 @@ class GasOil(object):
             monotonocity={
                 "krg": {"sign": 1, "lower": 0, "upper": 1},
                 "pc": {"sign": 1, "allowzero": True},
-            },
+            }
+            if not self.fast
+            else None,
         )
         string += "/\n"
         return string
@@ -925,7 +931,9 @@ class GasOil(object):
                 "krog": {"sign": -1, "lower": 0, "upper": 1},
                 "krg": {"sign": 1, "lower": 0, "upper": 1},
                 "pc": {"sign": 1, "allowzero": True},
-            },
+            }
+            if self.table.fast
+            else None,
         )
         return string
 

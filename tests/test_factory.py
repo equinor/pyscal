@@ -148,6 +148,48 @@ def test_factory_wateroil():
     assert "pc" not in wateroil.table
 
 
+def test_fast_mode():
+    """Test that the fast-flag is passed on to constructed objects
+
+    Each object's own test code tests the actual effects of the fast flag"""
+    wateroil = PyscalFactory.create_water_oil({"nw": 2, "now": 2})
+    assert not wateroil.fast
+    wateroil = PyscalFactory.create_water_oil({"nw": 2, "now": 2}, fast=True)
+    assert wateroil.fast
+
+    gasoil = PyscalFactory.create_gas_oil({"ng": 2, "nog": 2})
+    assert not gasoil.fast
+    gasoil = PyscalFactory.create_gas_oil({"ng": 2, "nog": 2}, fast=True)
+    assert gasoil.fast
+
+    gaswater = PyscalFactory.create_gas_water({"nw": 2, "ng": 2})
+    assert not gaswater.gasoil.fast
+    assert not gaswater.wateroil.fast
+    gaswater = PyscalFactory.create_gas_water({"nw": 2, "ng": 2}, fast=True)
+    assert gaswater.gasoil.fast
+    assert gaswater.wateroil.fast
+    assert gaswater.fast
+
+    wateroilgas = PyscalFactory.create_water_oil_gas(
+        {"nw": 2, "now": 2, "ng": 2, "nog": 2}, fast=True
+    )
+    assert wateroilgas.fast
+    assert wateroilgas.wateroil.fast
+    assert wateroilgas.gasoil.fast
+
+    scalrec = PyscalFactory.create_scal_recommendation(
+        {
+            "low": {"nw": 2, "now": 2, "ng": 2, "nog": 2},
+            "base": {"nw": 2, "now": 2, "ng": 2, "nog": 2},
+            "high": {"nw": 2, "now": 2, "ng": 2, "nog": 2},
+        },
+        fast=True,
+    )
+    assert scalrec.low.fast
+    assert scalrec.base.fast
+    assert scalrec.high.fast
+
+
 def test_init_with_swlheight():
     """With sufficient parameters, swl will be calculated on the fly
     when initializing the WaterOil object"""
