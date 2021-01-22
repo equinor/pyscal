@@ -315,7 +315,9 @@ class PyscalList(object):
         wog_list = PyscalList()
         for (satnum, scalrec) in enumerate(self.pyscal_list):
             wog_list.append(
-                scalrec.interpolate(int_params_wo[satnum], int_params_go[satnum], h=h, fast=fast)
+                scalrec.interpolate(
+                    int_params_wo[satnum], int_params_go[satnum], h=h, fast=fast
+                )
             )
         return wog_list
 
