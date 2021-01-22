@@ -189,6 +189,9 @@ def test_fast_mode():
     assert scalrec.base.fast
     assert scalrec.high.fast
 
+    interpolant = scalrec.interpolate(-0.5)
+    assert interpolant.fast
+
 
 def test_init_with_swlheight():
     """With sufficient parameters, swl will be calculated on the fly

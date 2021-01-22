@@ -592,7 +592,7 @@ class PyscalFactory(object):
             except ValueError as err:
                 raise ValueError(f"Problem with base case: {err}") from err
             try:
-                wog_high = PyscalFactory.create_gas_water(params["high"], fast)
+                wog_high = PyscalFactory.create_gas_water(params["high"], fast=fast)
             except ValueError as err:
                 raise ValueError(f"Problem with high/opt case: {err}") from err
 
@@ -601,7 +601,7 @@ class PyscalFactory(object):
         if errored:
             raise ValueError("Incomplete SCAL recommendation")
 
-        scal = SCALrecommendation(wog_low, wog_base, wog_high, tag)
+        scal = SCALrecommendation(wog_low, wog_base, wog_high, tag, fast=fast)
         return scal
 
     @staticmethod

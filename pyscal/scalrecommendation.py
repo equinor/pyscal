@@ -34,10 +34,14 @@ class SCALrecommendation(object):
             high (WaterOilGas): high case
             tag (str): Describes the recommendation. This string will be used
                 as tag strings for the interpolants.
+            fast (bool): Set to True if in order to skip some integrity checks
+            and nice-to-have features. Not needed to set for normal pyscal
+            runs, as speed is seldom crucial. Default False
         """
 
         self.h = h
         self.tag = tag
+        self.fast = fast
 
         if isinstance(low, dict) and isinstance(base, dict) and isinstance(high, dict):
 
@@ -207,7 +211,7 @@ class SCALrecommendation(object):
             a=a, b=b, poro_ref=poro_ref, perm_ref=perm_ref, drho=drho, g=g
         )
 
-    def interpolate(self, parameter, parameter2=None, h=0.02, fast=False):
+    def interpolate(self, parameter, parameter2=None, h=0.02):
         """Interpolate between low, base and high
 
         Endpoints are located for input curves, and interpolated
@@ -229,7 +233,6 @@ class SCALrecommendation(object):
                 GasOil. Ignored for GasWater (no warning).
             h (float): Saturation step length in generated tables. Does not
                 need to be the same as the tables interpolation is done from.
-            fast (bool): If fast-mode should be set for constructed object
         """
 
         if parameter2 is not None:
@@ -290,14 +293,14 @@ class SCALrecommendation(object):
             )
         tagstring = "\n".join(tags)
         if do_gaswater:
-            interpolant = GasWater(h=h, tag=tagstring, fast=fast)
+            interpolant = GasWater(h=h, tag=tagstring, fast=self.fast)
             if gasparameter != parameter:
                 logger.warning(
                     "Different interpolation parameters for Water and for "
                     "gas in GasWater, this is maybe not what you want"
                 )
         else:
-            interpolant = WaterOilGas(h=h, tag=tagstring, fast=fast)
+            interpolant = WaterOilGas(h=h, tag=tagstring, fast=self.fast)
 
         if do_wateroil or do_gaswater:
             tag = (
@@ -323,7 +326,7 @@ class SCALrecommendation(object):
                     -parameter,
                     h=h,
                     tag=tag,
-                    fast=fast,
+                    fast=self.fast,
                 )
             elif parameter > 0.0:
                 interpolant.wateroil = interpolate_wo(
@@ -332,7 +335,7 @@ class SCALrecommendation(object):
                     parameter,
                     h=h,
                     tag=tag,
-                    fast=fast,
+                    fast=self.fast,
                 )
         else:
             interpolant.wateroil = None
@@ -361,7 +364,7 @@ class SCALrecommendation(object):
                     -1 * gasparameter,
                     h=h,
                     tag=tag,
-                    fast=fast,
+                    fast=self.fast,
                 )
             elif gasparameter > 0.0:
                 interpolant.gasoil = interpolate_go(
@@ -370,7 +373,7 @@ class SCALrecommendation(object):
                     gasparameter,
                     h=h,
                     tag=tag,
-                    fast=fast,
+                    fast=self.fast,
                 )
         else:
             interpolant.gasoil = None
