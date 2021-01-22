@@ -23,9 +23,6 @@ class SCALrecommendation(object):
         base (WaterOilGas): An object representing the base case
         high (WaterOilGas): An object representing the high case
         tag (str): A string that describes the recommendation. Optional.
-        fast (bool): Set to True if in order to skip some integrity checks
-            and nice-to-have features. Not needed to set for normal pyscal
-            runs, as speed is seldom crucial. Default False
     """
 
     def __init__(self, low, base, high, tag=None, h=0.01, fast=False):
@@ -37,13 +34,10 @@ class SCALrecommendation(object):
             high (WaterOilGas): high case
             tag (str): Describes the recommendation. This string will be used
                 as tag strings for the interpolants.
-            fast(bool): Set to True if in order to skip some integrity checks
-            and nice-to-have features.
         """
 
         self.h = h
         self.tag = tag
-        self.fast = fast
 
         if isinstance(low, dict) and isinstance(base, dict) and isinstance(high, dict):
 
@@ -87,7 +81,6 @@ class SCALrecommendation(object):
                 swcr=low["swcr"],
                 h=h,
                 tag=tag,
-                fast=fast,
             )
             self.base = WaterOilGas(
                 swirr=base["swirr"],
@@ -98,7 +91,6 @@ class SCALrecommendation(object):
                 swcr=base["swcr"],
                 h=h,
                 tag=tag,
-                fast=fast,
             )
             self.high = WaterOilGas(
                 swirr=high["swirr"],
@@ -109,7 +101,6 @@ class SCALrecommendation(object):
                 swcr=high["swcr"],
                 h=h,
                 tag=tag,
-                fast=fast,
             )
 
             # Add water and oil curves
