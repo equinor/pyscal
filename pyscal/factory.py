@@ -113,7 +113,7 @@ class PyscalFactory(object):
     """
 
     @staticmethod
-    def create_water_oil(params=None):
+    def create_water_oil(params=None, fast=False):
         """Create a WaterOil object from a dictionary of parameters.
 
         Parameterization (Corey/LET) is inferred from presence
@@ -138,6 +138,7 @@ class PyscalFactory(object):
 
         Args:
             params (dict): Dictionary with parameters describing the WaterOil object.
+            fast (bool): If fast-mode should be set for constructed object.
         """
         if not params:
             params = dict()
@@ -197,7 +198,7 @@ class PyscalFactory(object):
             params["swcr"] = params["swl"] + params[WO_SWCR_ADD[0]]
 
         # No requirements to the base objects, defaults are ok.
-        wateroil = WaterOil(**slicedict(params, WO_INIT))
+        wateroil = WaterOil(**slicedict(params, WO_INIT), fast=fast)
         usedparams = usedparams.union(set(slicedict(params, WO_INIT).keys()))
         logger.debug(
             "Initialized WaterOil object from parameters %s", str(list(usedparams))
@@ -295,7 +296,7 @@ class PyscalFactory(object):
         return wateroil
 
     @staticmethod
-    def create_gas_oil(params=None):
+    def create_gas_oil(params=None, fast=False):
         """Create a GasOil object from a dictionary of parameters.
 
         Parameterization (Corey/LET) is inferred from presence
@@ -314,6 +315,12 @@ class PyscalFactory(object):
           ng, krgend, krgmax, nog, kroend,
           lg, eg, tg, log, eog, tog
 
+        Args:
+            params (dict): Dictionary with parameters describing the GasOil object.
+            fast (bool): If fast-mode should be set for constructed object.
+
+        Returns:
+            GasOil
         """
         if not params:
             params = dict()
@@ -332,7 +339,7 @@ class PyscalFactory(object):
 
         usedparams = set()
         # No requirements to the base objects, defaults are ok.
-        gasoil = GasOil(**slicedict(params, GO_INIT))
+        gasoil = GasOil(**slicedict(params, GO_INIT), fast=fast)
         usedparams = usedparams.union(set(slicedict(params, GO_INIT).keys()))
         logger.debug(
             "Initialized GasOil object from parameters %s", str(list(usedparams))
@@ -397,7 +404,7 @@ class PyscalFactory(object):
         return gasoil
 
     @staticmethod
-    def create_water_oil_gas(params=None):
+    def create_water_oil_gas(params=None, fast=False):
         """Create a WaterOilGas object from a dictionary of parameters
 
         Parameterization (Corey/LET) is inferred from presence
@@ -407,8 +414,8 @@ class PyscalFactory(object):
         of supported parameters (case insensitive)
 
         Params:
-            params (dict):  parameteres
-            gaswater (bool): Flag to indicate if is to be used for GasWater
+            params (dict): Dictionary with parameters describing the WaterOilGas object.
+            fast (bool): If fast-mode should be set for constructed object.
         """
         if not params:
             params = dict()
@@ -421,7 +428,7 @@ class PyscalFactory(object):
         params = {key.lower(): value for (key, value) in params.items()}
 
         if sufficient_water_oil_params(params, failhard=False):
-            wateroil = PyscalFactory.create_water_oil(params)
+            wateroil = PyscalFactory.create_water_oil(params, fast=fast)
         else:
             logger.info("No wateroil parameters. Assuming only gas-oil in wateroilgas")
             wateroil = None
@@ -432,13 +439,13 @@ class PyscalFactory(object):
             params["swl"] = wateroil.swl
 
         if sufficient_gas_oil_params(params, failhard=False):
-            gasoil = PyscalFactory.create_gas_oil(params)
+            gasoil = PyscalFactory.create_gas_oil(params, fast=fast)
         else:
             logger.info("No gasoil parameters, assuming two-phase oilwatergas")
             gasoil = None
 
         wog_init_params = slicedict(params, WOG_INIT)
-        wateroilgas = WaterOilGas(**wog_init_params)
+        wateroilgas = WaterOilGas(**wog_init_params, fast=fast)
         # The wateroilgas __init__ has already created WaterOil and GasOil objects
         # but we overwrite the references with newly created ones, this factory function
         # must then guarantee that they are compatible.
@@ -451,7 +458,7 @@ class PyscalFactory(object):
         return wateroilgas
 
     @staticmethod
-    def create_gas_water(params=None):
+    def create_gas_water(params=None, fast=False):
         """Create a GasWater object.
 
         Parameterization (Corey/LET) is inferred from presence
@@ -459,6 +466,7 @@ class PyscalFactory(object):
 
         Args:
             params (dict): Dictionary with parameters for GasWater.
+            fast (bool): If fast-mode should be set for constructed object.
 
         Returns:
             GasWater
@@ -474,7 +482,7 @@ class PyscalFactory(object):
         sufficient_gas_water_params(params, failhard=True)
 
         gw_init_params = slicedict(params, GW_INIT)
-        gaswater = GasWater(**gw_init_params)
+        gaswater = GasWater(**gw_init_params, fast=fast)
 
         # We are using the create_water_oil_gas factory function
         # to avoid replicating code. It works because GasWater and
@@ -485,13 +493,14 @@ class PyscalFactory(object):
         # Set some dummy parameters for oil:
         wog_params["nog"] = 1
         wog_params["now"] = 1
-        wog = PyscalFactory.create_water_oil_gas(wog_params)
+        wog = PyscalFactory.create_water_oil_gas(wog_params, fast=fast)
         gaswater.wateroil = wog.wateroil
         gaswater.gasoil = wog.gasoil
+        print(gaswater.fast)
         return gaswater
 
     @staticmethod
-    def create_scal_recommendation(params, tag="", h=None):
+    def create_scal_recommendation(params, tag="", h=None, fast=False):
         """
         Set up a SCAL recommendation curve set from input as a
         dictionary of dictionary.
@@ -518,6 +527,7 @@ class PyscalFactory(object):
                 for base and high.
             tag (string): String to be used as the tag, will end up in comments.
             h (float): Saturation step length
+            fast (bool): If fast-mode should be set for constructed object.
 
         Returns:
             SCALrecommendation
@@ -559,14 +569,32 @@ class PyscalFactory(object):
         )
 
         if wateroil or gasoil:
-            wog_low = PyscalFactory.create_water_oil_gas(params["low"])
-            wog_base = PyscalFactory.create_water_oil_gas(params["base"])
-            wog_high = PyscalFactory.create_water_oil_gas(params["high"])
+            try:
+                wog_low = PyscalFactory.create_water_oil_gas(params["low"], fast=fast)
+            except ValueError as err:
+                raise ValueError(f"Problem with low/pess case: {err}") from err
+            try:
+                wog_base = PyscalFactory.create_water_oil_gas(params["base"], fast=fast)
+            except ValueError as err:
+                raise ValueError(f"Problem with base case: {err}") from err
+            try:
+                wog_high = PyscalFactory.create_water_oil_gas(params["high"], fast=fast)
+            except ValueError as err:
+                raise ValueError(f"Problem with high/opt case: {err}") from err
         elif gaswater:
             # Note that gaswater will be True in three-phase configs.
-            wog_low = PyscalFactory.create_gas_water(params["low"])
-            wog_base = PyscalFactory.create_gas_water(params["base"])
-            wog_high = PyscalFactory.create_gas_water(params["high"])
+            try:
+                wog_low = PyscalFactory.create_gas_water(params["low"], fast=fast)
+            except ValueError as err:
+                raise ValueError(f"Problem with low/pess case: {err}") from err
+            try:
+                wog_base = PyscalFactory.create_gas_water(params["base"], fast=fast)
+            except ValueError as err:
+                raise ValueError(f"Problem with base case: {err}") from err
+            try:
+                wog_high = PyscalFactory.create_gas_water(params["high"], fast)
+            except ValueError as err:
+                raise ValueError(f"Problem with high/opt case: {err}") from err
 
         errored = all([not wog.selfcheck() for wog in [wog_low, wog_base, wog_high]])
 
@@ -812,11 +840,15 @@ class PyscalFactory(object):
             if len(scalinput.loc[satnum, :]) < 3:
                 logger.error("Too few cases supplied for SATNUM %s", str(satnum))
                 raise ValueError
-            scal_l.append(
-                PyscalFactory.create_scal_recommendation(
-                    scalinput.loc[satnum, :].to_dict(orient="index"), h=h
+            try:
+                scal_l.append(
+                    PyscalFactory.create_scal_recommendation(
+                        scalinput.loc[satnum, :].to_dict(orient="index"), h=h
+                    )
                 )
-            )
+            except ValueError as err:
+                raise ValueError(f"Error for SATNUM {satnum}: {str(err)}") from err
+
         return scal_l
 
     @staticmethod
@@ -861,10 +893,13 @@ class PyscalFactory(object):
             PyscalList, consisting of WaterOilGas objects
         """
         wogl = PyscalList()
-        for (_, params) in relperm_params_df.iterrows():
+        for (row_idx, params) in relperm_params_df.sort_values("SATNUM").iterrows():
             if h is not None:
                 params["h"] = h
-            wogl.append(PyscalFactory.create_water_oil_gas(params.to_dict()))
+            try:
+                wogl.append(PyscalFactory.create_water_oil_gas(params.to_dict()))
+            except (AssertionError, ValueError, TypeError) as err:
+                raise ValueError(f"Error for SATNUM {row_idx+1}: {str(err)}") from err
         return wogl
 
     @staticmethod
@@ -884,7 +919,12 @@ class PyscalFactory(object):
         for (_, params) in relperm_params_df.iterrows():
             if h is not None:
                 params["h"] = h
-            wol.append(PyscalFactory.create_water_oil(params.to_dict()))
+            try:
+                wol.append(PyscalFactory.create_water_oil(params.to_dict()))
+            except (AssertionError, ValueError, TypeError) as err:
+                raise ValueError(
+                    f"Error for SATNUM {params['SATNUM']}: {str(err)}"
+                ) from err
         return wol
 
     @staticmethod
@@ -904,7 +944,12 @@ class PyscalFactory(object):
         for (_, params) in relperm_params_df.iterrows():
             if h is not None:
                 params["h"] = h
-            gol.append(PyscalFactory.create_gas_oil(params.to_dict()))
+            try:
+                gol.append(PyscalFactory.create_gas_oil(params.to_dict()))
+            except (AssertionError, ValueError, TypeError) as err:
+                raise ValueError(
+                    f"Error for SATNUM {params['SATNUM']}: {str(err)}"
+                ) from err
         return gol
 
     @staticmethod
@@ -924,7 +969,12 @@ class PyscalFactory(object):
         for (_, params) in relperm_params_df.iterrows():
             if h is not None:
                 params["h"] = h
-            gwl.append(PyscalFactory.create_gas_water(params.to_dict()))
+            try:
+                gwl.append(PyscalFactory.create_gas_water(params.to_dict()))
+            except (AssertionError, ValueError, TypeError) as err:
+                raise ValueError(
+                    f"Error for SATNUM {params['SATNUM']}: {str(err)}"
+                ) from err
         return gwl
 
 
