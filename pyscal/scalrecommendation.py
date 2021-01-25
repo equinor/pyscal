@@ -197,8 +197,9 @@ class SCALrecommendation(object):
             self.fast = self.low.fast = self.base.fast = self.high.fast = False
             logger.warning(
                 (
-                    "One or more of the low/base/high objects are set to be run in fast mode, "
-                    "but not all. Fast mode set to false in all objects. Code is run in normal mode."
+                    "One or more of the low/base/high objects are set to be run in "
+                    "fast mode, but not all. Fast mode set to false in all objects. "
+                    "Code is run in normal mode."
                 )
             )
         else:
