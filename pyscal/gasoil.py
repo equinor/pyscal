@@ -937,7 +937,7 @@ class GasOil(object):
                 "krg": {"sign": 1, "lower": 0, "upper": 1},
                 "pc": {"sign": 1, "allowzero": True},
             }
-            if self.table.fast
+            if self.fast
             else None,
         )
         return string
