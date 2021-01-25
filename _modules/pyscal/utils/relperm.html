@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.utils.relperm &mdash; pyscal 0.7.3.dev7+g24daae8 documentation</title>
+  <title>pyscal.utils.relperm &mdash; pyscal 0.7.3.dev9+g65a9486 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.7.3.dev7+g24daae8
+                0.7.3.dev9+g65a9486
               </div>
             
           
@@ -273,27 +273,6 @@
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">linearpart</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">linearpart</span> <span class="o">=</span> <span class="n">table</span><span class="p">[(</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;_lindevcumsum&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">)]</span>
     <span class="k">return</span> <span class="n">linearpart</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">xcol</span><span class="p">]</span></div>
-
-
-<div class="viewcode-block" id="comment_formatter"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.relperm.comment_formatter">[docs]</a><span class="k">def</span> <span class="nf">comment_formatter</span><span class="p">(</span><span class="n">multiline</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;-- &quot;</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Prepends comment characters to every line in input</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        multiline (str): String that can contain newlines</span>
-<span class="sd">        prefix (str): Comment characters to prepend every line with</span>
-<span class="sd">            Default is the Eclipse comment syntax &#39;-- &#39;</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        string, with newlines preserved, and where each line</span>
-<span class="sd">            starts with the given prefix. Always ends with a newline.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">multiline</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">multiline</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
-        <span class="c1"># Ensure we indicate that there is placeholder for something.</span>
-        <span class="k">return</span> <span class="s2">&quot;-- </span><span class="se">\n</span><span class="s2">&quot;</span>
-    <span class="k">return</span> <span class="p">(</span>
-        <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">prefix</span> <span class="o">+</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">multiline</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()])</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
-        <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-    <span class="p">)</span></div>
 </pre></div>
 
            </div>

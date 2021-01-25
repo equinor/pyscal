@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.gasoil &mdash; pyscal 0.7.3.dev7+g24daae8 documentation</title>
+  <title>pyscal.gasoil &mdash; pyscal 0.7.3.dev9+g65a9486 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.7.3.dev7+g24daae8
+                0.7.3.dev9+g65a9486
               </div>
             
           
@@ -164,9 +164,10 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pyscal.gasoil</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot; Representing a GasOil object &quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Representing a GasOil object&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -235,16 +236,20 @@
     <span class="p">):</span>
         <span class="k">if</span> <span class="n">h</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">h</span> <span class="o">=</span> <span class="mf">0.01</span>
-        <span class="k">assert</span> <span class="o">-</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">swirr</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">epsilon</span>
-        <span class="k">assert</span> <span class="o">-</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">sgcr</span> <span class="o">&lt;</span> <span class="mi">1</span>
-        <span class="k">assert</span> <span class="o">-</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">swl</span> <span class="o">&lt;</span> <span class="mi">1</span>
-        <span class="k">assert</span> <span class="o">-</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">sorg</span> <span class="o">&lt;</span> <span class="mi">1</span>
+        <span class="k">assert</span> <span class="o">-</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">swirr</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">,</span> <span class="s2">&quot;0 &lt;= swirr &lt;= 1 is required&quot;</span>
+        <span class="k">assert</span> <span class="o">-</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">sgcr</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;0 &lt;= sgcr &lt; 1 is required&quot;</span>
+        <span class="k">assert</span> <span class="o">-</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">swl</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;0 &lt;= swl &lt; 1 is required&quot;</span>
+        <span class="k">assert</span> <span class="o">-</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">sorg</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;0 &lt;= sorg &lt;  1 is required&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;tag must be a string, this will be a hard failure later&quot;</span><span class="p">,</span>
+                <span class="ne">DeprecationWarning</span><span class="p">,</span>
+            <span class="p">)</span>
             <span class="n">tag</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">if</span> <span class="n">krgendanchor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">krgendanchor</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
-        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">krgendanchor</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">krgendanchor</span><span class="p">,</span> <span class="nb">str</span><span class="p">),</span> <span class="s2">&quot;krgendanchor must be a string&quot;</span>
 
         <span class="n">h_min</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">SWINTEGERS</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">h</span> <span class="o">&lt;</span> <span class="n">h_min</span><span class="p">:</span>
@@ -268,7 +273,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">tag</span> <span class="o">=</span> <span class="n">tag</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorg</span> <span class="o">-</span> <span class="n">swl</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;No saturation range left &quot;</span> <span class="o">+</span> <span class="s2">&quot;after endpoints, check input&quot;</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="n">krgendanchor</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;sorg&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">]:</span>
@@ -1098,7 +1103,7 @@
                 <span class="s2">&quot;krg&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;sign&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;lower&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;upper&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
                 <span class="s2">&quot;pc&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;sign&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;allowzero&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
             <span class="p">}</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">fast</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fast</span>
             <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">string</span></div>
