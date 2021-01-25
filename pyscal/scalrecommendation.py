@@ -38,18 +38,6 @@ class SCALrecommendation(object):
 
         self.h = h
         self.tag = tag
-        if all([low.fast, base.fast, high.fast]):
-            self.fast = True
-        elif any([low.fast, base.fast, high.fast]):
-            self.fast = low.fast = base.fast = high.fast = False
-            logger.warning(
-                (
-                    "One or more of the low/base/high objects are set to be run in fast mode, "
-                    "but not all. Code is run in normal mode, not fast mode."
-                )
-            )
-        else:
-            self.fast = False
 
         if isinstance(low, dict) and isinstance(base, dict) and isinstance(high, dict):
 
@@ -202,6 +190,19 @@ class SCALrecommendation(object):
             self.type = GasWater
         else:
             raise ValueError("Wrong arguments to SCALrecommendation")
+
+        if all([self.low.fast, self.base.fast, self.high.fast]):
+            self.fast = True
+        elif any([self.low.fast, self.base.fast, self.high.fast]):
+            self.fast = self.low.fast = self.base.fast = self.high.fast = False
+            logger.warning(
+                (
+                    "One or more of the low/base/high objects are set to be run in fast mode, "
+                    "but not all. Fast mode set to false in all objects. Code is run in normal mode."
+                )
+            )
+        else:
+            self.fast = False
 
     # User should add capillary pressure explicitly by calling add**
     # on the class objects, or run the following method to add the
