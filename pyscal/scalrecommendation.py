@@ -301,14 +301,14 @@ class SCALrecommendation(object):
             )
         tagstring = "\n".join(tags)
         if do_gaswater:
-            interpolant = GasWater(h=h, tag=tagstring, fast=self.fast)
+            interpolant = GasWater(h=h, tag=tagstring)
             if gasparameter != parameter:
                 logger.warning(
                     "Different interpolation parameters for Water and for "
                     "gas in GasWater, this is maybe not what you want"
                 )
         else:
-            interpolant = WaterOilGas(h=h, tag=tagstring, fast=self.fast)
+            interpolant = WaterOilGas(h=h, tag=tagstring)
 
         if do_wateroil or do_gaswater:
             tag = (
@@ -381,6 +381,8 @@ class SCALrecommendation(object):
                 )
         else:
             interpolant.gasoil = None
+
+        interpolant.fast = self.fast
 
         return interpolant
 
