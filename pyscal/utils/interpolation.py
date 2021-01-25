@@ -215,7 +215,7 @@ def _interpolate_tags(low, high, parameter, tag):
     return tag
 
 
-def interpolate_wo(wo_low, wo_high, parameter, h=0.01, tag=None, fast=False):
+def interpolate_wo(wo_low, wo_high, parameter, h=0.01, tag=None):
     """Interpolates between two water-oil curves.
 
     The saturation endpoints for the curves must be known
@@ -235,7 +235,6 @@ def interpolate_wo(wo_low, wo_high, parameter, h=0.01, tag=None, fast=False):
             smaller than in the input curves are used, to preserve information.
         tag (string): Tag to associate to the constructed object. If None
             it will be automatically filled. Set to empty string to ensure no tag.
-        fast (bool): If fast-mode should be set for constructed object
 
     Returns:
         A new oil-water curve
@@ -248,6 +247,12 @@ def interpolate_wo(wo_low, wo_high, parameter, h=0.01, tag=None, fast=False):
 
     assert 0 <= parameter <= 1
     # Extrapolation is refused, but perhaps later implemented with truncation to (0,1)
+
+    # Running fast mode if both interpolants have fast mode
+    if wo_low.fast and wo_high.fast:
+        fast = True
+    else:
+        fast = False
 
     # Constructs functions that works on normalized saturation interval
     krw1, kro1 = normalize_nonlinpart_wo(wo_low)
@@ -299,7 +304,7 @@ def interpolate_wo(wo_low, wo_high, parameter, h=0.01, tag=None, fast=False):
     return wo_new
 
 
-def interpolate_go(go_low, go_high, parameter, h=0.01, tag=None, fast=False):
+def interpolate_go(go_low, go_high, parameter, h=0.01, tag=None):
     """Interpolates between two gas-oil curves.
 
     The saturation endpoints for the curves must be known
@@ -319,7 +324,6 @@ def interpolate_go(go_low, go_high, parameter, h=0.01, tag=None, fast=False):
             smaller than in the input curves are used, to preserve information.
         tag (string): Tag to associate to the constructed object. If None
             it will be automatically filled. Set to empty string to ensure no tag.
-        fast (bool): If fast-mode should be set for constructed object
 
     Returns:
         A new gas-oil curve
@@ -332,6 +336,12 @@ def interpolate_go(go_low, go_high, parameter, h=0.01, tag=None, fast=False):
 
     assert 0 <= parameter <= 1
     # Extrapolation is refused, but perhaps later implemented with truncation to (0,1)
+
+    # Running fast mode if both interpolants have fast mode
+    if go_low.fast and go_high.fast:
+        fast = True
+    else:
+        fast = False
 
     # Constructs functions that works on normalized saturation interval
     krg1, kro1 = normalize_nonlinpart_go(go_low)

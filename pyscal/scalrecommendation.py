@@ -25,7 +25,7 @@ class SCALrecommendation(object):
         tag (str): A string that describes the recommendation. Optional.
     """
 
-    def __init__(self, low, base, high, tag=None, h=0.01, fast=False):
+    def __init__(self, low, base, high, tag=None, h=0.01):
         """Set up a SCAL recommendation curve set from WaterOilGas objects
 
         Arguments:
@@ -34,14 +34,22 @@ class SCALrecommendation(object):
             high (WaterOilGas): high case
             tag (str): Describes the recommendation. This string will be used
                 as tag strings for the interpolants.
-            fast (bool): Set to True if in order to skip some integrity checks
-            and nice-to-have features. Not needed to set for normal pyscal
-            runs, as speed is seldom crucial. Default False
         """
 
         self.h = h
         self.tag = tag
-        self.fast = fast
+        if all([low.fast, base.fast, high.fast]):
+            self.fast = True
+        elif any([low.fast, base.fast, high.fast]):
+            self.fast = low.fast = base.fast = high.fast = False
+            logger.warning(
+                (
+                    "One or more of the low/base/high objects are set to be run in fast mode, "
+                    "but not all. Code is run in normal mode, not fast mode."
+                )
+            )
+        else:
+            self.fast = False
 
         if isinstance(low, dict) and isinstance(base, dict) and isinstance(high, dict):
 
@@ -326,7 +334,6 @@ class SCALrecommendation(object):
                     -parameter,
                     h=h,
                     tag=tag,
-                    fast=self.fast,
                 )
             elif parameter > 0.0:
                 interpolant.wateroil = interpolate_wo(
@@ -335,7 +342,6 @@ class SCALrecommendation(object):
                     parameter,
                     h=h,
                     tag=tag,
-                    fast=self.fast,
                 )
         else:
             interpolant.wateroil = None
@@ -364,7 +370,6 @@ class SCALrecommendation(object):
                     -1 * gasparameter,
                     h=h,
                     tag=tag,
-                    fast=self.fast,
                 )
             elif gasparameter > 0.0:
                 interpolant.gasoil = interpolate_go(
@@ -373,7 +378,6 @@ class SCALrecommendation(object):
                     gasparameter,
                     h=h,
                     tag=tag,
-                    fast=self.fast,
                 )
         else:
             interpolant.gasoil = None

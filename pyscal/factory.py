@@ -601,7 +601,7 @@ class PyscalFactory(object):
         if errored:
             raise ValueError("Incomplete SCAL recommendation")
 
-        scal = SCALrecommendation(wog_low, wog_base, wog_high, tag, fast=fast)
+        scal = SCALrecommendation(wog_low, wog_base, wog_high, tag)
         return scal
 
     @staticmethod

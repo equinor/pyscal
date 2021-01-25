@@ -415,3 +415,33 @@ def test_gaswater_scal():
     assert "SCAL recommendation interpolation to -1" in str_fam2
     assert "SGFN" in str_fam2
     assert "SWFN" in str_fam2
+
+
+def test_fast():
+    """Test the fast option"""
+    low_fast = PyscalFactory.create_water_oil_gas(LOW_SAMPLE_LET, fast=True)
+    base_fast = PyscalFactory.create_water_oil_gas(BASE_SAMPLE_LET, fast=True)
+    high_fast = PyscalFactory.create_water_oil_gas(HIGH_SAMPLE_LET, fast=True)
+    low = PyscalFactory.create_water_oil_gas(LOW_SAMPLE_LET)
+    base = PyscalFactory.create_water_oil_gas(BASE_SAMPLE_LET)
+    high = PyscalFactory.create_water_oil_gas(HIGH_SAMPLE_LET)
+
+    rec = SCALrecommendation(low_fast, base_fast, high_fast)
+    interp = rec.interpolate(-0.5)
+    assert rec.fast
+    assert interp.fast
+
+    rec = SCALrecommendation(low_fast, base_fast, high)
+    interp = rec.interpolate(-0.5)
+    assert not rec.fast
+    assert not interp.fast
+
+    rec = SCALrecommendation(low, base_fast, high)
+    interp = rec.interpolate(-0.5)
+    assert not rec.fast
+    assert not interp.fast
+
+    rec = SCALrecommendation(low, base, high)
+    interp = rec.interpolate(-0.5)
+    assert not rec.fast
+    assert not interp.fast
