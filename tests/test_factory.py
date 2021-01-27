@@ -987,8 +987,17 @@ def test_infer_tabular_file_format(tmpdir, caplog):
     # Ensure factory.py's error message got through:
     assert "Impossible to infer file format for empty.csv" in caplog.text
 
-    # Write 10 random bytes to a file, this should with very
+    # We don't want ISO-8859 files, ensure we fail
+    norw_chars = "Dette,er,en,CSV,fil\nmed,iso-8859:,æ,ø,å"
+    Path("iso8859.csv").write_bytes(norw_chars.encode("iso-8859-1"))
+    assert factory.infer_tabular_file_format("iso8859.csv") == ""
+    # Providing an error that this error was due to ISO-8859 and
+    # nothing else is deemed too hard.
+    Path("utf8.csv").write_bytes(norw_chars.encode("utf-8"))
+    assert factory.infer_tabular_file_format("utf8.csv") == "csv"
+
+    # Write some random bytes to a file, this should with very
     # little probability give a valid xlsx/xls/csv file.
-    Path("wrong.csv").write_bytes(os.urandom(10))
+    Path("wrong.csv").write_bytes(os.urandom(100))
     assert factory.infer_tabular_file_format("wrong.csv") == ""
     assert "Impossible to infer file format for wrong.csv" in caplog.text

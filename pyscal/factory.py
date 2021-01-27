@@ -662,7 +662,9 @@ class PyscalFactory(object):
                 )
                 logger.info("Parsed %s file %s", tabular_file_format.upper(), inputfile)
             else:
-                input_df = pd.read_csv(inputfile, skipinitialspace=True)
+                input_df = pd.read_csv(
+                    inputfile, skipinitialspace=True, encoding="utf-8"
+                )
                 logger.info("Parsed CSV file %s", inputfile)
 
         elif isinstance(inputfile, pd.DataFrame):
@@ -1130,7 +1132,9 @@ def infer_tabular_file_format(filename):
         # We get here for both CSV and XLSX files.
         pass
     try:
-        dframe = pd.read_csv(filename)
+        dframe = pd.read_csv(filename, encoding="utf-8")
+        # >= 1.2.1: Pandas: Bugfix makes read_csv() more encoding fault
+        #                   tolerant which this code opts out from.
         if not dframe.empty:
             return "csv"
     except UnicodeDecodeError:
