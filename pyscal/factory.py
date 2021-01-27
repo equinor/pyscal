@@ -610,7 +610,7 @@ class PyscalFactory(object):
         a dataframe.
 
         Checks validity in SATNUM and CASE columns.
-        Ensures case-insensitivenes SATNUM, CASE, TAG and COMMENT
+        Ensures case-insensitiveness SATNUM, CASE, TAG and COMMENT
 
         Merges COMMENT into TAG column, as only TAG is picked up downstream.
         Adds a prexix "SATNUM <number>" to all tags.
