@@ -422,14 +422,16 @@ def test_fast():
     low_fast = PyscalFactory.create_water_oil_gas(LOW_SAMPLE_LET, fast=True)
     base_fast = PyscalFactory.create_water_oil_gas(BASE_SAMPLE_LET, fast=True)
     high_fast = PyscalFactory.create_water_oil_gas(HIGH_SAMPLE_LET, fast=True)
-    low = PyscalFactory.create_water_oil_gas(LOW_SAMPLE_LET)
-    base = PyscalFactory.create_water_oil_gas(BASE_SAMPLE_LET)
-    high = PyscalFactory.create_water_oil_gas(HIGH_SAMPLE_LET)
 
     rec = SCALrecommendation(low_fast, base_fast, high_fast)
     interp = rec.interpolate(-0.5)
     assert rec.fast
     assert interp.fast
+
+    # test that one or more inputs not being set to fast does not trigger fast mode
+    low = PyscalFactory.create_water_oil_gas(LOW_SAMPLE_LET)
+    base = PyscalFactory.create_water_oil_gas(BASE_SAMPLE_LET)
+    high = PyscalFactory.create_water_oil_gas(HIGH_SAMPLE_LET)
 
     rec = SCALrecommendation(low_fast, base_fast, high)
     interp = rec.interpolate(-0.5)

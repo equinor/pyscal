@@ -699,3 +699,38 @@ def test_error_messages_pr_satnum(caplog):
         PyscalFactory.create_scal_recommendation_list(dframe, h=0.2)
     with pytest.raises(ValueError, match="Problem with low"):
         PyscalFactory.create_scal_recommendation_list(dframe, h=0.2)
+
+
+def test_fast():
+    """Test fast mode for SCALrecommendation"""
+    testdir = Path(__file__).absolute().parent
+
+    scalrec_data = PyscalFactory.load_relperm_df(
+        testdir / "data/scal-pc-input-example.xlsx"
+    )
+    scalrec_list_fast = PyscalFactory.create_scal_recommendation_list(
+        scalrec_data, fast=True
+    )
+
+    for item in scalrec_list_fast:
+        assert item.fast
+        assert item.low.fast
+        assert item.base.fast
+        assert item.high.fast
+
+    wog_list_fast = scalrec_list_fast.interpolate(-0.5)
+    for item in wog_list_fast:
+        assert item.fast
+
+    dframe = pd.DataFrame(
+        columns=["SATNUM", "Nw", "Now", "ng", "nog"],
+        data=[
+            [1, 2, 2, 2, 2],
+            [2, 2, 2, 2, 2],
+            [3, 2, 2, 2, 2],
+        ],
+    )
+    relperm_data = PyscalFactory.load_relperm_df(dframe)
+    p_list_fast = PyscalFactory.create_pyscal_list(relperm_data, h=0.2, fast=True)
+    for item in p_list_fast:
+        assert item.fast
