@@ -722,8 +722,9 @@ def test_fast():
     for item in wog_list_fast:
         assert item.fast
 
+    # WaterOilGas list
     dframe = pd.DataFrame(
-        columns=["SATNUM", "Nw", "Now", "ng", "nog"],
+        columns=["SATNUM", "nw", "now", "ng", "nog"],
         data=[
             [1, 2, 2, 2, 2],
             [2, 2, 2, 2, 2],
@@ -734,3 +735,39 @@ def test_fast():
     p_list_fast = PyscalFactory.create_pyscal_list(relperm_data, h=0.2, fast=True)
     for item in p_list_fast:
         assert item.fast
+
+    # GasOil list
+    input_dframe = dframe[["SATNUM", "ng", "nog"]]
+    relperm_data = PyscalFactory.load_relperm_df(input_dframe)
+    p_list_fast = PyscalFactory.create_pyscal_list(relperm_data, h=0.2, fast=True)
+    for item in p_list_fast:
+        assert item.fast
+
+    # WaterOil list
+    input_dframe = dframe[["SATNUM", "nw", "now"]]
+    relperm_data = PyscalFactory.load_relperm_df(input_dframe)
+    p_list_fast = PyscalFactory.create_pyscal_list(relperm_data, h=0.2, fast=True)
+    for item in p_list_fast:
+        assert item.fast
+
+    # GasWater list
+    input_dframe = dframe[["SATNUM", "nw", "ng"]]
+    relperm_data = PyscalFactory.load_relperm_df(input_dframe)
+    p_list_fast = PyscalFactory.create_pyscal_list(relperm_data, h=0.2, fast=True)
+    for item in p_list_fast:
+        assert item.fast
+
+    # Testing with fast column in dataframe
+    dframe = pd.DataFrame(
+        columns=["SATNUM", "nw", "now", "ng", "nog", "fast"],
+        data=[
+            [1, 2, 2, 2, 2, True],
+            [2, 2, 2, 2, 2, False],
+            [3, 2, 2, 2, 2, True],
+        ],
+    )
+    relperm_data = PyscalFactory.load_relperm_df(dframe)
+    assert "fast" in relperm_data
+    p_list = PyscalFactory.create_pyscal_list(relperm_data, h=0.2)
+    for item in p_list:
+        assert not item.fast

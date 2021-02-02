@@ -496,7 +496,6 @@ class PyscalFactory(object):
         wog = PyscalFactory.create_water_oil_gas(wog_params, fast=fast)
         gaswater.wateroil = wog.wateroil
         gaswater.gasoil = wog.gasoil
-        print(gaswater.fast)
         return gaswater
 
     @staticmethod
@@ -754,6 +753,13 @@ class PyscalFactory(object):
         input_df["TAG"] = (
             "SATNUM " + input_df["SATNUM"].astype(str) + " " + input_df["TAG"]
         )
+
+        # Check if fast is defined as a column
+        if "fast" in input_df:
+            logger.warning("Fast mode is not an option for individual SATNUMs")
+            logger.warning("it is implemented as a global option.")
+            logger.warning("The fast column in the dataframe will be ignored.")
+            logger.warning("Use fast=True in the function call instead.")
 
         # Check that we are able to make something out of the first row:
         firstrow = input_df.iloc[0, :]
