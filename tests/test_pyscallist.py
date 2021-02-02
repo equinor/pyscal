@@ -737,21 +737,21 @@ def test_fast():
         assert item.fast
 
     # GasOil list
-    input_dframe = dframe[["SATNUM", "ng", "nog"]]
+    input_dframe = dframe[["SATNUM", "ng", "nog"]].copy()
     relperm_data = PyscalFactory.load_relperm_df(input_dframe)
     p_list_fast = PyscalFactory.create_pyscal_list(relperm_data, h=0.2, fast=True)
     for item in p_list_fast:
         assert item.fast
 
     # WaterOil list
-    input_dframe = dframe[["SATNUM", "nw", "now"]]
+    input_dframe = dframe[["SATNUM", "nw", "now"]].copy()
     relperm_data = PyscalFactory.load_relperm_df(input_dframe)
     p_list_fast = PyscalFactory.create_pyscal_list(relperm_data, h=0.2, fast=True)
     for item in p_list_fast:
         assert item.fast
 
     # GasWater list
-    input_dframe = dframe[["SATNUM", "nw", "ng"]]
+    input_dframe = dframe[["SATNUM", "nw", "ng"]].copy()
     relperm_data = PyscalFactory.load_relperm_df(input_dframe)
     p_list_fast = PyscalFactory.create_pyscal_list(relperm_data, h=0.2, fast=True)
     for item in p_list_fast:
