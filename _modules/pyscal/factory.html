@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.factory &mdash; pyscal 0.7.4.dev2+g195153e documentation</title>
+  <title>pyscal.factory &mdash; pyscal 0.7.4.dev3+gd9c49c6 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.7.4.dev2+g195153e
+                0.7.4.dev3+gd9c49c6
               </div>
             
           
@@ -662,7 +662,6 @@
         <span class="n">wog</span> <span class="o">=</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_water_oil_gas</span><span class="p">(</span><span class="n">wog_params</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">)</span>
         <span class="n">gaswater</span><span class="o">.</span><span class="n">wateroil</span> <span class="o">=</span> <span class="n">wog</span><span class="o">.</span><span class="n">wateroil</span>
         <span class="n">gaswater</span><span class="o">.</span><span class="n">gasoil</span> <span class="o">=</span> <span class="n">wog</span><span class="o">.</span><span class="n">gasoil</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">gaswater</span><span class="o">.</span><span class="n">fast</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">gaswater</span></div>
 
 <div class="viewcode-block" id="PyscalFactory.create_scal_recommendation"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_scal_recommendation">[docs]</a>    <span class="nd">@staticmethod</span>
@@ -758,7 +757,7 @@
             <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Problem with base case: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">err</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">wog_high</span> <span class="o">=</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_gas_water</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;high&quot;</span><span class="p">],</span> <span class="n">fast</span><span class="p">)</span>
+                <span class="n">wog_high</span> <span class="o">=</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_gas_water</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;high&quot;</span><span class="p">],</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Problem with high/opt case: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">err</span>
 
@@ -923,6 +922,14 @@
             <span class="s2">&quot;SATNUM &quot;</span> <span class="o">+</span> <span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;SATNUM&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;TAG&quot;</span><span class="p">]</span>
         <span class="p">)</span>
 
+        <span class="c1"># Check if fast is defined as a column</span>
+        <span class="k">if</span> <span class="s2">&quot;fast&quot;</span> <span class="ow">in</span> <span class="n">input_df</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Fast mode is not an option for individual SATNUMs&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;it is implemented as a global option.&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;The fast column in the dataframe will be ignored.&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Use fast=True in the function call instead.&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Fast mode is only available through the Python API&quot;</span><span class="p">)</span>
+
         <span class="c1"># Check that we are able to make something out of the first row:</span>
         <span class="n">firstrow</span> <span class="o">=</span> <span class="n">input_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
         <span class="n">error</span> <span class="o">=</span> <span class="kc">False</span>
@@ -983,13 +990,14 @@
         <span class="k">return</span> <span class="n">remapped</span></div>
 
 <div class="viewcode-block" id="PyscalFactory.create_scal_recommendation_list"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_scal_recommendation_list">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">create_scal_recommendation_list</span><span class="p">(</span><span class="n">input_df</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create_scal_recommendation_list</span><span class="p">(</span><span class="n">input_df</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Requires SATNUM and CASE to be defined in the input data</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            input_df (pd.DataFrame): Input data, should have been processed</span>
 <span class="sd">                through load_relperm_df().</span>
 <span class="sd">            h (float): Saturation step-value</span>
+<span class="sd">            fast (bool): If fast-mode should be set for constructed object</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            PyscalList, consisting of SCALrecommendation objects</span>
@@ -1011,7 +1019,7 @@
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">scal_l</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_scal_recommendation</span><span class="p">(</span>
-                        <span class="n">scalinput</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">satnum</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">),</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span>
+                        <span class="n">scalinput</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">satnum</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">orient</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">),</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span>
                     <span class="p">)</span>
                 <span class="p">)</span>
             <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
@@ -1020,7 +1028,7 @@
         <span class="k">return</span> <span class="n">scal_l</span></div>
 
 <div class="viewcode-block" id="PyscalFactory.create_pyscal_list"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_pyscal_list">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">create_pyscal_list</span><span class="p">(</span><span class="n">relperm_params_df</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create_pyscal_list</span><span class="p">(</span><span class="n">relperm_params_df</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Create WaterOilGas, WaterOil, GasOil or GasWater list</span>
 <span class="sd">        based on what is available</span>
 
@@ -1028,6 +1036,7 @@
 <span class="sd">            relperm_params_df (pd.DataFrame): Input data, should have been processed</span>
 <span class="sd">                through load_relperm_df().</span>
 <span class="sd">            h (float): Saturation step-value</span>
+<span class="sd">            fast (bool): If fast-mode should be set for constructed object</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            PyscalList, consisting of either WaterOil, GasOil or WaterOilGas objects</span>
@@ -1037,18 +1046,18 @@
         <span class="n">gas_oil</span> <span class="o">=</span> <span class="n">sufficient_gas_oil_params</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="n">gas_water</span> <span class="o">=</span> <span class="n">sufficient_gas_water_params</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">water_oil</span> <span class="ow">and</span> <span class="n">gas_oil</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_wateroilgas_list</span><span class="p">(</span><span class="n">relperm_params_df</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_wateroilgas_list</span><span class="p">(</span><span class="n">relperm_params_df</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">fast</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">water_oil</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_wateroil_list</span><span class="p">(</span><span class="n">relperm_params_df</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_wateroil_list</span><span class="p">(</span><span class="n">relperm_params_df</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">fast</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">gas_oil</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_gasoil_list</span><span class="p">(</span><span class="n">relperm_params_df</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_gasoil_list</span><span class="p">(</span><span class="n">relperm_params_df</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">fast</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">gas_water</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_gaswater_list</span><span class="p">(</span><span class="n">relperm_params_df</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_gaswater_list</span><span class="p">(</span><span class="n">relperm_params_df</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">fast</span><span class="p">)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Could not determine two or three phase from parameters&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="PyscalFactory.create_wateroilgas_list"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_wateroilgas_list">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">create_wateroilgas_list</span><span class="p">(</span><span class="n">relperm_params_df</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create_wateroilgas_list</span><span class="p">(</span><span class="n">relperm_params_df</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Create a PyscalList with WaterOilGas objects from</span>
 <span class="sd">        a dataframe</span>
 
@@ -1056,6 +1065,7 @@
 <span class="sd">            relperm_params_df (pd.DataFrame): Input data, should have been processed</span>
 <span class="sd">                through load_relperm_df().</span>
 <span class="sd">            h (float): Saturation step-value</span>
+<span class="sd">            fast (bool): If fast-mode should be set for constructed object</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            PyscalList, consisting of WaterOilGas objects</span>
@@ -1065,13 +1075,15 @@
             <span class="k">if</span> <span class="n">h</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">params</span><span class="p">[</span><span class="s2">&quot;h&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">h</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">wogl</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_water_oil_gas</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()))</span>
+                <span class="n">wogl</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_water_oil_gas</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">)</span>
+                <span class="p">)</span>
             <span class="k">except</span> <span class="p">(</span><span class="ne">AssertionError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error for SATNUM </span><span class="si">{</span><span class="n">row_idx</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">err</span>
         <span class="k">return</span> <span class="n">wogl</span></div>
 
 <div class="viewcode-block" id="PyscalFactory.create_wateroil_list"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_wateroil_list">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">create_wateroil_list</span><span class="p">(</span><span class="n">relperm_params_df</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create_wateroil_list</span><span class="p">(</span><span class="n">relperm_params_df</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Create a PyscalList with WaterOil objects from</span>
 <span class="sd">        a dataframe</span>
 
@@ -1079,6 +1091,7 @@
 <span class="sd">            relperm_params_df (pd.DataFrame): A valid dataframe with</span>
 <span class="sd">                WaterOil parameters, processed through load_relperm_df()</span>
 <span class="sd">            h (float): Saturation steplength</span>
+<span class="sd">            fast (bool): If fast-mode should be set for constructed object</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            PyscalList, consisting of WaterOil objects</span>
@@ -1088,7 +1101,7 @@
             <span class="k">if</span> <span class="n">h</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">params</span><span class="p">[</span><span class="s2">&quot;h&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">h</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">wol</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_water_oil</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()))</span>
+                <span class="n">wol</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_water_oil</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">))</span>
             <span class="k">except</span> <span class="p">(</span><span class="ne">AssertionError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;Error for SATNUM </span><span class="si">{</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;SATNUM&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -1096,7 +1109,7 @@
         <span class="k">return</span> <span class="n">wol</span></div>
 
 <div class="viewcode-block" id="PyscalFactory.create_gasoil_list"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_gasoil_list">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">create_gasoil_list</span><span class="p">(</span><span class="n">relperm_params_df</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create_gasoil_list</span><span class="p">(</span><span class="n">relperm_params_df</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Create a PyscalList with GasOil objects from</span>
 <span class="sd">        a dataframe</span>
 
@@ -1104,6 +1117,7 @@
 <span class="sd">            relperm_params_df (pd.DataFrame): A valid dataframe with GasOil parameters,</span>
 <span class="sd">                processed through load_relperm_df()</span>
 <span class="sd">            h (float): Saturation steplength</span>
+<span class="sd">            fast (bool): If fast-mode should be set for constructed object</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            PyscalList, consisting of GasOil objects</span>
@@ -1113,7 +1127,7 @@
             <span class="k">if</span> <span class="n">h</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">params</span><span class="p">[</span><span class="s2">&quot;h&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">h</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">gol</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_gas_oil</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()))</span>
+                <span class="n">gol</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_gas_oil</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">))</span>
             <span class="k">except</span> <span class="p">(</span><span class="ne">AssertionError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;Error for SATNUM </span><span class="si">{</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;SATNUM&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -1121,7 +1135,7 @@
         <span class="k">return</span> <span class="n">gol</span></div>
 
 <div class="viewcode-block" id="PyscalFactory.create_gaswater_list"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_gaswater_list">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">create_gaswater_list</span><span class="p">(</span><span class="n">relperm_params_df</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create_gaswater_list</span><span class="p">(</span><span class="n">relperm_params_df</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Create a PyscalList with WaterOilGas objects from</span>
 <span class="sd">        a dataframe, to be used for GasWater</span>
 
@@ -1129,6 +1143,7 @@
 <span class="sd">            relperm_params_df (pd.DataFrame): A valid dataframe with GasWater</span>
 <span class="sd">                parameters, processed through load_relperm_df()</span>
 <span class="sd">            h (float): Saturation steplength</span>
+<span class="sd">            fast (bool): If fast-mode should be set for constructed object</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            PyscalList, consisting of GasWater objects</span>
@@ -1138,7 +1153,7 @@
             <span class="k">if</span> <span class="n">h</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">params</span><span class="p">[</span><span class="s2">&quot;h&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">h</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="n">gwl</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_gas_water</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()))</span>
+                <span class="n">gwl</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_gas_water</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">))</span>
             <span class="k">except</span> <span class="p">(</span><span class="ne">AssertionError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;Error for SATNUM </span><span class="si">{</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;SATNUM&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>

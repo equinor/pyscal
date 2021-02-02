@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.utils.interpolation &mdash; pyscal 0.7.4.dev2+g195153e documentation</title>
+  <title>pyscal.utils.interpolation &mdash; pyscal 0.7.4.dev3+gd9c49c6 documentation</title>
   
 
   
@@ -65,7 +65,7 @@
             
             
               <div class="version">
-                0.7.4.dev2+g195153e
+                0.7.4.dev3+gd9c49c6
               </div>
             
           
@@ -401,6 +401,7 @@
 <span class="sd">            smaller than in the input curves are used, to preserve information.</span>
 <span class="sd">        tag (string): Tag to associate to the constructed object. If None</span>
 <span class="sd">            it will be automatically filled. Set to empty string to ensure no tag.</span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        A new oil-water curve</span>
 
@@ -412,6 +413,12 @@
 
     <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">parameter</span> <span class="o">&lt;=</span> <span class="mi">1</span>
     <span class="c1"># Extrapolation is refused, but perhaps later implemented with truncation to (0,1)</span>
+
+    <span class="c1"># Running fast mode if both interpolants have fast mode</span>
+    <span class="k">if</span> <span class="n">wo_low</span><span class="o">.</span><span class="n">fast</span> <span class="ow">and</span> <span class="n">wo_high</span><span class="o">.</span><span class="n">fast</span><span class="p">:</span>
+        <span class="n">fast</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">fast</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="c1"># Constructs functions that works on normalized saturation interval</span>
     <span class="n">krw1</span><span class="p">,</span> <span class="n">kro1</span> <span class="o">=</span> <span class="n">normalize_nonlinpart_wo</span><span class="p">(</span><span class="n">wo_low</span><span class="p">)</span>
@@ -436,7 +443,7 @@
 
     <span class="c1"># Construct the new WaterOil object, with interpolated</span>
     <span class="c1"># endpoints:</span>
-    <span class="n">wo_new</span> <span class="o">=</span> <span class="n">pyscal</span><span class="o">.</span><span class="n">WaterOil</span><span class="p">(</span><span class="n">swl</span><span class="o">=</span><span class="n">swl_new</span><span class="p">,</span> <span class="n">swcr</span><span class="o">=</span><span class="n">swcr_new</span><span class="p">,</span> <span class="n">sorw</span><span class="o">=</span><span class="n">sorw_new</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">)</span>
+    <span class="n">wo_new</span> <span class="o">=</span> <span class="n">pyscal</span><span class="o">.</span><span class="n">WaterOil</span><span class="p">(</span><span class="n">swl</span><span class="o">=</span><span class="n">swl_new</span><span class="p">,</span> <span class="n">swcr</span><span class="o">=</span><span class="n">swcr_new</span><span class="p">,</span> <span class="n">sorw</span><span class="o">=</span><span class="n">sorw_new</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">)</span>
 
     <span class="c1"># Add interpolated relperm data in nonlinear parts:</span>
     <span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span>
@@ -483,6 +490,7 @@
 <span class="sd">            smaller than in the input curves are used, to preserve information.</span>
 <span class="sd">        tag (string): Tag to associate to the constructed object. If None</span>
 <span class="sd">            it will be automatically filled. Set to empty string to ensure no tag.</span>
+
 <span class="sd">    Returns:</span>
 <span class="sd">        A new gas-oil curve</span>
 
@@ -494,6 +502,12 @@
 
     <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">parameter</span> <span class="o">&lt;=</span> <span class="mi">1</span>
     <span class="c1"># Extrapolation is refused, but perhaps later implemented with truncation to (0,1)</span>
+
+    <span class="c1"># Running fast mode if both interpolants have fast mode</span>
+    <span class="k">if</span> <span class="n">go_low</span><span class="o">.</span><span class="n">fast</span> <span class="ow">and</span> <span class="n">go_high</span><span class="o">.</span><span class="n">fast</span><span class="p">:</span>
+        <span class="n">fast</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">fast</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="c1"># Constructs functions that works on normalized saturation interval</span>
     <span class="n">krg1</span><span class="p">,</span> <span class="n">kro1</span> <span class="o">=</span> <span class="n">normalize_nonlinpart_go</span><span class="p">(</span><span class="n">go_low</span><span class="p">)</span>
@@ -518,7 +532,7 @@
 
     <span class="c1"># Construct the new GasOil object, with interpolated</span>
     <span class="c1"># endpoints:</span>
-    <span class="n">go_new</span> <span class="o">=</span> <span class="n">pyscal</span><span class="o">.</span><span class="n">GasOil</span><span class="p">(</span><span class="n">swl</span><span class="o">=</span><span class="n">swl_new</span><span class="p">,</span> <span class="n">sgcr</span><span class="o">=</span><span class="n">sgcr_new</span><span class="p">,</span> <span class="n">sorg</span><span class="o">=</span><span class="n">sorg_new</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">)</span>
+    <span class="n">go_new</span> <span class="o">=</span> <span class="n">pyscal</span><span class="o">.</span><span class="n">GasOil</span><span class="p">(</span><span class="n">swl</span><span class="o">=</span><span class="n">swl_new</span><span class="p">,</span> <span class="n">sgcr</span><span class="o">=</span><span class="n">sgcr_new</span><span class="p">,</span> <span class="n">sorg</span><span class="o">=</span><span class="n">sorg_new</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">)</span>
 
     <span class="c1"># Add interpolated relperm data in nonlinear parts:</span>
     <span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krg&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span>

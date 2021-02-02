@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal package &mdash; pyscal 0.7.4.dev2+g195153e documentation</title>
+  <title>pyscal package &mdash; pyscal 0.7.4.dev3+gd9c49c6 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.7.4.dev2+g195153e
+                0.7.4.dev3+gd9c49c6
               </div>
             
           
@@ -305,7 +305,7 @@ of certain parameters in the dictionary.</p>
 
 <dl class="py method">
 <dt id="pyscal.factory.PyscalFactory.create_gasoil_list">
-<em class="property">static </em><code class="sig-name descname">create_gasoil_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">relperm_params_df</span></em>, <em class="sig-param"><span class="n">h</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_gasoil_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_gasoil_list" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">create_gasoil_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">relperm_params_df</span></em>, <em class="sig-param"><span class="n">h</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fast</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_gasoil_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_gasoil_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a PyscalList with GasOil objects from
 a dataframe</p>
 <dl class="field-list simple">
@@ -314,6 +314,7 @@ a dataframe</p>
 <li><p><strong>relperm_params_df</strong> (<em>pd.DataFrame</em>) – A valid dataframe with GasOil parameters,
 processed through load_relperm_df()</p></li>
 <li><p><strong>h</strong> (<em>float</em>) – Saturation steplength</p></li>
+<li><p><strong>fast</strong> (<em>bool</em>) – If fast-mode should be set for constructed object</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -324,7 +325,7 @@ processed through load_relperm_df()</p></li>
 
 <dl class="py method">
 <dt id="pyscal.factory.PyscalFactory.create_gaswater_list">
-<em class="property">static </em><code class="sig-name descname">create_gaswater_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">relperm_params_df</span></em>, <em class="sig-param"><span class="n">h</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_gaswater_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_gaswater_list" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">create_gaswater_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">relperm_params_df</span></em>, <em class="sig-param"><span class="n">h</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fast</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_gaswater_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_gaswater_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a PyscalList with WaterOilGas objects from
 a dataframe, to be used for GasWater</p>
 <dl class="field-list simple">
@@ -333,6 +334,7 @@ a dataframe, to be used for GasWater</p>
 <li><p><strong>relperm_params_df</strong> (<em>pd.DataFrame</em>) – A valid dataframe with GasWater
 parameters, processed through load_relperm_df()</p></li>
 <li><p><strong>h</strong> (<em>float</em>) – Saturation steplength</p></li>
+<li><p><strong>fast</strong> (<em>bool</em>) – If fast-mode should be set for constructed object</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -343,7 +345,7 @@ parameters, processed through load_relperm_df()</p></li>
 
 <dl class="py method">
 <dt id="pyscal.factory.PyscalFactory.create_pyscal_list">
-<em class="property">static </em><code class="sig-name descname">create_pyscal_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">relperm_params_df</span></em>, <em class="sig-param"><span class="n">h</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_pyscal_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_pyscal_list" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">create_pyscal_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">relperm_params_df</span></em>, <em class="sig-param"><span class="n">h</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fast</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_pyscal_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_pyscal_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create WaterOilGas, WaterOil, GasOil or GasWater list
 based on what is available</p>
 <dl class="field-list simple">
@@ -352,6 +354,7 @@ based on what is available</p>
 <li><p><strong>relperm_params_df</strong> (<em>pd.DataFrame</em>) – Input data, should have been processed
 through load_relperm_df().</p></li>
 <li><p><strong>h</strong> (<em>float</em>) – Saturation step-value</p></li>
+<li><p><strong>fast</strong> (<em>bool</em>) – If fast-mode should be set for constructed object</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -396,7 +399,7 @@ for base and high.</p></li>
 
 <dl class="py method">
 <dt id="pyscal.factory.PyscalFactory.create_scal_recommendation_list">
-<em class="property">static </em><code class="sig-name descname">create_scal_recommendation_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_df</span></em>, <em class="sig-param"><span class="n">h</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_scal_recommendation_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_scal_recommendation_list" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">create_scal_recommendation_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input_df</span></em>, <em class="sig-param"><span class="n">h</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fast</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_scal_recommendation_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_scal_recommendation_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Requires SATNUM and CASE to be defined in the input data</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -404,6 +407,7 @@ for base and high.</p></li>
 <li><p><strong>input_df</strong> (<em>pd.DataFrame</em>) – Input data, should have been processed
 through load_relperm_df().</p></li>
 <li><p><strong>h</strong> (<em>float</em>) – Saturation step-value</p></li>
+<li><p><strong>fast</strong> (<em>bool</em>) – If fast-mode should be set for constructed object</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -460,7 +464,7 @@ fast (bool): If fast-mode should be set for constructed object.</p>
 
 <dl class="py method">
 <dt id="pyscal.factory.PyscalFactory.create_wateroil_list">
-<em class="property">static </em><code class="sig-name descname">create_wateroil_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">relperm_params_df</span></em>, <em class="sig-param"><span class="n">h</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_wateroil_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_wateroil_list" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">create_wateroil_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">relperm_params_df</span></em>, <em class="sig-param"><span class="n">h</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fast</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_wateroil_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_wateroil_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a PyscalList with WaterOil objects from
 a dataframe</p>
 <dl class="field-list simple">
@@ -469,6 +473,7 @@ a dataframe</p>
 <li><p><strong>relperm_params_df</strong> (<em>pd.DataFrame</em>) – A valid dataframe with
 WaterOil parameters, processed through load_relperm_df()</p></li>
 <li><p><strong>h</strong> (<em>float</em>) – Saturation steplength</p></li>
+<li><p><strong>fast</strong> (<em>bool</em>) – If fast-mode should be set for constructed object</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
@@ -479,7 +484,7 @@ WaterOil parameters, processed through load_relperm_df()</p></li>
 
 <dl class="py method">
 <dt id="pyscal.factory.PyscalFactory.create_wateroilgas_list">
-<em class="property">static </em><code class="sig-name descname">create_wateroilgas_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">relperm_params_df</span></em>, <em class="sig-param"><span class="n">h</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_wateroilgas_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_wateroilgas_list" title="Permalink to this definition">¶</a></dt>
+<em class="property">static </em><code class="sig-name descname">create_wateroilgas_list</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">relperm_params_df</span></em>, <em class="sig-param"><span class="n">h</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">fast</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/factory.html#PyscalFactory.create_wateroilgas_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_wateroilgas_list" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create a PyscalList with WaterOilGas objects from
 a dataframe</p>
 <dl class="field-list simple">
@@ -488,6 +493,7 @@ a dataframe</p>
 <li><p><strong>relperm_params_df</strong> (<em>pd.DataFrame</em>) – Input data, should have been processed
 through load_relperm_df().</p></li>
 <li><p><strong>h</strong> (<em>float</em>) – Saturation step-value</p></li>
+<li><p><strong>fast</strong> (<em>bool</em>) – If fast-mode should be set for constructed object</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
