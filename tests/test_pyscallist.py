@@ -757,7 +757,11 @@ def test_fast():
     for item in p_list_fast:
         assert item.fast
 
-    # Testing with fast column in dataframe
+    # Testing with "fast" column in dataframe
+    # Currently the choice is to only implement fast mode
+    # as a global option. This column should do nothing now.
+    # One could imagine it implemented
+    # for individual SATNUM regions at a later stage
     dframe = pd.DataFrame(
         columns=["SATNUM", "nw", "now", "ng", "nog", "fast"],
         data=[

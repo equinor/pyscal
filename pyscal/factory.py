@@ -760,6 +760,7 @@ class PyscalFactory(object):
             logger.warning("it is implemented as a global option.")
             logger.warning("The fast column in the dataframe will be ignored.")
             logger.warning("Use fast=True in the function call instead.")
+            logger.warning("Fast mode is only available through the Python API")
 
         # Check that we are able to make something out of the first row:
         firstrow = input_df.iloc[0, :]
