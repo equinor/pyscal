@@ -496,7 +496,6 @@ class PyscalFactory(object):
         wog = PyscalFactory.create_water_oil_gas(wog_params, fast=fast)
         gaswater.wateroil = wog.wateroil
         gaswater.gasoil = wog.gasoil
-        print(gaswater.fast)
         return gaswater
 
     @staticmethod
@@ -592,7 +591,7 @@ class PyscalFactory(object):
             except ValueError as err:
                 raise ValueError(f"Problem with base case: {err}") from err
             try:
-                wog_high = PyscalFactory.create_gas_water(params["high"], fast)
+                wog_high = PyscalFactory.create_gas_water(params["high"], fast=fast)
             except ValueError as err:
                 raise ValueError(f"Problem with high/opt case: {err}") from err
 
@@ -757,6 +756,14 @@ class PyscalFactory(object):
             "SATNUM " + input_df["SATNUM"].astype(str) + " " + input_df["TAG"]
         )
 
+        # Check if fast is defined as a column
+        if "fast" in input_df:
+            logger.warning("Fast mode is not an option for individual SATNUMs")
+            logger.warning("it is implemented as a global option.")
+            logger.warning("The fast column in the dataframe will be ignored.")
+            logger.warning("Use fast=True in the function call instead.")
+            logger.warning("Fast mode is only available through the Python API")
+
         # Check that we are able to make something out of the first row:
         firstrow = input_df.iloc[0, :]
         error = False
@@ -817,13 +824,14 @@ class PyscalFactory(object):
         return remapped
 
     @staticmethod
-    def create_scal_recommendation_list(input_df, h=None):
+    def create_scal_recommendation_list(input_df, h=None, fast=False):
         """Requires SATNUM and CASE to be defined in the input data
 
         Args:
             input_df (pd.DataFrame): Input data, should have been processed
                 through load_relperm_df().
             h (float): Saturation step-value
+            fast (bool): If fast-mode should be set for constructed object
 
         Returns:
             PyscalList, consisting of SCALrecommendation objects
@@ -845,7 +853,7 @@ class PyscalFactory(object):
             try:
                 scal_l.append(
                     PyscalFactory.create_scal_recommendation(
-                        scalinput.loc[satnum, :].to_dict(orient="index"), h=h
+                        scalinput.loc[satnum, :].to_dict(orient="index"), h=h, fast=fast
                     )
                 )
             except ValueError as err:
@@ -854,7 +862,7 @@ class PyscalFactory(object):
         return scal_l
 
     @staticmethod
-    def create_pyscal_list(relperm_params_df, h=None):
+    def create_pyscal_list(relperm_params_df, h=None, fast=False):
         """Create WaterOilGas, WaterOil, GasOil or GasWater list
         based on what is available
 
@@ -862,6 +870,7 @@ class PyscalFactory(object):
             relperm_params_df (pd.DataFrame): Input data, should have been processed
                 through load_relperm_df().
             h (float): Saturation step-value
+            fast (bool): If fast-mode should be set for constructed object
 
         Returns:
             PyscalList, consisting of either WaterOil, GasOil or WaterOilGas objects
@@ -871,18 +880,18 @@ class PyscalFactory(object):
         gas_oil = sufficient_gas_oil_params(params)
         gas_water = sufficient_gas_water_params(params)
         if water_oil and gas_oil:
-            return PyscalFactory.create_wateroilgas_list(relperm_params_df, h)
+            return PyscalFactory.create_wateroilgas_list(relperm_params_df, h, fast)
         if water_oil:
-            return PyscalFactory.create_wateroil_list(relperm_params_df, h)
+            return PyscalFactory.create_wateroil_list(relperm_params_df, h, fast)
         if gas_oil:
-            return PyscalFactory.create_gasoil_list(relperm_params_df, h)
+            return PyscalFactory.create_gasoil_list(relperm_params_df, h, fast)
         if gas_water:
-            return PyscalFactory.create_gaswater_list(relperm_params_df, h)
+            return PyscalFactory.create_gaswater_list(relperm_params_df, h, fast)
         logger.error("Could not determine two or three phase from parameters")
         return None
 
     @staticmethod
-    def create_wateroilgas_list(relperm_params_df, h=None):
+    def create_wateroilgas_list(relperm_params_df, h=None, fast=False):
         """Create a PyscalList with WaterOilGas objects from
         a dataframe
 
@@ -890,6 +899,7 @@ class PyscalFactory(object):
             relperm_params_df (pd.DataFrame): Input data, should have been processed
                 through load_relperm_df().
             h (float): Saturation step-value
+            fast (bool): If fast-mode should be set for constructed object
 
         Returns:
             PyscalList, consisting of WaterOilGas objects
@@ -899,13 +909,15 @@ class PyscalFactory(object):
             if h is not None:
                 params["h"] = h
             try:
-                wogl.append(PyscalFactory.create_water_oil_gas(params.to_dict()))
+                wogl.append(
+                    PyscalFactory.create_water_oil_gas(params.to_dict(), fast=fast)
+                )
             except (AssertionError, ValueError, TypeError) as err:
                 raise ValueError(f"Error for SATNUM {row_idx+1}: {str(err)}") from err
         return wogl
 
     @staticmethod
-    def create_wateroil_list(relperm_params_df, h=None):
+    def create_wateroil_list(relperm_params_df, h=None, fast=False):
         """Create a PyscalList with WaterOil objects from
         a dataframe
 
@@ -913,6 +925,7 @@ class PyscalFactory(object):
             relperm_params_df (pd.DataFrame): A valid dataframe with
                 WaterOil parameters, processed through load_relperm_df()
             h (float): Saturation steplength
+            fast (bool): If fast-mode should be set for constructed object
 
         Returns:
             PyscalList, consisting of WaterOil objects
@@ -922,7 +935,7 @@ class PyscalFactory(object):
             if h is not None:
                 params["h"] = h
             try:
-                wol.append(PyscalFactory.create_water_oil(params.to_dict()))
+                wol.append(PyscalFactory.create_water_oil(params.to_dict(), fast=fast))
             except (AssertionError, ValueError, TypeError) as err:
                 raise ValueError(
                     f"Error for SATNUM {params['SATNUM']}: {str(err)}"
@@ -930,7 +943,7 @@ class PyscalFactory(object):
         return wol
 
     @staticmethod
-    def create_gasoil_list(relperm_params_df, h=None):
+    def create_gasoil_list(relperm_params_df, h=None, fast=False):
         """Create a PyscalList with GasOil objects from
         a dataframe
 
@@ -938,6 +951,7 @@ class PyscalFactory(object):
             relperm_params_df (pd.DataFrame): A valid dataframe with GasOil parameters,
                 processed through load_relperm_df()
             h (float): Saturation steplength
+            fast (bool): If fast-mode should be set for constructed object
 
         Returns:
             PyscalList, consisting of GasOil objects
@@ -947,7 +961,7 @@ class PyscalFactory(object):
             if h is not None:
                 params["h"] = h
             try:
-                gol.append(PyscalFactory.create_gas_oil(params.to_dict()))
+                gol.append(PyscalFactory.create_gas_oil(params.to_dict(), fast=fast))
             except (AssertionError, ValueError, TypeError) as err:
                 raise ValueError(
                     f"Error for SATNUM {params['SATNUM']}: {str(err)}"
@@ -955,7 +969,7 @@ class PyscalFactory(object):
         return gol
 
     @staticmethod
-    def create_gaswater_list(relperm_params_df, h=None):
+    def create_gaswater_list(relperm_params_df, h=None, fast=False):
         """Create a PyscalList with WaterOilGas objects from
         a dataframe, to be used for GasWater
 
@@ -963,6 +977,7 @@ class PyscalFactory(object):
             relperm_params_df (pd.DataFrame): A valid dataframe with GasWater
                 parameters, processed through load_relperm_df()
             h (float): Saturation steplength
+            fast (bool): If fast-mode should be set for constructed object
 
         Returns:
             PyscalList, consisting of GasWater objects
@@ -972,7 +987,7 @@ class PyscalFactory(object):
             if h is not None:
                 params["h"] = h
             try:
-                gwl.append(PyscalFactory.create_gas_water(params.to_dict()))
+                gwl.append(PyscalFactory.create_gas_water(params.to_dict(), fast=fast))
             except (AssertionError, ValueError, TypeError) as err:
                 raise ValueError(
                     f"Error for SATNUM {params['SATNUM']}: {str(err)}"

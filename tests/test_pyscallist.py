@@ -699,3 +699,79 @@ def test_error_messages_pr_satnum(caplog):
         PyscalFactory.create_scal_recommendation_list(dframe, h=0.2)
     with pytest.raises(ValueError, match="Problem with low"):
         PyscalFactory.create_scal_recommendation_list(dframe, h=0.2)
+
+
+def test_fast():
+    """Test fast mode for SCALrecommendation"""
+    testdir = Path(__file__).absolute().parent
+
+    scalrec_data = PyscalFactory.load_relperm_df(
+        testdir / "data/scal-pc-input-example.xlsx"
+    )
+    scalrec_list_fast = PyscalFactory.create_scal_recommendation_list(
+        scalrec_data, fast=True
+    )
+
+    for item in scalrec_list_fast:
+        assert item.fast
+        assert item.low.fast
+        assert item.base.fast
+        assert item.high.fast
+
+    wog_list_fast = scalrec_list_fast.interpolate(-0.5)
+    for item in wog_list_fast:
+        assert item.fast
+
+    # WaterOilGas list
+    dframe = pd.DataFrame(
+        columns=["SATNUM", "nw", "now", "ng", "nog"],
+        data=[
+            [1, 2, 2, 2, 2],
+            [2, 2, 2, 2, 2],
+            [3, 2, 2, 2, 2],
+        ],
+    )
+    relperm_data = PyscalFactory.load_relperm_df(dframe)
+    p_list_fast = PyscalFactory.create_pyscal_list(relperm_data, h=0.2, fast=True)
+    for item in p_list_fast:
+        assert item.fast
+
+    # GasOil list
+    input_dframe = dframe[["SATNUM", "ng", "nog"]].copy()
+    relperm_data = PyscalFactory.load_relperm_df(input_dframe)
+    p_list_fast = PyscalFactory.create_pyscal_list(relperm_data, h=0.2, fast=True)
+    for item in p_list_fast:
+        assert item.fast
+
+    # WaterOil list
+    input_dframe = dframe[["SATNUM", "nw", "now"]].copy()
+    relperm_data = PyscalFactory.load_relperm_df(input_dframe)
+    p_list_fast = PyscalFactory.create_pyscal_list(relperm_data, h=0.2, fast=True)
+    for item in p_list_fast:
+        assert item.fast
+
+    # GasWater list
+    input_dframe = dframe[["SATNUM", "nw", "ng"]].copy()
+    relperm_data = PyscalFactory.load_relperm_df(input_dframe)
+    p_list_fast = PyscalFactory.create_pyscal_list(relperm_data, h=0.2, fast=True)
+    for item in p_list_fast:
+        assert item.fast
+
+    # Testing with "fast" column in dataframe
+    # Currently the choice is to only implement fast mode
+    # as a global option. This column should do nothing now.
+    # One could imagine it implemented
+    # for individual SATNUM regions at a later stage
+    dframe = pd.DataFrame(
+        columns=["SATNUM", "nw", "now", "ng", "nog", "fast"],
+        data=[
+            [1, 2, 2, 2, 2, True],
+            [2, 2, 2, 2, 2, False],
+            [3, 2, 2, 2, 2, True],
+        ],
+    )
+    relperm_data = PyscalFactory.load_relperm_df(dframe)
+    assert "fast" in relperm_data
+    p_list = PyscalFactory.create_pyscal_list(relperm_data, h=0.2)
+    for item in p_list:
+        assert not item.fast

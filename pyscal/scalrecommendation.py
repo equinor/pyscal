@@ -191,6 +191,20 @@ class SCALrecommendation(object):
         else:
             raise ValueError("Wrong arguments to SCALrecommendation")
 
+        if all([self.low.fast, self.base.fast, self.high.fast]):
+            self.fast = True
+        elif any([self.low.fast, self.base.fast, self.high.fast]):
+            self.fast = self.low.fast = self.base.fast = self.high.fast = False
+            logger.warning(
+                (
+                    "One or more of the low/base/high objects are set to be run in "
+                    "fast mode, but not all. Fast mode set to false in all objects. "
+                    "Code is run in normal mode."
+                )
+            )
+        else:
+            self.fast = False
+
     # User should add capillary pressure explicitly by calling add**
     # on the class objects, or run the following method to add the
     # same to all curves:
@@ -317,11 +331,19 @@ class SCALrecommendation(object):
                 interpolant.wateroil.tag = tag
             elif parameter < 0.0:
                 interpolant.wateroil = interpolate_wo(
-                    self.base.wateroil, self.low.wateroil, -parameter, h=h, tag=tag
+                    self.base.wateroil,
+                    self.low.wateroil,
+                    -parameter,
+                    h=h,
+                    tag=tag,
                 )
             elif parameter > 0.0:
                 interpolant.wateroil = interpolate_wo(
-                    self.base.wateroil, self.high.wateroil, parameter, h=h, tag=tag
+                    self.base.wateroil,
+                    self.high.wateroil,
+                    parameter,
+                    h=h,
+                    tag=tag,
                 )
         else:
             interpolant.wateroil = None
@@ -345,14 +367,24 @@ class SCALrecommendation(object):
                 interpolant.gasoil.tag = tag
             elif gasparameter < 0.0:
                 interpolant.gasoil = interpolate_go(
-                    self.base.gasoil, self.low.gasoil, -1 * gasparameter, h=h, tag=tag
+                    self.base.gasoil,
+                    self.low.gasoil,
+                    -1 * gasparameter,
+                    h=h,
+                    tag=tag,
                 )
             elif gasparameter > 0.0:
                 interpolant.gasoil = interpolate_go(
-                    self.base.gasoil, self.high.gasoil, gasparameter, h=h, tag=tag
+                    self.base.gasoil,
+                    self.high.gasoil,
+                    gasparameter,
+                    h=h,
+                    tag=tag,
                 )
         else:
             interpolant.gasoil = None
+
+        interpolant.fast = self.fast
 
         return interpolant
 
