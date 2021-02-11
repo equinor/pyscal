@@ -2,6 +2,7 @@
 
 import logging
 from pathlib import Path
+import zipfile
 
 import pandas as pd
 import numpy as np
@@ -1135,10 +1136,17 @@ def infer_tabular_file_format(filename):
     try:
         pd.read_excel(filename, engine="openpyxl")
         return "xlsx"
-    except (ValueError, OSError, openpyxl.utils.exceptions.InvalidFileException):
+    except (
+        ValueError,
+        OSError,
+        openpyxl.utils.exceptions.InvalidFileException,
+        zipfile.BadZipFile,
+    ):
         # < Pandas 1.2, we get InvalidFileException from openpyxl
-        # >= Pandas 1.2.0: CSV gives ValueError,
-        #                  XLS gives OSError
+        # Pandas 1.2.0 - 1.2.1: CSV gives ValueError,
+        #                       XLS gives OSError
+        # >= Pandas 1.2.2:      CSV gives zipfile.BadZipFile,
+        #                       XLS gives OSError
         pass
     try:
         pd.read_excel(filename, engine="xlrd")
