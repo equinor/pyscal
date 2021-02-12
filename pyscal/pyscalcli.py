@@ -3,6 +3,7 @@
 import sys
 import argparse
 import warnings
+import traceback
 
 import logging
 
@@ -166,9 +167,9 @@ def main():
             slgof=args.slgof,
             family2=args.family2,
         )
-    except ValueError:
-        # If ValueErrors, error messages have already been printed
-        sys.exit(1)
+    except (OSError, ValueError) as err:
+        print("".join(traceback.format_tb(err.__traceback__)))
+        sys.exit(str(err))
 
 
 def pyscal_main(
@@ -210,8 +211,7 @@ def pyscal_main(
     logger.debug("Input data:\n%s", scalinput_df.to_string(index=False))
 
     if int_param_go is not None and int_param_wo is None:
-        logger.error("Don't use int_param_go alone, only int_param_wo")
-        raise ValueError
+        raise ValueError("Don't use int_param_go alone, only int_param_wo")
     if (int_param_wo is not None and len(int_param_wo) > 1) or (
         int_param_go is not None and len(int_param_go) > 1
     ):
@@ -222,13 +222,11 @@ def pyscal_main(
             FutureWarning,
         )
     if "SATNUM" not in scalinput_df:
-        logger.error("There is no column called SATNUM in the input data")
-        raise ValueError
+        raise ValueError("There is no column called SATNUM in the input data")
     if "CASE" in scalinput_df:
         # Then we should do interpolation
         if int_param_wo is None:
-            logger.error("No interpolation parameters provided")
-            raise ValueError
+            raise ValueError("No interpolation parameters provided")
         scalrec_list = PyscalFactory.create_scal_recommendation_list(
             scalinput_df, h=delta_s
         )
@@ -253,10 +251,9 @@ def pyscal_main(
     if (
         int_param_wo is not None or int_param_go is not None
     ) and "CASE" not in scalinput_df:
-        logger.error(
+        raise ValueError(
             "Interpolation parameter provided but no CASE column in input data"
         )
-        raise ValueError
 
     if family2 or wog_list.pyscaltype == GasWater:
         logger.info("Generating family 2 keywords.")

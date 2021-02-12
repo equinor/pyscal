@@ -105,7 +105,8 @@ def test_interpolation_deprecated(param_wo, param_go):
     assert rec.type == WaterOilGas
     try:
         interpolant = rec.interpolate(param_wo, param_go, h=0.1)
-    except AssertionError:
+    except ValueError:
+        # We get here when interpolation parameters are outside [-1, 1]
         return
 
     check_table(interpolant.wateroil.table)
@@ -276,7 +277,7 @@ def test_interpolation(param_wo, param_go):
 
     try:
         interpolant = rec.interpolate(param_wo, param_go, h=0.1)
-    except AssertionError:
+    except ValueError:
         return
 
     check_table(interpolant.wateroil.table)

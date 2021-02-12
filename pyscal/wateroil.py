@@ -242,16 +242,10 @@ class WaterOil(object):
                 try:
                     dframe[col] = dframe[col].astype(float)
                     logger.info("Converted column %s to numbers for fromtable()", col)
-                except ValueError as e_msg:
-                    logger.error(
-                        "Failed to parse column %s as numbers for add_fromtable()", col
-                    )
-                    raise ValueError(e_msg)
-                except TypeError as e_msg:
-                    logger.error(
-                        "Failed to parse column %s as numbers for add_fromtable()", col
-                    )
-                    raise TypeError(e_msg)
+                except (TypeError, ValueError) as err:
+                    raise ValueError(
+                        f"Failed to parse column {col} as numbers for add_fromtable()"
+                    ) from err
 
         if (dframe[swcolname].diff() < 0).any():
             raise ValueError("sw data not sorted")

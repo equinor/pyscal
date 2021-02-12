@@ -210,6 +210,17 @@ def test_pyscal_client_static(tmpdir, caplog, default_loglevel):
     assert linecount2 > linecount1 * 4  # since we don't filter out non-numerical lines
 
 
+def test_pyscalcli_exception_catching(capsys):
+    """The command line client catches selected exceptions.
+
+    Traceback is always included."""
+    sys.argv = ["pyscal", "notexisting.xlsx"]
+    with pytest.raises(SystemExit, match="File not found"):
+        pyscalcli.main()
+    outerr = capsys.readouterr().out + capsys.readouterr().err
+    assert "raise" in outerr  # This is the traceback.
+
+
 def test_pyscalcli_oilwater(tmpdir, caplog):
     """Test the command line client in two-phase oil-water"""
     tmpdir.chdir()

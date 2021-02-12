@@ -705,8 +705,7 @@ class PyscalFactory(object):
         # break optional comment columns which might only be defined on certain lines.
 
         if "SATNUM" not in input_df:
-            logger.error("SATNUM must be present in CSV/XLSX file/dataframe")
-            raise ValueError("SATNUM missing")
+            raise ValueError("SATNUM must be present in CSV/XLSX file/dataframe")
 
         # Delete columns and rows that are all NaNs (this has been observed
         # to occur from seemingly empty cells in Excel/LibreOffice and
@@ -715,11 +714,10 @@ class PyscalFactory(object):
         input_df.dropna(axis="index", how="all", inplace=True)
 
         if input_df["SATNUM"].isnull().sum() > 0:
-            logger.error(
-                "Found not-a-number in the SATNUM column. This could be due to"
+            raise ValueError(
+                "Found not-a-number in the SATNUM column. This could be due to "
+                "merged cells in XLSX, which is not supported."
             )
-            logger.error("merged cells in XLSX, which is not supported.")
-            raise ValueError
 
         # Warn about any other columns with empty cells:
         nan_columns = set(input_df.columns[input_df.isnull().any()])
@@ -733,27 +731,27 @@ class PyscalFactory(object):
         # Check that SATNUM's are consecutive and integers:
         try:
             input_df["SATNUM"] = input_df["SATNUM"].astype(int)
-        except ValueError:
-            logger.error("SATNUM must contain only integers")
-            raise ValueError
+        except ValueError as err:
+            raise ValueError("SATNUM must contain only integers") from err
+
         if min(input_df["SATNUM"]) != 1:
-            logger.error("SATNUM must start at 1")
-            raise ValueError
+            raise ValueError("SATNUM must start at 1")
+
         if max(input_df["SATNUM"]) != len(input_df["SATNUM"].unique()):
             logger.error(
                 "Missing SATNUMs? Max SATNUM is not equal to number of unique SATNUMS"
             )
             raise ValueError
         if "CASE" not in input_df and len(input_df["SATNUM"].unique()) != len(input_df):
-            logger.error("Non-unique SATNUMs?")
-            raise ValueError
+            raise ValueError("Non-unique SATNUMs?")
         # If we are in a SCAL recommendation setting
         if "CASE" in input_df:
             # Enforce lower case:
             if input_df["CASE"].isnull().sum() > 0:
-                logger.error("Found not-a-number in the CASE column. This could be due")
-                logger.error("merged cells in XLSX, which is not supported.")
-                raise ValueError
+                raise ValueError(
+                    "Found not-a-number in the CASE column. This could be due "
+                    "merged cells in XLSX, which is not supported."
+                )
             input_df["CASE"] = PyscalFactory.remap_validate_cases(
                 input_df["CASE"].values
             )
@@ -784,12 +782,11 @@ class PyscalFactory(object):
         except ValueError:
             error = True
         if error or not wo_ok and not go_ok and not gw_ok:
-            logger.error(
-                "Can't make neither WaterOil, GasOil or GasWater from the given data."
+            raise ValueError(
+                "Can't make neither WaterOil, GasOil or GasWater from "
+                "the given data. Check documentation for what you need to supply. "
+                f"You provided the columns {input_df.columns.values}"
             )
-            logger.error("Check documentation for what you need to supply")
-            logger.error("You provided the columns %s", str(input_df.columns.values))
-            raise ValueError
         logger.info(
             "Loaded input data with %s SATNUMS, column %s",
             str(len(input_df["SATNUM"].unique())),
@@ -824,13 +821,11 @@ class PyscalFactory(object):
         ]
         not_understood = set(remapped) - set(accepted)
         if not_understood:
-            logger.error("Invalid case values: %s", str(not_understood))
-            raise ValueError
+            raise ValueError(f"Invalid case values: {not_understood}")
         if len(set(remapped)) != len(accepted):
-            logger.error(
-                "You must supply low, base AND high, got only %s", str(set(remapped))
+            raise ValueError(
+                f"You must supply low, base AND high, got only {set(remapped)}"
             )
-            raise ValueError
         return remapped
 
     @staticmethod
@@ -855,11 +850,9 @@ class PyscalFactory(object):
             # load_relperm_df only validates the CASE column for all SATNUMs at
             # once, errors for particular SATNUMs are caught here.
             if len(scalinput.loc[satnum, :]) > 3:
-                logger.error("Too many cases supplied for SATNUM %s", str(satnum))
-                raise ValueError
+                raise ValueError(f"Too many cases supplied for SATNUM {satnum}")
             if len(scalinput.loc[satnum, :]) < 3:
-                logger.error("Too few cases supplied for SATNUM %s", str(satnum))
-                raise ValueError
+                raise ValueError(f"Too few cases supplied for SATNUM {satnum}")
             try:
                 scal_l.append(
                     PyscalFactory.create_scal_recommendation(
