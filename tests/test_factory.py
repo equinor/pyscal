@@ -276,6 +276,23 @@ def test_init_with_swlheight():
     assert gaswater.swcr == 0.3
     assert "swcr=0.3" in gaswater.SWFN()
 
+    # Test error message for missing swirr when swlheight is asked for:
+    with pytest.raises(
+        ValueError, match="Can't initialize from SWLHEIGHT without sufficient simple-J"
+    ):
+        pyscal_factory.create_water_oil(
+            dict(
+                swlheight=200,
+                nw=1,
+                now=1,
+                a=1,
+                b=-2,
+                poro_ref=0.2,
+                perm_ref=100,
+                drho=200,
+            )
+        )
+
 
 def test_relative_swcr():
     """swcr can be initialized relative to swl
