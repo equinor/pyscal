@@ -164,10 +164,13 @@ class PyscalFactory(object):
                 raise ValueError(
                     "Do not provide both swl and swlheight at the same time"
                 )
+            if params["swlheight"] <= 0:
+                raise ValueError("swlheight must be larger than zero")
             params_swl_from_height = slicedict(params, WO_SWL_FROM_HEIGHT)
             params["swl"] = capillarypressure.swl_from_height_simpleJ(
                 **params_swl_from_height
             )
+            logger.debug("Computed swl from swlwheight to %s", str(params["swl"]))
             if "swcr" in params and params["swcr"] < params["swl"]:
                 raise ValueError(
                     "Provided swcr={} is lower than computed swl={}".format(
@@ -178,7 +181,7 @@ class PyscalFactory(object):
             raise ValueError(
                 (
                     "Can't initialize from SWLHEIGHT without "
-                    "sufficient simple-J parameters, all of: "
+                    "sufficient simple-J parameters, needs all of: "
                     "{}".format(WO_SWL_FROM_HEIGHT)
                 )
             )
