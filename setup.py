@@ -1,4 +1,4 @@
-from os import path
+from pathlib import Path
 
 from setuptools import setup, find_packages
 
@@ -11,10 +11,7 @@ except ImportError:
     cmdclass = {}
 
 # Read the contents of README.md, for PyPI
-this_directory = path.abspath(path.dirname(__file__))
-with open(path.join(this_directory, "README.md")) as f_handle:
-    LONG_DESCRIPTION = f_handle.read()
-
+LONG_DESCRIPTION = (Path(__file__).parent / "README.md").read_text()
 
 REQUIREMENTS = [
     "matplotlib",
@@ -25,20 +22,9 @@ REQUIREMENTS = [
     "typing-extensions>=3.7; python_version<'3.8'",
     "xlrd",
 ]
-TEST_REQUIREMENTS = [
-    "black>=20.8b0",
-    "flake8",
-    "hypothesis",
-    "mypy",
-    "pre-commit",
-    "pytest",
-    "pytest-cov",
-    "rstcheck",
-    "sphinx",
-    "sphinx-argparse",
-    "sphinx-autodoc-typehints",
-    "sphinx_rtd_theme",
-]
+
+TEST_REQUIREMENTS = Path("test_requirements.txt").read_text().splitlines()
+
 SETUP_REQUIREMENTS = ["pytest-runner", "setuptools >=28", "setuptools_scm"]
 EXTRAS_REQUIRE = {"tests": TEST_REQUIREMENTS}
 
