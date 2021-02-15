@@ -114,7 +114,7 @@ Additionally, *g* can be given as the gravitational acceleration where relevant,
 otherwise defaulted to 9.81 m/s².
 
 For *simple J*, it is also possible to initialize *swl* from a height above free
-water level, by providing ``swl_height`` (in meters) as a parameter instead of
+water level, by providing ``swlheight`` (in meters) as a parameter instead of
 ``swl``. In that case, it is also recommended to use ``swcr_add`` instead of
 ``swcr``.
 

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.factory &mdash; pyscal 0.7.5 documentation</title>
+  <title>pyscal.factory &mdash; pyscal 0.7.6.dev1+ga526946 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.7.5
+                0.7.6.dev1+ga526946
               </div>
             
           
@@ -329,10 +329,13 @@
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                     <span class="s2">&quot;Do not provide both swl and swlheight at the same time&quot;</span>
                 <span class="p">)</span>
+            <span class="k">if</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;swlheight&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;swlheight must be larger than zero&quot;</span><span class="p">)</span>
             <span class="n">params_swl_from_height</span> <span class="o">=</span> <span class="n">slicedict</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">WO_SWL_FROM_HEIGHT</span><span class="p">)</span>
             <span class="n">params</span><span class="p">[</span><span class="s2">&quot;swl&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">capillarypressure</span><span class="o">.</span><span class="n">swl_from_height_simpleJ</span><span class="p">(</span>
                 <span class="o">**</span><span class="n">params_swl_from_height</span>
             <span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Computed swl from swlwheight to </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;swl&quot;</span><span class="p">]))</span>
             <span class="k">if</span> <span class="s2">&quot;swcr&quot;</span> <span class="ow">in</span> <span class="n">params</span> <span class="ow">and</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;swcr&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;swl&quot;</span><span class="p">]:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                     <span class="s2">&quot;Provided swcr=</span><span class="si">{}</span><span class="s2"> is lower than computed swl=</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
@@ -343,7 +346,7 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="p">(</span>
                     <span class="s2">&quot;Can&#39;t initialize from SWLHEIGHT without &quot;</span>
-                    <span class="s2">&quot;sufficient simple-J parameters, all of: &quot;</span>
+                    <span class="s2">&quot;sufficient simple-J parameters, needs all of: &quot;</span>
                     <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">WO_SWL_FROM_HEIGHT</span><span class="p">)</span>
                 <span class="p">)</span>
             <span class="p">)</span>
