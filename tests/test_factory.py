@@ -590,6 +590,25 @@ def test_load_relperm_df(tmpdir):
         PyscalFactory.load_relperm_df("dummy.txt")
 
 
+def test_many_nans():
+    """Excel or oocalc sometimes saves a xlsx file that gives all NaN rows and
+    all-NaN columns, maybe some column setting that triggers Pandas to load
+    them as actual columns/rows.
+
+    Ensure we handle extra Nans in both directions"""
+    nanframe = pd.DataFrame(
+        [
+            {"SATNUM": 1, "nw": 2, "now": 2, "Unnamed: 15": np.nan},
+            {"SATNUM": np.nan, "nw": np.nan, "now": np.nan, "Unnamed: 15": np.nan},
+        ]
+    )
+    wateroil_list = PyscalFactory.create_pyscal_list(
+        PyscalFactory.load_relperm_df(nanframe)
+    )
+    assert len(wateroil_list) == 1
+    sat_table_str_ok(wateroil_list.SWOF())
+
+
 def test_xls_factory():
     """Test/demonstrate how to go from data in an excel row to pyscal objects
 
