@@ -708,6 +708,12 @@ class PyscalFactory(object):
             logger.error("SATNUM must be present in CSV/XLSX file/dataframe")
             raise ValueError("SATNUM missing")
 
+        # Delete columns and rows that are all NaNs (this has been observed
+        # to occur from seemingly empty cells in Excel/LibreOffice and
+        # has been seen to vary with Pandas/Openpyxl versions in use)
+        input_df.dropna(axis="columns", how="all", inplace=True)
+        input_df.dropna(axis="index", how="all", inplace=True)
+
         if input_df["SATNUM"].isnull().sum() > 0:
             logger.error(
                 "Found not-a-number in the SATNUM column. This could be due to"
