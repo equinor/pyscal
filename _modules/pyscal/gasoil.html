@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.gasoil &mdash; pyscal 0.7.6.dev3+ge5364ac documentation</title>
+  <title>pyscal.gasoil &mdash; pyscal 0.7.6.dev4+gb28b183 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.7.6.dev3+ge5364ac
+                0.7.6.dev4+gb28b183
               </div>
             
           
@@ -403,10 +403,9 @@
             <span class="n">dframe</span> <span class="o">=</span> <span class="n">dframe</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">sgcolname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dframe</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">critical</span><span class="p">(</span>
-                <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> not found in dataframe, can&#39;t read table data&quot;</span><span class="p">,</span> <span class="n">sgcolname</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">sgcolname</span><span class="si">}</span><span class="s2"> not found in dataframe, can&#39;t read table data&quot;</span>
             <span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span>
 
         <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="p">[</span><span class="n">sgcolname</span><span class="p">,</span> <span class="n">krgcolname</span><span class="p">,</span> <span class="n">krogcolname</span><span class="p">,</span> <span class="n">pccolname</span><span class="p">]:</span>
             <span class="c1"># Typecheck/convert all numerical columns:</span>
@@ -415,16 +414,10 @@
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">dframe</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">dframe</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
                     <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Converted column </span><span class="si">%s</span><span class="s2"> to numbers for fromtable()&quot;</span><span class="p">,</span> <span class="n">col</span><span class="p">)</span>
-                <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e_msg</span><span class="p">:</span>
-                    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                        <span class="s2">&quot;Failed to parse column </span><span class="si">%s</span><span class="s2"> as numbers for add_fromtable()&quot;</span><span class="p">,</span> <span class="n">col</span>
-                    <span class="p">)</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">e_msg</span><span class="p">)</span>
-                <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e_msg</span><span class="p">:</span>
-                    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                        <span class="s2">&quot;Failed to parse column </span><span class="si">%s</span><span class="s2"> as numbers for add_fromtable()&quot;</span><span class="p">,</span> <span class="n">col</span>
-                    <span class="p">)</span>
-                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="n">e_msg</span><span class="p">)</span>
+                <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Failed to parse column </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2"> as numbers for add_fromtable()&quot;</span>
+                    <span class="p">)</span> <span class="kn">from</span> <span class="nn">err</span>
 
         <span class="k">if</span> <span class="n">dframe</span><span class="p">[</span><span class="n">sgcolname</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;sg must start at zero&quot;</span><span class="p">)</span>

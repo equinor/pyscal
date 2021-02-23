@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.pyscalcli &mdash; pyscal 0.7.6.dev3+ge5364ac documentation</title>
+  <title>pyscal.pyscalcli &mdash; pyscal 0.7.6.dev4+gb28b183 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.7.6.dev3+ge5364ac
+                0.7.6.dev4+gb28b183
               </div>
             
           
@@ -168,6 +168,7 @@
 <span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">argparse</span>
 <span class="kn">import</span> <span class="nn">warnings</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
 
@@ -331,9 +332,9 @@
             <span class="n">slgof</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">slgof</span><span class="p">,</span>
             <span class="n">family2</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">family2</span><span class="p">,</span>
         <span class="p">)</span>
-    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-        <span class="c1"># If ValueErrors, error messages have already been printed</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">OSError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_tb</span><span class="p">(</span><span class="n">err</span><span class="o">.</span><span class="n">__traceback__</span><span class="p">)))</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">))</span></div>
 
 
 <div class="viewcode-block" id="pyscal_main"><a class="viewcode-back" href="../../pyscal.html#pyscal.pyscalcli.pyscal_main">[docs]</a><span class="k">def</span> <span class="nf">pyscal_main</span><span class="p">(</span>
@@ -375,8 +376,7 @@
     <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Input data:</span><span class="se">\n</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">scalinput_df</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="n">int_param_go</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">int_param_wo</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Don&#39;t use int_param_go alone, only int_param_wo&quot;</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Don&#39;t use int_param_go alone, only int_param_wo&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">int_param_wo</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">int_param_wo</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
         <span class="n">int_param_go</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">int_param_go</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span>
     <span class="p">):</span>
@@ -387,13 +387,11 @@
             <span class="ne">FutureWarning</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">if</span> <span class="s2">&quot;SATNUM&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">scalinput_df</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;There is no column called SATNUM in the input data&quot;</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;There is no column called SATNUM in the input data&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="s2">&quot;CASE&quot;</span> <span class="ow">in</span> <span class="n">scalinput_df</span><span class="p">:</span>
         <span class="c1"># Then we should do interpolation</span>
         <span class="k">if</span> <span class="n">int_param_wo</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;No interpolation parameters provided&quot;</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No interpolation parameters provided&quot;</span><span class="p">)</span>
         <span class="n">scalrec_list</span> <span class="o">=</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_scal_recommendation_list</span><span class="p">(</span>
             <span class="n">scalinput_df</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">delta_s</span>
         <span class="p">)</span>
@@ -418,10 +416,9 @@
     <span class="k">if</span> <span class="p">(</span>
         <span class="n">int_param_wo</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">int_param_go</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;CASE&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">scalinput_df</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="s2">&quot;Interpolation parameter provided but no CASE column in input data&quot;</span>
         <span class="p">)</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span>
 
     <span class="k">if</span> <span class="n">family2</span> <span class="ow">or</span> <span class="n">wog_list</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">==</span> <span class="n">GasWater</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Generating family 2 keywords.&quot;</span><span class="p">)</span>

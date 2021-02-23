@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.factory &mdash; pyscal 0.7.6.dev3+ge5364ac documentation</title>
+  <title>pyscal.factory &mdash; pyscal 0.7.6.dev4+gb28b183 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.7.6.dev3+ge5364ac
+                0.7.6.dev4+gb28b183
               </div>
             
           
@@ -870,8 +870,7 @@
         <span class="c1"># break optional comment columns which might only be defined on certain lines.</span>
 
         <span class="k">if</span> <span class="s2">&quot;SATNUM&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_df</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;SATNUM must be present in CSV/XLSX file/dataframe&quot;</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;SATNUM missing&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;SATNUM must be present in CSV/XLSX file/dataframe&quot;</span><span class="p">)</span>
 
         <span class="c1"># Delete columns and rows that are all NaNs (this has been observed</span>
         <span class="c1"># to occur from seemingly empty cells in Excel/LibreOffice and</span>
@@ -880,11 +879,10 @@
         <span class="n">input_df</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;SATNUM&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="s2">&quot;Found not-a-number in the SATNUM column. This could be due to&quot;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Found not-a-number in the SATNUM column. This could be due to &quot;</span>
+                <span class="s2">&quot;merged cells in XLSX, which is not supported.&quot;</span>
             <span class="p">)</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;merged cells in XLSX, which is not supported.&quot;</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span>
 
         <span class="c1"># Warn about any other columns with empty cells:</span>
         <span class="n">nan_columns</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">input_df</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="n">input_df</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()])</span>
@@ -898,27 +896,27 @@
         <span class="c1"># Check that SATNUM&#39;s are consecutive and integers:</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;SATNUM&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;SATNUM&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;SATNUM must contain only integers&quot;</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;SATNUM must contain only integers&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">err</span>
+
         <span class="k">if</span> <span class="nb">min</span><span class="p">(</span><span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;SATNUM&quot;</span><span class="p">])</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;SATNUM must start at 1&quot;</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;SATNUM must start at 1&quot;</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="nb">max</span><span class="p">(</span><span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;SATNUM&quot;</span><span class="p">])</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;SATNUM&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()):</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
                 <span class="s2">&quot;Missing SATNUMs? Max SATNUM is not equal to number of unique SATNUMS&quot;</span>
             <span class="p">)</span>
             <span class="k">raise</span> <span class="ne">ValueError</span>
         <span class="k">if</span> <span class="s2">&quot;CASE&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_df</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;SATNUM&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_df</span><span class="p">):</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Non-unique SATNUMs?&quot;</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Non-unique SATNUMs?&quot;</span><span class="p">)</span>
         <span class="c1"># If we are in a SCAL recommendation setting</span>
         <span class="k">if</span> <span class="s2">&quot;CASE&quot;</span> <span class="ow">in</span> <span class="n">input_df</span><span class="p">:</span>
             <span class="c1"># Enforce lower case:</span>
             <span class="k">if</span> <span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;CASE&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Found not-a-number in the CASE column. This could be due&quot;</span><span class="p">)</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;merged cells in XLSX, which is not supported.&quot;</span><span class="p">)</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Found not-a-number in the CASE column. This could be due &quot;</span>
+                    <span class="s2">&quot;merged cells in XLSX, which is not supported.&quot;</span>
+                <span class="p">)</span>
             <span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;CASE&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">remap_validate_cases</span><span class="p">(</span>
                 <span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;CASE&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
             <span class="p">)</span>
@@ -949,12 +947,11 @@
         <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
             <span class="n">error</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="n">error</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">wo_ok</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">go_ok</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">gw_ok</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="s2">&quot;Can&#39;t make neither WaterOil, GasOil or GasWater from the given data.&quot;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Can&#39;t make neither WaterOil, GasOil or GasWater from &quot;</span>
+                <span class="s2">&quot;the given data. Check documentation for what you need to supply. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;You provided the columns </span><span class="si">{</span><span class="n">input_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Check documentation for what you need to supply&quot;</span><span class="p">)</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;You provided the columns </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">input_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">))</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
             <span class="s2">&quot;Loaded input data with </span><span class="si">%s</span><span class="s2"> SATNUMS, column </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
             <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;SATNUM&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())),</span>
@@ -989,13 +986,11 @@
         <span class="p">]</span>
         <span class="n">not_understood</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">remapped</span><span class="p">)</span> <span class="o">-</span> <span class="nb">set</span><span class="p">(</span><span class="n">accepted</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">not_understood</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Invalid case values: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">not_understood</span><span class="p">))</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid case values: </span><span class="si">{</span><span class="n">not_understood</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">remapped</span><span class="p">))</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">accepted</span><span class="p">):</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="s2">&quot;You must supply low, base AND high, got only </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">remapped</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;You must supply low, base AND high, got only </span><span class="si">{</span><span class="nb">set</span><span class="p">(</span><span class="n">remapped</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span>
         <span class="k">return</span> <span class="n">remapped</span></div>
 
 <div class="viewcode-block" id="PyscalFactory.create_scal_recommendation_list"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_scal_recommendation_list">[docs]</a>    <span class="nd">@staticmethod</span>
@@ -1020,11 +1015,9 @@
             <span class="c1"># load_relperm_df only validates the CASE column for all SATNUMs at</span>
             <span class="c1"># once, errors for particular SATNUMs are caught here.</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">scalinput</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">satnum</span><span class="p">,</span> <span class="p">:])</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Too many cases supplied for SATNUM </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">satnum</span><span class="p">))</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Too many cases supplied for SATNUM </span><span class="si">{</span><span class="n">satnum</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">scalinput</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">satnum</span><span class="p">,</span> <span class="p">:])</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Too few cases supplied for SATNUM </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">satnum</span><span class="p">))</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Too few cases supplied for SATNUM </span><span class="si">{</span><span class="n">satnum</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">scal_l</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_scal_recommendation</span><span class="p">(</span>
