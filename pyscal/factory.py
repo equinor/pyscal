@@ -226,10 +226,6 @@ class PyscalFactory(object):
                 "Added LET water to WaterOil object from parameters %s",
                 str(params_let_water.keys()),
             )
-        else:
-            logger.warning(
-                "Missing or ambiguous parameters for water curve in WaterOil object"
-            )
 
         # Oil curve:
         params_corey_oil = slicedict(params, WO_COREY_OIL + WO_OIL_ENDPOINTS)
@@ -268,10 +264,6 @@ class PyscalFactory(object):
             logger.debug(
                 "Added LET water to WaterOil object from parameters %s",
                 str(params_let_oil.keys()),
-            )
-        else:
-            logger.warning(
-                "Missing or ambiguous parameters for oil curve in WaterOil object"
             )
 
         # Capillary pressure:
@@ -457,7 +449,7 @@ class PyscalFactory(object):
         wateroilgas.gasoil = gasoil  # This might be None
         if not wateroilgas.selfcheck():
             raise ValueError(
-                ("Incomplete WaterOilGas object, some parameters missing to factory")
+                f"Inconsistent WaterOilGas object. Bug? Input was {params}"
             )
         return wateroilgas
 
@@ -616,7 +608,7 @@ class PyscalFactory(object):
         Ensures case-insensitiveness SATNUM, CASE, TAG and COMMENT
 
         Merges COMMENT into TAG column, as only TAG is picked up downstream.
-        Adds a prexix "SATNUM <number>" to all tags.
+        Adds a prefix "SATNUM <number>" to all tags.
 
         All strings in CASE column are converted to lowercase. Applies
         aliasing in the CASE column so that "pessimistic" and "pess" map to
@@ -642,7 +634,7 @@ class PyscalFactory(object):
                     "Sheet name only relevant for XLSX files, ignoring %s", sheet_name
                 )
             excel_engines = {"xls": "xlrd", "xlsx": "openpyxl"}
-            if sheet_name:
+            if tabular_file_format != "csv" and sheet_name:
                 try:
                     input_df = pd.read_excel(
                         inputfile,
@@ -655,10 +647,10 @@ class PyscalFactory(object):
                         inputfile,
                         sheet_name,
                     )
-                except KeyError as error:
-                    logger.error("Non-existing sheet-name %s provided?", sheet_name)
-                    logger.error(str(error))
-                    return pd.DataFrame()
+                except (KeyError, ValueError) as error:
+                    raise ValueError(
+                        f"Non-existing sheet-name {sheet_name} provided."
+                    ) from error
             elif tabular_file_format.startswith("xls"):
                 input_df = pd.read_excel(
                     inputfile, engine=excel_engines[tabular_file_format]
@@ -738,10 +730,9 @@ class PyscalFactory(object):
             raise ValueError("SATNUM must start at 1")
 
         if max(input_df["SATNUM"]) != len(input_df["SATNUM"].unique()):
-            logger.error(
+            raise ValueError(
                 "Missing SATNUMs? Max SATNUM is not equal to number of unique SATNUMS"
             )
-            raise ValueError
         if "CASE" not in input_df and len(input_df["SATNUM"].unique()) != len(input_df):
             raise ValueError("Non-unique SATNUMs?")
         # If we are in a SCAL recommendation setting
@@ -775,12 +766,9 @@ class PyscalFactory(object):
         # Check that we are able to make something out of the first row:
         firstrow = input_df.iloc[0, :]
         error = False
-        try:
-            wo_ok = sufficient_water_oil_params(firstrow)
-            go_ok = sufficient_gas_oil_params(firstrow)
-            gw_ok = sufficient_gas_water_params(firstrow)
-        except ValueError:
-            error = True
+        wo_ok = sufficient_water_oil_params(firstrow)
+        go_ok = sufficient_gas_oil_params(firstrow)
+        gw_ok = sufficient_gas_water_params(firstrow)
         if error or not wo_ok and not go_ok and not gw_ok:
             raise ValueError(
                 "Can't make neither WaterOil, GasOil or GasWater from "

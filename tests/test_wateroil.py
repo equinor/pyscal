@@ -7,6 +7,7 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot
 
+import pytest
 from hypothesis import given, settings
 import hypothesis.strategies as st
 
@@ -290,15 +291,31 @@ def test_nexus():
     assert (df.values >= 0.0).all()
 
 
-def test_skjaeveland_pc():
-    """Simple test of Skjæveland capillary pressure correlation"""
-    wateroil = WaterOil(h=0.3, swl=0.2)
-    wateroil.add_skjaeveland_pc(swr=0.1, cw=0.1, co=-0.1, aw=0.1, ao=0.1)
-    check_table(wateroil.table)
+@pytest.mark.parametrize(
+    "columnname, errorvalues",
+    [
+        ("sw", [1, 0]),
+        ("sw", [0, 2]),
+        ("krw", [1, 0]),
+        ("krw", [0, 2]),
+        ("krow", [0, 1]),
+        ("krow", [2, 0]),
+        ("pc", [np.inf, 0]),
+        ("pc", [np.nan, 0]),
+        ("pc", [1, 2]),
+        ("pc", [0, 1]),
+    ],
+)
+def test_selfcheck(columnname, errorvalues):
+    """Test the selfcheck feature of a WaterOil object"""
+    wateroil = WaterOil(h=1)
+    wateroil.add_corey_water()
+    wateroil.add_corey_oil()
+    assert wateroil.selfcheck()
 
-    # Add with wrong numbers
-    wateroil = WaterOil(h=0.3, swl=0.2, sorw=0.3)
-    wateroil.add_skjaeveland_pc(swr=0.8, cw=-0.1, co=0.1, aw=-0.1, ao=-0.1)
-    # (the code returns None when errors occur, no Exception)
-    assert wateroil.pccomment == ""
-    assert "pc" not in wateroil.table
+    # Punch the internal table directly to trigger error:
+    wateroil.table[columnname] = errorvalues
+    assert not wateroil.selfcheck()
+    assert wateroil.SWOF() == ""
+    if not columnname == "krow":
+        assert wateroil.SWFN() == ""

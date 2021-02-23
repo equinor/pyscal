@@ -194,7 +194,7 @@ class WaterOilGas(object):
         width = 10
         string += (
             "-- "
-            + "SW".ljust(width - 3)
+            + "SO".ljust(width - 3)
             + "KROW".ljust(width)
             + "KROG".ljust(width)
             + "\n"

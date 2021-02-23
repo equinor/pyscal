@@ -95,8 +95,6 @@ class WaterOil(object):
         if _sgcr is not None:
             self.sgcr = _sgcr
 
-        if not isinstance(tag, str):
-            tag = ""
         self.swirr = swirr
         self.swl = max(swl, swirr)  # Cannot allow swl < swirr. Warn?
         if not np.isclose(sorw, 0) and sorw < 1 / SWINTEGERS:
@@ -627,10 +625,9 @@ class WaterOil(object):
         assert perm_ref > 0.0
 
         if self.swl < epsilon:
-            logger.error(
-                "swl must larger than zero to avoid infinite capillary pressure"
+            raise ValueError(
+                "swl must be larger than zero to avoid infinite capillary pressure"
             )
-            raise ValueError
 
         if b > 0:
             logger.warning(
@@ -693,13 +690,12 @@ class WaterOil(object):
         assert perm_ref > 0.0
 
         if self.swl < epsilon:
-            logger.error(
-                "swl must larger than zero to avoid infinite capillary pressure"
+            raise ValueError(
+                "swl must be larger than zero to avoid infinite capillary pressure"
             )
-            raise ValueError
 
         if b > 0:
-            logger.warning(
+            raise ValueError(
                 "positive b will give increasing capillary pressure with saturation"
             )
 
@@ -748,8 +744,7 @@ class WaterOil(object):
         assert isinstance(sigma_costau, (int, float))
 
         if b < 0 and np.isclose(self.swirr, self.swl):
-            logger.error("swl must be set larger than swirr to avoid infinite p_c")
-            raise ValueError("swl must be larger than swirr")
+            raise ValueError("swl must be larger than swirr to avoid infinite p_c")
 
         if abs(b) < 0.01:
             logger.warning(
@@ -799,19 +794,14 @@ class WaterOil(object):
         Returns false if error occured.
 
         """  # noqa
-        inputerror = False  # Flag to be able to catch all errors
         if cw < 0:
-            logger.error("cw must be larger or equal to zero")
-            inputerror = True
+            raise ValueError("cw must be larger or equal to zero")
         if co > 0:
-            logger.error("co must be less than zero")
-            inputerror = True
+            raise ValueError("co must be less than zero")
         if aw <= 0:
-            logger.error("aw must be larger than zero")
-            inputerror = True
+            raise ValueError("aw must be larger than zero")
         if ao <= 0:
-            logger.error("ao must be larger than zero")
-            inputerror = True
+            raise ValueError("ao must be larger than zero")
 
         if swr is None:
             swr = self.swirr
@@ -819,16 +809,12 @@ class WaterOil(object):
             sor = self.sorw
 
         if swr >= 1 - sor:
-            logger.error("swr (swirr) must be less than 1 - sor")
-            inputerror = True
+            raise ValueError("swr (swirr) must be less than 1 - sor")
         if swr < 0 or swr > 1:
-            logger.error("swr must be contained in [0,1]")
-            inputerror = True
+            raise ValueError("swr must be contained in [0,1]")
         if sor < 0 or sor > 1:
-            logger.error("sor must be contained in [0,1]")
-            inputerror = True
-        if inputerror:
-            return
+            raise ValueError("sor must be contained in [0,1]")
+
         self.pccomment = (
             "-- Skjæveland correlation for Pc;\n"
             + "-- cw=%g, co=%g, aw=%g, ao=%g, swr=%g, sor=%g\n"
@@ -851,13 +837,9 @@ class WaterOil(object):
             self.table["swnpc"] ** aw
         ) + co / (self.table["sonpc"] ** ao)
 
-        # From 1-sor, the pc is not defined. We want to extrapolate constantly,
-        # but with a twist as Eclipse does not non-monotone capillary pressure:
-        self.table["pc"].fillna(value=self.table["pc"].min(), inplace=True)
-        nanrows = self.table["sw"] > 1 - sor - epsilon
-        self.table.loc[nanrows, "pc"] = (
-            self.table.loc[nanrows, "pc"] - self.table.loc[nanrows, "sw"]
-        )  # Just deduct sw to make it monotone..
+        # From 1-sor, the pc is not defined. Extrapolate constantly, and let
+        # the non-monotonocity be fixed in the output generators.
+        self.table["pc"].fillna(method="ffill", inplace=True)
 
     def add_LET_pc_pd(self, Lp, Ep, Tp, Lt, Et, Tt, Pcmax, Pct):
         # pylint: disable=line-too-long
@@ -1051,6 +1033,9 @@ class WaterOil(object):
             if not (self.table["pc"].diff().dropna().round(10) < epsilon).all():
                 logger.error("pc data not strictly decreasing")
                 error = True
+        if "pc" in self.table.columns and np.isnan(self.table["pc"]).any():
+            logger.error("pc data contains NaN")
+            error = True
         if "pc" in self.table.columns and np.isinf(self.table["pc"].max()):
             logger.error("pc goes to infinity. Maybe swirr=swl?")
             error = True
