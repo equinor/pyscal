@@ -58,12 +58,10 @@ class PyscalList(object):
             # WaterOilGas objects where gasoil is None, effectively
             # making that object a WaterOil object.
         if not isinstance(pyscal_obj, self.pyscaltype):
-            logger.error(
-                "Trying to add %s to list of %s objects",
-                type(pyscal_obj),
-                self.pyscaltype,
+            raise ValueError(
+                f"Trying to add {type(pyscal_obj)} to list "
+                f"of {self.pyscaltype} objects."
             )
-            raise ValueError
         self.pyscal_list.append(pyscal_obj)
 
     def df(self):
@@ -209,9 +207,7 @@ class PyscalList(object):
             if slgof:
                 logger.warning("SLGOF not meaningful for GasOil. Ignored")
         if self.pyscaltype == GasWater:
-            msg = "Family 1 output not possible for GasWater"
-            logger.error(msg)
-            raise ValueError(msg)
+            raise ValueError("Family 1 output not possible for GasWater")
         if filename is not None:
             logger.info(
                 "Dumping family 1 keywords (%s) for %d SATNUMs to %s",
@@ -244,8 +240,7 @@ class PyscalList(object):
             family_2_str = self.SWFN() + "\n" + self.SGFN() + "\n"
             keywords = "SWFN and SGFN"
         else:
-            logger.error("Family 2 only supported for WaterOilGas and GasWater")
-            raise ValueError
+            raise ValueError("Family 2 only supported for WaterOilGas and GasWater")
         if filename is not None:
             logger.info(
                 "Dumping family 2 keywords (%s) for %d SATNUMs to %s",
@@ -288,29 +283,21 @@ class PyscalList(object):
         if isinstance(int_params_go, list) and len(int_params_go) == 1:
             int_params_go = int_params_go * self.__len__()
         if 1 < len(int_params_wo) < len(self):
-            logger.error(
-                "Too few interpolation parameters given for WaterOil %s",
-                str(int_params_wo),
+            raise ValueError(
+                f"Too few interpolation parameters given for WaterOil {int_params_wo}"
             )
-            raise ValueError
         if len(int_params_wo) > len(self):
-            logger.error(
-                "Too many interpolation parameters given for WaterOil %s",
-                str(int_params_wo),
+            raise ValueError(
+                f"Too many interpolation parameters given for WaterOil {int_params_wo}",
             )
-            raise ValueError
         if 1 < len(int_params_go) < len(self):
-            logger.error(
-                "Too few interpolation parameters given for GasOil %s",
-                str(int_params_go),
+            raise ValueError(
+                f"Too few interpolation parameters given for GasOil {int_params_go}"
             )
-            raise ValueError
         if len(int_params_go) > len(self):
-            logger.error(
-                "Too many interpolation parameters given for GasOil %s",
-                str(int_params_go),
+            raise ValueError(
+                f"Too many interpolation parameters given for GasOil {int_params_go}"
             )
-            raise ValueError
         wog_list = PyscalList()
         for (satnum, scalrec) in enumerate(self.pyscal_list):
             wog_list.append(
@@ -321,10 +308,9 @@ class PyscalList(object):
     def make_ecl_output(self, keyword, write_to_filename=None, gaswater=False):
         """Internal helper function for constructing strings and writing to disk"""
         if self.pyscaltype == SCALrecommendation:
-            logger.error(
+            raise TypeError(
                 "You need to interpolate before you can dump a SCAL recommendation"
             )
-            raise TypeError
         first_obj = self.pyscal_list[0]
         outputter = getattr(first_obj, keyword)
         if gaswater:

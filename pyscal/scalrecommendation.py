@@ -318,8 +318,9 @@ class SCALrecommendation(object):
                 + tagstring
             )
             if abs(parameter) > 1.0:
-                logger.error("Interpolation parameter must be in [-1,1]")
-                assert abs(parameter) <= 1.0
+                raise ValueError(
+                    f"Interpolation parameter must be in [-1,1], got {parameter}"
+                )
             elif np.isclose(parameter, 0.0):
                 interpolant.wateroil = copy.deepcopy(self.base.wateroil)
                 interpolant.wateroil.tag = tag
@@ -354,8 +355,10 @@ class SCALrecommendation(object):
                 + tagstring
             )
             if abs(gasparameter) > 1.0:
-                logger.error("Interpolation parameter must be in [-1,1]")
-                assert abs(gasparameter) <= 1.0
+                raise ValueError(
+                    "Interpolation parameter for gas must "
+                    f"be in [-1,1], got {gasparameter}"
+                )
             elif np.isclose(gasparameter, 0.0):
                 interpolant.gasoil = copy.deepcopy(self.base.gasoil)
                 interpolant.gasoil.tag = tag
