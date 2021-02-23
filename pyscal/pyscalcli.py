@@ -2,6 +2,7 @@
 
 import sys
 import argparse
+import warnings
 
 import logging
 
@@ -211,6 +212,15 @@ def pyscal_main(
     if int_param_go is not None and int_param_wo is None:
         logger.error("Don't use int_param_go alone, only int_param_wo")
         raise ValueError
+    if (int_param_wo is not None and len(int_param_wo) > 1) or (
+        int_param_go is not None and len(int_param_go) > 1
+    ):
+        warnings.warn(
+            "SATNUM specific interpolation parameters are deprecated in "
+            "the pyscal command line client. "
+            "Use interp_relperm from subscript or the API directly",
+            FutureWarning,
+        )
     if "SATNUM" not in scalinput_df:
         logger.error("There is no column called SATNUM in the input data")
         raise ValueError
