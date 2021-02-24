@@ -212,8 +212,14 @@ def pyscal_main(
 
     if int_param_go is not None and int_param_wo is None:
         raise ValueError("Don't use int_param_go alone, only int_param_wo")
-    if (int_param_wo is not None and len(int_param_wo) > 1) or (
-        int_param_go is not None and len(int_param_go) > 1
+    if (
+        int_param_wo is not None
+        and isinstance(int_param_wo, list)
+        and len(int_param_wo) > 1
+    ) or (
+        int_param_go is not None
+        and isinstance(int_param_go, list)
+        and len(int_param_go) > 1
     ):
         warnings.warn(
             "SATNUM specific interpolation parameters are deprecated in "
