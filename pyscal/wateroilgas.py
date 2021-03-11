@@ -87,8 +87,8 @@ class WaterOilGas(object):
         if self.wateroil is None:
             logger.error("No WaterOil object in this WaterOilGas object")
             return ""
-        if "krw" not in self.wateroil.table or "krow" not in self.wateroil.table:
-            logger.error("Missing krw/krow curves in WaterOilGas object")
+        if "KRW" not in self.wateroil.table or "KROW" not in self.wateroil.table:
+            logger.error("Missing KRW/KROW curves in WaterOilGas object")
             return ""
         return self.wateroil.SWOF(header, dataincommentrow)
 
@@ -97,8 +97,8 @@ class WaterOilGas(object):
         if self.gasoil is None:
             logger.error("No GasOil object in this WaterOilGas object")
             return ""
-        if "krg" not in self.gasoil.table or "krog" not in self.gasoil.table:
-            logger.error("Missing krg/krog curves in WaterOilGas object")
+        if "KRG" not in self.gasoil.table or "KROG" not in self.gasoil.table:
+            logger.error("Missing KRG/KROG curves in WaterOilGas object")
             return ""
         return self.gasoil.SGOF(header, dataincommentrow)
 
@@ -107,8 +107,8 @@ class WaterOilGas(object):
         if self.gasoil is None:
             logger.error("No GasOil object in this WaterOilGas object")
             return ""
-        if "krg" not in self.gasoil.table or "krog" not in self.gasoil.table:
-            logger.error("Missing krg/krog in WaterOilGas object")
+        if "KRG" not in self.gasoil.table or "KROG" not in self.gasoil.table:
+            logger.error("Missing KRG/KROG in WaterOilGas object")
             return ""
         return self.gasoil.SLGOF(header, dataincommentrow)
 
@@ -117,8 +117,8 @@ class WaterOilGas(object):
         if self.gasoil is None:
             logger.error("No GasOil object in this WaterOilGas object")
             return ""
-        if "krg" not in self.gasoil.table:
-            logger.error("Missing krg in WaterOilGas object")
+        if "KRG" not in self.gasoil.table:
+            logger.error("Missing KRG in WaterOilGas object")
             return ""
         return self.gasoil.SGFN(header, dataincommentrow)
 
@@ -127,8 +127,8 @@ class WaterOilGas(object):
         if self.wateroil is None:
             logger.error("No WaterOil object in this WaterOilGas object")
             return ""
-        if "krw" not in self.wateroil.table:
-            logger.error("Missing krw in WaterOilGas object")
+        if "KRW" not in self.wateroil.table:
+            logger.error("Missing KRW in WaterOilGas object")
             return ""
         return self.wateroil.SWFN(header, dataincommentrow)
 
@@ -139,24 +139,24 @@ class WaterOilGas(object):
         So - the oil saturation ranges from 0 to 1-swl. The saturation points
         from the WaterOil object is used to generate these
         """
-        if "krow" not in self.wateroil.table or "krog" not in self.gasoil.table:
+        if "KROW" not in self.wateroil.table or "KROG" not in self.gasoil.table:
             logger.error("Both WaterOil and GasOil krow/krog is needed for SOF3")
             return ""
         self.threephaseconsistency()
 
         # Copy of the wateroil data:
-        table = pd.DataFrame(self.wateroil.table[["sw", "krow"]])
-        table["so"] = 1 - table["sw"]
+        table = pd.DataFrame(self.wateroil.table[["SW", "KROW"]])
+        table["SO"] = 1 - table["SW"]
 
         # Copy of the gasoil data:
-        gastable = pd.DataFrame(self.gasoil.table[["sg", "krog"]])
-        gastable["so"] = 1 - gastable["sg"] - self.wateroil.swl
+        gastable = pd.DataFrame(self.gasoil.table[["SG", "KROG"]])
+        gastable["SO"] = 1 - gastable["SG"] - self.wateroil.swl
 
         # Merge WaterOil and GasOil on oil saturation, interpolate for
         # missing data (potentially different sg- and sw-grids)
         sof3table = (
             pd.concat([table, gastable], sort=True)
-            .set_index("so")
+            .set_index("SO")
             .sort_index()
             .interpolate(method="slinear")
             .fillna(method="ffill")
@@ -164,14 +164,14 @@ class WaterOilGas(object):
             .reset_index()
         )
         sof3table["soint"] = list(
-            map(int, list(map(round, sof3table["so"] * SWINTEGERS)))
+            map(int, list(map(round, sof3table["SO"] * SWINTEGERS)))
         )
         sof3table.drop_duplicates("soint", inplace=True)
 
         # The 'so' column has been calculated from floating point numbers
         # and the zero value easily becomes a negative zero, circumvent this:
-        zerorow = np.isclose(sof3table["so"], 0.0)
-        sof3table.loc[zerorow, "so"] = abs(sof3table.loc[zerorow, "so"])
+        zerorow = np.isclose(sof3table["SO"], 0.0)
+        sof3table.loc[zerorow, "SO"] = abs(sof3table.loc[zerorow, "SO"])
 
         string = ""
         if header:
@@ -199,7 +199,7 @@ class WaterOilGas(object):
             + "KROG".ljust(width)
             + "\n"
         )
-        string += df2str(sof3table[["so", "krow", "krog"]])
+        string += df2str(sof3table[["SO", "KROW", "KROG"]])
         string += "/\n"
         return string
 
@@ -263,20 +263,20 @@ class WaterOilGas(object):
 
         wog_is_ok = True
         if not np.isclose(
-            self.wateroil.table["krow"].max(), self.gasoil.table["krog"].max()
+            self.wateroil.table["KROW"].max(), self.gasoil.table["KROG"].max()
         ):
             logger.warning(
-                "Eclipse will fail, max(krow)=%g is not equal to max(krog)=%g",
-                self.wateroil.table["krow"].max(),
-                self.gasoil.table["krog"].max(),
+                "Eclipse will fail, max(KROW)=%g is not equal to max(KROG)=%g",
+                self.wateroil.table["KROW"].max(),
+                self.gasoil.table["KROG"].max(),
             )
             wog_is_ok = False
 
         # 2: Inconsistent end points in saturation table 1 the maximum
         # gas saturation (0.91) plus the connate water saturation
         # (0.10) must not exceed 1.0
-        if self.gasoil.table["sg"].max() + self.wateroil.table["sw"].min() > 1.0:
-            logger.warning("Eclipse will fail, max(sg) + Swl > 1.0")
+        if self.gasoil.table["SG"].max() + self.wateroil.table["SW"].min() > 1.0:
+            logger.warning("Eclipse will fail, max(SG) + swl > 1.0")
             wog_is_ok = False
 
         # 3: Warning: Consistency problem for gas phase endpoint (krgr > krg)

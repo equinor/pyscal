@@ -245,22 +245,22 @@ class GasWater(object):
             float: the gas saturation where krw == krg, for relperm
                 linearly interpolated in water saturation.
         """
-        if not {"sw", "krw"}.issubset(self.wateroil.table.columns):
-            logger.warning("Can't compute crosspoint when krw is not present")
+        if not {"SW", "KRW"}.issubset(self.wateroil.table.columns):
+            logger.warning("Can't compute crosspoint when KRW is not present")
             return None
-        if not {"sl", "krg"}.issubset(self.gasoil.table.columns):
-            logger.warning("Can't compute crosspoint when krg is not present")
+        if not {"SL", "KRG"}.issubset(self.gasoil.table.columns):
+            logger.warning("Can't compute crosspoint when KRG is not present")
             return None
         dframe = pd.concat(
-            [self.wateroil.table[["sw", "krw"]], self.gasoil.table[["sl", "krg"]]],
+            [self.wateroil.table[["SW", "KRW"]], self.gasoil.table[["SL", "KRG"]]],
             sort=False,
         )
-        # The  "sl" column in the GasOil object corresponds exactly to "sw" in WaterOil
+        # The  "SL" column in the GasOil object corresponds exactly to "SW" in WaterOil
         # but since they are floating point, we do not want to "merge" dataframes on it,
         # rather concatenate and let linear interpolation fill in values.
-        dframe["sw"].fillna(value=0, inplace=True)
-        dframe["sl"].fillna(value=0, inplace=True)
-        dframe["sat"] = dframe["sl"] + dframe["sw"]
+        dframe["SW"].fillna(value=0, inplace=True)
+        dframe["SL"].fillna(value=0, inplace=True)
+        dframe["sat"] = dframe["SL"] + dframe["SW"]
         dframe = (
             dframe.set_index("sat")
             .sort_index()
@@ -268,7 +268,7 @@ class GasWater(object):
             .dropna()
             .reset_index()
         )
-        return crosspoint(dframe, "sat", "krw", "krg")
+        return crosspoint(dframe, "sat", "KRW", "KRG")
 
     def plotkrwkrg(
         self,
@@ -302,8 +302,8 @@ class GasWater(object):
             useax.set_ylim([1e-8, 1])
         self.wateroil.table.plot(
             ax=useax,
-            x="sw",
-            y="krw",
+            x="SW",
+            y="KRW",
             c=color,
             alpha=alpha,
             legend=None,
@@ -314,8 +314,8 @@ class GasWater(object):
         )
         self.gasoil.table.plot(
             ax=useax,
-            x="sl",
-            y="krg",
+            x="SL",
+            y="KRG",
             c=color,
             alpha=alpha,
             label=None,
@@ -324,7 +324,7 @@ class GasWater(object):
             linestyle=linestyle,
             marker=marker,
         )
-        plt.xlabel("sw")
+        plt.xlabel("SW")
         if mpl_ax is None:
             plt.show()
 

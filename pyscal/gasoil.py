@@ -123,53 +123,53 @@ class GasOil(object):
             + [1 - swl]
         )
         sg_list.sort()
-        self.table = pd.DataFrame(sg_list, columns=["sg"])
+        self.table = pd.DataFrame(sg_list, columns=["SG"])
         self.table["sgint"] = list(
-            map(int, list(map(round, self.table["sg"] * SWINTEGERS)))
+            map(int, list(map(round, self.table["SG"] * SWINTEGERS)))
         )
         self.table.drop_duplicates("sgint", inplace=True)
 
         # Now sg=1-sorg-swl might be accidentally dropped, so make sure we
         # have it by replacing the closest value by 1 - sorg exactly
         sorgindex = (
-            (self.table["sg"] - (1 - self.sorg - self.swl)).abs().sort_values().index[0]
+            (self.table["SG"] - (1 - self.sorg - self.swl)).abs().sort_values().index[0]
         )
-        self.table.loc[sorgindex, "sg"] = 1 - self.sorg - self.swl
+        self.table.loc[sorgindex, "SG"] = 1 - self.sorg - self.swl
 
         # Same for sg=sgcr
-        sgcrindex = (self.table["sg"] - (self.sgcr)).abs().sort_values().index[0]
-        self.table.loc[sgcrindex, "sg"] = self.sgcr
+        sgcrindex = (self.table["SG"] - (self.sgcr)).abs().sort_values().index[0]
+        self.table.loc[sgcrindex, "SG"] = self.sgcr
         if sgcrindex == 0 and sgcr > 0.0:
             # Need to conserve sg=0
-            zero_row = pd.DataFrame({"sg": 0}, index=[0])
+            zero_row = pd.DataFrame({"SG": 0}, index=[0])
             self.table = pd.concat([zero_row, self.table], sort=False).reset_index(
                 drop=True
             )
 
         # If sg=1-swl was dropped, then sorg was close to zero:
-        if not np.isclose(self.table["sg"].max(), 1 - self.swl):
+        if not np.isclose(self.table["SG"].max(), 1 - self.swl):
             # Add it as an extra row:
-            self.table.loc[len(self.table) + 1, "sg"] = 1 - self.swl
-            self.table.sort_values(by="sg", inplace=True)
+            self.table.loc[len(self.table) + 1, "SG"] = 1 - self.swl
+            self.table.sort_values(by="SG", inplace=True)
         # Ensure the value closest to 1-swl is actually 1-swl:
         swl_right_index = (
-            (self.table["sg"] - (1 - self.swl)).abs().sort_values().index[0]
+            (self.table["SG"] - (1 - self.swl)).abs().sort_values().index[0]
         )
-        self.table.loc[swl_right_index, "sg"] = 1 - self.swl
+        self.table.loc[swl_right_index, "SG"] = 1 - self.swl
 
         self.table.reset_index(inplace=True)
-        self.table = self.table[["sg"]]
-        self.table["sl"] = 1 - self.table["sg"]
+        self.table = self.table[["SG"]]
+        self.table["SL"] = 1 - self.table["SG"]
         if krgendanchor == "sorg":
             # Normalized sg (sgn) is 0 at sgcr, and 1 at 1-swl-sorg
             assert 1 - swl - sgcr - sorg > epsilon
-            self.table["sgn"] = (self.table["sg"] - sgcr) / (1 - swl - sgcr - sorg)
+            self.table["SGN"] = (self.table["SG"] - sgcr) / (1 - swl - sgcr - sorg)
         else:
             assert 1 - swl - sgcr > epsilon
-            self.table["sgn"] = (self.table["sg"] - sgcr) / (1 - swl - sgcr)
+            self.table["SGN"] = (self.table["SG"] - sgcr) / (1 - swl - sgcr)
 
         # Normalized oil saturation should be 0 at 1-sorg, and 1 at swl+sgcr
-        self.table["son"] = (self.table["sl"] - sorg - swl) / (1 - sorg - swl)
+        self.table["SON"] = (self.table["SL"] - sorg - swl) / (1 - sorg - swl)
         self.sgcomment = "-- swirr=%g, sgcr=%g, swl=%g, sorg=%g, krgendanchor=%s\n" % (
             self.swirr,
             self.sgcr,
@@ -187,9 +187,11 @@ class GasOil(object):
 
     def resetsorg(self):
         """Recalculate sorg in case it has table data has been manipulated"""
-        if "krog" in self.table.columns:
+        if "KROG" in self.table.columns:
             self.sorg = (
-                1 - self.swl - self.table[np.isclose(self.table.krog, 0.0)].min()["sg"]
+                1
+                - self.swl
+                - self.table[np.isclose(self.table["KROG"], 0.0)].min()["SG"]
             )
             self.sgcomment = (
                 "-- swirr=%g, sgcr=%g, swl=%g, sorg=%g, krgendanchor=%s\n"
@@ -199,10 +201,10 @@ class GasOil(object):
     def add_fromtable(
         self,
         dframe,
-        sgcolname="Sg",
-        krgcolname="krg",
-        krogcolname="krog",
-        pccolname="pcog",
+        sgcolname="SG",
+        krgcolname="KRG",
+        krogcolname="KROG",
+        pccolname="PCOG",
         krgcomment="",
         krogcomment="",
         pccomment="",
@@ -248,7 +250,7 @@ class GasOil(object):
         swlfrominput = 1 - dframe[sgcolname].max()
         if abs(swlfrominput - self.swl) > epsilon:
             logger.warning(
-                "swl=%f and 1-max(sg)=%f from incoming table does not seem compatible",
+                "swl=%f and 1-max(sg)=%f from incoming table do not seem compatible",
                 self.swl,
                 swlfrominput,
             )
@@ -270,10 +272,10 @@ class GasOil(object):
                 dframe[sgcolname].astype(float), dframe[krgcolname].astype(float)
             )
             # Do not extrapolate this data. We will bfill and ffill afterwards
-            self.table["krg"] = pchip(self.table.sg, extrapolate=False)
-            self.table["krg"].fillna(method="ffill", inplace=True)
-            self.table["krg"].fillna(method="bfill", inplace=True)
-            self.table["krg"].clip(lower=0.0, upper=1.0, inplace=True)
+            self.table["KRG"] = pchip(self.table["SG"], extrapolate=False)
+            self.table["KRG"].fillna(method="ffill", inplace=True)
+            self.table["KRG"].fillna(method="bfill", inplace=True)
+            self.table["KRG"].clip(lower=0.0, upper=1.0, inplace=True)
             self.krgcomment = "-- krg from tabular input" + krgcomment + "\n"
             self.sgcr = self.estimate_sgcr()
         if krogcolname in dframe:
@@ -286,18 +288,22 @@ class GasOil(object):
             pchip = PchipInterpolator(
                 dframe[sgcolname].astype(float), dframe[krogcolname].astype(float)
             )
-            self.table["krog"] = pchip(self.table.sg, extrapolate=False)
-            self.table["krog"].fillna(method="ffill", inplace=True)
-            self.table["krog"].fillna(method="bfill", inplace=True)
-            self.table["krog"].clip(lower=0.0, upper=1.0, inplace=True)
+            self.table["KROG"] = pchip(self.table["SG"], extrapolate=False)
+            self.table["KROG"].fillna(method="ffill", inplace=True)
+            self.table["KROG"].fillna(method="bfill", inplace=True)
+            self.table["KROG"].clip(lower=0.0, upper=1.0, inplace=True)
             self.krogcomment = "-- krog from tabular input" + krogcomment + "\n"
             self.sorg = self.estimate_sorg()
         if pccolname in dframe:
             # Incoming dataframe must cover the range:
-            if dframe[sgcolname].min() > self.table["sg"].min():
+            if dframe[sgcolname].min() > self.table["SG"].min():
                 raise ValueError("Too large sgcr for pcog interpolation")
-            if dframe[sgcolname].max() < self.table["sg"].max():
-                raise ValueError("Too large swl for pcog interpolation")
+            if dframe[sgcolname].max() < self.table["SG"].max():
+                raise ValueError(
+                    f"Too large swl for pcog interpolation, "
+                    f"max incoming sg is {dframe[sgcolname].max()} "
+                    f"and existing max(SG) is {self.table['SG'].max()}"
+                )
             if np.isinf(dframe[pccolname]).any():
                 logger.warning(
                     (
@@ -314,8 +320,8 @@ class GasOil(object):
             pchip = PchipInterpolator(
                 dframe[sgcolname].astype(float), dframe[pccolname].astype(float)
             )
-            self.table["pc"] = pchip(self.table.sg, extrapolate=False)
-            if np.isnan(self.table["pc"]).any() or np.isinf(self.table["pc"]).any():
+            self.table["PC"] = pchip(self.table["SG"], extrapolate=False)
+            if np.isnan(self.table["PC"]).any() or np.isinf(self.table["PC"]).any():
                 raise ValueError("inf/nan in interpolated data, check input")
             self.pccomment = "-- pc from tabular input" + pccomment + "\n"
 
@@ -343,23 +349,25 @@ class GasOil(object):
             krgmax (float): krg at Sg = 1 - swl. Default 1.
 
         """
-        self.table.loc[self.table.sg <= self.sgcr, "krg"] = 0
+        self.table.loc[self.table["SG"] <= self.sgcr, "KRG"] = 0
 
         if self.krgendanchor == "sorg":
             # Linear curve between krgendcanchor and 1-swl if krgend
             # is anchored to sorg
             if not krgmax:
                 krgmax = 1
-            tmp = pd.DataFrame(self.table[["sg"]])
-            tmp["sgendnorm"] = (tmp["sg"] - (1 - (self.sorg + self.swl))) / (self.sorg)
-            tmp["krg"] = (
+            tmp = pd.DataFrame(self.table[["SG"]])
+            tmp["sgendnorm"] = (tmp["SG"] - (1 - (self.sorg + self.swl))) / (self.sorg)
+            tmp["KRG"] = (
                 tmp["sgendnorm"] * krgmax + (1 - tmp["sgendnorm"]) * krgend
             ).clip(lower=0.0, upper=1.0)
             self.table.loc[
-                self.table.sg >= (1 - (self.sorg + self.swl + epsilon)), "krg"
-            ] = tmp.loc[tmp.sg >= (1 - (self.sorg + self.swl + epsilon)), "krg"]
+                self.table["SG"] >= (1 - (self.sorg + self.swl + epsilon)), "KRG"
+            ] = tmp.loc[tmp["SG"] >= (1 - (self.sorg + self.swl + epsilon)), "KRG"]
         else:
-            self.table.loc[self.table.sg > (1 - (self.swl + epsilon)), "krg"] = krgend
+            self.table.loc[
+                self.table["SG"] > (1 - (self.swl + epsilon)), "KRG"
+            ] = krgend
             if krgmax and krgmax < 1.0 and self.sorg > 0:
                 # Only warn if something else than default is in use
                 logger.warning("krgmax ignored when not anchoring to sorg")
@@ -380,11 +388,11 @@ class GasOil(object):
 
         # Special handling of the part close to sg=1, set to zero.
         self.table.loc[
-            self.table["sg"] > 1 - self.sorg - self.swl - epsilon, "krog"
+            self.table["SG"] > 1 - self.sorg - self.swl - epsilon, "KROG"
         ] = 0
 
         # Floating point issues can cause a slight overshoot at sg=0:
-        self.table.loc[self.table["krog"] > kroend, "krog"] = kroend
+        self.table.loc[self.table["KROG"] > kroend, "KROG"] = kroend
 
     def add_corey_gas(self, ng=2, krgend=1, krgmax=None):
         """Add krg data through the Corey parametrization
@@ -402,7 +410,7 @@ class GasOil(object):
         assert 0 < krgend <= 1.0
         if krgmax is not None:
             assert 0 < krgend <= krgmax <= 1.0
-        self.table["krg"] = krgend * self.table.sgn ** ng
+        self.table["KRG"] = krgend * self.table["SGN"] ** ng
 
         self.set_endpoints_linearpart_krg(krgend, krgmax)
 
@@ -436,7 +444,7 @@ class GasOil(object):
         if kromax is not None:
             logger.error("kromax is DEPRECATED, ignored")
 
-        self.table["krog"] = kroend * self.table.son ** nog
+        self.table["KROG"] = kroend * self.table["SON"] ** nog
 
         self.set_endpoints_linearpart_krog(kroend)
 
@@ -449,7 +457,7 @@ class GasOil(object):
         """
         Add gas relative permability data through the LET parametrization
 
-        A column called 'krg' will be added, replaced if it does not exist
+        A column called 'KRG' will be added, replaced if it does not exist
 
         If krgendanchor is sorg, the LET curve ends at krgend at
         sg = 1 - swl - sorg, and then linear up to krgmax at
@@ -476,13 +484,13 @@ class GasOil(object):
         else:
             assert 0 < krgend <= 1.0
 
-        self.table["krg"] = (
+        self.table["KRG"] = (
             krgend
-            * self.table.sgn ** l
-            / ((self.table.sgn ** l) + e * (1 - self.table.sgn) ** t)
+            * self.table["SGN"] ** l
+            / ((self.table["SGN"] ** l) + e * (1 - self.table["SGN"]) ** t)
         )
         # This equation is undefined for t a float and sgn=1, set explicitly:
-        self.table.loc[np.isclose(self.table["sgn"], 1.0), "krg"] = krgend
+        self.table.loc[np.isclose(self.table["SGN"], 1.0), "KRG"] = krgend
 
         self.set_endpoints_linearpart_krg(krgend, krgmax)
 
@@ -519,13 +527,13 @@ class GasOil(object):
             logger.error("kromax is DEPRECATED, ignored")
 
         # LET shape for the interval [sgcr, 1 - swl - sorg]
-        self.table["krog"] = (
+        self.table["KROG"] = (
             kroend
-            * self.table["son"] ** l
-            / ((self.table["son"] ** l) + e * (1 - self.table["son"]) ** t)
+            * self.table["SON"] ** l
+            / ((self.table["SON"] ** l) + e * (1 - self.table["SON"]) ** t)
         )
         # This equation is undefined for t a float and son=1, set explicitly:
-        self.table.loc[np.isclose(self.table["son"], 1.0), "krog"] = kroend
+        self.table.loc[np.isclose(self.table["SON"], 1.0), "KROG"] = kroend
 
         self.set_endpoints_linearpart_krog(kroend)
 
@@ -554,15 +562,15 @@ class GasOil(object):
             float: The estimated sorg.
         """
         if self.krgendanchor == "sorg":
-            assert "krg" in self.table
-            assert self.table["krg"].sum() > 0
-            return self.table["sg"].max() - estimate_diffjumppoint(
-                self.table, xcol="sg", ycol="krg", side="right"
+            assert "KRG" in self.table
+            assert self.table["KRG"].sum() > 0
+            return self.table["SG"].max() - estimate_diffjumppoint(
+                self.table, xcol="SG", ycol="KRG", side="right"
             )
-        assert "krog" in self.table
-        assert self.table["krog"].sum() > 0
-        return self.table["sg"].max() - estimate_diffjumppoint(
-            self.table, xcol="sg", ycol="krog", side="right"
+        assert "KROG" in self.table
+        assert self.table["KROG"].sum() > 0
+        return self.table["SG"].max() - estimate_diffjumppoint(
+            self.table, xcol="SG", ycol="KROG", side="right"
         )
 
     def estimate_sgcr(self):
@@ -576,7 +584,7 @@ class GasOil(object):
         Returns:
             float: The estimated sgcr.
         """
-        return self.table[self.table["krg"] < 10 * epsilon]["sg"].max()
+        return self.table[self.table["KRG"] < 10 * epsilon]["SG"].max()
 
     def crosspoint(self):
         """Locate and return the saturation point where krg = krog
@@ -589,7 +597,7 @@ class GasOil(object):
             float: the gas saturation where krg == krog, for relperm
                 linearly interpolated in gas saturation.
         """
-        return crosspoint(self.table, "sg", "krg", "krog")
+        return crosspoint(self.table, "SG", "KRG", "KROG")
 
     def selfcheck(self, mode="SGOF"):
         """Check validities of the data in the table.
@@ -606,44 +614,44 @@ class GasOil(object):
             mode (str): If mode is "SGFN", krog is not required.
         """
         error = False
-        if "krg" not in self.table:
-            logger.error("krg data missing")
+        if "KRG" not in self.table:
+            logger.error("KRG data missing")
             error = True
-        if not (self.table["sg"].diff().dropna() > -epsilon).all():
-            logger.error("sg data not strictly increasing")
+        if not (self.table["SG"].diff().dropna() > -epsilon).all():
+            logger.error("SG data not strictly increasing")
             error = True
         if (
-            "krg" in self.table
-            and not (self.table["krg"].diff().dropna() >= -epsilon).all()
+            "KRG" in self.table
+            and not (self.table["KRG"].diff().dropna() >= -epsilon).all()
         ):
-            logger.error("krg data not monotonically decreasing")
+            logger.error("KRG data not monotonically decreasing")
             error = True
 
         if mode != "SGFN":
-            if "krog" not in self.table:
-                logger.error("krog data missing")
+            if "KROG" not in self.table:
+                logger.error("KROG data missing")
                 error = True
             if (
-                "krog" in self.table
-                and not (self.table["krog"].diff().dropna() <= epsilon).all()
+                "KROG" in self.table
+                and not (self.table["KROG"].diff().dropna() <= epsilon).all()
             ):
-                logger.error("krog data not monotonically increasing")
+                logger.error("KROG data not monotonically increasing")
                 error = True
-        if "krg" in self.table and not np.isclose(min(self.table["krg"]), 0.0):
-            logger.error("krg must start at zero")
+        if "KRG" in self.table and not np.isclose(min(self.table["KRG"]), 0.0):
+            logger.error("KRG Must start at zero")
             error = True
-        if "pc" in self.table and self.table["pc"][0] > -epsilon:
-            if not (self.table["pc"].diff().dropna() < epsilon).all():
-                logger.error("pc data for gas-oil not strictly decreasing")
+        if "PC" in self.table and self.table["PC"][0] > -epsilon:
+            if not (self.table["PC"].diff().dropna() < epsilon).all():
+                logger.error("PC data for gas-oil not strictly decreasing")
                 error = True
-        if "pc" in self.table and np.isinf(self.table["pc"].max()):
-            logger.error("pc goes to infinity for gas-oil. ")
+        if "PC" in self.table and np.isinf(self.table["PC"].max()):
+            logger.error("PC goes to infinity for gas-oil. ")
             error = True
-        if "pc" in self.table.columns and np.isnan(self.table["pc"]).any():
+        if "PC" in self.table.columns and np.isnan(self.table["PC"]).any():
             logger.error("pc data contains NaN")
             error = True
 
-        for col in list(set(["sg", "krg", "krog"]) & set(self.table.columns)):
+        for col in list(set(["SG", "KRG", "KROG"]) & set(self.table.columns)):
             if not (
                 (min(self.table[col]) >= -epsilon)
                 and (max(self.table[col]) <= 1 + epsilon)
@@ -677,8 +685,8 @@ class GasOil(object):
             # selfcheck() will log error/warning messages
             return ""
         string = ""
-        if "pc" not in self.table:
-            self.table["pc"] = 0.0
+        if "PC" not in self.table:
+            self.table["PC"] = 0.0
             self.pccomment = "-- Zero capillary pressure\n"
         if header:
             string += "SGOF\n"
@@ -701,11 +709,11 @@ class GasOil(object):
             + "\n"
         )
         string += df2str(
-            self.table[["sg", "krg", "krog", "pc"]],
+            self.table[["SG", "KRG", "KROG", "PC"]],
             monotonicity={
-                "krog": {"sign": -1, "lower": 0, "upper": 1},
-                "krg": {"sign": 1, "lower": 0, "upper": 1},
-                "pc": {"sign": 1, "allowzero": True},
+                "KROG": {"sign": -1, "lower": 0, "upper": 1},
+                "KRG": {"sign": 1, "lower": 0, "upper": 1},
+                "PC": {"sign": 1, "allowzero": True},
             }
             if not self.fast
             else None,
@@ -718,28 +726,28 @@ class GasOil(object):
 
         This is a used by the SLGOF() function, it is
         extracted as a single function to facilitate testing."""
-        if "pc" not in self.table.columns:
+        if "PC" not in self.table.columns:
             # Only happens when the SLGOF function is skipped (test code)
-            self.table["pc"] = 0.0
+            self.table["PC"] = 0.0
         slgof = (
             self.table[
-                self.table["sg"] <= 1 - self.sorg - self.swl + 1.0 / float(SWINTEGERS)
+                self.table["SG"] <= 1 - self.sorg - self.swl + 1.0 / float(SWINTEGERS)
             ]
-            .sort_values("sl")[["sl", "krg", "krog", "pc"]]
+            .sort_values("SL")[["SL", "KRG", "KROG", "PC"]]
             .reset_index(drop=True)
         )
         # It is a strict requirement that the first sl value should be swl + sorg,
         # so we modify it if it close. If it is not close, we do not dare to fix
         # it, to ensure we don't cover bugs.
-        slgof_sl_mismatch = abs(slgof["sl"].values[0] - (self.sorg + self.swl))
+        slgof_sl_mismatch = abs(slgof["SL"].values[0] - (self.sorg + self.swl))
         if slgof_sl_mismatch > epsilon:
             if slgof_sl_mismatch < 2 * 1.0 / float(SWINTEGERS):
                 # Repair the table in-place:
-                slgof.loc[0, "sl"] = self.sorg + self.swl
+                slgof.loc[0, "SL"] = self.sorg + self.swl
                 # After modification, we can get duplicate sl values,
                 # so drop duplicates:
                 slgof["slint"] = list(
-                    map(int, list(map(round, slgof["sl"] * SWINTEGERS)))
+                    map(int, list(map(round, slgof["SL"] * SWINTEGERS)))
                 )
                 slgof.drop_duplicates("slint", inplace=True)
                 # Delete the temporary column:
@@ -774,8 +782,8 @@ class GasOil(object):
             # Selfcheck will issue error messages.
             return ""
         string = ""
-        if "pc" not in self.table:
-            self.table["pc"] = 0.0
+        if "PC" not in self.table:
+            self.table["PC"] = 0.0
             self.pccomment = "-- Zero capillary pressure\n"
         if header:
             string += "SLGOF\n"
@@ -799,9 +807,9 @@ class GasOil(object):
         string += df2str(
             self.slgof_df(),
             monotonicity={
-                "krog": {"sign": 1, "lower": 0, "upper": 1},
-                "krg": {"sign": -1, "lower": 0, "upper": 1},
-                "pc": {"sign": -1, "allowzero": True},
+                "KROG": {"sign": 1, "lower": 0, "upper": 1},
+                "KRG": {"sign": -1, "lower": 0, "upper": 1},
+                "PC": {"sign": -1, "allowzero": True},
             }
             if not self.fast
             else None,
@@ -839,8 +847,8 @@ class GasOil(object):
             # Selfcheck will issue error messages.
             return ""
         string = ""
-        if "pc" not in self.table.columns:
-            self.table["pc"] = 0.0
+        if "PC" not in self.table.columns:
+            self.table["PC"] = 0.0
             self.pccomment = "-- Zero capillary pressure\n"
         if header:
             string += "SGFN\n"
@@ -853,7 +861,7 @@ class GasOil(object):
                 string += self.sgcomment
             string += self.krgcomment
             if crosspointcomment is None:
-                if "krog" in self.table.columns:
+                if "KROG" in self.table.columns:
                     string += "-- krg = krog @ sg=%1.5f\n" % self.crosspoint()
             else:
                 string += crosspointcomment
@@ -867,10 +875,10 @@ class GasOil(object):
             + "\n"
         )
         string += df2str(
-            self.table[["sg", "krg", "pc"]],
+            self.table[["SG", "KRG", "PC"]],
             monotonicity={
-                "krg": {"sign": 1, "lower": 0, "upper": 1},
-                "pc": {"sign": 1, "allowzero": True},
+                "KRG": {"sign": 1, "lower": 0, "upper": 1},
+                "PC": {"sign": 1, "allowzero": True},
             }
             if not self.fast
             else None,
@@ -897,8 +905,8 @@ class GasOil(object):
                 defaults to True.
         """
         string = ""
-        if "pc" not in self.table.columns:
-            self.table["pc"] = 0.0
+        if "PC" not in self.table.columns:
+            self.table["PC"] = 0.0
             self.pccomment = "-- Zero capillary pressure\n"
         if header:
             string += "GOTABLE\n"
@@ -920,11 +928,11 @@ class GasOil(object):
             + "\n"
         )
         string += df2str(
-            self.table[["sg", "krg", "krog", "pc"]],
+            self.table[["SG", "KRG", "KROG", "PC"]],
             monotonicity={
-                "krog": {"sign": -1, "lower": 0, "upper": 1},
-                "krg": {"sign": 1, "lower": 0, "upper": 1},
-                "pc": {"sign": 1, "allowzero": True},
+                "KROG": {"sign": -1, "lower": 0, "upper": 1},
+                "KRG": {"sign": 1, "lower": 0, "upper": 1},
+                "PC": {"sign": 1, "allowzero": True},
             }
             if self.fast
             else None,
@@ -963,8 +971,8 @@ class GasOil(object):
             useax.set_ylim([1e-8, 1])
         self.table.plot(
             ax=useax,
-            x="sg",
-            y="krg",
+            x="SG",
+            y="KRG",
             c=color,
             alpha=alpha,
             legend=None,
@@ -975,8 +983,8 @@ class GasOil(object):
         )
         self.table.plot(
             ax=useax,
-            x="sg",
-            y="krog",
+            x="SG",
+            y="KROG",
             c=color,
             alpha=alpha,
             legend=None,

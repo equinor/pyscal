@@ -17,14 +17,14 @@ def check_table(dframe):
     """Check sanity of important columns"""
     assert not dframe.empty
     assert not dframe.isnull().values.any()
-    assert dframe["sl"].is_monotonic
-    assert (dframe["sl"] >= 0.0).all()
-    assert (dframe["sl"] <= 1.0).all()
+    assert dframe["SL"].is_monotonic
+    assert (dframe["SL"] >= 0.0).all()
+    assert (dframe["SL"] <= 1.0).all()
     # Increasing, but not monotonically for slgof
-    assert (dframe["krog"].diff().dropna() > -EPSILON).all()
-    assert dframe["krg"].is_monotonic_decreasing
-    if "pc" in dframe:
-        assert dframe["pc"].is_monotonic_decreasing
+    assert (dframe["KROG"].diff().dropna() > -EPSILON).all()
+    assert dframe["KRG"].is_monotonic_decreasing
+    if "PC" in dframe:
+        assert dframe["PC"].is_monotonic_decreasing
 
 
 @settings(deadline=1000)
@@ -44,18 +44,18 @@ def test_slgof(swl, sorg, sgcr):
     assert wog.selfcheck()
 
     slgof = wog.gasoil.slgof_df()
-    assert "sl" in slgof
-    assert "krg" in slgof
-    assert "krog" in slgof
+    assert "SL" in slgof
+    assert "KRG" in slgof
+    assert "KROG" in slgof
     assert not slgof.empty
 
     check_table(slgof)
     sat_table_str_ok(wog.SLGOF())
 
     # Requirements from E100 manual:
-    assert np.isclose(slgof["sl"].values[0], wog.gasoil.swl + wog.gasoil.sorg)
-    assert np.isclose(slgof["krg"].values[-1], 0)
-    assert np.isclose(slgof["krog"].values[0], 0)
+    assert np.isclose(slgof["SL"].values[0], wog.gasoil.swl + wog.gasoil.sorg)
+    assert np.isclose(slgof["KRG"].values[-1], 0)
+    assert np.isclose(slgof["KROG"].values[0], 0)
 
 
 @pytest.mark.parametrize(
@@ -84,8 +84,8 @@ def test_numerical_problems(swl, sorg, sgcr):
     gasoil.add_corey_oil()
     assert gasoil.selfcheck()
     slgof = gasoil.slgof_df()
-    assert np.isclose(slgof["sl"].values[0], gasoil.swl + gasoil.sorg)
-    assert np.isclose(slgof["sl"].values[-1], 1.0)
+    assert np.isclose(slgof["SL"].values[0], gasoil.swl + gasoil.sorg)
+    assert np.isclose(slgof["SL"].values[-1], 1.0)
     check_table(slgof)
 
 
@@ -105,9 +105,9 @@ def test_slgof_hypo(swl, sorg, sgcr, h):
     slgof = gasoil.slgof_df()
     check_table(slgof)
     # Eclipse 100 requirement from manual:
-    assert np.isclose(slgof["sl"].values[0], gasoil.swl + gasoil.sorg)
+    assert np.isclose(slgof["SL"].values[0], gasoil.swl + gasoil.sorg)
     # Eclipse 100 requirement from manual:
-    assert np.isclose(slgof["sl"].values[-1], 1.0)
+    assert np.isclose(slgof["SL"].values[-1], 1.0)
     slgof_str = gasoil.SLGOF()
     assert isinstance(slgof_str, str)
     assert slgof_str

@@ -30,21 +30,21 @@ def check_endpoints(wateroil, krwend, krwmax, kroend):
     # Check endpoints for oil curve:
     # krow at swcr should be kroend:
     if wateroil.swcr > wateroil.swl + swtol:
-        assert float_df_checker(wateroil.table, "son", 1.0, "krow", kroend)
+        assert float_df_checker(wateroil.table, "SON", 1.0, "KROW", kroend)
     # krow at sorw should be zero:
-    assert float_df_checker(wateroil.table, "son", 0.0, "krow", 0.0)
-    assert np.isclose(wateroil.table["krow"].max(), kroend)
+    assert float_df_checker(wateroil.table, "SON", 0.0, "KROW", 0.0)
+    assert np.isclose(wateroil.table["KROW"].max(), kroend)
 
     # Check endpoints for water curve: (np.isclose is only reliable around 1)
-    assert float_df_checker(wateroil.table, "swn", 0.0, "krw", 0.0)
-    assert float_df_checker(wateroil.table, "sw", wateroil.swcr, "krw", 0)
+    assert float_df_checker(wateroil.table, "SWN", 0.0, "KRW", 0.0)
+    assert float_df_checker(wateroil.table, "SW", wateroil.swcr, "KRW", 0)
 
     if wateroil.sorw > swtol:
         # (hard to get it right when sorw is less than h and close to zero)
-        assert float_df_checker(wateroil.table, "sw", 1 - wateroil.sorw, "krw", krwend)
-        assert np.isclose(wateroil.table["krw"].max(), krwmax)
+        assert float_df_checker(wateroil.table, "SW", 1 - wateroil.sorw, "KRW", krwend)
+        assert np.isclose(wateroil.table["KRW"].max(), krwmax)
     else:
-        assert np.isclose(wateroil.table["krw"].max(), krwend)
+        assert np.isclose(wateroil.table["KRW"].max(), krwend)
 
 
 @given(st.text())
@@ -70,8 +70,8 @@ def test_wateroil_corey1(nw, now):
         # This happens for "invalid" input
         return
 
-    assert "krow" in wateroil.table
-    assert "krw" in wateroil.table
+    assert "KROW" in wateroil.table
+    assert "KRW" in wateroil.table
     assert isinstance(wateroil.krwcomment, str)
     check_table(wateroil.table)
     check_linear_sections(wateroil)
@@ -90,8 +90,8 @@ def test_wateroil_let1(l, e, t, krwend, krwmax):
     except AssertionError:
         # This happens for negative values f.ex.
         return
-    assert "krow" in wateroil.table
-    assert "krw" in wateroil.table
+    assert "KROW" in wateroil.table
+    assert "KRW" in wateroil.table
     assert isinstance(wateroil.krwcomment, str)
     check_table(wateroil.table)
     check_linear_sections(wateroil)
@@ -146,7 +146,7 @@ def test_fast():
     assert "-- krw = krow @ sw=0.5" in wateroil.SWOF()
 
     # Provoke non-strict-monotone krow:
-    wateroil.table.loc[0:2, "krow"] = [1.00, 0.81, 0.81]
+    wateroil.table.loc[0:2, "KROW"] = [1.00, 0.81, 0.81]
     # (this is valid in non-imbibition, but pyscal will correct it for all
     # curves)
     assert "0.1000000 0.0100000 0.8100000 0.0000000" in wateroil.SWOF()
@@ -162,12 +162,12 @@ def test_fast():
 
     # Provoke non-strict-monotone krow, in fast-mode
     # this slips through:
-    wateroil.table.loc[0:2, "krow"] = [1.00, 0.81, 0.81]
+    wateroil.table.loc[0:2, "KROW"] = [1.00, 0.81, 0.81]
     assert "0.1000000 0.0100000 0.8100000 0.0000000" in wateroil.SWOF()
     assert "0.2000000 0.0400000 0.8100000 0.0000000" in wateroil.SWOF()
     # not corrected:               ^^^^^^
 
-    wateroil.table.loc[0:2, "krw"] = [0.00, 0.01, 0.01]
+    wateroil.table.loc[0:2, "KRW"] = [0.00, 0.01, 0.01]
     assert "0.1000000 0.0100000" in wateroil.SWFN()
     assert "0.2000000 0.0100000" in wateroil.SWFN()
 
@@ -224,8 +224,8 @@ def test_wateroil_linear():
     check_table(wateroil.table)
     check_linear_sections(wateroil)
     assert len(wateroil.table) == 2
-    assert np.isclose(wateroil.table["sw"].min(), 0.1)
-    assert np.isclose(wateroil.table["sw"].max(), 1.0)
+    assert np.isclose(wateroil.table["SW"].min(), 0.1)
+    assert np.isclose(wateroil.table["SW"].max(), 1.0)
     assert np.isclose(wateroil.crosspoint(), 0.55)
 
 
@@ -294,16 +294,16 @@ def test_nexus():
 @pytest.mark.parametrize(
     "columnname, errorvalues",
     [
-        ("sw", [1, 0]),
-        ("sw", [0, 2]),
-        ("krw", [1, 0]),
-        ("krw", [0, 2]),
-        ("krow", [0, 1]),
-        ("krow", [2, 0]),
-        ("pc", [np.inf, 0]),
-        ("pc", [np.nan, 0]),
-        ("pc", [1, 2]),
-        ("pc", [0, 1]),
+        ("SW", [1, 0]),
+        ("SW", [0, 2]),
+        ("KRW", [1, 0]),
+        ("KRW", [0, 2]),
+        ("KROW", [0, 1]),
+        ("KROW", [2, 0]),
+        ("PC", [np.inf, 0]),
+        ("PC", [np.nan, 0]),
+        ("PC", [1, 2]),
+        ("PC", [0, 1]),
     ],
 )
 def test_selfcheck(columnname, errorvalues):
@@ -317,5 +317,5 @@ def test_selfcheck(columnname, errorvalues):
     wateroil.table[columnname] = errorvalues
     assert not wateroil.selfcheck()
     assert wateroil.SWOF() == ""
-    if not columnname == "krow":
+    if not columnname == "KROW":
         assert wateroil.SWFN() == ""

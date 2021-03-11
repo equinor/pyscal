@@ -41,27 +41,27 @@ def test_wateroil_normalization(swirr, swl, swcr, sorw, h, tag):
     assert not wateroil.table.isnull().values.any()
 
     # Check that son is 1 at swl:
-    assert float_df_checker(wateroil.table, "sw", wateroil.swl, "son", 1)
+    assert float_df_checker(wateroil.table, "SW", wateroil.swl, "SON", 1)
 
     # Check that son is 0 at sorw:
     if wateroil.sorw > h:
-        assert float_df_checker(wateroil.table, "sw", 1 - wateroil.sorw, "son", 0)
+        assert float_df_checker(wateroil.table, "SW", 1 - wateroil.sorw, "SON", 0)
 
     # Check that swn is 0 at swcr:
-    assert float_df_checker(wateroil.table, "sw", wateroil.swcr, "swn", 0)
+    assert float_df_checker(wateroil.table, "SW", wateroil.swcr, "SWN", 0)
     # Check that swn is 1 at 1 - sorw
     if wateroil.sorw > 1 / SWINTEGERS:
-        assert float_df_checker(wateroil.table, "sw", 1 - wateroil.sorw, "swn", 1)
+        assert float_df_checker(wateroil.table, "SW", 1 - wateroil.sorw, "SWN", 1)
 
     # Check that swnpc is 0 at swirr and 1 at 1:
     if wateroil.swirr >= wateroil.swl + h:
-        assert float_df_checker(wateroil.table, "sw", wateroil.swirr, "swnpc", 0)
+        assert float_df_checker(wateroil.table, "SW", wateroil.swirr, "SWNPC", 0)
     else:
         # Let this go, when swirr is too close to swl. We
         # are not guaranteed to have sw=swirr present
         pass
 
-    assert float_df_checker(wateroil.table, "sw", 1.0, "swnpc", 1)
+    assert float_df_checker(wateroil.table, "SW", 1.0, "SWNPC", 1)
 
 
 @given(st.floats(min_value=0, max_value=1))

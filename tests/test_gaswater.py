@@ -28,27 +28,27 @@ def check_endpoints(gaswater, krwend, krwmax, krgend):
 
     # Check endpoints for gas curve:
     # krg at swl should be krgend:
-    assert float_df_checker(gaswater.gasoil.table, "sgn", 1.0, "krg", krgend)
-    assert float_df_checker(gaswater.gasoil.table, "sl", gaswater.swl, "krg", krgend)
+    assert float_df_checker(gaswater.gasoil.table, "SGN", 1.0, "KRG", krgend)
+    assert float_df_checker(gaswater.gasoil.table, "SL", gaswater.swl, "KRG", krgend)
     # krg at sgcr (sgn is zero there) should be zero:
-    assert float_df_checker(gaswater.gasoil.table, "sgn", 0.0, "krg", 0.0)
-    assert float_df_checker(gaswater.gasoil.table, "sl", 1 - gaswater.sgcr, "krg", 0.0)
+    assert float_df_checker(gaswater.gasoil.table, "SGN", 0.0, "KRG", 0.0)
+    assert float_df_checker(gaswater.gasoil.table, "SL", 1 - gaswater.sgcr, "KRG", 0.0)
 
     check_linear_sections(gaswater.gasoil)
     check_linear_sections(gaswater.wateroil)
 
     # Check endpoints for water curve: (np.isclose is only reliable around 1)
-    assert float_df_checker(gaswater.wateroil.table, "swn", 0.0, "krw", 0.0)
-    assert float_df_checker(gaswater.wateroil.table, "sw", gaswater.swcr, "krw", 0)
+    assert float_df_checker(gaswater.wateroil.table, "SWN", 0.0, "KRW", 0.0)
+    assert float_df_checker(gaswater.wateroil.table, "SW", gaswater.swcr, "KRW", 0)
 
     if gaswater.sgrw > swtol:
         # (hard to get it right when sgrw is less than h and close to zero)
         assert float_df_checker(
-            gaswater.wateroil.table, "sw", 1 - gaswater.sgrw, "krw", krwend
+            gaswater.wateroil.table, "SW", 1 - gaswater.sgrw, "KRW", krwend
         )
-        assert np.isclose(gaswater.wateroil.table["krw"].max(), krwmax)
+        assert np.isclose(gaswater.wateroil.table["KRW"].max(), krwmax)
     else:
-        assert np.isclose(gaswater.wateroil.table["krw"].max(), krwend)
+        assert np.isclose(gaswater.wateroil.table["KRW"].max(), krwend)
 
 
 def test_constructor():
@@ -102,8 +102,8 @@ def test_gaswater_corey1(nw, ng):
         # This happens for "invalid" input
         return
 
-    assert "krg" in gaswater.gasoil.table
-    assert "krw" in gaswater.wateroil.table
+    assert "KRG" in gaswater.gasoil.table
+    assert "KRW" in gaswater.wateroil.table
     assert isinstance(gaswater.wateroil.krwcomment, str)
     check_table(gaswater.wateroil.table)
     check_table(gaswater.gasoil.table)
@@ -126,8 +126,8 @@ def test_gaswater_let1(l, e, t, krwend, krwmax):
     except AssertionError:
         # This happens for negative values f.ex.
         return
-    assert "krg" in gaswater.gasoil.table
-    assert "krw" in gaswater.wateroil.table
+    assert "KRG" in gaswater.gasoil.table
+    assert "KRW" in gaswater.wateroil.table
     assert isinstance(gaswater.wateroil.krwcomment, str)
     check_table(gaswater.wateroil.table)
     check_table(gaswater.gasoil.table)
@@ -228,8 +228,8 @@ def test_gaswater_linear():
     check_linear_sections(gaswater.gasoil)
     assert len(gaswater.wateroil.table) == 2
     assert len(gaswater.gasoil.table) == 2
-    assert np.isclose(gaswater.wateroil.table["sw"].min(), 0.1)
-    assert np.isclose(gaswater.wateroil.table["sw"].max(), 1.0)
+    assert np.isclose(gaswater.wateroil.table["SW"].min(), 0.1)
+    assert np.isclose(gaswater.wateroil.table["SW"].max(), 1.0)
     # assert np.isclose(gaswater.crosspoint(), 0.55)
 
 
@@ -263,7 +263,7 @@ def test_crosspoint():
     assert np.isclose(gaswater.crosspoint(), 0.25)
 
     # Test warning/error situation:
-    del gaswater.wateroil.table["krw"]
+    del gaswater.wateroil.table["KRW"]
     assert gaswater.crosspoint() is None
 
 
@@ -277,7 +277,7 @@ def test_gaswater_pc():
     gaswater.add_corey_water()
     gaswater.add_corey_gas()
     gaswater.add_simple_J()
-    assert gaswater.wateroil.table["pc"].abs().sum() > 0
+    assert gaswater.wateroil.table["PC"].abs().sum() > 0
     swfn = gaswater.SWFN()
     assert "Simplified J-function" in swfn
     assert "0.1000000 0.0000000 0.23266" in swfn  # this is the first row.

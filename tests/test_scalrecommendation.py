@@ -213,9 +213,9 @@ def test_interpolation(param_wo, param_go):
     rec.add_simple_J()  # Add default pc curve
 
     # Check that added pc curve is non-zero
-    assert sum(rec.low.wateroil.table["pc"])
-    assert sum(rec.base.wateroil.table["pc"])
-    assert sum(rec.high.wateroil.table["pc"])
+    assert sum(rec.low.wateroil.table["PC"])
+    assert sum(rec.base.wateroil.table["PC"])
+    assert sum(rec.high.wateroil.table["PC"])
 
     try:
         interpolant = rec.interpolate(param_wo, param_go, h=0.1)
@@ -232,7 +232,7 @@ def test_interpolation(param_wo, param_go):
     assert len(interpolant.wateroil.SWOF()) > 100
     assert interpolant.threephaseconsistency()
 
-    assert sum(interpolant.wateroil.table["pc"])
+    assert sum(interpolant.wateroil.table["PC"])
 
 
 def test_boundary_cases():
@@ -245,8 +245,8 @@ def test_boundary_cases():
     )
     assert rec.type == WaterOilGas
 
-    wo_cols = ["sw", "krw", "krow"]  # no Pc in this test data
-    go_cols = ["sg", "krg", "krog"]
+    wo_cols = ["SW", "KRW", "KROW"]  # no Pc in this test data
+    go_cols = ["SG", "KRG", "KROG"]
     assert (
         rec.interpolate(0)
         .wateroil.table[wo_cols]

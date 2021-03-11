@@ -37,11 +37,11 @@ def normalize_nonlinpart_wo(curve):
             evaluate krow on the normalized So interval [0,1].
     """
     krw_interp = interp1d(
-        curve.table["sw"],
-        curve.table["krw"],
+        curve.table["SW"],
+        curve.table["KRW"],
         kind="linear",
         bounds_error=False,
-        fill_value=(0.0, curve.table["krw"].max()),
+        fill_value=(0.0, curve.table["KRW"].max()),
     )
 
     # The internal dataframe might contain normalized
@@ -55,11 +55,11 @@ def normalize_nonlinpart_wo(curve):
         return krw_interp(sw_fn(swn))
 
     kro_interp = interp1d(
-        1.0 - curve.table["sw"],
-        curve.table["krow"],
+        1.0 - curve.table["SW"],
+        curve.table["KROW"],
         kind="linear",
         bounds_error=False,
-        fill_value=(0.0, curve.table["krow"].max()),
+        fill_value=(0.0, curve.table["KROW"].max()),
     )
 
     def so_fn(son):
@@ -98,11 +98,11 @@ def normalize_nonlinpart_go(curve):
             evaluate krog on the normalized So interval [0,1].
     """
     krg_interp = interp1d(
-        curve.table["sg"],
-        curve.table["krg"],
+        curve.table["SG"],
+        curve.table["KRG"],
         kind="linear",
         bounds_error=False,
-        fill_value=(0.0, curve.table["krg"].max()),
+        fill_value=(0.0, curve.table["KRG"].max()),
     )
 
     # The internal dataframe might contain normalized
@@ -116,11 +116,11 @@ def normalize_nonlinpart_go(curve):
         return krg_interp(sg_fn(sgn))
 
     kro_interp = interp1d(
-        1.0 - curve.table["sg"],
-        curve.table["krog"],
+        1.0 - curve.table["SG"],
+        curve.table["KROG"],
         kind="linear",
         bounds_error=False,
-        fill_value=(0.0, curve.table["krog"].max()),
+        fill_value=(0.0, curve.table["KROG"].max()),
     )
 
     def so_fn(son):
@@ -150,24 +150,24 @@ def normalize_pc(curve):
         the normalized interval [0,1]
     """
     if isinstance(curve, pyscal.WaterOil):
-        sat_col = "sw"
+        sat_col = "SW"
     elif isinstance(curve, pyscal.GasOil):
-        sat_col = "sg"
+        sat_col = "SG"
     else:
         raise ValueError("Only WaterOil or GasOil allowed as argument")
 
-    if "pc" not in curve.table:
+    if "PC" not in curve.table:
         # Return a dummy zero lambda
         return lambda sxn: 0
 
-    min_pc = curve.table["pc"].min()
-    max_pc = curve.table["pc"].max()
+    min_pc = curve.table["PC"].min()
+    max_pc = curve.table["PC"].max()
     min_sx = curve.table[sat_col].min()
     max_sx = curve.table[sat_col].max()
 
     pc_interp = interp1d(
         curve.table[sat_col],
-        curve.table["pc"],
+        curve.table["PC"],
         kind="linear",
         bounds_error=False,
         fill_value=(max_pc, min_pc),  # This gives constant extrapolation outside [0, 1]
@@ -268,7 +268,7 @@ def interpolate_wo(wo_low, wo_high, parameter, h=0.01, tag=None):
     sorw_new = weighted_value(wo_low.sorw, wo_high.sorw)
 
     # Interpolate kr at saturation endpoints
-    krwmax_new = weighted_value(wo_low.table["krw"].max(), wo_high.table["krw"].max())
+    krwmax_new = weighted_value(wo_low.table["KRW"].max(), wo_high.table["KRW"].max())
     krwend_new = weighted_value(krw1(1), krw2(1))
     kroend_new = weighted_value(kro1(1), kro2(1))
 
@@ -277,11 +277,11 @@ def interpolate_wo(wo_low, wo_high, parameter, h=0.01, tag=None):
     wo_new = pyscal.WaterOil(swl=swl_new, swcr=swcr_new, sorw=sorw_new, h=h, fast=fast)
 
     # Add interpolated relperm data in nonlinear parts:
-    wo_new.table["krw"] = weighted_value(
-        krw1(wo_new.table["swn"]), krw2(wo_new.table["swn"])
+    wo_new.table["KRW"] = weighted_value(
+        krw1(wo_new.table["SWN"]), krw2(wo_new.table["SWN"])
     )
-    wo_new.table["krow"] = weighted_value(
-        kro1(wo_new.table["son"]), kro2(wo_new.table["son"])
+    wo_new.table["KROW"] = weighted_value(
+        kro1(wo_new.table["SON"]), kro2(wo_new.table["SON"])
     )
 
     wo_new.set_endpoints_linearpart_krw(krwend=krwend_new, krwmax=krwmax_new)
@@ -289,10 +289,10 @@ def interpolate_wo(wo_low, wo_high, parameter, h=0.01, tag=None):
 
     # We need a new fit-for-purpose normalized swnpc, that ignores
     # the initial swnpc (swirr-influenced)
-    wo_new.table["swn_pc_intp"] = (wo_new.table["sw"] - wo_new.table["sw"].min()) / (
-        wo_new.table["sw"].max() - wo_new.table["sw"].min()
+    wo_new.table["swn_pc_intp"] = (wo_new.table["SW"] - wo_new.table["SW"].min()) / (
+        wo_new.table["SW"].max() - wo_new.table["SW"].min()
     )
-    wo_new.table["pc"] = weighted_value(
+    wo_new.table["PC"] = weighted_value(
         pc1(wo_new.table["swn_pc_intp"]), pc2(wo_new.table["swn_pc_intp"])
     )
 
@@ -357,7 +357,7 @@ def interpolate_go(go_low, go_high, parameter, h=0.01, tag=None):
     sorg_new = weighted_value(go_low.sorg, go_high.sorg)
 
     # Interpolate kr at saturation endpoints
-    krgmax_new = weighted_value(go_low.table["krg"].max(), go_high.table["krg"].max())
+    krgmax_new = weighted_value(go_low.table["KRG"].max(), go_high.table["KRG"].max())
     krgend_new = weighted_value(krg1(1), krg2(1))
     kroend_new = weighted_value(kro1(1), kro2(1))
 
@@ -366,21 +366,21 @@ def interpolate_go(go_low, go_high, parameter, h=0.01, tag=None):
     go_new = pyscal.GasOil(swl=swl_new, sgcr=sgcr_new, sorg=sorg_new, h=h, fast=fast)
 
     # Add interpolated relperm data in nonlinear parts:
-    go_new.table["krg"] = weighted_value(
-        krg1(go_new.table["sgn"]), krg2(go_new.table["sgn"])
+    go_new.table["KRG"] = weighted_value(
+        krg1(go_new.table["SGN"]), krg2(go_new.table["SGN"])
     )
-    go_new.table["krog"] = weighted_value(
-        kro1(go_new.table["son"]), kro2(go_new.table["son"])
+    go_new.table["KROG"] = weighted_value(
+        kro1(go_new.table["SON"]), kro2(go_new.table["SON"])
     )
-    go_new.table["pc"] = weighted_value(
-        pc1(go_new.table["sgn"]), pc2(go_new.table["sgn"])
+    go_new.table["PC"] = weighted_value(
+        pc1(go_new.table["SGN"]), pc2(go_new.table["SGN"])
     )
 
     # We need a new fit-for-purpose normalized sgnpc
-    go_new.table["sgn_pc_intp"] = (go_new.table["sg"] - go_new.table["sg"].min()) / (
-        go_new.table["sg"].max() - go_new.table["sg"].min()
+    go_new.table["sgn_pc_intp"] = (go_new.table["SG"] - go_new.table["SG"].min()) / (
+        go_new.table["SG"].max() - go_new.table["SG"].min()
     )
-    go_new.table["pc"] = weighted_value(
+    go_new.table["PC"] = weighted_value(
         pc1(go_new.table["sgn_pc_intp"]), pc2(go_new.table["sgn_pc_intp"])
     )
 

@@ -50,18 +50,18 @@ def test_df2str_monotone():
     )
 
     # For strict monotonicity we will introduce negativity:
-    dframe = pd.DataFrame(data=[0.00001, 0.0, 0.0, 0.0], columns=["pc"])
+    dframe = pd.DataFrame(data=[0.00001, 0.0, 0.0, 0.0], columns=["PC"])
     assert (
-        df2str(dframe, monotonicity={"pc": {"sign": -1}})
+        df2str(dframe, monotonicity={"PC": {"sign": -1}})
         == "0.0000100\n0.0000000\n-0.0000001\n-0.0000002\n"
     )
 
     # Actual data that has occured:
     dframe = pd.DataFrame(
-        data=[0.0000027, 0.0000026, 0.0000024, 0.0000024, 0.0000017], columns=["pc"]
+        data=[0.0000027, 0.0000026, 0.0000024, 0.0000024, 0.0000017], columns=["PC"]
     )
     assert (
-        df2str(dframe, monotonicity={"pc": {"sign": -1}})
+        df2str(dframe, monotonicity={"PC": {"sign": -1}})
         == "0.0000027\n0.0000026\n0.0000024\n0.0000023\n0.0000017\n"
     )
 
@@ -252,7 +252,7 @@ def test_df2str_nonstrict_monotonicity_digits1(series, monotonicity, expected):
         ([0, 0.5, 1], {0: {"sign": -1, "lower": 0, "upper": 1}}),
         ([0, 1], {1: "foo"}),  # not a dict of dict
         ([0, 1], {0: {}}),  # sign is required
-        ([0, 1], {0: {"sgn": 1}}),  # sign is required
+        ([0, 1], {0: {"SGN": 1}}),  # sign is required
         ([0, 1], {0: {"sign": 2}}),  # sign have abs = 1
         ([0, 1], {0: {"sign": 1, "lower": "a"}}),
         ([0, 1], {0: {"sign": 1, "lower": 2}}),
