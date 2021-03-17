@@ -20,6 +20,22 @@ Detailed release history (with minor releases) at
 
   * https://github.com/equinor/pyscal/releases
 
+v0.7.x
+------
+**New features**
+  - Monotonocity is always enforced (in the last digit) in relative
+    permeability data, unless fast mode is activated.
+  - ``swl`` can be initialized from height-above-free-water-level, if simple J
+    parameters are included in input table.
+  - ``swcr`` can be initialized relative to ``swl``, by using the ``swcr_add``
+    parameter in the input table.
+  - PyscalFactory can create objects with fast mode enabled.
+
+**Deprecations**
+  - Dropped Python2 support.
+  - SATNUM specific interpolation parameters are deprecated in the command line
+    client.
+
 v0.6.0
 ------
 **Changes**
