@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>History &mdash; pyscal 0.7.7 documentation</title>
+  <title>History &mdash; pyscal 0.7.8.dev1+gdace715 documentation</title>
   
 
   
@@ -66,7 +66,7 @@
             
             
               <div class="version">
-                0.7.7
+                0.7.8.dev1+gdace715
               </div>
             
           
@@ -98,6 +98,7 @@
 <li class="toctree-l1"><a class="reference internal" href="modules.html">API for pyscal</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#release-notes">Release notes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#v0-7-x">v0.7.x</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v0-6-0">v0.6.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v0-5-0">v0.5.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v0-4-0">v0.4.0</a></li>
@@ -188,6 +189,27 @@ languages. Open sourced (LGPLv3) in 2019.</p>
 <li><p><a class="reference external" href="https://github.com/equinor/pyscal/releases">https://github.com/equinor/pyscal/releases</a></p></li>
 </ul>
 </div></blockquote>
+<div class="section" id="v0-7-x">
+<h2>v0.7.x<a class="headerlink" href="#v0-7-x" title="Permalink to this headline">¶</a></h2>
+<dl class="simple">
+<dt><strong>New features</strong></dt><dd><ul class="simple">
+<li><p>Monotonocity is always enforced (in the last digit) in relative
+permeability data, unless fast mode is activated.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">swl</span></code> can be initialized from height-above-free-water-level, if simple J
+parameters are included in input table.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">swcr</span></code> can be initialized relative to <code class="docutils literal notranslate"><span class="pre">swl</span></code>, by using the <code class="docutils literal notranslate"><span class="pre">swcr_add</span></code>
+parameter in the input table.</p></li>
+<li><p>PyscalFactory can create objects with fast mode enabled.</p></li>
+</ul>
+</dd>
+<dt><strong>Deprecations</strong></dt><dd><ul class="simple">
+<li><p>Dropped Python2 support.</p></li>
+<li><p>SATNUM specific interpolation parameters are deprecated in the command line
+client.</p></li>
+</ul>
+</dd>
+</dl>
+</div>
 <div class="section" id="v0-6-0">
 <h2>v0.6.0<a class="headerlink" href="#v0-6-0" title="Permalink to this headline">¶</a></h2>
 <dl class="simple">
