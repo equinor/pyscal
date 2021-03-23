@@ -202,11 +202,6 @@ class GasOil(object):
                 % (self.swirr, self.sgcr, self.swl, self.sorg, self.krgendanchor)
             )
 
-    def add_gasoil_fromtable(self, *args, **kwargs):
-        """Deprecated. Use ``add_fromtable()``"""
-        logger.warning("add_gasoil_fromtable() is deprecated, use add_fromtable()")
-        self.add_fromtable(*args, **kwargs)
-
     def add_fromtable(
         self,
         dframe,

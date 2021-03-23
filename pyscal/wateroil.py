@@ -173,11 +173,6 @@ class WaterOil(object):
             "Initialized WaterOil with %s saturation points", str(len(self.table))
         )
 
-    def add_oilwater_fromtable(self, *args, **kwargs):
-        """Deprecated, use ``add_fromtable()``"""
-        logger.warning("add_oilwater_fromtable() is deprecated, use add_fromtable()")
-        self.add_fromtable(*args, **kwargs)
-
     def add_fromtable(
         self,
         dframe,

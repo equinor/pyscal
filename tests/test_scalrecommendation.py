@@ -89,64 +89,6 @@ HIGH_SAMPLE_LET = {
 }
 
 
-@settings(max_examples=10, deadline=3000)
-@given(
-    st.floats(min_value=-1.1, max_value=1.1), st.floats(min_value=-1.1, max_value=1.1)
-)
-def test_interpolation_deprecated(param_wo, param_go):
-    """Testing deprecated functionality. Remove
-    this test function when SCALrecommendation class is updated"""
-
-    rec = SCALrecommendation(
-        LOW_SAMPLE_LET, BASE_SAMPLE_LET, HIGH_SAMPLE_LET, "foo", h=0.1
-    )
-
-    rec.add_simple_J()  # Add default pc curve
-    assert rec.type == WaterOilGas
-    try:
-        interpolant = rec.interpolate(param_wo, param_go, h=0.1)
-    except ValueError:
-        # We get here when interpolation parameters are outside [-1, 1]
-        return
-
-    check_table(interpolant.wateroil.table)
-    check_table(interpolant.gasoil.table)
-
-    assert len(interpolant.gasoil.SGOF()) > 100
-    assert len(interpolant.gasoil.SGFN()) > 100
-    assert len(interpolant.wateroil.SWFN()) > 100
-    assert len(interpolant.SOF3()) > 100
-    assert len(interpolant.wateroil.SWOF()) > 100
-    if not interpolant.threephaseconsistency():
-        print(interpolant.wateroil.SWOF())
-        print(interpolant.gasoil.SGOF())
-    assert interpolant.threephaseconsistency()
-
-
-def test_deprecated_kroend():
-    """Testing that the deprecated scalrecommendation can take
-    both kroend and krogend/krowend"""
-
-    low_krowend = dict(LOW_SAMPLE_LET)
-    low_krowend["krowend"] = low_krowend["kroend"]
-    del low_krowend["kroend"]
-
-    base_krowend = dict(BASE_SAMPLE_LET)
-    base_krowend["krowend"] = base_krowend["kroend"]
-    del base_krowend["kroend"]
-
-    high_krowend = dict(HIGH_SAMPLE_LET)
-    high_krowend["krowend"] = high_krowend["kroend"]
-    del high_krowend["kroend"]
-
-    rec = SCALrecommendation(low_krowend, base_krowend, high_krowend, "foo", h=0.1)
-
-    rec.add_simple_J()  # Add default pc curve
-    interpolant = rec.interpolate(0.1, 0, h=0.1)
-    check_table(interpolant.wateroil.table)
-    print(interpolant.SWOF())
-
-
 def test_make_scalrecommendation():
     """Test that we can make scal recommendation objects
     from three WaterOilGas objects"""
