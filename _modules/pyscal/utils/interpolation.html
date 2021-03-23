@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.utils.interpolation &mdash; pyscal 0.7.8.dev1+gdace715 documentation</title>
+  <title>pyscal.utils.interpolation &mdash; pyscal 0.7.8.dev2+g1edeb8f documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.7.8.dev1+gdace715
+                0.7.8.dev2+g1edeb8f
               </div>
             
           
@@ -168,12 +168,9 @@
 
 <span class="kn">import</span> <span class="nn">logging</span>
 
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">interp1d</span>
 
 <span class="kn">import</span> <span class="nn">pyscal</span>
-<span class="kn">from</span> <span class="nn">..constants</span> <span class="kn">import</span> <span class="n">SWINTEGERS</span>
-
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -560,91 +557,6 @@
     <span class="n">go_new</span><span class="o">.</span><span class="n">tag</span> <span class="o">=</span> <span class="n">_interpolate_tags</span><span class="p">(</span><span class="n">go_low</span><span class="p">,</span> <span class="n">go_high</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">go_new</span></div>
-
-
-<div class="viewcode-block" id="interpolator"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.interpolation.interpolator">[docs]</a><span class="k">def</span> <span class="nf">interpolator</span><span class="p">(</span>
-    <span class="n">tableobject</span><span class="p">,</span> <span class="n">wo_low</span><span class="p">,</span> <span class="n">wo_high</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">sat</span><span class="o">=</span><span class="s2">&quot;sw&quot;</span><span class="p">,</span> <span class="n">kr1</span><span class="o">=</span><span class="s2">&quot;krw&quot;</span><span class="p">,</span> <span class="n">kr2</span><span class="o">=</span><span class="s2">&quot;krow&quot;</span><span class="p">,</span> <span class="n">pc</span><span class="o">=</span><span class="s2">&quot;pc&quot;</span>
-<span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Interpolates between two curves.</span>
-
-<span class="sd">    DEPRECATED FUNCTION!</span>
-
-<span class="sd">    The interpolation parameter is 0 through 1,</span>
-<span class="sd">    irrespective of phases or low-base/base-high/low-high.</span>
-
-<span class="sd">    Args:</span>
-<span class="sd">        tabjeobject (WaterOil or GasOil): A partially setup object where</span>
-<span class="sd">            relperm and pc columns are to be filled with numbers.</span>
-<span class="sd">        wo_low (WaterOil or GasOil): &quot;Low&quot; case of interpolation (relates</span>
-<span class="sd">            to interpolation parameter 0). Must be copies, as they</span>
-<span class="sd">            will be modified.</span>
-<span class="sd">        wo_high: Ditto, relates to interpolation parameter 1</span>
-<span class="sd">        parameter (float): Between 0 and 1, what you want to interpolate to.</span>
-<span class="sd">        sat (str): Name of the saturation column, typically &#39;sw&#39; or &#39;sg&#39;</span>
-<span class="sd">        kr1 (str): Name of the first relperm column (&#39;krw&#39; or &#39;krg&#39;)</span>
-<span class="sd">        kr2 (str): Name of the second relperm column (&#39;krow&#39; or &#39;krog&#39;)</span>
-<span class="sd">        pc (str): Name of the capillary pressure column (&#39;pc&#39;)</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        None, but modifies the first argument.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;utils.interpolator() is deprecated and will disappear&quot;</span><span class="p">)</span>
-
-    <span class="n">wo_low</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="n">kr1</span><span class="p">:</span> <span class="n">kr1</span> <span class="o">+</span> <span class="s2">&quot;_1&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">wo_high</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="n">kr1</span><span class="p">:</span> <span class="n">kr1</span> <span class="o">+</span> <span class="s2">&quot;_2&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">wo_low</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="n">kr2</span><span class="p">:</span> <span class="n">kr2</span> <span class="o">+</span> <span class="s2">&quot;_1&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">wo_high</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="n">kr2</span><span class="p">:</span> <span class="n">kr2</span> <span class="o">+</span> <span class="s2">&quot;_2&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">wo_low</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="n">pc</span><span class="p">:</span> <span class="n">pc</span> <span class="o">+</span> <span class="s2">&quot;_1&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">wo_high</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="n">pc</span><span class="p">:</span> <span class="n">pc</span> <span class="o">+</span> <span class="s2">&quot;_2&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-    <span class="c1"># Result data container:</span>
-    <span class="n">satresult</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">tableobject</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">sat</span><span class="p">],</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="n">sat</span><span class="p">])</span>
-
-    <span class="c1"># Merge swresult with wo_low and wo_high, and interpolate all</span>
-    <span class="c1"># columns in sw:</span>
-    <span class="n">intdf</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">wo_low</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="n">wo_high</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="n">satresult</span><span class="p">],</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="n">sat</span><span class="p">)</span>
-        <span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
-        <span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;slinear&quot;</span><span class="p">)</span>
-        <span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;bfill&quot;</span><span class="p">)</span>
-        <span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;ffill&quot;</span><span class="p">)</span>
-    <span class="p">)</span>
-
-    <span class="c1"># Normalized saturations does not make sense for the</span>
-    <span class="c1"># interpolant, remove:</span>
-    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;swn&quot;</span><span class="p">,</span> <span class="s2">&quot;son&quot;</span><span class="p">,</span> <span class="s2">&quot;swnpc&quot;</span><span class="p">,</span> <span class="s2">&quot;H&quot;</span><span class="p">,</span> <span class="s2">&quot;J&quot;</span><span class="p">]:</span>
-        <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">intdf</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-            <span class="k">del</span> <span class="n">intdf</span><span class="p">[</span><span class="n">col</span><span class="p">]</span>
-
-    <span class="n">intdf</span><span class="p">[</span><span class="n">kr1</span><span class="p">]</span> <span class="o">=</span> <span class="n">intdf</span><span class="p">[</span><span class="n">kr1</span> <span class="o">+</span> <span class="s2">&quot;_1&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">parameter</span><span class="p">)</span> <span class="o">+</span> <span class="n">intdf</span><span class="p">[</span><span class="n">kr1</span> <span class="o">+</span> <span class="s2">&quot;_2&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">parameter</span>
-    <span class="n">intdf</span><span class="p">[</span><span class="n">kr2</span><span class="p">]</span> <span class="o">=</span> <span class="n">intdf</span><span class="p">[</span><span class="n">kr2</span> <span class="o">+</span> <span class="s2">&quot;_1&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">parameter</span><span class="p">)</span> <span class="o">+</span> <span class="n">intdf</span><span class="p">[</span><span class="n">kr2</span> <span class="o">+</span> <span class="s2">&quot;_2&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">parameter</span>
-    <span class="k">if</span> <span class="n">pc</span> <span class="o">+</span> <span class="s2">&quot;_1&quot;</span> <span class="ow">in</span> <span class="n">wo_low</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span> <span class="ow">and</span> <span class="n">pc</span> <span class="o">+</span> <span class="s2">&quot;_2&quot;</span> <span class="ow">in</span> <span class="n">wo_high</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-        <span class="n">intdf</span><span class="p">[</span><span class="n">pc</span><span class="p">]</span> <span class="o">=</span> <span class="n">intdf</span><span class="p">[</span><span class="n">pc</span> <span class="o">+</span> <span class="s2">&quot;_1&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">parameter</span><span class="p">)</span> <span class="o">+</span> <span class="n">intdf</span><span class="p">[</span><span class="n">pc</span> <span class="o">+</span> <span class="s2">&quot;_2&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">parameter</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">intdf</span><span class="p">[</span><span class="n">pc</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-
-    <span class="c1"># Slice out the resulting sw values and columns. Slicing on</span>
-    <span class="c1"># floating point indices is not robust so we need to slice on an</span>
-    <span class="c1"># integer version of the sw column</span>
-    <span class="n">tableobject</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;swint&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
-        <span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">round</span><span class="p">,</span> <span class="n">tableobject</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">sat</span><span class="p">]</span> <span class="o">*</span> <span class="n">SWINTEGERS</span><span class="p">)))</span>
-    <span class="p">)</span>
-    <span class="n">intdf</span><span class="p">[</span><span class="s2">&quot;swint&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">round</span><span class="p">,</span> <span class="n">intdf</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">values</span> <span class="o">*</span> <span class="n">SWINTEGERS</span><span class="p">))))</span>
-    <span class="n">intdf</span> <span class="o">=</span> <span class="n">intdf</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
-    <span class="n">intdf</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="s2">&quot;swint&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">intdf</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;swint&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="n">intdf</span> <span class="o">=</span> <span class="n">intdf</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">tableobject</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;swint&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">]</span>
-    <span class="n">intdf</span> <span class="o">=</span> <span class="n">intdf</span><span class="p">[[</span><span class="n">sat</span><span class="p">,</span> <span class="n">kr1</span><span class="p">,</span> <span class="n">kr2</span><span class="p">,</span> <span class="n">pc</span><span class="p">]]</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
-
-    <span class="c1"># intdf[&#39;swint&#39;] = (intdf[&#39;sw&#39;] * SWINTEGERS).astype(int)</span>
-    <span class="c1"># intdf.drop_duplicates(&#39;swint&#39;, inplace=True)</span>
-
-    <span class="c1"># Populate the WaterOil object</span>
-    <span class="n">tableobject</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">kr1</span><span class="p">]</span> <span class="o">=</span> <span class="n">intdf</span><span class="p">[</span><span class="n">kr1</span><span class="p">]</span>
-    <span class="n">tableobject</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">kr2</span><span class="p">]</span> <span class="o">=</span> <span class="n">intdf</span><span class="p">[</span><span class="n">kr2</span><span class="p">]</span>
-    <span class="n">tableobject</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">pc</span><span class="p">]</span> <span class="o">=</span> <span class="n">intdf</span><span class="p">[</span><span class="n">pc</span><span class="p">]</span>
-    <span class="n">tableobject</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;ffill&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 </pre></div>
 
            </div>

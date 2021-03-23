@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.utils package &mdash; pyscal 0.7.8.dev1+gdace715 documentation</title>
+  <title>pyscal.utils package &mdash; pyscal 0.7.8.dev2+g1edeb8f documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.7.8.dev1+gdace715
+                0.7.8.dev2+g1edeb8f
               </div>
             
           
@@ -316,35 +316,6 @@ it will be automatically filled. Set to empty string to ensure no tag.</p></li>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>A new oil-water curve</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt id="pyscal.utils.interpolation.interpolator">
-<code class="sig-prename descclassname"><span class="pre">pyscal.utils.interpolation.</span></code><code class="sig-name descname"><span class="pre">interpolator</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">tableobject</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wo_low</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wo_high</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sat</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'sw'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kr1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'krw'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kr2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'krow'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pc'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils/interpolation.html#interpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.interpolation.interpolator" title="Permalink to this definition">¶</a></dt>
-<dd><p>Interpolates between two curves.</p>
-<p>DEPRECATED FUNCTION!</p>
-<p>The interpolation parameter is 0 through 1,
-irrespective of phases or low-base/base-high/low-high.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>tabjeobject</strong> (<a class="reference internal" href="pyscal.html#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><em>WaterOil</em></a><em> or </em><a class="reference internal" href="pyscal.html#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><em>GasOil</em></a>) – A partially setup object where
-relperm and pc columns are to be filled with numbers.</p></li>
-<li><p><strong>wo_low</strong> (<a class="reference internal" href="pyscal.html#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><em>WaterOil</em></a><em> or </em><a class="reference internal" href="pyscal.html#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><em>GasOil</em></a>) – “Low” case of interpolation (relates
-to interpolation parameter 0). Must be copies, as they
-will be modified.</p></li>
-<li><p><strong>wo_high</strong> – Ditto, relates to interpolation parameter 1</p></li>
-<li><p><strong>parameter</strong> (<em>float</em>) – Between 0 and 1, what you want to interpolate to.</p></li>
-<li><p><strong>sat</strong> (<em>str</em>) – Name of the saturation column, typically ‘sw’ or ‘sg’</p></li>
-<li><p><strong>kr1</strong> (<em>str</em>) – Name of the first relperm column (‘krw’ or ‘krg’)</p></li>
-<li><p><strong>kr2</strong> (<em>str</em>) – Name of the second relperm column (‘krow’ or ‘krog’)</p></li>
-<li><p><strong>pc</strong> (<em>str</em>) – Name of the capillary pressure column (‘pc’)</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>None, but modifies the first argument.</p>
 </dd>
 </dl>
 </dd></dl>
