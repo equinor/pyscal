@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.factory &mdash; pyscal 0.7.8.dev2+g1edeb8f documentation</title>
+  <title>pyscal.factory &mdash; pyscal 0.7.8.dev3+gd8352b8 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.7.8.dev2+g1edeb8f
+                0.7.8.dev3+gd8352b8
               </div>
             
           
@@ -391,10 +391,6 @@
                 <span class="s2">&quot;Added LET water to WaterOil object from parameters </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
                 <span class="nb">str</span><span class="p">(</span><span class="n">params_let_water</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span>
             <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;Missing or ambiguous parameters for water curve in WaterOil object&quot;</span>
-            <span class="p">)</span>
 
         <span class="c1"># Oil curve:</span>
         <span class="n">params_corey_oil</span> <span class="o">=</span> <span class="n">slicedict</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">WO_COREY_OIL</span> <span class="o">+</span> <span class="n">WO_OIL_ENDPOINTS</span><span class="p">)</span>
@@ -433,10 +429,6 @@
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
                 <span class="s2">&quot;Added LET water to WaterOil object from parameters </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
                 <span class="nb">str</span><span class="p">(</span><span class="n">params_let_oil</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span>
-            <span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;Missing or ambiguous parameters for oil curve in WaterOil object&quot;</span>
             <span class="p">)</span>
 
         <span class="c1"># Capillary pressure:</span>
@@ -622,7 +614,7 @@
         <span class="n">wateroilgas</span><span class="o">.</span><span class="n">gasoil</span> <span class="o">=</span> <span class="n">gasoil</span>  <span class="c1"># This might be None</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">wateroilgas</span><span class="o">.</span><span class="n">selfcheck</span><span class="p">():</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="p">(</span><span class="s2">&quot;Incomplete WaterOilGas object, some parameters missing to factory&quot;</span><span class="p">)</span>
+                <span class="sa">f</span><span class="s2">&quot;Inconsistent WaterOilGas object. Bug? Input was </span><span class="si">{</span><span class="n">params</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">wateroilgas</span></div>
 
@@ -781,7 +773,7 @@
 <span class="sd">        Ensures case-insensitiveness SATNUM, CASE, TAG and COMMENT</span>
 
 <span class="sd">        Merges COMMENT into TAG column, as only TAG is picked up downstream.</span>
-<span class="sd">        Adds a prexix &quot;SATNUM &lt;number&gt;&quot; to all tags.</span>
+<span class="sd">        Adds a prefix &quot;SATNUM &lt;number&gt;&quot; to all tags.</span>
 
 <span class="sd">        All strings in CASE column are converted to lowercase. Applies</span>
 <span class="sd">        aliasing in the CASE column so that &quot;pessimistic&quot; and &quot;pess&quot; map to</span>
@@ -807,7 +799,7 @@
                     <span class="s2">&quot;Sheet name only relevant for XLSX files, ignoring </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">sheet_name</span>
                 <span class="p">)</span>
             <span class="n">excel_engines</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;xls&quot;</span><span class="p">:</span> <span class="s2">&quot;xlrd&quot;</span><span class="p">,</span> <span class="s2">&quot;xlsx&quot;</span><span class="p">:</span> <span class="s2">&quot;openpyxl&quot;</span><span class="p">}</span>
-            <span class="k">if</span> <span class="n">sheet_name</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">tabular_file_format</span> <span class="o">!=</span> <span class="s2">&quot;csv&quot;</span> <span class="ow">and</span> <span class="n">sheet_name</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">input_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span>
                         <span class="n">inputfile</span><span class="p">,</span>
@@ -820,10 +812,10 @@
                         <span class="n">inputfile</span><span class="p">,</span>
                         <span class="n">sheet_name</span><span class="p">,</span>
                     <span class="p">)</span>
-                <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
-                    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Non-existing sheet-name </span><span class="si">%s</span><span class="s2"> provided?&quot;</span><span class="p">,</span> <span class="n">sheet_name</span><span class="p">)</span>
-                    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">error</span><span class="p">))</span>
-                    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+                <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Non-existing sheet-name </span><span class="si">{</span><span class="n">sheet_name</span><span class="si">}</span><span class="s2"> provided.&quot;</span>
+                    <span class="p">)</span> <span class="kn">from</span> <span class="nn">error</span>
             <span class="k">elif</span> <span class="n">tabular_file_format</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;xls&quot;</span><span class="p">):</span>
                 <span class="n">input_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span>
                     <span class="n">inputfile</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="n">excel_engines</span><span class="p">[</span><span class="n">tabular_file_format</span><span class="p">]</span>
@@ -903,10 +895,9 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;SATNUM must start at 1&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">max</span><span class="p">(</span><span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;SATNUM&quot;</span><span class="p">])</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;SATNUM&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()):</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;Missing SATNUMs? Max SATNUM is not equal to number of unique SATNUMS&quot;</span>
             <span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span>
         <span class="k">if</span> <span class="s2">&quot;CASE&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_df</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;SATNUM&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_df</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Non-unique SATNUMs?&quot;</span><span class="p">)</span>
         <span class="c1"># If we are in a SCAL recommendation setting</span>
@@ -940,12 +931,9 @@
         <span class="c1"># Check that we are able to make something out of the first row:</span>
         <span class="n">firstrow</span> <span class="o">=</span> <span class="n">input_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
         <span class="n">error</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">wo_ok</span> <span class="o">=</span> <span class="n">sufficient_water_oil_params</span><span class="p">(</span><span class="n">firstrow</span><span class="p">)</span>
-            <span class="n">go_ok</span> <span class="o">=</span> <span class="n">sufficient_gas_oil_params</span><span class="p">(</span><span class="n">firstrow</span><span class="p">)</span>
-            <span class="n">gw_ok</span> <span class="o">=</span> <span class="n">sufficient_gas_water_params</span><span class="p">(</span><span class="n">firstrow</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
-            <span class="n">error</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="n">wo_ok</span> <span class="o">=</span> <span class="n">sufficient_water_oil_params</span><span class="p">(</span><span class="n">firstrow</span><span class="p">)</span>
+        <span class="n">go_ok</span> <span class="o">=</span> <span class="n">sufficient_gas_oil_params</span><span class="p">(</span><span class="n">firstrow</span><span class="p">)</span>
+        <span class="n">gw_ok</span> <span class="o">=</span> <span class="n">sufficient_gas_water_params</span><span class="p">(</span><span class="n">firstrow</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">error</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">wo_ok</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">go_ok</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">gw_ok</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;Can&#39;t make neither WaterOil, GasOil or GasWater from &quot;</span>

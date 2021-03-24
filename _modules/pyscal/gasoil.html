@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.gasoil &mdash; pyscal 0.7.8.dev2+g1edeb8f documentation</title>
+  <title>pyscal.gasoil &mdash; pyscal 0.7.8.dev3+gd8352b8 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.7.8.dev2+g1edeb8f
+                0.7.8.dev3+gd8352b8
               </div>
             
           
@@ -166,7 +166,6 @@
 <span></span><span class="sd">&quot;&quot;&quot;Representing a GasOil object&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">import</span> <span class="nn">warnings</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -239,12 +238,7 @@
         <span class="k">assert</span> <span class="o">-</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">sgcr</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;0 &lt;= sgcr &lt; 1 is required&quot;</span>
         <span class="k">assert</span> <span class="o">-</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">swl</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;0 &lt;= swl &lt; 1 is required&quot;</span>
         <span class="k">assert</span> <span class="o">-</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">sorg</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;0 &lt;= sorg &lt;  1 is required&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
-                <span class="s2">&quot;tag must be a string, this will be a hard failure later&quot;</span><span class="p">,</span>
-                <span class="ne">DeprecationWarning</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">tag</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
         <span class="k">if</span> <span class="n">krgendanchor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">krgendanchor</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
@@ -803,13 +797,17 @@
         <span class="k">if</span> <span class="s2">&quot;krg&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krg&quot;</span><span class="p">]),</span> <span class="mf">0.0</span><span class="p">):</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;krg must start at zero&quot;</span><span class="p">)</span>
             <span class="n">error</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">if</span> <span class="s2">&quot;pc&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;pc&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="o">-</span><span class="n">epsilon</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;pc data for gas-oil not strictly deceasing&quot;</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;pc data for gas-oil not strictly decreasing&quot;</span><span class="p">)</span>
                 <span class="n">error</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="s2">&quot;pc&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()):</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;pc goes to infinity for gas-oil. &quot;</span><span class="p">)</span>
             <span class="n">error</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="s2">&quot;pc&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;pc data contains NaN&quot;</span><span class="p">)</span>
+            <span class="n">error</span> <span class="o">=</span> <span class="kc">True</span>
+
         <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="s2">&quot;sg&quot;</span><span class="p">,</span> <span class="s2">&quot;krg&quot;</span><span class="p">,</span> <span class="s2">&quot;krog&quot;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">)):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
                 <span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">col</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="n">epsilon</span><span class="p">)</span>
@@ -1002,6 +1000,9 @@
 <span class="sd">                string, overrides what this object can provide. Used by GasWater.</span>
 <span class="sd">                If None, it will be computed, use empty string to avoid.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">selfcheck</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">&quot;SGFN&quot;</span><span class="p">):</span>
+            <span class="c1"># Selfcheck will issue error messages.</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
         <span class="n">string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">if</span> <span class="s2">&quot;pc&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.wateroil &mdash; pyscal 0.7.8.dev2+g1edeb8f documentation</title>
+  <title>pyscal.wateroil &mdash; pyscal 0.7.8.dev3+gd8352b8 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.7.8.dev2+g1edeb8f
+                0.7.8.dev3+gd8352b8
               </div>
             
           
@@ -260,8 +260,6 @@
         <span class="k">if</span> <span class="n">_sgcr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sgcr</span> <span class="o">=</span> <span class="n">_sgcr</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tag</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">tag</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">swirr</span> <span class="o">=</span> <span class="n">swirr</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">swl</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">swl</span><span class="p">,</span> <span class="n">swirr</span><span class="p">)</span>  <span class="c1"># Cannot allow swl &lt; swirr. Warn?</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">sorw</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="n">sorw</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">SWINTEGERS</span><span class="p">:</span>
@@ -787,10 +785,9 @@
         <span class="k">assert</span> <span class="n">perm_ref</span> <span class="o">&gt;</span> <span class="mf">0.0</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="s2">&quot;swl must larger than zero to avoid infinite capillary pressure&quot;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;swl must be larger than zero to avoid infinite capillary pressure&quot;</span>
             <span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span>
 
         <span class="k">if</span> <span class="n">b</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
@@ -853,13 +850,12 @@
         <span class="k">assert</span> <span class="n">perm_ref</span> <span class="o">&gt;</span> <span class="mf">0.0</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="s2">&quot;swl must larger than zero to avoid infinite capillary pressure&quot;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;swl must be larger than zero to avoid infinite capillary pressure&quot;</span>
             <span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span>
 
         <span class="k">if</span> <span class="n">b</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;positive b will give increasing capillary pressure with saturation&quot;</span>
             <span class="p">)</span>
 
@@ -908,8 +904,7 @@
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sigma_costau</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="n">b</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">swirr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span><span class="p">):</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;swl must be set larger than swirr to avoid infinite p_c&quot;</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;swl must be larger than swirr&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;swl must be larger than swirr to avoid infinite p_c&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.01</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
@@ -959,19 +954,14 @@
 <span class="sd">        Returns false if error occured.</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>  <span class="c1"># noqa</span>
-        <span class="n">inputerror</span> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># Flag to be able to catch all errors</span>
         <span class="k">if</span> <span class="n">cw</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;cw must be larger or equal to zero&quot;</span><span class="p">)</span>
-            <span class="n">inputerror</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;cw must be larger or equal to zero&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">co</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;co must be less than zero&quot;</span><span class="p">)</span>
-            <span class="n">inputerror</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;co must be less than zero&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">aw</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;aw must be larger than zero&quot;</span><span class="p">)</span>
-            <span class="n">inputerror</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;aw must be larger than zero&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">ao</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;ao must be larger than zero&quot;</span><span class="p">)</span>
-            <span class="n">inputerror</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;ao must be larger than zero&quot;</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">swr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">swr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">swirr</span>
@@ -979,16 +969,12 @@
             <span class="n">sor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span>
 
         <span class="k">if</span> <span class="n">swr</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sor</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;swr (swirr) must be less than 1 - sor&quot;</span><span class="p">)</span>
-            <span class="n">inputerror</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;swr (swirr) must be less than 1 - sor&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">swr</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">swr</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;swr must be contained in [0,1]&quot;</span><span class="p">)</span>
-            <span class="n">inputerror</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;swr must be contained in [0,1]&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">sor</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">sor</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;sor must be contained in [0,1]&quot;</span><span class="p">)</span>
-            <span class="n">inputerror</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">if</span> <span class="n">inputerror</span><span class="p">:</span>
-            <span class="k">return</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;sor must be contained in [0,1]&quot;</span><span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">pccomment</span> <span class="o">=</span> <span class="p">(</span>
             <span class="s2">&quot;-- Skjæveland correlation for Pc;</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="o">+</span> <span class="s2">&quot;-- cw=</span><span class="si">%g</span><span class="s2">, co=</span><span class="si">%g</span><span class="s2">, aw=</span><span class="si">%g</span><span class="s2">, ao=</span><span class="si">%g</span><span class="s2">, swr=</span><span class="si">%g</span><span class="s2">, sor=</span><span class="si">%g</span><span class="se">\n</span><span class="s2">&quot;</span>
@@ -1011,13 +997,9 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;swnpc&quot;</span><span class="p">]</span> <span class="o">**</span> <span class="n">aw</span>
         <span class="p">)</span> <span class="o">+</span> <span class="n">co</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sonpc&quot;</span><span class="p">]</span> <span class="o">**</span> <span class="n">ao</span><span class="p">)</span>
 
-        <span class="c1"># From 1-sor, the pc is not defined. We want to extrapolate constantly,</span>
-        <span class="c1"># but with a twist as Eclipse does not non-monotone capillary pressure:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">nanrows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sor</span> <span class="o">-</span> <span class="n">epsilon</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">nanrows</span><span class="p">,</span> <span class="s2">&quot;pc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">nanrows</span><span class="p">,</span> <span class="s2">&quot;pc&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">nanrows</span><span class="p">,</span> <span class="s2">&quot;sw&quot;</span><span class="p">]</span>
-        <span class="p">)</span>  <span class="c1"># Just deduct sw to make it monotone..</span></div>
+        <span class="c1"># From 1-sor, the pc is not defined. Extrapolate constantly, and let</span>
+        <span class="c1"># the non-monotonocity be fixed in the output generators.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;ffill&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="WaterOil.add_LET_pc_pd"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.add_LET_pc_pd">[docs]</a>    <span class="k">def</span> <span class="nf">add_LET_pc_pd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Lp</span><span class="p">,</span> <span class="n">Ep</span><span class="p">,</span> <span class="n">Tp</span><span class="p">,</span> <span class="n">Lt</span><span class="p">,</span> <span class="n">Et</span><span class="p">,</span> <span class="n">Tt</span><span class="p">,</span> <span class="n">Pcmax</span><span class="p">,</span> <span class="n">Pct</span><span class="p">):</span>
         <span class="c1"># pylint: disable=line-too-long</span>
@@ -1211,6 +1193,9 @@
             <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;pc data not strictly decreasing&quot;</span><span class="p">)</span>
                 <span class="n">error</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="s2">&quot;pc&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;pc data contains NaN&quot;</span><span class="p">)</span>
+            <span class="n">error</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="s2">&quot;pc&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()):</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;pc goes to infinity. Maybe swirr=swl?&quot;</span><span class="p">)</span>
             <span class="n">error</span> <span class="o">=</span> <span class="kc">True</span>
