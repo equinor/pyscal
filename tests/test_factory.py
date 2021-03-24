@@ -33,6 +33,9 @@ def test_factory_wateroil():
         # pylint: disable=unexpected-keyword-arg
         pyscal_factory.create_water_oil(swirr=0.01)  # noqa
 
+    with pytest.raises(TypeError):
+        pyscal_factory.create_water_oil(params="swirr 0.01")
+
     wateroil = pyscal_factory.create_water_oil(
         dict(
             swirr=0.01,
@@ -237,6 +240,22 @@ def test_init_with_swlheight():
             )
         )
 
+    # swlheight must be positive:
+    with pytest.raises(ValueError, match="swlheight must be larger than zero"):
+        pyscal_factory.create_water_oil(
+            dict(
+                swlheight=-200,
+                nw=1,
+                now=1,
+                swirr=0.01,
+                a=1,
+                b=-2,
+                poro_ref=0.2,
+                perm_ref=100,
+                drho=200,
+            )
+        )
+
     # If swcr is large enough, it will pass:
     wateroil = pyscal_factory.create_water_oil(
         dict(
@@ -363,10 +382,17 @@ def test_factory_gasoil():
     """Test that we can create curves from dictionaries of parameters"""
     pyscal_factory = PyscalFactory()
 
+    # Factory refuses to create incomplete defaulted objects.
+    with pytest.raises(ValueError):
+        pyscal_factory.create_gas_oil()
+
     with pytest.raises(TypeError):
         # (this must be a dictionary)
         # pylint: disable=unexpected-keyword-arg
         pyscal_factory.create_gas_oil(swirr=0.01)  # noqa
+
+    with pytest.raises(TypeError):
+        pyscal_factory.create_gas_oil(params="swirr 0.01")
 
     gasoil = pyscal_factory.create_gas_oil(
         dict(swirr=0.01, swl=0.1, sgcr=0.05, tag="Good sand", ng=1, nog=2)
@@ -411,9 +437,18 @@ def test_factory_gaswater():
     """Test that we can create gas-water curves from dictionaries of parameters"""
     pyscal_factory = PyscalFactory()
 
+    # Factory refuses to create incomplete defaulted objects.
+    with pytest.raises(ValueError):
+        pyscal_factory.create_gas_water()
+
     with pytest.raises(TypeError):
         # pylint: disable=unexpected-keyword-arg
         pyscal_factory.create_gas_water(swirr=0.01)  # noqa
+
+    with pytest.raises(TypeError):
+        # (it must be a dictionary)
+        # pylint: disable=unexpected-keyword-arg
+        pyscal_factory.create_gas_water(params="swirr 0.01")
 
     gaswater = pyscal_factory.create_gas_water(
         dict(swirr=0.01, swl=0.03, sgrw=0.1, sgcr=0.15, tag="gassy sand", ng=2, nw=2)
@@ -456,6 +491,18 @@ def test_factory_gaswater():
 def test_factory_wateroilgas():
     """Test creating discrete cases of WaterOilGas from factory"""
     pyscal_factory = PyscalFactory()
+
+    # Factory refuses to create incomplete defaulted objects.
+    with pytest.raises(ValueError):
+        pyscal_factory.create_water_oil_gas()
+
+    with pytest.raises(TypeError):
+        # (this must be a dictionary)
+        # pylint: disable=unexpected-keyword-arg
+        pyscal_factory.create_water_oil_gas(swirr=0.01)  # noqa
+
+    with pytest.raises(TypeError):
+        pyscal_factory.create_water_oil_gas(params="swirr 0.01")
 
     wog = pyscal_factory.create_water_oil_gas(dict(nw=2, now=3, ng=1, nog=2.5))
     swof = wog.SWOF()
@@ -521,7 +568,7 @@ def test_factory_wateroilgas_wo():
     wog.SGOF()
 
 
-def test_load_relperm_df(tmpdir):
+def test_load_relperm_df(tmpdir, caplog):
     """Test loading of dataframes with validation from excel or from csv"""
     testdir = Path(__file__).absolute().parent
 
@@ -530,6 +577,9 @@ def test_load_relperm_df(tmpdir):
     scaldata = PyscalFactory.load_relperm_df(scalfile_xls)
     with pytest.raises(IOError):
         PyscalFactory.load_relperm_df("not-existing-file")
+
+    with pytest.raises(ValueError, match="Non-existing sheet-name"):
+        PyscalFactory.load_relperm_df(scalfile_xls, sheet_name="foo")
 
     assert "SATNUM" in scaldata
     assert "CASE" in scaldata
@@ -544,6 +594,12 @@ def test_load_relperm_df(tmpdir):
     assert "CASE" in scaldata_fromdf
     assert "SATNUM" in scaldata_fromdf
     assert len(scaldata_fromdf) == len(scaldata_fromcsv) == len(scaldata)
+
+    scaldata_fromcsv = PyscalFactory.load_relperm_df("scal-input.csv", sheet_name="foo")
+    assert "Sheet name only relevant for XLSX files, ignoring foo" in caplog.text
+
+    with pytest.raises(ValueError, match="Unsupported argument"):
+        PyscalFactory.load_relperm_df(dict(foo=1))
 
     # Perturb the dataframe, this should trigger errors
     with pytest.raises(ValueError):
@@ -584,10 +640,42 @@ def test_load_relperm_df(tmpdir):
     assert "foobar" in swof_str  # Random string injected in xlsx.
 
     # Make a dummy text file
-    with open("dummy.txt", "w") as fhandle:
-        fhandle.write("foo\nbar, com")
+    Path("dummy.txt").write_text("foo\nbar, com")
     with pytest.raises(ValueError):
         PyscalFactory.load_relperm_df("dummy.txt")
+
+    # Make an empty csv file
+    Path("empty.csv").write_text("")
+    # A ValueError would also make sense here
+    assert PyscalFactory.load_relperm_df("empty.csv").empty
+
+    # Merge tags and comments if both are supplied
+    Path("tagandcomment.csv").write_text(
+        "SATNUM,nw,now,tag,comment\n1,1,1,a-tag,a-comment"
+    )
+    tagandcomment_df = PyscalFactory.load_relperm_df("tagandcomment.csv")
+    assert (
+        tagandcomment_df["TAG"].values[0] == "SATNUM 1 tag: a-tag; comment: a-comment"
+    )
+
+    # Missing SATNUMs:
+    Path("wrongsatnum.csv").write_text("SATNUM,nw,now\n1,1,1\n3,1,1")
+    with pytest.raises(ValueError, match="Missing SATNUMs?"):
+        PyscalFactory.load_relperm_df("wrongsatnum.csv")
+
+    # Missing SATNUMs, like merged cells:
+    Path("mergedcells.csv").write_text(
+        "CASE,SATNUM,nw,now\nlow,,1,1\nlow,1,2,2\nlow,,3,32"
+    )
+    with pytest.raises(ValueError, match="Found not-a-number"):
+        PyscalFactory.load_relperm_df("mergedcells.csv")
+
+    # Missing SATNUMs, like merged cells:
+    Path("mergedcellscase.csv").write_text(
+        "CASE,SATNUM,nw,now\n,1,1,1\nlow,1,2,2\n,1,3,32"
+    )
+    with pytest.raises(ValueError, match="Found not-a-number"):
+        PyscalFactory.load_relperm_df("mergedcellscase.csv")
 
 
 def test_many_nans():
@@ -674,6 +762,10 @@ def test_scalrecommendation():
         "high": {"nw": 4, "now": 2, "ng": 1, "nog": 3},
     }
     scal = pyscal_factory.create_scal_recommendation(scal_input)
+
+    with pytest.raises(ValueError, match="Input must be a dict"):
+        pyscal_factory.create_scal_recommendation("low")
+
     # (not supported yet to make WaterOil only..)
     interp = scal.interpolate(-0.5)
     sat_table_str_ok(interp.SWOF())
@@ -683,10 +775,12 @@ def test_scalrecommendation():
     check_table(interp.wateroil.table)
     check_table(interp.gasoil.table)
 
-    incomplete1 = scal_input.copy()
-    del incomplete1["BASE"]
-    with pytest.raises(ValueError):
-        pyscal_factory.create_scal_recommendation(incomplete1)
+    # Check that we error if any of the parameters above is missing:
+    for case in ["low", "BASE", "high"]:
+        copy1 = scal_input.copy()
+        del copy1[case]
+        with pytest.raises(ValueError):
+            pyscal_factory.create_scal_recommendation(copy1)
 
     go_only = scal_input.copy()
     del go_only["low"]["now"]
@@ -699,6 +793,16 @@ def test_scalrecommendation():
     # don't try to ask for water data:
     assert "SGFN" in gasoil.interpolate(-0.4).SGFN()
     assert "SWOF" not in gasoil.interpolate(-0.2).SWOF()
+
+    basehigh = scal_input.copy()
+    del basehigh["low"]
+    with pytest.raises(ValueError, match='"low" case not supplied'):
+        pyscal_factory.create_scal_recommendation(basehigh)
+
+    baselow = scal_input.copy()
+    del baselow["high"]
+    with pytest.raises(ValueError, match='"high" case not supplied'):
+        pyscal_factory.create_scal_recommendation(baselow)
 
 
 def test_scalrecommendation_gaswater():
@@ -724,12 +828,9 @@ def test_xls_scalrecommendation():
 
     xlsxfile = testdir / "data/scal-pc-input-example.xlsx"
     scalinput = pd.read_excel(xlsxfile, engine="openpyxl").set_index(["SATNUM", "CASE"])
-    print(scalinput)
     for satnum in scalinput.index.levels[0].values:
         dictofdict = scalinput.loc[satnum, :].to_dict(orient="index")
-        print(dictofdict)
         scalrec = PyscalFactory.create_scal_recommendation(dictofdict)
-        print(scalrec.interpolate(-0.5).SWOF())
         scalrec.interpolate(+0.5)
 
 

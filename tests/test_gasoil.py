@@ -75,10 +75,6 @@ def test_errors():
     with pytest.raises(ValueError, match="No saturation range left"):
         GasOil(swl=0.3, sorg=0.8)
 
-    with pytest.warns(DeprecationWarning):
-        gasoil = GasOil(tag=dict())
-    assert gasoil.tag == ""
-
 
 def test_plotting():
     """Test that plotting code pass through (nothing displayed)"""
@@ -416,7 +412,6 @@ def test_sgfn():
     sgfn_str = gasoil.SGFN()
     assert "SGFN" in sgfn_str
     assert len(sgfn_str) > 15
-    print(sgfn_str)
 
 
 def test_fast():
@@ -495,3 +490,33 @@ def test_roundoff():
     assert "0.1952404" not in gasoil.SGOF()
     assert "0.1952405" in gasoil.SGOF()
     check_table(gasoil.table)  # This function allows this monotonicity hiccup.
+
+
+@pytest.mark.parametrize(
+    "columnname, errorvalues",
+    [
+        ("sg", [1, 0]),
+        ("sg", [0, 2]),
+        ("krg", [1, 0]),
+        ("krg", [0, 2]),
+        ("krog", [0, 1]),
+        ("krog", [2, 0]),
+        ("pc", [np.inf, 0]),
+        ("pc", [np.nan, 0]),
+        ("pc", [1, 2]),
+        ("pc", [0, 1]),
+    ],
+)
+def test_selfcheck(columnname, errorvalues):
+    """Test the selfcheck feature of a GasOil object"""
+    gasoil = GasOil(h=1)
+    gasoil.add_corey_gas()
+    gasoil.add_corey_oil()
+    assert gasoil.selfcheck()
+
+    # Punch the internal table directly to trigger error:
+    gasoil.table[columnname] = errorvalues
+    assert not gasoil.selfcheck()
+    assert gasoil.SGOF() == ""
+    if not columnname == "krog":
+        assert gasoil.SGFN() == ""

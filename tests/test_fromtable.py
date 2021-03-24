@@ -291,17 +291,11 @@ def test_go_invalidcurves():
 
 def test_wo_fromtable_problems():
     """Test wateroil from tables with problematic data"""
-    # Implicit swl and sorw in the input, how do we handle that?
+    # With default object:
     df1 = pd.DataFrame(
         columns=["Sw", "krw", "krow", "pcow"],
         data=[[0.15, 0, 1, 3], [0.89, 1, 0, 0.1], [1, 1, 0, 0]],
     )
-    # With default object:
-    wateroil = WaterOil(h=0.1)
-    with pytest.raises(ValueError):
-        wateroil.add_fromtable(df1)
-        # This results in krw and krow overshooting 0 and 1
-    # Fix left endpoint:
     wateroil = WaterOil(h=0.1, swl=df1["Sw"].min())
     wateroil.add_fromtable(df1)
     # The table is now valid, but we did not preserve the 0.89 point
@@ -314,22 +308,97 @@ def test_wo_fromtable_problems():
     check_table(wateroil.table)
     # For low enough h, this will however NOT matter.
 
-    df2 = pd.DataFrame(
-        columns=["Sw", "KRW", "KROW", "PCOW"], data=[[0, -0.01, 1, 0], [1, 1, 0, 0]]
-    )
-    wateroil = WaterOil(h=0.1)
-    with pytest.raises(ValueError):
-        # Should say krw is negative
-        wateroil.add_fromtable(df2, krwcolname="KRW")
 
-    df3 = pd.DataFrame(
-        columns=["Sw", "KRW", "KROW", "PCOW"],
-        data=[[0, 0, 1, 0], [1, 1.000000001, 0, 0]],
-    )
-    wateroil = WaterOil(h=0.1)
-    with pytest.raises(ValueError):
-        # Should say krw is above 1.0
-        wateroil.add_fromtable(df3, krwcolname="KRW")
+@pytest.mark.parametrize(
+    "dframe, swl, exception, message",
+    [
+        (
+            pd.DataFrame(
+                columns=["Sw", "krw", "krow", "pcow"],
+                data=[[0.15, "fooo", 1, 3], [0.89, 1, 0, 0.1], [1, 1, 0, 0]],
+            ),
+            0.15,
+            ValueError,
+            "Failed to parse column krw",
+        ),
+        (
+            pd.DataFrame(
+                columns=["Sw", "krw", "krow", "pcow"],
+                data=[[0.15, 1.1, 1, 3], [0.89, 1, 0, 0.1], [1, 1, 0, 0]],
+            ),
+            0.15,
+            ValueError,
+            "krw is above 1",
+        ),
+        (
+            pd.DataFrame(
+                columns=["Sw", "krw", "krow", "pcow"],
+                data=[[0.15, -0.1, 1, 3], [0.89, 1, 0, 0.1], [1, 1, 0, 0]],
+            ),
+            0.15,
+            ValueError,
+            "krw is below 0",
+        ),
+        (
+            pd.DataFrame(
+                columns=["Sw", "krw", "krow", "pcow"],
+                data=[[0.15, 0.1, "foo", 3], [0.89, 1, 0, 0.1], [1, 1, 0, 0]],
+            ),
+            0.15,
+            ValueError,
+            "Failed to parse column krow",
+        ),
+        (
+            pd.DataFrame(
+                columns=["Sw", "krw", "krow", "pcow"],
+                data=[[0.15, 0.1, 1.1, 3], [0.89, 1, 0, 0.1], [1, 1, 0, 0]],
+            ),
+            0.15,
+            ValueError,
+            "krow is above 1",
+        ),
+        (
+            pd.DataFrame(
+                columns=["Sw", "krw", "krow", "pcow"],
+                data=[[0.15, 0.1, 1, 3], [0.89, 1, 0, 0.1], [1, 1, -0.001, 0]],
+            ),
+            0.15,
+            ValueError,
+            "krow is below 0",
+        ),
+        (
+            pd.DataFrame(
+                columns=["Sw", "krw", "krow", "pcow"],
+                data=[[0.15, 0.1, 1, 3], [0.89, 1, 0, 0.1], [1, 1, -0.001, 0]],
+            ),
+            0.10,
+            ValueError,
+            "Incompatible swl",
+        ),
+        (
+            pd.DataFrame(
+                columns=["Sw", "krw", "krow", "pcow"],
+                data=[[0.15, 0.1, 1, 3], [0.89, 1, 0, 0.1], [1, 1, -0.001, 0]],
+            ),
+            0,
+            ValueError,
+            "Incompatible swl",
+        ),
+        (
+            pd.DataFrame(
+                columns=["Sw", "krw", "krow", "pcow"],
+                data=[[0.15, 0.1, 1, 3], [0.89, 1, 0, 0.1], [1, 1, -0.001, 0]],
+            ),
+            0.16,
+            ValueError,
+            "Incompatible swl",
+        ),
+    ],
+)
+def test_wo_from_table_exceptions(dframe, swl, exception, message):
+    wateroil = WaterOil(h=0.1, swl=swl)
+    with pytest.raises(exception, match=message):
+        wateroil.add_fromtable(dframe)
 
 
 def test_fromtable_types():

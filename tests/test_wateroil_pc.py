@@ -20,7 +20,12 @@ def test_simple_j():
     check_table(wateroil.table)
     assert wateroil.pccomment
 
+    wateroil = WaterOil(swl=0)
+    with pytest.raises(ValueError, match="swl must be larger than zero"):
+        wateroil.add_simple_J()
+
     # Zero gravity:
+    wateroil = WaterOil(swl=0.01)
     wateroil.add_simple_J(g=0)
     assert wateroil.table.pc.unique() == 0.0
 
@@ -47,6 +52,10 @@ def test_simple_j():
 
 def test_simple_j_petro():
     """Simple test of the simple J petrophysical function correlation"""
+    wateroil = WaterOil(swl=0)
+    with pytest.raises(ValueError, match="swl must be larger than zero"):
+        wateroil.add_simple_J_petro(a=1, b=-2)
+
     wateroil = WaterOil(swl=0.01)
     wateroil.add_simple_J_petro(a=1, b=-2)
     check_table(wateroil.table)
@@ -73,6 +82,10 @@ def test_simple_j_petro():
     sat_table_str_ok(swof)
     sat_table_str_ok(wateroil.SWFN())
 
+    with pytest.raises(ValueError, match="positive b"):
+        wateroil = WaterOil(swl=0.01)
+        wateroil.add_simple_J_petro(a=1, b=2)
+
 
 @settings(deadline=500)
 @given(
@@ -98,7 +111,7 @@ def test_simple_j_random(a, b, poro_ref, perm_ref, drho, g):
     check_table(wateroil.table)
 
 
-def test_normalized_j():
+def test_normalized_j(caplog):
     """Test the normalized J-function correlation for capillary pressure"""
     wateroil = WaterOil(swirr=0.1, h=0.1)
     with pytest.raises(ValueError):
@@ -115,6 +128,18 @@ def test_normalized_j():
     float_df_checker(wateroil.table, "sw", 0.1, "pc", 2.039969 * bar_to_atm)
     float_df_checker(wateroil.table, "sw", 0.6, "pc", 0.056666 * bar_to_atm)
     float_df_checker(wateroil.table, "sw", 1.0, "pc", 0.02040 * bar_to_atm)
+
+    wateroil = WaterOil(swirr=0.1, swl=0.11, h=0.1)
+    wateroil.add_normalized_J(a=0.5, b=-0.001, poro=0.2, perm=10, sigma_costau=30)
+    assert "b exponent is very small" in caplog.text
+
+    wateroil = WaterOil(swirr=0.1, swl=0.11, h=0.1)
+    wateroil.add_normalized_J(a=0.001, b=-2, poro=0.2, perm=10, sigma_costau=30)
+    assert "a parameter is very small" in caplog.text
+
+    wateroil = WaterOil(swirr=0.1, swl=0.11, h=0.1)
+    wateroil.add_normalized_J(a=9, b=-2, poro=0.2, perm=10, sigma_costau=30)
+    assert "a parameter is very high" in caplog.text
 
 
 @settings(deadline=500)
@@ -193,3 +218,37 @@ def test_let_pc_imb():
     wateroil.add_corey_water()
     wateroil.add_corey_oil()
     sat_table_str_ok(wateroil.SWOF())
+
+
+def test_skjaeveland_pc():
+    """Simple test of Skjæveland capillary pressure correlation"""
+    wateroil = WaterOil(h=0.3, swl=0.2, swirr=0.1)
+    wateroil.add_corey_water()
+    wateroil.add_skjaeveland_pc(swr=0.1, cw=0.1, co=-0.1, aw=0.1, ao=0.1)
+    check_table(wateroil.table)
+    swfn = wateroil.SWFN()
+
+    # Defaulting swr:
+    wateroil.add_skjaeveland_pc(swr=0.1, cw=0.1, co=-0.1, aw=0.1, ao=0.1)
+    wateroil.add_skjaeveland_pc(swr=0.1, cw=0.1, co=-0.1, aw=0.1, ao=0.1)
+    assert wateroil.SWFN() == swfn
+
+    # Add with wrong numbers
+    wateroil = WaterOil(h=0.3, swl=0.2, sorw=0.3)
+    with pytest.raises(ValueError, match="cw must be larger"):
+        wateroil.add_skjaeveland_pc(swr=0.1, cw=-0.1, co=-0.1, aw=0.1, ao=0.1)
+
+    with pytest.raises(ValueError, match="co must be less"):
+        wateroil.add_skjaeveland_pc(swr=0.1, cw=0.1, co=0.1, aw=0.1, ao=0.1)
+
+    with pytest.raises(ValueError, match="aw must be larger"):
+        wateroil.add_skjaeveland_pc(swr=0.1, cw=0.1, co=-0.1, aw=-0.1, ao=0.1)
+
+    with pytest.raises(ValueError, match="ao must be larger"):
+        wateroil.add_skjaeveland_pc(swr=0.1, sor=0.3, cw=0.1, co=-0.1, aw=0.1, ao=-0.1)
+
+    with pytest.raises(ValueError, match=r"swr \(swirr\) must be less than 1 - sor"):
+        wateroil.add_skjaeveland_pc(swr=0.8, sor=0.3, cw=0.1, co=-0.1, aw=0.1, ao=0.1)
+
+    with pytest.raises(ValueError, match="swr must be contained in"):
+        wateroil.add_skjaeveland_pc(swr=-1.2, sor=0.3, cw=0.1, co=-0.1, aw=0.1, ao=0.1)

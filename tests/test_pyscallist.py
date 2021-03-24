@@ -689,16 +689,23 @@ def test_error_messages_pr_satnum(caplog):
             [1, "low", 1, 1, 1, 1],
             [1, "base", 1, 1, 1, 1],
             [1, "high", 1, 1, 1, 1],
-            [2, "low", np.nan, 1, 2, 3],
+            [2, "low", 1, 1, 2, 3],
             [2, "base", 2, 1, 2, 3],
             [2, "high", 3, 1, 2, 3],
         ],
     )
-    # The error should hint both to SATNUM and to low/base/high
-    with pytest.raises(ValueError, match="SATNUM 2"):
-        PyscalFactory.create_scal_recommendation_list(dframe, h=0.2)
-    with pytest.raises(ValueError, match="Problem with low"):
-        PyscalFactory.create_scal_recommendation_list(dframe, h=0.2)
+    # Perturb all entries in the dataframe:
+    for rowidx in list(range(0, 6)):
+        for colidx in list(range(2, 6)):
+            dframe_perturbed = dframe.copy()
+            dframe_perturbed.iloc[rowidx, colidx] = np.nan
+            satnum = dframe.iloc[rowidx, 0]
+            case = dframe.iloc[rowidx, 1]
+            # The error should hint both to SATNUM and to low/base/high
+            with pytest.raises(ValueError, match=f"SATNUM {satnum}"):
+                PyscalFactory.create_scal_recommendation_list(dframe_perturbed, h=0.2)
+            with pytest.raises(ValueError, match=f"Problem with {case}"):
+                PyscalFactory.create_scal_recommendation_list(dframe_perturbed, h=0.2)
 
 
 def test_fast():

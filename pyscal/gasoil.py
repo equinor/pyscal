@@ -1,7 +1,6 @@
 """Representing a GasOil object"""
 
 import logging
-import warnings
 
 import numpy as np
 import pandas as pd
@@ -74,12 +73,7 @@ class GasOil(object):
         assert -epsilon < sgcr < 1, "0 <= sgcr < 1 is required"
         assert -epsilon < swl < 1, "0 <= swl < 1 is required"
         assert -epsilon < sorg < 1, "0 <= sorg <  1 is required"
-        if not isinstance(tag, str):
-            warnings.warn(
-                "tag must be a string, this will be a hard failure later",
-                DeprecationWarning,
-            )
-            tag = ""
+
         if krgendanchor is None:
             krgendanchor = ""
 
@@ -638,13 +632,17 @@ class GasOil(object):
         if "krg" in self.table and not np.isclose(min(self.table["krg"]), 0.0):
             logger.error("krg must start at zero")
             error = True
-        if "pc" in self.table and self.table["pc"][0] > 0:
+        if "pc" in self.table and self.table["pc"][0] > -epsilon:
             if not (self.table["pc"].diff().dropna() < epsilon).all():
-                logger.error("pc data for gas-oil not strictly deceasing")
+                logger.error("pc data for gas-oil not strictly decreasing")
                 error = True
         if "pc" in self.table and np.isinf(self.table["pc"].max()):
             logger.error("pc goes to infinity for gas-oil. ")
             error = True
+        if "pc" in self.table.columns and np.isnan(self.table["pc"]).any():
+            logger.error("pc data contains NaN")
+            error = True
+
         for col in list(set(["sg", "krg", "krog"]) & set(self.table.columns)):
             if not (
                 (min(self.table[col]) >= -epsilon)
@@ -837,6 +835,9 @@ class GasOil(object):
                 string, overrides what this object can provide. Used by GasWater.
                 If None, it will be computed, use empty string to avoid.
         """
+        if not self.selfcheck(mode="SGFN"):
+            # Selfcheck will issue error messages.
+            return ""
         string = ""
         if "pc" not in self.table.columns:
             self.table["pc"] = 0.0
