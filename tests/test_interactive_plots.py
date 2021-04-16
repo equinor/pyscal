@@ -3,6 +3,7 @@
 Run pytest with --plot option to make these run. Add -s also to get
 instructions for what to check."""
 
+import os
 import random
 
 import matplotlib

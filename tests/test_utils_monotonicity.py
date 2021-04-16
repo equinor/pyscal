@@ -1,4 +1,5 @@
 """Test module for monotonicity support functions in pyscal"""
+import os
 
 import numpy as np
 import pandas as pd
@@ -25,34 +26,35 @@ def test_df2str_monotone():
     # but still we ensure it runs in eclipse:
     assert (
         df2str(pd.DataFrame(data=[1, 1, 1]), digits=2, monotonicity={0: {"sign": -1}})
-        == "1.00\n0.99\n0.98\n"
+        == os.linesep.join(["1.00", "0.99", "0.98"]) + os.linesep
     )
     assert (
         df2str(pd.DataFrame(data=[1, 1, 1]), digits=2, monotonicity={0: {"sign": -1}})
-        == "1.00\n0.99\n0.98\n"
+        == os.linesep.join(["1.00", "0.99", "0.98"]) + os.linesep
     )
     assert (
         df2str(pd.DataFrame(data=[1, 1, 1]), digits=2, monotonicity={0: {"sign": -1}})
-        == "1.00\n0.99\n0.98\n"
+        == os.linesep.join(["1.00", "0.99", "0.98"]) + os.linesep
     )
     assert (
         df2str(pd.DataFrame(data=[1, 1, 1]), digits=2, monotonicity={0: {"sign": 1}})
-        == "1.00\n1.01\n1.02\n"
+        == os.linesep.join(["1.00", "1.01", "1.02"]) + os.linesep
     )
     assert (
         df2str(pd.DataFrame(data=[1, 1, 1]), digits=2, monotonicity={0: {"sign": 1}})
-        == "1.00\n1.01\n1.02\n"
+        == os.linesep.join(["1.00", "1.01", "1.02"]) + os.linesep
     )
     assert (
         df2str(pd.DataFrame(data=[1, 1, 1]), digits=7, monotonicity={0: {"sign": -1}})
-        == "1.0000000\n0.9999999\n0.9999998\n"
+        == os.linesep.join(["1.0000000", "0.9999999", "0.9999998"]) + os.linesep
     )
 
     # For strict monotonicity we will introduce negativity:
     dframe = pd.DataFrame(data=[0.00001, 0.0, 0.0, 0.0], columns=["PC"])
     assert (
         df2str(dframe, monotonicity={"PC": {"sign": -1}})
-        == "0.0000100\n0.0000000\n-0.0000001\n-0.0000002\n"
+        == os.linesep.join(["0.0000100", "0.0000000", "-0.0000001", "-0.0000002"])
+        + os.linesep
     )
 
     # Actual data that has occured:
@@ -61,7 +63,10 @@ def test_df2str_monotone():
     )
     assert (
         df2str(dframe, monotonicity={"PC": {"sign": -1}})
-        == "0.0000027\n0.0000026\n0.0000024\n0.0000023\n0.0000017\n"
+        == os.linesep.join(
+            ["0.0000027", "0.0000026", "0.0000024", "0.0000023", "0.0000017"]
+        )
+        + os.linesep
     )
 
 
