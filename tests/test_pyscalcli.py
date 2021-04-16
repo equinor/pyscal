@@ -23,6 +23,7 @@ def test_installed():
     assert subprocess.check_output(["pyscal", "--version"])
 
 
+@pytest.mark.skipif(sys.platform == "win32", reason="UTF-8 problems on Windows")
 @pytest.mark.skipif(sys.version_info < (3, 7), reason="Requires Python 3.7 or higher")
 @pytest.mark.parametrize("verbosity_flag", [None, "--verbose", "--debug"])
 def test_log_levels(tmp_path, verbosity_flag):
@@ -30,7 +31,10 @@ def test_log_levels(tmp_path, verbosity_flag):
     client, and get log output from modules deep down"""
 
     relperm_file = str(
-        Path(__file__).absolute().parent / "data" / "relperm-input-example.xlsx"
+        # A cell in this xlsx contains "Åre 1.5", does not work on Windows
+        Path(__file__).absolute().parent
+        / "data"
+        / "relperm-input-example.xlsx"
     )
 
     commands = ["pyscal", relperm_file]
@@ -76,7 +80,7 @@ def test_pyscal_client_static(tmp_path, caplog, default_loglevel, mocker):
     # We get one warning due to empty cells in xlsx:
     assert sum(record.levelno == logging.WARNING for record in caplog.records) == 1
 
-    relpermlines = "\n".join(open("relperm.inc").readlines())
+    relpermlines = os.linesep.join(open("relperm.inc").readlines())
     assert "SWOF" in relpermlines
     assert "SGOF" in relpermlines
     assert "SLGOF" not in relpermlines
@@ -104,7 +108,7 @@ def test_pyscal_client_static(tmp_path, caplog, default_loglevel, mocker):
     pyscalcli.main()
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
     assert Path("relperm-fam2.inc").is_file()
-    relpermlines = "\n".join(open("relperm-fam2.inc").readlines())
+    relpermlines = os.linesep.join(open("relperm-fam2.inc").readlines())
     assert "SWFN" in relpermlines
     assert "SGFN" in relpermlines
     assert "SOF3" in relpermlines
@@ -120,7 +124,7 @@ def test_pyscal_client_static(tmp_path, caplog, default_loglevel, mocker):
     pyscalcli.main()
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
     assert Path("relperm-slgof.inc").is_file()
-    relpermlines = "\n".join(open("relperm-slgof.inc").readlines())
+    relpermlines = os.linesep.join(open("relperm-slgof.inc").readlines())
     assert "SWOF" in relpermlines
     assert "SGOF" not in relpermlines
     assert "SLGOF" in relpermlines
@@ -187,7 +191,7 @@ def test_pyscal_client_static(tmp_path, caplog, default_loglevel, mocker):
     )
     pyscalcli.main()
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
-    secondsheet = "\n".join(open("relperm-secondsheet.inc").readlines())
+    secondsheet = os.linesep.join(open("relperm-secondsheet.inc").readlines())
     assert "SATNUM 3" not in secondsheet
     assert "sand" in secondsheet
     assert "mud" in secondsheet  # From the comment column in sheet: simple
@@ -247,12 +251,15 @@ def test_pyscalcli_exception_catching(capsys, mocker):
     assert "raise" in outerr  # This is the traceback.
 
 
+@pytest.mark.skipif(sys.platform == "win32", reason="UTF-8 problems on Windows")
 def test_pyscalcli_oilwater(tmp_path, caplog, mocker):
     """Test the command line client in two-phase oil-water"""
     os.chdir(tmp_path)
     relperm_file = "oilwater.csv"
     pd.DataFrame(
-        columns=["SATNUM", "nw", "now", "tag"], data=[[1, 2, 3, "fooå"]]
+        # "fooå" here causes problems on Windows
+        columns=["SATNUM", "nw", "now", "tag"],
+        data=[[1, 2, 3, "fooå"]],
     ).to_csv(relperm_file, index=False)
     caplog.clear()
     mocker.patch(
@@ -268,7 +275,7 @@ def test_pyscalcli_oilwater(tmp_path, caplog, mocker):
     assert not any(record.levelno == logging.WARNING for record in caplog.records)
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
     lines = open("ow.inc").readlines()
-    joined = "\n".join(lines)
+    joined = os.linesep.join(lines)
     assert "fooå" in joined
     assert 100 < len(lines) < 120  # weak test..
 
@@ -319,7 +326,7 @@ def test_pyscalcli_gaswater(tmp_path, caplog, mocker):
     assert not any(record.levelno == logging.WARNING for record in caplog.records)
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
     lines = open("gw.inc").readlines()
-    joined = "\n".join(lines)
+    joined = os.linesep.join(lines)
     assert "SWFN" in joined
     assert "SGFN" in joined
     assert "SWOF" not in joined
@@ -357,7 +364,7 @@ def test_pyscalcli_gaswater_scal(tmp_path, caplog, mocker):
     assert not any(record.levelno == logging.WARNING for record in caplog.records)
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
     lines = open("gw.inc").readlines()
-    joined = "\n".join(lines)
+    joined = os.linesep.join(lines)
     assert "SWFN" in joined
     assert "SGFN" in joined
     assert "SWOF" not in joined
@@ -390,7 +397,7 @@ def test_pyscal_client_scal(tmp_path, caplog, default_loglevel, mocker):
     assert not any(record.levelno == logging.WARNING for record in caplog.records)
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
 
-    relpermlines = "\n".join(open("relperm1.inc").readlines())
+    relpermlines = os.linesep.join(open("relperm1.inc").readlines())
     assert "SWOF" in relpermlines
     assert "SGOF" in relpermlines
     assert "SLGOF" not in relpermlines
