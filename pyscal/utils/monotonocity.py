@@ -278,15 +278,3 @@ def validate_monotonocity_arg(monotonocity, dframe_colnames):
                 raise ValueError(
                     "allowzero in monotonocity argument must be True/False"
                 )
-
-
-def remap_deprecated_monotonocity(monotone_column, monotone_direction):
-    """Remove this function around pyscal 0.9"""
-    signs = {"1": 1, "+1": 1, "inc": 1, "-1": -1, "dec": -1}
-    if monotone_column is not None and monotone_direction is None:
-        return {monotone_column: {"sign": -1}}
-    if monotone_column is not None and monotone_direction is not None:
-        if str(monotone_direction) not in signs:
-            raise ValueError("Invalid monotone_direction {}".format(monotone_direction))
-        return {monotone_column: {"sign": signs[str(monotone_direction)]}}
-    return {}

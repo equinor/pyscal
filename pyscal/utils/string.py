@@ -2,7 +2,7 @@
 
 import logging
 
-from .monotonocity import modify_dframe_monotonocity, remap_deprecated_monotonocity
+from .monotonocity import modify_dframe_monotonocity
 
 logger = logging.getLogger(__name__)
 
@@ -43,22 +43,8 @@ def df2str(
             "sign" (-1 or +1 integer) for direction,  "upper" and "lower" for
             lower and upper limits (non-strict monotonocity is allowed at
             these upper and lower limits).
-        monotone_columns (list of str): column names for which strict
-            monotonocity must be preserved in output. Deprecated.
-        monotone_directions (list of str): Direction of monotonocity, increasing
-            or decreasing, allowed values are '-1', '1', 'inc' or 'dec'. If
-            multiple columns, specify for each. Deprecated.
     """
     float_format = "%1." + str(digits) + "f"
-
-    if monotonocity is not None and monotone_column is not None:
-        raise ValueError("Do not mix new and deprecated API")
-
-    if monotonocity is None and monotone_column is not None:
-        logger.warning("monotone_column is deprecated, use monotonocity")
-        monotonocity = remap_deprecated_monotonocity(
-            monotone_column, monotone_direction
-        )
 
     if monotonocity is not None:
         dframe = modify_dframe_monotonocity(dframe, monotonocity, digits)

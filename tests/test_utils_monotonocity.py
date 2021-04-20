@@ -25,54 +25,34 @@ def test_df2str_monotone():
     # A constant nonzero column, makes no sense as capillary pressure
     # but still we ensure it runs in eclipse:
     assert (
-        df2str(pd.DataFrame(data=[1, 1, 1]), digits=2, monotone_column=0)
+        df2str(pd.DataFrame(data=[1, 1, 1]), digits=2, monotonocity={0: {"sign": -1}})
         == "1.00\n0.99\n0.98\n"
     )
     assert (
-        df2str(
-            pd.DataFrame(data=[1, 1, 1]),
-            digits=2,
-            monotone_column=0,
-            monotone_direction=-1,
-        )
+        df2str(pd.DataFrame(data=[1, 1, 1]), digits=2, monotonocity={0: {"sign": -1}})
         == "1.00\n0.99\n0.98\n"
     )
     assert (
-        df2str(
-            pd.DataFrame(data=[1, 1, 1]),
-            digits=2,
-            monotone_column=0,
-            monotone_direction="dec",
-        )
+        df2str(pd.DataFrame(data=[1, 1, 1]), digits=2, monotonocity={0: {"sign": -1}})
         == "1.00\n0.99\n0.98\n"
     )
     assert (
-        df2str(
-            pd.DataFrame(data=[1, 1, 1]),
-            digits=2,
-            monotone_column=0,
-            monotone_direction=1,
-        )
+        df2str(pd.DataFrame(data=[1, 1, 1]), digits=2, monotonocity={0: {"sign": 1}})
         == "1.00\n1.01\n1.02\n"
     )
     assert (
-        df2str(
-            pd.DataFrame(data=[1, 1, 1]),
-            digits=2,
-            monotone_column=0,
-            monotone_direction="inc",
-        )
+        df2str(pd.DataFrame(data=[1, 1, 1]), digits=2, monotonocity={0: {"sign": 1}})
         == "1.00\n1.01\n1.02\n"
     )
     assert (
-        df2str(pd.DataFrame(data=[1, 1, 1]), digits=7, monotone_column=0)
+        df2str(pd.DataFrame(data=[1, 1, 1]), digits=7, monotonocity={0: {"sign": -1}})
         == "1.0000000\n0.9999999\n0.9999998\n"
     )
 
     # For strict monotonicity we will introduce negativity:
     dframe = pd.DataFrame(data=[0.00001, 0.0, 0.0, 0.0], columns=["pc"])
     assert (
-        df2str(dframe, monotone_column="pc")
+        df2str(dframe, monotonocity={"pc": {"sign": -1}})
         == "0.0000100\n0.0000000\n-0.0000001\n-0.0000002\n"
     )
 
@@ -81,7 +61,7 @@ def test_df2str_monotone():
         data=[0.0000027, 0.0000026, 0.0000024, 0.0000024, 0.0000017], columns=["pc"]
     )
     assert (
-        df2str(dframe, monotone_column="pc")
+        df2str(dframe, monotonocity={"pc": {"sign": -1}})
         == "0.0000027\n0.0000026\n0.0000024\n0.0000023\n0.0000017\n"
     )
 
