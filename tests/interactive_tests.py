@@ -8,6 +8,7 @@ If you want to run individual tests, import this module in
 a Python session and run the functions manually.
 """
 
+import os
 import random
 
 import numpy as np
@@ -452,7 +453,7 @@ def testplot():
     swof.add_LET_oil(l=2, e=1, t=1.4, kroend=0.9)
 
     # Print the first 7 lines of SWOF:
-    print("\n".join(swof.SWOF().split("\n")[0:8]))
+    print(os.linesep.join(swof.SWOF().splitlines()[0:8]))
     _, mpl_ax = plt.subplots()
     swof.plotkrwkrow(mpl_ax)
     plt.show()
