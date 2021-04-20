@@ -372,71 +372,8 @@ def test_pyscal_client_scal(tmpdir, caplog, default_loglevel):
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
     # assert something about -0.5 in the comments
 
-    # Only two interpolation parameters for three satnums:
+    # Multiple interpolation parameters, this was supported in pyscal <= 0.7.7,
+    # but is now an error:
     sys.argv = ["pyscal", str(scalrec_file), "--int_param_wo", "-0.5", "0"]
     with pytest.raises(SystemExit):
         pyscalcli.main()
-
-    caplog.clear()
-    sys.argv = [
-        "pyscal",
-        str(scalrec_file),
-        "--int_param_wo",
-        "-0.5",
-        "0.0",
-        "1.0",
-        "-o",
-        "relperm3.inc",
-    ]
-    pyscalcli.main()
-    assert not any(record.levelno == logging.INFO for record in caplog.records)
-    assert not any(record.levelno == logging.WARNING for record in caplog.records)
-    assert not any(record.levelno == logging.ERROR for record in caplog.records)
-    assert Path("relperm3.inc").is_file()
-    # assert someting about three different parameters..
-
-    sys.argv = [
-        "pyscal",
-        str(scalrec_file),
-        "--int_param_wo",
-        "-0.5",
-        "0",
-        "1",
-        "--int_param_go",
-        "0.9",
-        "-o",
-        "relperm4.inc",
-    ]
-    pyscalcli.main()
-    assert Path("relperm4.inc").is_file()
-
-    sys.argv = [
-        "pyscal",
-        str(scalrec_file),
-        "--int_param_wo",
-        "-0.5",
-        "0",
-        "1",
-        "--int_param_go",
-        "0.9",
-        "1",
-    ]
-    with pytest.raises(SystemExit):
-        pyscalcli.main()
-    sys.argv = [
-        "pyscal",
-        str(scalrec_file),
-        "--int_param_wo",
-        "-0.5",
-        "0",
-        "1",
-        "--int_param_go",
-        "0.9",
-        "1",
-        "-0.5",
-        "-o",
-        "relperm5.inc",
-    ]
-    pyscalcli.main()
-    assert Path("relperm5.inc").is_file()
-    # check that interpolation parameters have been used.

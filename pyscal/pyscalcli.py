@@ -97,27 +97,21 @@ def get_parser():
     )
     parser.add_argument(
         "--int_param_wo",
-        nargs="+",
         default=None,
         type=float,
         help=(
-            "Interpolation parameters for water-oil, if the parametertable contains "
-            "low, base and high for each SATNUM. "
-            "Either one number used for all SATNUM, or a sequence of "
-            "length equal to the max SATNUM. Numbers between -1 and 1. "
-            "Also used for GasWater."
+            "Interpolation parameter for water-oil, needed if the parametertable "
+            "contains pess/low, base and opt/high for each SATNUM. "
+            "The parameter will be used for all SATNUMs and must be "
+            "between -1 and 1. Also used for GasWater."
         ),
     )
     parser.add_argument(
         "--int_param_go",
-        nargs="+",
         default=None,
         type=float,
         help=(
-            "Interpolation parameters for gas-oil, if the parametertable contains "
-            "low, base and high for each SATNUM. "
-            "Either one number used for all SATNUM, or a sequence "
-            "of length equal to the max SATNUM. Numbers between -1 and 1. "
+            "Interpolation parameter for gas-oil. "
             "If not provided, the water-oil interpolation parameter will be used "
             "as default. Do not use for GasWater."
         ),
