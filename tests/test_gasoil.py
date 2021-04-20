@@ -9,7 +9,7 @@ import matplotlib.pyplot
 
 import pytest
 
-from hypothesis import given, settings
+from hypothesis import given, settings, reproduce_failure
 import hypothesis.strategies as st
 
 from pyscal import GasOil
@@ -134,6 +134,7 @@ def test_gasoil_normalization(swl, sgcr, sorg, h, tag):
     assert float_df_checker(gasoil.table, "sg", gasoil.sgcr, "sgn", 0)
 
 
+@reproduce_failure("6.10.0", b"AXic478eIhqR8Z//OpdtweJr/GDePwZ8AABptAky")
 @settings(deadline=1000)
 @given(
     st.floats(min_value=0, max_value=0.3),  # swl
@@ -161,6 +162,7 @@ def test_gasoil_krendmax(swl, sgcr, sorg, kroend, krgend, krgmax, h, fast):
     check_table(gasoil.table)
     check_linear_sections(gasoil)
     assert gasoil.selfcheck()
+    print(gasoil.table.head())
     check_endpoints(gasoil, krgend, krgmax, kroend)
     assert 0 < gasoil.crosspoint() < 1
 
