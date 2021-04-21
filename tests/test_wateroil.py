@@ -151,7 +151,7 @@ def test_fast():
     # curves)
     assert "0.1000000 0.0100000 0.8100000 0.0000000" in wateroil.SWOF()
     assert "0.2000000 0.0400000 0.8099999 0.0000000" in wateroil.SWOF()
-    #   monotonocity correction:   ^^^^^^
+    #   monotonicity correction:   ^^^^^^
 
     # Now redo with fast option:
     wateroil = WaterOil(h=0.1, fast=True)

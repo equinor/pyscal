@@ -2,7 +2,7 @@
 
 import logging
 
-from .monotonocity import modify_dframe_monotonocity
+from .monotonicity import modify_dframe_monotonicity
 
 logger = logging.getLogger(__name__)
 
@@ -12,7 +12,7 @@ def df2str(
     digits=7,
     roundlevel=9,
     header=False,
-    monotonocity=None,
+    monotonicity=None,
     monotone_column=None,
     monotone_direction=None,
 ):
@@ -21,7 +21,7 @@ def df2str(
     proper rounding.
 
     This is used to print the tables in the SWOF/SGOF include files,
-    explicit rounding is necessary to avoid monotonocity errors
+    explicit rounding is necessary to avoid monotonicity errors
     from truncation. Examples in test code.
 
     Capillary pressure must be strictly monotone if nonzero, and if a
@@ -38,16 +38,16 @@ def df2str(
         roundlevel (int): To how many digits should we round prior to print.
             Recommended to be > digits + 1, see test code.
         header (bool): If the dataframe column header should be included
-        monotonocity (dict): Settings for monotonocity in output. A dict
+        monotonicity (dict): Settings for monotonicity in output. A dict
             with column names as keys, with values being a dict with keys
             "sign" (-1 or +1 integer) for direction,  "upper" and "lower" for
-            lower and upper limits (non-strict monotonocity is allowed at
+            lower and upper limits (non-strict monotonicity is allowed at
             these upper and lower limits).
     """
     float_format = "%1." + str(digits) + "f"
 
-    if monotonocity is not None:
-        dframe = modify_dframe_monotonocity(dframe, monotonocity, digits)
+    if monotonicity is not None:
+        dframe = modify_dframe_monotonicity(dframe, monotonicity, digits)
 
     return dframe.round(roundlevel).to_csv(
         sep=" ", float_format=float_format, header=header, index=False

@@ -833,7 +833,7 @@ class WaterOil(object):
         ) + co / (self.table["sonpc"] ** ao)
 
         # From 1-sor, the pc is not defined. Extrapolate constantly, and let
-        # the non-monotonocity be fixed in the output generators.
+        # the non-monotonicity be fixed in the output generators.
         self.table["pc"].fillna(method="ffill", inplace=True)
 
     def add_LET_pc_pd(self, Lp, Ep, Tp, Lt, Et, Tt, Pcmax, Pct):
@@ -1094,7 +1094,7 @@ class WaterOil(object):
         )
         string += df2str(
             self.table[["sw", "krw", "krow", "pc"]],
-            monotonocity={
+            monotonicity={
                 "krow": {"sign": -1, "lower": 0, "upper": 1},
                 "krw": {"sign": 1, "lower": 0, "upper": 1},
                 "pc": {"sign": -1, "allowzero": True},
@@ -1162,7 +1162,7 @@ class WaterOil(object):
         )
         string += df2str(
             self.table[["sw", "krw", "pc"]],
-            monotonocity={
+            monotonicity={
                 "krw": {"sign": 1, "lower": 0, "upper": 1},
                 "pc": {"sign": -1, "allowzero": True},
             }
@@ -1201,7 +1201,7 @@ class WaterOil(object):
         )
         string += df2str(
             self.table[["sw", "krw", "krow", "pc"]],
-            monotonocity={
+            monotonicity={
                 "krow": {"sign": -1, "lower": 0, "upper": 1},
                 "krw": {"sign": 1, "lower": 0, "upper": 1},
                 "pc": {"sign": -1, "allowzero": True},
