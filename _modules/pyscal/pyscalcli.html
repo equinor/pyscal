@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.pyscalcli &mdash; pyscal 0.7.8.dev3+gd8352b8 documentation</title>
+  <title>pyscal.pyscalcli &mdash; pyscal 0.7.8.dev4+g430dfd7 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.7.8.dev3+gd8352b8
+                0.7.8.dev4+g430dfd7
               </div>
             
           
@@ -262,27 +262,21 @@
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;--int_param_wo&quot;</span><span class="p">,</span>
-        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="p">(</span>
-            <span class="s2">&quot;Interpolation parameters for water-oil, if the parametertable contains &quot;</span>
-            <span class="s2">&quot;low, base and high for each SATNUM. &quot;</span>
-            <span class="s2">&quot;Either one number used for all SATNUM, or a sequence of &quot;</span>
-            <span class="s2">&quot;length equal to the max SATNUM. Numbers between -1 and 1. &quot;</span>
-            <span class="s2">&quot;Also used for GasWater.&quot;</span>
+            <span class="s2">&quot;Interpolation parameter for water-oil, needed if the parametertable &quot;</span>
+            <span class="s2">&quot;contains pess/low, base and opt/high for each SATNUM. &quot;</span>
+            <span class="s2">&quot;The parameter will be used for all SATNUMs and must be &quot;</span>
+            <span class="s2">&quot;between -1 and 1. Also used for GasWater.&quot;</span>
         <span class="p">),</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
         <span class="s2">&quot;--int_param_go&quot;</span><span class="p">,</span>
-        <span class="n">nargs</span><span class="o">=</span><span class="s2">&quot;+&quot;</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="p">(</span>
-            <span class="s2">&quot;Interpolation parameters for gas-oil, if the parametertable contains &quot;</span>
-            <span class="s2">&quot;low, base and high for each SATNUM. &quot;</span>
-            <span class="s2">&quot;Either one number used for all SATNUM, or a sequence &quot;</span>
-            <span class="s2">&quot;of length equal to the max SATNUM. Numbers between -1 and 1. &quot;</span>
+            <span class="s2">&quot;Interpolation parameter for gas-oil. &quot;</span>
             <span class="s2">&quot;If not provided, the water-oil interpolation parameter will be used &quot;</span>
             <span class="s2">&quot;as default. Do not use for GasWater.&quot;</span>
         <span class="p">),</span>
