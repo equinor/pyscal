@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.utils.string &mdash; pyscal 0.7.8.dev4+g430dfd7 documentation</title>
+  <title>pyscal.utils.string &mdash; pyscal 0.7.8.dev5+g997ed1c documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.7.8.dev4+g430dfd7
+                0.7.8.dev5+g997ed1c
               </div>
             
           
@@ -167,7 +167,7 @@
 
 <span class="kn">import</span> <span class="nn">logging</span>
 
-<span class="kn">from</span> <span class="nn">.monotonocity</span> <span class="kn">import</span> <span class="n">modify_dframe_monotonocity</span><span class="p">,</span> <span class="n">remap_deprecated_monotonocity</span>
+<span class="kn">from</span> <span class="nn">.monotonocity</span> <span class="kn">import</span> <span class="n">modify_dframe_monotonocity</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -208,22 +208,8 @@
 <span class="sd">            &quot;sign&quot; (-1 or +1 integer) for direction,  &quot;upper&quot; and &quot;lower&quot; for</span>
 <span class="sd">            lower and upper limits (non-strict monotonocity is allowed at</span>
 <span class="sd">            these upper and lower limits).</span>
-<span class="sd">        monotone_columns (list of str): column names for which strict</span>
-<span class="sd">            monotonocity must be preserved in output. Deprecated.</span>
-<span class="sd">        monotone_directions (list of str): Direction of monotonocity, increasing</span>
-<span class="sd">            or decreasing, allowed values are &#39;-1&#39;, &#39;1&#39;, &#39;inc&#39; or &#39;dec&#39;. If</span>
-<span class="sd">            multiple columns, specify for each. Deprecated.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">float_format</span> <span class="o">=</span> <span class="s2">&quot;%1.&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">digits</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;f&quot;</span>
-
-    <span class="k">if</span> <span class="n">monotonocity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">monotone_column</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Do not mix new and deprecated API&quot;</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="n">monotonocity</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">monotone_column</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;monotone_column is deprecated, use monotonocity&quot;</span><span class="p">)</span>
-        <span class="n">monotonocity</span> <span class="o">=</span> <span class="n">remap_deprecated_monotonocity</span><span class="p">(</span>
-            <span class="n">monotone_column</span><span class="p">,</span> <span class="n">monotone_direction</span>
-        <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">monotonocity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">dframe</span> <span class="o">=</span> <span class="n">modify_dframe_monotonocity</span><span class="p">(</span><span class="n">dframe</span><span class="p">,</span> <span class="n">monotonocity</span><span class="p">,</span> <span class="n">digits</span><span class="p">)</span>
