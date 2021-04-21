@@ -399,6 +399,7 @@ def test_factory_gasoil():
     )
     assert isinstance(gasoil, GasOil)
     assert gasoil.sgcr == 0.05
+    assert gasoil.sgro == 0.0
     assert gasoil.swl == 0.1
     assert gasoil.swirr == 0.01
     assert gasoil.tag == "Good sand"
@@ -431,6 +432,23 @@ def test_factory_gasoil():
     check_table(gasoil.table)
     assert "LET krg" in sgof
     assert "LET krog" in sgof
+
+
+def test_factory_gascondensate():
+    """In gas condensate problems, the sgro and krosgro are relevant"""
+    pyscal_factory = PyscalFactory()
+    gasoil = pyscal_factory.create_gas_oil(
+        dict(sgro=0.1, tag="Good sand", ng=1, nog=2, krosgro=0.5, kroend=0.9)
+    )
+    assert isinstance(gasoil, GasOil)
+    assert gasoil.sgro == 0.1
+    assert gasoil.tag == "Good sand"
+    sgof = gasoil.SGOF()
+    sat_table_str_ok(sgof)
+    check_table(gasoil.table)
+    assert "Corey krog" in sgof
+    assert "krosgro=0.5" in sgof
+    assert "sgro=0.1" in sgof
 
 
 def test_factory_gaswater():

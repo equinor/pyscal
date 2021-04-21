@@ -44,6 +44,8 @@ class GasOil(object):
             gas saturation is above this value.
         sorg: Residual oil saturation after gas flooding. At this oil
             saturation, the oil has zero relative permeability.
+        sgro: Residual gas, for use in gas-condensate modelling. Used
+            as an endpoint for parametrized oil curve.
         krgendanchor: Set to `sorg` (default) or something else, where to
             anchor `krgend`. If `sorg`, then the normalized gas
             saturation will be equal to 1 at `1 - swl - sorg`,
@@ -63,11 +65,11 @@ class GasOil(object):
         h: Optional[float] = None,
         swl: float = 0.0,
         sorg: float = 0.0,
+        sgro: float = 0.0,
         tag: str = "",
         krgendanchor: str = "sorg",
         fast: bool = False,
     ) -> None:
-
         if h is None:
             h = 0.01
 
@@ -98,14 +100,11 @@ class GasOil(object):
             logger.warning("sorg was close to zero, set to zero")
             sorg = 0.0
         self.sorg = sorg
+        self.sgro = sgro
 
         self.sgcr = sgcr
         self.tag = tag
 
-        if not 1 - sorg - swl > 0:
-            raise ValueError(
-                "No saturation range left " + "after endpoints, check input"
-            )
         if krgendanchor in ["sorg", ""]:
             self.krgendanchor = krgendanchor
         else:
@@ -117,10 +116,24 @@ class GasOil(object):
         if np.isclose(sorg, 0.0) and self.krgendanchor == "sorg":
             self.krgendanchor = ""  # This is critical to avoid bugs due to numerics.
 
+        if krgendanchor == "sorg" and not 1 - sorg - swl - sgcr > 0:
+            raise ValueError(
+                "No saturation range left for gas curve between endpoints, check input"
+            )
+        if krgendanchor == "" and not 1 - swl - sgcr > 0:
+            raise ValueError(
+                "No saturation range left for gas curve between endpoints, check input"
+            )
+
+        if not 1 - swl - sorg - sgro > 0:
+            raise ValueError(
+                "No saturation range left for oil curve between endpoints, check input"
+            )
+
         sg_list = (
             [0.0]
-            + [sgcr]
-            + list(np.arange(sgcr + self.h, 1 - swl, self.h))
+            + [sgcr, sgro]
+            + list(np.arange(min(sgcr, sgro) + self.h, 1 - sorg - swl, self.h))
             + [1 - sorg - swl]
             + [1 - swl]
         )
@@ -138,10 +151,18 @@ class GasOil(object):
         )
         self.table.loc[sorgindex, "SG"] = 1 - self.sorg - self.swl
 
-        # Same for sg=sgcr
         sgcrindex = (self.table["SG"] - (self.sgcr)).abs().sort_values().index[0]
         self.table.loc[sgcrindex, "SG"] = self.sgcr
         if sgcrindex == 0 and sgcr > 0.0:
+            # Need to conserve sg=0
+            zero_row = pd.DataFrame({"SG": 0}, index=[0])
+            self.table = pd.concat([zero_row, self.table], sort=False).reset_index(
+                drop=True
+            )
+        # and sg=sgro:
+        sgroindex = (self.table["SG"] - (self.sgro)).abs().sort_values().index[0]
+        self.table.loc[sgroindex, "SG"] = self.sgro
+        if sgroindex == 0 and sgro > 0.0:
             # Need to conserve sg=0
             zero_row = pd.DataFrame({"SG": 0}, index=[0])
             self.table = pd.concat([zero_row, self.table], sort=False).reset_index(
@@ -170,14 +191,18 @@ class GasOil(object):
             assert 1 - swl - sgcr > epsilon
             self.table["SGN"] = (self.table["SG"] - sgcr) / (1 - swl - sgcr)
 
-        # Normalized oil saturation should be 0 at 1-sorg, and 1 at swl+sgcr
-        self.table["SON"] = (self.table["SL"] - sorg - swl) / (1 - sorg - swl)
-        self.sgcomment = "-- swirr=%g, sgcr=%g, swl=%g, sorg=%g, krgendanchor=%s\n" % (
-            self.swirr,
-            self.sgcr,
-            self.swl,
-            self.sorg,
-            self.krgendanchor,
+        # Normalized oil saturation should be 0 at sg=1-swl-sorg, and 1 at sg=sgro
+        self.table["SON"] = (self.table["SL"] - sorg - swl) / (1 - sorg - swl - sgro)
+        self.sgcomment = (
+            "-- swirr=%g, sgcr=%g, swl=%g, sorg=%g, sgro=%g, krgendanchor=%s\n"
+            % (
+                self.swirr,
+                self.sgcr,
+                self.swl,
+                self.sorg,
+                self.sgro,
+                self.krgendanchor,
+            )
         )
         self.krgcomment = ""
         self.krogcomment = ""
@@ -196,8 +221,15 @@ class GasOil(object):
                 - self.table[np.isclose(self.table["KROG"], 0.0)].min()["SG"]
             )
             self.sgcomment = (
-                "-- swirr=%g, sgcr=%g, swl=%g, sorg=%g, krgendanchor=%s\n"
-                % (self.swirr, self.sgcr, self.swl, self.sorg, self.krgendanchor)
+                "-- swirr=%g, sgcr=%g, swl=%g, sorg=%g, sgro=%g, krgendanchor=%s\n"
+                % (
+                    self.swirr,
+                    self.sgcr,
+                    self.swl,
+                    self.sorg,
+                    self.sgro,
+                    self.krgendanchor,
+                )
             )
 
     def add_fromtable(
@@ -296,6 +328,7 @@ class GasOil(object):
             self.table["KROG"].clip(lower=0.0, upper=1.0, inplace=True)
             self.krogcomment = "-- krog from tabular input" + krogcomment + "\n"
             self.sorg = self.estimate_sorg()
+            self.sgro = self.estimate_sgro()
         if pccolname in dframe:
             # Incoming dataframe must cover the range:
             if dframe[sgcolname].min() > self.table["SG"].min():
@@ -377,9 +410,15 @@ class GasOil(object):
                 logger.warning("krgmax ignored when not anchoring to sorg")
 
     def set_endpoints_linearpart_krog(
-        self, kroend: float, kromax: Optional[float] = None
+        self,
+        kroend: float,
+        krosgro: Optional[float] = None,
+        kromax: Optional[float] = None,
     ):
         """Set linear parts of krog outside endpoints.
+
+        Linear for sg in [0, sgro], from kroend to krosgro, but nonzero
+        sgro should only be used in gas-condensate modelling.
 
         Zero for sg above 1 - sorg - swl.
 
@@ -388,9 +427,15 @@ class GasOil(object):
 
         Args:
             kroend: krog at sg=0
+            krosgro: krog at sg=sgro in gas-condensate problems.
         """
         if kromax is not None:
             logger.error("kromax is DEPRECATED, ignored")
+
+        if krosgro is None:
+            krosgro = kroend
+
+        assert krosgro <= kroend
 
         # Special handling of the part close to sg=1, set to zero.
         self.table.loc[
@@ -399,6 +444,18 @@ class GasOil(object):
 
         # Floating point issues can cause a slight overshoot at sg=0:
         self.table.loc[self.table["KROG"] > kroend, "KROG"] = kroend
+
+        # If sgro=0 and krosgro is not None, we get the wrong
+        # value at sg=0:
+        self.table.loc[0, "KROG"] = kroend
+
+        # Linear part [0, sgro] for gas-condensate:
+        sgroindex = (self.table["SG"] - (self.sgro)).abs().sort_values().index[0]
+        if sgroindex > 1:
+            self.table.loc[1 : sgroindex - 1, "KROG"] = np.nan
+            self.table["KROG"] = (
+                self.table.set_index("SG")["KROG"].interpolate(method="index").values
+            )
 
     def add_corey_gas(
         self, ng: float = 2.0, krgend: float = 1.0, krgmax: Optional[float] = None
@@ -431,7 +488,11 @@ class GasOil(object):
         )
 
     def add_corey_oil(
-        self, nog: float = 2, kroend: float = 1, kromax: Optional[float] = None
+        self,
+        nog: float = 2,
+        kroend: float = 1,
+        krosgro: Optional[float] = None,
+        kromax: Optional[float] = None,
     ):
         """
         Add kro data through the Corey parametrization
@@ -444,6 +505,7 @@ class GasOil(object):
         Arguments:
             nog: Corey exponent for oil
             kroend: Value for krog at normalized oil saturation 1
+            krosgro: Value for krog at sgro in gas-condensate models.
 
         Returns:
             None (modifies internal class state)
@@ -454,14 +516,21 @@ class GasOil(object):
         if kromax is not None:
             logger.error("kromax is DEPRECATED, ignored")
 
-        self.table["KROG"] = kroend * self.table["SON"] ** nog
+        if krosgro is None:
+            self.table["KROG"] = kroend * self.table["SON"] ** nog
+        else:
+            self.table["KROG"] = krosgro * self.table["SON"] ** nog
+            # If sgro is zero, this will be undone in
+            # set_endpoints_linearpart_krog()
 
-        self.set_endpoints_linearpart_krog(kroend)
+        self.set_endpoints_linearpart_krog(kroend, krosgro)
 
-        self.krogcomment = "-- Corey krog, nog=%g, kroend=%g\n" % (
+        self.krogcomment = "-- Corey krog, nog=%g, kroend=%g" % (
             nog,
             kroend,
         )
+        if krosgro is not None:
+            self.krogcomment += f", krosgro={krosgro:g}"
 
     def add_LET_gas(
         self,
@@ -527,6 +596,7 @@ class GasOil(object):
         e: float = 2.0,
         t: float = 2.0,
         kroend: float = 1.0,
+        krosgro: Optional[float] = None,
         kromax: Optional[float] = None,
     ):
         """Add oil (vs gas) relative permeability data through the Corey
@@ -541,6 +611,7 @@ class GasOil(object):
             e: E parameter
             t: T parameter
             kroend: The value at gas saturation sgcr
+            krosgro: Value for krog at sgro in gas-condensate models.
         """
         assert epsilon < l < MAX_EXPONENT
         assert epsilon < e < MAX_EXPONENT
@@ -559,14 +630,32 @@ class GasOil(object):
         # This equation is undefined for t a float and son=1, set explicitly:
         self.table.loc[np.isclose(self.table["SON"], 1.0), "KROG"] = kroend
 
-        self.set_endpoints_linearpart_krog(kroend)
+        self.set_endpoints_linearpart_krog(kroend, krosgro)
 
-        self.krogcomment = "-- LET krog, l=%g, e=%g, t=%g, kroend=%g\n" % (
+        self.krogcomment = "-- LET krog, l=%g, e=%g, t=%g, kroend=%g" % (
             l,
             e,
             t,
             kroend,
         )
+        if krosgro is not None:
+            self.krogcomment += f", krosgro={krosgro:g}"
+
+    def estimate_sgro(self):
+        """Estimate sgro of the current krog data
+
+        sgro is estimated by searching for a linear part in kro
+        from sg=0. In practice it is impossible to infer sgro = 0,
+        since we are limited by h.
+
+        If the curve is linear everywhere, sgro will be returned as 1 - swl + h
+
+        Returns:
+            float: The estimated sgro
+        """
+        assert "KROG" in self.table
+        assert self.table["KROG"].sum() > 0
+        return estimate_diffjumppoint(self.table, xcol="SG", ycol="KROG", side="left")
 
     def estimate_sorg(self) -> float:
         """Estimate sorg of the current krg or krog data.

@@ -56,11 +56,15 @@ WO_SIMPLE_J_PETRO = [
     "drho",
 ]  # "g" is optional
 
-GO_INIT = ["swirr", "sgcr", "sorg", "swl", "krgendanchor", "h", "tag"]
+GO_INIT = ["swirr", "sgcr", "sorg", "sgro", "swl", "krgendanchor", "h", "tag"]
 GO_COREY_GAS = ["ng"]
 GO_GAS_ENDPOINTS = ["krgend", "krgmax"]
 GO_COREY_OIL = ["nog"]
-GO_OIL_ENDPOINTS = ["kroend", "krogend"]  # krogend is deprecated in favour of kroend
+GO_OIL_ENDPOINTS = [
+    "kroend",
+    "krosgro",
+    "krogend",
+]  # krogend is deprecated in favour of kroend
 GO_LET_GAS = ["lg", "eg", "tg"]
 GO_LET_OIL = ["log", "eog", "tog"]
 

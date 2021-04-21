@@ -74,6 +74,10 @@ def test_errors():
     """Test some error situations for the constructor"""
     with pytest.raises(ValueError, match="No saturation range left"):
         GasOil(swl=0.3, sorg=0.8)
+    with pytest.raises(ValueError, match="No saturation range left"):
+        GasOil(swl=0.3, sgro=0.88)
+    with pytest.raises(ValueError, match="No saturation range left"):
+        GasOil(swl=0.3, sgcr=0.88)
 
 
 def test_plotting():
@@ -138,30 +142,33 @@ def test_gasoil_normalization(swl, sgcr, sorg, h, tag):
 @given(
     st.floats(min_value=0, max_value=0.3),  # swl
     st.floats(min_value=0, max_value=0.3),  # sgcr
-    st.floats(min_value=0, max_value=0.41),  # sorg (sgn collapses when >0.4)
+    st.floats(min_value=0, max_value=0.4),  # sorg (sgn collapses when >0.4)
+    st.floats(min_value=0, max_value=0.3),  # sgro
     st.floats(min_value=0.1, max_value=1),  # kroend
+    st.floats(min_value=0.1, max_value=1),  # krosgro
     st.floats(min_value=0.1, max_value=1),  # krgend
     st.floats(min_value=0.2, max_value=1),  # krgmax
     st.floats(min_value=0.0001, max_value=1),  # h
     st.booleans(),  # fast mode
 )
-def test_gasoil_krendmax(swl, sgcr, sorg, kroend, krgend, krgmax, h, fast):
-    """Test that krendmax gets correct in all numerical corner cases.
-
-    The normalized sg-range is allowed to collapse to nothing in this test.
-    (causes AssertionError)
-    """
+def test_gasoil_krendmax(
+    swl, sgcr, sorg, sgro, kroend, krosgro, krgend, krgmax, h, fast
+):
+    """Test that relperm curves are valid in all numerical corner cases."""
     try:
-        gasoil = GasOil(swl=swl, sgcr=sgcr, sorg=sorg, h=h, tag="", fast=fast)
+        gasoil = GasOil(
+            swl=swl, sgcr=sgcr, sorg=sorg, sgro=sgro, h=h, tag="", fast=fast
+        )
     except AssertionError:
         return
     krgend = min(krgend, krgmax)
-    gasoil.add_corey_oil(kroend=kroend)
+    krosgro = min(krosgro, kroend)
+    gasoil.add_corey_oil(kroend=kroend, krosgro=krosgro)
     gasoil.add_corey_gas(krgend=krgend, krgmax=krgmax)
     check_table(gasoil.table)
     check_linear_sections(gasoil)
     assert gasoil.selfcheck()
-    check_endpoints(gasoil, krgend, krgmax, kroend)
+    check_endpoints(gasoil, krgend, krgmax, kroend, krosgro=krosgro)
     assert 0 < gasoil.crosspoint() < 1
 
     # Redo with krgendanchor not defaulted
@@ -171,12 +178,12 @@ def test_gasoil_krendmax(swl, sgcr, sorg, kroend, krgend, krgmax, h, fast):
     check_table(gasoil.table)
     check_linear_sections(gasoil)
     assert gasoil.selfcheck()
-    check_endpoints(gasoil, krgend, krgmax, kroend)
+    check_endpoints(gasoil, krgend, krgmax, kroend, krosgro=krosgro)
     assert 0 < gasoil.crosspoint() < 1
 
     # Redo with LET:
     gasoil = GasOil(swl=swl, sgcr=sgcr, sorg=sorg, h=h, tag="")
-    gasoil.add_LET_oil(t=1.1, kroend=kroend)
+    gasoil.add_LET_oil(t=1.1, kroend=kroend, krosgro=krosgro)
     gasoil.add_LET_gas(krgend=krgend, krgmax=krgmax)
     check_table(gasoil.table)
     check_linear_sections(gasoil)
@@ -185,19 +192,25 @@ def test_gasoil_krendmax(swl, sgcr, sorg, kroend, krgend, krgmax, h, fast):
     assert 0 < gasoil.crosspoint() < 1
 
 
-def check_endpoints(gasoil, krgend, krgmax, kroend):
+def check_endpoints(gasoil, krgend, krgmax, kroend, krosgro=None):
     """Discrete tests that endpoints get numerically correct"""
     swtol = 1 / SWINTEGERS
 
-    # Check endpoints for oil curve:
-    # krog at sgcr should be kroend
-    if gasoil.sgcr > swtol:
-        assert float_df_checker(gasoil.table, "SON", 1.0, "KROG", kroend)
-    # krog at son=0 (1-sorg-swl or 1 - swl) should be zero:
-    assert float_df_checker(gasoil.table, "SON", 0.0, "KROG", 0)
-
+    # Oil curve, from sg = 0 to sg = 1:
     assert float_df_checker(gasoil.table, "SG", 0, "KROG", kroend)
 
+    if gasoil.sgro > swtol:
+        assert float_df_checker(gasoil.table, "SON", 1.0, "KROG", krosgro)
+
+    # son=0 @ 1 - sorg - swl or 1 - swl) should be zero:
+    assert float_df_checker(gasoil.table, "SON", 0.0, "KROG", 0)
+    # sgn=1 @ 1 - swl:
+    assert float_df_checker(gasoil.table, "SGN", 1.0, "KROG", 0)
+    assert np.isclose(gasoil.table["KROG"].min(), 0.0)
+    assert np.isclose(gasoil.table["KROG"].max(), kroend)
+
+    # Gas curve, from sg=0 to sg=1:
+    assert float_df_checker(gasoil.table, "SG", 0.0, "KRG", 0)
     assert float_df_checker(gasoil.table, "SGN", 0.0, "KRG", 0)
     assert float_df_checker(gasoil.table, "SG", gasoil.sgcr, "KRG", 0)
 
@@ -207,6 +220,7 @@ def check_endpoints(gasoil, krgend, krgmax, kroend):
         assert np.isclose(gasoil.table["KRG"].max(), krgmax)
     if gasoil.krgendanchor != "sorg":
         assert np.isclose(gasoil.table["KRG"].max(), krgend)
+    assert np.isclose(gasoil.table["KRG"].min(), 0.0)
 
 
 def test_gasoil_krgendanchor():
