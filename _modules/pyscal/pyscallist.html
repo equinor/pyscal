@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.pyscallist &mdash; pyscal 0.7.8.dev6+g9812e7c documentation</title>
+  <title>pyscal.pyscallist &mdash; pyscal 0.7.8.dev7+g28df448 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.7.8.dev6+g9812e7c
+                0.7.8.dev7+g28df448
               </div>
             
           
@@ -243,12 +243,12 @@
 <span class="sd">            pd.DataFrame</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Names of dataframe columns in wateroil/gasoil.table:</span>
-        <span class="n">wateroil_pyscal_cols</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;sw&quot;</span><span class="p">,</span> <span class="s2">&quot;krw&quot;</span><span class="p">,</span> <span class="s2">&quot;krow&quot;</span><span class="p">,</span> <span class="s2">&quot;pc&quot;</span><span class="p">}</span>
-        <span class="n">gasoil_pyscal_cols</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;sg&quot;</span><span class="p">,</span> <span class="s2">&quot;krg&quot;</span><span class="p">,</span> <span class="s2">&quot;krog&quot;</span><span class="p">,</span> <span class="s2">&quot;pc&quot;</span><span class="p">}</span>
+        <span class="n">wateroil_pyscal_cols</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;SW&quot;</span><span class="p">,</span> <span class="s2">&quot;KRW&quot;</span><span class="p">,</span> <span class="s2">&quot;KROW&quot;</span><span class="p">,</span> <span class="s2">&quot;PC&quot;</span><span class="p">}</span>
+        <span class="n">gasoil_pyscal_cols</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;SG&quot;</span><span class="p">,</span> <span class="s2">&quot;KRG&quot;</span><span class="p">,</span> <span class="s2">&quot;KROG&quot;</span><span class="p">,</span> <span class="s2">&quot;PC&quot;</span><span class="p">}</span>
 
         <span class="c1"># Renamers applied to the returned dataframe:</span>
-        <span class="n">gasoil_col_renamer</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;sg&quot;</span><span class="p">:</span> <span class="s2">&quot;SG&quot;</span><span class="p">,</span> <span class="s2">&quot;krg&quot;</span><span class="p">:</span> <span class="s2">&quot;KRG&quot;</span><span class="p">,</span> <span class="s2">&quot;krog&quot;</span><span class="p">:</span> <span class="s2">&quot;KROG&quot;</span><span class="p">,</span> <span class="s2">&quot;pc&quot;</span><span class="p">:</span> <span class="s2">&quot;PCOG&quot;</span><span class="p">}</span>
-        <span class="n">wateroil_col_renamer</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;sw&quot;</span><span class="p">:</span> <span class="s2">&quot;SW&quot;</span><span class="p">,</span> <span class="s2">&quot;krw&quot;</span><span class="p">:</span> <span class="s2">&quot;KRW&quot;</span><span class="p">,</span> <span class="s2">&quot;krow&quot;</span><span class="p">:</span> <span class="s2">&quot;KROW&quot;</span><span class="p">,</span> <span class="s2">&quot;pc&quot;</span><span class="p">:</span> <span class="s2">&quot;PCOW&quot;</span><span class="p">}</span>
+        <span class="n">gasoil_col_renamer</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;SG&quot;</span><span class="p">:</span> <span class="s2">&quot;SG&quot;</span><span class="p">,</span> <span class="s2">&quot;KRG&quot;</span><span class="p">:</span> <span class="s2">&quot;KRG&quot;</span><span class="p">,</span> <span class="s2">&quot;KROG&quot;</span><span class="p">:</span> <span class="s2">&quot;KROG&quot;</span><span class="p">,</span> <span class="s2">&quot;PC&quot;</span><span class="p">:</span> <span class="s2">&quot;PCOG&quot;</span><span class="p">}</span>
+        <span class="n">wateroil_col_renamer</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;SW&quot;</span><span class="p">:</span> <span class="s2">&quot;SW&quot;</span><span class="p">,</span> <span class="s2">&quot;KRW&quot;</span><span class="p">:</span> <span class="s2">&quot;KRW&quot;</span><span class="p">,</span> <span class="s2">&quot;KROW&quot;</span><span class="p">:</span> <span class="s2">&quot;KROW&quot;</span><span class="p">,</span> <span class="s2">&quot;PC&quot;</span><span class="p">:</span> <span class="s2">&quot;PCOW&quot;</span><span class="p">}</span>
 
         <span class="c1"># Sort order for rows in returned dataframe:</span>
         <span class="n">sort_candidates</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;SATNUM&quot;</span><span class="p">,</span> <span class="s2">&quot;CASE&quot;</span><span class="p">,</span> <span class="s2">&quot;KEYWORD&quot;</span><span class="p">,</span> <span class="s2">&quot;SW&quot;</span><span class="p">,</span> <span class="s2">&quot;SG&quot;</span><span class="p">,</span> <span class="s2">&quot;SL&quot;</span><span class="p">]</span>

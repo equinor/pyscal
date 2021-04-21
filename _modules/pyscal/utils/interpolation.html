@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.utils.interpolation &mdash; pyscal 0.7.8.dev6+g9812e7c documentation</title>
+  <title>pyscal.utils.interpolation &mdash; pyscal 0.7.8.dev7+g28df448 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.7.8.dev6+g9812e7c
+                0.7.8.dev7+g28df448
               </div>
             
           
@@ -202,11 +202,11 @@
 <span class="sd">            evaluate krow on the normalized So interval [0,1].</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">krw_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span>
-        <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">],</span>
-        <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krw&quot;</span><span class="p">],</span>
+        <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">],</span>
+        <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KRW&quot;</span><span class="p">],</span>
         <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span>
         <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krw&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()),</span>
+        <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KRW&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()),</span>
     <span class="p">)</span>
 
     <span class="c1"># The internal dataframe might contain normalized</span>
@@ -220,11 +220,11 @@
         <span class="k">return</span> <span class="n">krw_interp</span><span class="p">(</span><span class="n">sw_fn</span><span class="p">(</span><span class="n">swn</span><span class="p">))</span>
 
     <span class="n">kro_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span>
-        <span class="mf">1.0</span> <span class="o">-</span> <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">],</span>
-        <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krow&quot;</span><span class="p">],</span>
+        <span class="mf">1.0</span> <span class="o">-</span> <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">],</span>
+        <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROW&quot;</span><span class="p">],</span>
         <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span>
         <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krow&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()),</span>
+        <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROW&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()),</span>
     <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">so_fn</span><span class="p">(</span><span class="n">son</span><span class="p">):</span>
@@ -263,11 +263,11 @@
 <span class="sd">            evaluate krog on the normalized So interval [0,1].</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">krg_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span>
-        <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sg&quot;</span><span class="p">],</span>
-        <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krg&quot;</span><span class="p">],</span>
+        <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SG&quot;</span><span class="p">],</span>
+        <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KRG&quot;</span><span class="p">],</span>
         <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span>
         <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krg&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()),</span>
+        <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KRG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()),</span>
     <span class="p">)</span>
 
     <span class="c1"># The internal dataframe might contain normalized</span>
@@ -281,11 +281,11 @@
         <span class="k">return</span> <span class="n">krg_interp</span><span class="p">(</span><span class="n">sg_fn</span><span class="p">(</span><span class="n">sgn</span><span class="p">))</span>
 
     <span class="n">kro_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span>
-        <span class="mf">1.0</span> <span class="o">-</span> <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sg&quot;</span><span class="p">],</span>
-        <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krog&quot;</span><span class="p">],</span>
+        <span class="mf">1.0</span> <span class="o">-</span> <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SG&quot;</span><span class="p">],</span>
+        <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROG&quot;</span><span class="p">],</span>
         <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span>
         <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krog&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()),</span>
+        <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()),</span>
     <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">so_fn</span><span class="p">(</span><span class="n">son</span><span class="p">):</span>
@@ -315,24 +315,24 @@
 <span class="sd">        the normalized interval [0,1]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">curve</span><span class="p">,</span> <span class="n">pyscal</span><span class="o">.</span><span class="n">WaterOil</span><span class="p">):</span>
-        <span class="n">sat_col</span> <span class="o">=</span> <span class="s2">&quot;sw&quot;</span>
+        <span class="n">sat_col</span> <span class="o">=</span> <span class="s2">&quot;SW&quot;</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">curve</span><span class="p">,</span> <span class="n">pyscal</span><span class="o">.</span><span class="n">GasOil</span><span class="p">):</span>
-        <span class="n">sat_col</span> <span class="o">=</span> <span class="s2">&quot;sg&quot;</span>
+        <span class="n">sat_col</span> <span class="o">=</span> <span class="s2">&quot;SG&quot;</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Only WaterOil or GasOil allowed as argument&quot;</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="s2">&quot;pc&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">:</span>
+    <span class="k">if</span> <span class="s2">&quot;PC&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">:</span>
         <span class="c1"># Return a dummy zero lambda</span>
         <span class="k">return</span> <span class="k">lambda</span> <span class="n">sxn</span><span class="p">:</span> <span class="mi">0</span>
 
-    <span class="n">min_pc</span> <span class="o">=</span> <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
-    <span class="n">max_pc</span> <span class="o">=</span> <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="n">min_pc</span> <span class="o">=</span> <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;PC&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+    <span class="n">max_pc</span> <span class="o">=</span> <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;PC&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
     <span class="n">min_sx</span> <span class="o">=</span> <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">sat_col</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
     <span class="n">max_sx</span> <span class="o">=</span> <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">sat_col</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
 
     <span class="n">pc_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span>
         <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">sat_col</span><span class="p">],</span>
-        <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">],</span>
+        <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;PC&quot;</span><span class="p">],</span>
         <span class="n">kind</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span>
         <span class="n">bounds_error</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">fill_value</span><span class="o">=</span><span class="p">(</span><span class="n">max_pc</span><span class="p">,</span> <span class="n">min_pc</span><span class="p">),</span>  <span class="c1"># This gives constant extrapolation outside [0, 1]</span>
@@ -433,7 +433,7 @@
     <span class="n">sorw_new</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span><span class="n">wo_low</span><span class="o">.</span><span class="n">sorw</span><span class="p">,</span> <span class="n">wo_high</span><span class="o">.</span><span class="n">sorw</span><span class="p">)</span>
 
     <span class="c1"># Interpolate kr at saturation endpoints</span>
-    <span class="n">krwmax_new</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span><span class="n">wo_low</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krw&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">wo_high</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krw&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+    <span class="n">krwmax_new</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span><span class="n">wo_low</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KRW&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">wo_high</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KRW&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
     <span class="n">krwend_new</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span><span class="n">krw1</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">krw2</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
     <span class="n">kroend_new</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span><span class="n">kro1</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">kro2</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
 
@@ -442,11 +442,11 @@
     <span class="n">wo_new</span> <span class="o">=</span> <span class="n">pyscal</span><span class="o">.</span><span class="n">WaterOil</span><span class="p">(</span><span class="n">swl</span><span class="o">=</span><span class="n">swl_new</span><span class="p">,</span> <span class="n">swcr</span><span class="o">=</span><span class="n">swcr_new</span><span class="p">,</span> <span class="n">sorw</span><span class="o">=</span><span class="n">sorw_new</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">)</span>
 
     <span class="c1"># Add interpolated relperm data in nonlinear parts:</span>
-    <span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span>
-        <span class="n">krw1</span><span class="p">(</span><span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;swn&quot;</span><span class="p">]),</span> <span class="n">krw2</span><span class="p">(</span><span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;swn&quot;</span><span class="p">])</span>
+    <span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KRW&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span>
+        <span class="n">krw1</span><span class="p">(</span><span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SWN&quot;</span><span class="p">]),</span> <span class="n">krw2</span><span class="p">(</span><span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SWN&quot;</span><span class="p">])</span>
     <span class="p">)</span>
-    <span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krow&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span>
-        <span class="n">kro1</span><span class="p">(</span><span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;son&quot;</span><span class="p">]),</span> <span class="n">kro2</span><span class="p">(</span><span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;son&quot;</span><span class="p">])</span>
+    <span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROW&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span>
+        <span class="n">kro1</span><span class="p">(</span><span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SON&quot;</span><span class="p">]),</span> <span class="n">kro2</span><span class="p">(</span><span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SON&quot;</span><span class="p">])</span>
     <span class="p">)</span>
 
     <span class="n">wo_new</span><span class="o">.</span><span class="n">set_endpoints_linearpart_krw</span><span class="p">(</span><span class="n">krwend</span><span class="o">=</span><span class="n">krwend_new</span><span class="p">,</span> <span class="n">krwmax</span><span class="o">=</span><span class="n">krwmax_new</span><span class="p">)</span>
@@ -454,10 +454,10 @@
 
     <span class="c1"># We need a new fit-for-purpose normalized swnpc, that ignores</span>
     <span class="c1"># the initial swnpc (swirr-influenced)</span>
-    <span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;swn_pc_intp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span>
-        <span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+    <span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;swn_pc_intp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span>
+        <span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
     <span class="p">)</span>
-    <span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span>
+    <span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;PC&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span>
         <span class="n">pc1</span><span class="p">(</span><span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;swn_pc_intp&quot;</span><span class="p">]),</span> <span class="n">pc2</span><span class="p">(</span><span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;swn_pc_intp&quot;</span><span class="p">])</span>
     <span class="p">)</span>
 
@@ -522,7 +522,7 @@
     <span class="n">sorg_new</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span><span class="n">go_low</span><span class="o">.</span><span class="n">sorg</span><span class="p">,</span> <span class="n">go_high</span><span class="o">.</span><span class="n">sorg</span><span class="p">)</span>
 
     <span class="c1"># Interpolate kr at saturation endpoints</span>
-    <span class="n">krgmax_new</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span><span class="n">go_low</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krg&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">go_high</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krg&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+    <span class="n">krgmax_new</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span><span class="n">go_low</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KRG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">go_high</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KRG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
     <span class="n">krgend_new</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span><span class="n">krg1</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">krg2</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
     <span class="n">kroend_new</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span><span class="n">kro1</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">kro2</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
 
@@ -531,21 +531,21 @@
     <span class="n">go_new</span> <span class="o">=</span> <span class="n">pyscal</span><span class="o">.</span><span class="n">GasOil</span><span class="p">(</span><span class="n">swl</span><span class="o">=</span><span class="n">swl_new</span><span class="p">,</span> <span class="n">sgcr</span><span class="o">=</span><span class="n">sgcr_new</span><span class="p">,</span> <span class="n">sorg</span><span class="o">=</span><span class="n">sorg_new</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">)</span>
 
     <span class="c1"># Add interpolated relperm data in nonlinear parts:</span>
-    <span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krg&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span>
-        <span class="n">krg1</span><span class="p">(</span><span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sgn&quot;</span><span class="p">]),</span> <span class="n">krg2</span><span class="p">(</span><span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sgn&quot;</span><span class="p">])</span>
+    <span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KRG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span>
+        <span class="n">krg1</span><span class="p">(</span><span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SGN&quot;</span><span class="p">]),</span> <span class="n">krg2</span><span class="p">(</span><span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SGN&quot;</span><span class="p">])</span>
     <span class="p">)</span>
-    <span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krog&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span>
-        <span class="n">kro1</span><span class="p">(</span><span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;son&quot;</span><span class="p">]),</span> <span class="n">kro2</span><span class="p">(</span><span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;son&quot;</span><span class="p">])</span>
+    <span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span>
+        <span class="n">kro1</span><span class="p">(</span><span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SON&quot;</span><span class="p">]),</span> <span class="n">kro2</span><span class="p">(</span><span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SON&quot;</span><span class="p">])</span>
     <span class="p">)</span>
-    <span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span>
-        <span class="n">pc1</span><span class="p">(</span><span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sgn&quot;</span><span class="p">]),</span> <span class="n">pc2</span><span class="p">(</span><span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sgn&quot;</span><span class="p">])</span>
+    <span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;PC&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span>
+        <span class="n">pc1</span><span class="p">(</span><span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SGN&quot;</span><span class="p">]),</span> <span class="n">pc2</span><span class="p">(</span><span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SGN&quot;</span><span class="p">])</span>
     <span class="p">)</span>
 
     <span class="c1"># We need a new fit-for-purpose normalized sgnpc</span>
-    <span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sgn_pc_intp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sg&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sg&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span>
-        <span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sg&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sg&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+    <span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sgn_pc_intp&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SG&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span>
+        <span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
     <span class="p">)</span>
-    <span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span>
+    <span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;PC&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span>
         <span class="n">pc1</span><span class="p">(</span><span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sgn_pc_intp&quot;</span><span class="p">]),</span> <span class="n">pc2</span><span class="p">(</span><span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sgn_pc_intp&quot;</span><span class="p">])</span>
     <span class="p">)</span>
 

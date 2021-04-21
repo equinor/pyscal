@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.gaswater &mdash; pyscal 0.7.8.dev6+g9812e7c documentation</title>
+  <title>pyscal.gaswater &mdash; pyscal 0.7.8.dev7+g28df448 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.7.8.dev6+g9812e7c
+                0.7.8.dev7+g28df448
               </div>
             
           
@@ -410,22 +410,22 @@
 <span class="sd">            float: the gas saturation where krw == krg, for relperm</span>
 <span class="sd">                linearly interpolated in water saturation.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="p">{</span><span class="s2">&quot;sw&quot;</span><span class="p">,</span> <span class="s2">&quot;krw&quot;</span><span class="p">}</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Can&#39;t compute crosspoint when krw is not present&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">{</span><span class="s2">&quot;SW&quot;</span><span class="p">,</span> <span class="s2">&quot;KRW&quot;</span><span class="p">}</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Can&#39;t compute crosspoint when KRW is not present&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">None</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="p">{</span><span class="s2">&quot;sl&quot;</span><span class="p">,</span> <span class="s2">&quot;krg&quot;</span><span class="p">}</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Can&#39;t compute crosspoint when krg is not present&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">{</span><span class="s2">&quot;SL&quot;</span><span class="p">,</span> <span class="s2">&quot;KRG&quot;</span><span class="p">}</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Can&#39;t compute crosspoint when KRG is not present&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="kc">None</span>
         <span class="n">dframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span>
-            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;sw&quot;</span><span class="p">,</span> <span class="s2">&quot;krw&quot;</span><span class="p">]],</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;sl&quot;</span><span class="p">,</span> <span class="s2">&quot;krg&quot;</span><span class="p">]]],</span>
+            <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;SW&quot;</span><span class="p">,</span> <span class="s2">&quot;KRW&quot;</span><span class="p">]],</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;SL&quot;</span><span class="p">,</span> <span class="s2">&quot;KRG&quot;</span><span class="p">]]],</span>
             <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="c1"># The  &quot;sl&quot; column in the GasOil object corresponds exactly to &quot;sw&quot; in WaterOil</span>
+        <span class="c1"># The  &quot;SL&quot; column in the GasOil object corresponds exactly to &quot;SW&quot; in WaterOil</span>
         <span class="c1"># but since they are floating point, we do not want to &quot;merge&quot; dataframes on it,</span>
         <span class="c1"># rather concatenate and let linear interpolation fill in values.</span>
-        <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;sl&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;sat&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;sl&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span>
+        <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SL&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;sat&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SL&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span>
         <span class="n">dframe</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">dframe</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;sat&quot;</span><span class="p">)</span>
             <span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
@@ -433,7 +433,7 @@
             <span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
             <span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
         <span class="p">)</span>
-        <span class="k">return</span> <span class="n">crosspoint</span><span class="p">(</span><span class="n">dframe</span><span class="p">,</span> <span class="s2">&quot;sat&quot;</span><span class="p">,</span> <span class="s2">&quot;krw&quot;</span><span class="p">,</span> <span class="s2">&quot;krg&quot;</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">crosspoint</span><span class="p">(</span><span class="n">dframe</span><span class="p">,</span> <span class="s2">&quot;sat&quot;</span><span class="p">,</span> <span class="s2">&quot;KRW&quot;</span><span class="p">,</span> <span class="s2">&quot;KRG&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="GasWater.plotkrwkrg"><a class="viewcode-back" href="../../pyscal.html#pyscal.gaswater.GasWater.plotkrwkrg">[docs]</a>    <span class="k">def</span> <span class="nf">plotkrwkrg</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -467,8 +467,8 @@
             <span class="n">useax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">([</span><span class="mf">1e-8</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
             <span class="n">ax</span><span class="o">=</span><span class="n">useax</span><span class="p">,</span>
-            <span class="n">x</span><span class="o">=</span><span class="s2">&quot;sw&quot;</span><span class="p">,</span>
-            <span class="n">y</span><span class="o">=</span><span class="s2">&quot;krw&quot;</span><span class="p">,</span>
+            <span class="n">x</span><span class="o">=</span><span class="s2">&quot;SW&quot;</span><span class="p">,</span>
+            <span class="n">y</span><span class="o">=</span><span class="s2">&quot;KRW&quot;</span><span class="p">,</span>
             <span class="n">c</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
             <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
             <span class="n">legend</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -479,8 +479,8 @@
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
             <span class="n">ax</span><span class="o">=</span><span class="n">useax</span><span class="p">,</span>
-            <span class="n">x</span><span class="o">=</span><span class="s2">&quot;sl&quot;</span><span class="p">,</span>
-            <span class="n">y</span><span class="o">=</span><span class="s2">&quot;krg&quot;</span><span class="p">,</span>
+            <span class="n">x</span><span class="o">=</span><span class="s2">&quot;SL&quot;</span><span class="p">,</span>
+            <span class="n">y</span><span class="o">=</span><span class="s2">&quot;KRG&quot;</span><span class="p">,</span>
             <span class="n">c</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
             <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
             <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -489,7 +489,7 @@
             <span class="n">linestyle</span><span class="o">=</span><span class="n">linestyle</span><span class="p">,</span>
             <span class="n">marker</span><span class="o">=</span><span class="n">marker</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;sw&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;SW&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">mpl_ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.wateroilgas &mdash; pyscal 0.7.8.dev6+g9812e7c documentation</title>
+  <title>pyscal.wateroilgas &mdash; pyscal 0.7.8.dev7+g28df448 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.7.8.dev6+g9812e7c
+                0.7.8.dev7+g28df448
               </div>
             
           
@@ -252,8 +252,8 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;No WaterOil object in this WaterOilGas object&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="s2">&quot;&quot;</span>
-        <span class="k">if</span> <span class="s2">&quot;krw&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span> <span class="ow">or</span> <span class="s2">&quot;krow&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Missing krw/krow curves in WaterOilGas object&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;KRW&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span> <span class="ow">or</span> <span class="s2">&quot;KROW&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Missing KRW/KROW curves in WaterOilGas object&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="s2">&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">SWOF</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">)</span></div>
 
@@ -262,8 +262,8 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;No GasOil object in this WaterOilGas object&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="s2">&quot;&quot;</span>
-        <span class="k">if</span> <span class="s2">&quot;krg&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span> <span class="ow">or</span> <span class="s2">&quot;krog&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Missing krg/krog curves in WaterOilGas object&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;KRG&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span> <span class="ow">or</span> <span class="s2">&quot;KROG&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Missing KRG/KROG curves in WaterOilGas object&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="s2">&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">SGOF</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">)</span></div>
 
@@ -272,8 +272,8 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;No GasOil object in this WaterOilGas object&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="s2">&quot;&quot;</span>
-        <span class="k">if</span> <span class="s2">&quot;krg&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span> <span class="ow">or</span> <span class="s2">&quot;krog&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Missing krg/krog in WaterOilGas object&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;KRG&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span> <span class="ow">or</span> <span class="s2">&quot;KROG&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Missing KRG/KROG in WaterOilGas object&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="s2">&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">SLGOF</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">)</span></div>
 
@@ -282,8 +282,8 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;No GasOil object in this WaterOilGas object&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="s2">&quot;&quot;</span>
-        <span class="k">if</span> <span class="s2">&quot;krg&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Missing krg in WaterOilGas object&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;KRG&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Missing KRG in WaterOilGas object&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="s2">&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">SGFN</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">)</span></div>
 
@@ -292,8 +292,8 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;No WaterOil object in this WaterOilGas object&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="s2">&quot;&quot;</span>
-        <span class="k">if</span> <span class="s2">&quot;krw&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Missing krw in WaterOilGas object&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;KRW&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Missing KRW in WaterOilGas object&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="s2">&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">SWFN</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">)</span></div>
 
@@ -304,24 +304,24 @@
 <span class="sd">        So - the oil saturation ranges from 0 to 1-swl. The saturation points</span>
 <span class="sd">        from the WaterOil object is used to generate these</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="s2">&quot;krow&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span> <span class="ow">or</span> <span class="s2">&quot;krog&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;KROW&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span> <span class="ow">or</span> <span class="s2">&quot;KROG&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Both WaterOil and GasOil krow/krog is needed for SOF3&quot;</span><span class="p">)</span>
             <span class="k">return</span> <span class="s2">&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">threephaseconsistency</span><span class="p">()</span>
 
         <span class="c1"># Copy of the wateroil data:</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;sw&quot;</span><span class="p">,</span> <span class="s2">&quot;krow&quot;</span><span class="p">]])</span>
-        <span class="n">table</span><span class="p">[</span><span class="s2">&quot;so&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;SW&quot;</span><span class="p">,</span> <span class="s2">&quot;KROW&quot;</span><span class="p">]])</span>
+        <span class="n">table</span><span class="p">[</span><span class="s2">&quot;SO&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span>
 
         <span class="c1"># Copy of the gasoil data:</span>
-        <span class="n">gastable</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;sg&quot;</span><span class="p">,</span> <span class="s2">&quot;krog&quot;</span><span class="p">]])</span>
-        <span class="n">gastable</span><span class="p">[</span><span class="s2">&quot;so&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">gastable</span><span class="p">[</span><span class="s2">&quot;sg&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">swl</span>
+        <span class="n">gastable</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;SG&quot;</span><span class="p">,</span> <span class="s2">&quot;KROG&quot;</span><span class="p">]])</span>
+        <span class="n">gastable</span><span class="p">[</span><span class="s2">&quot;SO&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">gastable</span><span class="p">[</span><span class="s2">&quot;SG&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">swl</span>
 
         <span class="c1"># Merge WaterOil and GasOil on oil saturation, interpolate for</span>
         <span class="c1"># missing data (potentially different sg- and sw-grids)</span>
         <span class="n">sof3table</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">table</span><span class="p">,</span> <span class="n">gastable</span><span class="p">],</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;so&quot;</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;SO&quot;</span><span class="p">)</span>
             <span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
             <span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;slinear&quot;</span><span class="p">)</span>
             <span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;ffill&quot;</span><span class="p">)</span>
@@ -329,14 +329,14 @@
             <span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
         <span class="p">)</span>
         <span class="n">sof3table</span><span class="p">[</span><span class="s2">&quot;soint&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
-            <span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">round</span><span class="p">,</span> <span class="n">sof3table</span><span class="p">[</span><span class="s2">&quot;so&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">SWINTEGERS</span><span class="p">)))</span>
+            <span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">round</span><span class="p">,</span> <span class="n">sof3table</span><span class="p">[</span><span class="s2">&quot;SO&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">SWINTEGERS</span><span class="p">)))</span>
         <span class="p">)</span>
         <span class="n">sof3table</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="s2">&quot;soint&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="c1"># The &#39;so&#39; column has been calculated from floating point numbers</span>
         <span class="c1"># and the zero value easily becomes a negative zero, circumvent this:</span>
-        <span class="n">zerorow</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">sof3table</span><span class="p">[</span><span class="s2">&quot;so&quot;</span><span class="p">],</span> <span class="mf">0.0</span><span class="p">)</span>
-        <span class="n">sof3table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">zerorow</span><span class="p">,</span> <span class="s2">&quot;so&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">sof3table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">zerorow</span><span class="p">,</span> <span class="s2">&quot;so&quot;</span><span class="p">])</span>
+        <span class="n">zerorow</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">sof3table</span><span class="p">[</span><span class="s2">&quot;SO&quot;</span><span class="p">],</span> <span class="mf">0.0</span><span class="p">)</span>
+        <span class="n">sof3table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">zerorow</span><span class="p">,</span> <span class="s2">&quot;SO&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">sof3table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">zerorow</span><span class="p">,</span> <span class="s2">&quot;SO&quot;</span><span class="p">])</span>
 
         <span class="n">string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">if</span> <span class="n">header</span><span class="p">:</span>
@@ -364,7 +364,7 @@
             <span class="o">+</span> <span class="s2">&quot;KROG&quot;</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>
             <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="p">)</span>
-        <span class="n">string</span> <span class="o">+=</span> <span class="n">df2str</span><span class="p">(</span><span class="n">sof3table</span><span class="p">[[</span><span class="s2">&quot;so&quot;</span><span class="p">,</span> <span class="s2">&quot;krow&quot;</span><span class="p">,</span> <span class="s2">&quot;krog&quot;</span><span class="p">]])</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="n">df2str</span><span class="p">(</span><span class="n">sof3table</span><span class="p">[[</span><span class="s2">&quot;SO&quot;</span><span class="p">,</span> <span class="s2">&quot;KROW&quot;</span><span class="p">,</span> <span class="s2">&quot;KROG&quot;</span><span class="p">]])</span>
         <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;/</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="n">string</span></div>
 
@@ -428,20 +428,20 @@
 
         <span class="n">wog_is_ok</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krow&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krog&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROW&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
         <span class="p">):</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;Eclipse will fail, max(krow)=</span><span class="si">%g</span><span class="s2"> is not equal to max(krog)=</span><span class="si">%g</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krow&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;krog&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span>
+                <span class="s2">&quot;Eclipse will fail, max(KROW)=</span><span class="si">%g</span><span class="s2"> is not equal to max(KROG)=</span><span class="si">%g</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROW&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span>
             <span class="p">)</span>
             <span class="n">wog_is_ok</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="c1"># 2: Inconsistent end points in saturation table 1 the maximum</span>
         <span class="c1"># gas saturation (0.91) plus the connate water saturation</span>
         <span class="c1"># (0.10) must not exceed 1.0</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sg&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Eclipse will fail, max(sg) + Swl &gt; 1.0&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Eclipse will fail, max(SG) + swl &gt; 1.0&quot;</span><span class="p">)</span>
             <span class="n">wog_is_ok</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="c1"># 3: Warning: Consistency problem for gas phase endpoint (krgr &gt; krg)</span>

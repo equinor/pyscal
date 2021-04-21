@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.utils.testing &mdash; pyscal 0.7.8.dev6+g9812e7c documentation</title>
+  <title>pyscal.utils.testing &mdash; pyscal 0.7.8.dev7+g28df448 documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.7.8.dev6+g9812e7c
+                0.7.8.dev7+g28df448
               </div>
             
           
@@ -263,57 +263,57 @@
 <span class="sd">    has the properties that Eclipse enforces&quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="ow">not</span> <span class="n">dframe</span><span class="o">.</span><span class="n">empty</span>
     <span class="k">assert</span> <span class="ow">not</span> <span class="n">dframe</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
-    <span class="k">if</span> <span class="s2">&quot;sw&quot;</span> <span class="ow">in</span> <span class="n">dframe</span> <span class="ow">and</span> <span class="s2">&quot;sg&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dframe</span><span class="p">:</span>
+    <span class="k">if</span> <span class="s2">&quot;SW&quot;</span> <span class="ow">in</span> <span class="n">dframe</span> <span class="ow">and</span> <span class="s2">&quot;SG&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dframe</span><span class="p">:</span>
         <span class="c1"># (avoiding GasWater tables, where sw is an auxiliary column)</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">dframe</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">is_monotonic</span>
-        <span class="k">assert</span> <span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;sw&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;swn&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">is_monotonic</span>
-        <span class="k">assert</span> <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;son&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">is_monotonic_decreasing</span>
-        <span class="k">assert</span> <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;swnpc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">is_monotonic</span>
-    <span class="k">if</span> <span class="s2">&quot;sg&quot;</span> <span class="ow">in</span> <span class="n">dframe</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;sg&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">dframe</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;sg&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">is_monotonic</span>
-        <span class="k">assert</span> <span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;sg&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;sgn&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">is_monotonic</span>
-        <span class="k">assert</span> <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;son&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">is_monotonic_decreasing</span>
-    <span class="k">if</span> <span class="s2">&quot;krow&quot;</span> <span class="ow">in</span> <span class="n">dframe</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="n">series_decreasing</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;krow&quot;</span><span class="p">])</span>
-        <span class="k">assert</span> <span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;krow&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;krow&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
-    <span class="k">if</span> <span class="s2">&quot;krw&quot;</span> <span class="ow">in</span> <span class="n">dframe</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="n">series_increasing</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;krw&quot;</span><span class="p">])</span>
-        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;krw&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mf">0.0</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;krw&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;krw&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
-    <span class="k">if</span> <span class="s2">&quot;pc&quot;</span> <span class="ow">in</span> <span class="n">dframe</span><span class="p">:</span>
-        <span class="k">if</span> <span class="s2">&quot;sw&quot;</span> <span class="ow">in</span> <span class="n">dframe</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="n">series_decreasing</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">])</span>
-        <span class="k">if</span> <span class="s2">&quot;sg&quot;</span> <span class="ow">in</span> <span class="n">dframe</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="n">series_increasing</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">])</span>
-    <span class="k">if</span> <span class="s2">&quot;krog&quot;</span> <span class="ow">in</span> <span class="n">dframe</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="n">series_decreasing</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;krog&quot;</span><span class="p">])</span>
-        <span class="k">assert</span> <span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;krog&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;krog&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
-    <span class="k">if</span> <span class="s2">&quot;krg&quot;</span> <span class="ow">in</span> <span class="n">dframe</span><span class="p">:</span>
-        <span class="k">assert</span> <span class="n">series_increasing</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;krg&quot;</span><span class="p">])</span>
-        <span class="k">assert</span> <span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;krg&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;krg&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span></div>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">dframe</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">is_monotonic</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SWN&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">is_monotonic</span>
+        <span class="k">assert</span> <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SON&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">is_monotonic_decreasing</span>
+        <span class="k">assert</span> <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SWNPC&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">is_monotonic</span>
+    <span class="k">if</span> <span class="s2">&quot;SG&quot;</span> <span class="ow">in</span> <span class="n">dframe</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">dframe</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">is_monotonic</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SG&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SGN&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">is_monotonic</span>
+        <span class="k">assert</span> <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SON&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">is_monotonic_decreasing</span>
+    <span class="k">if</span> <span class="s2">&quot;KROW&quot;</span> <span class="ow">in</span> <span class="n">dframe</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">series_decreasing</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;KROW&quot;</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;KROW&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;KROW&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="k">if</span> <span class="s2">&quot;KRW&quot;</span> <span class="ow">in</span> <span class="n">dframe</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">series_increasing</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;KRW&quot;</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;KRW&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mf">0.0</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;KRW&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;KRW&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="k">if</span> <span class="s2">&quot;PC&quot;</span> <span class="ow">in</span> <span class="n">dframe</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;SW&quot;</span> <span class="ow">in</span> <span class="n">dframe</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">series_decreasing</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;PC&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="s2">&quot;SG&quot;</span> <span class="ow">in</span> <span class="n">dframe</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">series_increasing</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;PC&quot;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="s2">&quot;KROG&quot;</span> <span class="ow">in</span> <span class="n">dframe</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">series_decreasing</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;KROG&quot;</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;KROG&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;KROG&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+    <span class="k">if</span> <span class="s2">&quot;KRG&quot;</span> <span class="ow">in</span> <span class="n">dframe</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">series_increasing</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;KRG&quot;</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;KRG&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;KRG&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="check_linear_sections"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.testing.check_linear_sections">[docs]</a><span class="k">def</span> <span class="nf">check_linear_sections</span><span class="p">(</span><span class="n">wo_or_go</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Check that the linear segments of a WaterOil or a GasOil</span>
 <span class="sd">    object are linear.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">wo_or_go</span><span class="p">,</span> <span class="n">WaterOil</span><span class="p">):</span>
-        <span class="n">sat_col</span> <span class="o">=</span> <span class="s2">&quot;sw&quot;</span>
+        <span class="n">sat_col</span> <span class="o">=</span> <span class="s2">&quot;SW&quot;</span>
         <span class="n">right_start</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">wo_or_go</span><span class="o">.</span><span class="n">sorw</span>
         <span class="n">right_end</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="n">right_lin_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;krow&quot;</span><span class="p">,</span> <span class="s2">&quot;krw&quot;</span><span class="p">]</span>
-        <span class="n">left_lin_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;krw&quot;</span><span class="p">]</span>
+        <span class="n">right_lin_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;KROW&quot;</span><span class="p">,</span> <span class="s2">&quot;KRW&quot;</span><span class="p">]</span>
+        <span class="n">left_lin_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;KRW&quot;</span><span class="p">]</span>
         <span class="n">left_start</span> <span class="o">=</span> <span class="n">wo_or_go</span><span class="o">.</span><span class="n">swl</span>
         <span class="n">left_end</span> <span class="o">=</span> <span class="n">wo_or_go</span><span class="o">.</span><span class="n">swcr</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">wo_or_go</span><span class="p">,</span> <span class="n">GasOil</span><span class="p">):</span>
-        <span class="n">sat_col</span> <span class="o">=</span> <span class="s2">&quot;sg&quot;</span>
+        <span class="n">sat_col</span> <span class="o">=</span> <span class="s2">&quot;SG&quot;</span>
         <span class="k">if</span> <span class="n">wo_or_go</span><span class="o">.</span><span class="n">krgendanchor</span> <span class="o">==</span> <span class="s2">&quot;sorg&quot;</span><span class="p">:</span>
             <span class="n">right_start</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">wo_or_go</span><span class="o">.</span><span class="n">sorg</span> <span class="o">-</span> <span class="n">wo_or_go</span><span class="o">.</span><span class="n">swl</span>
         <span class="k">else</span><span class="p">:</span>
@@ -321,8 +321,8 @@
             <span class="c1"># segment to the right.</span>
             <span class="n">right_start</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">wo_or_go</span><span class="o">.</span><span class="n">swl</span>
         <span class="n">right_end</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">wo_or_go</span><span class="o">.</span><span class="n">swl</span>
-        <span class="n">right_lin_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;krog&quot;</span><span class="p">,</span> <span class="s2">&quot;krg&quot;</span><span class="p">]</span>
-        <span class="n">left_lin_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;krg&quot;</span><span class="p">]</span>
+        <span class="n">right_lin_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;KROG&quot;</span><span class="p">,</span> <span class="s2">&quot;KRG&quot;</span><span class="p">]</span>
+        <span class="n">left_lin_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;KRG&quot;</span><span class="p">]</span>
         <span class="n">left_start</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">left_end</span> <span class="o">=</span> <span class="n">wo_or_go</span><span class="o">.</span><span class="n">sgcr</span>
 
