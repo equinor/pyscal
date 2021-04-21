@@ -90,7 +90,7 @@ class GasWater(object):
 
         Performs tests if necessary data is ready in the object for
         printing Eclipse include files, and checks some numerical
-        properties (direction and monotonocity)
+        properties (direction and monotonicity)
 
         Returns:
             bool

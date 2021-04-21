@@ -429,7 +429,7 @@ def test_fast():
     # curves)
     assert "0.1000000 0.0100000 0.8100000 0.0000000" in gasoil.SGOF()
     assert "0.2000000 0.0400000 0.8099999 0.0000000" in gasoil.SGOF()
-    #   monotonocity correction:   ^^^^^^
+    #   monotonicity correction:   ^^^^^^
 
     # Now redo with fast option:
     gasoil = GasOil(h=0.1, fast=True)

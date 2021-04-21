@@ -11,12 +11,12 @@ from pyscal.constants import EPSILON as epsilon
 logger = logging.getLogger(__name__)
 
 
-def modify_dframe_monotonocity(dframe, monotonocity, digits):
+def modify_dframe_monotonicity(dframe, monotonicity, digits):
     """Modify a dataframe for monotonicity.
 
     Columns in the dataframe are modified in-place.
 
-    Number intervals to consider when enforcing monotonocity::
+    Number intervals to consider when enforcing monotonicity::
 
       <value>                          <orig>    <fixed>
       <lower limit>                     0.00      0.00
@@ -35,7 +35,7 @@ def modify_dframe_monotonocity(dframe, monotonocity, digits):
     than the requested accuracy are allowed, and will be
     shifted to the limits.
 
-    Only strict monotonocity is supported. Non-strict
+    Only strict monotonicity is supported. Non-strict
     monotonicity is only allowed at upper and lower limit, or
     for all-zero vectors if that option is activated.
 
@@ -43,14 +43,14 @@ def modify_dframe_monotonocity(dframe, monotonocity, digits):
 
     Args:
         dframe (pd.DataFrame): Data to modify.
-        monotonocity (dict): see df2str() for syntax.
-        digits (int): Number of digits to ensure monotonocity for.
+        monotonicity (dict): see df2str() for syntax.
+        digits (int): Number of digits to ensure monotonicity for.
     """
-    validate_monotonocity_arg(monotonocity, dframe.columns)
+    validate_monotonicity_arg(monotonicity, dframe.columns)
 
     # Wateroil.SWOF() (and similar) supply a column view
     # of the internal wateroil.table dataframe. When asked
-    # to enforce monotonocity, it must be done on a copy, both
+    # to enforce monotonicity, it must be done on a copy, both
     # for speed and for not compromising the original data.
 
     # Round to an accuracy one notch finer than end results,
@@ -58,42 +58,42 @@ def modify_dframe_monotonocity(dframe, monotonocity, digits):
     dframe = dframe.round(digits + 1)
 
     # Prepare and check columns:
-    for col in monotonocity:
+    for col in monotonicity:
         if dframe[col].dtype != np.float64:
             dframe.loc[:, col] = dframe[col].astype(float)
 
         # Bail on clearly erroneous data:
-        check_almost_monotone(dframe[col], digits, monotonocity[col]["sign"])
+        check_almost_monotone(dframe[col], digits, monotonicity[col]["sign"])
 
-        check_limits(dframe[col], monotonocity[col])
+        check_limits(dframe[col], monotonicity[col])
 
-    # Modify data for monotonocity:
-    for col in monotonocity:
+    # Modify data for monotonicity:
+    for col in monotonicity:
         accuracy = 1.0 / 10.0 ** digits - epsilon
 
-        if "allowzero" in monotonocity[col]:
-            # Treat zero as an exception for strict monotonocity:
+        if "allowzero" in monotonicity[col]:
+            # Treat zero as an exception for strict monotonicity:
             max_value = dframe[col].abs().max()
-            if max_value < accuracy and monotonocity[col]["allowzero"]:
+            if max_value < accuracy and monotonicity[col]["allowzero"]:
                 continue
 
-        constants = rows_to_be_fixed(dframe[col], monotonocity[col], digits)
+        constants = rows_to_be_fixed(dframe[col], monotonicity[col], digits)
         iterations = 0
-        sign = monotonocity[col]["sign"]
+        sign = monotonicity[col]["sign"]
         while constants.any():
             iterations += 1
             if iterations > 2 * len(dframe[col]):
-                raise Exception("Too many iterations for monotonocity fix")
+                raise Exception("Too many iterations for monotonicity fix")
 
             dframe.loc[constants, col] = (
                 dframe.loc[constants, col] + sign / 10.0 ** digits - epsilon
             )
 
-            # Ensure nonstrict monotonocity and clips after each modification:
-            dframe[col] = clip_accumulate(dframe[col], monotonocity[col])
+            # Ensure nonstrict monotonicity and clips after each modification:
+            dframe[col] = clip_accumulate(dframe[col], monotonicity[col])
 
             # Evaluate what is left to fix:
-            constants = rows_to_be_fixed(dframe[col], monotonocity[col], digits)
+            constants = rows_to_be_fixed(dframe[col], monotonicity[col], digits)
 
         # Warn if more iterations than 5% of the rows
         # (number of iterations do not necessarily correspond with
@@ -106,7 +106,7 @@ def modify_dframe_monotonocity(dframe, monotonocity, digits):
                 str(len(dframe[col])),
             )
 
-        # Check result for monotonocity:
+        # Check result for monotonicity:
         # Is this possible when rows_to_be_fixed returns none??
         allowance = 1.0 / 10.0 ** digits
         if sign > 0:
@@ -118,14 +118,14 @@ def modify_dframe_monotonocity(dframe, monotonocity, digits):
     return dframe
 
 
-def clip_accumulate(series, monotonocity):
+def clip_accumulate(series, monotonicity):
     """
-    Modify a series (vector of numbers) for non-strict monotonocity, and
+    Modify a series (vector of numbers) for non-strict monotonicity, and
     optionally clip at lower and upper limits.
 
     Args:
         series (pd.Series or np.array): Vector of numbers to modify
-        monotonocity (dict): Monotonocity options. The keys 'lower' and 'upper'
+        monotonicity (dict): Monotonocity options. The keys 'lower' and 'upper'
             can be provided for clipping the vector.
 
     Returns:
@@ -133,22 +133,22 @@ def clip_accumulate(series, monotonocity):
     """
     if isinstance(series, (list, np.ndarray)):
         series = pd.Series(series, dtype="float64")
-    if monotonocity["sign"] > 0:
+    if monotonicity["sign"] > 0:
         series = np.maximum.accumulate(series)
     else:
         series = np.minimum.accumulate(series)
-    if "lower" in monotonocity and "upper" in monotonocity:
+    if "lower" in monotonicity and "upper" in monotonicity:
         series.clip(
-            lower=monotonocity["lower"], upper=monotonocity["upper"], inplace=True
+            lower=monotonicity["lower"], upper=monotonicity["upper"], inplace=True
         )
-    elif "lower" in monotonocity:
-        series.clip(lower=monotonocity["lower"], inplace=True)
-    elif "upper" in monotonocity:
-        series.clip(upper=monotonocity["upper"], inplace=True)
+    elif "lower" in monotonicity:
+        series.clip(lower=monotonicity["lower"], inplace=True)
+    elif "upper" in monotonicity:
+        series.clip(upper=monotonicity["upper"], inplace=True)
     return series
 
 
-def check_limits(series, monotonocity, colname=""):
+def check_limits(series, monotonicity, colname=""):
     """
     Check a series whether it obeys numerical limits.
     Equivalence to limits is allowed.
@@ -158,7 +158,7 @@ def check_limits(series, monotonocity, colname=""):
 
     Args:
         series (pd.Series): Vector of numbers to check
-        monotonocity (dict): Keys 'upper' and 'lower' are optional
+        monotonicity (dict): Keys 'upper' and 'lower' are optional
             and point to numerical limits.
         colname (str): Optional string for a column name that will be
             included in any error message.
@@ -169,18 +169,18 @@ def check_limits(series, monotonocity, colname=""):
         series = pd.Series(series, dtype="float64")
     if series.empty:
         return
-    if "upper" in monotonocity and (series > monotonocity["upper"]).any():
+    if "upper" in monotonicity and (series > monotonicity["upper"]).any():
         raise ValueError("Values larger than upper limit in column {}".format(colname))
-    if "lower" in monotonocity and (series < monotonocity["lower"]).any():
+    if "lower" in monotonicity and (series < monotonicity["lower"]).any():
         raise ValueError("Values smaller than lower limit in column {}".format(colname))
 
 
-def rows_to_be_fixed(series, monotonocity, digits):
+def rows_to_be_fixed(series, monotonicity, digits):
     """Compute boolean array of rows that must be modified
 
     Args:
         series (pd.Series):
-        monotonocity (dict): Can contain "upper" or "lower"
+        monotonicity (dict): Can contain "upper" or "lower"
             numerical bounds, and "sign", where >0 means positive.
             "sign" is mandatory.
         digits (int): Accuracy required, how many digits
@@ -194,16 +194,16 @@ def rows_to_be_fixed(series, monotonocity, digits):
 
     # minus epsilon is critical to avoid being greedy
     accuracy = 1.0 / 10.0 ** digits - epsilon
-    if monotonocity["sign"] > 0:
+    if monotonicity["sign"] > 0:
         constants = series.round(digits + 1).diff() < accuracy
     else:
         constants = series.round(digits + 1).diff() > -accuracy
 
     # Allow constants at the lower and upper limits.
-    if "upper" in monotonocity:
-        constants = constants & (series < (monotonocity["upper"] - accuracy))
-    if "lower" in monotonocity:
-        constants = constants & (series > (monotonocity["lower"] + accuracy))
+    if "upper" in monotonicity:
+        constants = constants & (series < (monotonicity["upper"] - accuracy))
+    if "lower" in monotonicity:
+        constants = constants & (series > (monotonicity["lower"] + accuracy))
     return constants
 
 
@@ -228,15 +228,15 @@ def check_almost_monotone(series, digits, sign):
             raise ValueError("Series is not almost monotone")
 
 
-def validate_monotonocity_arg(monotonocity, dframe_colnames):
+def validate_monotonicity_arg(monotonicity, dframe_colnames):
     """
-    Validate a dictionary with monotonocity arguments that
+    Validate a dictionary with monotonicity arguments that
     can be given to df2str().
 
     Will raise ValueError exceptions if anything is wrong.
 
     Args:
-        monotonocity (dict): Keys are 'sign', 'upper', 'lower'
+        monotonicity (dict): Keys are 'sign', 'upper', 'lower'
             and  'allowzero'.
         dframe_colnames (list of str): Names of column names
             in dframes. Used in error messages.
@@ -245,36 +245,36 @@ def validate_monotonocity_arg(monotonocity, dframe_colnames):
         None
     """
     valid_keys = ["sign", "upper", "lower", "allowzero"]
-    if monotonocity is None:
+    if monotonicity is None:
         return
-    if not isinstance(monotonocity, dict):
-        raise ValueError("monotonocity argument must be a dict")
-    for col in monotonocity:
-        if not isinstance(monotonocity[col], dict):
-            raise ValueError("monotonocity argument must be a dict of dicts")
-        if not set(monotonocity[col].keys()).issubset(valid_keys):
+    if not isinstance(monotonicity, dict):
+        raise ValueError("monotonicity argument must be a dict")
+    for col in monotonicity:
+        if not isinstance(monotonicity[col], dict):
+            raise ValueError("monotonicity argument must be a dict of dicts")
+        if not set(monotonicity[col].keys()).issubset(valid_keys):
             raise ValueError(
-                "Unknown keys in monotonocity {}".format(monotonocity[col].keys())
+                "Unknown keys in monotonicity {}".format(monotonicity[col].keys())
             )
         if col not in dframe_colnames:
             raise ValueError("Column {} does not exist in dataframe".format(col))
-        if "sign" not in monotonocity[col]:
+        if "sign" not in monotonicity[col]:
             raise ValueError("Monotonocity sign not specified for {}".format(col))
         try:
-            signvalue = float(monotonocity[col]["sign"])
+            signvalue = float(monotonicity[col]["sign"])
         except ValueError as err:
             raise ValueError(
-                "Monotonocity sign {} not valid".format(monotonocity[col]["sign"])
+                "Monotonocity sign {} not valid".format(monotonicity[col]["sign"])
             ) from err
-        if "upper" in monotonocity[col]:
-            float(monotonocity[col]["upper"])
-        if "lower" in monotonocity[col]:
-            float(monotonocity[col]["lower"])
+        if "upper" in monotonicity[col]:
+            float(monotonicity[col]["upper"])
+        if "lower" in monotonicity[col]:
+            float(monotonicity[col]["lower"])
         if abs(signvalue) > 1:
             raise ValueError("Monotonocity sign must be -1 or +1, not larger/smaller")
 
-        if "allowzero" in monotonocity[col]:
-            if monotonocity[col]["allowzero"] not in {True, False}:
+        if "allowzero" in monotonicity[col]:
+            if monotonicity[col]["allowzero"] not in {True, False}:
                 raise ValueError(
-                    "allowzero in monotonocity argument must be True/False"
+                    "allowzero in monotonicity argument must be True/False"
                 )

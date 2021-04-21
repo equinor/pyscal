@@ -702,7 +702,7 @@ class GasOil(object):
         )
         string += df2str(
             self.table[["sg", "krg", "krog", "pc"]],
-            monotonocity={
+            monotonicity={
                 "krog": {"sign": -1, "lower": 0, "upper": 1},
                 "krg": {"sign": 1, "lower": 0, "upper": 1},
                 "pc": {"sign": 1, "allowzero": True},
@@ -798,7 +798,7 @@ class GasOil(object):
         )
         string += df2str(
             self.slgof_df(),
-            monotonocity={
+            monotonicity={
                 "krog": {"sign": 1, "lower": 0, "upper": 1},
                 "krg": {"sign": -1, "lower": 0, "upper": 1},
                 "pc": {"sign": -1, "allowzero": True},
@@ -868,7 +868,7 @@ class GasOil(object):
         )
         string += df2str(
             self.table[["sg", "krg", "pc"]],
-            monotonocity={
+            monotonicity={
                 "krg": {"sign": 1, "lower": 0, "upper": 1},
                 "pc": {"sign": 1, "allowzero": True},
             }
@@ -921,7 +921,7 @@ class GasOil(object):
         )
         string += df2str(
             self.table[["sg", "krg", "krog", "pc"]],
-            monotonocity={
+            monotonicity={
                 "krog": {"sign": -1, "lower": 0, "upper": 1},
                 "krg": {"sign": 1, "lower": 0, "upper": 1},
                 "pc": {"sign": 1, "allowzero": True},
