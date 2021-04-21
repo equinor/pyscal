@@ -32,7 +32,6 @@ class GasWater(object):
         swl (float): First water saturation point in outputted tables.
         swcr (float): Critical water saturation, water is immobile below this
         sgrw (float): Residual gas saturation after water flooding.
-        sgcr (float): Critical gas saturation, gas is immobile below this
         h (float): Saturation intervals in generated tables.
         tag (str): Optional text that will be included as comments.
         fast (bool): Set to True if you prefer speed over robustness. Not recommended,
@@ -45,7 +44,6 @@ class GasWater(object):
         swl=0.0,
         swcr=0.0,
         sgrw=0.0,
-        sgcr=0,
         h=0.01,
         tag="",
         fast=False,
@@ -63,16 +61,15 @@ class GasWater(object):
             h=h,
             tag=tag,
             fast=fast,
-            _sgcr=sgcr,
+            _gaswater=True,
         )
 
-        self.sgcr = sgcr
         self.sgrw = sgrw
         # (remaining parameters are implemented as property functions)
 
         self.gasoil = GasOil(
             swirr=swirr,  # Reserved for use in capillary pressure
-            sgcr=sgcr,
+            sgcr=sgrw,
             sorg=0,  # Irrelevant for GasWater
             swl=swl,
             h=h,

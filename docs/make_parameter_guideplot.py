@@ -172,12 +172,11 @@ def make_gaswater_plot(show=True):
     swirr = 0.05
     swl = 0.1
     swcr = 0.2
-    sgcr = 0.4
     sgrw = 0.2
     krwend = 0.65
     krwmax = 0.75
     krgend = 0.85
-    gaswater = GasWater(swirr=swirr, swl=swl, swcr=swcr, sgrw=sgrw, sgcr=sgcr, h=0.001)
+    gaswater = GasWater(swirr=swirr, swl=swl, swcr=swcr, sgrw=sgrw, h=0.001)
     gaswater.add_corey_water(nw=2, krwend=krwend, krwmax=krwmax)
     gaswater.add_corey_gas(ng=2, krgend=krgend)
     gaswater.wateroil.table.plot(
@@ -230,11 +229,6 @@ def make_gaswater_plot(show=True):
     axes.text(1 - sgrw + 0.04, 0.04, "SGRW")
     axes.annotate(
         "", xy=(1 - sgrw, 0.02), xytext=(1, 0.02), arrowprops=dict(arrowstyle="<->")
-    )
-
-    axes.text(1 - sgcr + 0.04, 0.14, "SGCR")
-    axes.annotate(
-        "", xy=(1 - sgcr, 0.12), xytext=(1, 0.12), arrowprops=dict(arrowstyle="<->")
     )
 
     if show:

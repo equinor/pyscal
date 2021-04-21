@@ -65,12 +65,12 @@ class WaterOil(object):
         h=0.01,
         tag="",
         fast=False,
-        _sgcr=None,
+        _gaswater=False,
     ):
         """Sets up the saturation range. Swirr is only relevant
         for the capillary pressure, not for relperm data.
 
-        _sgcr is only to be used by the GasWater object.
+        _gaswater is only to be used by the GasWater object.
         """
 
         assert -epsilon < swirr < 1.0 + epsilon
@@ -91,9 +91,6 @@ class WaterOil(object):
             self.h = h_min
         else:
             self.h = h
-
-        if _sgcr is not None:
-            self.sgcr = _sgcr
 
         self.swirr = swirr
         self.swl = max(swl, swirr)  # Cannot allow swl < swirr. Warn?
@@ -146,7 +143,7 @@ class WaterOil(object):
         # Different normalization for Sw used for capillary pressure
         self.table["SWNPC"] = (self.table["SW"] - swirr) / (1 - swirr)
 
-        if _sgcr is None:
+        if _gaswater is False:
             self.swcomment = "-- swirr=%g swl=%g swcr=%g sorw=%g\n" % (
                 self.swirr,
                 self.swl,
@@ -154,13 +151,11 @@ class WaterOil(object):
                 self.sorw,
             )
         else:
-            # When _sgcr is defined, this object is in use by GasWater
-            self.swcomment = "-- swirr=%g swl=%g swcr=%g sgrw=%g sgcr=%g\n" % (
+            self.swcomment = "-- swirr=%g swl=%g swcr=%g sgrw=%g\n" % (
                 self.swirr,
                 self.swl,
                 self.swcr,
                 self.sorw,
-                self.sgcr,
             )
 
         self.krwcomment = ""
@@ -966,7 +961,7 @@ class WaterOil(object):
                 If this is all linear, but krw is not, you might be better off
                 with krw
         Returns:
-            float: The estimated sgcr.
+            float: The estimated swcr.
         """
         assert curve in self.table
         assert self.table[curve].sum() > 0

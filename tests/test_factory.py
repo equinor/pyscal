@@ -451,7 +451,7 @@ def test_factory_gaswater():
         pyscal_factory.create_gas_water(params="swirr 0.01")
 
     gaswater = pyscal_factory.create_gas_water(
-        dict(swirr=0.01, swl=0.03, sgrw=0.1, sgcr=0.15, tag="gassy sand", ng=2, nw=2)
+        dict(swirr=0.01, swl=0.03, sgrw=0.1, tag="gassy sand", ng=2, nw=2)
     )
 
     assert isinstance(gaswater, GasWater)
@@ -459,7 +459,6 @@ def test_factory_gaswater():
     assert gaswater.swirr == 0.01
     assert gaswater.swl == 0.03
     assert gaswater.sgrw == 0.1
-    assert gaswater.sgcr == 0.15
     assert gaswater.tag == "gassy sand"
 
     sgfn = gaswater.SGFN()
@@ -473,7 +472,6 @@ def test_factory_gaswater():
     assert "swirr=0.01" in sgfn
     assert "swirr=0.01" in swfn
     assert "sgrw=0.1" in swfn
-    assert "sgcr=0.15" in sgfn
     assert "nw=2" in swfn
     assert "ng=2" in sgfn
     assert "gassy sand" in sgfn

@@ -32,7 +32,7 @@ def check_endpoints(gaswater, krwend, krwmax, krgend):
     assert float_df_checker(gaswater.gasoil.table, "SL", gaswater.swl, "KRG", krgend)
     # krg at sgcr (sgn is zero there) should be zero:
     assert float_df_checker(gaswater.gasoil.table, "SGN", 0.0, "KRG", 0.0)
-    assert float_df_checker(gaswater.gasoil.table, "SL", 1 - gaswater.sgcr, "KRG", 0.0)
+    assert float_df_checker(gaswater.gasoil.table, "SL", 1 - gaswater.sgrw, "KRG", 0.0)
 
     check_linear_sections(gaswater.gasoil)
     check_linear_sections(gaswater.wateroil)
@@ -235,29 +235,24 @@ def test_gaswater_linear():
 
 def test_crosspoint():
     """Test the crosspoint computation (on edge cases)"""
-    gaswater = GasWater(swl=0.0, sgrw=0.0, sgcr=0.0, h=0.1)
+    gaswater = GasWater(swl=0.0, sgrw=0.0, h=0.1)
     gaswater.add_corey_water(nw=1)
     gaswater.add_corey_gas(ng=1)
     assert np.isclose(gaswater.crosspoint(), 0.5)
 
     assert "-- krw = krg @ sw=0.5" in gaswater.SWFN()
 
-    gaswater = GasWater(swl=0.5, sgrw=0.0, sgcr=0.0, h=0.1)
+    gaswater = GasWater(swl=0.5, sgrw=0.0, h=0.1)
     gaswater.add_corey_water(nw=1)
     gaswater.add_corey_gas(ng=1)
     assert np.isclose(gaswater.crosspoint(), 0.75)
 
-    gaswater = GasWater(swl=0.0, sgrw=0.5, sgcr=0.0, h=0.1)
-    gaswater.add_corey_water(nw=1)
-    gaswater.add_corey_gas(ng=1)
-    assert np.isclose(gaswater.crosspoint(), 0.3333333)
-
-    gaswater = GasWater(swl=0.0, sgrw=0.5, sgcr=0.5, h=0.1)
+    gaswater = GasWater(swl=0.0, sgrw=0.5, h=0.1)
     gaswater.add_corey_water(nw=1)
     gaswater.add_corey_gas(ng=1)
     assert np.isclose(gaswater.crosspoint(), 0.25)
 
-    gaswater = GasWater(swl=0.0, sgrw=0.5, sgcr=0.5, h=0.1)
+    gaswater = GasWater(swl=0.0, sgrw=0.5, h=0.1)
     gaswater.add_corey_water(nw=1, krwend=0.5)
     gaswater.add_corey_gas(ng=1, krgend=0.5)
     assert np.isclose(gaswater.crosspoint(), 0.25)
@@ -321,7 +316,6 @@ def test_comments():
     assert "swcr=0" in swfn
     assert "swl=0" in swfn
     assert "sgrw=0" in swfn
-    assert "sgcr=0" in swfn
     assert "nw=2" in swfn
     assert "krwend=1" in swfn
     assert "Corey" in swfn
@@ -336,7 +330,6 @@ def test_comments():
     assert "--" in sgfn
     assert "pyscal: " in sgfn  # part of version string
     assert "swirr=0" in sgfn
-    assert "sgcr=0" in sgfn
     assert "swl=0" in sgfn
     assert "ng=2" in sgfn
     assert "krgend=1" in sgfn
