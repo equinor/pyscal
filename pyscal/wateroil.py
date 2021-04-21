@@ -109,42 +109,42 @@ class WaterOil(object):
         self.fast = fast
         sw_list = list(np.arange(self.swl, 1, self.h)) + [self.swcr] + [1 - sorw] + [1]
         sw_list.sort()  # Using default timsort on nearly sorted data.
-        self.table = pd.DataFrame(sw_list, columns=["sw"])
+        self.table = pd.DataFrame(sw_list, columns=["SW"])
 
         # Ensure that we do not have sw values that are too close
         # to each other, determined rougly by the distance 1/10000
         self.table["swint"] = list(
-            map(int, list(map(round, self.table["sw"] * SWINTEGERS)))
+            map(int, list(map(round, self.table["SW"] * SWINTEGERS)))
         )
         self.table.drop_duplicates("swint", inplace=True)
 
         # Now, sw=1-sorw might be accidentaly dropped, so make sure we
         # have it by replacing the closest value by 1-sorw exactly
-        sorwindex = (self.table["sw"] - (1 - self.sorw)).abs().sort_values().index[0]
-        self.table.loc[sorwindex, "sw"] = 1 - self.sorw
+        sorwindex = (self.table["SW"] - (1 - self.sorw)).abs().sort_values().index[0]
+        self.table.loc[sorwindex, "SW"] = 1 - self.sorw
 
         # Same for sw=swcr:
-        swcrindex = (self.table["sw"] - (self.swcr)).abs().sort_values().index[0]
-        self.table.loc[swcrindex, "sw"] = self.swcr
+        swcrindex = (self.table["SW"] - (self.swcr)).abs().sort_values().index[0]
+        self.table.loc[swcrindex, "SW"] = self.swcr
 
         # If sw=1 was dropped, then sorw was close to zero:
-        if not np.isclose(self.table["sw"].max(), 1.0):
+        if not np.isclose(self.table["SW"].max(), 1.0):
             # Add it as an extra row:
-            self.table.loc[len(self.table) + 1, "sw"] = 1.0
-            self.table.sort_values(by="sw", inplace=True)
+            self.table.loc[len(self.table) + 1, "SW"] = 1.0
+            self.table.sort_values(by="SW", inplace=True)
 
         self.table.reset_index(inplace=True)
-        self.table = self.table[["sw"]]  # Drop the swint column
+        self.table = self.table[["SW"]]  # Drop the swint column
 
         # Normalize for krw:
-        self.table["swn"] = (self.table["sw"] - self.swcr) / (1 - self.swcr - self.sorw)
+        self.table["SWN"] = (self.table["SW"] - self.swcr) / (1 - self.swcr - self.sorw)
         # Normalize for krow:
-        self.table["son"] = (1 - self.table["sw"] - self.sorw) / (
+        self.table["SON"] = (1 - self.table["SW"] - self.sorw) / (
             1 - self.sorw - self.swl
         )
 
         # Different normalization for Sw used for capillary pressure
-        self.table["swnpc"] = (self.table["sw"] - swirr) / (1 - swirr)
+        self.table["SWNPC"] = (self.table["SW"] - swirr) / (1 - swirr)
 
         if _sgcr is None:
             self.swcomment = "-- swirr=%g swl=%g swcr=%g sorw=%g\n" % (
@@ -174,10 +174,10 @@ class WaterOil(object):
     def add_fromtable(
         self,
         dframe,
-        swcolname="Sw",
-        krwcolname="krw",
-        krowcolname="krow",
-        pccolname="pcow",
+        swcolname="SW",
+        krwcolname="KRW",
+        krowcolname="KROW",
+        pccolname="PCOW",
         krwcomment="",
         krowcomment="",
         pccomment="",
@@ -241,7 +241,7 @@ class WaterOil(object):
                     ) from err
 
         if (dframe[swcolname].diff() < 0).any():
-            raise ValueError("sw data not sorted")
+            raise ValueError("SW data not sorted")
         if krwcolname in dframe:
             if not sorw:
                 sorw = dframe[swcolname].max() - estimate_diffjumppoint(
@@ -250,9 +250,9 @@ class WaterOil(object):
                 logger.info("Estimated sorw in tabular data to %f", sorw)
             assert -epsilon <= sorw <= 1 + epsilon
             if dframe[krwcolname].max() > 1.0:
-                raise ValueError("krw is above 1 in incoming table")
+                raise ValueError("KRW is above 1 in incoming table")
             if dframe[krwcolname].min() < 0.0:
-                raise ValueError("krw is below 0 in incoming table")
+                raise ValueError("KRW is below 0 in incoming table")
             linearpart = dframe[swcolname] >= 1 - sorw
             nonlinearpart = dframe[swcolname] <= 1 - sorw  # (overlapping at sorw)
             if sum(linearpart) < 2:
@@ -262,32 +262,32 @@ class WaterOil(object):
             if sum(nonlinearpart) < 2:
                 nonlinearpart = pd.Series([False] * len(nonlinearpart))
                 linearpart = ~nonlinearpart
-            if not np.isclose(dframe[swcolname].min(), self.table["sw"].min()):
+            if not np.isclose(dframe[swcolname].min(), self.table["SW"].min()):
                 raise ValueError("Incompatible swl")
             # Verify that incoming data is increasing (or level):
             if not (dframe[krwcolname].diff().dropna() > -epsilon).all():
-                raise ValueError("Incoming krw not increasing")
+                raise ValueError("Incoming KRW not increasing")
             if dframe[krwcolname].max() > 1.0:
-                raise ValueError("krw is above 1 in incoming table")
+                raise ValueError("KRW is above 1 in incoming table")
             if dframe[krwcolname].min() < 0.0:
-                raise ValueError("krw is below 0 in incoming table")
+                raise ValueError("KRW is below 0 in incoming table")
             if sum(nonlinearpart) >= 2:
                 pchip = PchipInterpolator(
                     dframe[nonlinearpart][swcolname].astype(float),
                     dframe[nonlinearpart][krwcolname].astype(float),
                 )
-                self.table.loc[self.table["sw"] <= 1 - sorw, "krw"] = pchip(
-                    self.table.loc[self.table["sw"] <= 1 - sorw, "sw"]
+                self.table.loc[self.table["SW"] <= 1 - sorw, "KRW"] = pchip(
+                    self.table.loc[self.table["SW"] <= 1 - sorw, "SW"]
                 )
             if sum(linearpart) >= 2:
                 linearinterpolator = interp1d(
                     dframe[linearpart][swcolname].astype(float),
                     dframe[linearpart][krwcolname].astype(float),
                 )
-                self.table.loc[self.table["sw"] > 1 - sorw, "krw"] = linearinterpolator(
-                    self.table.loc[self.table["sw"] > 1 - sorw, "sw"]
+                self.table.loc[self.table["SW"] > 1 - sorw, "KRW"] = linearinterpolator(
+                    self.table.loc[self.table["SW"] > 1 - sorw, "SW"]
                 )
-            self.table["krw"].clip(lower=0.0, upper=1.0, inplace=True)
+            self.table["KRW"].clip(lower=0.0, upper=1.0, inplace=True)
             self.sorw = sorw
             self.krwcomment = "-- krw from tabular input" + krwcomment + "\n"
             self.swcr = self.estimate_swcr()
@@ -308,21 +308,21 @@ class WaterOil(object):
             if sum(nonlinearpart) < 2:
                 nonlinearpart = pd.Series([False] * len(nonlinearpart))
                 linearpart = ~nonlinearpart
-            if not np.isclose(dframe[swcolname].min(), self.table["sw"].min()):
+            if not np.isclose(dframe[swcolname].min(), self.table["SW"].min()):
                 raise ValueError("Incompatible swl")
             if not (dframe[krowcolname].diff().dropna() < epsilon).all():
-                raise ValueError("Incoming krow not decreasing")
+                raise ValueError("Incoming KROW Not decreasing")
             if dframe[krowcolname].max() > 1.0:
-                raise ValueError("krow is above 1 in incoming table")
+                raise ValueError("KROW is above 1 in incoming table")
             if dframe[krowcolname].min() < 0.0:
-                raise ValueError("krow is below 0 in incoming table")
+                raise ValueError("KROW is below 0 in incoming table")
             if sum(nonlinearpart) >= 2:
                 pchip = PchipInterpolator(
                     dframe.loc[nonlinearpart, swcolname].astype(float),
                     dframe.loc[nonlinearpart, krowcolname].astype(float),
                 )
-                self.table.loc[self.table["sw"] <= 1 - sorw, "krow"] = pchip(
-                    self.table.loc[self.table["sw"] <= 1 - sorw, "sw"]
+                self.table.loc[self.table["SW"] <= 1 - sorw, "KROW"] = pchip(
+                    self.table.loc[self.table["SW"] <= 1 - sorw, "SW"]
                 )
             if sum(linearpart) >= 2:
                 linearinterpolator = interp1d(
@@ -330,18 +330,18 @@ class WaterOil(object):
                     dframe.loc[linearpart, krowcolname].astype(float),
                 )
                 self.table.loc[
-                    self.table["sw"] > 1 - sorw, "krow"
+                    self.table["SW"] > 1 - sorw, "KROW"
                 ] = linearinterpolator(
-                    self.table.loc[self.table["sw"] > 1 - sorw, "sw"]
+                    self.table.loc[self.table["SW"] > 1 - sorw, "SW"]
                 )
-            self.table["krow"].clip(lower=0.0, upper=1.0, inplace=True)
+            self.table["KROW"].clip(lower=0.0, upper=1.0, inplace=True)
             self.sorw = sorw
             self.krowcomment = "-- krow from tabular input" + krowcomment + "\n"
         if pccolname in dframe:
             # Incoming dataframe must cover the range:
-            if dframe[swcolname].min() > self.table["sw"].min():
+            if dframe[swcolname].min() > self.table["SW"].min():
                 raise ValueError("Too large swl for pc interpolation")
-            if dframe[swcolname].max() < self.table["sw"].max():
+            if dframe[swcolname].max() < self.table["SW"].max():
                 raise ValueError("max(sw) of incoming data not large enough")
             if np.isinf(dframe[pccolname]).any():
                 logger.warning(
@@ -359,8 +359,8 @@ class WaterOil(object):
             pchip = PchipInterpolator(
                 dframe[swcolname].astype(float), dframe[pccolname].astype(float)
             )
-            self.table["pc"] = pchip(self.table["sw"])
-            if np.isnan(self.table["pc"]).any() or np.isinf(self.table["pc"]).any():
+            self.table["PC"] = pchip(self.table["SW"])
+            if np.isnan(self.table["PC"]).any() or np.isinf(self.table["PC"]).any():
                 raise ValueError("inf/nan in interpolated data, check input")
             self.pccomment = "-- pc from tabular input" + pccomment + "\n"
 
@@ -386,7 +386,7 @@ class WaterOil(object):
         else:
             assert 0 < krwend <= 1.0
 
-        self.table["krw"] = krwend * self.table["swn"] ** nw
+        self.table["KRW"] = krwend * self.table["SWN"] ** nw
 
         self.set_endpoints_linearpart_krw(krwend, krwmax)
 
@@ -412,17 +412,17 @@ class WaterOil(object):
             krwmax (float): krw at Sw=1. Default 1.
         """
         # The rows and indices involved in the linear section [1-sorw, 1]:
-        linear_section_rows = self.table["sw"] > (1 - self.sorw - epsilon)
+        linear_section_rows = self.table["SW"] > (1 - self.sorw - epsilon)
         linear_section_indices = self.table[linear_section_rows].index
         # (these lists are never empty)
 
         # Set krwend always (overrides krwmax if sorw=0)
-        self.table.iloc[linear_section_indices[0]]["krw"] = krwend
+        self.table.iloc[linear_section_indices[0]]["KRW"] = krwend
 
         if len(linear_section_indices) > 1:
             if krwmax is None:
                 krwmax = 1
-            self.table.iloc[linear_section_indices[-1]]["krw"] = krwmax
+            self.table.iloc[linear_section_indices[-1]]["KRW"] = krwmax
         else:
             if krwmax is not None:
                 logger.info("krwmax ignored when sorw is zero")
@@ -430,16 +430,16 @@ class WaterOil(object):
         # If the linear section is longer than two rows, do linear
         # interpolation inside for krw:
         if len(linear_section_indices) > 2:
-            self.table.loc[linear_section_indices[1:-1], "krw"] = np.nan
+            self.table.loc[linear_section_indices[1:-1], "KRW"] = np.nan
             interp_krw = (
-                self.table[["sw", "krw"]]
-                .set_index("sw")
-                .interpolate(method="index")["krw"]
+                self.table[["SW", "KRW"]]
+                .set_index("SW")
+                .interpolate(method="index")["KRW"]
             )
-            self.table.loc[:, "krw"] = interp_krw.values
+            self.table.loc[:, "KRW"] = interp_krw.values
 
         # Left linear section is all zero:
-        self.table.loc[self.table["sw"] < self.swcr, "krw"] = 0
+        self.table.loc[self.table["SW"] < self.swcr, "KRW"] = 0
 
     def set_endpoints_linearpart_krow(self, kroend, kromax=None):
         """Set linear parts of krow outside endpoints
@@ -456,11 +456,11 @@ class WaterOil(object):
             logger.error("kromax is DEPRECATED, ignored")
 
         # Set to zero above sorw:
-        self.table.loc[self.table["sw"] > 1 - self.sorw, "krow"] = 0
+        self.table.loc[self.table["SW"] > 1 - self.sorw, "KROW"] = 0
 
         # Floating point issues can cause this to have become
         # slightly bigger than krowend.
-        self.table.loc[self.table["krow"] > kroend, "krow"] = kroend
+        self.table.loc[self.table["KROW"] > kroend, "KROW"] = kroend
 
     def add_LET_water(self, l=2, e=2, t=2, krwend=1, krwmax=None):
         """Add krw data through LET parametrization
@@ -488,13 +488,13 @@ class WaterOil(object):
         else:
             assert 0 < krwend <= 1.0
 
-        self.table["krw"] = (
+        self.table["KRW"] = (
             krwend
-            * self.table["swn"] ** l
-            / ((self.table["swn"] ** l) + e * (1 - self.table["swn"]) ** t)
+            * self.table["SWN"] ** l
+            / ((self.table["SWN"] ** l) + e * (1 - self.table["SWN"]) ** t)
         )
         # This equation is undefined for t a float and swn=1, set explicitly:
-        self.table.loc[np.isclose(self.table["swn"], 1.0), "krw"] = krwend
+        self.table.loc[np.isclose(self.table["SWN"], 1.0), "KRW"] = krwend
 
         self.set_endpoints_linearpart_krw(krwend, krwmax)
 
@@ -529,15 +529,15 @@ class WaterOil(object):
         if kromax is not None:
             logger.error("kromax is DEPRECATED, ignored")
 
-        self.table["krow"] = (
+        self.table["KROW"] = (
             kroend
-            * self.table["son"] ** l
-            / ((self.table["son"] ** l) + e * (1 - self.table["son"]) ** t)
+            * self.table["SON"] ** l
+            / ((self.table["SON"] ** l) + e * (1 - self.table["SON"]) ** t)
         )
         # This equation is undefined for t a float and son=1, set explicitly:
-        self.table.loc[np.isclose(self.table["son"], 1.0), "krow"] = kroend
+        self.table.loc[np.isclose(self.table["SON"], 1.0), "KROW"] = kroend
 
-        self.table.loc[self.table["sw"] >= (1 - self.sorw), "krow"] = 0
+        self.table.loc[self.table["SW"] >= (1 - self.sorw), "KROW"] = 0
 
         self.set_endpoints_linearpart_krow(kroend)
 
@@ -567,8 +567,8 @@ class WaterOil(object):
         if kromax is not None:
             logger.error("kromax is DEPRECATED, ignored")
 
-        self.table["krow"] = kroend * self.table["son"] ** now
-        self.table.loc[self.table["sw"] >= (1 - self.sorw), "krow"] = 0
+        self.table["KROW"] = kroend * self.table["SON"] ** now
+        self.table.loc[self.table["SW"] >= (1 - self.sorw), "KROW"] = 0
 
         self.set_endpoints_linearpart_krow(kroend)
 
@@ -633,8 +633,8 @@ class WaterOil(object):
         # respect to swirr, not to swl (the swirr here is sometimes
         # called 'swirra' - asymptotic swirr)
 
-        self.table["pc"] = simple_J(
-            self.table["swnpc"], a, b, poro_ref, perm_ref, drho, g
+        self.table["PC"] = simple_J(
+            self.table["SWNPC"], a, b, poro_ref, perm_ref, drho, g
         )
         self.pccomment = (
             "-- Simplified J-function for Pc; rms version, in bar\n--   "
@@ -762,10 +762,10 @@ class WaterOil(object):
 
         perm_darcy = perm / 1000
         perm_sq_meters = perm_darcy * 9.869233e-13
-        tmp = (self.table["swnpc"] / a) ** (1.0 / b)
+        tmp = (self.table["SWNPC"] / a) ** (1.0 / b)
         tmp = tmp / math.sqrt(perm_sq_meters / poro)
         tmp = tmp * sigma_costau / 1000  # Converting mN/m to N/m
-        self.table["pc"] = tmp * pascal_to_bar
+        self.table["PC"] = tmp * pascal_to_bar
         self.pccomment = (
             "-- Capillary pressure from normalized J-function, in bar\n"
             + "-- a=%g, b=%g, poro=%g, perm=%g mD, sigma_costau=%g mN/m\n"
@@ -785,7 +785,7 @@ class WaterOil(object):
         swirr and sorw. Only use different values here if you know
         what you are doing.
 
-        Modifies or adds self.table["pc"] if succesful.
+        Modifies or adds self.table["PC"] if succesful.
         Returns false if error occured.
 
         """  # noqa
@@ -822,19 +822,19 @@ class WaterOil(object):
 
         # swnpc is generated upon object initialization, but overwritten
         # here to most likely the same values.
-        self.table["swnpc"] = (self.table["sw"] - swr) / (1 - swr)
+        self.table["SWNPC"] = (self.table["SW"] - swr) / (1 - swr)
 
         # sonpc is almost like 'son', but swl is not used here:
-        self.table["sonpc"] = (1 - self.table["sw"] - sor) / (1 - sor)
+        self.table["SONPC"] = (1 - self.table["SW"] - sor) / (1 - sor)
 
         # The Skjæveland correlation
-        self.table.loc[self.table["sw"] < 1 - sor, "pc"] = cw / (
-            self.table["swnpc"] ** aw
-        ) + co / (self.table["sonpc"] ** ao)
+        self.table.loc[self.table["SW"] < 1 - sor, "PC"] = cw / (
+            self.table["SWNPC"] ** aw
+        ) + co / (self.table["SONPC"] ** ao)
 
         # From 1-sor, the pc is not defined. Extrapolate constantly, and let
         # the non-monotonicity be fixed in the output generators.
-        self.table["pc"].fillna(method="ffill", inplace=True)
+        self.table["PC"].fillna(method="ffill", inplace=True)
 
     def add_LET_pc_pd(self, Lp, Ep, Tp, Lt, Et, Tt, Pcmax, Pct):
         # pylint: disable=line-too-long
@@ -854,22 +854,22 @@ class WaterOil(object):
         assert Pct <= Pcmax
 
         # The "forced part"
-        self.table["Ffpcow"] = (1 - self.table["swnpc"]) ** Lp / (
-            (1 - self.table["swnpc"]) ** Lp + Ep * self.table["swnpc"] ** Tp
+        self.table["Ffpcow"] = (1 - self.table["SWNPC"]) ** Lp / (
+            (1 - self.table["SWNPC"]) ** Lp + Ep * self.table["SWNPC"] ** Tp
         )
 
         # The gradual rise part:
-        self.table["Ftpcow"] = self.table["swnpc"] ** Lt / (
-            self.table["swnpc"] ** Lt + Et * (1 - self.table["swnpc"]) ** Tt
+        self.table["Ftpcow"] = self.table["SWNPC"] ** Lt / (
+            self.table["SWNPC"] ** Lt + Et * (1 - self.table["SWNPC"]) ** Tt
         )
 
         # Putting it together:
-        self.table["pc"] = (
+        self.table["PC"] = (
             (Pcmax - Pct) * self.table["Ffpcow"] - Pct * self.table["Ftpcow"] + Pct
         )
 
         # Special handling of the interval [0,swirr]
-        self.table.loc[self.table["swn"] < epsilon, "pc"] = Pcmax
+        self.table.loc[self.table["SWN"] < epsilon, "PC"] = Pcmax
         self.pccomment = (
             "-- LET correlation for primary drainage Pc;\n"
             "-- Lp=%g, Ep=%g, Tp=%g, Lt=%g, Et=%g, Tt=%g, Pcmax=%g, Pct=%g\n"
@@ -891,38 +891,38 @@ class WaterOil(object):
         assert Pcmin <= Pct <= Pcmax
 
         # Normalized water saturation including sorw
-        self.table["swnpco"] = (self.table["sw"] - self.swirr) / (
+        self.table["SWNPCO"] = (self.table["SW"] - self.swirr) / (
             1 - self.sorw - self.swirr
         )
 
         # The "forced part"
-        self.table["Fficow"] = self.table["swnpco"] ** Lf / (
-            self.table["swnpco"] ** Lf + Ef * (1 - self.table["swnpco"]) ** Tf
+        self.table["Fficow"] = self.table["SWNPCO"] ** Lf / (
+            self.table["SWNPCO"] ** Lf + Ef * (1 - self.table["SWNPCO"]) ** Tf
         )
 
         # The spontaneous part:
-        self.table["Fsicow"] = (1 - self.table["swnpco"]) ** Ls / (
-            (1 - self.table["swnpco"]) ** Ls + Es * self.table["swnpco"] ** Ts
+        self.table["Fsicow"] = (1 - self.table["SWNPCO"]) ** Ls / (
+            (1 - self.table["SWNPCO"]) ** Ls + Es * self.table["SWNPCO"] ** Ts
         )
 
         # Putting it together:
-        self.table["pc"] = (
+        self.table["PC"] = (
             (Pcmax - Pct) * self.table["Fsicow"]
             + (Pcmin - Pct) * self.table["Fficow"]
             + Pct
         )
 
         # Special handling of the interval [0,swirr]
-        self.table.loc[self.table["swnpco"] < epsilon, "pc"] = Pcmax
+        self.table.loc[self.table["SWNPCO"] < epsilon, "PC"] = Pcmax
         # and [1-sorw,1]
-        self.table.loc[self.table["swnpco"] > 1 - epsilon, "pc"] = Pcmin
+        self.table.loc[self.table["SWNPCO"] > 1 - epsilon, "PC"] = Pcmin
         self.pccomment = (
             "-- LET correlation for imbibition Pc;\n"
             "-- Ls=%g, Es=%g, Ts=%g, Lf=%g, Ef=%g, Tf=%g, Pcmax=%g, Pcmin=%g, Pct=%g\n"
             % (Ls, Es, Ts, Lf, Ef, Tf, Pcmax, Pcmin, Pct)
         )
 
-    def estimate_sorw(self, curve="krw"):
+    def estimate_sorw(self, curve="KRW"):
         """Estimate sorw of the current krw data.
 
         This is mostly relevant when add_fromtable() has been used.
@@ -947,11 +947,11 @@ class WaterOil(object):
         """
         assert curve in self.table
         assert self.table[curve].sum() > 0
-        return self.table["sw"].max() - estimate_diffjumppoint(
-            self.table, xcol="sw", ycol=curve, side="right"
+        return self.table["SW"].max() - estimate_diffjumppoint(
+            self.table, xcol="SW", ycol=curve, side="right"
         )
 
-    def estimate_swcr(self, curve="krw"):
+    def estimate_swcr(self, curve="KRW"):
         """Estimate swcr of the current krw data.
 
         kwcr is estimated by searching for a linear part in krw upwards from sw=swl.
@@ -970,7 +970,7 @@ class WaterOil(object):
         """
         assert curve in self.table
         assert self.table[curve].sum() > 0
-        return estimate_diffjumppoint(self.table, xcol="sw", ycol=curve, side="left")
+        return estimate_diffjumppoint(self.table, xcol="SW", ycol=curve, side="left")
 
     def crosspoint(self):
         """Locate and return the saturation point where krw = krow
@@ -982,7 +982,7 @@ class WaterOil(object):
             float: the water saturation where krw == krow, for relperm
                 linearly interpolated in water saturation.
         """
-        return crosspoint(self.table, "sw", "krw", "krow")
+        return crosspoint(self.table, "SW", "KRW", "KROW")
 
     def selfcheck(self, mode="SWOF"):
         """Check validities of the data in the table.
@@ -998,43 +998,43 @@ class WaterOil(object):
             mode (str): "SWOF" or "SWFN". If SWFN, krow is not required.
         """
         error = False
-        if "krw" not in self.table:
+        if "KRW" not in self.table:
             logger.error("krw data not found")
             error = True
-        if not (self.table["sw"].diff().dropna().round(10) > -epsilon).all():
-            logger.error("sw data not strictly increasing")
+        if not (self.table["SW"].diff().dropna().round(10) > -epsilon).all():
+            logger.error("SW data not strictly increasing")
             error = True
         if (
-            "krw" in self.table
-            and not (self.table["krw"].diff().dropna().round(10) >= -epsilon).all()
+            "KRW" in self.table
+            and not (self.table["KRW"].diff().dropna().round(10) >= -epsilon).all()
         ):
-            logger.error("krw data not monotonically increasing")
+            logger.error("KRW data not monotonically increasing")
             error = True
         if mode != "SWFN":
-            if "krow" not in self.table:
-                logger.error("krow data not found")
+            if "KROW" not in self.table:
+                logger.error("KROW data not found")
                 error = True
 
             if (
-                "krow" in self.table.columns
-                and not (self.table["krow"].diff().dropna().round(10) <= epsilon).all()
+                "KROW" in self.table.columns
+                and not (self.table["KROW"].diff().dropna().round(10) <= epsilon).all()
             ):
                 # In normal Eclipse runs, krow needs to be level or decreasing.
                 # In hysteresis runs, it needs to be strictly decreasing, that must
                 # be the users responsibility.
-                logger.error("krow data not level or monotonically decreasing")
+                logger.error("KROW data not level or monotonically decreasing")
                 error = True
-        if "pc" in self.table.columns and self.table["pc"][0] > -epsilon:
-            if not (self.table["pc"].diff().dropna().round(10) < epsilon).all():
-                logger.error("pc data not strictly decreasing")
+        if "PC" in self.table.columns and self.table["PC"][0] > -epsilon:
+            if not (self.table["PC"].diff().dropna().round(10) < epsilon).all():
+                logger.error("PC data not strictly decreasing")
                 error = True
-        if "pc" in self.table.columns and np.isnan(self.table["pc"]).any():
+        if "PC" in self.table.columns and np.isnan(self.table["PC"]).any():
             logger.error("pc data contains NaN")
             error = True
-        if "pc" in self.table.columns and np.isinf(self.table["pc"].max()):
+        if "PC" in self.table.columns and np.isinf(self.table["PC"].max()):
             logger.error("pc goes to infinity. Maybe swirr=swl?")
             error = True
-        for col in list(set(["sw", "krw", "krow"]) & set(self.table.columns)):
+        for col in list(set(["SW", "KRW", "KROW"]) & set(self.table.columns)):
             if not (
                 (round(min(self.table[col]), 10) >= -epsilon)
                 and (round(max(self.table[col]), 10) <= 1 + epsilon)
@@ -1073,8 +1073,8 @@ class WaterOil(object):
             string += "SWOF\n"
         string += comment_formatter(self.tag)
         string += "-- pyscal: " + str(pyscal.__version__) + "\n"
-        if "pc" not in self.table.columns:
-            self.table["pc"] = 0.0
+        if "PC" not in self.table.columns:
+            self.table["PC"] = 0.0
             self.pccomment = "-- Zero capillary pressure\n"
         if dataincommentrow:
             string += self.swcomment
@@ -1093,11 +1093,11 @@ class WaterOil(object):
             + "\n"
         )
         string += df2str(
-            self.table[["sw", "krw", "krow", "pc"]],
+            self.table[["SW", "KRW", "KROW", "PC"]],
             monotonicity={
-                "krow": {"sign": -1, "lower": 0, "upper": 1},
-                "krw": {"sign": 1, "lower": 0, "upper": 1},
-                "pc": {"sign": -1, "allowzero": True},
+                "KROW": {"sign": -1, "lower": 0, "upper": 1},
+                "KRW": {"sign": 1, "lower": 0, "upper": 1},
+                "PC": {"sign": -1, "allowzero": True},
             }
             if not self.fast
             else None,
@@ -1133,8 +1133,8 @@ class WaterOil(object):
             # selfcheck will print errors/warnings
             return ""
         string = ""
-        if "pc" not in self.table.columns:
-            self.table["pc"] = 0.0
+        if "PC" not in self.table.columns:
+            self.table["PC"] = 0.0
             self.pccomment = "-- Zero capillary pressure\n"
         if header:
             string += "SWFN\n"
@@ -1147,7 +1147,7 @@ class WaterOil(object):
                 string += self.swcomment
             string += self.krwcomment
             if crosspointcomment is None:
-                if "krow" in self.table.columns and not self.fast:
+                if "KROW" in self.table.columns and not self.fast:
                     string += "-- krw = krow @ sw=%1.5f\n" % self.crosspoint()
             else:
                 string += crosspointcomment
@@ -1161,10 +1161,10 @@ class WaterOil(object):
             + "\n"
         )
         string += df2str(
-            self.table[["sw", "krw", "pc"]],
+            self.table[["SW", "KRW", "PC"]],
             monotonicity={
-                "krw": {"sign": 1, "lower": 0, "upper": 1},
-                "pc": {"sign": -1, "allowzero": True},
+                "KRW": {"sign": 1, "lower": 0, "upper": 1},
+                "PC": {"sign": -1, "allowzero": True},
             }
             if not self.fast
             else None,
@@ -1175,8 +1175,8 @@ class WaterOil(object):
     def WOTABLE(self, header=True, dataincommentrow=True):
         """Return a string for a Nexus WOTABLE"""
         string = ""
-        if "pc" not in self.table.columns:
-            self.table["pc"] = 0.0
+        if "PC" not in self.table.columns:
+            self.table["PC"] = 0.0
             self.pccomment = "-- Zero capillary pressure\n"
 
         if header:
@@ -1200,11 +1200,11 @@ class WaterOil(object):
             + "\n"
         )
         string += df2str(
-            self.table[["sw", "krw", "krow", "pc"]],
+            self.table[["SW", "KRW", "KROW", "PC"]],
             monotonicity={
-                "krow": {"sign": -1, "lower": 0, "upper": 1},
-                "krw": {"sign": 1, "lower": 0, "upper": 1},
-                "pc": {"sign": -1, "allowzero": True},
+                "KROW": {"sign": -1, "lower": 0, "upper": 1},
+                "KRW": {"sign": 1, "lower": 0, "upper": 1},
+                "PC": {"sign": -1, "allowzero": True},
             }
             if not self.fast
             else None,
@@ -1241,8 +1241,8 @@ class WaterOil(object):
             useax.set_ylim([1e-6, 100])
         self.table.plot(
             ax=useax,
-            x="sw",
-            y="pc",
+            x="SW",
+            y="PC",
             c=color,
             alpha=alpha,
             label=label,
@@ -1284,8 +1284,8 @@ class WaterOil(object):
             useax.set_ylim([1e-8, 1])
         self.table.plot(
             ax=useax,
-            x="sw",
-            y="krw",
+            x="SW",
+            y="KRW",
             c=color,
             alpha=alpha,
             legend=None,
@@ -1296,8 +1296,8 @@ class WaterOil(object):
         )
         self.table.plot(
             ax=useax,
-            x="sw",
-            y="krow",
+            x="SW",
+            y="KROW",
             c=color,
             alpha=alpha,
             label=None,

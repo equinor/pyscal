@@ -52,9 +52,9 @@ def test_factory_wateroil():
     assert wateroil.swirr == 0.01
     assert wateroil.swl == 0.1
     assert wateroil.tag == "Good sand"
-    assert "krw" in wateroil.table
+    assert "KRW" in wateroil.table
     assert "Corey" in wateroil.krwcomment
-    assert wateroil.table["krw"].max() == 0.2  # Because sorw==0 by default
+    assert wateroil.table["KRW"].max() == 0.2  # Because sorw==0 by default
     check_table(wateroil.table)
     sat_table_str_ok(wateroil.SWOF())
     sat_table_str_ok(wateroil.SWFN())
@@ -63,9 +63,9 @@ def test_factory_wateroil():
         dict(nw=3, now=2, sorw=0.1, krwend=0.2, krwmax=0.5)
     )
     assert isinstance(wateroil, WaterOil)
-    assert "krw" in wateroil.table
+    assert "KRW" in wateroil.table
     assert "Corey" in wateroil.krwcomment
-    assert wateroil.table["krw"].max() == 0.5
+    assert wateroil.table["KRW"].max() == 0.5
     check_table(wateroil.table)
     sat_table_str_ok(wateroil.SWOF())
     sat_table_str_ok(wateroil.SWFN())
@@ -73,7 +73,7 @@ def test_factory_wateroil():
     # Ambiguous works, but we don't guarantee that this results
     # in LET or Corey.
     wateroil = pyscal_factory.create_water_oil(dict(nw=3, Lw=2, Ew=2, Tw=2, now=3))
-    assert "krw" in wateroil.table
+    assert "KRW" in wateroil.table
     assert "Corey" in wateroil.krwcomment or "LET" in wateroil.krwcomment
     check_table(wateroil.table)
     sat_table_str_ok(wateroil.SWOF())
@@ -82,8 +82,8 @@ def test_factory_wateroil():
     # Mixing Corey and LET
     wateroil = pyscal_factory.create_water_oil(dict(Lw=2, Ew=2, Tw=2, krwend=1, now=4))
     assert isinstance(wateroil, WaterOil)
-    assert "krw" in wateroil.table
-    assert wateroil.table["krw"].max() == 1.0
+    assert "KRW" in wateroil.table
+    assert wateroil.table["KRW"].max() == 1.0
     assert "LET" in wateroil.krwcomment
     check_table(wateroil.table)
     sat_table_str_ok(wateroil.SWOF())
@@ -93,10 +93,10 @@ def test_factory_wateroil():
         dict(Lw=2, Ew=2, Tw=2, Low=3, Eow=3, Tow=3, krwend=0.5)
     )
     assert isinstance(wateroil, WaterOil)
-    assert "krw" in wateroil.table
-    assert "krow" in wateroil.table
-    assert wateroil.table["krw"].max() == 0.5
-    assert wateroil.table["krow"].max() == 1
+    assert "KRW" in wateroil.table
+    assert "KROW" in wateroil.table
+    assert wateroil.table["KRW"].max() == 0.5
+    assert wateroil.table["KROW"].max() == 1
     assert "LET" in wateroil.krwcomment
     assert "LET" in wateroil.krowcomment
     check_table(wateroil.table)
@@ -107,8 +107,8 @@ def test_factory_wateroil():
     wateroil = pyscal_factory.create_water_oil(
         dict(swl=0.1, nw=1, now=1, a=2, b=-1, poro_ref=0.2, perm_ref=100, drho=200)
     )
-    assert "pc" in wateroil.table
-    assert wateroil.table["pc"].max() > 0.0
+    assert "PC" in wateroil.table
+    assert wateroil.table["PC"].max() > 0.0
     assert "Simplified J" in wateroil.pccomment
     check_table(wateroil.table)
     sat_table_str_ok(wateroil.SWOF())
@@ -118,8 +118,8 @@ def test_factory_wateroil():
     wateroil = pyscal_factory.create_water_oil(
         dict(swl=0.1, nw=1, now=1, a=2, b=-1, poro_ref=0.2, perm_ref=100, drho=200, g=0)
     )
-    assert "pc" in wateroil.table
-    assert wateroil.table["pc"].max() == 0.0
+    assert "PC" in wateroil.table
+    assert wateroil.table["PC"].max() == 0.0
     check_table(wateroil.table)
     sat_table_str_ok(wateroil.SWOF())
     sat_table_str_ok(wateroil.SWFN())
@@ -137,8 +137,8 @@ def test_factory_wateroil():
             drho=200,
         )
     )
-    assert "pc" in wateroil.table
-    assert wateroil.table["pc"].max() > 0.0
+    assert "PC" in wateroil.table
+    assert wateroil.table["PC"].max() > 0.0
     assert "etrophysic" in wateroil.pccomment
     check_table(wateroil.table)
     sat_table_str_ok(wateroil.SWOF())
@@ -148,7 +148,7 @@ def test_factory_wateroil():
     wateroil = pyscal_factory.create_water_oil(
         dict(swl=0.1, nw=1, now=1, a=2, b=-1, perm_ref=100, drho=200, g=0)
     )
-    assert "pc" not in wateroil.table
+    assert "PC" not in wateroil.table
 
 
 def test_fast_mode():
@@ -375,7 +375,7 @@ def test_ambiguity():
     )
     # Corey is picked here.
     assert "Corey" in wateroil.krwcomment
-    assert "krw" in wateroil.table
+    assert "KRW" in wateroil.table
 
 
 def test_factory_gasoil():
@@ -560,7 +560,7 @@ def test_factory_wateroilgas_wo():
     )
     swof = wog.SWOF()
     assert "Corey krw" in swof
-    assert "krw" in wog.wateroil.table
+    assert "KRW" in wog.wateroil.table
     sat_table_str_ok(swof)
     check_table(wog.wateroil.table)
     assert wog.gasoil is None
@@ -853,12 +853,12 @@ def test_check_deprecated_krowgend(caplog):
     wateroil = PyscalFactory.create_water_oil(dict(swl=0.1, nw=2, now=2, krowend=0.4))
     assert "krowend" in caplog.text
     assert "deprecated" in caplog.text
-    assert wateroil.table["krow"].max() == 0.4
+    assert wateroil.table["KROW"].max() == 0.4
 
     gasoil = PyscalFactory.create_gas_oil(dict(swl=0.1, ng=2, nog=2, krogend=0.4))
     assert "krogend" in caplog.text
     assert "deprecated" in caplog.text
-    assert gasoil.table["krog"].max() == 0.4
+    assert gasoil.table["KROG"].max() == 0.4
 
 
 def test_check_deprecated_kromax(caplog):

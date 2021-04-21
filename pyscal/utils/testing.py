@@ -98,57 +98,57 @@ def check_table(dframe):
     has the properties that Eclipse enforces"""
     assert not dframe.empty
     assert not dframe.isnull().values.any()
-    if "sw" in dframe and "sg" not in dframe:
+    if "SW" in dframe and "SG" not in dframe:
         # (avoiding GasWater tables, where sw is an auxiliary column)
-        assert len(dframe["sw"].unique()) == len(dframe)
-        assert dframe["sw"].is_monotonic
-        assert (dframe["sw"] >= 0.0).all()
-        assert dframe["swn"].is_monotonic
-        assert dframe["son"].is_monotonic_decreasing
-        assert dframe["swnpc"].is_monotonic
-    if "sg" in dframe:
-        assert len(dframe["sg"].unique()) == len(dframe)
-        assert dframe["sg"].is_monotonic
-        assert (dframe["sg"] >= 0.0).all()
-        assert dframe["sgn"].is_monotonic
-        assert dframe["son"].is_monotonic_decreasing
-    if "krow" in dframe:
-        assert series_decreasing(dframe["krow"])
-        assert (dframe["krow"] >= 0).all()
-        assert (dframe["krow"] <= 1.0).all()
-    if "krw" in dframe:
-        assert series_increasing(dframe["krw"])
-        assert np.isclose(dframe["krw"].iloc[0], 0.0)
-        assert (dframe["krw"] >= 0).all()
-        assert (dframe["krw"] <= 1.0).all()
-    if "pc" in dframe:
-        if "sw" in dframe:
-            assert series_decreasing(dframe["pc"])
-        if "sg" in dframe:
-            assert series_increasing(dframe["pc"])
-    if "krog" in dframe:
-        assert series_decreasing(dframe["krog"])
-        assert (dframe["krog"] >= 0).all()
-        assert (dframe["krog"] <= 1.0).all()
-    if "krg" in dframe:
-        assert series_increasing(dframe["krg"])
-        assert (dframe["krg"] >= 0).all()
-        assert (dframe["krg"] <= 1.0).all()
+        assert len(dframe["SW"].unique()) == len(dframe)
+        assert dframe["SW"].is_monotonic
+        assert (dframe["SW"] >= 0.0).all()
+        assert dframe["SWN"].is_monotonic
+        assert dframe["SON"].is_monotonic_decreasing
+        assert dframe["SWNPC"].is_monotonic
+    if "SG" in dframe:
+        assert len(dframe["SG"].unique()) == len(dframe)
+        assert dframe["SG"].is_monotonic
+        assert (dframe["SG"] >= 0.0).all()
+        assert dframe["SGN"].is_monotonic
+        assert dframe["SON"].is_monotonic_decreasing
+    if "KROW" in dframe:
+        assert series_decreasing(dframe["KROW"])
+        assert (dframe["KROW"] >= 0).all()
+        assert (dframe["KROW"] <= 1.0).all()
+    if "KRW" in dframe:
+        assert series_increasing(dframe["KRW"])
+        assert np.isclose(dframe["KRW"].iloc[0], 0.0)
+        assert (dframe["KRW"] >= 0).all()
+        assert (dframe["KRW"] <= 1.0).all()
+    if "PC" in dframe:
+        if "SW" in dframe:
+            assert series_decreasing(dframe["PC"])
+        if "SG" in dframe:
+            assert series_increasing(dframe["PC"])
+    if "KROG" in dframe:
+        assert series_decreasing(dframe["KROG"])
+        assert (dframe["KROG"] >= 0).all()
+        assert (dframe["KROG"] <= 1.0).all()
+    if "KRG" in dframe:
+        assert series_increasing(dframe["KRG"])
+        assert (dframe["KRG"] >= 0).all()
+        assert (dframe["KRG"] <= 1.0).all()
 
 
 def check_linear_sections(wo_or_go):
     """Check that the linear segments of a WaterOil or a GasOil
     object are linear."""
     if isinstance(wo_or_go, WaterOil):
-        sat_col = "sw"
+        sat_col = "SW"
         right_start = 1 - wo_or_go.sorw
         right_end = 1
-        right_lin_cols = ["krow", "krw"]
-        left_lin_cols = ["krw"]
+        right_lin_cols = ["KROW", "KRW"]
+        left_lin_cols = ["KRW"]
         left_start = wo_or_go.swl
         left_end = wo_or_go.swcr
     if isinstance(wo_or_go, GasOil):
-        sat_col = "sg"
+        sat_col = "SG"
         if wo_or_go.krgendanchor == "sorg":
             right_start = 1 - wo_or_go.sorg - wo_or_go.swl
         else:
@@ -156,8 +156,8 @@ def check_linear_sections(wo_or_go):
             # segment to the right.
             right_start = 1 - wo_or_go.swl
         right_end = 1 - wo_or_go.swl
-        right_lin_cols = ["krog", "krg"]
-        left_lin_cols = ["krg"]
+        right_lin_cols = ["KROG", "KRG"]
+        left_lin_cols = ["KRG"]
         left_start = 0
         left_end = wo_or_go.sgcr
 

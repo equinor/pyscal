@@ -21,25 +21,16 @@ def test_wo_fromtable_simple():
     wateroil = WaterOil(h=0.1)
     # With wrong names:
     with pytest.raises(ValueError):
-        wateroil.add_fromtable(df1)
+        wateroil.add_fromtable(df1, swcolname="sw")
 
     # Set names:
-    wateroil.add_fromtable(df1, swcolname="SW")
-    # This didn't do anything, because we did not provide any relperm names
-    assert "krw" not in wateroil.table.columns
-    assert "krow" not in wateroil.table.columns
-    assert "pc" not in wateroil.table.columns
-
-    # Try again:
-    wateroil.add_fromtable(
-        df1, swcolname="SW", krwcolname="KRW", krowcolname="KROW", pccolname="PC"
-    )
-    assert "krw" in wateroil.table.columns
-    assert "krow" in wateroil.table.columns
-    assert "pc" in wateroil.table.columns
-    assert sum(wateroil.table["krw"]) > 0
-    assert sum(wateroil.table["krow"]) > 0
-    assert np.isclose(sum(wateroil.table["pc"]), 11)  # Linearly increasing PC
+    wateroil.add_fromtable(df1, swcolname="SW", pccolname="PC")
+    assert "KRW" in wateroil.table.columns
+    assert "KROW" in wateroil.table.columns
+    assert "PC" in wateroil.table.columns
+    assert sum(wateroil.table["KRW"]) > 0
+    assert sum(wateroil.table["KROW"]) > 0
+    assert np.isclose(sum(wateroil.table["PC"]), 11)  # Linearly increasing PC
     check_table(wateroil.table)
 
 
@@ -52,9 +43,9 @@ def test_go_fromtable_simple():
     gasoil.add_fromtable(
         df1, sgcolname="SG", krgcolname="KRG", krogcolname="KROG", pccolname="PC"
     )
-    assert sum(gasoil.table["krg"]) > 0
-    assert sum(gasoil.table["krog"]) > 0
-    assert np.isclose(sum(gasoil.table["pc"]), 11)  # Linearly increasing PCOG
+    assert sum(gasoil.table["KRG"]) > 0
+    assert sum(gasoil.table["KROG"]) > 0
+    assert np.isclose(sum(gasoil.table["PC"]), 11)  # Linearly increasing PCOG
     check_table(gasoil.table)
 
 
@@ -78,16 +69,16 @@ def test_wo_fromtable_multiindex():
     wateroil.add_fromtable(
         df1, swcolname="SW", krwcolname="KRW", krowcolname="KROW", pccolname="PC"
     )
-    assert "krw" in wateroil.table.columns
-    assert "krow" in wateroil.table.columns
-    assert "pc" in wateroil.table.columns
+    assert "KRW" in wateroil.table.columns
+    assert "KROW" in wateroil.table.columns
+    assert "PC" in wateroil.table.columns
     check_table(wateroil.table)
 
 
 def test_go_fromtable_problems():
     """Test loading from a table where there should be problems"""
     df1 = pd.DataFrame(
-        columns=["Sg", "KRG", "KROG", "PCOG"], data=[[0.1, 0, 1, 0], [0.9, 1, 0, 2]]
+        columns=["SG", "KRG", "KROG", "PCOG"], data=[[0.1, 0, 1, 0], [0.9, 1, 0, 2]]
     )
     # Now sgcr and swl is wrong:
     gasoil = GasOil(h=0.1)
@@ -95,7 +86,7 @@ def test_go_fromtable_problems():
         # Should say sg must start at zero.
         gasoil.add_fromtable(df1, pccolname="PCOG")
     df2 = pd.DataFrame(
-        columns=["Sg", "KRG", "KROG", "PCOG"], data=[[0.0, 0, 1, 0], [0.9, 0.8, 0, 2]]
+        columns=["SG", "KRG", "KROG", "PCOG"], data=[[0.0, 0, 1, 0], [0.9, 0.8, 0, 2]]
     )
     with pytest.raises(ValueError):
         # should say too large swl for pcog interpolation
@@ -103,24 +94,24 @@ def test_go_fromtable_problems():
         gasoil.add_fromtable(df2, pccolname="PCOG")
     gasoil = GasOil(h=0.1, swl=0.1)
     gasoil.add_fromtable(df2, pccolname="PCOG")
-    assert np.isclose(gasoil.table["pc"].max(), 2.0)
-    assert np.isclose(gasoil.table["pc"].min(), 0.0)
-    assert np.isclose(gasoil.table["sg"].max(), 0.9)
+    assert np.isclose(gasoil.table["PC"].max(), 2.0)
+    assert np.isclose(gasoil.table["PC"].min(), 0.0)
+    assert np.isclose(gasoil.table["SG"].max(), 0.9)
 
     gasoil = GasOil(h=0.1)
     with pytest.raises(ValueError):
         # sg must start at zero
         gasoil.add_fromtable(df1, krgcolname="KRG", krogcolname="KROG")
     # This works fine, but we get warnings on swl not seemingly correct
-    gasoil.add_fromtable(df2, krgcolname="KRG", krogcolname="KROG")
+    gasoil.add_fromtable(df2, krgcolname="KRG", krogcolname="KROG", pccolname=None)
     # krg will be extrapolated to sg=1
-    float_df_checker(gasoil.table, "sg", 1.0, "krg", 0.8)
-    float_df_checker(gasoil.table, "sg", 1.0, "krog", 0.0)
+    float_df_checker(gasoil.table, "SG", 1.0, "KRG", 0.8)
+    float_df_checker(gasoil.table, "SG", 1.0, "KROG", 0.0)
     gasoil = GasOil(h=0.1, swl=0.1)
     gasoil.add_fromtable(df2, krgcolname="KRG", krogcolname="KROG")
 
     df3 = pd.DataFrame(
-        columns=["Sg", "KRG", "KROG", "PCOG"], data=[[0, -0.01, 1, 0], [1, 1, 0, 0]]
+        columns=["SG", "KRG", "KROG", "PCOG"], data=[[0, -0.01, 1, 0], [1, 1, 0, 0]]
     )
     gasoil = GasOil(h=0.1)
     with pytest.raises(ValueError):
@@ -128,7 +119,7 @@ def test_go_fromtable_problems():
         gasoil.add_fromtable(df3, krgcolname="KRG")
 
     df4 = pd.DataFrame(
-        columns=["Sg", "KRG", "KROG", "PCOG"],
+        columns=["SG", "KRG", "KROG", "PCOG"],
         data=[[0, 0, 1, 0], [1, 1.0000000001, 0, 0]],
     )
     gasoil = GasOil(h=0.1)
@@ -140,45 +131,45 @@ def test_go_fromtable_problems():
 
 def test_wo_singlecolumns():
     """Test that we can load single columns from individual dataframes"""
-    krw = pd.DataFrame(columns=["Sw", "krw"], data=[[0.15, 0], [0.89, 1], [1, 1]])
-    krow = pd.DataFrame(columns=["Sw", "krow"], data=[[0.15, 1], [0.89, 0], [1, 0]])
-    pc1 = pd.DataFrame(columns=["Sw", "pcow"], data=[[0.15, 3], [0.89, 0.1], [1, 0]])
+    krw = pd.DataFrame(columns=["SW", "KRW"], data=[[0.15, 0], [0.89, 1], [1, 1]])
+    krow = pd.DataFrame(columns=["SW", "KROW"], data=[[0.15, 1], [0.89, 0], [1, 0]])
+    pc1 = pd.DataFrame(columns=["SW", "PCOW"], data=[[0.15, 3], [0.89, 0.1], [1, 0]])
     wateroil = WaterOil(h=0.1, swl=0.15, sorw=1 - 0.89)
     wateroil.add_fromtable(krw)
-    assert "krw" in wateroil.table
-    assert "krow" not in wateroil.table
+    assert "KRW" in wateroil.table
+    assert "KROW" not in wateroil.table
     wateroil.add_fromtable(krow)
-    assert "krow" in wateroil.table
+    assert "KROW" in wateroil.table
     wateroil.add_fromtable(pc1)
-    assert "pc" in wateroil.table
+    assert "PC" in wateroil.table
 
     # We want to allow a pc dataframe where sw starts from zero:
     # then should not preserve pc(sw=0)
-    pc2 = pd.DataFrame(columns=["Sw", "pcow"], data=[[0, 3], [0.5, 0.1], [1, 0]])
+    pc2 = pd.DataFrame(columns=["SW", "PCOW"], data=[[0, 3], [0.5, 0.1], [1, 0]])
     wateroil.add_fromtable(pc2)
-    assert "pc" in wateroil.table
-    assert wateroil.table["sw"].min() == 0.15
-    assert wateroil.table["pc"].max() < 3
+    assert "PC" in wateroil.table
+    assert wateroil.table["SW"].min() == 0.15
+    assert wateroil.table["PC"].max() < 3
 
     # But we should refuse a pc dataframe not covering our sw range:
     wateroil = WaterOil(h=0.1, swl=0)
     with pytest.raises(ValueError):
-        pc3 = pd.DataFrame(columns=["Sw", "pcow"], data=[[0.1, 3], [0.5, 0.1], [1, 0]])
+        pc3 = pd.DataFrame(columns=["SW", "PCOW"], data=[[0.1, 3], [0.5, 0.1], [1, 0]])
         wateroil.add_fromtable(pc3)
     with pytest.raises(ValueError):
-        pc3 = pd.DataFrame(columns=["Sw", "pcow"], data=[[0, 3], [0.5, 0.1]])
+        pc3 = pd.DataFrame(columns=["SW", "PCOW"], data=[[0, 3], [0.5, 0.1]])
         wateroil.add_fromtable(pc3)
 
     # Disallow non-monotonous capillary pressure:
-    pc4 = pd.DataFrame(columns=["Sw", "pcow"], data=[[0.15, 3], [0.89, 0.1], [1, 0.1]])
+    pc4 = pd.DataFrame(columns=["SW", "PCOW"], data=[[0.15, 3], [0.89, 0.1], [1, 0.1]])
     with pytest.raises(ValueError):
         wateroil.add_fromtable(pc4)
 
     # But if capillary pressure is all zero, accept it:
-    pc5 = pd.DataFrame(columns=["Sw", "pcow"], data=[[0, 0], [1, 0]])
+    pc5 = pd.DataFrame(columns=["SW", "PCOW"], data=[[0, 0], [1, 0]])
     wateroil = WaterOil(h=0.1)
     wateroil.add_fromtable(pc5)
-    assert wateroil.table["pc"].sum() == 0
+    assert wateroil.table["PC"].sum() == 0
 
 
 def test_ieee_754():
@@ -191,119 +182,125 @@ def test_ieee_754():
 
     # Can we then interpolate from a table that goes up to 0.82?
     sgof = pd.DataFrame(
-        columns=["Sg", "krg", "krog", "pcog"], data=[[0, 0, 1, 0], [0.82, 1, 0, 0]]
+        columns=["SG", "KRG", "KROG", "PCOG"], data=[[0, 0, 1, 0], [0.82, 1, 0, 0]]
     )
     # Note, replacing 0.82 in the table above with 1-0.18 *is not the same*
     wateroilgas.gasoil.add_fromtable(sgof)
-    assert wateroilgas.gasoil.table["krg"].max() == 1.0
-    assert wateroilgas.gasoil.table["krog"].min() == 0.0
-    assert wateroilgas.gasoil.table["pc"].min() == 0.0
-    assert wateroilgas.gasoil.table["pc"].max() == 0.0
+    assert wateroilgas.gasoil.table["KRG"].max() == 1.0
+    assert wateroilgas.gasoil.table["KROG"].min() == 0.0
+    assert wateroilgas.gasoil.table["PC"].min() == 0.0
+    assert wateroilgas.gasoil.table["PC"].max() == 0.0
 
 
 def test_wo_invalidcurves():
     """Test what happens when we give in invalid data"""
     # Sw data not ordered:
-    krw1 = pd.DataFrame(columns=["Sw", "krw"], data=[[0.15, 0], [0.1, 1], [1, 1]])
-    wateroil = WaterOil(swl=krw1["Sw"].min(), h=0.1)
+    krw1 = pd.DataFrame(columns=["SW", "KRW"], data=[[0.15, 0], [0.1, 1], [1, 1]])
+    wateroil = WaterOil(swl=krw1["SW"].min(), h=0.1)
     with pytest.raises(ValueError):
         # pchip-interpolator raises this error;
         # x coordinates are not in increasing order
-        wateroil.add_fromtable(krw1, krwcolname="krw")
+        wateroil.add_fromtable(krw1, krwcolname="KRW")
 
     krw2 = pd.DataFrame(
-        columns=["Sw", "krw"], data=[[0.15, 0], [0.4, 0.6], [0.6, 0.4], [1, 1]]
+        columns=["SW", "KRW"], data=[[0.15, 0], [0.4, 0.6], [0.6, 0.4], [1, 1]]
     )
-    wateroil = WaterOil(swl=krw2["Sw"].min(), h=0.1)
+    wateroil = WaterOil(swl=krw2["SW"].min(), h=0.1)
     with pytest.raises(ValueError):
         # Should get notified that krw is not monotonous
-        wateroil.add_fromtable(krw2, krwcolname="krw")
+        wateroil.add_fromtable(krw2, krwcolname="KRW")
     krow2 = pd.DataFrame(
-        columns=["Sw", "krow"], data=[[0.15, 1], [0.4, 0.4], [0.6, 0.6], [1, 0]]
+        columns=["SW", "KROW"], data=[[0.15, 1], [0.4, 0.4], [0.6, 0.6], [1, 0]]
     )
-    wateroil = WaterOil(swl=krow2["Sw"].min(), h=0.1)
+    wateroil = WaterOil(swl=krow2["SW"].min(), h=0.1)
     with pytest.raises(ValueError):
         # Should get notified that krow is not monotonous
-        wateroil.add_fromtable(krow2, krowcolname="krow")
+        wateroil.add_fromtable(krow2, krowcolname="KROW")
     pc2 = pd.DataFrame(
-        columns=["Sw", "pc"], data=[[0.15, 1], [0.4, 0.4], [0.6, 0.6], [1, 0]]
+        columns=["SW", "PC"], data=[[0.15, 1], [0.4, 0.4], [0.6, 0.6], [1, 0]]
     )
-    wateroil = WaterOil(swl=pc2["Sw"].min(), h=0.1)
+    wateroil = WaterOil(swl=pc2["SW"].min(), h=0.1)
     with pytest.raises(ValueError):
         # Should get notified that pc is not monotonous
-        wateroil.add_fromtable(pc2, pccolname="pc")
+        wateroil.add_fromtable(pc2, pccolname="PC")
 
     pc3 = pd.DataFrame(
-        columns=["Sw", "pc"],
+        columns=["SW", "PC"],
         data=[[0, np.inf], [0.1, 1], [0.4, 0.4], [0.6, 0.2], [1, 0]],
     )
-    wateroil = WaterOil(swl=pc3["Sw"].min(), h=0.1)
+    wateroil = WaterOil(swl=pc3["SW"].min(), h=0.1)
     # Will get warning that infinite numbers are ignored.
     # In this case the extrapolation is quite bad.
-    wateroil.add_fromtable(pc3, pccolname="pc")
+    wateroil.add_fromtable(pc3, pccolname="PC")
 
     # But when we later set swl larger, then we should
     # not bother about the infinity:
     wateroil = WaterOil(swl=0.1, h=0.1)
-    wateroil.add_fromtable(pc3, pccolname="pc")
-    assert np.isclose(wateroil.table["pc"].max(), pc3.iloc[1:]["pc"].max())
+    wateroil.add_fromtable(pc3, pccolname="PC")
+    assert np.isclose(wateroil.table["PC"].max(), pc3.iloc[1:]["PC"].max())
 
     # Choosing endpoint slightly to the left of 0.1 incurs
     # extrapolation. A warning will be given
     wateroil = WaterOil(swl=0.05, h=0.1)
-    wateroil.add_fromtable(pc3, pccolname="pc")
+    wateroil.add_fromtable(pc3, pccolname="PC")
     # Inequality due to extrapolation:
-    assert wateroil.table["pc"].max() > pc3.iloc[1:]["pc"].max()
+    assert wateroil.table["PC"].max() > pc3.iloc[1:]["PC"].max()
 
 
 def test_go_invalidcurves():
     """Test  fromtable on invalid gasoil data"""
     # Sw data not ordered:
-    krg1 = pd.DataFrame(columns=["Sg", "krg"], data=[[0.15, 0], [0.1, 1], [1, 1]])
+    krg1 = pd.DataFrame(columns=["SG", "KRG"], data=[[0.15, 0], [0.1, 1], [1, 1]])
     gasoil = GasOil(h=0.1)
     with pytest.raises(ValueError):
         # pchip-interpolator raises this error;
         # x coordinates are not in increasing order
-        gasoil.add_fromtable(krg1, krgcolname="krg")
+        gasoil.add_fromtable(krg1, krgcolname="KRG")
 
     krg2 = pd.DataFrame(
-        columns=["Sg", "krg"], data=[[0.15, 0], [0.4, 0.6], [0.6, 0.4], [1, 1]]
+        columns=["SG", "KRG"], data=[[0.15, 0], [0.4, 0.6], [0.6, 0.4], [1, 1]]
     )
     gasoil = GasOil(h=0.1)
     with pytest.raises(ValueError):
         # Should get notified that krg is not monotonous
-        gasoil.add_fromtable(krg2, krgcolname="krg")
+        gasoil.add_fromtable(krg2, krgcolname="KRG")
     krog2 = pd.DataFrame(
-        columns=["Sg", "krog"], data=[[0.15, 1], [0.4, 0.4], [0.6, 0.6], [1, 0]]
+        columns=["SG", "KROG"], data=[[0.15, 1], [0.4, 0.4], [0.6, 0.6], [1, 0]]
     )
     gasoil = GasOil(h=0.1)
     with pytest.raises(ValueError):
         # Should get notified that krog is not monotonous
-        gasoil.add_fromtable(krog2, krogcolname="krog")
+        gasoil.add_fromtable(krog2, krogcolname="KROG")
     pc2 = pd.DataFrame(
-        columns=["Sg", "pc"], data=[[0.15, 1], [0.4, 0.4], [0.6, 0.6], [1, 0]]
+        columns=["SG", "PC"], data=[[0.15, 1], [0.4, 0.4], [0.6, 0.6], [1, 0]]
     )
     gasoil = GasOil(h=0.1)
     with pytest.raises(ValueError):
         # Should get notified that pc is not monotonous
-        gasoil.add_fromtable(pc2, pccolname="pc")
+        gasoil.add_fromtable(pc2, pccolname="PC")
 
 
 def test_wo_fromtable_problems():
     """Test wateroil from tables with problematic data"""
     # With default object:
     df1 = pd.DataFrame(
-        columns=["Sw", "krw", "krow", "pcow"],
+        columns=["SW", "KRW", "KROW", "PCOW"],
         data=[[0.15, 0, 1, 3], [0.89, 1, 0, 0.1], [1, 1, 0, 0]],
     )
-    wateroil = WaterOil(h=0.1, swl=df1["Sw"].min())
+    # With default object:
+    wateroil = WaterOil(h=0.1)
+    with pytest.raises(ValueError):
+        wateroil.add_fromtable(df1)
+        # This results in krw and krow overshooting 0 and 1
+    # Fix left endpoint:
+    wateroil = WaterOil(h=0.1, swl=df1["SW"].min())
     wateroil.add_fromtable(df1)
     # The table is now valid, but we did not preserve the 0.89 point
     check_table(wateroil.table)
 
     # If we also tell the WaterOil object about sorw, we are guaranteed
     # to have it expclitly included:
-    wateroil = WaterOil(h=0.1, swl=df1["Sw"].min(), sorw=1 - 0.89)
+    wateroil = WaterOil(h=0.1, swl=df1["SW"].min(), sorw=1 - 0.89)
     wateroil.add_fromtable(df1)
     check_table(wateroil.table)
     # For low enough h, this will however NOT matter.
@@ -314,61 +311,61 @@ def test_wo_fromtable_problems():
     [
         (
             pd.DataFrame(
-                columns=["Sw", "krw", "krow", "pcow"],
+                columns=["SW", "KRW", "KROW", "PCOW"],
                 data=[[0.15, "fooo", 1, 3], [0.89, 1, 0, 0.1], [1, 1, 0, 0]],
             ),
             0.15,
             ValueError,
-            "Failed to parse column krw",
+            "Failed to parse column KRW",
         ),
         (
             pd.DataFrame(
-                columns=["Sw", "krw", "krow", "pcow"],
+                columns=["SW", "KRW", "KROW", "PCOW"],
                 data=[[0.15, 1.1, 1, 3], [0.89, 1, 0, 0.1], [1, 1, 0, 0]],
             ),
             0.15,
             ValueError,
-            "krw is above 1",
+            "KRW is above 1",
         ),
         (
             pd.DataFrame(
-                columns=["Sw", "krw", "krow", "pcow"],
+                columns=["SW", "KRW", "KROW", "PCOW"],
                 data=[[0.15, -0.1, 1, 3], [0.89, 1, 0, 0.1], [1, 1, 0, 0]],
             ),
             0.15,
             ValueError,
-            "krw is below 0",
+            "KRW is below 0",
         ),
         (
             pd.DataFrame(
-                columns=["Sw", "krw", "krow", "pcow"],
+                columns=["SW", "KRW", "KROW", "PCOW"],
                 data=[[0.15, 0.1, "foo", 3], [0.89, 1, 0, 0.1], [1, 1, 0, 0]],
             ),
             0.15,
             ValueError,
-            "Failed to parse column krow",
+            "Failed to parse column KROW",
         ),
         (
             pd.DataFrame(
-                columns=["Sw", "krw", "krow", "pcow"],
+                columns=["SW", "KRW", "KROW", "PCOW"],
                 data=[[0.15, 0.1, 1.1, 3], [0.89, 1, 0, 0.1], [1, 1, 0, 0]],
             ),
             0.15,
             ValueError,
-            "krow is above 1",
+            "KROW is above 1",
         ),
         (
             pd.DataFrame(
-                columns=["Sw", "krw", "krow", "pcow"],
+                columns=["SW", "KRW", "KROW", "PCOW"],
                 data=[[0.15, 0.1, 1, 3], [0.89, 1, 0, 0.1], [1, 1, -0.001, 0]],
             ),
             0.15,
             ValueError,
-            "krow is below 0",
+            "KROW is below 0",
         ),
         (
             pd.DataFrame(
-                columns=["Sw", "krw", "krow", "pcow"],
+                columns=["SW", "KRW", "KROW", "PCOW"],
                 data=[[0.15, 0.1, 1, 3], [0.89, 1, 0, 0.1], [1, 1, -0.001, 0]],
             ),
             0.10,
@@ -377,7 +374,7 @@ def test_wo_fromtable_problems():
         ),
         (
             pd.DataFrame(
-                columns=["Sw", "krw", "krow", "pcow"],
+                columns=["SW", "KRW", "KROW", "PCOW"],
                 data=[[0.15, 0.1, 1, 3], [0.89, 1, 0, 0.1], [1, 1, -0.001, 0]],
             ),
             0,
@@ -386,7 +383,7 @@ def test_wo_fromtable_problems():
         ),
         (
             pd.DataFrame(
-                columns=["Sw", "krw", "krow", "pcow"],
+                columns=["SW", "KRW", "KROW", "PCOW"],
                 data=[[0.15, 0.1, 1, 3], [0.89, 1, 0, 0.1], [1, 1, -0.001, 0]],
             ),
             0.16,
@@ -415,18 +412,18 @@ def test_fromtable_types():
     wateroil.add_fromtable(
         df1, swcolname="SW", krwcolname="KRW", krowcolname="KROW", pccolname="PC"
     )
-    assert "krw" in wateroil.table.columns
-    assert "krow" in wateroil.table.columns
-    assert "pc" in wateroil.table.columns
+    assert "KRW" in wateroil.table.columns
+    assert "KROW" in wateroil.table.columns
+    assert "PC" in wateroil.table.columns
     check_table(wateroil.table)
 
     gasoil = GasOil(h=0.1)
     gasoil.add_fromtable(
         df1, sgcolname="SW", krgcolname="KRW", krogcolname="KROW", pccolname="PC"
     )
-    assert "krg" in gasoil.table.columns
-    assert "krog" in gasoil.table.columns
-    assert "pc" in gasoil.table.columns
+    assert "KRG" in gasoil.table.columns
+    assert "KROG" in gasoil.table.columns
+    assert "PC" in gasoil.table.columns
     check_table(gasoil.table)
 
     # But this should not make sense.
@@ -451,7 +448,7 @@ def test_fromtable_types():
 def test_wo_fromtable_h(h):
     """Test making curves from tabular data with random stepsize h"""
     df1 = pd.DataFrame(
-        columns=["Sw", "krw", "krow", "pcow"],
+        columns=["SW", "KRW", "KROW", "PCOW"],
         data=[[0.15, 0, 1, 3], [0.89, 1, 0, 0.1], [1, 1, 0, 0]],
     )
     wateroil = WaterOil(h=h, swl=0.15, sorw=1 - 0.89)

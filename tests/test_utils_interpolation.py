@@ -74,8 +74,8 @@ def test_normalize_pc(swirr, dswl):
     """Test that we can normalize a pc curve"""
     wateroil = WaterOil(swirr=swirr, swl=swirr + dswl)
     wateroil.add_simple_J()
-    pc_max = wateroil.table["pc"].max()
-    pc_min = wateroil.table["pc"].min()
+    pc_max = wateroil.table["PC"].max()
+    pc_min = wateroil.table["PC"].min()
 
     pc_fn = normalize_pc(wateroil)
     assert np.isclose(pc_fn(0), pc_max)
@@ -149,7 +149,7 @@ def test_normalize_nonlinpart_wo():
     assert np.isclose(kron(1), 0.8)
 
     # So fix endpoints!
-    wateroil.swl = wateroil.table["sw"].min()
+    wateroil.swl = wateroil.table["SW"].min()
     wateroil.swcr = wateroil.estimate_swcr()
     wateroil.sorw = wateroil.estimate_sorw()
     # Try again
@@ -273,16 +273,16 @@ def test_interpolate_wo(
 
     # Distances between low and interpolants:
     dists = [
-        (wo_low.table - interp.table)[["krw", "krow"]].sum().sum() for interp in ips
+        (wo_low.table - interp.table)[["KRW", "KROW"]].sum().sum() for interp in ips
     ]
     assert np.isclose(dists[0], 0)
 
     # Distance between high and the last interpolant
-    assert (wo_high.table - ips[-1].table)[["krw", "krow"]].sum().sum() < 0.01
+    assert (wo_high.table - ips[-1].table)[["KRW", "KROW"]].sum().sum() < 0.01
 
     # Distances between low and interpolants:
     dists = [
-        (wo_low.table - interp.table)[["krw", "krow"]].sum().sum() for interp in ips
+        (wo_low.table - interp.table)[["KRW", "KROW"]].sum().sum() for interp in ips
     ]
     print(
         "Interpolation, mean: {}, min: {}, max: {}, std: {} ip-par-dist: {}".format(
@@ -349,14 +349,14 @@ def test_interpolate_wo_pc(swl, dswcr, dswlhigh, sorw, a_l, a_h, b_l, b_h):
         assert 0 < wo_ip.crosspoint() < 1
 
     # Distances between low and interpolants:
-    dists = [(wo_low.table - interp.table)[["pc"]].sum().sum() for interp in ips]
+    dists = [(wo_low.table - interp.table)[["PC"]].sum().sum() for interp in ips]
     assert np.isclose(dists[0], 0)
 
     # Distance between high and the last interpolant
-    assert (wo_high.table - ips[-1].table)[["pc"]].sum().sum() < 0.01
+    assert (wo_high.table - ips[-1].table)[["PC"]].sum().sum() < 0.01
 
     # Distances between low and interpolants:
-    dists = [(wo_low.table - interp.table)[["pc"]].sum().sum() for interp in ips]
+    dists = [(wo_low.table - interp.table)[["PC"]].sum().sum() for interp in ips]
     print(
         "Interpolation, mean: {}, min: {}, max: {}, std: {} ip-par-dist: {}".format(
             np.mean(dists), min(dists), max(dists), np.std(np.diff(dists[1:])), ip_dist
@@ -492,7 +492,7 @@ def test_normalize_nonlinpart_go():
     assert not np.isclose(krgn(1), 0.6)
 
     # So fix endpoints!
-    gasoil.swl = 1 - gasoil.table["sg"].max()
+    gasoil.swl = 1 - gasoil.table["SG"].max()
     gasoil.sgcr = gasoil.estimate_sgcr()
     gasoil.sorg = gasoil.estimate_sorg()
     # Try again
@@ -517,10 +517,10 @@ def test_ip_wo_kroend():
     wo_ip = interpolate_wo(wo_low, wo_high, 0.5)
 
     # kroend at mean swl:
-    assert float_df_checker(wo_ip.table, "sw", 0.01, "krow", (0.6 + 0.7) / 2.0)
+    assert float_df_checker(wo_ip.table, "SW", 0.01, "KROW", (0.6 + 0.7) / 2.0)
 
-    assert float_df_checker(wo_ip.table, "sw", 1, "krw", 0.71)
-    assert float_df_checker(wo_ip.table, "sw", 1 - 0.15, "krw", 0.5)
+    assert float_df_checker(wo_ip.table, "SW", 1, "KRW", 0.71)
+    assert float_df_checker(wo_ip.table, "SW", 1 - 0.15, "KRW", 0.5)
 
 
 def test_ip_go_kroend():
@@ -537,15 +537,15 @@ def test_ip_go_kroend():
     go_ip = interpolate_go(go_low, go_high, 0.5)
 
     # kroend at sg zero:
-    assert float_df_checker(go_ip.table, "sg", 0.0, "krog", (0.6 + 0.7) / 2.0)
+    assert float_df_checker(go_ip.table, "SG", 0.0, "KROG", (0.6 + 0.7) / 2.0)
 
     assert np.isclose(go_ip.swl, 0.01)
     assert np.isclose(go_ip.sorg, 0.15)
 
     # krgmax at 1 - swl:
-    assert float_df_checker(go_ip.table, "sg", 1 - go_ip.swl, "krg", 0.71)
+    assert float_df_checker(go_ip.table, "SG", 1 - go_ip.swl, "KRG", 0.71)
     # krgend at 1 - swl - sorg
-    assert float_df_checker(go_ip.table, "sg", 1 - go_ip.swl - go_ip.sorg, "krg", 0.5)
+    assert float_df_checker(go_ip.table, "SG", 1 - go_ip.swl - go_ip.sorg, "KRG", 0.5)
 
     # If krgendanchor is None, then krgmax should be irrelevant
     go_low = GasOil(swl=0, sgcr=0.1, sorg=0.2, krgendanchor="")
@@ -562,7 +562,7 @@ def test_ip_go_kroend():
     # Interpolate to midpoint between the curves above
     go_ip = interpolate_go(go_low, go_high, 0.5, h=0.1)
 
-    assert float_df_checker(go_ip.table, "sg", 0.0, "krog", (0.6 + 0.7) / 2.0)
+    assert float_df_checker(go_ip.table, "SG", 0.0, "KROG", (0.6 + 0.7) / 2.0)
 
     # Activate these line to see a bug, interpolation_go
     # does not honor krgendanchorA:
@@ -573,7 +573,7 @@ def test_ip_go_kroend():
     # plt.show()
 
     # krgmax is irrelevant, krgend is used here:
-    assert float_df_checker(go_ip.table, "sg", 1 - 0.01, "krg", 0.5)
+    assert float_df_checker(go_ip.table, "SG", 1 - 0.01, "KRG", 0.5)
 
     # Also check that estimated new sgcr is between the inputs:
     assert 0.05 <= go_ip.estimate_sgcr() <= 0.1
@@ -590,17 +590,17 @@ def test_ip_go_kroend():
     # Interpolate to midpoint between the curves above
     go_ip = interpolate_go(go_low, go_high, 0.5)
 
-    assert float_df_checker(go_ip.table, "sg", 0.0, "krog", (0.6 + 0.7) / 2.0)
+    assert float_df_checker(go_ip.table, "SG", 0.0, "KROG", (0.6 + 0.7) / 2.0)
 
     # max(krg) is here avg of krgmax and krgend from the differnt tables:
-    assert float_df_checker(go_ip.table, "sg", 1 - 0.01, "krg", 0.6)
+    assert float_df_checker(go_ip.table, "SG", 1 - 0.01, "KRG", 0.6)
 
     # krgend at 1 - swl - sorg, non-trivial expression, so a numerical
     # value is used here in the test:
-    assert float_df_checker(go_ip.table, "sg", 1 - 0.01 - 0.15, "krg", 0.4491271)
+    assert float_df_checker(go_ip.table, "SG", 1 - 0.01 - 0.15, "KRG", 0.4491271)
 
     # krog-zero at 1 - swl - sorg:
-    assert float_df_checker(go_ip.table, "sg", 1 - 0.01 - 0.15, "krog", 0)
+    assert float_df_checker(go_ip.table, "SG", 1 - 0.01 - 0.15, "KROG", 0)
 
 
 @settings(max_examples=50, deadline=5000)
@@ -678,7 +678,7 @@ def test_interpolate_go(
 
     # Distances between low and interpolants:
     dists = [
-        (go_low.table - interp.table)[["krg", "krog"]].sum().sum() for interp in ips
+        (go_low.table - interp.table)[["KRG", "KROG"]].sum().sum() for interp in ips
     ]
     print(
         "Interpolation, mean: {}, min: {}, max: {}, std: {} ip-par-dist: {}".format(
@@ -714,7 +714,7 @@ def test_interpolations_go_fromtable():
     was underestimated in interpolations following add_fromtable().
     """
     base = pd.DataFrame(
-        columns=["Sg", "krg", "krog"],
+        columns=["SG", "KRG", "KROG"],
         data=[
             [0.0, 0.0, 1.0],
             [0.1, 0.0, 1.0],
@@ -726,7 +726,7 @@ def test_interpolations_go_fromtable():
         ],
     )
     opt = pd.DataFrame(
-        columns=["Sg", "krg", "krog"],
+        columns=["SG", "KRG", "KROG"],
         data=[
             [0.0, 0.0, 1.0],
             [0.1, 0.0, 1.0],
@@ -757,7 +757,7 @@ def test_interpolations_wo_fromtable():
     Pyscal 0.6.1 and earlier fails this test sorw.
     """
     base = pd.DataFrame(
-        columns=["Sw", "krw", "krow"],
+        columns=["SW", "KRW", "KROW"],
         data=[
             [0.0, 0.0, 1.0],
             [0.1, 0.0, 1.0],
@@ -769,7 +769,7 @@ def test_interpolations_wo_fromtable():
         ],
     )
     opt = pd.DataFrame(
-        columns=["Sw", "krw", "krow"],
+        columns=["SW", "KRW", "KROW"],
         data=[
             [0.0, 0.0, 1.0],
             [0.1, 0.0, 1.0],

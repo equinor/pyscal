@@ -61,8 +61,8 @@ def test_gasoil_init():
     gasoil.add_corey_oil()
     assert len(gasoil.table) == 2
     assert np.isclose(gasoil.crosspoint(), 0.45)
-    assert np.isclose(gasoil.table["sg"].min(), 0)
-    assert np.isclose(gasoil.table["sg"].max(), 0.9)
+    assert np.isclose(gasoil.table["SG"].min(), 0)
+    assert np.isclose(gasoil.table["SG"].max(), 0.9)
 
     # Test too small h:
     gasoil = GasOil(swl=0.1, h=0.00000000000000000001)
@@ -115,23 +115,23 @@ def test_gasoil_normalization(swl, sgcr, sorg, h, tag):
     assert not gasoil.table.isnull().values.any()
 
     # Check that son is 1 at sg=0
-    assert float_df_checker(gasoil.table, "sg", 0, "son", 1)
+    assert float_df_checker(gasoil.table, "SG", 0, "SON", 1)
 
     # Check that son is 0 at sorg with this krgendanchor
-    assert float_df_checker(gasoil.table, "sg", 1 - gasoil.sorg - gasoil.swl, "son", 0)
+    assert float_df_checker(gasoil.table, "SG", 1 - gasoil.sorg - gasoil.swl, "SON", 0)
 
     # Check that sgn is 0 at sgcr
-    assert float_df_checker(gasoil.table, "sg", gasoil.sgcr, "sgn", 0)
+    assert float_df_checker(gasoil.table, "SG", gasoil.sgcr, "SGN", 0)
 
     # Check that sgn is 1 at sorg
-    assert float_df_checker(gasoil.table, "sg", 1 - gasoil.sorg - gasoil.swl, "sgn", 1)
+    assert float_df_checker(gasoil.table, "SG", 1 - gasoil.sorg - gasoil.swl, "SGN", 1)
 
     # Redo with different krgendanchor
     gasoil = GasOil(
         swirr=0.0, swl=swl, sgcr=sgcr, sorg=sorg, h=h, krgendanchor="", tag=tag
     )
-    assert float_df_checker(gasoil.table, "sg", 1 - gasoil.swl, "sgn", 1)
-    assert float_df_checker(gasoil.table, "sg", gasoil.sgcr, "sgn", 0)
+    assert float_df_checker(gasoil.table, "SG", 1 - gasoil.swl, "SGN", 1)
+    assert float_df_checker(gasoil.table, "SG", gasoil.sgcr, "SGN", 0)
 
 
 @settings(deadline=1000)
@@ -192,21 +192,21 @@ def check_endpoints(gasoil, krgend, krgmax, kroend):
     # Check endpoints for oil curve:
     # krog at sgcr should be kroend
     if gasoil.sgcr > swtol:
-        assert float_df_checker(gasoil.table, "son", 1.0, "krog", kroend)
+        assert float_df_checker(gasoil.table, "SON", 1.0, "KROG", kroend)
     # krog at son=0 (1-sorg-swl or 1 - swl) should be zero:
-    assert float_df_checker(gasoil.table, "son", 0.0, "krog", 0)
+    assert float_df_checker(gasoil.table, "SON", 0.0, "KROG", 0)
 
-    assert float_df_checker(gasoil.table, "sg", 0, "krog", kroend)
+    assert float_df_checker(gasoil.table, "SG", 0, "KROG", kroend)
 
-    assert float_df_checker(gasoil.table, "sgn", 0.0, "krg", 0)
-    assert float_df_checker(gasoil.table, "sg", gasoil.sgcr, "krg", 0)
+    assert float_df_checker(gasoil.table, "SGN", 0.0, "KRG", 0)
+    assert float_df_checker(gasoil.table, "SG", gasoil.sgcr, "KRG", 0)
 
     # If krgendanchor == "sorg" then krgmax is irrelevant.
     if gasoil.sorg > swtol and gasoil.sorg > gasoil.h and gasoil.krgendanchor == "sorg":
-        assert float_df_checker(gasoil.table, "sgn", 1.0, "krg", krgend)
-        assert np.isclose(gasoil.table["krg"].max(), krgmax)
+        assert float_df_checker(gasoil.table, "SGN", 1.0, "KRG", krgend)
+        assert np.isclose(gasoil.table["KRG"].max(), krgmax)
     if gasoil.krgendanchor != "sorg":
-        assert np.isclose(gasoil.table["krg"].max(), krgend)
+        assert np.isclose(gasoil.table["KRG"].max(), krgend)
 
 
 def test_gasoil_krgendanchor():
@@ -218,10 +218,10 @@ def test_gasoil_krgendanchor():
 
     # kg should be 1.0 at 1 - sorg due to krgendanchor == "sorg":
     assert (
-        gasoil.table[np.isclose(gasoil.table["sg"], 1 - gasoil.sorg)]["krg"].values[0]
+        gasoil.table[np.isclose(gasoil.table["SG"], 1 - gasoil.sorg)]["KRG"].values[0]
         == 1.0
     )
-    assert gasoil.table[np.isclose(gasoil.table["sg"], 1.0)]["krg"].values[0] == 1.0
+    assert gasoil.table[np.isclose(gasoil.table["SG"], 1.0)]["KRG"].values[0] == 1.0
 
     gasoil = GasOil(krgendanchor="", sorg=0.2, h=0.1)
     assert gasoil.sorg
@@ -230,10 +230,10 @@ def test_gasoil_krgendanchor():
 
     # kg should be < 1 at 1 - sorg due to krgendanchor being ""
     assert (
-        gasoil.table[np.isclose(gasoil.table["sg"], 1 - gasoil.sorg)]["krg"].values[0]
+        gasoil.table[np.isclose(gasoil.table["SG"], 1 - gasoil.sorg)]["KRG"].values[0]
         < 1.0
     )
-    assert gasoil.table[np.isclose(gasoil.table["sg"], 1.0)]["krg"].values[0] == 1.0
+    assert gasoil.table[np.isclose(gasoil.table["SG"], 1.0)]["KRG"].values[0] == 1.0
     assert gasoil.selfcheck()
     assert gasoil.crosspoint() > 0
 
@@ -247,10 +247,10 @@ def test_gasoil_krgendanchor():
 
     # kg should be 1.0 at 1 - sorg due to krgendanchor == "sorg":
     assert (
-        gasoil.table[np.isclose(gasoil.table["sg"], 1 - gasoil.sorg)]["krg"].values[0]
+        gasoil.table[np.isclose(gasoil.table["SG"], 1 - gasoil.sorg)]["KRG"].values[0]
         == 1.0
     )
-    assert gasoil.table[np.isclose(gasoil.table["sg"], 1.0)]["krg"].values[0] == 1.0
+    assert gasoil.table[np.isclose(gasoil.table["SG"], 1.0)]["KRG"].values[0] == 1.0
 
     gasoil = GasOil(krgendanchor="", sorg=0.2, h=0.1)
     assert gasoil.sorg
@@ -261,10 +261,10 @@ def test_gasoil_krgendanchor():
 
     # kg should be < 1 at 1 - sorg due to krgendanchor being ""
     assert (
-        gasoil.table[np.isclose(gasoil.table["sg"], 1 - gasoil.sorg)]["krg"].values[0]
+        gasoil.table[np.isclose(gasoil.table["SG"], 1 - gasoil.sorg)]["KRG"].values[0]
         < 1.0
     )
-    assert gasoil.table[np.isclose(gasoil.table["sg"], 1.0)]["krg"].values[0] == 1.0
+    assert gasoil.table[np.isclose(gasoil.table["SG"], 1.0)]["KRG"].values[0] == 1.0
 
 
 def test_nexus():
@@ -303,17 +303,17 @@ def test_kroend():
     gasoil = GasOil(swirr=0.01, sgcr=0.01, h=0.01, swl=0.1, sorg=0.05)
     gasoil.add_LET_gas()
     gasoil.add_LET_oil(2, 2, 2.1)
-    assert gasoil.table["krog"].max() == 1
+    assert gasoil.table["KROG"].max() == 1
     gasoil.add_LET_oil(2, 2, 2.1, kroend=0.5)
     check_linear_sections(gasoil)
-    assert gasoil.table["krog"].max() == 0.5
+    assert gasoil.table["KROG"].max() == 0.5
 
     assert 0 < gasoil.crosspoint() < 1
 
     gasoil.add_corey_oil(2)
-    assert gasoil.table["krog"].max() == 1
+    assert gasoil.table["KROG"].max() == 1
     gasoil.add_corey_oil(nog=2, kroend=0.5)
-    assert gasoil.table["krog"].max() == 0.5
+    assert gasoil.table["KROG"].max() == 0.5
 
 
 @settings(deadline=1500)
@@ -328,8 +328,8 @@ def test_gasoil_corey1(ng, nog):
         # This happens for "invalid" input
         return
 
-    assert "krog" in gasoil.table
-    assert "krg" in gasoil.table
+    assert "KROG" in gasoil.table
+    assert "KRG" in gasoil.table
     assert isinstance(gasoil.krgcomment, str)
     check_table(gasoil.table)
     sgofstr = gasoil.SGOF()
@@ -395,8 +395,8 @@ def test_gasoil_let1(l, e, t, krgend, krgmax):
     except AssertionError:
         # This happens for negative values f.ex.
         return
-    assert "krog" in gasoil.table
-    assert "krg" in gasoil.table
+    assert "KROG" in gasoil.table
+    assert "KRG" in gasoil.table
     assert isinstance(gasoil.krgcomment, str)
     check_table(gasoil.table)
     check_linear_sections(gasoil)
@@ -424,7 +424,7 @@ def test_fast():
     assert "-- krg = krog @ sg=0.5" in gasoil.SGOF()
 
     # Provoke non-strict-monotone krow:
-    gasoil.table.loc[0:2, "krog"] = [1.00, 0.81, 0.81]
+    gasoil.table.loc[0:2, "KROG"] = [1.00, 0.81, 0.81]
     # (this is valid in non-imbibition, but pyscal will correct it for all
     # curves)
     assert "0.1000000 0.0100000 0.8100000 0.0000000" in gasoil.SGOF()
@@ -440,12 +440,12 @@ def test_fast():
 
     # Provoke non-strict-monotone krow, in fast-mode
     # this slips through:
-    gasoil.table.loc[0:2, "krog"] = [1.00, 0.81, 0.81]
+    gasoil.table.loc[0:2, "KROG"] = [1.00, 0.81, 0.81]
     assert "0.1000000 0.0100000 0.8100000 0.0000000" in gasoil.SGOF()
     assert "0.2000000 0.0400000 0.8100000 0.0000000" in gasoil.SGOF()
     # not corrected:               ^^^^^^
 
-    gasoil.table.loc[0:2, "krg"] = [0.00, 0.01, 0.01]
+    gasoil.table.loc[0:2, "KRG"] = [0.00, 0.01, 0.01]
     assert "0.1000000 0.0100000" in gasoil.SGFN()
     assert "0.2000000 0.0100000" in gasoil.SGFN()
 
@@ -469,7 +469,7 @@ def test_roundoff():
     # Inject a custom dataframe that has occured in the wild,
     # and given monotonicity issues in GasOil.SGOF().
     gasoil.table = pd.DataFrame(
-        columns=["sg", "krg", "krog", "pc"],
+        columns=["SG", "KRG", "KROG", "PC"],
         data=[
             [0.02, 0, 0.19524045000000001, 0],
             [0.040000000000000001, 0, 0.19524044999999998, 0],
@@ -483,8 +483,8 @@ def test_roundoff():
             [1, 1, 0, 0],
         ],
     )
-    gasoil.table["sgn"] = gasoil.table["sg"]
-    gasoil.table["son"] = 1 - gasoil.table["sg"]
+    gasoil.table["SGN"] = gasoil.table["SG"]
+    gasoil.table["SON"] = 1 - gasoil.table["SG"]
     # If this value (as string) occurs, then we are victim of floating point truncation
     # in float_format=".7f":
     assert "0.1952404" not in gasoil.SGOF()
@@ -495,16 +495,16 @@ def test_roundoff():
 @pytest.mark.parametrize(
     "columnname, errorvalues",
     [
-        ("sg", [1, 0]),
-        ("sg", [0, 2]),
-        ("krg", [1, 0]),
-        ("krg", [0, 2]),
-        ("krog", [0, 1]),
-        ("krog", [2, 0]),
-        ("pc", [np.inf, 0]),
-        ("pc", [np.nan, 0]),
-        ("pc", [1, 2]),
-        ("pc", [0, 1]),
+        ("SG", [1, 0]),
+        ("SG", [0, 2]),
+        ("KRG", [1, 0]),
+        ("KRG", [0, 2]),
+        ("KROG", [0, 1]),
+        ("KROG", [2, 0]),
+        ("PC", [np.inf, 0]),
+        ("PC", [np.nan, 0]),
+        ("PC", [1, 2]),
+        ("PC", [0, 1]),
     ],
 )
 def test_selfcheck(columnname, errorvalues):
@@ -518,5 +518,5 @@ def test_selfcheck(columnname, errorvalues):
     gasoil.table[columnname] = errorvalues
     assert not gasoil.selfcheck()
     assert gasoil.SGOF() == ""
-    if not columnname == "krog":
+    if not columnname == "KROG":
         assert gasoil.SGFN() == ""

@@ -27,12 +27,12 @@ def test_simple_j():
     # Zero gravity:
     wateroil = WaterOil(swl=0.01)
     wateroil.add_simple_J(g=0)
-    assert wateroil.table.pc.unique() == 0.0
+    assert wateroil.table["PC"].unique() == 0.0
 
     # This should give back Sw:
     # This ensures that density and gravity scaling is correct
     wateroil.add_simple_J(a=1, b=1, poro_ref=1, perm_ref=1, drho=1000, g=100)
-    assert (wateroil.table["pc"] - wateroil.table["sw"]).sum() < 0.00001
+    assert (wateroil.table["PC"] - wateroil.table["SW"]).sum() < 0.00001
     # (check_table() will fail on this, when b > 0)
 
     # Some values seen in real life:
@@ -64,14 +64,14 @@ def test_simple_j_petro():
 
     # Zero gravity:
     wateroil.add_simple_J_petro(a=1, b=-2, g=0)
-    assert wateroil.table.pc.unique() == 0.0
+    assert wateroil.table["PC"].unique() == 0.0
 
     # Numerical test from sample numbers calculated independently in different tool:
     wateroil = WaterOil(swl=0.05, h=0.025)
     wateroil.add_simple_J_petro(
         a=1.45, b=-0.285, drho=143, g=9.81, perm_ref=15, poro_ref=0.27
     )
-    float_df_checker(wateroil.table, "sw", 0.1, "pc", 22.36746)
+    float_df_checker(wateroil.table, "SW", 0.1, "PC", 22.36746)
     assert "Simplified" in wateroil.pccomment
     assert "etrophysic" in wateroil.pccomment
     wateroil.add_corey_oil()
@@ -125,9 +125,9 @@ def test_normalized_j(caplog):
     # NB: Prior implementation created Pc in atm, we create in bar
     bar_to_atm = 1.0 / 1.01325
     wateroil.add_normalized_J(a=0.22, b=-0.5, perm=100, poro=0.2, sigma_costau=30)
-    float_df_checker(wateroil.table, "sw", 0.1, "pc", 2.039969 * bar_to_atm)
-    float_df_checker(wateroil.table, "sw", 0.6, "pc", 0.056666 * bar_to_atm)
-    float_df_checker(wateroil.table, "sw", 1.0, "pc", 0.02040 * bar_to_atm)
+    float_df_checker(wateroil.table, "SW", 0.1, "PC", 2.039969 * bar_to_atm)
+    float_df_checker(wateroil.table, "SW", 0.6, "PC", 0.056666 * bar_to_atm)
+    float_df_checker(wateroil.table, "SW", 1.0, "PC", 0.02040 * bar_to_atm)
 
     wateroil = WaterOil(swirr=0.1, swl=0.11, h=0.1)
     wateroil.add_normalized_J(a=0.5, b=-0.001, poro=0.2, perm=10, sigma_costau=30)
@@ -176,20 +176,20 @@ def test_let_pc_pd():
     """Test LET formulation for primary drainage capillary pressure"""
     wateroil = WaterOil(swirr=0.1)
     wateroil.add_LET_pc_pd(Lp=1, Ep=1, Tp=1, Lt=1, Et=1, Tt=1, Pcmax=10, Pct=5)
-    assert np.isclose(wateroil.table["pc"].max(), 10)
-    assert np.isclose(wateroil.table["pc"].min(), 0)
+    assert np.isclose(wateroil.table["PC"].max(), 10)
+    assert np.isclose(wateroil.table["PC"].min(), 0)
     # (everything is linear)
 
     wateroil.add_LET_pc_pd(Lp=10, Ep=10, Tp=10, Lt=10, Et=10, Tt=10, Pcmax=10, Pct=5)
-    assert np.isclose(wateroil.table["pc"].max(), 10)
-    assert np.isclose(wateroil.table["pc"].min(), 0)
+    assert np.isclose(wateroil.table["PC"].max(), 10)
+    assert np.isclose(wateroil.table["PC"].min(), 0)
     # On a plot, you can see a kink at Pc=5.
     # wateroil.plotpc()
 
     wateroil = WaterOil(swirr=0.1, sorw=0.4)
     wateroil.add_LET_pc_pd(Lp=10, Ep=10, Tp=10, Lt=10, Et=10, Tt=10, Pcmax=5, Pct=2)
-    assert np.isclose(wateroil.table["pc"].max(), 5)
-    assert np.isclose(wateroil.table["pc"].min(), 0)
+    assert np.isclose(wateroil.table["PC"].max(), 5)
+    assert np.isclose(wateroil.table["PC"].min(), 0)
     # On plot: hard-to-see kink at Pc=2. .
     # wateroil.plotpc()
     wateroil.add_corey_water()
@@ -203,18 +203,18 @@ def test_let_pc_imb():
     wateroil.add_LET_pc_imb(
         Ls=1, Es=1, Ts=1, Lf=1, Ef=1, Tf=1, Pcmax=10, Pcmin=-10, Pct=3
     )
-    assert np.isclose(wateroil.table["pc"].max(), 10)
-    assert np.isclose(wateroil.table["pc"].min(), -10)
+    assert np.isclose(wateroil.table["PC"].max(), 10)
+    assert np.isclose(wateroil.table["PC"].min(), -10)
 
     wateroil = WaterOil(swirr=0.1)
     wateroil.add_LET_pc_imb(Ls=5, Es=5, Ts=5, Lf=5, Ef=5, Tf=5, Pcmax=5, Pcmin=1, Pct=4)
-    assert np.isclose(wateroil.table["pc"].max(), 5)
-    assert np.isclose(wateroil.table["pc"].min(), 1)
+    assert np.isclose(wateroil.table["PC"].max(), 5)
+    assert np.isclose(wateroil.table["PC"].min(), 1)
 
     wateroil = WaterOil(swirr=0.1, sorw=0.3)
     wateroil.add_LET_pc_imb(Ls=5, Es=5, Ts=5, Lf=5, Ef=5, Tf=5, Pcmax=5, Pcmin=1, Pct=4)
-    assert np.isclose(wateroil.table["pc"].max(), 5)
-    assert np.isclose(wateroil.table["pc"].min(), 1)
+    assert np.isclose(wateroil.table["PC"].max(), 5)
+    assert np.isclose(wateroil.table["PC"].min(), 1)
     wateroil.add_corey_water()
     wateroil.add_corey_oil()
     sat_table_str_ok(wateroil.SWOF())

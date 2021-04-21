@@ -78,12 +78,12 @@ class PyscalList(object):
             pd.DataFrame
         """
         # Names of dataframe columns in wateroil/gasoil.table:
-        wateroil_pyscal_cols = {"sw", "krw", "krow", "pc"}
-        gasoil_pyscal_cols = {"sg", "krg", "krog", "pc"}
+        wateroil_pyscal_cols = {"SW", "KRW", "KROW", "PC"}
+        gasoil_pyscal_cols = {"SG", "KRG", "KROG", "PC"}
 
         # Renamers applied to the returned dataframe:
-        gasoil_col_renamer = {"sg": "SG", "krg": "KRG", "krog": "KROG", "pc": "PCOG"}
-        wateroil_col_renamer = {"sw": "SW", "krw": "KRW", "krow": "KROW", "pc": "PCOW"}
+        gasoil_col_renamer = {"SG": "SG", "KRG": "KRG", "KROG": "KROG", "PC": "PCOG"}
+        wateroil_col_renamer = {"SW": "SW", "KRW": "KRW", "KROW": "KROW", "PC": "PCOW"}
 
         # Sort order for rows in returned dataframe:
         sort_candidates = ["SATNUM", "CASE", "KEYWORD", "SW", "SG", "SL"]
