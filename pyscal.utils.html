@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.utils package &mdash; pyscal 0.7.8.dev5+g997ed1c documentation</title>
+  <title>pyscal.utils package &mdash; pyscal 0.7.8.dev6+g9812e7c documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.7.8.dev5+g997ed1c
+                0.7.8.dev6+g9812e7c
               </div>
             
           
@@ -402,12 +402,12 @@ the normalized interval [0,1]</p>
 </dd></dl>
 
 </div>
-<div class="section" id="module-pyscal.utils.monotonocity">
-<span id="pyscal-utils-monotonocity-module"></span><h2>pyscal.utils.monotonocity module<a class="headerlink" href="#module-pyscal.utils.monotonocity" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="module-pyscal.utils.monotonicity">
+<span id="pyscal-utils-monotonicity-module"></span><h2>pyscal.utils.monotonicity module<a class="headerlink" href="#module-pyscal.utils.monotonicity" title="Permalink to this headline">¶</a></h2>
 <p>Monotonocity support functions for pyscal</p>
 <dl class="py function">
-<dt id="pyscal.utils.monotonocity.check_almost_monotone">
-<code class="sig-prename descclassname"><span class="pre">pyscal.utils.monotonocity.</span></code><code class="sig-name descname"><span class="pre">check_almost_monotone</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">digits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sign</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils/monotonocity.html#check_almost_monotone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.monotonocity.check_almost_monotone" title="Permalink to this definition">¶</a></dt>
+<dt id="pyscal.utils.monotonicity.check_almost_monotone">
+<code class="sig-prename descclassname"><span class="pre">pyscal.utils.monotonicity.</span></code><code class="sig-name descname"><span class="pre">check_almost_monotone</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">digits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sign</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils/monotonicity.html#check_almost_monotone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.monotonicity.check_almost_monotone" title="Permalink to this definition">¶</a></dt>
 <dd><p>Raise a ValueError if a series is not sufficiently close
 to constant or monotone in a certain direction.</p>
 <dl class="field-list simple">
@@ -422,8 +422,8 @@ to constant or monotone in a certain direction.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="pyscal.utils.monotonocity.check_limits">
-<code class="sig-prename descclassname"><span class="pre">pyscal.utils.monotonocity.</span></code><code class="sig-name descname"><span class="pre">check_limits</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monotonocity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils/monotonocity.html#check_limits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.monotonocity.check_limits" title="Permalink to this definition">¶</a></dt>
+<dt id="pyscal.utils.monotonicity.check_limits">
+<code class="sig-prename descclassname"><span class="pre">pyscal.utils.monotonicity.</span></code><code class="sig-name descname"><span class="pre">check_limits</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monotonicity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils/monotonicity.html#check_limits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.monotonicity.check_limits" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check a series whether it obeys numerical limits.
 Equivalence to limits is allowed.</p>
 <p>Exceptions will be raised in case of error. Nothing is returned
@@ -432,7 +432,7 @@ when everything is ok.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>series</strong> (<em>pd.Series</em>) – Vector of numbers to check</p></li>
-<li><p><strong>monotonocity</strong> (<em>dict</em>) – Keys ‘upper’ and ‘lower’ are optional
+<li><p><strong>monotonicity</strong> (<em>dict</em>) – Keys ‘upper’ and ‘lower’ are optional
 and point to numerical limits.</p></li>
 <li><p><strong>colname</strong> (<em>str</em>) – Optional string for a column name that will be
 included in any error message.</p></li>
@@ -445,15 +445,15 @@ included in any error message.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="pyscal.utils.monotonocity.clip_accumulate">
-<code class="sig-prename descclassname"><span class="pre">pyscal.utils.monotonocity.</span></code><code class="sig-name descname"><span class="pre">clip_accumulate</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monotonocity</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils/monotonocity.html#clip_accumulate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.monotonocity.clip_accumulate" title="Permalink to this definition">¶</a></dt>
-<dd><p>Modify a series (vector of numbers) for non-strict monotonocity, and
+<dt id="pyscal.utils.monotonicity.clip_accumulate">
+<code class="sig-prename descclassname"><span class="pre">pyscal.utils.monotonicity.</span></code><code class="sig-name descname"><span class="pre">clip_accumulate</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monotonicity</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils/monotonicity.html#clip_accumulate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.monotonicity.clip_accumulate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Modify a series (vector of numbers) for non-strict monotonicity, and
 optionally clip at lower and upper limits.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>series</strong> (<em>pd.Series</em><em> or </em><em>np.array</em>) – Vector of numbers to modify</p></li>
-<li><p><strong>monotonocity</strong> (<em>dict</em>) – Monotonocity options. The keys ‘lower’ and ‘upper’
+<li><p><strong>monotonicity</strong> (<em>dict</em>) – Monotonocity options. The keys ‘lower’ and ‘upper’
 can be provided for clipping the vector.</p></li>
 </ul>
 </dd>
@@ -464,11 +464,11 @@ can be provided for clipping the vector.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="pyscal.utils.monotonocity.modify_dframe_monotonocity">
-<code class="sig-prename descclassname"><span class="pre">pyscal.utils.monotonocity.</span></code><code class="sig-name descname"><span class="pre">modify_dframe_monotonocity</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dframe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monotonocity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">digits</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils/monotonocity.html#modify_dframe_monotonocity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.monotonocity.modify_dframe_monotonocity" title="Permalink to this definition">¶</a></dt>
+<dt id="pyscal.utils.monotonicity.modify_dframe_monotonicity">
+<code class="sig-prename descclassname"><span class="pre">pyscal.utils.monotonicity.</span></code><code class="sig-name descname"><span class="pre">modify_dframe_monotonicity</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dframe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monotonicity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">digits</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils/monotonicity.html#modify_dframe_monotonicity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.monotonicity.modify_dframe_monotonicity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Modify a dataframe for monotonicity.</p>
 <p>Columns in the dataframe are modified in-place.</p>
-<p>Number intervals to consider when enforcing monotonocity:</p>
+<p>Number intervals to consider when enforcing monotonicity:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">value</span><span class="o">&gt;</span>                          <span class="o">&lt;</span><span class="n">orig</span><span class="o">&gt;</span>    <span class="o">&lt;</span><span class="n">fixed</span><span class="o">&gt;</span>
 <span class="o">&lt;</span><span class="n">lower</span> <span class="n">limit</span><span class="o">&gt;</span>                     <span class="mf">0.00</span>      <span class="mf">0.00</span>
 <span class="o">&lt;</span><span class="n">values</span> <span class="n">smaller</span> <span class="n">than</span> <span class="n">accuracy</span><span class="o">&gt;</span>    <span class="mf">0.0002</span>    <span class="mf">0.00</span>
@@ -486,7 +486,7 @@ can be provided for clipping the vector.</p></li>
 supplied), but which deviate from the limit by less
 than the requested accuracy are allowed, and will be
 shifted to the limits.</p>
-<p>Only strict monotonocity is supported. Non-strict
+<p>Only strict monotonicity is supported. Non-strict
 monotonicity is only allowed at upper and lower limit, or
 for all-zero vectors if that option is activated.</p>
 <p>For non-strict monotocity, see the function clip_accumulate()</p>
@@ -494,22 +494,22 @@ for all-zero vectors if that option is activated.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dframe</strong> (<em>pd.DataFrame</em>) – Data to modify.</p></li>
-<li><p><strong>monotonocity</strong> (<em>dict</em>) – see df2str() for syntax.</p></li>
-<li><p><strong>digits</strong> (<em>int</em>) – Number of digits to ensure monotonocity for.</p></li>
+<li><p><strong>monotonicity</strong> (<em>dict</em>) – see df2str() for syntax.</p></li>
+<li><p><strong>digits</strong> (<em>int</em>) – Number of digits to ensure monotonicity for.</p></li>
 </ul>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
-<dt id="pyscal.utils.monotonocity.rows_to_be_fixed">
-<code class="sig-prename descclassname"><span class="pre">pyscal.utils.monotonocity.</span></code><code class="sig-name descname"><span class="pre">rows_to_be_fixed</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monotonocity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">digits</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils/monotonocity.html#rows_to_be_fixed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.monotonocity.rows_to_be_fixed" title="Permalink to this definition">¶</a></dt>
+<dt id="pyscal.utils.monotonicity.rows_to_be_fixed">
+<code class="sig-prename descclassname"><span class="pre">pyscal.utils.monotonicity.</span></code><code class="sig-name descname"><span class="pre">rows_to_be_fixed</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monotonicity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">digits</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils/monotonicity.html#rows_to_be_fixed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.monotonicity.rows_to_be_fixed" title="Permalink to this definition">¶</a></dt>
 <dd><p>Compute boolean array of rows that must be modified</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>series</strong> (<em>pd.Series</em>) – </p></li>
-<li><p><strong>monotonocity</strong> (<em>dict</em>) – Can contain “upper” or “lower”
+<li><p><strong>monotonicity</strong> (<em>dict</em>) – Can contain “upper” or “lower”
 numerical bounds, and “sign”, where &gt;0 means positive.
 “sign” is mandatory.</p></li>
 <li><p><strong>digits</strong> (<em>int</em>) – Accuracy required, how many digits
@@ -524,15 +524,15 @@ constancy to.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="pyscal.utils.monotonocity.validate_monotonocity_arg">
-<code class="sig-prename descclassname"><span class="pre">pyscal.utils.monotonocity.</span></code><code class="sig-name descname"><span class="pre">validate_monotonocity_arg</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">monotonocity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dframe_colnames</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils/monotonocity.html#validate_monotonocity_arg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.monotonocity.validate_monotonocity_arg" title="Permalink to this definition">¶</a></dt>
-<dd><p>Validate a dictionary with monotonocity arguments that
+<dt id="pyscal.utils.monotonicity.validate_monotonicity_arg">
+<code class="sig-prename descclassname"><span class="pre">pyscal.utils.monotonicity.</span></code><code class="sig-name descname"><span class="pre">validate_monotonicity_arg</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">monotonicity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dframe_colnames</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils/monotonicity.html#validate_monotonicity_arg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.monotonicity.validate_monotonicity_arg" title="Permalink to this definition">¶</a></dt>
+<dd><p>Validate a dictionary with monotonicity arguments that
 can be given to df2str().</p>
 <p>Will raise ValueError exceptions if anything is wrong.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>monotonocity</strong> (<em>dict</em>) – Keys are ‘sign’, ‘upper’, ‘lower’
+<li><p><strong>monotonicity</strong> (<em>dict</em>) – Keys are ‘sign’, ‘upper’, ‘lower’
 and  ‘allowzero’.</p></li>
 <li><p><strong>dframe_colnames</strong> (<em>list of str</em>) – Names of column names
 in dframes. Used in error messages.</p></li>
@@ -631,11 +631,11 @@ Default is the Eclipse comment syntax ‘– ‘</p></li>
 
 <dl class="py function">
 <dt id="pyscal.utils.string.df2str">
-<code class="sig-prename descclassname"><span class="pre">pyscal.utils.string.</span></code><code class="sig-name descname"><span class="pre">df2str</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dframe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">digits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roundlevel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monotonocity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monotone_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monotone_direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils/string.html#df2str"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.string.df2str" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">pyscal.utils.string.</span></code><code class="sig-name descname"><span class="pre">df2str</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dframe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">digits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roundlevel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monotonicity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monotone_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monotone_direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils/string.html#df2str"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.string.df2str" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a string representation of a dataframe with
 proper rounding.</p>
 <p>This is used to print the tables in the SWOF/SGOF include files,
-explicit rounding is necessary to avoid monotonocity errors
+explicit rounding is necessary to avoid monotonicity errors
 from truncation. Examples in test code.</p>
 <p>Capillary pressure must be strictly monotone if nonzero, and if a
 column name is provided, the string representation of that column is
@@ -652,10 +652,10 @@ numerical robustness to the deviation.</p></li>
 <li><p><strong>roundlevel</strong> (<em>int</em>) – To how many digits should we round prior to print.
 Recommended to be &gt; digits + 1, see test code.</p></li>
 <li><p><strong>header</strong> (<em>bool</em>) – If the dataframe column header should be included</p></li>
-<li><p><strong>monotonocity</strong> (<em>dict</em>) – Settings for monotonocity in output. A dict
+<li><p><strong>monotonicity</strong> (<em>dict</em>) – Settings for monotonicity in output. A dict
 with column names as keys, with values being a dict with keys
 “sign” (-1 or +1 integer) for direction,  “upper” and “lower” for
-lower and upper limits (non-strict monotonocity is allowed at
+lower and upper limits (non-strict monotonicity is allowed at
 these upper and lower limits).</p></li>
 </ul>
 </dd>

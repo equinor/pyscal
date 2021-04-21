@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.utils.string &mdash; pyscal 0.7.8.dev5+g997ed1c documentation</title>
+  <title>pyscal.utils.string &mdash; pyscal 0.7.8.dev6+g9812e7c documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.7.8.dev5+g997ed1c
+                0.7.8.dev6+g9812e7c
               </div>
             
           
@@ -167,7 +167,7 @@
 
 <span class="kn">import</span> <span class="nn">logging</span>
 
-<span class="kn">from</span> <span class="nn">.monotonocity</span> <span class="kn">import</span> <span class="n">modify_dframe_monotonocity</span>
+<span class="kn">from</span> <span class="nn">.monotonicity</span> <span class="kn">import</span> <span class="n">modify_dframe_monotonicity</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -177,7 +177,7 @@
     <span class="n">digits</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
     <span class="n">roundlevel</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span>
     <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">monotonocity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">monotonicity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">monotone_column</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="n">monotone_direction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
 <span class="p">):</span>
@@ -186,7 +186,7 @@
 <span class="sd">    proper rounding.</span>
 
 <span class="sd">    This is used to print the tables in the SWOF/SGOF include files,</span>
-<span class="sd">    explicit rounding is necessary to avoid monotonocity errors</span>
+<span class="sd">    explicit rounding is necessary to avoid monotonicity errors</span>
 <span class="sd">    from truncation. Examples in test code.</span>
 
 <span class="sd">    Capillary pressure must be strictly monotone if nonzero, and if a</span>
@@ -203,16 +203,16 @@
 <span class="sd">        roundlevel (int): To how many digits should we round prior to print.</span>
 <span class="sd">            Recommended to be &gt; digits + 1, see test code.</span>
 <span class="sd">        header (bool): If the dataframe column header should be included</span>
-<span class="sd">        monotonocity (dict): Settings for monotonocity in output. A dict</span>
+<span class="sd">        monotonicity (dict): Settings for monotonicity in output. A dict</span>
 <span class="sd">            with column names as keys, with values being a dict with keys</span>
 <span class="sd">            &quot;sign&quot; (-1 or +1 integer) for direction,  &quot;upper&quot; and &quot;lower&quot; for</span>
-<span class="sd">            lower and upper limits (non-strict monotonocity is allowed at</span>
+<span class="sd">            lower and upper limits (non-strict monotonicity is allowed at</span>
 <span class="sd">            these upper and lower limits).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">float_format</span> <span class="o">=</span> <span class="s2">&quot;%1.&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">digits</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;f&quot;</span>
 
-    <span class="k">if</span> <span class="n">monotonocity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="n">dframe</span> <span class="o">=</span> <span class="n">modify_dframe_monotonocity</span><span class="p">(</span><span class="n">dframe</span><span class="p">,</span> <span class="n">monotonocity</span><span class="p">,</span> <span class="n">digits</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">monotonicity</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dframe</span> <span class="o">=</span> <span class="n">modify_dframe_monotonicity</span><span class="p">(</span><span class="n">dframe</span><span class="p">,</span> <span class="n">monotonicity</span><span class="p">,</span> <span class="n">digits</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">dframe</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">roundlevel</span><span class="p">)</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span>
         <span class="n">sep</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">float_format</span><span class="o">=</span><span class="n">float_format</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span>

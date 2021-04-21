@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.wateroil &mdash; pyscal 0.7.8.dev5+g997ed1c documentation</title>
+  <title>pyscal.wateroil &mdash; pyscal 0.7.8.dev6+g9812e7c documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.7.8.dev5+g997ed1c
+                0.7.8.dev6+g9812e7c
               </div>
             
           
@@ -998,7 +998,7 @@
         <span class="p">)</span> <span class="o">+</span> <span class="n">co</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sonpc&quot;</span><span class="p">]</span> <span class="o">**</span> <span class="n">ao</span><span class="p">)</span>
 
         <span class="c1"># From 1-sor, the pc is not defined. Extrapolate constantly, and let</span>
-        <span class="c1"># the non-monotonocity be fixed in the output generators.</span>
+        <span class="c1"># the non-monotonicity be fixed in the output generators.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;ffill&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="WaterOil.add_LET_pc_pd"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.add_LET_pc_pd">[docs]</a>    <span class="k">def</span> <span class="nf">add_LET_pc_pd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Lp</span><span class="p">,</span> <span class="n">Ep</span><span class="p">,</span> <span class="n">Tp</span><span class="p">,</span> <span class="n">Lt</span><span class="p">,</span> <span class="n">Et</span><span class="p">,</span> <span class="n">Tt</span><span class="p">,</span> <span class="n">Pcmax</span><span class="p">,</span> <span class="n">Pct</span><span class="p">):</span>
@@ -1259,7 +1259,7 @@
         <span class="p">)</span>
         <span class="n">string</span> <span class="o">+=</span> <span class="n">df2str</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;sw&quot;</span><span class="p">,</span> <span class="s2">&quot;krw&quot;</span><span class="p">,</span> <span class="s2">&quot;krow&quot;</span><span class="p">,</span> <span class="s2">&quot;pc&quot;</span><span class="p">]],</span>
-            <span class="n">monotonocity</span><span class="o">=</span><span class="p">{</span>
+            <span class="n">monotonicity</span><span class="o">=</span><span class="p">{</span>
                 <span class="s2">&quot;krow&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;sign&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;lower&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;upper&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
                 <span class="s2">&quot;krw&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;sign&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;lower&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;upper&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
                 <span class="s2">&quot;pc&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;sign&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;allowzero&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
@@ -1327,7 +1327,7 @@
         <span class="p">)</span>
         <span class="n">string</span> <span class="o">+=</span> <span class="n">df2str</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;sw&quot;</span><span class="p">,</span> <span class="s2">&quot;krw&quot;</span><span class="p">,</span> <span class="s2">&quot;pc&quot;</span><span class="p">]],</span>
-            <span class="n">monotonocity</span><span class="o">=</span><span class="p">{</span>
+            <span class="n">monotonicity</span><span class="o">=</span><span class="p">{</span>
                 <span class="s2">&quot;krw&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;sign&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;lower&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;upper&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
                 <span class="s2">&quot;pc&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;sign&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;allowzero&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
             <span class="p">}</span>
@@ -1366,7 +1366,7 @@
         <span class="p">)</span>
         <span class="n">string</span> <span class="o">+=</span> <span class="n">df2str</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;sw&quot;</span><span class="p">,</span> <span class="s2">&quot;krw&quot;</span><span class="p">,</span> <span class="s2">&quot;krow&quot;</span><span class="p">,</span> <span class="s2">&quot;pc&quot;</span><span class="p">]],</span>
-            <span class="n">monotonocity</span><span class="o">=</span><span class="p">{</span>
+            <span class="n">monotonicity</span><span class="o">=</span><span class="p">{</span>
                 <span class="s2">&quot;krow&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;sign&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;lower&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;upper&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
                 <span class="s2">&quot;krw&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;sign&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;lower&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;upper&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
                 <span class="s2">&quot;pc&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;sign&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;allowzero&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>

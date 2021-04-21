@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.utils.monotonocity &mdash; pyscal 0.7.8.dev5+g997ed1c documentation</title>
+  <title>pyscal.utils.monotonicity &mdash; pyscal 0.7.8.dev6+g9812e7c documentation</title>
   
 
   
@@ -64,7 +64,7 @@
             
             
               <div class="version">
-                0.7.8.dev5+g997ed1c
+                0.7.8.dev6+g9812e7c
               </div>
             
           
@@ -147,7 +147,7 @@
         
           <li><a href="../../index.html">Module code</a> &raquo;</li>
         
-      <li>pyscal.utils.monotonocity</li>
+      <li>pyscal.utils.monotonicity</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -162,7 +162,7 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <h1>Source code for pyscal.utils.monotonocity</h1><div class="highlight"><pre>
+  <h1>Source code for pyscal.utils.monotonicity</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Monotonocity support functions for pyscal&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
@@ -176,12 +176,12 @@
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="modify_dframe_monotonocity"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.monotonocity.modify_dframe_monotonocity">[docs]</a><span class="k">def</span> <span class="nf">modify_dframe_monotonocity</span><span class="p">(</span><span class="n">dframe</span><span class="p">,</span> <span class="n">monotonocity</span><span class="p">,</span> <span class="n">digits</span><span class="p">):</span>
+<div class="viewcode-block" id="modify_dframe_monotonicity"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.monotonicity.modify_dframe_monotonicity">[docs]</a><span class="k">def</span> <span class="nf">modify_dframe_monotonicity</span><span class="p">(</span><span class="n">dframe</span><span class="p">,</span> <span class="n">monotonicity</span><span class="p">,</span> <span class="n">digits</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Modify a dataframe for monotonicity.</span>
 
 <span class="sd">    Columns in the dataframe are modified in-place.</span>
 
-<span class="sd">    Number intervals to consider when enforcing monotonocity::</span>
+<span class="sd">    Number intervals to consider when enforcing monotonicity::</span>
 
 <span class="sd">      &lt;value&gt;                          &lt;orig&gt;    &lt;fixed&gt;</span>
 <span class="sd">      &lt;lower limit&gt;                     0.00      0.00</span>
@@ -200,7 +200,7 @@
 <span class="sd">    than the requested accuracy are allowed, and will be</span>
 <span class="sd">    shifted to the limits.</span>
 
-<span class="sd">    Only strict monotonocity is supported. Non-strict</span>
+<span class="sd">    Only strict monotonicity is supported. Non-strict</span>
 <span class="sd">    monotonicity is only allowed at upper and lower limit, or</span>
 <span class="sd">    for all-zero vectors if that option is activated.</span>
 
@@ -208,14 +208,14 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        dframe (pd.DataFrame): Data to modify.</span>
-<span class="sd">        monotonocity (dict): see df2str() for syntax.</span>
-<span class="sd">        digits (int): Number of digits to ensure monotonocity for.</span>
+<span class="sd">        monotonicity (dict): see df2str() for syntax.</span>
+<span class="sd">        digits (int): Number of digits to ensure monotonicity for.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">validate_monotonocity_arg</span><span class="p">(</span><span class="n">monotonocity</span><span class="p">,</span> <span class="n">dframe</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+    <span class="n">validate_monotonicity_arg</span><span class="p">(</span><span class="n">monotonicity</span><span class="p">,</span> <span class="n">dframe</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
 
     <span class="c1"># Wateroil.SWOF() (and similar) supply a column view</span>
     <span class="c1"># of the internal wateroil.table dataframe. When asked</span>
-    <span class="c1"># to enforce monotonocity, it must be done on a copy, both</span>
+    <span class="c1"># to enforce monotonicity, it must be done on a copy, both</span>
     <span class="c1"># for speed and for not compromising the original data.</span>
 
     <span class="c1"># Round to an accuracy one notch finer than end results,</span>
@@ -223,42 +223,42 @@
     <span class="n">dframe</span> <span class="o">=</span> <span class="n">dframe</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">digits</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
 
     <span class="c1"># Prepare and check columns:</span>
-    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">monotonocity</span><span class="p">:</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">monotonicity</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">dframe</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">:</span>
             <span class="n">dframe</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">dframe</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
 
         <span class="c1"># Bail on clearly erroneous data:</span>
-        <span class="n">check_almost_monotone</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">digits</span><span class="p">,</span> <span class="n">monotonocity</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;sign&quot;</span><span class="p">])</span>
+        <span class="n">check_almost_monotone</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">digits</span><span class="p">,</span> <span class="n">monotonicity</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;sign&quot;</span><span class="p">])</span>
 
-        <span class="n">check_limits</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">monotonocity</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
+        <span class="n">check_limits</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">monotonicity</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
 
-    <span class="c1"># Modify data for monotonocity:</span>
-    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">monotonocity</span><span class="p">:</span>
+    <span class="c1"># Modify data for monotonicity:</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">monotonicity</span><span class="p">:</span>
         <span class="n">accuracy</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="mf">10.0</span> <span class="o">**</span> <span class="n">digits</span> <span class="o">-</span> <span class="n">epsilon</span>
 
-        <span class="k">if</span> <span class="s2">&quot;allowzero&quot;</span> <span class="ow">in</span> <span class="n">monotonocity</span><span class="p">[</span><span class="n">col</span><span class="p">]:</span>
-            <span class="c1"># Treat zero as an exception for strict monotonocity:</span>
+        <span class="k">if</span> <span class="s2">&quot;allowzero&quot;</span> <span class="ow">in</span> <span class="n">monotonicity</span><span class="p">[</span><span class="n">col</span><span class="p">]:</span>
+            <span class="c1"># Treat zero as an exception for strict monotonicity:</span>
             <span class="n">max_value</span> <span class="o">=</span> <span class="n">dframe</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">max_value</span> <span class="o">&lt;</span> <span class="n">accuracy</span> <span class="ow">and</span> <span class="n">monotonocity</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;allowzero&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">max_value</span> <span class="o">&lt;</span> <span class="n">accuracy</span> <span class="ow">and</span> <span class="n">monotonicity</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;allowzero&quot;</span><span class="p">]:</span>
                 <span class="k">continue</span>
 
-        <span class="n">constants</span> <span class="o">=</span> <span class="n">rows_to_be_fixed</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">monotonocity</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">digits</span><span class="p">)</span>
+        <span class="n">constants</span> <span class="o">=</span> <span class="n">rows_to_be_fixed</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">monotonicity</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">digits</span><span class="p">)</span>
         <span class="n">iterations</span> <span class="o">=</span> <span class="mi">0</span>
-        <span class="n">sign</span> <span class="o">=</span> <span class="n">monotonocity</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;sign&quot;</span><span class="p">]</span>
+        <span class="n">sign</span> <span class="o">=</span> <span class="n">monotonicity</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;sign&quot;</span><span class="p">]</span>
         <span class="k">while</span> <span class="n">constants</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
             <span class="n">iterations</span> <span class="o">+=</span> <span class="mi">1</span>
             <span class="k">if</span> <span class="n">iterations</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="n">col</span><span class="p">]):</span>
-                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Too many iterations for monotonocity fix&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Too many iterations for monotonicity fix&quot;</span><span class="p">)</span>
 
             <span class="n">dframe</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">constants</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="n">dframe</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">constants</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span> <span class="o">+</span> <span class="n">sign</span> <span class="o">/</span> <span class="mf">10.0</span> <span class="o">**</span> <span class="n">digits</span> <span class="o">-</span> <span class="n">epsilon</span>
             <span class="p">)</span>
 
-            <span class="c1"># Ensure nonstrict monotonocity and clips after each modification:</span>
-            <span class="n">dframe</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">clip_accumulate</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">monotonocity</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
+            <span class="c1"># Ensure nonstrict monotonicity and clips after each modification:</span>
+            <span class="n">dframe</span><span class="p">[</span><span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">clip_accumulate</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">monotonicity</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
 
             <span class="c1"># Evaluate what is left to fix:</span>
-            <span class="n">constants</span> <span class="o">=</span> <span class="n">rows_to_be_fixed</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">monotonocity</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">digits</span><span class="p">)</span>
+            <span class="n">constants</span> <span class="o">=</span> <span class="n">rows_to_be_fixed</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">monotonicity</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="n">digits</span><span class="p">)</span>
 
         <span class="c1"># Warn if more iterations than 5% of the rows</span>
         <span class="c1"># (number of iterations do not necessarily correspond with</span>
@@ -271,7 +271,7 @@
                 <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="n">col</span><span class="p">])),</span>
             <span class="p">)</span>
 
-        <span class="c1"># Check result for monotonocity:</span>
+        <span class="c1"># Check result for monotonicity:</span>
         <span class="c1"># Is this possible when rows_to_be_fixed returns none??</span>
         <span class="n">allowance</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="mf">10.0</span> <span class="o">**</span> <span class="n">digits</span>
         <span class="k">if</span> <span class="n">sign</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -283,14 +283,14 @@
     <span class="k">return</span> <span class="n">dframe</span></div>
 
 
-<div class="viewcode-block" id="clip_accumulate"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.monotonocity.clip_accumulate">[docs]</a><span class="k">def</span> <span class="nf">clip_accumulate</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">monotonocity</span><span class="p">):</span>
+<div class="viewcode-block" id="clip_accumulate"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.monotonicity.clip_accumulate">[docs]</a><span class="k">def</span> <span class="nf">clip_accumulate</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">monotonicity</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Modify a series (vector of numbers) for non-strict monotonocity, and</span>
+<span class="sd">    Modify a series (vector of numbers) for non-strict monotonicity, and</span>
 <span class="sd">    optionally clip at lower and upper limits.</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        series (pd.Series or np.array): Vector of numbers to modify</span>
-<span class="sd">        monotonocity (dict): Monotonocity options. The keys &#39;lower&#39; and &#39;upper&#39;</span>
+<span class="sd">        monotonicity (dict): Monotonocity options. The keys &#39;lower&#39; and &#39;upper&#39;</span>
 <span class="sd">            can be provided for clipping the vector.</span>
 
 <span class="sd">    Returns:</span>
@@ -298,22 +298,22 @@
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
         <span class="n">series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float64&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">monotonocity</span><span class="p">[</span><span class="s2">&quot;sign&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">monotonicity</span><span class="p">[</span><span class="s2">&quot;sign&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">series</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="o">.</span><span class="n">accumulate</span><span class="p">(</span><span class="n">series</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">series</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">minimum</span><span class="o">.</span><span class="n">accumulate</span><span class="p">(</span><span class="n">series</span><span class="p">)</span>
-    <span class="k">if</span> <span class="s2">&quot;lower&quot;</span> <span class="ow">in</span> <span class="n">monotonocity</span> <span class="ow">and</span> <span class="s2">&quot;upper&quot;</span> <span class="ow">in</span> <span class="n">monotonocity</span><span class="p">:</span>
+    <span class="k">if</span> <span class="s2">&quot;lower&quot;</span> <span class="ow">in</span> <span class="n">monotonicity</span> <span class="ow">and</span> <span class="s2">&quot;upper&quot;</span> <span class="ow">in</span> <span class="n">monotonicity</span><span class="p">:</span>
         <span class="n">series</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span>
-            <span class="n">lower</span><span class="o">=</span><span class="n">monotonocity</span><span class="p">[</span><span class="s2">&quot;lower&quot;</span><span class="p">],</span> <span class="n">upper</span><span class="o">=</span><span class="n">monotonocity</span><span class="p">[</span><span class="s2">&quot;upper&quot;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span>
+            <span class="n">lower</span><span class="o">=</span><span class="n">monotonicity</span><span class="p">[</span><span class="s2">&quot;lower&quot;</span><span class="p">],</span> <span class="n">upper</span><span class="o">=</span><span class="n">monotonicity</span><span class="p">[</span><span class="s2">&quot;upper&quot;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span>
         <span class="p">)</span>
-    <span class="k">elif</span> <span class="s2">&quot;lower&quot;</span> <span class="ow">in</span> <span class="n">monotonocity</span><span class="p">:</span>
-        <span class="n">series</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">lower</span><span class="o">=</span><span class="n">monotonocity</span><span class="p">[</span><span class="s2">&quot;lower&quot;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="s2">&quot;upper&quot;</span> <span class="ow">in</span> <span class="n">monotonocity</span><span class="p">:</span>
-        <span class="n">series</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">upper</span><span class="o">=</span><span class="n">monotonocity</span><span class="p">[</span><span class="s2">&quot;upper&quot;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="s2">&quot;lower&quot;</span> <span class="ow">in</span> <span class="n">monotonicity</span><span class="p">:</span>
+        <span class="n">series</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">lower</span><span class="o">=</span><span class="n">monotonicity</span><span class="p">[</span><span class="s2">&quot;lower&quot;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="s2">&quot;upper&quot;</span> <span class="ow">in</span> <span class="n">monotonicity</span><span class="p">:</span>
+        <span class="n">series</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">upper</span><span class="o">=</span><span class="n">monotonicity</span><span class="p">[</span><span class="s2">&quot;upper&quot;</span><span class="p">],</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">series</span></div>
 
 
-<div class="viewcode-block" id="check_limits"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.monotonocity.check_limits">[docs]</a><span class="k">def</span> <span class="nf">check_limits</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">monotonocity</span><span class="p">,</span> <span class="n">colname</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="check_limits"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.monotonicity.check_limits">[docs]</a><span class="k">def</span> <span class="nf">check_limits</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">monotonicity</span><span class="p">,</span> <span class="n">colname</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Check a series whether it obeys numerical limits.</span>
 <span class="sd">    Equivalence to limits is allowed.</span>
@@ -323,7 +323,7 @@
 
 <span class="sd">    Args:</span>
 <span class="sd">        series (pd.Series): Vector of numbers to check</span>
-<span class="sd">        monotonocity (dict): Keys &#39;upper&#39; and &#39;lower&#39; are optional</span>
+<span class="sd">        monotonicity (dict): Keys &#39;upper&#39; and &#39;lower&#39; are optional</span>
 <span class="sd">            and point to numerical limits.</span>
 <span class="sd">        colname (str): Optional string for a column name that will be</span>
 <span class="sd">            included in any error message.</span>
@@ -334,18 +334,18 @@
         <span class="n">series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float64&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">series</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
         <span class="k">return</span>
-    <span class="k">if</span> <span class="s2">&quot;upper&quot;</span> <span class="ow">in</span> <span class="n">monotonocity</span> <span class="ow">and</span> <span class="p">(</span><span class="n">series</span> <span class="o">&gt;</span> <span class="n">monotonocity</span><span class="p">[</span><span class="s2">&quot;upper&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+    <span class="k">if</span> <span class="s2">&quot;upper&quot;</span> <span class="ow">in</span> <span class="n">monotonicity</span> <span class="ow">and</span> <span class="p">(</span><span class="n">series</span> <span class="o">&gt;</span> <span class="n">monotonicity</span><span class="p">[</span><span class="s2">&quot;upper&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Values larger than upper limit in column </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">colname</span><span class="p">))</span>
-    <span class="k">if</span> <span class="s2">&quot;lower&quot;</span> <span class="ow">in</span> <span class="n">monotonocity</span> <span class="ow">and</span> <span class="p">(</span><span class="n">series</span> <span class="o">&lt;</span> <span class="n">monotonocity</span><span class="p">[</span><span class="s2">&quot;lower&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+    <span class="k">if</span> <span class="s2">&quot;lower&quot;</span> <span class="ow">in</span> <span class="n">monotonicity</span> <span class="ow">and</span> <span class="p">(</span><span class="n">series</span> <span class="o">&lt;</span> <span class="n">monotonicity</span><span class="p">[</span><span class="s2">&quot;lower&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Values smaller than lower limit in column </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">colname</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="rows_to_be_fixed"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.monotonocity.rows_to_be_fixed">[docs]</a><span class="k">def</span> <span class="nf">rows_to_be_fixed</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">monotonocity</span><span class="p">,</span> <span class="n">digits</span><span class="p">):</span>
+<div class="viewcode-block" id="rows_to_be_fixed"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.monotonicity.rows_to_be_fixed">[docs]</a><span class="k">def</span> <span class="nf">rows_to_be_fixed</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">monotonicity</span><span class="p">,</span> <span class="n">digits</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Compute boolean array of rows that must be modified</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        series (pd.Series):</span>
-<span class="sd">        monotonocity (dict): Can contain &quot;upper&quot; or &quot;lower&quot;</span>
+<span class="sd">        monotonicity (dict): Can contain &quot;upper&quot; or &quot;lower&quot;</span>
 <span class="sd">            numerical bounds, and &quot;sign&quot;, where &gt;0 means positive.</span>
 <span class="sd">            &quot;sign&quot; is mandatory.</span>
 <span class="sd">        digits (int): Accuracy required, how many digits</span>
@@ -359,20 +359,20 @@
 
     <span class="c1"># minus epsilon is critical to avoid being greedy</span>
     <span class="n">accuracy</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="mf">10.0</span> <span class="o">**</span> <span class="n">digits</span> <span class="o">-</span> <span class="n">epsilon</span>
-    <span class="k">if</span> <span class="n">monotonocity</span><span class="p">[</span><span class="s2">&quot;sign&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">monotonicity</span><span class="p">[</span><span class="s2">&quot;sign&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">constants</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">digits</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">accuracy</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">constants</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">digits</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span> <span class="o">&gt;</span> <span class="o">-</span><span class="n">accuracy</span>
 
     <span class="c1"># Allow constants at the lower and upper limits.</span>
-    <span class="k">if</span> <span class="s2">&quot;upper&quot;</span> <span class="ow">in</span> <span class="n">monotonocity</span><span class="p">:</span>
-        <span class="n">constants</span> <span class="o">=</span> <span class="n">constants</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">series</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">monotonocity</span><span class="p">[</span><span class="s2">&quot;upper&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">accuracy</span><span class="p">))</span>
-    <span class="k">if</span> <span class="s2">&quot;lower&quot;</span> <span class="ow">in</span> <span class="n">monotonocity</span><span class="p">:</span>
-        <span class="n">constants</span> <span class="o">=</span> <span class="n">constants</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">series</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">monotonocity</span><span class="p">[</span><span class="s2">&quot;lower&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">accuracy</span><span class="p">))</span>
+    <span class="k">if</span> <span class="s2">&quot;upper&quot;</span> <span class="ow">in</span> <span class="n">monotonicity</span><span class="p">:</span>
+        <span class="n">constants</span> <span class="o">=</span> <span class="n">constants</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">series</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">monotonicity</span><span class="p">[</span><span class="s2">&quot;upper&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">accuracy</span><span class="p">))</span>
+    <span class="k">if</span> <span class="s2">&quot;lower&quot;</span> <span class="ow">in</span> <span class="n">monotonicity</span><span class="p">:</span>
+        <span class="n">constants</span> <span class="o">=</span> <span class="n">constants</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">series</span> <span class="o">&gt;</span> <span class="p">(</span><span class="n">monotonicity</span><span class="p">[</span><span class="s2">&quot;lower&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">accuracy</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">constants</span></div>
 
 
-<div class="viewcode-block" id="check_almost_monotone"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.monotonocity.check_almost_monotone">[docs]</a><span class="k">def</span> <span class="nf">check_almost_monotone</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">digits</span><span class="p">,</span> <span class="n">sign</span><span class="p">):</span>
+<div class="viewcode-block" id="check_almost_monotone"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.monotonicity.check_almost_monotone">[docs]</a><span class="k">def</span> <span class="nf">check_almost_monotone</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">digits</span><span class="p">,</span> <span class="n">sign</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Raise a ValueError if a series is not sufficiently close</span>
 <span class="sd">    to constant or monotone in a certain direction.</span>
 
@@ -393,15 +393,15 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Series is not almost monotone&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="validate_monotonocity_arg"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.monotonocity.validate_monotonocity_arg">[docs]</a><span class="k">def</span> <span class="nf">validate_monotonocity_arg</span><span class="p">(</span><span class="n">monotonocity</span><span class="p">,</span> <span class="n">dframe_colnames</span><span class="p">):</span>
+<div class="viewcode-block" id="validate_monotonicity_arg"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.monotonicity.validate_monotonicity_arg">[docs]</a><span class="k">def</span> <span class="nf">validate_monotonicity_arg</span><span class="p">(</span><span class="n">monotonicity</span><span class="p">,</span> <span class="n">dframe_colnames</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Validate a dictionary with monotonocity arguments that</span>
+<span class="sd">    Validate a dictionary with monotonicity arguments that</span>
 <span class="sd">    can be given to df2str().</span>
 
 <span class="sd">    Will raise ValueError exceptions if anything is wrong.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        monotonocity (dict): Keys are &#39;sign&#39;, &#39;upper&#39;, &#39;lower&#39;</span>
+<span class="sd">        monotonicity (dict): Keys are &#39;sign&#39;, &#39;upper&#39;, &#39;lower&#39;</span>
 <span class="sd">            and  &#39;allowzero&#39;.</span>
 <span class="sd">        dframe_colnames (list of str): Names of column names</span>
 <span class="sd">            in dframes. Used in error messages.</span>
@@ -410,38 +410,38 @@
 <span class="sd">        None</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">valid_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;sign&quot;</span><span class="p">,</span> <span class="s2">&quot;upper&quot;</span><span class="p">,</span> <span class="s2">&quot;lower&quot;</span><span class="p">,</span> <span class="s2">&quot;allowzero&quot;</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">monotonocity</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">monotonicity</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">monotonocity</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;monotonocity argument must be a dict&quot;</span><span class="p">)</span>
-    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">monotonocity</span><span class="p">:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">monotonocity</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;monotonocity argument must be a dict of dicts&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="n">monotonocity</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">valid_keys</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">monotonicity</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;monotonicity argument must be a dict&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">monotonicity</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">monotonicity</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;monotonicity argument must be a dict of dicts&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="n">monotonicity</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">valid_keys</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Unknown keys in monotonocity </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">monotonocity</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+                <span class="s2">&quot;Unknown keys in monotonicity </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">monotonicity</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dframe_colnames</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Column </span><span class="si">{}</span><span class="s2"> does not exist in dataframe&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">col</span><span class="p">))</span>
-        <span class="k">if</span> <span class="s2">&quot;sign&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">monotonocity</span><span class="p">[</span><span class="n">col</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="s2">&quot;sign&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">monotonicity</span><span class="p">[</span><span class="n">col</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Monotonocity sign not specified for </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">col</span><span class="p">))</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">signvalue</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">monotonocity</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;sign&quot;</span><span class="p">])</span>
+            <span class="n">signvalue</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">monotonicity</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;sign&quot;</span><span class="p">])</span>
         <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Monotonocity sign </span><span class="si">{}</span><span class="s2"> not valid&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">monotonocity</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;sign&quot;</span><span class="p">])</span>
+                <span class="s2">&quot;Monotonocity sign </span><span class="si">{}</span><span class="s2"> not valid&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">monotonicity</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;sign&quot;</span><span class="p">])</span>
             <span class="p">)</span> <span class="kn">from</span> <span class="nn">err</span>
-        <span class="k">if</span> <span class="s2">&quot;upper&quot;</span> <span class="ow">in</span> <span class="n">monotonocity</span><span class="p">[</span><span class="n">col</span><span class="p">]:</span>
-            <span class="nb">float</span><span class="p">(</span><span class="n">monotonocity</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;upper&quot;</span><span class="p">])</span>
-        <span class="k">if</span> <span class="s2">&quot;lower&quot;</span> <span class="ow">in</span> <span class="n">monotonocity</span><span class="p">[</span><span class="n">col</span><span class="p">]:</span>
-            <span class="nb">float</span><span class="p">(</span><span class="n">monotonocity</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;lower&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="s2">&quot;upper&quot;</span> <span class="ow">in</span> <span class="n">monotonicity</span><span class="p">[</span><span class="n">col</span><span class="p">]:</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">monotonicity</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;upper&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="s2">&quot;lower&quot;</span> <span class="ow">in</span> <span class="n">monotonicity</span><span class="p">[</span><span class="n">col</span><span class="p">]:</span>
+            <span class="nb">float</span><span class="p">(</span><span class="n">monotonicity</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;lower&quot;</span><span class="p">])</span>
         <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">signvalue</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Monotonocity sign must be -1 or +1, not larger/smaller&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="s2">&quot;allowzero&quot;</span> <span class="ow">in</span> <span class="n">monotonocity</span><span class="p">[</span><span class="n">col</span><span class="p">]:</span>
-            <span class="k">if</span> <span class="n">monotonocity</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;allowzero&quot;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">}:</span>
+        <span class="k">if</span> <span class="s2">&quot;allowzero&quot;</span> <span class="ow">in</span> <span class="n">monotonicity</span><span class="p">[</span><span class="n">col</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">monotonicity</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;allowzero&quot;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">{</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">}:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;allowzero in monotonocity argument must be True/False&quot;</span>
+                    <span class="s2">&quot;allowzero in monotonicity argument must be True/False&quot;</span>
                 <span class="p">)</span></div>
 </pre></div>
 
