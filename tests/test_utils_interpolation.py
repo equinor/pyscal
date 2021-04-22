@@ -391,14 +391,18 @@ def test_interpolate_wo_pc(swl, dswcr, dswlhigh, sorw, a_l, a_h, b_l, b_h):
     st.floats(min_value=0, max_value=0.1),  # dsgcr
     st.floats(min_value=0, max_value=0.3),  # sorg
     st.floats(min_value=0, max_value=0.1),  # dsorg
+    st.floats(min_value=0, max_value=0.3),  # sgro
+    st.floats(min_value=0, max_value=0.1),  # dsgro
     st.floats(min_value=0.1, max_value=5),  # ng1
     st.floats(min_value=0.01, max_value=1),  # krgend1
     st.floats(min_value=0.1, max_value=5),  # nog1
     st.floats(min_value=0.01, max_value=1),  # kroend1
+    st.floats(min_value=0.01, max_value=1),  # krosgro1
     st.floats(min_value=0.1, max_value=5),  # ng2
     st.floats(min_value=0.01, max_value=1),  # krgend2
     st.floats(min_value=0.1, max_value=5),  # nog2
     st.floats(min_value=0.01, max_value=1),  # kroend2
+    st.floats(min_value=0.01, max_value=1),  # krosgro2
 )
 def test_normalize_nonlinpart_go_hypo(
     swl,
@@ -407,45 +411,56 @@ def test_normalize_nonlinpart_go_hypo(
     dsgcr,
     sorg,
     dsorg,
+    sgro,
+    dsgro,
     ng1,
     krgend1,
     nog1,
     kroend1,
+    krosgro1,
     ng2,
     krgend2,
     nog2,
     kroend2,
+    krosgro2,
 ):
     # pylint: disable=too-many-arguments,too-many-locals
     """Test the normalization code in utils.
 
     In particular the fill_value argument to scipy has been tuned to
     fulfill this code"""
-    go_low = GasOil(swl=swl, sgcr=sgcr, sorg=sorg)
-    go_high = GasOil(swl=swl + dswlhigh, sgcr=sgcr + dsgcr, sorg=max(sorg - dsorg, 0))
+    krosgro1 = min(krosgro1, kroend1)
+    krosgro2 = min(krosgro2, kroend2)
+    go_low = GasOil(swl=swl, sgcr=sgcr, sorg=sorg, sgro=sgro)
+    go_high = GasOil(
+        swl=swl + dswlhigh,
+        sgcr=sgcr + dsgcr,
+        sgro=sgro + dsgro,
+        sorg=max(sorg - dsorg, 0),
+    )
     go_low.add_corey_gas(ng=ng1, krgend=krgend1)
     go_high.add_corey_gas(ng=ng2, krgend=krgend2)
-    go_low.add_corey_oil(nog=nog1, kroend=kroend1)
-    go_high.add_corey_oil(nog=nog2, kroend=kroend2)
+    go_low.add_corey_oil(nog=nog1, kroend=kroend1, krosgro=krosgro1)
+    go_high.add_corey_oil(nog=nog2, kroend=kroend2, krosgro=krosgro2)
 
     krgn1, kron1 = normalize_nonlinpart_go(go_low)
     assert np.isclose(krgn1(0), 0)
     assert np.isclose(krgn1(1), krgend1)
     assert np.isclose(kron1(0), 0)
-    assert np.isclose(kron1(1), kroend1)
+    assert np.isclose(kron1(1), krosgro1)
 
     krgn2, kron2 = normalize_nonlinpart_go(go_high)
     assert np.isclose(krgn2(0), 0)
     assert np.isclose(krgn2(1), krgend2)
     assert np.isclose(kron2(0), 0)
-    assert np.isclose(kron2(1), kroend2)
+    assert np.isclose(kron2(1), krosgro2)
 
 
 def test_normalize_nonlinpart_go():
     """Manual tests for normalize_nonlinpart_go"""
-    gasoil = GasOil(swl=0.1, sgcr=0.12, sorg=0.05, h=0.05)
+    gasoil = GasOil(swl=0.1, sgcr=0.12, sgro=0.11, sorg=0.05, h=0.05)
     gasoil.add_corey_gas(ng=2.1, krgend=0.9)
-    gasoil.add_corey_oil(nog=3, kroend=0.8)
+    gasoil.add_corey_oil(nog=3, kroend=0.8, krosgro=0.75)
     krgn, kron = normalize_nonlinpart_go(gasoil)
 
     assert np.isclose(krgn(0), 0)
@@ -453,7 +468,7 @@ def test_normalize_nonlinpart_go():
 
     # kron is normalized on son
     assert np.isclose(kron(0), 0)
-    assert np.isclose(kron(1), 0.8)
+    assert np.isclose(kron(1), 0.75)
 
     # Test with tricky endpoints
     h = 0.01
@@ -521,6 +536,27 @@ def test_ip_wo_kroend():
 
     assert float_df_checker(wo_ip.table, "SW", 1, "KRW", 0.71)
     assert float_df_checker(wo_ip.table, "SW", 1 - 0.15, "KRW", 0.5)
+
+
+def test_ip_go_krosgro():
+    """Test behaviour of krosgro under interpolation"""
+    go_low = GasOil(swl=0, sgro=0.1)
+    go_high = GasOil(swl=0, sgro=0)
+    go_low.add_corey_gas()
+    go_low.add_corey_oil(nog=2, krosgro=0.5, kroend=1)
+    go_high.add_corey_gas()
+    go_high.add_corey_oil(nog=2, kroend=1)
+
+    # Interpolate to midpoint between the curves above
+    go_ip = interpolate_go(go_low, go_high, 0.5)
+
+    # kro(sg=0) is 1 for all interpolants:
+    assert float_df_checker(go_ip.table, "SG", 0.0, "KROG", 1.0)
+
+    # kro(sg=mean(sgro)) = mean krosgro
+    assert float_df_checker(go_ip.table, "SG", (0 + 0.1) / 2.0, "KROG", 0.75)
+
+    assert np.isclose(go_ip.estimate_sgro(), (0 + 0.1) / 2.0)
 
 
 def test_ip_go_kroend():
