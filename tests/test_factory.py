@@ -399,6 +399,7 @@ def test_factory_gasoil():
     )
     assert isinstance(gasoil, GasOil)
     assert gasoil.sgcr == 0.05
+    assert gasoil.sgro == 0.0
     assert gasoil.swl == 0.1
     assert gasoil.swirr == 0.01
     assert gasoil.tag == "Good sand"
@@ -530,6 +531,48 @@ def test_factory_wateroilgas():
     # Mangling data
     wateroil = pyscal_factory.create_water_oil_gas(dict(nw=2, now=3, ng=1))
     assert wateroil.gasoil is None
+
+
+def test_factory_gascondensate():
+    """Test modelling of gas condensate, which in pyscal terms
+    is the same as wateroilgas, except that we allow for aliasing
+    in sgrw=sorw for the underlying WaterOil object, and also there
+    are additional parameters sgro and krosgro for GasOil."""
+    wcg = PyscalFactory.create_water_oil_gas(
+        dict(nw=2, now=3, ng=1, nog=2, sgrw=0.1, swl=0.1, sgro=0.4, krosgro=0.5)
+    )
+    assert wcg.gasoil.sgro == 0.4
+    assert wcg.wateroil.sorw == 0.1
+
+    swof = wcg.SWOF()
+    sgof = wcg.SGOF()
+
+    # sgrw has been aliased to sorw, but the WaterOil object does not know that:
+    assert "sgrw" not in swof
+    assert "sorw=0.1" in swof
+    assert "sgro=0.4" in sgof
+    assert "krosgro=0.5" in sgof
+
+    sat_table_str_ok(swof)
+    sat_table_str_ok(sgof)
+
+    # Different sorw and sgrw is a hard error:
+    with pytest.raises(ValueError, match="must equal"):
+        PyscalFactory.create_water_oil_gas(
+            dict(nw=2, now=3, ng=1, nog=2, sorw=0.2, sgrw=0.1, swl=0.1)
+        )
+
+    # But it will pass if they both are supplied but are equal:
+    wcg_2 = PyscalFactory.create_water_oil_gas(
+        dict(nw=2, now=3, ng=1, nog=2, sorw=0.2, sgrw=0.2, swl=0.1)
+    )
+    assert "sorw=0.2" in wcg_2.SWOF()
+
+    # krosgro higher than kroend is an error:
+    with pytest.raises(AssertionError):
+        PyscalFactory.create_water_oil_gas(
+            dict(nw=2, now=3, ng=1, nog=2, sgro=0.1, krosgro=1, kroend=0.8, swl=0.1)
+        )
 
 
 def test_factory_wateroilgas_deprecated_krowgend(caplog):
