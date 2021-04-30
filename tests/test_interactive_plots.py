@@ -1,29 +1,31 @@
-"""
-Run this module from command line to run a few
-tests intended for human inspection
+"""Interactive tests for pyscal, supposed to be looked at by a human.
 
- $ python interactive_tests.py
-
-If you want to run individual tests, import this module in
-a Python session and run the functions manually.
-"""
+Run pytest with --plot option to make these run. Add -s also to get
+instructions for what to check."""
 
 import random
 
 import numpy as np
 
-from matplotlib import pyplot as plt
+from matplotlib import pyplot
 import matplotlib
 
-from test_scalrecommendation import LOW_SAMPLE_LET, BASE_SAMPLE_LET, HIGH_SAMPLE_LET
+import pytest
 
-from pyscal import WaterOil, WaterOilGas, GasOil, GasWater, utils, PyscalFactory
+from pyscal import WaterOil, GasOil, GasWater, utils, PyscalFactory
+
+from .test_scalrecommendation import LOW_SAMPLE_LET, BASE_SAMPLE_LET, HIGH_SAMPLE_LET
 
 
-def interpolation_art(repeats=50, interpolants=30, curvetype="corey"):
-    """This code was used to create the Pyscal logo"""
-    cmap = plt.get_cmap("viridis")
-    _, mpl_ax = plt.subplots()
+@pytest.mark.plot
+def test_interpolation_art():
+    """This code was used to create the Pyscal logo (50 repeats and 30 interpolants)"""
+    repeats = 15
+    interpolants = 30
+    curvetype = "corey"
+
+    cmap = pyplot.get_cmap("viridis")
+    _, mpl_ax = pyplot.subplots()
     for _ in range(repeats):
         swl = random.uniform(0, 0.1)
         swcr = swl + random.uniform(0, 0.1)
@@ -74,9 +76,21 @@ def interpolation_art(repeats=50, interpolants=30, curvetype="corey"):
         for tparam in np.arange(0, 1, 1.0 / interpolants):
             wo_ip = utils.interpolation.interpolate_wo(wo_low, wo_high, tparam)
             wo_ip.plotkrwkrow(mpl_ax, color=color, alpha=0.3)
-    plt.show()
+    pyplot.title("Pyscal art")
+    pyplot.show()
 
 
+def _pyplot_show_with_user_message():
+    print(
+        "Ensure green curves are within red and blue, "
+        "and check behaviour around endpoints"
+    )
+    print("[Close windows to continue tests]")
+    pyplot.show()
+
+
+@pytest.mark.plot
+@pytest.mark.parametrize("", [(), (), ()])  # 3 repeated runs
 def test_interpolate_wo():
     """Discrete test scenarios for wateroil interpolation"""
     swl_l = random.uniform(0, 0.1)
@@ -108,36 +122,38 @@ def test_interpolate_wo():
         + wo_high.pccomment
     )
 
-    _, mpl_ax = plt.subplots()
+    _, mpl_ax = pyplot.subplots()
     wo_low.plotkrwkrow(mpl_ax, color="red")
     wo_high.plotkrwkrow(mpl_ax, color="blue")
     for tparam in np.arange(0, 1, 0.1):
         wo_ip = utils.interpolation.interpolate_wo(wo_low, wo_high, tparam, h=0.001)
         wo_ip.plotkrwkrow(mpl_ax, color="green")
     mpl_ax.set_title("WaterOil, random Corey, linear y-scale")
-    plt.show()
+    _pyplot_show_with_user_message()
 
     # Plot again with log yscale:
-    _, mpl_ax = plt.subplots()
+    _, mpl_ax = pyplot.subplots()
     wo_low.plotkrwkrow(mpl_ax, color="red")
     wo_high.plotkrwkrow(mpl_ax, color="blue")
     for tparam in np.arange(0, 1, 0.1):
         wo_ip = utils.interpolation.interpolate_wo(wo_low, wo_high, tparam, h=0.001)
         wo_ip.plotkrwkrow(mpl_ax, color="green", logyscale=True)
     mpl_ax.set_title("WaterOil, random Corey, log y-scale")
-    plt.show()
+    _pyplot_show_with_user_message()
 
     # Capillary pressure
-    _, mpl_ax = plt.subplots()
+    _, mpl_ax = pyplot.subplots()
     wo_low.plotpc(mpl_ax, color="red", logyscale=True)
     wo_high.plotpc(mpl_ax, color="blue", logyscale=True)
     for tparam in np.arange(0, 1, 0.1):
         wo_ip = utils.interpolation.interpolate_wo(wo_low, wo_high, tparam, h=0.001)
         wo_ip.plotpc(mpl_ax, color="green", logyscale=True)
     mpl_ax.set_title("WaterOil, capillary pressure")
-    plt.show()
+    _pyplot_show_with_user_message()
 
 
+@pytest.mark.plot
+@pytest.mark.parametrize("", [(), (), ()])  # 3 repeated runs
 def test_interpolate_go():
     """Interactive tests for gasoil"""
     swl_l = random.uniform(0, 0.1)
@@ -177,7 +193,7 @@ def test_interpolate_go():
         + go_high.krogcomment
     )
 
-    _, mpl_ax = plt.subplots()
+    _, mpl_ax = pyplot.subplots()
     go_low.plotkrgkrog(mpl_ax, color="red")
     go_high.plotkrgkrog(mpl_ax, color="blue")
 
@@ -185,9 +201,9 @@ def test_interpolate_go():
         go_ip = utils.interpolation.interpolate_go(go_low, go_high, tparam)
         go_ip.plotkrgkrog(mpl_ax, color="green")
     mpl_ax.set_title("GasOil, random Corey, linear y-scale")
-    plt.show()
+    _pyplot_show_with_user_message()
 
-    _, mpl_ax = plt.subplots()
+    _, mpl_ax = pyplot.subplots()
     go_low.plotkrgkrog(mpl_ax, color="red")
     go_high.plotkrgkrog(mpl_ax, color="blue")
     # Plot again with log yscale:
@@ -195,21 +211,11 @@ def test_interpolate_go():
         go_ip = utils.interpolation.interpolate_go(go_low, go_high, tparam)
         go_ip.plotkrgkrog(mpl_ax, color="green", logyscale=True)
     mpl_ax.set_title("GasOil, random Corey, log y-scale")
-    plt.show()
-
-    # Capillary pressure - This is barely supported for gasoil
-    # so the plotpc() function is missing. Include calculations
-    # here so we ensure we don't crash on the all zeros.
-    # _, mpl_ax = plt.subplots()
-    # go_low.plotpc(mpl_ax, color="red", logyscale=True)
-    # go_high.plotpc(mpl_ax, color="blue", logyscale=True)
-    for tparam in np.arange(0, 1, 0.1):
-        go_ip = utils.interpolation.interpolate_go(go_low, go_high, tparam, h=0.001)
-        # go_ip.plotpc(mpl_ax, color="green", logyscale=True)
-    # mpl_ax.set_title("GasOil, capillary pressure")
-    # plt.show()
+    _pyplot_show_with_user_message()
 
 
+@pytest.mark.plot
+@pytest.mark.parametrize("", [(), (), ()])  # 3 repeated runs
 def test_interpolate_gw():
     """Discrete test scenarios for gaswater interpolation"""
     # pylint: disable=too-many-locals
@@ -240,7 +246,7 @@ def test_interpolate_gw():
         + gw_high.krgcomment
     )
 
-    _, mpl_ax = plt.subplots()
+    _, mpl_ax = pyplot.subplots()
     gw_low.plotkrwkrg(mpl_ax, color="red")
     gw_high.plotkrwkrg(mpl_ax, color="blue")
     for tparam in np.arange(0, 1, 0.1):
@@ -255,10 +261,10 @@ def test_interpolate_gw():
         gw_ip.wateroil = gw_wo_ip
         gw_ip.plotkrwkrg(mpl_ax, color="green")
     mpl_ax.set_title("GasWater, random Corey, linear y-scale")
-    plt.show()
+    _pyplot_show_with_user_message()
 
     # Plot again with log yscale:
-    _, mpl_ax = plt.subplots()
+    _, mpl_ax = pyplot.subplots()
     gw_low.plotkrwkrg(mpl_ax, color="red")
     gw_high.plotkrwkrg(mpl_ax, color="blue")
     for tparam in np.arange(0, 1, 0.1):
@@ -273,11 +279,12 @@ def test_interpolate_gw():
         gw_ip.wateroil = gw_wo_ip
         gw_ip.plotkrwkrg(mpl_ax, color="green", logyscale=True)
     mpl_ax.set_title("GasWater, random Corey, log y-scale")
-    plt.show()
+    _pyplot_show_with_user_message()
 
 
-def interpolateplottest():
-    """Demonstration of interpolation pointwise between LET curves"""
+@pytest.mark.plot
+def test_SCAL_interpolation():
+    """Demonstration of interpolation between LET curves, 2x2 subplot"""
     matplotlib.style.use("ggplot")
 
     rec = PyscalFactory.create_scal_recommendation(
@@ -285,7 +292,7 @@ def interpolateplottest():
         "FOO",
         h=0.001,
     )
-    _, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2)
+    _, ((ax1, ax2), (ax3, ax4)) = pyplot.subplots(2, 2)
 
     # Choosing logarithmic spaced interpolation parameters
     # is not the same as interpolating in log(kr)-space
@@ -317,8 +324,10 @@ def interpolateplottest():
     rec.high.wateroil.plotkrwkrow(ax2, linewidth=2, linestyle="--")
     ax2.set_yscale("log")
     ax2.set_ylim([1e-10, 1])
-    ax1.set_title("Water-oil, low, base, high and interpolants")
-    ax2.set_title("Water-oil, low, base, high and interpolants")
+    ax1.set_xlabel("")
+    ax2.set_xlabel("")
+    ax1.set_title("Water-oil, low, base, high and interpolants", fontsize=10)
+    ax2.set_title("Water-oil, low, base, high and interpolants", fontsize=10)
 
     for tparam in np.arange(-1, 0, 0.2):
         interp = rec.interpolate(tparam, h=0.001)
@@ -336,41 +345,29 @@ def interpolateplottest():
     rec.low.gasoil.plotkrgkrog(ax4, linewidth=2, linestyle=":")
     rec.base.gasoil.plotkrgkrog(ax4, linewidth=2)
     rec.high.gasoil.plotkrgkrog(ax4, linewidth=2, linestyle="--")
-    ax3.set_title("Gas-oil, low, base, high and interpolants")
-    ax4.set_title("Gas-oil, low, base, high and interpolants")
+    ax3.set_title("Gas-oil, low, base, high and interpolants", fontsize=10)
+    ax4.set_title("Gas-oil, low, base, high and interpolants", fontsize=10)
     ax4.set_yscale("log")
     ax4.set_ylim([1e-05, 1])
-    plt.subplots_adjust(hspace=0.3)
-    plt.show()
+    ax3.set_xlabel("")
+    ax4.set_xlabel("")
+    pyplot.subplots_adjust(hspace=0.3)
+    print("--  Check:")
+    print("--   * Red curves are between dotted and solid blue line")
+    print("--   * Green curves are between solid blue and dashed")
+    print("[Close windows to continue tests]")
+    pyplot.show()
 
 
-def interpolatetest():
-    """Test interpolation (sample test) in a scal recommentation"""
-    rec = PyscalFactory.create_scal_recommendation(
-        {"low": LOW_SAMPLE_LET, "base": BASE_SAMPLE_LET, "high": HIGH_SAMPLE_LET},
-        "foo",
-        h=0.001,
-    )
-    rec.add_simple_J()  # Add default pc curve
-    #    print rec.low.wateroil.table
-    interpolant = rec.interpolate(0.3, parameter2=-0.9, h=0.05)
-    print(interpolant.wateroil.SWOF())
-    print(interpolant.gasoil.SGOF())
-
-    print("Consistency check: ", end=" ")
-    print(interpolant.threephaseconsistency())
-
-
-def letspan():
+@pytest.mark.plot
+def test_letspan():
     """Demonstration of how random LET (random individually and
     uncorrelated in L, eand T) curves span out the relperm-space
     between low and high LET curves
 
     If the low and high LET curves do not cross, the random
     curves are all between the low and high curves.
-
     """
-
     matplotlib.style.use("ggplot")
 
     let_w = {
@@ -406,7 +403,7 @@ def letspan():
     slimw = {x: sorted(let_w[x]) for x in let_w}
     slimo = {x: sorted(let_o[x]) for x in let_o}
 
-    _, mpl_ax = plt.subplots()
+    _, mpl_ax = pyplot.subplots()
     for _ in range(100):
         swof = WaterOil(
             h=0.01, swl=0.16, sorw=random.uniform(slimw["sorw"][0], slimw["sorw"][1])
@@ -436,119 +433,13 @@ def letspan():
     )
     swof.add_LET_oil(l=let_o["l"][1], e=let_o["e"][1], t=let_o["t"][1])
     swof.plotkrwkrow(mpl_ax=mpl_ax, color="red", label="High")
-    # mpl_ax.set_yscale('log')
-    plt.show()
 
-
-def testplot():
-    """Generate and plot relperm curves
-
-    Use this as a template function.
-    """
-    swof = WaterOil(tag="Testcurve", h=0.01, swirr=0.2, swl=0.2, sorw=0.1)
-    swof.add_corey_water(nw=5, krwend=0.7, krwmax=0.9)
-    swof.add_corey_oil(now=2, kroend=0.95)
-    swof.add_LET_water(l=2, e=1, t=1.4, krwend=0.7, krwmax=0.9)
-    swof.add_LET_oil(l=2, e=1, t=1.4, kroend=0.9)
-
-    # Print the first 7 lines of SWOF:
-    print("\n".join(swof.SWOF().split("\n")[0:8]))
-    _, mpl_ax = plt.subplots()
-    swof.plotkrwkrow(mpl_ax)
-    plt.show()
-
-
-def multiplesatnums():
-    """Test of a case where there are multiple satnums"""
-    satnums = []
-    satnums.append(
-        WaterOilGas(swirr=0.01, swl=0.1, sgcr=0.05, sorg=0.1, tag="Good sand")
+    pyplot.subplots_adjust(top=0.8)
+    pyplot.title(
+        "Blue LET curves go outside red boundaries, \n"
+        "therefore SCAL-interpolation "
+        "must be done\n on curves, not in LET-space.",
+        fontsize=12,
     )
-    satnums[0].wateroil.add_corey_oil(3)
-    satnums[0].wateroil.add_corey_water(2.5)
-    satnums[0].wateroil.add_simple_J()
-    satnums[0].gasoil.add_corey_oil(4)
-    satnums[0].gasoil.add_corey_gas(1)
-
-    satnums.append(
-        WaterOilGas(swirr=0.35, swl=0.4, sgcr=0.05, sorg=0.1, tag="Bad sand")
-    )
-    satnums[1].wateroil.add_corey_oil(4)
-    satnums[1].wateroil.add_corey_water(5)
-    satnums[1].wateroil.add_simple_J()
-    satnums[1].gasoil.add_corey_oil(4)
-    satnums[1].gasoil.add_corey_gas(1)
-
-    if satnums[0].selfcheck() and satnums[1].selfcheck():
-        print(satnums[0].wateroil.SWOF())
-        print(satnums[1].wateroil.SWOF(header=False))
-        print(satnums[0].gasoil.SGOF())
-        print(satnums[1].gasoil.SGOF(header=False))
-
-
-def testgascurves():
-    """test of gas-oil curves"""
-    sgof = GasOil(tag="Testcurve", h=0.02, swirr=0.18, swl=0.31, sorg=0.09, sgcr=0.04)
-    sgof.add_corey_gas(ng=1.5, krgend=0.7)
-    sgof.add_corey_oil(nog=2, kroend=0.4)
-    sgof.add_LET_gas(l=2, e=1, t=1.4, krgend=0.9)
-    sgof.add_LET_oil(l=2, e=3, t=1.4, kroend=0.7)
-
-    print(sgof.table)
-    _, mpl_ax = plt.subplots()
-    sgof.plotkrgkrog(mpl_ax)
-    # mpl_ax.set_yscale('log')
-    print(sgof.SGOF())
-    plt.show()
-
-
-def main():
-    """Entry point for interactive tests, will run
-    some tests where the intention is that the user will
-    look at what is displayed, and potentially see if
-    something looks really bad"""
-    print("-- **********************************")
-    print("-- Manual check of output")
-    swof = WaterOil(tag="Good sand, SATNUM 1", h=0.1, swl=0.1)
-    swof.add_corey_water()
-    swof.add_LET_water()
-    swof.add_corey_oil()
-    swof.add_simple_J()
-
-    print(swof.SWOF())
-
-    sgof = GasOil(tag="Good sand, SATNUM 1", h=0.1)
-    sgof.add_corey_gas()
-    sgof.add_corey_oil()
-    print(sgof.SGOF())
-
-    print("")
-    print("-- ******************************************")
-    print("-- Manual visual check of interpolation in LET-space")
-    print("--  Check:")
-    print("--   * green curves are between red and blue blue line")
-    print("-- (close plot window to continue)")
-    for _ in range(0, 5):
-        test_interpolate_wo()
-        test_interpolate_go()
-        test_interpolate_gw()
-    print("")
-    print("-- ******************************************")
-    print("-- Manual visual check of interpolation in LET-space")
-    print("--  Check:")
-    print("--   * Red curves are between dotted and solid blue line")
-    print("--   * Green curves are between solid blue and dashed")
-    print("-- (close plot window to continue)")
-    interpolateplottest()
-
-    print("")
-    print("-- ***********************************************")
-    print("-- Span of LET curves when LET parameters are varied")
-    print("-- within the bounds of the parameters of the red curves")
-    print("-- Blue dim curves are allowed to go outside the red boundary curves")
-    print("-- (close plot window to continue)")
-    letspan()
-
-
-if __name__ == "__main__":
-    main()
+    print("[Close windows to continue tests]")
+    pyplot.show()
