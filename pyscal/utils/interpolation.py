@@ -2,15 +2,16 @@
 """
 
 import logging
+from typing import Tuple, Callable, Union, Optional
 
 from scipy.interpolate import interp1d
 
-import pyscal
+from pyscal import WaterOil, GasOil
 
 logger = logging.getLogger(__name__)
 
 
-def normalize_nonlinpart_wo(curve):
+def normalize_nonlinpart_wo(curve: WaterOil) -> Tuple[Callable, Callable]:
     """Make krw and krow functions that evaluate only on the
     (potentially) nonlinear part of the relperm curves, and with
     a normalized argument (0,1) on that interval.
@@ -29,12 +30,12 @@ def normalize_nonlinpart_wo(curve):
     this function only deals with the presumably known endpoints.
 
     Arguments:
-        curve (WaterOil): incoming oilwater curve set (krw and krow)
+        curve: incoming oilwater curve set (krw and krow)
 
     Returns:
         tuple of lambda functions. The first will evaluate krw on
-            the normalized Sw interval [0,1], the second will
-            evaluate krow on the normalized So interval [0,1].
+        the normalized Sw interval [0,1], the second will
+        evaluate krow on the normalized So interval [0,1].
     """
     krw_interp = interp1d(
         curve.table["SW"],
@@ -71,7 +72,7 @@ def normalize_nonlinpart_wo(curve):
     return (krw_fn, kro_fn)
 
 
-def normalize_nonlinpart_go(curve):
+def normalize_nonlinpart_go(curve: GasOil) -> Tuple[Callable, Callable]:
     """Make krg and krog functions that evaluates only on the
     (potentially) nonlinear part of the relperm curves, and with
     a normalized argument (0,1) on that interval.
@@ -90,12 +91,12 @@ def normalize_nonlinpart_go(curve):
     this function only deals with the presumably known endpoints.
 
     Arguments:
-        curve (GasOil): incoming gasoil curve set (krg and krog)
+        curve: incoming gasoil curve set (krg and krog)
 
     Returns:
         tuple of functions. The first will evaluate krg on
-            the normalized Sg interval [0,1], the second will
-            evaluate krog on the normalized So interval [0,1].
+        the normalized Sg interval [0,1], the second will
+        evaluate krog on the normalized So interval [0,1].
     """
     krg_interp = interp1d(
         curve.table["SG"],
@@ -132,7 +133,7 @@ def normalize_nonlinpart_go(curve):
     return (krg_fn, kro_fn)
 
 
-def normalize_pc(curve):
+def normalize_pc(curve: Union[WaterOil, GasOil]) -> Callable:
     """Normalize the capillary pressure curve.
 
     This is only normalized with respect to the
@@ -143,15 +144,15 @@ def normalize_pc(curve):
     the data in the table.
 
     Args:
-        curve (WaterOil or GasOil): An object with a table with a pc column
+        curve: An object with a table with a pc column
 
     Returns:
         a lambda function that will evaluate pc on
         the normalized interval [0,1]
     """
-    if isinstance(curve, pyscal.WaterOil):
+    if isinstance(curve, WaterOil):
         sat_col = "SW"
-    elif isinstance(curve, pyscal.GasOil):
+    elif isinstance(curve, GasOil):
         sat_col = "SG"
     else:
         raise ValueError("Only WaterOil or GasOil allowed as argument")
@@ -183,7 +184,12 @@ def normalize_pc(curve):
     return pc_fn
 
 
-def _interpolate_tags(low, high, parameter, tag):
+def _interpolate_tags(
+    low: Union[WaterOil, GasOil],
+    high: Union[WaterOil, GasOil],
+    parameter: float,
+    tag: Optional[str],
+):
     """Preserve tag/comment. Depending on context, the
     interpolation parameter may or may not make sense. In a SCALrecommendation
     interpolation, the new tag should be constructed in the caller of this function.
@@ -192,10 +198,10 @@ def _interpolate_tags(low, high, parameter, tag):
     This function is used by interpolate_wo and interpolate_go
 
     Args:
-        low (WaterOil or GasOil): low case in interpolation
-        high (WaterOil or GasOil): high case
-        parameter (float): between 0 and 1
-        tag (str): If not none, this is directly returned.
+        low: low case in interpolation
+        high: high case
+        parameter: between 0 and 1
+        tag: If not none, this is directly returned.
 
     Returns:
         string, a "computed" tag if a tag is not directly supplied
@@ -212,7 +218,13 @@ def _interpolate_tags(low, high, parameter, tag):
     return tag
 
 
-def interpolate_wo(wo_low, wo_high, parameter, h=0.01, tag=None):
+def interpolate_wo(
+    wo_low: WaterOil,
+    wo_high: WaterOil,
+    parameter: float,
+    h: Optional[float] = None,
+    tag: Optional[str] = None,
+) -> WaterOil:
     """Interpolates between two water-oil curves.
 
     The saturation endpoints for the curves must be known
@@ -224,23 +236,19 @@ def interpolate_wo(wo_low, wo_high, parameter, h=0.01, tag=None):
     interpolated individually.
 
     Arguments:
-        wo_low (WaterOil): a "low" case
-        wo_high (WaterOil): a "high" case
-        parameter (float): Between 0 and 1. 0 will return the low case, 1 will return
+        wo_low: a "low" case
+        wo_high: a "high" case
+        parameter: Between 0 and 1. 0 will return the low case, 1 will return
             the high case. Any number in between will return an interpolated curve
-        h (float): Saturation step-size in interpolant. If defaulted, a value
+        h: Saturation step-size in interpolant. If defaulted, a value
             smaller than in the input curves are used, to preserve information.
-        tag (string): Tag to associate to the constructed object. If None
+        tag: Tag to associate to the constructed object. If None
             it will be automatically filled. Set to empty string to ensure no tag.
-
-    Returns:
-        A new oil-water curve
-
     """
     # Warning: Almost code duplication with corresponding _go function
 
-    assert isinstance(wo_low, pyscal.WaterOil)
-    assert isinstance(wo_high, pyscal.WaterOil)
+    assert isinstance(wo_low, WaterOil)
+    assert isinstance(wo_high, WaterOil)
 
     assert 0 <= parameter <= 1
     # Extrapolation is refused, but perhaps later implemented with truncation to (0,1)
@@ -274,7 +282,7 @@ def interpolate_wo(wo_low, wo_high, parameter, h=0.01, tag=None):
 
     # Construct the new WaterOil object, with interpolated
     # endpoints:
-    wo_new = pyscal.WaterOil(swl=swl_new, swcr=swcr_new, sorw=sorw_new, h=h, fast=fast)
+    wo_new = WaterOil(swl=swl_new, swcr=swcr_new, sorw=sorw_new, h=h, fast=fast)
 
     # Add interpolated relperm data in nonlinear parts:
     wo_new.table["KRW"] = weighted_value(
@@ -301,7 +309,13 @@ def interpolate_wo(wo_low, wo_high, parameter, h=0.01, tag=None):
     return wo_new
 
 
-def interpolate_go(go_low, go_high, parameter, h=0.01, tag=None):
+def interpolate_go(
+    go_low: GasOil,
+    go_high: GasOil,
+    parameter: float,
+    h: Optional[float] = None,
+    tag: Optional[str] = None,
+) -> GasOil:
     """Interpolates between two gas-oil curves.
 
     The saturation endpoints for the curves must be known
@@ -313,23 +327,19 @@ def interpolate_go(go_low, go_high, parameter, h=0.01, tag=None):
     interpolated individually.
 
     Arguments:
-        go_low (GasOil): a "low" case
-        go_high (GasOil): a "high" case
-        parameter (float): Between 0 and 1. 0 will return the low case, 1 will return
+        go_low: a "low" case
+        go_high: a "high" case
+        parameter: Between 0 and 1. 0 will return the low case, 1 will return
             the high case. Any number in between will return an interpolated curve
-        h (float): Saturation step-size in interpolant. If defaulted, a value
+        h: Saturation step-size in interpolant. If defaulted, a value
             smaller than in the input curves are used, to preserve information.
-        tag (string): Tag to associate to the constructed object. If None
+        tag: Tag to associate to the constructed object. If None
             it will be automatically filled. Set to empty string to ensure no tag.
-
-    Returns:
-        A new gas-oil curve
-
     """
     # Warning: Almost code duplication with corresponding _wo function
 
-    assert isinstance(go_low, pyscal.GasOil)
-    assert isinstance(go_high, pyscal.GasOil)
+    assert isinstance(go_low, GasOil)
+    assert isinstance(go_high, GasOil)
 
     assert 0 <= parameter <= 1
     # Extrapolation is refused, but perhaps later implemented with truncation to (0,1)
@@ -363,7 +373,7 @@ def interpolate_go(go_low, go_high, parameter, h=0.01, tag=None):
 
     # Construct the new GasOil object, with interpolated
     # endpoints:
-    go_new = pyscal.GasOil(swl=swl_new, sgcr=sgcr_new, sorg=sorg_new, h=h, fast=fast)
+    go_new = GasOil(swl=swl_new, sgcr=sgcr_new, sorg=sorg_new, h=h, fast=fast)
 
     # Add interpolated relperm data in nonlinear parts:
     go_new.table["KRG"] = weighted_value(

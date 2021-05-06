@@ -28,12 +28,14 @@ TEST_REQUIREMENTS = [
     "black>=20.8b0",
     "flake8",
     "hypothesis",
+    "mypy",
     "pre-commit",
     "pytest",
     "pytest-cov",
     "rstcheck",
     "sphinx",
     "sphinx-argparse",
+    "sphinx-autodoc-typehints",
     "sphinx_rtd_theme",
 ]
 SETUP_REQUIREMENTS = ["pytest-runner", "setuptools >=28", "setuptools_scm"]

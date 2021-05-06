@@ -3,11 +3,15 @@
 from pathlib import Path
 import logging
 
+from typing import List, Union, Optional, Type
+
 import pandas as pd
 
 from pyscal import WaterOil, GasOil, GasWater, WaterOilGas, SCALrecommendation
 
 PYSCAL_OBJECTS = [WaterOil, GasOil, GasWater, WaterOilGas, SCALrecommendation]
+
+PyscalObjects = Union[WaterOil, GasOil, GasWater, WaterOilGas, SCALrecommendation]
 
 logger = logging.getLogger(__name__)
 
@@ -25,23 +29,23 @@ class PyscalList(object):
         pyscal_list (list): List of objects if already ready. Can be empty or None.
     """
 
-    def __init__(self, pyscal_list=None):
-        self.pyscaltype = None
+    def __init__(self, pyscal_list: List[PyscalObjects] = None):
+        self.pyscaltype: Optional[Type] = None
         if isinstance(pyscal_list, list):
             for pyscal_obj in pyscal_list:
                 self.append(pyscal_obj)
         else:
-            self.pyscal_list = []
+            self.pyscal_list: List[PyscalObjects] = []
 
-    def append(self, pyscal_obj):
+    def append(self, pyscal_obj: Optional[PyscalObjects]) -> None:
         """Append a pyscal object to the list
 
         Args:
-            pyscal_obj (WaterOil, GasOil, WaterOilGas or SCALrecommendation)
+            pyscal_obj
 
         Raises:
             ValueError if the type of the incoming object does not
-                match existing objects in the list
+            match existing objects in the list
         """
         if pyscal_obj is None:
             return
@@ -64,7 +68,7 @@ class PyscalList(object):
             )
         self.pyscal_list.append(pyscal_obj)
 
-    def df(self):
+    def df(self) -> pd.DataFrame:
         """Dump dataframes of generated relperm data
 
         Column names are compatible with ecl2df.satfunc. Always uppercase
@@ -73,9 +77,6 @@ class PyscalList(object):
         If the PyscalList contains SCALrecommendations, the CASE column
         will contain the strings 'pess', 'base' and 'opt' (independent of
         any alias name potentially used in an input xlsx/csv)
-
-        Returns:
-            pd.DataFrame
         """
         # Names of dataframe columns in wateroil/gasoil.table:
         wateroil_pyscal_cols = {"SW", "KRW", "KROW", "PC"}
@@ -91,6 +92,9 @@ class PyscalList(object):
         df_list = []
         if self.pyscaltype == WaterOilGas:
             for (satnum, wateroilgas) in enumerate(self.pyscal_list):
+                assert isinstance(wateroilgas, WaterOilGas)
+                assert wateroilgas.wateroil is not None
+                assert wateroilgas.gasoil is not None
                 wateroil_cols = set(wateroilgas.wateroil.table.columns).intersection(
                     wateroil_pyscal_cols
                 )
@@ -109,6 +113,16 @@ class PyscalList(object):
                 )
         elif self.pyscaltype == SCALrecommendation:
             for (satnum, scalrec) in enumerate(self.pyscal_list):
+                assert isinstance(scalrec, SCALrecommendation)
+                assert scalrec.low is not None
+                assert scalrec.base is not None
+                assert scalrec.high is not None
+                assert scalrec.low.wateroil is not None
+                assert scalrec.low.gasoil is not None
+                assert scalrec.base.wateroil is not None
+                assert scalrec.base.gasoil is not None
+                assert scalrec.high.wateroil is not None
+                assert scalrec.high.gasoil is not None
                 gasoil_cols = set(scalrec.base.gasoil.table.columns).intersection(
                     gasoil_pyscal_cols
                 )
@@ -148,6 +162,8 @@ class PyscalList(object):
                 )
         elif self.pyscaltype == WaterOil:
             for (satnum, wateroil) in enumerate(self.pyscal_list):
+                assert isinstance(wateroil, WaterOil)
+                assert wateroil is not None
                 wateroil_cols = set(wateroil.table.columns).intersection(
                     wateroil_pyscal_cols
                 )
@@ -158,6 +174,8 @@ class PyscalList(object):
                 )
         elif self.pyscaltype == GasOil:
             for (satnum, gasoil) in enumerate(self.pyscal_list):
+                assert isinstance(gasoil, GasOil)
+                assert gasoil is not None
                 gasoil_cols = set(gasoil.table.columns).intersection(gasoil_pyscal_cols)
                 df_list.append(
                     gasoil.table[gasoil_cols]
@@ -170,13 +188,13 @@ class PyscalList(object):
             dframe.sort_values(sort_rows_on, inplace=True)
         return dframe
 
-    def dump_family_1(self, filename=None, slgof=False):
+    def dump_family_1(self, filename: Optional[str] = None, slgof: bool = False) -> str:
         """Dumps family 1 Eclipse saturation tables to one
         filename. This means SWOF + SGOF (SGOF only if relevant)
 
         Args:
-            filename (str): Filename for the output to be given to Eclips 100
-            slgof (bool): Set to true of SLGOF is wanted instead of SGOF
+            filename: Filename for the output to be given to Eclipse 100
+            slgof: Set to true of SLGOF is wanted instead of SGOF
         """
         if self.pyscaltype == SCALrecommendation:
             logger.error(
@@ -186,6 +204,7 @@ class PyscalList(object):
         if self.pyscaltype == WaterOilGas:
             # WaterOilGas can be of type WaterOil when it emerges
             # from a SCAL recommendation, do a fragile test:
+            assert isinstance(self.pyscal_list[0], WaterOilGas)
             if self.pyscal_list[0].gasoil is None:
                 family_1_str = self.SWOF()
                 keywords = "SWOF"
@@ -219,7 +238,7 @@ class PyscalList(object):
             Path(filename).write_text(family_1_str, encoding="utf-8")
         return family_1_str
 
-    def dump_family_2(self, filename=None):
+    def dump_family_2(self, filename: Optional[str] = None) -> str:
         """Dumps family 2 Eclipse saturation tables to one
         filename. This means SWFN + SGFN + SOF3 (SOF3 only for WaterOilGas)
 
@@ -252,20 +271,23 @@ class PyscalList(object):
             Path(filename).write_text(family_2_str, encoding="utf-8")
         return family_2_str
 
-    def interpolate(self, int_params_wo, int_params_go=None, h=None):
+    def interpolate(
+        self,
+        int_params_wo: Union[float, int, List[float]],
+        int_params_go: Optional[Union[float, int, List[Optional[float]]]] = None,
+        h: Optional[float] = None,
+    ) -> "PyscalList":
         """This function will interpolate each SCALrecommendation
         object to the chosen parameters
 
         This only works on lists of SCALrecommendation objects
 
         Args:
-            int_params_wo (float or list of float): Interpolation parameters
-                for wateroil, or for both. If list,
-                separate parameter for each SATNUM. All numbers between
-                -1 and 1.
-            int_params_go (float or list of float): If specified, will
-                be used for GasOil interpolation.
-            h (float): Saturation step-length
+            int_params_wo: Interpolation parameters for wateroil, or for
+                both. If list, separate parameter for each SATNUM. All
+                numbers between -1 and 1 (inclusive).
+            int_params_go: If specified, will be used for GasOil interpolation.
+            h: Saturation step-length
 
         Returns:
             PyscalList of type WaterOilGas, with the same length.
@@ -274,11 +296,11 @@ class PyscalList(object):
         if self.pyscaltype != SCALrecommendation:
             logger.error("Can only interpolate PyscalList of type SCALrecommendation")
             raise TypeError
-        if not isinstance(int_params_wo, list):
+        if isinstance(int_params_wo, (float, int)):
             int_params_wo = [int_params_wo] * self.__len__()
         if isinstance(int_params_wo, list) and len(int_params_wo) == 1:
             int_params_wo = int_params_wo * self.__len__()
-        if not isinstance(int_params_go, list):
+        if int_params_go is None or isinstance(int_params_go, (float, int)):
             int_params_go = [int_params_go] * len(self)
         if isinstance(int_params_go, list) and len(int_params_go) == 1:
             int_params_go = int_params_go * self.__len__()
@@ -298,14 +320,20 @@ class PyscalList(object):
             raise ValueError(
                 f"Too many interpolation parameters given for GasOil {int_params_go}"
             )
-        wog_list = PyscalList()
+        wog_list: PyscalList = PyscalList()
         for (satnum, scalrec) in enumerate(self.pyscal_list):
+            assert isinstance(scalrec, SCALrecommendation)
             wog_list.append(
                 scalrec.interpolate(int_params_wo[satnum], int_params_go[satnum], h=h)
             )
         return wog_list
 
-    def make_ecl_output(self, keyword, write_to_filename=None, gaswater=False):
+    def make_ecl_output(
+        self,
+        keyword: str,
+        write_to_filename: Optional[str] = None,
+        gaswater: bool = False,
+    ) -> str:
         """Internal helper function for constructing strings and writing to disk"""
         if self.pyscaltype == SCALrecommendation:
             raise TypeError(
@@ -329,35 +357,39 @@ class PyscalList(object):
             Path(write_to_filename).write_text(string, encoding="utf-8")
         return string
 
-    def SWOF(self, write_to_filename=None):
+    def SWOF(self, write_to_filename: Optional[str] = None) -> str:
         """Make SWOF string and optionally print to file"""
         return self.make_ecl_output("SWOF", write_to_filename)
 
-    def SGOF(self, write_to_filename=None):
+    def SGOF(self, write_to_filename: Optional[str] = None) -> str:
         """Make SGOF string and optionally print to file"""
         return self.make_ecl_output("SGOF", write_to_filename)
 
-    def SLGOF(self, write_to_filename=None):
+    def SLGOF(self, write_to_filename: Optional[str] = None) -> str:
         """Make SLGOF string and optionally print to file"""
         return self.make_ecl_output("SLGOF", write_to_filename)
 
-    def SGFN(self, write_to_filename=None, gaswater=False):
+    def SGFN(
+        self, write_to_filename: Optional[str] = None, gaswater: bool = False
+    ) -> str:
         """Make SGFN string and optionally print to file"""
         return self.make_ecl_output("SGFN", write_to_filename, gaswater=gaswater)
 
-    def SWFN(self, write_to_filename=None, gaswater=False):
+    def SWFN(
+        self, write_to_filename: Optional[str] = None, gaswater: bool = False
+    ) -> str:
         """Make SWFN string and optionally print to file"""
         return self.make_ecl_output("SWFN", write_to_filename, gaswater=gaswater)
 
-    def SOF3(self, write_to_filename=None):
+    def SOF3(self, write_to_filename: Optional[str] = None) -> str:
         """Make SOF3 string and optionally print to file"""
         return self.make_ecl_output("SOF3", write_to_filename)
 
-    def __len__(self):
+    def __len__(self) -> int:
         """Return the count of Pyscal objects in the list"""
         return len(self.pyscal_list)
 
-    def __getitem__(self, satnum_idx):
+    def __getitem__(self, satnum_idx) -> PyscalObjects:
         """Get a specific List member.
 
         The indexing starts at 1, not zero, similar

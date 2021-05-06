@@ -1,6 +1,7 @@
 """Monotonocity support functions for pyscal"""
 
 import logging
+from typing import Union, List
 
 import numpy as np
 import pandas as pd
@@ -11,7 +12,9 @@ from pyscal.constants import EPSILON as epsilon
 logger = logging.getLogger(__name__)
 
 
-def modify_dframe_monotonicity(dframe, monotonicity, digits):
+def modify_dframe_monotonicity(
+    dframe: pd.DataFrame, monotonicity: dict, digits: int
+) -> pd.DataFrame:
     """Modify a dataframe for monotonicity.
 
     Columns in the dataframe are modified in-place.
@@ -42,9 +45,9 @@ def modify_dframe_monotonicity(dframe, monotonicity, digits):
     For non-strict monotocity, see the function clip_accumulate()
 
     Args:
-        dframe (pd.DataFrame): Data to modify.
-        monotonicity (dict): see df2str() for syntax.
-        digits (int): Number of digits to ensure monotonicity for.
+        dframe: Data to modify.
+        monotonicity: see df2str() for syntax.
+        digits: Number of digits to ensure monotonicity for.
     """
     validate_monotonicity_arg(monotonicity, dframe.columns)
 
@@ -118,14 +121,16 @@ def modify_dframe_monotonicity(dframe, monotonicity, digits):
     return dframe
 
 
-def clip_accumulate(series, monotonicity):
+def clip_accumulate(
+    series: Union[List[float], pd.Series, np.ndarray], monotonicity: dict
+) -> np.ndarray:
     """
     Modify a series (vector of numbers) for non-strict monotonicity, and
     optionally clip at lower and upper limits.
 
     Args:
-        series (pd.Series or np.array): Vector of numbers to modify
-        monotonicity (dict): Monotonocity options. The keys 'lower' and 'upper'
+        series: Vector of numbers to modify
+        monotonicity: Monotonocity options. The keys 'lower' and 'upper'
             can be provided for clipping the vector.
 
     Returns:
@@ -148,7 +153,11 @@ def clip_accumulate(series, monotonicity):
     return series
 
 
-def check_limits(series, monotonicity, colname=""):
+def check_limits(
+    series: Union[List[float], pd.Series, np.ndarray],
+    monotonicity: dict,
+    colname: str = "",
+) -> None:
     """
     Check a series whether it obeys numerical limits.
     Equivalence to limits is allowed.
@@ -157,13 +166,11 @@ def check_limits(series, monotonicity, colname=""):
     when everything is ok.
 
     Args:
-        series (pd.Series): Vector of numbers to check
-        monotonicity (dict): Keys 'upper' and 'lower' are optional
+        series: Vector of numbers to check
+        monotonicity: Keys 'upper' and 'lower' are optional
             and point to numerical limits.
-        colname (str): Optional string for a column name that will be
+        colname: Optional string for a column name that will be
             included in any error message.
-    Returns:
-        None
     """
     if isinstance(series, (list, np.ndarray)):
         series = pd.Series(series, dtype="float64")
@@ -175,15 +182,15 @@ def check_limits(series, monotonicity, colname=""):
         raise ValueError("Values smaller than lower limit in column {}".format(colname))
 
 
-def rows_to_be_fixed(series, monotonicity, digits):
+def rows_to_be_fixed(series: pd.Series, monotonicity: dict, digits: int) -> pd.Series:
     """Compute boolean array of rows that must be modified
 
     Args:
-        series (pd.Series):
-        monotonicity (dict): Can contain "upper" or "lower"
+        series:
+        monotonicity: Can contain "upper" or "lower"
             numerical bounds, and "sign", where >0 means positive.
             "sign" is mandatory.
-        digits (int): Accuracy required, how many digits
+        digits: Accuracy required, how many digits
             that are to be printed, and to which we should relate
             constancy to.
     Returns:
@@ -207,14 +214,14 @@ def rows_to_be_fixed(series, monotonicity, digits):
     return constants
 
 
-def check_almost_monotone(series, digits, sign):
+def check_almost_monotone(series: pd.Series, digits: int, sign: int) -> None:
     """Raise a ValueError if a series is not sufficiently close
     to constant or monotone in a certain direction.
 
     Args:
-        series (pd.Series): Vector of numbers
-        digits (int):
-        sign (int): direction. >0 means positive
+        series: Vector of numbers
+        digits:
+        sign: direction. >0 means positive
     """
     if isinstance(series, (list, np.ndarray)):
         series = pd.Series(series, dtype="float64")
@@ -228,7 +235,7 @@ def check_almost_monotone(series, digits, sign):
             raise ValueError("Series is not almost monotone")
 
 
-def validate_monotonicity_arg(monotonicity, dframe_colnames):
+def validate_monotonicity_arg(monotonicity: dict, dframe_colnames: List[str]) -> None:
     """
     Validate a dictionary with monotonicity arguments that
     can be given to df2str().
@@ -236,13 +243,10 @@ def validate_monotonicity_arg(monotonicity, dframe_colnames):
     Will raise ValueError exceptions if anything is wrong.
 
     Args:
-        monotonicity (dict): Keys are 'sign', 'upper', 'lower'
+        monotonicity: Keys are 'sign', 'upper', 'lower'
             and  'allowzero'.
-        dframe_colnames (list of str): Names of column names
+        dframe_colnames: Names of column names
             in dframes. Used in error messages.
-
-    Returns:
-        None
     """
     valid_keys = ["sign", "upper", "lower", "allowzero"]
     if monotonicity is None:

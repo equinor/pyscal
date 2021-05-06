@@ -43,6 +43,11 @@ jobs:
           pip install flake8
           flake8 pyscal tests
 
+      - name: Enforce static typing
+        run: |
+          pip install mypy
+          mypy pyscal
+
       - name: Install pyscal with dependencies
         run: |
           pip install --upgrade pip

@@ -4,12 +4,11 @@ import sys
 import argparse
 import warnings
 import traceback
+from typing import List, Optional
 
 import logging
 
-from pyscal import __version__
-from .wateroilgas import WaterOilGas
-from .gaswater import GasWater
+from pyscal import __version__, WaterOilGas, GasWater, SCALrecommendation
 from .factory import PyscalFactory
 
 logger = logging.getLogger(__name__)
@@ -46,7 +45,7 @@ if individual interpolation for each SATNUM is needed.
 """
 
 
-def get_parser():
+def get_parser() -> argparse.ArgumentParser:
     """Construct the argparse parser for the command line script.
 
     Returns:
@@ -141,7 +140,7 @@ def get_parser():
     return parser
 
 
-def main():
+def main() -> None:
     """Endpoint for pyscals command line utility.
 
     Translates from argparse API to Pyscal's Python API"""
@@ -167,32 +166,32 @@ def main():
 
 
 def pyscal_main(
-    parametertable,
-    verbose=False,
-    debug=False,
-    output="relperm.inc",
-    delta_s=None,
-    int_param_wo=None,
-    int_param_go=None,
-    sheet_name=None,
-    slgof=False,
-    family2=False,
-):
+    parametertable: str,
+    verbose: bool = False,
+    debug: bool = False,
+    output: str = "relperm.inc",
+    delta_s: Optional[float] = None,
+    int_param_wo: Optional[List[float]] = None,
+    int_param_go: Optional[List[Optional[float]]] = None,
+    sheet_name: str = None,
+    slgof: bool = False,
+    family2: bool = False,
+) -> None:
     """A "main()" method not relying on argparse. This can be used
     for testing, and also by an ERT forward model, e.g.
     in semeio (github.com/equinor/semeio)
 
     Args:
-        parametertable (string): Filename (CSV or XLSX) to load
-        verbose (bool): verbose or not
-        debug (bool): debug mode or not
-        output (string): Output filename
-        delta_s (float): Saturation step-length
-        int_param_wo (list): Interpolation params for wateroil
-        int_param_go (list): Interpolation params for gasoil
-        sheet_name (string): Which sheet in XLSX file
-        slgof (bool): Use SLGOF
-        family2 (bool): Dump family 2 keywords
+        parametertable: Filename (CSV or XLSX) to load
+        verbose: verbose or not
+        debug: debug mode or not
+        output: Output filename
+        delta_s: Saturation step-length
+        int_param_wo: Interpolation params for wateroil
+        int_param_go: Interpolation params for gasoil
+        sheet_name: Which sheet in XLSX file
+        slgof: Use SLGOF
+        family2: Dump family 2 keywords
     """
 
     if verbose:
@@ -230,6 +229,7 @@ def pyscal_main(
         scalrec_list = PyscalFactory.create_scal_recommendation_list(
             scalinput_df, h=delta_s
         )
+        assert isinstance(scalrec_list[1], SCALrecommendation)
         if scalrec_list[1].type == WaterOilGas:
             logger.info(
                 "Interpolating, wateroil=%s, gasoil=%s",

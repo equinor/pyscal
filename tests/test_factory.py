@@ -1175,3 +1175,17 @@ def test_infer_tabular_file_format(tmpdir, caplog):
     Path("wrong.csv").write_bytes(os.urandom(100))
     assert factory.infer_tabular_file_format("wrong.csv") == ""
     assert "Impossible to infer file format for wrong.csv" in caplog.text
+
+
+@pytest.mark.parametrize(
+    "orig_dict, keylist, expected_dict",
+    [
+        ({}, [], {}),
+        ({"foo": 1}, [], {}),
+        ({"foo": 1}, ["fo"], {}),
+        ({"foo": 1}, ["foo"], {"foo": 1}),
+        ({}, ["foo"], {}),
+    ],
+)
+def test_slicedict(orig_dict, keylist, expected_dict):
+    assert factory.slicedict(orig_dict, keylist) == expected_dict
