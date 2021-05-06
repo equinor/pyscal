@@ -13,8 +13,8 @@
    higher than the chosen number in most circumstances, but such high
    numbers should not be relevant for relative permeability
 """
-SWINTEGERS = 10000
+SWINTEGERS: int = 10000
 
-EPSILON = 1e-08
+EPSILON: float = 1e-08
 
-MAX_EXPONENT = 100
+MAX_EXPONENT: float = 100

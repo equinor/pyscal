@@ -4,6 +4,7 @@ import logging
 
 import numpy as np
 import pandas as pd
+from typing import Optional
 
 from scipy.interpolate import PchipInterpolator
 
@@ -34,41 +35,42 @@ class GasOil(object):
     else than the string `sorg`, it will be anchored to `1-swl`.
 
     Arguments:
-        swirr (float): Absolute minimal water saturation at infinite capillary
-            pressure.
-            Not in use currently, except for in informational headers and
+        swirr: Absolute minimal water saturation at infinite capillary
+            pressure.  Not in use currently, except for in informational headers and
             for consistency checks.
-        swl (float): First water saturation point in water tables. In GasOil, it
+        swl: First water saturation point in water tables. In GasOil, it
             is used to obtain the normalized oil and gas saturation.
-        sgcr (float): Critical gas saturation. Gas will not be mobile before the
+        sgcr: Critical gas saturation. Gas will not be mobile before the
             gas saturation is above this value.
-        sorg (float): Residual oil saturation after gas flooding. At this oil
+        sorg: Residual oil saturation after gas flooding. At this oil
             saturation, the oil has zero relative permeability.
-        krgendanchor (str): Set to `sorg` (default) or something else, where to
+        krgendanchor: Set to `sorg` (default) or something else, where to
             anchor `krgend`. If `sorg`, then the normalized gas
             saturation will be equal to 1 at `1 - swl - sorg`,
             if not, it will be 1 at `1 - swl`. If `sorg` is zero
             it does not matter. krgmax is only relevant when this anchor is sorg.
-        h (float): Saturation step-length in the outputted table.
-        tag (str): Optional string identifier, only used in comments.
-        fast (bool): Set to True if in order to skip some integrity checks
+        h: Saturation step-length in the outputted table.
+        tag: Optional string identifier, only used in comments.
+        fast: Set to True if in order to skip some integrity checks
             and nice-to-have features. Not needed to set for normal pyscal
             runs, as speed is seldom crucial. Default False
     """
 
     def __init__(
         self,
-        swirr=0,
-        sgcr=0.0,
-        h=0.01,
-        swl=0.0,
-        sorg=0.0,
-        tag="",
-        krgendanchor="sorg",
-        fast=False,
-    ):
+        swirr: float = 0.0,
+        sgcr: float = 0.0,
+        h: Optional[float] = None,
+        swl: float = 0.0,
+        sorg: float = 0.0,
+        tag: str = "",
+        krgendanchor: str = "sorg",
+        fast: bool = False,
+    ) -> None:
+
         if h is None:
             h = 0.01
+
         assert -epsilon < swirr < 1.0 + epsilon, "0 <= swirr <= 1 is required"
         assert -epsilon < sgcr < 1, "0 <= sgcr < 1 is required"
         assert -epsilon < swl < 1, "0 <= swl < 1 is required"
@@ -116,7 +118,7 @@ class GasOil(object):
             self.krgendanchor = ""  # This is critical to avoid bugs due to numerics.
 
         sg_list = (
-            [0]
+            [0.0]
             + [sgcr]
             + list(np.arange(sgcr + self.h, 1 - swl, self.h))
             + [1 - sorg - swl]
@@ -200,14 +202,14 @@ class GasOil(object):
 
     def add_fromtable(
         self,
-        dframe,
-        sgcolname="SG",
-        krgcolname="KRG",
-        krogcolname="KROG",
-        pccolname="PCOG",
-        krgcomment="",
-        krogcomment="",
-        pccomment="",
+        dframe: pd.DataFrame,
+        sgcolname: str = "SG",
+        krgcolname: str = "KRG",
+        krogcolname: str = "KROG",
+        pccolname: str = "PCOG",
+        krgcomment: str = "",
+        krogcomment: str = "",
+        pccomment: str = "",
     ):
         """Interpolate relpermdata from a dataframe.
 
@@ -325,7 +327,9 @@ class GasOil(object):
                 raise ValueError("inf/nan in interpolated data, check input")
             self.pccomment = "-- pc from tabular input" + pccomment + "\n"
 
-    def set_endpoints_linearpart_krg(self, krgend, krgmax=None):
+    def set_endpoints_linearpart_krg(
+        self, krgend: float, krgmax: Optional[float] = None
+    ):
         """Set linear parts of krg outside endpoints.
 
         Curve is set to zero in [0, sgcr].
@@ -345,8 +349,8 @@ class GasOil(object):
         utility functions. It should not be necessary for end-users.
 
         Args:
-            krgend (float): krg at sg = 1 - swl - sorg.
-            krgmax (float): krg at Sg = 1 - swl. Default 1.
+            krgend: krg at sg = 1 - swl - sorg.
+            krgmax: krg at Sg = 1 - swl. Default 1.
 
         """
         self.table.loc[self.table["SG"] <= self.sgcr, "KRG"] = 0
@@ -372,7 +376,9 @@ class GasOil(object):
                 # Only warn if something else than default is in use
                 logger.warning("krgmax ignored when not anchoring to sorg")
 
-    def set_endpoints_linearpart_krog(self, kroend, kromax=None):
+    def set_endpoints_linearpart_krog(
+        self, kroend: float, kromax: Optional[float] = None
+    ):
         """Set linear parts of krog outside endpoints.
 
         Zero for sg above 1 - sorg - swl.
@@ -381,7 +387,7 @@ class GasOil(object):
         utility functions. It should not be necessary for end-users.
 
         Args:
-            kroend (float): krog at sg=0
+            kroend: krog at sg=0
         """
         if kromax is not None:
             logger.error("kromax is DEPRECATED, ignored")
@@ -394,7 +400,9 @@ class GasOil(object):
         # Floating point issues can cause a slight overshoot at sg=0:
         self.table.loc[self.table["KROG"] > kroend, "KROG"] = kroend
 
-    def add_corey_gas(self, ng=2, krgend=1, krgmax=None):
+    def add_corey_gas(
+        self, ng: float = 2.0, krgend: float = 1.0, krgmax: Optional[float] = None
+    ):
         """Add krg data through the Corey parametrization
 
         A column called 'krg' will be added. If it exists, it will
@@ -422,7 +430,9 @@ class GasOil(object):
             krgmax,
         )
 
-    def add_corey_oil(self, nog=2, kroend=1, kromax=None):
+    def add_corey_oil(
+        self, nog: float = 2, kroend: float = 1, kromax: Optional[float] = None
+    ):
         """
         Add kro data through the Corey parametrization
 
@@ -432,8 +442,8 @@ class GasOil(object):
         All values above 1 - sorg - swl are set to zero.
 
         Arguments:
-            nog (float): Corey exponent for oil
-            kroend (float): Value for krog at normalized oil saturation 1
+            nog: Corey exponent for oil
+            kroend: Value for krog at normalized oil saturation 1
 
         Returns:
             None (modifies internal class state)
@@ -453,7 +463,14 @@ class GasOil(object):
             kroend,
         )
 
-    def add_LET_gas(self, l=2, e=2, t=2, krgend=1, krgmax=None):
+    def add_LET_gas(
+        self,
+        l: float = 2.0,
+        e: float = 2.0,
+        t: float = 2.0,
+        krgend: float = 1.0,
+        krgmax: Optional[float] = None,
+    ):
         """
         Add gas relative permability data through the LET parametrization
 
@@ -464,11 +481,11 @@ class GasOil(object):
         sg = 1 - swl. If not, it ends at krgend at sg = 1 - swl.
 
         Arguments:
-            l (float): L parameter in LET
-            e (float): E parameter in LET
-            t (float): T parameter in LET
-            krgend (float): Value of krg at normalized gas saturation 1
-            krgmax (float): Value of krg at gas saturation 1
+            l: L parameter in LET
+            e: E parameter in LET
+            t: T parameter in LET
+            krgend: Value of krg at normalized gas saturation 1
+            krgmax: Value of krg at gas saturation 1
 
         Returns:
             None (modifies internal state)
@@ -504,7 +521,14 @@ class GasOil(object):
             krgmax,
         )
 
-    def add_LET_oil(self, l=2, e=2, t=2, kroend=1, kromax=None):
+    def add_LET_oil(
+        self,
+        l: float = 2.0,
+        e: float = 2.0,
+        t: float = 2.0,
+        kroend: float = 1.0,
+        kromax: Optional[float] = None,
+    ):
         """Add oil (vs gas) relative permeability data through the Corey
         parametrization.
 
@@ -513,10 +537,10 @@ class GasOil(object):
         All values where sg > 1 - sorg - swl are set to zero.
 
         Arguments:
-            l (float): L parameter
-            e (float): E parameter
-            t (float): T parameter
-            kroend (float): The value at gas saturation sgcr
+            l: L parameter
+            e: E parameter
+            t: T parameter
+            kroend: The value at gas saturation sgcr
         """
         assert epsilon < l < MAX_EXPONENT
         assert epsilon < e < MAX_EXPONENT
@@ -544,7 +568,7 @@ class GasOil(object):
             kroend,
         )
 
-    def estimate_sorg(self):
+    def estimate_sorg(self) -> float:
         """Estimate sorg of the current krg or krog data.
 
         sorg is estimated by searching for a linear part in krg downwards
@@ -559,7 +583,7 @@ class GasOil(object):
         when krog is used if it very close to zero before reaching sorg.
 
         Returns:
-            float: The estimated sorg.
+            The estimated sorg.
         """
         if self.krgendanchor == "sorg":
             assert "KRG" in self.table
@@ -573,7 +597,7 @@ class GasOil(object):
             self.table, xcol="SG", ycol="KROG", side="right"
         )
 
-    def estimate_sgcr(self):
+    def estimate_sgcr(self) -> float:
         """Estimate sgcr of the current krog data.
 
         sgcr is the largest gas saturation for which the gas relative
@@ -582,11 +606,11 @@ class GasOil(object):
         by SGOF().
 
         Returns:
-            float: The estimated sgcr.
+            The estimated sgcr.
         """
         return self.table[self.table["KRG"] < 10 * epsilon]["SG"].max()
 
-    def crosspoint(self):
+    def crosspoint(self) -> float:
         """Locate and return the saturation point where krg = krog
 
         Accuracy of this crosspoint depends on the resolution chosen
@@ -594,12 +618,12 @@ class GasOil(object):
         interpolation to solve for the zero)
 
         Returns:
-            float: the gas saturation where krg == krog, for relperm
-                linearly interpolated in gas saturation.
+            The gas saturation where krg == krog, for relperm
+            linearly interpolated in gas saturation.
         """
         return crosspoint(self.table, "SG", "KRG", "KROG")
 
-    def selfcheck(self, mode="SGOF"):
+    def selfcheck(self, mode: str = "SGOF") -> bool:
         """Check validities of the data in the table.
 
         This is to catch errors that are either physically wrong
@@ -611,7 +635,7 @@ class GasOil(object):
         If you call SGOF/SLGOF, this function must not return False.
 
         Args:
-            mode (str): If mode is "SGFN", krog is not required.
+            mode: If mode is "SGFN", krog is not required.
         """
         error = False
         if "KRG" not in self.table:
@@ -663,7 +687,7 @@ class GasOil(object):
         logger.debug("GasOil object is checked to be valid")
         return True
 
-    def SGOF(self, header=True, dataincommentrow=True):
+    def SGOF(self, header: bool = True, dataincommentrow: bool = True) -> str:
         """
         Produce SGOF input for Eclipse reservoir simulator.
 
@@ -674,11 +698,11 @@ class GasOil(object):
         as Eclipse comments.
 
         Args:
-            header (bool): Whether the SGOF string should be emitted.
+            header: Whether the SGOF string should be emitted.
                 If you have multiple satnums, you should have True only
                 for the first (or False for all, and emit the SGOF yourself).
                 Defaults to True.
-            dataincommentrow (bool): Whether metadata should be printed,
+            dataincommentrow: Whether metadata should be printed,
                 defaults to True.
         """
         if not self.fast and not self.selfcheck():
@@ -721,7 +745,7 @@ class GasOil(object):
         string += "/\n"
         return string
 
-    def slgof_df(self):
+    def slgof_df(self) -> pd.DataFrame:
         """Slice out an SLGOF table.
 
         This is a used by the SLGOF() function, it is
@@ -761,7 +785,7 @@ class GasOil(object):
                 logger.error(str(slgof.head()))
         return slgof
 
-    def SLGOF(self, header=True, dataincommentrow=True):
+    def SLGOF(self, header: bool = True, dataincommentrow: bool = True) -> str:
         """Produce SLGOF input for Eclipse reservoir simulator.
 
         The columns sl (liquid saturation), krg, krog and pc are
@@ -818,7 +842,11 @@ class GasOil(object):
         return string
 
     def SGFN(
-        self, header=True, dataincommentrow=True, sgcomment=None, crosspointcomment=None
+        self,
+        header: bool = True,
+        dataincommentrow: bool = True,
+        sgcomment: Optional[str] = None,
+        crosspointcomment: Optional[str] = None,
     ):
         """
         Produce SGFN input for Eclipse reservoir simulator.
@@ -836,10 +864,10 @@ class GasOil(object):
                 Defaults to True.
             dataincommentrow: boolean for wheter metadata should be printed,
                 defaults to True.
-            sgcomment (str): Provide the string to include in the comment
+            sgcomment: Provide the string to include in the comment
                 section for describing the saturation endpoints. Used
                 by GasWater.
-            crosspointcomment (str): String to be used for crosspoint comment
+            crosspointcomment: String to be used for crosspoint comment
                 string, overrides what this object can provide. Used by GasWater.
                 If None, it will be computed, use empty string to avoid.
         """
@@ -886,7 +914,7 @@ class GasOil(object):
         string += "/\n"
         return string
 
-    def GOTABLE(self, header=True, dataincommentrow=True):
+    def GOTABLE(self, header: bool = True, dataincommentrow: bool = True) -> str:
         """
         Produce GOTABLE input for the Nexus reservoir simulator.
 
@@ -941,14 +969,14 @@ class GasOil(object):
 
     def plotkrgkrog(
         self,
-        mpl_ax=None,
-        color="blue",
-        alpha=1,
-        linewidth=1,
-        linestyle="-",
-        marker=None,
-        label=None,
-        logyscale=False,
+        mpl_ax: None,
+        color: str = "blue",
+        alpha: float = 1.0,
+        linewidth: int = 1,
+        linestyle: str = "-",
+        marker: Optional[str] = None,
+        label: Optional[str] = None,
+        logyscale: bool = False,
     ):
         """Plot krg and krog
 

@@ -2,6 +2,7 @@
 object for one WaterOil and one GasOil object"""
 
 import logging
+from typing import Optional
 
 import pandas as pd
 from pyscal.utils.relperm import crosspoint
@@ -28,34 +29,37 @@ class GasWater(object):
     object and one GasOil object, with dummy parameters for oil.
 
     Args:
-        swirr (float): Irreducible water saturation for capillary pressure
-        swl (float): First water saturation point in outputted tables.
-        swcr (float): Critical water saturation, water is immobile below this
-        sgrw (float): Residual gas saturation after water flooding.
-        sgcr (float): Critical gas saturation, gas is immobile below this
-        h (float): Saturation intervals in generated tables.
-        tag (str): Optional text that will be included as comments.
-        fast (bool): Set to True if you prefer speed over robustness. Not recommended,
+        swirr: Irreducible water saturation for capillary pressure
+        swl: First water saturation point in outputted tables.
+        swcr: Critical water saturation, water is immobile below this
+        sgrw: Residual gas saturation after water flooding.
+        sgcr: Critical gas saturation, gas is immobile below this
+        h: Saturation intervals in generated tables.
+        tag: Optional text that will be included as comments.
+        fast: Set to True if you prefer speed over robustness. Not recommended,
             pyscal will not guarantee valid output in this mode.
     """
 
     def __init__(
         self,
-        swirr=0,
-        swl=0.0,
-        swcr=0.0,
-        sgrw=0.0,
-        sgcr=0,
-        h=0.01,
-        tag="",
-        fast=False,
-    ):
+        swirr: float = 0,
+        swl: float = 0.0,
+        swcr: float = 0.0,
+        sgrw: float = 0.0,
+        sgcr: float = 0,
+        h: Optional[float] = None,
+        tag: str = "",
+        fast: bool = False,
+    ) -> None:
         """Sets up the saturation range for a GasWater object,
         by initializing one WaterOil and one GasOil object, with
         endpoints set to fit with the GasWater proxy object."""
-        self.fast = fast
+        self.fast: bool = fast
 
-        self.wateroil = WaterOil(
+        if h is None:
+            h = 0.01
+
+        self.wateroil: WaterOil = WaterOil(
             swirr=swirr,
             swl=swl,
             swcr=swcr,
@@ -66,11 +70,11 @@ class GasWater(object):
             _sgcr=sgcr,
         )
 
-        self.sgcr = sgcr
-        self.sgrw = sgrw
+        self.sgcr: float = sgcr
+        self.sgrw: float = sgrw
         # (remaining parameters are implemented as property functions)
 
-        self.gasoil = GasOil(
+        self.gasoil: GasOil = GasOil(
             swirr=swirr,  # Reserved for use in capillary pressure
             sgcr=sgcr,
             sorg=0,  # Irrelevant for GasWater
@@ -85,22 +89,21 @@ class GasWater(object):
         self.wateroil.add_corey_oil()
         self.gasoil.add_corey_oil()
 
-    def selfcheck(self):
+    def selfcheck(self) -> bool:
         """Run selfcheck on the data.
 
         Performs tests if necessary data is ready in the object for
         printing Eclipse include files, and checks some numerical
         properties (direction and monotonicity)
-
-        Returns:
-            bool
         """
         if self.wateroil is not None and self.gasoil is not None:
             return self.wateroil.selfcheck() and self.gasoil.selfcheck()
         logger.error("None objects in GasWater (bug)")
         return False
 
-    def add_corey_water(self, nw=2, krwend=1, krwmax=None):
+    def add_corey_water(
+        self, nw: float = 2.0, krwend: float = 1.0, krwmax: Optional[float] = None
+    ) -> None:
         """Add krw data through the Corey parametrization
 
         A column named 'krw' will be added. If it exists, it will
@@ -112,25 +115,32 @@ class GasWater(object):
         krwmax will be ignored if sgrw is close to zero
 
         Args:
-            nw (float): Corey parameter for water.
-            krwend (float): value of krw at 1 - sorw.
-            krwmax (float): maximal value at Sw=1. Default 1
+            nw: Corey parameter for water.
+            krwend: value of krw at 1 - sorw.
+            krwmax: maximal value at Sw=1. Default 1
         """
         self.wateroil.add_corey_water(nw, krwend, krwmax)
 
-    def add_corey_gas(self, ng=2, krgend=1):
+    def add_corey_gas(self, ng: float = 2.0, krgend: float = 1.0) -> None:
         """Add krg data through the Corey parametrization
 
         A column named 'krg' will be added. If it exists, it will
         be replaced.
 
         Args:
-            ng (float): Corey parameter for gas
-            krgend (float): value of krg at swl.
+            ng: Corey parameter for gas
+            krgend: value of krg at swl.
         """
         self.gasoil.add_corey_gas(ng, krgend, krgmax=None)
 
-    def add_LET_water(self, l=2, e=2, t=2, krwend=1, krwmax=None):
+    def add_LET_water(
+        self,
+        l: float = 2.0,
+        e: float = 2.0,
+        t: float = 2.0,
+        krwend: float = 1.0,
+        krwmax: Optional[float] = None,
+    ) -> None:
         """Add krw data through LET parametrization
 
         The LET model applies for sw < 1 - sgrw. For higher
@@ -139,40 +149,58 @@ class GasWater(object):
         krwmax will be ignored if sorw is close to zero.
 
         Args:
-            l (float): LET parameter
-            e (float): LET parameter
-            t (float): LET parameter
-            krwend (float): value of krw at 1 - sorw
-            krwmax (float): maximal value at Sw=1. Default 1
+            l: LET parameter
+            e: LET parameter
+            t: LET parameter
+            krwend: value of krw at 1 - sorw
+            krwmax: maximal value at Sw=1. Default 1
         """
         self.wateroil.add_LET_water(l, e, t, krwend, krwmax)
 
-    def add_LET_gas(self, l=2, e=2, t=2, krgend=1):
+    def add_LET_gas(
+        self, l: float = 2.0, e: float = 2.0, t: float = 2.0, krgend: float = 1.0
+    ) -> None:
         """Add krg data through the LET parametrization
 
         A column named 'krg' will be added. If it exists, it will
         be replaced.
 
         Args:
-            l (float): LET parameter
-            e (float): LET parameter
-            t (float): LET parameter
-            krgend (float): value of krg at swl
+            l: LET parameter
+            e: LET parameter
+            t: LET parameter
+            krgend: value of krg at swl
         """
         self.gasoil.add_LET_gas(l, e, t, krgend, krgmax=None)
 
     @is_documented_by(WaterOil.add_simple_J)
-    def add_simple_J(self, a=5, b=-1.5, poro_ref=0.25, perm_ref=100, drho=300, g=9.81):
+    def add_simple_J(
+        self,
+        a: float = 5.0,
+        b: float = -1.5,
+        poro_ref: float = 0.25,
+        perm_ref: float = 100.0,
+        drho: float = 300.0,
+        g: float = 9.81,
+    ) -> None:
         """Add a simple J-function, handed over to the WaterOil object"""
         self.wateroil.add_simple_J(a, b, poro_ref, perm_ref, drho, g)
 
     @is_documented_by(WaterOil.add_simple_J_petro)
-    def add_simple_J_petro(self, a, b, poro_ref=0.25, perm_ref=100, drho=300, g=9.81):
+    def add_simple_J_petro(
+        self,
+        a: float,
+        b: float,
+        poro_ref: float = 0.25,
+        perm_ref: float = 100.0,
+        drho: float = 300.0,
+        g: float = 9.81,
+    ) -> None:
         """Add a simple petrophysical variant of the J-function, handed
         over to the WaterOil object"""
         self.wateroil.add_simple_J_petro(a, b, poro_ref, perm_ref, drho, g)
 
-    def SWFN(self, header=True, dataincommentrow=True):
+    def SWFN(self, header: bool = True, dataincommentrow: bool = True):
         """Produce SWFN input to Eclipse
 
         The columns sw, krw and pc are outputted and formatted
@@ -204,7 +232,7 @@ class GasWater(object):
             crosspointcomment=crosspointcomment,
         )
 
-    def SGFN(self, header=True, dataincommentrow=True):
+    def SGFN(self, header: bool = True, dataincommentrow: bool = True):
         """Produce SGFN input for Eclipse reservoir simulator.
 
         The columns sg and krg are outputted and formatted accordingly.
@@ -234,7 +262,7 @@ class GasWater(object):
             crosspointcomment=crosspointcomment,
         )
 
-    def crosspoint(self):
+    def crosspoint(self) -> Optional[float]:
         """Calculate the sw value where krg == krw.
 
         Accuracy of this crosspoint depends on the resolution chosen
@@ -242,8 +270,8 @@ class GasWater(object):
         interpolation to solve for the zero)
 
         Returns:
-            float: the gas saturation where krw == krg, for relperm
-                linearly interpolated in water saturation.
+            The gas saturation where krw == krg, for relperm linearly
+            interpolated in water saturation.
         """
         if not {"SW", "KRW"}.issubset(self.wateroil.table.columns):
             logger.warning("Can't compute crosspoint when KRW is not present")
@@ -273,13 +301,13 @@ class GasWater(object):
     def plotkrwkrg(
         self,
         mpl_ax=None,
-        color="blue",
-        alpha=1,
-        linewidth=1,
-        linestyle="-",
-        marker=None,
-        label="",
-        logyscale=False,
+        color: str = "blue",
+        alpha: float = 1,
+        linewidth: int = 1,
+        linestyle: str = "-",
+        marker: Optional[str] = None,
+        label: str = "",
+        logyscale: bool = False,
     ):
         """Plot krw and krg
 
@@ -329,27 +357,27 @@ class GasWater(object):
             plt.show()
 
     @property
-    def swirr(self):
+    def swirr(self) -> float:
         """Get the swirr, irreducible water saturation used for pc-init"""
         return self.wateroil.swirr
 
     @property
-    def swl(self):
+    def swl(self) -> float:
         """Get the swl"""
         return self.wateroil.swl
 
     @property
-    def swcr(self):
+    def swcr(self) -> float:
         """Get the swcr"""
         return self.wateroil.swcr
 
     @property
-    def swcomment(self):
+    def swcomment(self) -> str:
         """Get a string representation of the endpoints used for water"""
         return self.wateroil.swcomment.replace("sorw", "sgrw")
 
     @property
-    def sgcomment(self):
+    def sgcomment(self) -> str:
         """Get a string representation of the endpoints used for gas"""
         return (
             self.gasoil.sgcomment.replace("sorg", "sgrw")
@@ -358,17 +386,17 @@ class GasWater(object):
         )
 
     @property
-    def krwcomment(self):
+    def krwcomment(self) -> str:
         """Get a string representation describing krw"""
         return self.wateroil.krwcomment
 
     @property
-    def krgcomment(self):
+    def krgcomment(self) -> str:
         """Get a string representation describing krg"""
         return self.gasoil.krgcomment
 
     @property
-    def tag(self):
+    def tag(self) -> str:
         """Get the user configured tag"""
         if self.wateroil.tag == self.gasoil.tag:
             return self.wateroil.tag
