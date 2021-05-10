@@ -116,7 +116,7 @@ class PyscalFactory(object):
 
     @staticmethod
     def create_water_oil(
-        params: Dict[str, float] = None, fast: bool = False
+        params: Optional[Dict[str, float]] = None, fast: bool = False
     ) -> WaterOil:
         """Create a WaterOil object from a dictionary of parameters.
 
@@ -295,7 +295,9 @@ class PyscalFactory(object):
         return wateroil
 
     @staticmethod
-    def create_gas_oil(params: Dict[str, float] = None, fast: bool = False) -> GasOil:
+    def create_gas_oil(
+        params: Optional[Dict[str, float]] = None, fast: bool = False
+    ) -> GasOil:
         """Create a GasOil object from a dictionary of parameters.
 
         Parameterization (Corey/LET) is inferred from presence
@@ -401,7 +403,7 @@ class PyscalFactory(object):
 
     @staticmethod
     def create_water_oil_gas(
-        params: Dict[str, float] = None, fast: bool = False
+        params: Optional[Dict[str, float]] = None, fast: bool = False
     ) -> WaterOilGas:
         """Create a WaterOilGas object from a dictionary of parameters
 
@@ -459,7 +461,7 @@ class PyscalFactory(object):
 
     @staticmethod
     def create_gas_water(
-        params: Dict[str, float] = None, fast: bool = False
+        params: Optional[Dict[str, float]] = None, fast: bool = False
     ) -> GasWater:
         """Create a GasWater object.
 

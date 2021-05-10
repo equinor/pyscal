@@ -71,6 +71,7 @@ setup(
         "Programming Language :: Python :: 3.8",
     ],
     packages=find_packages(),
+    package_data={"pyscal": ["py.typed"]},
     zip_safe=False,
     test_suite="tests",
     install_requires=REQUIREMENTS,
