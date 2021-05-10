@@ -42,11 +42,11 @@ class GasWater(object):
 
     def __init__(
         self,
-        swirr: float = 0,
+        swirr: float = 0.0,
         swl: float = 0.0,
         swcr: float = 0.0,
         sgrw: float = 0.0,
-        sgcr: float = 0,
+        sgcr: float = 0.0,
         h: Optional[float] = None,
         tag: str = "",
         fast: bool = False,
