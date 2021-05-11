@@ -1,15 +1,14 @@
 """Monotonocity support functions for pyscal"""
 
+import sys
 import logging
 from typing import Union, List, Dict
 
-try:
-    # Python 3.8+
-    # pylint: disable=ungrouped-imports
-    from typing import TypedDict  # type: ignore
-except ImportError:
-    # Python < 3.8
-    from typing_extensions import TypedDict  # type: ignore
+# pylint: disable=wrong-import-position
+if sys.version_info >= (3, 8):
+    from typing import TypedDict
+else:
+    from typing_extensions import TypedDict
 
 import numpy as np
 import pandas as pd
