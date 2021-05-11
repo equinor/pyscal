@@ -1,7 +1,7 @@
 """Monotonocity support functions for pyscal"""
 
 import logging
-from typing import Union, List
+from typing import Union, List, TypedDict, Dict
 
 import numpy as np
 import pandas as pd
@@ -12,8 +12,28 @@ from pyscal.constants import EPSILON as epsilon
 logger = logging.getLogger(__name__)
 
 
+class MonotonicitySpec(TypedDict, total=False):
+    """Specification of monotonicity for a vector of values"""
+
+    """Value of +1 dictates strictly increasing,
+    value of -1 dictates scrictly decreasing"""
+    sign: int
+
+    """Values will be clipped at upper limit, and non-strict monotonicity is
+    allowed at limit"""
+    upper: float
+
+    """Values will be clipped at lower limit, and non-strict monotonicity is
+    allowed at limit"""
+    lower: float
+
+    """If True, consecutive zeros will be allowes in an otherwise strictly
+    monotonic column"""
+    allowzero: bool
+
+
 def modify_dframe_monotonicity(
-    dframe: pd.DataFrame, monotonicity: dict, digits: int
+    dframe: pd.DataFrame, monotonicity: Dict[str, MonotonicitySpec], digits: int
 ) -> pd.DataFrame:
     """Modify a dataframe for monotonicity.
 
@@ -122,7 +142,7 @@ def modify_dframe_monotonicity(
 
 
 def clip_accumulate(
-    series: Union[List[float], pd.Series, np.ndarray], monotonicity: dict
+    series: Union[List[float], pd.Series, np.ndarray], monotonicity: MonotonicitySpec
 ) -> np.ndarray:
     """
     Modify a series (vector of numbers) for non-strict monotonicity, and
@@ -155,7 +175,7 @@ def clip_accumulate(
 
 def check_limits(
     series: Union[List[float], pd.Series, np.ndarray],
-    monotonicity: dict,
+    monotonicity: MonotonicitySpec,
     colname: str = "",
 ) -> None:
     """
@@ -182,7 +202,9 @@ def check_limits(
         raise ValueError("Values smaller than lower limit in column {}".format(colname))
 
 
-def rows_to_be_fixed(series: pd.Series, monotonicity: dict, digits: int) -> pd.Series:
+def rows_to_be_fixed(
+    series: pd.Series, monotonicity: MonotonicitySpec, digits: int
+) -> pd.Series:
     """Compute boolean array of rows that must be modified
 
     Args:
@@ -235,7 +257,9 @@ def check_almost_monotone(series: pd.Series, digits: int, sign: int) -> None:
             raise ValueError("Series is not almost monotone")
 
 
-def validate_monotonicity_arg(monotonicity: dict, dframe_colnames: List[str]) -> None:
+def validate_monotonicity_arg(
+    monotonicity: Dict[str, MonotonicitySpec], dframe_colnames: List[str]
+) -> None:
     """
     Validate a dictionary with monotonicity arguments that
     can be given to df2str().
@@ -243,8 +267,8 @@ def validate_monotonicity_arg(monotonicity: dict, dframe_colnames: List[str]) ->
     Will raise ValueError exceptions if anything is wrong.
 
     Args:
-        monotonicity: Keys are 'sign', 'upper', 'lower'
-            and  'allowzero'.
+        monotonicity: Pr each column, keys are 'sign', 'upper',
+            'lower' and 'allowzero'.
         dframe_colnames: Names of column names
             in dframes. Used in error messages.
     """

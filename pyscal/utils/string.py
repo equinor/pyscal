@@ -1,10 +1,11 @@
 """Utility functions for creating strings from pyscal"""
 
 import logging
+from typing import Dict, Optional
 
 import pandas as pd
 
-from .monotonicity import modify_dframe_monotonicity
+from .monotonicity import modify_dframe_monotonicity, MonotonicitySpec
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +15,7 @@ def df2str(
     digits: int = 7,
     roundlevel: int = 9,
     header: bool = False,
-    monotonicity: dict = None,
+    monotonicity: Optional[Dict[str, MonotonicitySpec]] = None,
 ) -> str:
     """
     Make a string representation of a dataframe with
