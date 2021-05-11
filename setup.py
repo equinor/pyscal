@@ -22,6 +22,7 @@ REQUIREMENTS = [
     "openpyxl",
     "pandas",
     "scipy",
+    "typing-extensions>=3.7; python_version<'3.8'",
     "xlrd",
 ]
 TEST_REQUIREMENTS = [
