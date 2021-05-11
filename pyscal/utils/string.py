@@ -39,11 +39,8 @@ def df2str(
         roundlevel: To how many digits should we round prior to print.
             Recommended to be > digits + 1, see test code.
         header: If the dataframe column header should be included
-        monotonicity: Settings for monotonicity in output. A dict
-            with column names as keys, with values being a dict with keys
-            "sign" (-1 or +1 integer) for direction,  "upper" and "lower" for
-            lower and upper limits (non-strict monotonicity is allowed at
-            these upper and lower limits).
+        monotonicity: Column names in dframe are the keys, pointing
+            to a specification for monotonicity to be enforced.
     """
     float_format = "%1." + str(digits) + "f"
 

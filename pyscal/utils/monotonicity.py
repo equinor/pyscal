@@ -15,21 +15,21 @@ logger = logging.getLogger(__name__)
 class MonotonicitySpec(TypedDict, total=False):
     """Specification of monotonicity for a vector of values"""
 
-    """Value of +1 dictates strictly increasing,
-    value of -1 dictates scrictly decreasing"""
     sign: int
+    """Value of +1 dictates strictly increasing,
+    value of -1 dictates scrictly decreasing. Required parameter."""
 
-    """Values will be clipped at upper limit, and non-strict monotonicity is
-    allowed at limit"""
     upper: float
+    """Values will be clipped at upper limit, and non-strict monotonicity is
+    allowed at limit. Optional parameter."""
 
-    """Values will be clipped at lower limit, and non-strict monotonicity is
-    allowed at limit"""
     lower: float
+    """Values will be clipped at lower limit, and non-strict monotonicity is
+    allowed at limit. Optional parameter."""
 
-    """If True, consecutive zeros will be allowes in an otherwise strictly
-    monotonic column"""
     allowzero: bool
+    """If True, consecutive zeros will be allowes in an otherwise strictly
+    monotonic column. Optional parameter."""
 
 
 def modify_dframe_monotonicity(
@@ -66,7 +66,7 @@ def modify_dframe_monotonicity(
 
     Args:
         dframe: Data to modify.
-        monotonicity: see df2str() for syntax.
+        monotonicity: Keys are column names
         digits: Number of digits to ensure monotonicity for.
     """
     validate_monotonicity_arg(monotonicity, dframe.columns)
@@ -150,8 +150,7 @@ def clip_accumulate(
 
     Args:
         series: Vector of numbers to modify
-        monotonicity: Monotonocity options. The keys 'lower' and 'upper'
-            can be provided for clipping the vector.
+        monotonicity:
 
     Returns:
         np.array, copy of original.
@@ -187,8 +186,7 @@ def check_limits(
 
     Args:
         series: Vector of numbers to check
-        monotonicity: Keys 'upper' and 'lower' are optional
-            and point to numerical limits.
+        monotonicity:
         colname: Optional string for a column name that will be
             included in any error message.
     """
@@ -209,9 +207,7 @@ def rows_to_be_fixed(
 
     Args:
         series:
-        monotonicity: Can contain "upper" or "lower"
-            numerical bounds, and "sign", where >0 means positive.
-            "sign" is mandatory.
+        monotonicity:
         digits: Accuracy required, how many digits
             that are to be printed, and to which we should relate
             constancy to.
@@ -267,8 +263,7 @@ def validate_monotonicity_arg(
     Will raise ValueError exceptions if anything is wrong.
 
     Args:
-        monotonicity: Pr each column, keys are 'sign', 'upper',
-            'lower' and 'allowzero'.
+        monotonicity: Keys are column names.
         dframe_colnames: Names of column names
             in dframes. Used in error messages.
     """
