@@ -2,6 +2,7 @@
 
 import math
 import logging
+from typing import Optional
 
 import numpy as np
 import pandas as pd
@@ -41,32 +42,32 @@ class WaterOil(object):
     Can be dumped as include files for Eclipse/OPM and Nexus simulators.
 
     Args:
-        swirr (float): Absolute minimal water saturation at infinite capillary
+        swirr: Absolute minimal water saturation at infinite capillary
             pressure.
-        swl (float): First water saturation point in generated table. Used
+        swl: First water saturation point in generated table. Used
             for normalized saturations.
-        swcr (float): Critical water saturation. Water will not be mobile before the
+        swcr: Critical water saturation. Water will not be mobile before the
             water saturation is above this value.
-        sorw (float): Residual oil saturation after water flooding. At this oil
+        sorw: Residual oil saturation after water flooding. At this oil
             saturation, the oil has zero relative permeability.
-        h (float): Saturation step-length in the outputted table.
-        tag (str): Optional string identifier, only used in comments.
-        fast (bool): Set to True if in order to skip some integrity checks
+        h: Saturation step-length in the outputted table.
+        tag: Optional string identifier, only used in comments.
+        fast: Set to True if in order to skip some integrity checks
             and nice-to-have features. Not needed to set for normal pyscal
             runs, as speed is seldom crucial. Default False
     """
 
     def __init__(
         self,
-        swirr=0.0,
-        swl=0.0,
-        swcr=0.0,
-        sorw=0.0,
-        h=0.01,
-        tag="",
-        fast=False,
-        _sgcr=None,
-    ):
+        swirr: float = 0.0,
+        swl: float = 0.0,
+        swcr: float = 0.0,
+        sorw: float = 0.0,
+        h: Optional[float] = None,
+        tag: str = "",
+        fast: bool = False,
+        _sgcr: float = None,
+    ) -> None:
         """Sets up the saturation range. Swirr is only relevant
         for the capillary pressure, not for relperm data.
 
@@ -77,8 +78,10 @@ class WaterOil(object):
         assert -epsilon < swl < 1.0 + epsilon
         assert -epsilon < swcr < 1.0 + epsilon
         assert -epsilon < sorw < 1.0 + epsilon
+
         if h is None:
             h = 0.01
+
         assert swl < 1 - sorw
         assert swcr < 1 - sorw
         assert swirr < 1 - sorw
@@ -173,16 +176,16 @@ class WaterOil(object):
 
     def add_fromtable(
         self,
-        dframe,
-        swcolname="SW",
-        krwcolname="KRW",
-        krowcolname="KROW",
-        pccolname="PCOW",
-        krwcomment="",
-        krowcomment="",
-        pccomment="",
-        sorw=None,
-    ):
+        dframe: pd.DataFrame,
+        swcolname: str = "SW",
+        krwcolname: str = "KRW",
+        krowcolname: str = "KROW",
+        pccolname: str = "PCOW",
+        krwcomment: str = "",
+        krowcomment: str = "",
+        pccomment: str = "",
+        sorw: Optional[float] = None,
+    ) -> None:
         """Interpolate relpermdata from a dataframe.
 
         The saturation range with endpoints must be set up beforehand,
@@ -204,15 +207,15 @@ class WaterOil(object):
         files to dataframes.
 
         Args:
-            dframe (pd.DataFrame): containing data
-            swcolname (string): column name with the saturation data in the dataframe df
-            krwcolname (string): name of column in df with krw
-            krowcolname (string): name of column in df with krow
-            pccolname (string): name of column in df with capillary pressure data
-            krwcomment (string): Inserted into comment
-            krowcomment (string): Inserted into comment
-            pccomment (str): Inserted into comment
-            sorw (float): Explicit sorw. If None, it will be estimated from
+            dframe: containing data
+            swcolname: column name with the saturation data in the dataframe df
+            krwcolname: name of column in df with krw
+            krowcolname: name of column in df with krow
+            pccolname: name of column in df with capillary pressure data
+            krwcomment: Inserted into comment
+            krowcomment: Inserted into comment
+            pccomment: Inserted into comment
+            sorw: Explicit sorw. If None, it will be estimated from
                 the numbers in krw (or krow)
         """
         # Avoid having to deal with multi-indices:
@@ -243,7 +246,7 @@ class WaterOil(object):
         if (dframe[swcolname].diff() < 0).any():
             raise ValueError("SW data not sorted")
         if krwcolname in dframe:
-            if not sorw:
+            if sorw is None:
                 sorw = dframe[swcolname].max() - estimate_diffjumppoint(
                     dframe, xcol=swcolname, ycol=krwcolname, side="right"
                 )
@@ -293,7 +296,7 @@ class WaterOil(object):
             self.swcr = self.estimate_swcr()
 
         if krowcolname in dframe:
-            if not sorw:
+            if sorw is None:
                 sorw = dframe[swcolname].max() - estimate_diffjumppoint(
                     dframe, xcol=swcolname, ycol=krowcolname, side="right"
                 )
@@ -364,7 +367,9 @@ class WaterOil(object):
                 raise ValueError("inf/nan in interpolated data, check input")
             self.pccomment = "-- pc from tabular input" + pccomment + "\n"
 
-    def add_corey_water(self, nw=2, krwend=1, krwmax=None):
+    def add_corey_water(
+        self, nw: float = 2.0, krwend: float = 1.0, krwmax: Optional[float] = None
+    ) -> None:
         """Add krw data through the Corey parametrization
 
         A column named 'krw' will be added. If it exists, it will
@@ -376,9 +381,9 @@ class WaterOil(object):
         krwmax will be ignored if sorw is close to zero
 
         Args:
-            nw (float): Corey parameter for water.
-            krwend (float): value of krw at 1 - sorw.
-            krwmax (float): maximal value at Sw=1. Default 1
+            nw: Corey parameter for water.
+            krwend: value of krw at 1 - sorw.
+            krwmax): maximal value at Sw=1. Default 1
         """
         assert 10 * epsilon < nw < MAX_EXPONENT
         if krwmax:
@@ -398,7 +403,9 @@ class WaterOil(object):
             krwmax,
         )
 
-    def set_endpoints_linearpart_krw(self, krwend, krwmax=None):
+    def set_endpoints_linearpart_krw(
+        self, krwend: float, krwmax: Optional[float] = None
+    ) -> None:
         """Set linear parts of krw outside endpoints.
 
         Curve will be linear from [1 - sorw, 1] (from krwmax to krwend)
@@ -408,8 +415,8 @@ class WaterOil(object):
         utility functions. It should not be necessary for end-users.
 
         Args:
-            krwend (float): krw at 1 - sorwr
-            krwmax (float): krw at Sw=1. Default 1.
+            krwend: krw at 1 - sorwr
+            krwmax: krw at Sw=1. Default 1.
         """
         # The rows and indices involved in the linear section [1-sorw, 1]:
         linear_section_rows = self.table["SW"] > (1 - self.sorw - epsilon)
@@ -441,7 +448,9 @@ class WaterOil(object):
         # Left linear section is all zero:
         self.table.loc[self.table["SW"] < self.swcr, "KRW"] = 0
 
-    def set_endpoints_linearpart_krow(self, kroend, kromax=None):
+    def set_endpoints_linearpart_krow(
+        self, kroend: float, kromax: Optional[float] = None
+    ) -> None:
         """Set linear parts of krow outside endpoints
 
         Curve will be zero in [1 - sorw, 1].
@@ -450,7 +459,7 @@ class WaterOil(object):
         utility functions. It should not be necessary for end-users.
 
         Args:
-            kroend (float): value of kro at swcr
+            kroend: value of kro at swcr
         """
         if kromax is not None:
             logger.error("kromax is DEPRECATED, ignored")
@@ -462,7 +471,14 @@ class WaterOil(object):
         # slightly bigger than krowend.
         self.table.loc[self.table["KROW"] > kroend, "KROW"] = kroend
 
-    def add_LET_water(self, l=2, e=2, t=2, krwend=1, krwmax=None):
+    def add_LET_water(
+        self,
+        l: float = 2.0,
+        e: float = 2.0,
+        t: float = 2.0,
+        krwend: float = 1.0,
+        krwmax: Optional[float] = None,
+    ) -> None:
         """Add krw data through LET parametrization
 
         The LET model applies for sw < 1 - sgrw. For higher
@@ -471,11 +487,11 @@ class WaterOil(object):
         krwmax will be ignored if sorw is close to zero.
 
         Args:
-            l (float): LET parameter
-            e (float): LET parameter
-            t (float): LET parameter
-            krwend (float): value of krw at 1 - sorw
-            krwmax (float): maximal value at Sw=1. Default 1
+            l: LET parameter
+            e: LET parameter
+            t: LET parameter
+            krwend: value of krw at 1 - sorw
+            krwmax: maximal value at Sw=1. Default 1
         """
         # Similar code in gasoil.add_LET_gas, but readability is
         # better by having them separate.
@@ -508,15 +524,22 @@ class WaterOil(object):
             krwmax,
         )
 
-    def add_LET_oil(self, l=2, e=2, t=2, kroend=1, kromax=None):
+    def add_LET_oil(
+        self,
+        l: float = 2.0,
+        e: float = 2.0,
+        t: float = 2.0,
+        kroend: float = 1,
+        kromax: Optional[float] = None,
+    ) -> None:
         """
         Add kro data through LET parametrization
 
         Args:
-            l (float): LET parameter
-            e (float): LET parameter
-            t (float): LET parameter
-            kroend (float): value of kro at swl
+            l: LET parameter
+            e: LET parameter
+            t: LET parameter
+            kroend: value of kro at swl
 
         Returns:
             None (modifies object)
@@ -548,7 +571,9 @@ class WaterOil(object):
             kroend,
         )
 
-    def add_corey_oil(self, now=2, kroend=1, kromax=None):
+    def add_corey_oil(
+        self, now: float = 2.0, kroend: float = 1.0, kromax: Optional[float] = None
+    ) -> None:
         """Add kro data through the Corey parametrization
 
         Corey applies to the interval between swcr and 1 - sorw
@@ -556,8 +581,8 @@ class WaterOil(object):
         Curve is linear between swl and swcr, zero above 1 - sorw.
 
         Args:
-            now (float): Corey exponent
-            kroend (float): kro value at swcr
+            now: Corey exponent
+            kroend: kro value at swcr
         Returns:
             None (modifies object)
         """
@@ -577,7 +602,15 @@ class WaterOil(object):
             kroend,
         )
 
-    def add_simple_J(self, a=5, b=-1.5, poro_ref=0.25, perm_ref=100, drho=300, g=9.81):
+    def add_simple_J(
+        self,
+        a: float = 5.0,
+        b: float = -1.5,
+        poro_ref: float = 0.25,
+        perm_ref: float = 100,
+        drho: float = 300,
+        g: float = 9.81,
+    ) -> None:
         # pylint: disable=anomalous-backslash-in-string
         r"""Add capillary pressure function from a simplified J-function
 
@@ -601,13 +634,13 @@ class WaterOil(object):
         of the WaterOil object.
 
         Args:
-            a (float): a coefficient
-            b (float): b coefficient
-            poro_ref (float): Reference porosity for scaling to Pc, between 0 and 1
-            perm_ref (float): Reference permeability for scaling to Pc, in milliDarcy
-            drho (float): Density difference between water and oil, in SI units kg/m³.
+            a: a coefficient
+            b: b coefficient
+            poro_ref: Reference porosity for scaling to Pc, between 0 and 1
+            perm_ref: Reference permeability for scaling to Pc, in milliDarcy
+            drho: Density difference between water and oil, in SI units kg/m³.
                 Default value is 300
-            g (float): Gravitational acceleration, in SI units m/s²,
+            g: Gravitational acceleration, in SI units m/s²,
                 default value is 9.81
 
         Returns:
@@ -642,7 +675,15 @@ class WaterOil(object):
             % (a, b, poro_ref, perm_ref, drho, g)
         )
 
-    def add_simple_J_petro(self, a, b, poro_ref=0.25, perm_ref=100, drho=300, g=9.81):
+    def add_simple_J_petro(
+        self,
+        a: float,
+        b: float,
+        poro_ref: float = 0.25,
+        perm_ref: float = 100,
+        drho: float = 300,
+        g: float = 9.81,
+    ) -> None:
         # pylint: disable=anomalous-backslash-in-string
         r"""Add capillary pressure function from a simplified J-function
 
@@ -666,13 +707,13 @@ class WaterOil(object):
         of the WaterOil object.
 
         Args:
-            a (float): a coefficient, petrophysical version
-            b (float): b coefficient, petrophysical version
-            poro_ref (float): Reference porosity for scaling to Pc, between 0 and 1
-            perm_ref (float): Reference permeability for scaling to Pc, in milliDarcy
-            drho (float): Density difference between water and oil, in SI units kg/m³.
+            a: a coefficient, petrophysical version
+            b: b coefficient, petrophysical version
+            poro_ref: Reference porosity for scaling to Pc, between 0 and 1
+            perm_ref: Reference permeability for scaling to Pc, in milliDarcy
+            drho: Density difference between water and oil, in SI units kg/m³.
                 Default value is 300
-            g (float): Gravitational acceleration, in SI units m/s²,
+            g: Gravitational acceleration, in SI units m/s²,
                 default value is 9.81
 
         Returns:
@@ -707,7 +748,9 @@ class WaterOil(object):
             % (a, b, poro_ref, perm_ref, drho, g)
         )
 
-    def add_normalized_J(self, a, b, poro, perm, sigma_costau):
+    def add_normalized_J(
+        self, a: float, b: float, poro: float, perm: float, sigma_costau: float
+    ) -> None:
         # Don't make this a raw string to avoid the \l warning,
         # it destroys the Latex-formatting in sphinx
         # pylint: disable=anomalous-backslash-in-string
@@ -723,11 +766,11 @@ class WaterOil(object):
         to the swirr parameter.
 
         Args:
-            a (float): a parameter
-            b (float): b exponent (typically negative)
-            poro (float): Porosity value, fraction between 0 and 1
-            perm (float): Permeability value in mD
-            sigma_costau (float): Interfacial tension in mN/m (typical value 30 mN/m)
+            a: a parameter
+            b: b exponent (typically negative)
+            poro: Porosity value, fraction between 0 and 1
+            perm: Permeability value in mD
+            sigma_costau: Interfacial tension in mN/m (typical value 30 mN/m)
 
         Returns:
             None. Modifies pc column in self.table, using bar as pressure unit.
@@ -772,7 +815,15 @@ class WaterOil(object):
             % (a, b, poro, perm, sigma_costau)
         )
 
-    def add_skjaeveland_pc(self, cw, co, aw, ao, swr=None, sor=None):
+    def add_skjaeveland_pc(
+        self,
+        cw: float,
+        co: float,
+        aw: float,
+        ao: float,
+        swr: Optional[float] = None,
+        sor: Optional[float] = None,
+    ):
         # pylint: disable=line-too-long
         """Add capillary pressure from the Skjæveland correlation,
 
@@ -836,7 +887,17 @@ class WaterOil(object):
         # the non-monotonicity be fixed in the output generators.
         self.table["PC"].fillna(method="ffill", inplace=True)
 
-    def add_LET_pc_pd(self, Lp, Ep, Tp, Lt, Et, Tt, Pcmax, Pct):
+    def add_LET_pc_pd(
+        self,
+        Lp: float,
+        Ep: float,
+        Tp: float,
+        Lt: float,
+        Et: float,
+        Tt: float,
+        Pcmax: float,
+        Pct: float,
+    ) -> None:
         # pylint: disable=line-too-long
         """Add a primary drainage LET capillary pressure curve.
 
@@ -876,7 +937,18 @@ class WaterOil(object):
             % (Lp, Ep, Tp, Lt, Et, Tt, Pcmax, Pct)
         )
 
-    def add_LET_pc_imb(self, Ls, Es, Ts, Lf, Ef, Tf, Pcmax, Pcmin, Pct):
+    def add_LET_pc_imb(
+        self,
+        Ls: float,
+        Es: float,
+        Ts: float,
+        Lf: float,
+        Ef: float,
+        Tf: float,
+        Pcmax: float,
+        Pcmin: float,
+        Pct: float,
+    ) -> None:
         # pylint: disable=line-too-long
         """Add an imbition LET capillary pressure curve.
 
@@ -922,7 +994,7 @@ class WaterOil(object):
             % (Ls, Es, Ts, Lf, Ef, Tf, Pcmax, Pcmin, Pct)
         )
 
-    def estimate_sorw(self, curve="KRW"):
+    def estimate_sorw(self, curve: str = "KRW") -> float:
         """Estimate sorw of the current krw data.
 
         This is mostly relevant when add_fromtable() has been used.
@@ -939,11 +1011,11 @@ class WaterOil(object):
         zero before approaching sorw.
 
         Args:
-            curve (str): Colum name of column to use, default is krw.
+            curve: Colum name of column to use, default is krw.
                 If this is all linear, but krow is not, you might be better off
                 with krow
         Returns:
-            float: The estimated sorw.
+            The estimated sorw.
         """
         assert curve in self.table
         assert self.table[curve].sum() > 0
@@ -951,7 +1023,7 @@ class WaterOil(object):
             self.table, xcol="SW", ycol=curve, side="right"
         )
 
-    def estimate_swcr(self, curve="KRW"):
+    def estimate_swcr(self, curve: str = "KRW") -> float:
         """Estimate swcr of the current krw data.
 
         kwcr is estimated by searching for a linear part in krw upwards from sw=swl.
@@ -962,29 +1034,29 @@ class WaterOil(object):
         of your saturation interval.
 
         Args:
-            curve (str): Colum name of column to use, default is krow.
+            curve: Colum name of column to use, default is krow.
                 If this is all linear, but krw is not, you might be better off
                 with krw
         Returns:
-            float: The estimated sgcr.
+            The estimated sgcr.
         """
         assert curve in self.table
         assert self.table[curve].sum() > 0
         return estimate_diffjumppoint(self.table, xcol="SW", ycol=curve, side="left")
 
-    def crosspoint(self):
+    def crosspoint(self) -> float:
         """Locate and return the saturation point where krw = krow
 
         Accuracy of this crosspoint depends on the resolution chosen
         when initializing the saturation range
 
         Returns:
-            float: the water saturation where krw == krow, for relperm
-                linearly interpolated in water saturation.
+            The water saturation where krw == krow, for relperm
+            linearly interpolated in water saturation.
         """
         return crosspoint(self.table, "SW", "KRW", "KROW")
 
-    def selfcheck(self, mode="SWOF"):
+    def selfcheck(self, mode: str = "SWOF") -> bool:
         """Check validities of the data in the table.
 
         An unfinished object will return False.
@@ -995,7 +1067,7 @@ class WaterOil(object):
         the error and give an error.
 
         Args:
-            mode (str): "SWOF" or "SWFN". If SWFN, krow is not required.
+            mode: "SWOF" or "SWFN". If SWFN, krow is not required.
         """
         error = False
         if "KRW" not in self.table:
@@ -1046,7 +1118,7 @@ class WaterOil(object):
         logger.debug("WaterOil object is checked to be valid")
         return True
 
-    def SWOF(self, header=True, dataincommentrow=True):
+    def SWOF(self, header: bool = True, dataincommentrow: bool = True) -> str:
         """
         Produce SWOF input for Eclipse reservoir simulator.
 
@@ -1057,11 +1129,11 @@ class WaterOil(object):
         as Eclipse comments.
 
         Args:
-            header (bool): Indicate whether the SWOF string should
+            header: Indicate whether the SWOF string should
                 be emitted. If you have multiple SATNUMs, you should
                 set this to True only for the first (or False for all,
                 and emit the SWOF yourself). Default True
-            dataincommentrow (bool): Wheter metadata should
+            dataincommentrow: Wheter metadata should
                 be printed. Defualt True
 
         """
@@ -1106,8 +1178,12 @@ class WaterOil(object):
         return string
 
     def SWFN(
-        self, header=True, dataincommentrow=True, swcomment=None, crosspointcomment=None
-    ):
+        self,
+        header: bool = True,
+        dataincommentrow: bool = True,
+        swcomment: Optional[str] = None,
+        crosspointcomment: Optional[str] = None,
+    ) -> str:
         """Return a SWFN keyword with data to Eclipse
 
         The columns sw, krw and pc are outputted and formatted
@@ -1123,9 +1199,9 @@ class WaterOil(object):
                 Defaults to True.
             dataincommentrow: boolean for wheter metadata should be printed,
                 defaults to True.
-            swcomment (str): String to be used for swcomment, overrides what
+            swcomment: String to be used for swcomment, overrides what
                 this object can provide. Used by GasWater
-            crosspointcomment (str): String to be used for crosspoint comment
+            crosspointcomment: String to be used for crosspoint comment
                 string, overrides what this object can provide. Used by GasWater.
                 If None, it will be computed, use empty string to avoid.
         """
@@ -1172,7 +1248,7 @@ class WaterOil(object):
         string += "/\n"  # Empty line at the end
         return string
 
-    def WOTABLE(self, header=True, dataincommentrow=True):
+    def WOTABLE(self, header: bool = True, dataincommentrow: bool = True) -> str:
         """Return a string for a Nexus WOTABLE"""
         string = ""
         if "PC" not in self.table.columns:
@@ -1214,13 +1290,13 @@ class WaterOil(object):
     def plotpc(
         self,
         mpl_ax=None,
-        color="blue",
-        alpha=1,
-        linewidth=1,
-        linestyle="-",
-        label="",
-        logyscale=False,
-    ):
+        color: str = "blue",
+        alpha: float = 1,
+        linewidth: int = 1,
+        linestyle: str = "-",
+        label: str = "",
+        logyscale: bool = False,
+    ) -> None:
         """Plot capillary pressure (pc)
 
         If mpl_ax is supplied, the curve will be drawn on
@@ -1256,14 +1332,14 @@ class WaterOil(object):
     def plotkrwkrow(
         self,
         mpl_ax=None,
-        color="blue",
-        alpha=1,
-        linewidth=1,
-        linestyle="-",
-        marker=None,
-        label="",
-        logyscale=False,
-    ):
+        color: str = "blue",
+        alpha: float = 1,
+        linewidth: float = 1,
+        linestyle: str = "-",
+        marker: Optional[str] = None,
+        label: str = "",
+        logyscale: bool = False,
+    ) -> None:
         """Plot krw and krow
 
         If the argument 'mpl_ax' is not supplied, a new plot

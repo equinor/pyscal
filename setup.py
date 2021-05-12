@@ -22,18 +22,21 @@ REQUIREMENTS = [
     "openpyxl",
     "pandas",
     "scipy",
+    "typing-extensions>=3.7; python_version<'3.8'",
     "xlrd",
 ]
 TEST_REQUIREMENTS = [
     "black>=20.8b0",
     "flake8",
     "hypothesis",
+    "mypy",
     "pre-commit",
     "pytest",
     "pytest-cov",
     "rstcheck",
     "sphinx",
     "sphinx-argparse",
+    "sphinx-autodoc-typehints",
     "sphinx_rtd_theme",
 ]
 SETUP_REQUIREMENTS = ["pytest-runner", "setuptools >=28", "setuptools_scm"]
@@ -69,6 +72,7 @@ setup(
         "Programming Language :: Python :: 3.8",
     ],
     packages=find_packages(),
+    package_data={"pyscal": ["py.typed"]},
     zip_safe=False,
     test_suite="tests",
     install_requires=REQUIREMENTS,

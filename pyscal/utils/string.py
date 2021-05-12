@@ -1,21 +1,22 @@
 """Utility functions for creating strings from pyscal"""
 
 import logging
+from typing import Dict, Optional
 
-from .monotonicity import modify_dframe_monotonicity
+import pandas as pd
+
+from .monotonicity import modify_dframe_monotonicity, MonotonicitySpec
 
 logger = logging.getLogger(__name__)
 
 
 def df2str(
-    dframe,
-    digits=7,
-    roundlevel=9,
-    header=False,
-    monotonicity=None,
-    monotone_column=None,
-    monotone_direction=None,
-):
+    dframe: pd.DataFrame,
+    digits: int = 7,
+    roundlevel: int = 9,
+    header: bool = False,
+    monotonicity: Optional[Dict[str, MonotonicitySpec]] = None,
+) -> str:
     """
     Make a string representation of a dataframe with
     proper rounding.
@@ -29,20 +30,17 @@ def df2str(
     ensured to be strictly monotone decreasing
 
     Args:
-        dframe (pd.DataFrame): A dataframe to print, all columns
+        dframe: A dataframe to print, all columns
             are included
-        digits (int): Number of digits used in floating point format f.ex ".7f"
+        digits: Number of digits used in floating point format f.ex ".7f"
             It is not recommended to deviate from the default 7 uncritically
             for pyscal output, other code have to be tuned to ensure
             numerical robustness to the deviation.
-        roundlevel (int): To how many digits should we round prior to print.
+        roundlevel: To how many digits should we round prior to print.
             Recommended to be > digits + 1, see test code.
-        header (bool): If the dataframe column header should be included
-        monotonicity (dict): Settings for monotonicity in output. A dict
-            with column names as keys, with values being a dict with keys
-            "sign" (-1 or +1 integer) for direction,  "upper" and "lower" for
-            lower and upper limits (non-strict monotonicity is allowed at
-            these upper and lower limits).
+        header: If the dataframe column header should be included
+        monotonicity: Column names in dframe are the keys, pointing
+            to a specification for monotonicity to be enforced.
     """
     float_format = "%1." + str(digits) + "f"
 
@@ -54,17 +52,17 @@ def df2str(
     )
 
 
-def comment_formatter(multiline, prefix="-- "):
+def comment_formatter(multiline: str, prefix: str = "-- "):
     """Prepends comment characters to every line in input
 
     Args:
-        multiline (str): String that can contain newlines
-        prefix (str): Comment characters to prepend every line with
+        multiline: String that can contain newlines
+        prefix: Comment characters to prepend every line with
             Default is the Eclipse comment syntax '-- '
 
     Returns:
-        string, with newlines preserved, and where each line
-            starts with the given prefix. Always ends with a newline.
+        string with newlines preserved, and where each line
+        starts with the given prefix. Always ends with a newline.
     """
     if multiline is None or not multiline.strip():
         # Ensure we indicate that there is placeholder for something.

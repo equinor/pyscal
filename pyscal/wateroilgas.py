@@ -3,6 +3,7 @@
 import logging
 import numpy as np
 import pandas as pd
+from typing import Optional
 
 import pyscal
 from pyscal.constants import SWINTEGERS
@@ -30,48 +31,45 @@ class WaterOilGas(object):
     in case of only two phases present.
 
     Args:
-        swirr (float): Irreducible water saturation for capillary pressure
-        swl (float): First water saturation point in outputted tables.
-        swcr (float): Critical water saturation, water is immobile below this
-        sorw (float): Residual oil saturation
-        sgcr (float): Critical gas saturation, gas is immobile below this
-        h (float): Saturation intervals in generated tables.
-        tag (str): Optional text that will be included as comments.
-        fast (bool): Set to True if you prefer speed over robustness. Not recommended,
+        swirr: Irreducible water saturation for capillary pressure
+        swl: First water saturation point in outputted tables.
+        swcr: Critical water saturation, water is immobile below this
+        sorw: Residual oil saturation
+        sgcr: Critical gas saturation, gas is immobile below this
+        h: Saturation intervals in generated tables.
+        tag: Optional text that will be included as comments.
+        fast: Set to True if you prefer speed over robustness. Not recommended,
             pyscal will not guarantee valid output in this mode.
     """
 
     def __init__(
         self,
-        swirr=0,
-        swl=0.0,
-        swcr=0.0,
-        sorw=0.00,
-        sorg=0,
-        sgcr=0,
-        h=0.01,
-        tag="",
-        fast=False,
-    ):
+        swirr: float = 0.0,
+        swl: float = 0.0,
+        swcr: float = 0.0,
+        sorw: float = 0.0,
+        sorg: float = 0.0,
+        sgcr: float = 0.0,
+        h: Optional[float] = None,
+        tag: str = "",
+        fast: bool = False,
+    ) -> None:
         """Sets up the saturation range for three phases"""
-        self.fast = fast
-        self.wateroil = WaterOil(
+        self.fast: bool = fast
+        self.wateroil: Optional[WaterOil] = WaterOil(
             swirr=swirr, swl=swl, swcr=swcr, sorw=sorw, h=h, tag=tag, fast=fast
         )
-        self.gasoil = GasOil(
+        self.gasoil: Optional[GasOil] = GasOil(
             swirr=swirr, sgcr=sgcr, sorg=sorg, swl=swl, h=h, tag=tag, fast=fast
         )
 
-    def selfcheck(self):
+    def selfcheck(self) -> bool:
         """Run selfcheck on both wateroil and gasoil.
 
         Returns true only if both passes if both are present.
 
         If only wateroil or gasoil is present (the other
         being None, only the relevant is checked.
-
-        Returns:
-            bool
         """
         if self.wateroil is not None and self.gasoil is not None:
             return self.wateroil.selfcheck() and self.gasoil.selfcheck()
@@ -82,7 +80,7 @@ class WaterOilGas(object):
         logger.error("Both wateroil and gasoil are None in WaterOilGas")
         return False
 
-    def SWOF(self, header=True, dataincommentrow=True):
+    def SWOF(self, header: bool = True, dataincommentrow: bool = True) -> str:
         """Return a SWOF string. Delegated to the wateroil object"""
         if self.wateroil is None:
             logger.error("No WaterOil object in this WaterOilGas object")
@@ -92,7 +90,7 @@ class WaterOilGas(object):
             return ""
         return self.wateroil.SWOF(header, dataincommentrow)
 
-    def SGOF(self, header=True, dataincommentrow=True):
+    def SGOF(self, header: bool = True, dataincommentrow: bool = True) -> str:
         """Return a SGOF string. Delegated to the gasoil object."""
         if self.gasoil is None:
             logger.error("No GasOil object in this WaterOilGas object")
@@ -102,7 +100,7 @@ class WaterOilGas(object):
             return ""
         return self.gasoil.SGOF(header, dataincommentrow)
 
-    def SLGOF(self, header=True, dataincommentrow=True):
+    def SLGOF(self, header: bool = True, dataincommentrow: bool = True) -> str:
         """Return a SLGOF string. Delegated to the gasoil object."""
         if self.gasoil is None:
             logger.error("No GasOil object in this WaterOilGas object")
@@ -112,7 +110,7 @@ class WaterOilGas(object):
             return ""
         return self.gasoil.SLGOF(header, dataincommentrow)
 
-    def SGFN(self, header=True, dataincommentrow=True):
+    def SGFN(self, header: bool = True, dataincommentrow: bool = True) -> str:
         """Return a SGFN string. Delegated to the gasoil object."""
         if self.gasoil is None:
             logger.error("No GasOil object in this WaterOilGas object")
@@ -122,7 +120,7 @@ class WaterOilGas(object):
             return ""
         return self.gasoil.SGFN(header, dataincommentrow)
 
-    def SWFN(self, header=True, dataincommentrow=True):
+    def SWFN(self, header: bool = True, dataincommentrow: bool = True) -> str:
         """Return a SWFN string. Delegated to the wateroil object."""
         if self.wateroil is None:
             logger.error("No WaterOil object in this WaterOilGas object")
@@ -132,14 +130,16 @@ class WaterOilGas(object):
             return ""
         return self.wateroil.SWFN(header, dataincommentrow)
 
-    def SOF3(self, header=True, dataincommentrow=True):
+    def SOF3(self, header: bool = True, dataincommentrow: bool = True) -> str:
         """Return a SOF3 string, combining data from the wateroil and
         gasoil objects.
 
         So - the oil saturation ranges from 0 to 1-swl. The saturation points
         from the WaterOil object is used to generate these
         """
-        if "KROW" not in self.wateroil.table or "KROG" not in self.gasoil.table:
+        if (self.wateroil is None or self.gasoil is None) or (
+            "KROW" not in self.wateroil.table or "KROG" not in self.gasoil.table
+        ):
             logger.error("Both WaterOil and GasOil krow/krog is needed for SOF3")
             return ""
         self.threephaseconsistency()
@@ -204,34 +204,48 @@ class WaterOilGas(object):
         return string
 
     @property
-    def swirr(self):
+    def swirr(self) -> float:
         """Get the swirr used for the WaterOil object"""
+        if self.wateroil is None:
+            raise ValueError("wateroil is None in WaterOilGas object")
         return self.wateroil.swirr
 
     @property
-    def swl(self):
+    def swl(self) -> float:
         """Get the swl used for the WaterOil object"""
+        if self.wateroil is None:
+            raise ValueError("wateroil is None in WaterOilGas object")
         return self.wateroil.swl
 
     @property
-    def sorg(self):
+    def sorg(self) -> float:
         """Get the sorg used in the GasOil object"""
+        if self.gasoil is None:
+            raise ValueError("gasoil is None in WaterOilGas object")
         return self.gasoil.sorg
 
     @property
-    def sorw(self):
+    def sorw(self) -> float:
         """Get the sorw used for the WaterOil object"""
+        if self.wateroil is None:
+            raise ValueError("wateroil is None in WaterOilGas object")
         return self.wateroil.sorw
 
     @property
-    def tag(self):
+    def tag(self) -> str:
         """Get the tag, a combination of the tags in WaterOil
         and GasOil only if they are different"""
-        if self.wateroil.tag == self.gasoil.tag:
+        if self.wateroil is not None and self.gasoil is not None:
+            if self.wateroil.tag == self.gasoil.tag:
+                return self.wateroil.tag
+            return self.wateroil.tag + " " + self.gasoil.tag
+        if self.wateroil is not None:
             return self.wateroil.tag
-        return self.wateroil.tag + " " + self.gasoil.tag
+        if self.gasoil is not None:
+            return self.gasoil.tag
+        return ""
 
-    def threephaseconsistency(self):
+    def threephaseconsistency(self) -> bool:
         """Perform consistency checks on produced curves, similar
         to what Eclipse does at startup.
 
@@ -241,12 +255,6 @@ class WaterOilGas(object):
         "Errors" from this function should be treated as
         warnings, as false positives from this function should
         not have breaking consequences.
-
-        Args:
-            None, examines self.
-
-        Returns:
-            bool - True if this function approves the data
         """
 
         # Eclipse errors:

@@ -1,6 +1,8 @@
 """Common functions and mock data for usage in pyscal testing"""
 
 import io
+from typing import Union
+
 import numpy as np
 import pandas as pd
 
@@ -8,7 +10,7 @@ import pandas as pd
 from pyscal import WaterOil, GasOil
 
 
-def series_decreasing(series):
+def series_decreasing(series: pd.Series):
     """Weaker than pd.Series.is_monotonic_decreasing,
     allows constant parts.
 
@@ -20,12 +22,12 @@ def series_decreasing(series):
     return (series.diff().dropna() < 1e-8).all()
 
 
-def series_increasing(series):
+def series_increasing(series: pd.Series):
     """Weaker than pd.Series.is_monotonic_increasing"""
     return (series.diff().dropna() > -1e-8).all()
 
 
-def sat_table_str_ok(sat_table_str):
+def sat_table_str_ok(sat_table_str: str) -> None:
     """Test that a supplied string from SWOF()/SGOF() etc is
     probably ok for Eclipse.
 
@@ -93,7 +95,7 @@ def sat_table_str_ok(sat_table_str):
         assert 0 <= dframe[2].min() <= dframe[2].max() <= 1
 
 
-def check_table(dframe):
+def check_table(dframe: pd.DataFrame) -> None:
     """Check that the numbers in a dataframe for WaterOil or GasOil
     has the properties that Eclipse enforces"""
     assert not dframe.empty
@@ -136,13 +138,13 @@ def check_table(dframe):
         assert (dframe["KRG"] <= 1.0).all()
 
 
-def check_linear_sections(wo_or_go):
+def check_linear_sections(wo_or_go: Union[WaterOil, GasOil]) -> None:
     """Check that the linear segments of a WaterOil or a GasOil
     object are linear."""
     if isinstance(wo_or_go, WaterOil):
         sat_col = "SW"
-        right_start = 1 - wo_or_go.sorw
-        right_end = 1
+        right_start = 1.0 - wo_or_go.sorw
+        right_end = 1.0
         right_lin_cols = ["KROW", "KRW"]
         left_lin_cols = ["KRW"]
         left_start = wo_or_go.swl
@@ -150,15 +152,15 @@ def check_linear_sections(wo_or_go):
     if isinstance(wo_or_go, GasOil):
         sat_col = "SG"
         if wo_or_go.krgendanchor == "sorg":
-            right_start = 1 - wo_or_go.sorg - wo_or_go.swl
+            right_start = 1.0 - wo_or_go.sorg - wo_or_go.swl
         else:
             # If not krgendanchor=sorg, then there is no linear
             # segment to the right.
-            right_start = 1 - wo_or_go.swl
-        right_end = 1 - wo_or_go.swl
+            right_start = 1.0 - wo_or_go.swl
+        right_end = 1.0 - wo_or_go.swl
         right_lin_cols = ["KROG", "KRG"]
         left_lin_cols = ["KRG"]
-        left_start = 0
+        left_start = 0.0
         left_end = wo_or_go.sgcr
 
     right_lin_seg = wo_or_go.table[
@@ -179,7 +181,9 @@ def check_linear_sections(wo_or_go):
             assert left_lin_seg.iloc[1:-1][col].diff().std() < 1e-9
 
 
-def float_df_checker(dframe, idxcol, value, compcol, answer):
+def float_df_checker(
+    dframe: pd.DataFrame, idxcol: str, value: float, compcol: str, answer: float
+) -> Union[np.bool_, np.ndarray]:
     """Looks up in a dataframe, selects the row where idxcol=value
     and compares the value in compcol with answer
 

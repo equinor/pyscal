@@ -2,6 +2,7 @@
 
 import copy
 import logging
+from typing import Optional, Union, Set, Type
 
 import numpy as np
 
@@ -19,25 +20,36 @@ class SCALrecommendation(object):
     through 0 (base) and to 1 (high).
 
     Args:
-        low (WaterOilGas): An object representing the low case
-        base (WaterOilGas): An object representing the base case
-        high (WaterOilGas): An object representing the high case
-        tag (str): A string that describes the recommendation. Optional.
+        low: An object representing the low case
+        base: An object representing the base case
+        high: An object representing the high case
+        tag: A string that describes the recommendation. Optional.
     """
 
-    def __init__(self, low, base, high, tag=None, h=0.01):
+    def __init__(
+        self,
+        low: Union[WaterOilGas, GasWater],
+        base: Union[WaterOilGas, GasWater],
+        high: Union[WaterOilGas, GasWater],
+        tag: Optional[str] = None,
+        h: float = 0.01,
+    ) -> None:
         """Set up a SCAL recommendation curve set from WaterOilGas objects
 
         Arguments:
-            low (WaterOilGas): low case
-            base (WaterOilGas): base case
-            high (WaterOilGas): high case
-            tag (str): Describes the recommendation. This string will be used
+            low: low case
+            base: base case
+            high: high case
+            tag: Describes the recommendation. This string will be used
                 as tag strings for the interpolants.
         """
 
-        self.h = h
-        self.tag = tag
+        self.h: float = h
+        self.tag: Optional[str] = tag
+        self.low: Union[WaterOilGas, GasWater]
+        self.base: Union[WaterOilGas, GasWater]
+        self.high: Union[WaterOilGas, GasWater]
+        self.type: Type
 
         if (
             isinstance(low, WaterOilGas)
@@ -62,6 +74,7 @@ class SCALrecommendation(object):
         else:
             raise ValueError("Wrong arguments to SCALrecommendation")
 
+        self.fast: bool = False
         if all([self.low.fast, self.base.fast, self.high.fast]):
             self.fast = True
         elif any([self.low.fast, self.base.fast, self.high.fast]):
@@ -73,15 +86,24 @@ class SCALrecommendation(object):
                     "Code is run in normal mode."
                 )
             )
-        else:
-            self.fast = False
 
     # User should add capillary pressure explicitly by calling add**
     # on the class objects, or run the following method to add the
     # same to all curves:
-    def add_simple_J(self, a=5, b=-1.5, poro_ref=0.25, perm_ref=100, drho=300, g=9.81):
+    def add_simple_J(
+        self,
+        a: float = 5.0,
+        b: float = -1.5,
+        poro_ref: float = 0.25,
+        perm_ref: float = 100.0,
+        drho: float = 300.0,
+        g: float = 9.81,
+    ) -> None:
         """Add (identical) simplified J-function to all water-oil
         curves in the SCAL recommendation set"""
+        assert self.low.wateroil is not None
+        assert self.base.wateroil is not None
+        assert self.high.wateroil is not None
         self.low.wateroil.add_simple_J(
             a=a, b=b, poro_ref=poro_ref, perm_ref=perm_ref, drho=drho, g=g
         )
@@ -92,7 +114,12 @@ class SCALrecommendation(object):
             a=a, b=b, poro_ref=poro_ref, perm_ref=perm_ref, drho=drho, g=g
         )
 
-    def interpolate(self, parameter, parameter2=None, h=0.02):
+    def interpolate(
+        self,
+        parameter: float,
+        parameter2: Optional[float] = None,
+        h: Optional[float] = None,
+    ) -> Union[WaterOilGas, GasWater]:
         """Interpolate between low, base and high
 
         Endpoints are located for input curves, and interpolated
@@ -107,12 +134,12 @@ class SCALrecommendation(object):
         parametrize the interpolant in L,E,T parameter space, or Corey-space.
 
         Args:
-            parameter (float): Between -1 and 1, inclusive. -1 reproduces low/
+            parameter: Between -1 and 1, inclusive. -1 reproduces low/
                 pessimistic curve, 0 gives base, 1 gives high/optimistic.
-            parameter2 (float): If not None, used for the gas-oil interpolation,
+            parameter2: If not None, used for the gas-oil interpolation,
                 enables having interpolation uncorrelated for WaterOil and
                 GasOil. Ignored for GasWater (no warning).
-            h (float): Saturation step length in generated tables. Does not
+            h: Saturation step length in generated tables. Does not
                 need to be the same as the tables interpolation is done from.
         """
 
@@ -156,9 +183,12 @@ class SCALrecommendation(object):
 
         # Initialize wateroil and gasoil curves to be filled with
         # interpolated curves:
-
-        tags = set()
+        interpolant: Union[WaterOilGas, GasWater]
+        tags: Set[str] = set()
         if do_wateroil or do_gaswater:
+            assert self.low.wateroil is not None
+            assert self.base.wateroil is not None
+            assert self.high.wateroil is not None
             tags = tags.union(
                 set(
                     [
@@ -169,6 +199,9 @@ class SCALrecommendation(object):
                 )
             )
         if do_gasoil:
+            assert self.low.gasoil is not None
+            assert self.base.gasoil is not None
+            assert self.high.gasoil is not None
             tags = tags.union(
                 set([self.base.gasoil.tag, self.low.gasoil.tag, self.high.gasoil.tag])
             )
@@ -188,6 +221,9 @@ class SCALrecommendation(object):
                 "SCAL recommendation interpolation to {}\n".format(parameter)
                 + tagstring
             )
+            assert self.low.wateroil is not None
+            assert self.base.wateroil is not None
+            assert self.high.wateroil is not None
             if abs(parameter) > 1.0:
                 raise ValueError(
                     f"Interpolation parameter must be in [-1,1], got {parameter}"
@@ -221,6 +257,9 @@ class SCALrecommendation(object):
             interpolant.wateroil = None
 
         if do_gasoil or do_gaswater:
+            assert self.low.gasoil is not None
+            assert self.base.gasoil is not None
+            assert self.high.gasoil is not None
             tag = (
                 "SCAL recommendation interpolation to {}\n".format(gasparameter)
                 + tagstring
