@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.utils package &mdash; pyscal 0.7.8.dev7+g28df448 documentation</title>
+  <title>pyscal.utils package &mdash; pyscal 0.7.8.dev8+g80b1e4e documentation</title>
   
 
   
@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                0.7.8.dev7+g28df448
+                0.7.8.dev8+g80b1e4e
               </div>
             
           
@@ -216,20 +216,23 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sw</strong> – float, np.array or similar, water saturation value to be used.
+<li><p><strong>sw</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – float, water saturation value to be used.
 Normalize when needed.</p></li>
-<li><p><strong>a</strong> (<em>float</em>) – a coefficient</p></li>
-<li><p><strong>b</strong> (<em>float</em>) – b coefficient</p></li>
-<li><p><strong>poro_ref</strong> (<em>float</em>) – Reference porosity for scaling to Pc, between 0 and 1</p></li>
-<li><p><strong>perm_ref</strong> (<em>float</em>) – Reference permeability for scaling to Pc, in milliDarcy</p></li>
-<li><p><strong>drho</strong> (<em>float</em>) – Density difference between water and oil, in SI units kg/m³.
+<li><p><strong>a</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – a coefficient</p></li>
+<li><p><strong>b</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – b coefficient</p></li>
+<li><p><strong>poro_ref</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Reference porosity for scaling to Pc, between 0 and 1</p></li>
+<li><p><strong>perm_ref</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Reference permeability for scaling to Pc, in milliDarcy</p></li>
+<li><p><strong>drho</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Density difference between water and oil, in SI units kg/m³.
 Default value is 300</p></li>
-<li><p><strong>g</strong> (<em>float</em>) – Gravitational acceleration, in SI units m/s²,
+<li><p><strong>g</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Gravitational acceleration, in SI units m/s²,
 default value is 9.81</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>capillary pressure, same type as swnpc input argument.</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>capillary pressure, same type as swnpc input argument.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -242,21 +245,21 @@ default value is 9.81</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>swlheight</strong> (<em>float</em>) – Height above free water level, in meters,
+<li><p><strong>swlheight</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Height above free water level, in meters,
 where we want swl to be.</p></li>
-<li><p><strong>swirr</strong> (<em>float</em>) – Asymptotic irreducible water saturation. This is
+<li><p><strong>swirr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Asymptotic irreducible water saturation. This is
 used to normalized the outputted swl.</p></li>
-<li><p><strong>a</strong> (<em>float</em>) – a coefficient in RMS simplified J function</p></li>
-<li><p><strong>b</strong> (<em>float</em>) – b coefficient in RMS simplified J function</p></li>
-<li><p><strong>poro_ref</strong> (<em>float</em>) – Reference porosity for scaling to Pc, between 0 and 1</p></li>
-<li><p><strong>perm_ref</strong> (<em>float</em>) – Reference permeability for scaling to Pc, in milliDarcy</p></li>
+<li><p><strong>a</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – a coefficient in RMS simplified J function</p></li>
+<li><p><strong>b</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – b coefficient in RMS simplified J function</p></li>
+<li><p><strong>poro_ref</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Reference porosity for scaling to Pc, between 0 and 1</p></li>
+<li><p><strong>perm_ref</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Reference permeability for scaling to Pc, in milliDarcy</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A value that can be used for swl.</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>swl (float)</p>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A value that can be used for swl.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -267,7 +270,7 @@ used to normalized the outputted swl.</p></li>
 <p>Utility function for pyscal</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="pyscal.utils.interpolation.interpolate_go">
-<span class="sig-prename descclassname"><span class="pre">pyscal.utils.interpolation.</span></span><span class="sig-name descname"><span class="pre">interpolate_go</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">go_low</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">go_high</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils/interpolation.html#interpolate_go"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.interpolation.interpolate_go" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyscal.utils.interpolation.</span></span><span class="sig-name descname"><span class="pre">interpolate_go</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">go_low</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">go_high</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils/interpolation.html#interpolate_go"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.interpolation.interpolate_go" title="Permalink to this definition">¶</a></dt>
 <dd><p>Interpolates between two gas-oil curves.</p>
 <p>The saturation endpoints for the curves must be known
 by the objects. They can be estimated by estimate_sorg() etc.
@@ -278,25 +281,25 @@ interpolated individually.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>go_low</strong> (<a class="reference internal" href="pyscal.html#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><em>GasOil</em></a>) – a “low” case</p></li>
-<li><p><strong>go_high</strong> (<a class="reference internal" href="pyscal.html#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><em>GasOil</em></a>) – a “high” case</p></li>
-<li><p><strong>parameter</strong> (<em>float</em>) – Between 0 and 1. 0 will return the low case, 1 will return
+<li><p><strong>go_low</strong> (<a class="reference internal" href="pyscal.html#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasOil</span></code></a>) – a “low” case</p></li>
+<li><p><strong>go_high</strong> (<a class="reference internal" href="pyscal.html#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasOil</span></code></a>) – a “high” case</p></li>
+<li><p><strong>parameter</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Between 0 and 1. 0 will return the low case, 1 will return
 the high case. Any number in between will return an interpolated curve</p></li>
-<li><p><strong>h</strong> (<em>float</em>) – Saturation step-size in interpolant. If defaulted, a value
+<li><p><strong>h</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Saturation step-size in interpolant. If defaulted, a value
 smaller than in the input curves are used, to preserve information.</p></li>
-<li><p><strong>tag</strong> (<em>string</em>) – Tag to associate to the constructed object. If None
+<li><p><strong>tag</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Tag to associate to the constructed object. If None
 it will be automatically filled. Set to empty string to ensure no tag.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A new gas-oil curve</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="pyscal.html#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasOil</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyscal.utils.interpolation.interpolate_wo">
-<span class="sig-prename descclassname"><span class="pre">pyscal.utils.interpolation.</span></span><span class="sig-name descname"><span class="pre">interpolate_wo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wo_low</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wo_high</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils/interpolation.html#interpolate_wo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.interpolation.interpolate_wo" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyscal.utils.interpolation.</span></span><span class="sig-name descname"><span class="pre">interpolate_wo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wo_low</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wo_high</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils/interpolation.html#interpolate_wo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.interpolation.interpolate_wo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Interpolates between two water-oil curves.</p>
 <p>The saturation endpoints for the curves must be known
 by the objects. They can be estimated by estimate_sorw() etc.
@@ -307,18 +310,18 @@ interpolated individually.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>wo_low</strong> (<a class="reference internal" href="pyscal.html#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><em>WaterOil</em></a>) – a “low” case</p></li>
-<li><p><strong>wo_high</strong> (<a class="reference internal" href="pyscal.html#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><em>WaterOil</em></a>) – a “high” case</p></li>
-<li><p><strong>parameter</strong> (<em>float</em>) – Between 0 and 1. 0 will return the low case, 1 will return
+<li><p><strong>wo_low</strong> (<a class="reference internal" href="pyscal.html#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">WaterOil</span></code></a>) – a “low” case</p></li>
+<li><p><strong>wo_high</strong> (<a class="reference internal" href="pyscal.html#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">WaterOil</span></code></a>) – a “high” case</p></li>
+<li><p><strong>parameter</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Between 0 and 1. 0 will return the low case, 1 will return
 the high case. Any number in between will return an interpolated curve</p></li>
-<li><p><strong>h</strong> (<em>float</em>) – Saturation step-size in interpolant. If defaulted, a value
+<li><p><strong>h</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Saturation step-size in interpolant. If defaulted, a value
 smaller than in the input curves are used, to preserve information.</p></li>
-<li><p><strong>tag</strong> (<em>string</em>) – Tag to associate to the constructed object. If None
+<li><p><strong>tag</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Tag to associate to the constructed object. If None
 it will be automatically filled. Set to empty string to ensure no tag.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A new oil-water curve</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="pyscal.html#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">WaterOil</span></code></a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -340,15 +343,15 @@ can determine them using functions ‘estimate_sorg()’ and ‘estimate_sgcr()�
 this function only deals with the presumably known endpoints.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>curve</strong> (<a class="reference internal" href="pyscal.html#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><em>GasOil</em></a>) – incoming gasoil curve set (krg and krog)</p>
+<dd class="field-odd"><p><strong>curve</strong> (<a class="reference internal" href="pyscal.html#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasOil</span></code></a>) – incoming gasoil curve set (krg and krog)</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>tuple of functions. The first will evaluate krg on</dt><dd><p>the normalized Sg interval [0,1], the second will
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>tuple of functions. The first will evaluate krg on
+the normalized Sg interval [0,1], the second will
 evaluate krog on the normalized So interval [0,1].</p>
-</dd>
-</dl>
-</p>
 </dd>
 </dl>
 </dd></dl>
@@ -370,15 +373,15 @@ can determine them using functions ‘estimate_sorw()’ and ‘estimate_swcr()�
 this function only deals with the presumably known endpoints.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>curve</strong> (<a class="reference internal" href="pyscal.html#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><em>WaterOil</em></a>) – incoming oilwater curve set (krw and krow)</p>
+<dd class="field-odd"><p><strong>curve</strong> (<a class="reference internal" href="pyscal.html#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">WaterOil</span></code></a>) – incoming oilwater curve set (krw and krow)</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>tuple of lambda functions. The first will evaluate krw on</dt><dd><p>the normalized Sw interval [0,1], the second will
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>tuple of lambda functions. The first will evaluate krw on
+the normalized Sw interval [0,1], the second will
 evaluate krow on the normalized So interval [0,1].</p>
-</dd>
-</dl>
-</p>
 </dd>
 </dl>
 </dd></dl>
@@ -395,10 +398,13 @@ to make assumptions on the equations used to generate
 the data in the table.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>curve</strong> (<a class="reference internal" href="pyscal.html#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><em>WaterOil</em></a><em> or </em><a class="reference internal" href="pyscal.html#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><em>GasOil</em></a>) – An object with a table with a pc column</p>
+<dd class="field-odd"><p><strong>curve</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="pyscal.html#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">WaterOil</span></code></a>, <a class="reference internal" href="pyscal.html#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasOil</span></code></a>]) – An object with a table with a pc column</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>a lambda function that will evaluate pc on
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>a lambda function that will evaluate pc on
 the normalized interval [0,1]</p>
 </dd>
 </dl>
@@ -408,6 +414,41 @@ the normalized interval [0,1]</p>
 <div class="section" id="module-pyscal.utils.monotonicity">
 <span id="pyscal-utils-monotonicity-module"></span><h2>pyscal.utils.monotonicity module<a class="headerlink" href="#module-pyscal.utils.monotonicity" title="Permalink to this headline">¶</a></h2>
 <p>Monotonocity support functions for pyscal</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyscal.utils.monotonicity.MonotonicitySpec">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pyscal.utils.monotonicity.</span></span><span class="sig-name descname"><span class="pre">MonotonicitySpec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils/monotonicity.html#MonotonicitySpec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.monotonicity.MonotonicitySpec" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
+<p>Specification of monotonicity for a vector of values</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyscal.utils.monotonicity.MonotonicitySpec.allowzero">
+<span class="sig-name descname"><span class="pre">allowzero</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#pyscal.utils.monotonicity.MonotonicitySpec.allowzero" title="Permalink to this definition">¶</a></dt>
+<dd><p>If True, consecutive zeros will be allowes in an otherwise strictly
+monotonic column. Optional parameter.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyscal.utils.monotonicity.MonotonicitySpec.lower">
+<span class="sig-name descname"><span class="pre">lower</span></span><em class="property"><span class="pre">:</span> <span class="pre">float</span></em><a class="headerlink" href="#pyscal.utils.monotonicity.MonotonicitySpec.lower" title="Permalink to this definition">¶</a></dt>
+<dd><p>Values will be clipped at lower limit, and non-strict monotonicity is
+allowed at limit. Optional parameter.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyscal.utils.monotonicity.MonotonicitySpec.sign">
+<span class="sig-name descname"><span class="pre">sign</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#pyscal.utils.monotonicity.MonotonicitySpec.sign" title="Permalink to this definition">¶</a></dt>
+<dd><p>Value of +1 dictates strictly increasing,
+value of -1 dictates scrictly decreasing. Required parameter.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyscal.utils.monotonicity.MonotonicitySpec.upper">
+<span class="sig-name descname"><span class="pre">upper</span></span><em class="property"><span class="pre">:</span> <span class="pre">float</span></em><a class="headerlink" href="#pyscal.utils.monotonicity.MonotonicitySpec.upper" title="Permalink to this definition">¶</a></dt>
+<dd><p>Values will be clipped at upper limit, and non-strict monotonicity is
+allowed at limit. Optional parameter.</p>
+</dd></dl>
+
+</dd></dl>
+
 <dl class="py function">
 <dt class="sig sig-object py" id="pyscal.utils.monotonicity.check_almost_monotone">
 <span class="sig-prename descclassname"><span class="pre">pyscal.utils.monotonicity.</span></span><span class="sig-name descname"><span class="pre">check_almost_monotone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">digits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sign</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils/monotonicity.html#check_almost_monotone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.monotonicity.check_almost_monotone" title="Permalink to this definition">¶</a></dt>
@@ -416,10 +457,13 @@ to constant or monotone in a certain direction.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>series</strong> (<em>pd.Series</em>) – Vector of numbers</p></li>
-<li><p><strong>digits</strong> (<em>int</em>) – </p></li>
-<li><p><strong>sign</strong> (<em>int</em>) – direction. &gt;0 means positive</p></li>
+<li><p><strong>series</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Series</span></code>) – Vector of numbers</p></li>
+<li><p><strong>digits</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – </p></li>
+<li><p><strong>sign</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – direction. &gt;0 means positive</p></li>
 </ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -434,15 +478,14 @@ when everything is ok.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>series</strong> (<em>pd.Series</em>) – Vector of numbers to check</p></li>
-<li><p><strong>monotonicity</strong> (<em>dict</em>) – Keys ‘upper’ and ‘lower’ are optional
-and point to numerical limits.</p></li>
-<li><p><strong>colname</strong> (<em>str</em>) – Optional string for a column name that will be
+<li><p><strong>series</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">Series</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]) – Vector of numbers to check</p></li>
+<li><p><strong>monotonicity</strong> (<a class="reference internal" href="#pyscal.utils.monotonicity.MonotonicitySpec" title="pyscal.utils.monotonicity.MonotonicitySpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">MonotonicitySpec</span></code></a>) – </p></li>
+<li><p><strong>colname</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Optional string for a column name that will be
 included in any error message.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>None</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -455,13 +498,15 @@ optionally clip at lower and upper limits.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>series</strong> (<em>pd.Series</em><em> or </em><em>np.array</em>) – Vector of numbers to modify</p></li>
-<li><p><strong>monotonicity</strong> (<em>dict</em>) – Monotonocity options. The keys ‘lower’ and ‘upper’
-can be provided for clipping the vector.</p></li>
+<li><p><strong>series</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">Series</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]) – Vector of numbers to modify</p></li>
+<li><p><strong>monotonicity</strong> (<a class="reference internal" href="#pyscal.utils.monotonicity.MonotonicitySpec" title="pyscal.utils.monotonicity.MonotonicitySpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">MonotonicitySpec</span></code></a>) – </p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>np.array, copy of original.</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>np.array, copy of original.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -496,10 +541,13 @@ for all-zero vectors if that option is activated.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dframe</strong> (<em>pd.DataFrame</em>) – Data to modify.</p></li>
-<li><p><strong>monotonicity</strong> (<em>dict</em>) – see df2str() for syntax.</p></li>
-<li><p><strong>digits</strong> (<em>int</em>) – Number of digits to ensure monotonicity for.</p></li>
+<li><p><strong>dframe</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code>) – Data to modify.</p></li>
+<li><p><strong>monotonicity</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <a class="reference internal" href="#pyscal.utils.monotonicity.MonotonicitySpec" title="pyscal.utils.monotonicity.MonotonicitySpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">MonotonicitySpec</span></code></a>]) – Keys are column names</p></li>
+<li><p><strong>digits</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of digits to ensure monotonicity for.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -511,17 +559,18 @@ for all-zero vectors if that option is activated.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>series</strong> (<em>pd.Series</em>) – </p></li>
-<li><p><strong>monotonicity</strong> (<em>dict</em>) – Can contain “upper” or “lower”
-numerical bounds, and “sign”, where &gt;0 means positive.
-“sign” is mandatory.</p></li>
-<li><p><strong>digits</strong> (<em>int</em>) – Accuracy required, how many digits
+<li><p><strong>series</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Series</span></code>) – </p></li>
+<li><p><strong>monotonicity</strong> (<a class="reference internal" href="#pyscal.utils.monotonicity.MonotonicitySpec" title="pyscal.utils.monotonicity.MonotonicitySpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">MonotonicitySpec</span></code></a>) – </p></li>
+<li><p><strong>digits</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Accuracy required, how many digits
 that are to be printed, and to which we should relate
 constancy to.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>boolean series.</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Series</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>boolean series.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -535,14 +584,13 @@ can be given to df2str().</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>monotonicity</strong> (<em>dict</em>) – Keys are ‘sign’, ‘upper’, ‘lower’
-and  ‘allowzero’.</p></li>
-<li><p><strong>dframe_colnames</strong> (<em>list of str</em>) – Names of column names
+<li><p><strong>monotonicity</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <a class="reference internal" href="#pyscal.utils.monotonicity.MonotonicitySpec" title="pyscal.utils.monotonicity.MonotonicitySpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">MonotonicitySpec</span></code></a>]) – Keys are column names.</p></li>
+<li><p><strong>dframe_colnames</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Names of column names
 in dframes. Used in error messages.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>None</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -558,19 +606,18 @@ in dframes. Used in error messages.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dframe</strong> (<em>pd.DataFrame</em>) – Dataframe with at least three columns</p></li>
-<li><p><strong>satcol</strong> (<em>str</em>) – Column name for the saturation column</p></li>
-<li><p><strong>kr1col</strong> (<em>str</em>) – Column name for first relperm column</p></li>
-<li><p><strong>kr2col</strong> (<em>str</em>) – Columnn ame for second column</p></li>
+<li><p><strong>dframe</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code>) – Dataframe with at least three columns</p></li>
+<li><p><strong>satcol</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Column name for the saturation column</p></li>
+<li><p><strong>kr1col</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Column name for first relperm column</p></li>
+<li><p><strong>kr2col</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Columnn ame for second column</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>float, the saturation value (interpolated) where</dt><dd><p>kr1col == kr2col, when krXcol is linearly interpolated
-as a function of the saturation values.</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
 </dd>
-</dl>
-</p>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The saturation value (interpolated) where kr1col == kr2col, when krXcol
+is linearly interpolated as a function of the saturation values.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -587,21 +634,21 @@ give you swcr.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>table</strong> (<em>pd.DataFrame</em>) – A Dataframe with x and y data</p></li>
-<li><p><strong>xcol</strong> (<em>string</em>) – The name of the column in table containing x-data. If
+<li><p><strong>table</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code>) – A Dataframe with x and y data</p></li>
+<li><p><strong>xcol</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – The name of the column in table containing x-data. If
 None (default) the first column in table will be used.</p></li>
-<li><p><strong>ycol</strong> (<em>string</em>) – The name of the column in table containing y-data.
+<li><p><strong>ycol</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – The name of the column in table containing y-data.
 If None (default) the second column in the table will be used.</p></li>
-<li><p><strong>side</strong> (<em>string</em>) – Must be ‘left’ or ‘right’. Decides whether to look from
+<li><p><strong>side</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Must be ‘left’ or ‘right’. Decides whether to look from
 the right side of the x-interval or from the left side for the
 linear domain.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The x value where the start-linear domain ends.</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
 </dd>
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>float</p>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The x value where the start-linear domain ends.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -617,24 +664,21 @@ linear domain.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>multiline</strong> (<em>str</em>) – String that can contain newlines</p></li>
-<li><p><strong>prefix</strong> (<em>str</em>) – Comment characters to prepend every line with
+<li><p><strong>multiline</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – String that can contain newlines</p></li>
+<li><p><strong>prefix</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Comment characters to prepend every line with
 Default is the Eclipse comment syntax ‘– ‘</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p><dl class="simple">
-<dt>string, with newlines preserved, and where each line</dt><dd><p>starts with the given prefix. Always ends with a newline.</p>
-</dd>
-</dl>
-</p>
+<dd class="field-even"><p>string with newlines preserved, and where each line
+starts with the given prefix. Always ends with a newline.</p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyscal.utils.string.df2str">
-<span class="sig-prename descclassname"><span class="pre">pyscal.utils.string.</span></span><span class="sig-name descname"><span class="pre">df2str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dframe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">digits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roundlevel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monotonicity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monotone_column</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monotone_direction</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils/string.html#df2str"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.string.df2str" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyscal.utils.string.</span></span><span class="sig-name descname"><span class="pre">df2str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dframe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">digits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roundlevel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monotonicity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils/string.html#df2str"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.string.df2str" title="Permalink to this definition">¶</a></dt>
 <dd><p>Make a string representation of a dataframe with
 proper rounding.</p>
 <p>This is used to print the tables in the SWOF/SGOF include files,
@@ -646,21 +690,21 @@ ensured to be strictly monotone decreasing</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dframe</strong> (<em>pd.DataFrame</em>) – A dataframe to print, all columns
+<li><p><strong>dframe</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code>) – A dataframe to print, all columns
 are included</p></li>
-<li><p><strong>digits</strong> (<em>int</em>) – Number of digits used in floating point format f.ex “.7f”
+<li><p><strong>digits</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of digits used in floating point format f.ex “.7f”
 It is not recommended to deviate from the default 7 uncritically
 for pyscal output, other code have to be tuned to ensure
 numerical robustness to the deviation.</p></li>
-<li><p><strong>roundlevel</strong> (<em>int</em>) – To how many digits should we round prior to print.
+<li><p><strong>roundlevel</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – To how many digits should we round prior to print.
 Recommended to be &gt; digits + 1, see test code.</p></li>
-<li><p><strong>header</strong> (<em>bool</em>) – If the dataframe column header should be included</p></li>
-<li><p><strong>monotonicity</strong> (<em>dict</em>) – Settings for monotonicity in output. A dict
-with column names as keys, with values being a dict with keys
-“sign” (-1 or +1 integer) for direction,  “upper” and “lower” for
-lower and upper limits (non-strict monotonicity is allowed at
-these upper and lower limits).</p></li>
+<li><p><strong>header</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – If the dataframe column header should be included</p></li>
+<li><p><strong>monotonicity</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <a class="reference internal" href="#pyscal.utils.monotonicity.MonotonicitySpec" title="pyscal.utils.monotonicity.MonotonicitySpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">MonotonicitySpec</span></code></a>]]) – Column names in dframe are the keys, pointing
+to a specification for monotonicity to be enforced.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -674,6 +718,11 @@ these upper and lower limits).</p></li>
 <span class="sig-prename descclassname"><span class="pre">pyscal.utils.testing.</span></span><span class="sig-name descname"><span class="pre">check_linear_sections</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wo_or_go</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils/testing.html#check_linear_sections"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.testing.check_linear_sections" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check that the linear segments of a WaterOil or a GasOil
 object are linear.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -681,6 +730,11 @@ object are linear.</p>
 <span class="sig-prename descclassname"><span class="pre">pyscal.utils.testing.</span></span><span class="sig-name descname"><span class="pre">check_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dframe</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/pyscal/utils/testing.html#check_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.testing.check_table" title="Permalink to this definition">¶</a></dt>
 <dd><p>Check that the numbers in a dataframe for WaterOil or GasOil
 has the properties that Eclipse enforces</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -690,6 +744,11 @@ has the properties that Eclipse enforces</p>
 and compares the value in compcol with answer</p>
 <p>Warning: This is slow code, but only the tests are slow</p>
 <p>Floats are notoriously difficult to handle in computers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">bool_</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">
@@ -700,6 +759,11 @@ probably ok for Eclipse.</p>
 <p>Number of floats pr. line must be constant
 All numerical lines must be parseable to a rectangular dataframe
 with only floats.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py function">

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.utils.testing &mdash; pyscal 0.7.8.dev7+g28df448 documentation</title>
+  <title>pyscal.utils.testing &mdash; pyscal 0.7.8.dev8+g80b1e4e documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.7.8.dev7+g28df448
+                0.7.8.dev8+g80b1e4e
               </div>
             
           
@@ -169,6 +169,8 @@
 <span></span><span class="sd">&quot;&quot;&quot;Common functions and mock data for usage in pyscal testing&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">io</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
@@ -176,7 +178,7 @@
 <span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">WaterOil</span><span class="p">,</span> <span class="n">GasOil</span>
 
 
-<div class="viewcode-block" id="series_decreasing"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.testing.series_decreasing">[docs]</a><span class="k">def</span> <span class="nf">series_decreasing</span><span class="p">(</span><span class="n">series</span><span class="p">):</span>
+<div class="viewcode-block" id="series_decreasing"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.testing.series_decreasing">[docs]</a><span class="k">def</span> <span class="nf">series_decreasing</span><span class="p">(</span><span class="n">series</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Weaker than pd.Series.is_monotonic_decreasing,</span>
 <span class="sd">    allows constant parts.</span>
 
@@ -188,12 +190,12 @@
     <span class="k">return</span> <span class="p">(</span><span class="n">series</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mf">1e-8</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="series_increasing"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.testing.series_increasing">[docs]</a><span class="k">def</span> <span class="nf">series_increasing</span><span class="p">(</span><span class="n">series</span><span class="p">):</span>
+<div class="viewcode-block" id="series_increasing"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.testing.series_increasing">[docs]</a><span class="k">def</span> <span class="nf">series_increasing</span><span class="p">(</span><span class="n">series</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Weaker than pd.Series.is_monotonic_increasing&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">series</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mf">1e-8</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="sat_table_str_ok"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.testing.sat_table_str_ok">[docs]</a><span class="k">def</span> <span class="nf">sat_table_str_ok</span><span class="p">(</span><span class="n">sat_table_str</span><span class="p">):</span>
+<div class="viewcode-block" id="sat_table_str_ok"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.testing.sat_table_str_ok">[docs]</a><span class="k">def</span> <span class="nf">sat_table_str_ok</span><span class="p">(</span><span class="n">sat_table_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Test that a supplied string from SWOF()/SGOF() etc is</span>
 <span class="sd">    probably ok for Eclipse.</span>
 
@@ -261,7 +263,7 @@
         <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">dframe</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="n">dframe</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="mi">1</span></div>
 
 
-<div class="viewcode-block" id="check_table"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.testing.check_table">[docs]</a><span class="k">def</span> <span class="nf">check_table</span><span class="p">(</span><span class="n">dframe</span><span class="p">):</span>
+<div class="viewcode-block" id="check_table"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.testing.check_table">[docs]</a><span class="k">def</span> <span class="nf">check_table</span><span class="p">(</span><span class="n">dframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Check that the numbers in a dataframe for WaterOil or GasOil</span>
 <span class="sd">    has the properties that Eclipse enforces&quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="ow">not</span> <span class="n">dframe</span><span class="o">.</span><span class="n">empty</span>
@@ -304,13 +306,13 @@
         <span class="k">assert</span> <span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;KRG&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="check_linear_sections"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.testing.check_linear_sections">[docs]</a><span class="k">def</span> <span class="nf">check_linear_sections</span><span class="p">(</span><span class="n">wo_or_go</span><span class="p">):</span>
+<div class="viewcode-block" id="check_linear_sections"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.testing.check_linear_sections">[docs]</a><span class="k">def</span> <span class="nf">check_linear_sections</span><span class="p">(</span><span class="n">wo_or_go</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">WaterOil</span><span class="p">,</span> <span class="n">GasOil</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Check that the linear segments of a WaterOil or a GasOil</span>
 <span class="sd">    object are linear.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">wo_or_go</span><span class="p">,</span> <span class="n">WaterOil</span><span class="p">):</span>
         <span class="n">sat_col</span> <span class="o">=</span> <span class="s2">&quot;SW&quot;</span>
-        <span class="n">right_start</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">wo_or_go</span><span class="o">.</span><span class="n">sorw</span>
-        <span class="n">right_end</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">right_start</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">wo_or_go</span><span class="o">.</span><span class="n">sorw</span>
+        <span class="n">right_end</span> <span class="o">=</span> <span class="mf">1.0</span>
         <span class="n">right_lin_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;KROW&quot;</span><span class="p">,</span> <span class="s2">&quot;KRW&quot;</span><span class="p">]</span>
         <span class="n">left_lin_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;KRW&quot;</span><span class="p">]</span>
         <span class="n">left_start</span> <span class="o">=</span> <span class="n">wo_or_go</span><span class="o">.</span><span class="n">swl</span>
@@ -318,15 +320,15 @@
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">wo_or_go</span><span class="p">,</span> <span class="n">GasOil</span><span class="p">):</span>
         <span class="n">sat_col</span> <span class="o">=</span> <span class="s2">&quot;SG&quot;</span>
         <span class="k">if</span> <span class="n">wo_or_go</span><span class="o">.</span><span class="n">krgendanchor</span> <span class="o">==</span> <span class="s2">&quot;sorg&quot;</span><span class="p">:</span>
-            <span class="n">right_start</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">wo_or_go</span><span class="o">.</span><span class="n">sorg</span> <span class="o">-</span> <span class="n">wo_or_go</span><span class="o">.</span><span class="n">swl</span>
+            <span class="n">right_start</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">wo_or_go</span><span class="o">.</span><span class="n">sorg</span> <span class="o">-</span> <span class="n">wo_or_go</span><span class="o">.</span><span class="n">swl</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># If not krgendanchor=sorg, then there is no linear</span>
             <span class="c1"># segment to the right.</span>
-            <span class="n">right_start</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">wo_or_go</span><span class="o">.</span><span class="n">swl</span>
-        <span class="n">right_end</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">wo_or_go</span><span class="o">.</span><span class="n">swl</span>
+            <span class="n">right_start</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">wo_or_go</span><span class="o">.</span><span class="n">swl</span>
+        <span class="n">right_end</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">wo_or_go</span><span class="o">.</span><span class="n">swl</span>
         <span class="n">right_lin_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;KROG&quot;</span><span class="p">,</span> <span class="s2">&quot;KRG&quot;</span><span class="p">]</span>
         <span class="n">left_lin_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;KRG&quot;</span><span class="p">]</span>
-        <span class="n">left_start</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">left_start</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="n">left_end</span> <span class="o">=</span> <span class="n">wo_or_go</span><span class="o">.</span><span class="n">sgcr</span>
 
     <span class="n">right_lin_seg</span> <span class="o">=</span> <span class="n">wo_or_go</span><span class="o">.</span><span class="n">table</span><span class="p">[</span>
@@ -347,7 +349,9 @@
             <span class="k">assert</span> <span class="n">left_lin_seg</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mf">1e-9</span></div>
 
 
-<div class="viewcode-block" id="float_df_checker"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.testing.float_df_checker">[docs]</a><span class="k">def</span> <span class="nf">float_df_checker</span><span class="p">(</span><span class="n">dframe</span><span class="p">,</span> <span class="n">idxcol</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">compcol</span><span class="p">,</span> <span class="n">answer</span><span class="p">):</span>
+<div class="viewcode-block" id="float_df_checker"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.testing.float_df_checker">[docs]</a><span class="k">def</span> <span class="nf">float_df_checker</span><span class="p">(</span>
+    <span class="n">dframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">idxcol</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">compcol</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">answer</span><span class="p">:</span> <span class="nb">float</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Looks up in a dataframe, selects the row where idxcol=value</span>
 <span class="sd">    and compares the value in compcol with answer</span>
 

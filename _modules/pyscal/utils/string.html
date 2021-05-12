@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.utils.string &mdash; pyscal 0.7.8.dev7+g28df448 documentation</title>
+  <title>pyscal.utils.string &mdash; pyscal 0.7.8.dev8+g80b1e4e documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.7.8.dev7+g28df448
+                0.7.8.dev8+g80b1e4e
               </div>
             
           
@@ -169,21 +169,22 @@
 <span></span><span class="sd">&quot;&quot;&quot;Utility functions for creating strings from pyscal&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">from</span> <span class="nn">.monotonicity</span> <span class="kn">import</span> <span class="n">modify_dframe_monotonicity</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">.monotonicity</span> <span class="kn">import</span> <span class="n">modify_dframe_monotonicity</span><span class="p">,</span> <span class="n">MonotonicitySpec</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="df2str"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.string.df2str">[docs]</a><span class="k">def</span> <span class="nf">df2str</span><span class="p">(</span>
-    <span class="n">dframe</span><span class="p">,</span>
-    <span class="n">digits</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
-    <span class="n">roundlevel</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span>
-    <span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="n">monotonicity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">monotone_column</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-    <span class="n">monotone_direction</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-<span class="p">):</span>
+    <span class="n">dframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">digits</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">7</span><span class="p">,</span>
+    <span class="n">roundlevel</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">9</span><span class="p">,</span>
+    <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">monotonicity</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">MonotonicitySpec</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Make a string representation of a dataframe with</span>
 <span class="sd">    proper rounding.</span>
@@ -197,20 +198,17 @@
 <span class="sd">    ensured to be strictly monotone decreasing</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        dframe (pd.DataFrame): A dataframe to print, all columns</span>
+<span class="sd">        dframe: A dataframe to print, all columns</span>
 <span class="sd">            are included</span>
-<span class="sd">        digits (int): Number of digits used in floating point format f.ex &quot;.7f&quot;</span>
+<span class="sd">        digits: Number of digits used in floating point format f.ex &quot;.7f&quot;</span>
 <span class="sd">            It is not recommended to deviate from the default 7 uncritically</span>
 <span class="sd">            for pyscal output, other code have to be tuned to ensure</span>
 <span class="sd">            numerical robustness to the deviation.</span>
-<span class="sd">        roundlevel (int): To how many digits should we round prior to print.</span>
+<span class="sd">        roundlevel: To how many digits should we round prior to print.</span>
 <span class="sd">            Recommended to be &gt; digits + 1, see test code.</span>
-<span class="sd">        header (bool): If the dataframe column header should be included</span>
-<span class="sd">        monotonicity (dict): Settings for monotonicity in output. A dict</span>
-<span class="sd">            with column names as keys, with values being a dict with keys</span>
-<span class="sd">            &quot;sign&quot; (-1 or +1 integer) for direction,  &quot;upper&quot; and &quot;lower&quot; for</span>
-<span class="sd">            lower and upper limits (non-strict monotonicity is allowed at</span>
-<span class="sd">            these upper and lower limits).</span>
+<span class="sd">        header: If the dataframe column header should be included</span>
+<span class="sd">        monotonicity: Column names in dframe are the keys, pointing</span>
+<span class="sd">            to a specification for monotonicity to be enforced.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">float_format</span> <span class="o">=</span> <span class="s2">&quot;%1.&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">digits</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;f&quot;</span>
 
@@ -222,17 +220,17 @@
     <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="comment_formatter"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.string.comment_formatter">[docs]</a><span class="k">def</span> <span class="nf">comment_formatter</span><span class="p">(</span><span class="n">multiline</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;-- &quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="comment_formatter"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.string.comment_formatter">[docs]</a><span class="k">def</span> <span class="nf">comment_formatter</span><span class="p">(</span><span class="n">multiline</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;-- &quot;</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Prepends comment characters to every line in input</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        multiline (str): String that can contain newlines</span>
-<span class="sd">        prefix (str): Comment characters to prepend every line with</span>
+<span class="sd">        multiline: String that can contain newlines</span>
+<span class="sd">        prefix: Comment characters to prepend every line with</span>
 <span class="sd">            Default is the Eclipse comment syntax &#39;-- &#39;</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        string, with newlines preserved, and where each line</span>
-<span class="sd">            starts with the given prefix. Always ends with a newline.</span>
+<span class="sd">        string with newlines preserved, and where each line</span>
+<span class="sd">        starts with the given prefix. Always ends with a newline.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="n">multiline</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">multiline</span><span class="o">.</span><span class="n">strip</span><span class="p">():</span>
         <span class="c1"># Ensure we indicate that there is placeholder for something.</span>

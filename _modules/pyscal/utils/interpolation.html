@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.utils.interpolation &mdash; pyscal 0.7.8.dev7+g28df448 documentation</title>
+  <title>pyscal.utils.interpolation &mdash; pyscal 0.7.8.dev8+g80b1e4e documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.7.8.dev7+g28df448
+                0.7.8.dev8+g80b1e4e
               </div>
             
           
@@ -170,15 +170,16 @@
 <span class="sd">&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="kn">import</span> <span class="n">interp1d</span>
 
-<span class="kn">import</span> <span class="nn">pyscal</span>
+<span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">WaterOil</span><span class="p">,</span> <span class="n">GasOil</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="normalize_nonlinpart_wo"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.interpolation.normalize_nonlinpart_wo">[docs]</a><span class="k">def</span> <span class="nf">normalize_nonlinpart_wo</span><span class="p">(</span><span class="n">curve</span><span class="p">):</span>
+<div class="viewcode-block" id="normalize_nonlinpart_wo"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.interpolation.normalize_nonlinpart_wo">[docs]</a><span class="k">def</span> <span class="nf">normalize_nonlinpart_wo</span><span class="p">(</span><span class="n">curve</span><span class="p">:</span> <span class="n">WaterOil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Make krw and krow functions that evaluate only on the</span>
 <span class="sd">    (potentially) nonlinear part of the relperm curves, and with</span>
 <span class="sd">    a normalized argument (0,1) on that interval.</span>
@@ -197,12 +198,12 @@
 <span class="sd">    this function only deals with the presumably known endpoints.</span>
 
 <span class="sd">    Arguments:</span>
-<span class="sd">        curve (WaterOil): incoming oilwater curve set (krw and krow)</span>
+<span class="sd">        curve: incoming oilwater curve set (krw and krow)</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        tuple of lambda functions. The first will evaluate krw on</span>
-<span class="sd">            the normalized Sw interval [0,1], the second will</span>
-<span class="sd">            evaluate krow on the normalized So interval [0,1].</span>
+<span class="sd">        the normalized Sw interval [0,1], the second will</span>
+<span class="sd">        evaluate krow on the normalized So interval [0,1].</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">krw_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span>
         <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">],</span>
@@ -239,7 +240,7 @@
     <span class="k">return</span> <span class="p">(</span><span class="n">krw_fn</span><span class="p">,</span> <span class="n">kro_fn</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="normalize_nonlinpart_go"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.interpolation.normalize_nonlinpart_go">[docs]</a><span class="k">def</span> <span class="nf">normalize_nonlinpart_go</span><span class="p">(</span><span class="n">curve</span><span class="p">):</span>
+<div class="viewcode-block" id="normalize_nonlinpart_go"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.interpolation.normalize_nonlinpart_go">[docs]</a><span class="k">def</span> <span class="nf">normalize_nonlinpart_go</span><span class="p">(</span><span class="n">curve</span><span class="p">:</span> <span class="n">GasOil</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">Callable</span><span class="p">,</span> <span class="n">Callable</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Make krg and krog functions that evaluates only on the</span>
 <span class="sd">    (potentially) nonlinear part of the relperm curves, and with</span>
 <span class="sd">    a normalized argument (0,1) on that interval.</span>
@@ -258,12 +259,12 @@
 <span class="sd">    this function only deals with the presumably known endpoints.</span>
 
 <span class="sd">    Arguments:</span>
-<span class="sd">        curve (GasOil): incoming gasoil curve set (krg and krog)</span>
+<span class="sd">        curve: incoming gasoil curve set (krg and krog)</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        tuple of functions. The first will evaluate krg on</span>
-<span class="sd">            the normalized Sg interval [0,1], the second will</span>
-<span class="sd">            evaluate krog on the normalized So interval [0,1].</span>
+<span class="sd">        the normalized Sg interval [0,1], the second will</span>
+<span class="sd">        evaluate krog on the normalized So interval [0,1].</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">krg_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span>
         <span class="n">curve</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SG&quot;</span><span class="p">],</span>
@@ -300,7 +301,7 @@
     <span class="k">return</span> <span class="p">(</span><span class="n">krg_fn</span><span class="p">,</span> <span class="n">kro_fn</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="normalize_pc"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.interpolation.normalize_pc">[docs]</a><span class="k">def</span> <span class="nf">normalize_pc</span><span class="p">(</span><span class="n">curve</span><span class="p">):</span>
+<div class="viewcode-block" id="normalize_pc"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.interpolation.normalize_pc">[docs]</a><span class="k">def</span> <span class="nf">normalize_pc</span><span class="p">(</span><span class="n">curve</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">WaterOil</span><span class="p">,</span> <span class="n">GasOil</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Normalize the capillary pressure curve.</span>
 
 <span class="sd">    This is only normalized with respect to the</span>
@@ -311,15 +312,15 @@
 <span class="sd">    the data in the table.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        curve (WaterOil or GasOil): An object with a table with a pc column</span>
+<span class="sd">        curve: An object with a table with a pc column</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        a lambda function that will evaluate pc on</span>
 <span class="sd">        the normalized interval [0,1]</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">curve</span><span class="p">,</span> <span class="n">pyscal</span><span class="o">.</span><span class="n">WaterOil</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">curve</span><span class="p">,</span> <span class="n">WaterOil</span><span class="p">):</span>
         <span class="n">sat_col</span> <span class="o">=</span> <span class="s2">&quot;SW&quot;</span>
-    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">curve</span><span class="p">,</span> <span class="n">pyscal</span><span class="o">.</span><span class="n">GasOil</span><span class="p">):</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">curve</span><span class="p">,</span> <span class="n">GasOil</span><span class="p">):</span>
         <span class="n">sat_col</span> <span class="o">=</span> <span class="s2">&quot;SG&quot;</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Only WaterOil or GasOil allowed as argument&quot;</span><span class="p">)</span>
@@ -351,7 +352,12 @@
     <span class="k">return</span> <span class="n">pc_fn</span></div>
 
 
-<span class="k">def</span> <span class="nf">_interpolate_tags</span><span class="p">(</span><span class="n">low</span><span class="p">,</span> <span class="n">high</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">tag</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">_interpolate_tags</span><span class="p">(</span>
+    <span class="n">low</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">WaterOil</span><span class="p">,</span> <span class="n">GasOil</span><span class="p">],</span>
+    <span class="n">high</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">WaterOil</span><span class="p">,</span> <span class="n">GasOil</span><span class="p">],</span>
+    <span class="n">parameter</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">tag</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+<span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Preserve tag/comment. Depending on context, the</span>
 <span class="sd">    interpolation parameter may or may not make sense. In a SCALrecommendation</span>
 <span class="sd">    interpolation, the new tag should be constructed in the caller of this function.</span>
@@ -360,10 +366,10 @@
 <span class="sd">    This function is used by interpolate_wo and interpolate_go</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        low (WaterOil or GasOil): low case in interpolation</span>
-<span class="sd">        high (WaterOil or GasOil): high case</span>
-<span class="sd">        parameter (float): between 0 and 1</span>
-<span class="sd">        tag (str): If not none, this is directly returned.</span>
+<span class="sd">        low: low case in interpolation</span>
+<span class="sd">        high: high case</span>
+<span class="sd">        parameter: between 0 and 1</span>
+<span class="sd">        tag: If not none, this is directly returned.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        string, a &quot;computed&quot; tag if a tag is not directly supplied</span>
@@ -380,7 +386,13 @@
     <span class="k">return</span> <span class="n">tag</span>
 
 
-<div class="viewcode-block" id="interpolate_wo"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.interpolation.interpolate_wo">[docs]</a><span class="k">def</span> <span class="nf">interpolate_wo</span><span class="p">(</span><span class="n">wo_low</span><span class="p">,</span> <span class="n">wo_high</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="interpolate_wo"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.interpolation.interpolate_wo">[docs]</a><span class="k">def</span> <span class="nf">interpolate_wo</span><span class="p">(</span>
+    <span class="n">wo_low</span><span class="p">:</span> <span class="n">WaterOil</span><span class="p">,</span>
+    <span class="n">wo_high</span><span class="p">:</span> <span class="n">WaterOil</span><span class="p">,</span>
+    <span class="n">parameter</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">h</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">tag</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WaterOil</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Interpolates between two water-oil curves.</span>
 
 <span class="sd">    The saturation endpoints for the curves must be known</span>
@@ -392,23 +404,19 @@
 <span class="sd">    interpolated individually.</span>
 
 <span class="sd">    Arguments:</span>
-<span class="sd">        wo_low (WaterOil): a &quot;low&quot; case</span>
-<span class="sd">        wo_high (WaterOil): a &quot;high&quot; case</span>
-<span class="sd">        parameter (float): Between 0 and 1. 0 will return the low case, 1 will return</span>
+<span class="sd">        wo_low: a &quot;low&quot; case</span>
+<span class="sd">        wo_high: a &quot;high&quot; case</span>
+<span class="sd">        parameter: Between 0 and 1. 0 will return the low case, 1 will return</span>
 <span class="sd">            the high case. Any number in between will return an interpolated curve</span>
-<span class="sd">        h (float): Saturation step-size in interpolant. If defaulted, a value</span>
+<span class="sd">        h: Saturation step-size in interpolant. If defaulted, a value</span>
 <span class="sd">            smaller than in the input curves are used, to preserve information.</span>
-<span class="sd">        tag (string): Tag to associate to the constructed object. If None</span>
+<span class="sd">        tag: Tag to associate to the constructed object. If None</span>
 <span class="sd">            it will be automatically filled. Set to empty string to ensure no tag.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        A new oil-water curve</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Warning: Almost code duplication with corresponding _go function</span>
 
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">wo_low</span><span class="p">,</span> <span class="n">pyscal</span><span class="o">.</span><span class="n">WaterOil</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">wo_high</span><span class="p">,</span> <span class="n">pyscal</span><span class="o">.</span><span class="n">WaterOil</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">wo_low</span><span class="p">,</span> <span class="n">WaterOil</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">wo_high</span><span class="p">,</span> <span class="n">WaterOil</span><span class="p">)</span>
 
     <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">parameter</span> <span class="o">&lt;=</span> <span class="mi">1</span>
     <span class="c1"># Extrapolation is refused, but perhaps later implemented with truncation to (0,1)</span>
@@ -442,7 +450,7 @@
 
     <span class="c1"># Construct the new WaterOil object, with interpolated</span>
     <span class="c1"># endpoints:</span>
-    <span class="n">wo_new</span> <span class="o">=</span> <span class="n">pyscal</span><span class="o">.</span><span class="n">WaterOil</span><span class="p">(</span><span class="n">swl</span><span class="o">=</span><span class="n">swl_new</span><span class="p">,</span> <span class="n">swcr</span><span class="o">=</span><span class="n">swcr_new</span><span class="p">,</span> <span class="n">sorw</span><span class="o">=</span><span class="n">sorw_new</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">)</span>
+    <span class="n">wo_new</span> <span class="o">=</span> <span class="n">WaterOil</span><span class="p">(</span><span class="n">swl</span><span class="o">=</span><span class="n">swl_new</span><span class="p">,</span> <span class="n">swcr</span><span class="o">=</span><span class="n">swcr_new</span><span class="p">,</span> <span class="n">sorw</span><span class="o">=</span><span class="n">sorw_new</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">)</span>
 
     <span class="c1"># Add interpolated relperm data in nonlinear parts:</span>
     <span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KRW&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span>
@@ -469,7 +477,13 @@
     <span class="k">return</span> <span class="n">wo_new</span></div>
 
 
-<div class="viewcode-block" id="interpolate_go"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.interpolation.interpolate_go">[docs]</a><span class="k">def</span> <span class="nf">interpolate_go</span><span class="p">(</span><span class="n">go_low</span><span class="p">,</span> <span class="n">go_high</span><span class="p">,</span> <span class="n">parameter</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="interpolate_go"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.interpolation.interpolate_go">[docs]</a><span class="k">def</span> <span class="nf">interpolate_go</span><span class="p">(</span>
+    <span class="n">go_low</span><span class="p">:</span> <span class="n">GasOil</span><span class="p">,</span>
+    <span class="n">go_high</span><span class="p">:</span> <span class="n">GasOil</span><span class="p">,</span>
+    <span class="n">parameter</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">h</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">tag</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GasOil</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Interpolates between two gas-oil curves.</span>
 
 <span class="sd">    The saturation endpoints for the curves must be known</span>
@@ -481,23 +495,19 @@
 <span class="sd">    interpolated individually.</span>
 
 <span class="sd">    Arguments:</span>
-<span class="sd">        go_low (GasOil): a &quot;low&quot; case</span>
-<span class="sd">        go_high (GasOil): a &quot;high&quot; case</span>
-<span class="sd">        parameter (float): Between 0 and 1. 0 will return the low case, 1 will return</span>
+<span class="sd">        go_low: a &quot;low&quot; case</span>
+<span class="sd">        go_high: a &quot;high&quot; case</span>
+<span class="sd">        parameter: Between 0 and 1. 0 will return the low case, 1 will return</span>
 <span class="sd">            the high case. Any number in between will return an interpolated curve</span>
-<span class="sd">        h (float): Saturation step-size in interpolant. If defaulted, a value</span>
+<span class="sd">        h: Saturation step-size in interpolant. If defaulted, a value</span>
 <span class="sd">            smaller than in the input curves are used, to preserve information.</span>
-<span class="sd">        tag (string): Tag to associate to the constructed object. If None</span>
+<span class="sd">        tag: Tag to associate to the constructed object. If None</span>
 <span class="sd">            it will be automatically filled. Set to empty string to ensure no tag.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        A new gas-oil curve</span>
-
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># Warning: Almost code duplication with corresponding _wo function</span>
 
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">go_low</span><span class="p">,</span> <span class="n">pyscal</span><span class="o">.</span><span class="n">GasOil</span><span class="p">)</span>
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">go_high</span><span class="p">,</span> <span class="n">pyscal</span><span class="o">.</span><span class="n">GasOil</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">go_low</span><span class="p">,</span> <span class="n">GasOil</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">go_high</span><span class="p">,</span> <span class="n">GasOil</span><span class="p">)</span>
 
     <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">parameter</span> <span class="o">&lt;=</span> <span class="mi">1</span>
     <span class="c1"># Extrapolation is refused, but perhaps later implemented with truncation to (0,1)</span>
@@ -531,7 +541,7 @@
 
     <span class="c1"># Construct the new GasOil object, with interpolated</span>
     <span class="c1"># endpoints:</span>
-    <span class="n">go_new</span> <span class="o">=</span> <span class="n">pyscal</span><span class="o">.</span><span class="n">GasOil</span><span class="p">(</span><span class="n">swl</span><span class="o">=</span><span class="n">swl_new</span><span class="p">,</span> <span class="n">sgcr</span><span class="o">=</span><span class="n">sgcr_new</span><span class="p">,</span> <span class="n">sorg</span><span class="o">=</span><span class="n">sorg_new</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">)</span>
+    <span class="n">go_new</span> <span class="o">=</span> <span class="n">GasOil</span><span class="p">(</span><span class="n">swl</span><span class="o">=</span><span class="n">swl_new</span><span class="p">,</span> <span class="n">sgcr</span><span class="o">=</span><span class="n">sgcr_new</span><span class="p">,</span> <span class="n">sorg</span><span class="o">=</span><span class="n">sorg_new</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">)</span>
 
     <span class="c1"># Add interpolated relperm data in nonlinear parts:</span>
     <span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KRG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span>

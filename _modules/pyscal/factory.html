@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.factory &mdash; pyscal 0.7.8.dev7+g28df448 documentation</title>
+  <title>pyscal.factory &mdash; pyscal 0.7.8.dev8+g80b1e4e documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.7.8.dev7+g28df448
+                0.7.8.dev8+g80b1e4e
               </div>
             
           
@@ -171,6 +171,7 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span> <span class="nn">zipfile</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Iterable</span>
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -188,7 +189,7 @@
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="slicedict"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.slicedict">[docs]</a><span class="k">def</span> <span class="nf">slicedict</span><span class="p">(</span><span class="n">dct</span><span class="p">,</span> <span class="n">keys</span><span class="p">):</span>
+<div class="viewcode-block" id="slicedict"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.slicedict">[docs]</a><span class="k">def</span> <span class="nf">slicedict</span><span class="p">(</span><span class="n">dct</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">keys</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Slice a dictionary for a set of keys.</span>
 <span class="sd">    Keys not existing will be ignored.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -282,7 +283,9 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
 <div class="viewcode-block" id="PyscalFactory.create_water_oil"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_water_oil">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">create_water_oil</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create_water_oil</span><span class="p">(</span>
+        <span class="n">params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WaterOil</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Create a WaterOil object from a dictionary of parameters.</span>
 
 <span class="sd">        Parameterization (Corey/LET) is inferred from presence</span>
@@ -306,8 +309,8 @@
 <span class="sd">          a, b, poro, perm, sigma_costau</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            params (dict): Dictionary with parameters describing the WaterOil object.</span>
-<span class="sd">            fast (bool): If fast-mode should be set for constructed object.</span>
+<span class="sd">            params: Dictionary with parameters describing the WaterOil object.</span>
+<span class="sd">            fast: If fast-mode should be set for constructed object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">params</span><span class="p">:</span>
             <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
@@ -324,7 +327,7 @@
         <span class="c1"># Allowing sending in NaN values, delete those keys.</span>
         <span class="n">params</span> <span class="o">=</span> <span class="n">filter_nan_from_dict</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
 
-        <span class="n">usedparams</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">usedparams</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 
         <span class="c1"># Check if we should initialize swl from a swlheight parameter:</span>
         <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">WO_SWL_FROM_HEIGHT</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
@@ -460,7 +463,9 @@
         <span class="k">return</span> <span class="n">wateroil</span></div>
 
 <div class="viewcode-block" id="PyscalFactory.create_gas_oil"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_gas_oil">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">create_gas_oil</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create_gas_oil</span><span class="p">(</span>
+        <span class="n">params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GasOil</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Create a GasOil object from a dictionary of parameters.</span>
 
 <span class="sd">        Parameterization (Corey/LET) is inferred from presence</span>
@@ -480,11 +485,8 @@
 <span class="sd">          lg, eg, tg, log, eog, tog</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            params (dict): Dictionary with parameters describing the GasOil object.</span>
-<span class="sd">            fast (bool): If fast-mode should be set for constructed object.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            GasOil</span>
+<span class="sd">            params: Dictionary with parameters describing the GasOil object.</span>
+<span class="sd">            fast: If fast-mode should be set for constructed object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">params</span><span class="p">:</span>
             <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
@@ -501,7 +503,7 @@
         <span class="c1"># Allowing sending in NaN values, delete those keys.</span>
         <span class="n">params</span> <span class="o">=</span> <span class="n">filter_nan_from_dict</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
 
-        <span class="n">usedparams</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="n">usedparams</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
         <span class="c1"># No requirements to the base objects, defaults are ok.</span>
         <span class="n">gasoil</span> <span class="o">=</span> <span class="n">GasOil</span><span class="p">(</span><span class="o">**</span><span class="n">slicedict</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">GO_INIT</span><span class="p">),</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">)</span>
         <span class="n">usedparams</span> <span class="o">=</span> <span class="n">usedparams</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">slicedict</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">GO_INIT</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
@@ -568,7 +570,9 @@
         <span class="k">return</span> <span class="n">gasoil</span></div>
 
 <div class="viewcode-block" id="PyscalFactory.create_water_oil_gas"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_water_oil_gas">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">create_water_oil_gas</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create_water_oil_gas</span><span class="p">(</span>
+        <span class="n">params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WaterOilGas</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Create a WaterOilGas object from a dictionary of parameters</span>
 
 <span class="sd">        Parameterization (Corey/LET) is inferred from presence</span>
@@ -578,8 +582,8 @@
 <span class="sd">        of supported parameters (case insensitive)</span>
 
 <span class="sd">        Params:</span>
-<span class="sd">            params (dict): Dictionary with parameters describing the WaterOilGas object.</span>
-<span class="sd">            fast (bool): If fast-mode should be set for constructed object.</span>
+<span class="sd">            params: Dictionary with parameters describing the WaterOilGas object.</span>
+<span class="sd">            fast: If fast-mode should be set for constructed object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">params</span><span class="p">:</span>
             <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
@@ -591,6 +595,7 @@
         <span class="c1"># For case insensitiveness, all keys are converted to lower case:</span>
         <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="n">value</span> <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 
+        <span class="n">wateroil</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">WaterOil</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">sufficient_water_oil_params</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">failhard</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
             <span class="n">wateroil</span> <span class="o">=</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_water_oil</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -599,9 +604,10 @@
 
         <span class="c1"># If the swl in WaterOil was initialized with swlheight,</span>
         <span class="c1"># ensure that result is passed on to the GasOil object:</span>
-        <span class="k">if</span> <span class="s2">&quot;swl&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">params</span> <span class="ow">and</span> <span class="s2">&quot;swlheight&quot;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;swl&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">params</span> <span class="ow">and</span> <span class="s2">&quot;swlheight&quot;</span> <span class="ow">in</span> <span class="n">params</span> <span class="ow">and</span> <span class="n">wateroil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">params</span><span class="p">[</span><span class="s2">&quot;swl&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wateroil</span><span class="o">.</span><span class="n">swl</span>
 
+        <span class="n">gasoil</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">GasOil</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">sufficient_gas_oil_params</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">failhard</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
             <span class="n">gasoil</span> <span class="o">=</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_gas_oil</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -622,18 +628,17 @@
         <span class="k">return</span> <span class="n">wateroilgas</span></div>
 
 <div class="viewcode-block" id="PyscalFactory.create_gas_water"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_gas_water">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">create_gas_water</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create_gas_water</span><span class="p">(</span>
+        <span class="n">params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GasWater</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Create a GasWater object.</span>
 
 <span class="sd">        Parameterization (Corey/LET) is inferred from presence</span>
 <span class="sd">        of certain parameters in the dictionary.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            params (dict): Dictionary with parameters for GasWater.</span>
-<span class="sd">            fast (bool): If fast-mode should be set for constructed object.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            GasWater</span>
+<span class="sd">            params: Dictionary with parameters for GasWater.</span>
+<span class="sd">            fast: If fast-mode should be set for constructed object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">params</span><span class="p">:</span>
             <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
@@ -658,12 +663,19 @@
         <span class="n">wog_params</span><span class="p">[</span><span class="s2">&quot;nog&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="n">wog_params</span><span class="p">[</span><span class="s2">&quot;now&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="n">wog</span> <span class="o">=</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_water_oil_gas</span><span class="p">(</span><span class="n">wog_params</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">wog</span><span class="o">.</span><span class="n">wateroil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="k">assert</span> <span class="n">wog</span><span class="o">.</span><span class="n">gasoil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="n">gaswater</span><span class="o">.</span><span class="n">wateroil</span> <span class="o">=</span> <span class="n">wog</span><span class="o">.</span><span class="n">wateroil</span>
         <span class="n">gaswater</span><span class="o">.</span><span class="n">gasoil</span> <span class="o">=</span> <span class="n">wog</span><span class="o">.</span><span class="n">gasoil</span>
         <span class="k">return</span> <span class="n">gaswater</span></div>
 
 <div class="viewcode-block" id="PyscalFactory.create_scal_recommendation"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_scal_recommendation">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">create_scal_recommendation</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create_scal_recommendation</span><span class="p">(</span>
+        <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span>
+        <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">h</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SCALrecommendation</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Set up a SCAL recommendation curve set from input as a</span>
 <span class="sd">        dictionary of dictionary.</span>
@@ -683,17 +695,14 @@
 <span class="sd">        and high.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            params (dict): keys low, base and high.</span>
+<span class="sd">            params: keys low, base and high.</span>
 <span class="sd">                The value for &quot;low&quot; must be a new dictionary with saturation</span>
 <span class="sd">                endpoints and LET/Corey parameters, as you would feed it to</span>
 <span class="sd">                the create_water_oil_gas() factory function, and then similarly</span>
 <span class="sd">                for base and high.</span>
-<span class="sd">            tag (string): String to be used as the tag, will end up in comments.</span>
-<span class="sd">            h (float): Saturation step length</span>
-<span class="sd">            fast (bool): If fast-mode should be set for constructed object.</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            SCALrecommendation</span>
+<span class="sd">            tag: String to be used as the tag, will end up in comments.</span>
+<span class="sd">            h: Saturation step length</span>
+<span class="sd">            fast: If fast-mode should be set for constructed object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Input must be a dictionary (of dictionaries)&quot;</span><span class="p">)</span>
@@ -730,6 +739,10 @@
         <span class="n">wateroil</span> <span class="o">=</span> <span class="nb">all</span><span class="p">(</span>
             <span class="p">[</span><span class="n">sufficient_water_oil_params</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">case</span><span class="p">])</span> <span class="k">for</span> <span class="n">case</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
         <span class="p">)</span>
+
+        <span class="n">wog_low</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">WaterOilGas</span><span class="p">,</span> <span class="n">GasWater</span><span class="p">]</span>
+        <span class="n">wog_base</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">WaterOilGas</span><span class="p">,</span> <span class="n">GasWater</span><span class="p">]</span>
+        <span class="n">wog_high</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">WaterOilGas</span><span class="p">,</span> <span class="n">GasWater</span><span class="p">]</span>
 
         <span class="k">if</span> <span class="n">wateroil</span> <span class="ow">or</span> <span class="n">gasoil</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
@@ -768,7 +781,9 @@
         <span class="k">return</span> <span class="n">scal</span></div>
 
 <div class="viewcode-block" id="PyscalFactory.load_relperm_df"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.load_relperm_df">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">load_relperm_df</span><span class="p">(</span><span class="n">inputfile</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">load_relperm_df</span><span class="p">(</span>
+        <span class="n">inputfile</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span> <span class="n">sheet_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Read CSV or XLSX from file and return scal/relperm data</span>
 <span class="sd">        a dataframe.</span>
 
@@ -783,12 +798,12 @@
 <span class="sd">        &quot;low&quot;, and &quot;optimistic&quot; and &quot;opt&quot; map to &quot;high&quot;.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            inputfile (str or pd.DataFrame): Filename for XLSX or CSV file, or a</span>
+<span class="sd">            inputfile: Filename for XLSX or CSV file, or a</span>
 <span class="sd">                pandas DataFrame.</span>
-<span class="sd">            sheet_name (str): Sheet-name, only used when loading xlsx files.</span>
+<span class="sd">            sheet_name: Sheet-name, only used when loading xlsx files.</span>
 
 <span class="sd">        Returns:</span>
-<span class="sd">            pd.DataFrame. To be handed over to pyscal list factory methods.</span>
+<span class="sd">            To be handed over to pyscal list factory methods.</span>
 <span class="sd">            Empty dataframe in case of errors (messages will be logged).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputfile</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">))</span> <span class="ow">and</span> <span class="n">Path</span><span class="p">(</span><span class="n">inputfile</span><span class="p">)</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
@@ -815,10 +830,10 @@
                         <span class="n">inputfile</span><span class="p">,</span>
                         <span class="n">sheet_name</span><span class="p">,</span>
                     <span class="p">)</span>
-                <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">error</span><span class="p">:</span>
+                <span class="k">except</span> <span class="p">(</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                         <span class="sa">f</span><span class="s2">&quot;Non-existing sheet-name </span><span class="si">{</span><span class="n">sheet_name</span><span class="si">}</span><span class="s2"> provided.&quot;</span>
-                    <span class="p">)</span> <span class="kn">from</span> <span class="nn">error</span>
+                    <span class="p">)</span> <span class="kn">from</span> <span class="nn">err</span>
             <span class="k">elif</span> <span class="n">tabular_file_format</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;xls&quot;</span><span class="p">):</span>
                 <span class="n">input_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span>
                     <span class="n">inputfile</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="n">excel_engines</span><span class="p">[</span><span class="n">tabular_file_format</span><span class="p">]</span>
@@ -933,7 +948,7 @@
 
         <span class="c1"># Check that we are able to make something out of the first row:</span>
         <span class="n">firstrow</span> <span class="o">=</span> <span class="n">input_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
-        <span class="n">error</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">error</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="n">wo_ok</span> <span class="o">=</span> <span class="n">sufficient_water_oil_params</span><span class="p">(</span><span class="n">firstrow</span><span class="p">)</span>
         <span class="n">go_ok</span> <span class="o">=</span> <span class="n">sufficient_gas_oil_params</span><span class="p">(</span><span class="n">firstrow</span><span class="p">)</span>
         <span class="n">gw_ok</span> <span class="o">=</span> <span class="n">sufficient_gas_water_params</span><span class="p">(</span><span class="n">firstrow</span><span class="p">)</span>
@@ -951,7 +966,7 @@
         <span class="k">return</span> <span class="n">input_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;SATNUM&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PyscalFactory.remap_validate_cases"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.remap_validate_cases">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">remap_validate_cases</span><span class="p">(</span><span class="n">casevalues</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">remap_validate_cases</span><span class="p">(</span><span class="n">casevalues</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Remap values in the CASE column so that we can use aliases.</span>
 
 <span class="sd">        All values are first made lower case, then</span>
@@ -962,7 +977,7 @@
 <span class="sd">        if we don&#39;t have exactly three unique values.</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            casevalues (list of str): values to remap.</span>
+<span class="sd">            casevalues: values to remap.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">accepted</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;low&quot;</span><span class="p">,</span> <span class="s2">&quot;base&quot;</span><span class="p">,</span> <span class="s2">&quot;high&quot;</span><span class="p">]</span>
         <span class="n">aliases</span> <span class="o">=</span> <span class="p">{</span>
@@ -985,14 +1000,16 @@
         <span class="k">return</span> <span class="n">remapped</span></div>
 
 <div class="viewcode-block" id="PyscalFactory.create_scal_recommendation_list"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_scal_recommendation_list">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">create_scal_recommendation_list</span><span class="p">(</span><span class="n">input_df</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create_scal_recommendation_list</span><span class="p">(</span>
+        <span class="n">input_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PyscalList</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Requires SATNUM and CASE to be defined in the input data</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            input_df (pd.DataFrame): Input data, should have been processed</span>
+<span class="sd">            input_df: Input data, should have been processed</span>
 <span class="sd">                through load_relperm_df().</span>
-<span class="sd">            h (float): Saturation step-value</span>
-<span class="sd">            fast (bool): If fast-mode should be set for constructed object</span>
+<span class="sd">            h: Saturation step-value</span>
+<span class="sd">            fast: If fast-mode should be set for constructed object</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            PyscalList, consisting of SCALrecommendation objects</span>
@@ -1021,15 +1038,17 @@
         <span class="k">return</span> <span class="n">scal_l</span></div>
 
 <div class="viewcode-block" id="PyscalFactory.create_pyscal_list"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_pyscal_list">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">create_pyscal_list</span><span class="p">(</span><span class="n">relperm_params_df</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create_pyscal_list</span><span class="p">(</span>
+        <span class="n">relperm_params_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Create WaterOilGas, WaterOil, GasOil or GasWater list</span>
 <span class="sd">        based on what is available</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            relperm_params_df (pd.DataFrame): Input data, should have been processed</span>
+<span class="sd">            relperm_params_df: Input data, should have been processed</span>
 <span class="sd">                through load_relperm_df().</span>
-<span class="sd">            h (float): Saturation step-value</span>
-<span class="sd">            fast (bool): If fast-mode should be set for constructed object</span>
+<span class="sd">            h: Saturation step-value</span>
+<span class="sd">            fast: If fast-mode should be set for constructed object</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            PyscalList, consisting of either WaterOil, GasOil or WaterOilGas objects</span>
@@ -1050,15 +1069,17 @@
         <span class="k">return</span> <span class="kc">None</span></div>
 
 <div class="viewcode-block" id="PyscalFactory.create_wateroilgas_list"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_wateroilgas_list">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">create_wateroilgas_list</span><span class="p">(</span><span class="n">relperm_params_df</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create_wateroilgas_list</span><span class="p">(</span>
+        <span class="n">relperm_params_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PyscalList</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Create a PyscalList with WaterOilGas objects from</span>
 <span class="sd">        a dataframe</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            relperm_params_df (pd.DataFrame): Input data, should have been processed</span>
+<span class="sd">            relperm_params_df: Input data, should have been processed</span>
 <span class="sd">                through load_relperm_df().</span>
-<span class="sd">            h (float): Saturation step-value</span>
-<span class="sd">            fast (bool): If fast-mode should be set for constructed object</span>
+<span class="sd">            h: Saturation step-value</span>
+<span class="sd">            fast: If fast-mode should be set for constructed object</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            PyscalList, consisting of WaterOilGas objects</span>
@@ -1076,15 +1097,17 @@
         <span class="k">return</span> <span class="n">wogl</span></div>
 
 <div class="viewcode-block" id="PyscalFactory.create_wateroil_list"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_wateroil_list">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">create_wateroil_list</span><span class="p">(</span><span class="n">relperm_params_df</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create_wateroil_list</span><span class="p">(</span>
+        <span class="n">relperm_params_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PyscalList</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Create a PyscalList with WaterOil objects from</span>
 <span class="sd">        a dataframe</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            relperm_params_df (pd.DataFrame): A valid dataframe with</span>
+<span class="sd">            relperm_params_df: A valid dataframe with</span>
 <span class="sd">                WaterOil parameters, processed through load_relperm_df()</span>
-<span class="sd">            h (float): Saturation steplength</span>
-<span class="sd">            fast (bool): If fast-mode should be set for constructed object</span>
+<span class="sd">            h: Saturation steplength</span>
+<span class="sd">            fast: If fast-mode should be set for constructed object</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            PyscalList, consisting of WaterOil objects</span>
@@ -1102,15 +1125,17 @@
         <span class="k">return</span> <span class="n">wol</span></div>
 
 <div class="viewcode-block" id="PyscalFactory.create_gasoil_list"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_gasoil_list">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">create_gasoil_list</span><span class="p">(</span><span class="n">relperm_params_df</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create_gasoil_list</span><span class="p">(</span>
+        <span class="n">relperm_params_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PyscalList</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Create a PyscalList with GasOil objects from</span>
 <span class="sd">        a dataframe</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            relperm_params_df (pd.DataFrame): A valid dataframe with GasOil parameters,</span>
+<span class="sd">            relperm_params_df: A valid dataframe with GasOil parameters,</span>
 <span class="sd">                processed through load_relperm_df()</span>
-<span class="sd">            h (float): Saturation steplength</span>
-<span class="sd">            fast (bool): If fast-mode should be set for constructed object</span>
+<span class="sd">            h: Saturation steplength</span>
+<span class="sd">            fast: If fast-mode should be set for constructed object</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            PyscalList, consisting of GasOil objects</span>
@@ -1128,15 +1153,17 @@
         <span class="k">return</span> <span class="n">gol</span></div>
 
 <div class="viewcode-block" id="PyscalFactory.create_gaswater_list"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_gaswater_list">[docs]</a>    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">create_gaswater_list</span><span class="p">(</span><span class="n">relperm_params_df</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">create_gaswater_list</span><span class="p">(</span>
+        <span class="n">relperm_params_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PyscalList</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Create a PyscalList with WaterOilGas objects from</span>
 <span class="sd">        a dataframe, to be used for GasWater</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            relperm_params_df (pd.DataFrame): A valid dataframe with GasWater</span>
+<span class="sd">            relperm_params_df: A valid dataframe with GasWater</span>
 <span class="sd">                parameters, processed through load_relperm_df()</span>
-<span class="sd">            h (float): Saturation steplength</span>
-<span class="sd">            fast (bool): If fast-mode should be set for constructed object</span>
+<span class="sd">            h: Saturation steplength</span>
+<span class="sd">            fast: If fast-mode should be set for constructed object</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            PyscalList, consisting of GasWater objects</span>
@@ -1154,7 +1181,7 @@
         <span class="k">return</span> <span class="n">gwl</span></div></div>
 
 
-<div class="viewcode-block" id="sufficient_water_oil_params"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.sufficient_water_oil_params">[docs]</a><span class="k">def</span> <span class="nf">sufficient_water_oil_params</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">failhard</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="sufficient_water_oil_params"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.sufficient_water_oil_params">[docs]</a><span class="k">def</span> <span class="nf">sufficient_water_oil_params</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">failhard</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Determine if the supplied parameters are sufficient for</span>
 <span class="sd">    attempting creating a WaterOil object.</span>
 
@@ -1163,14 +1190,14 @@
 <span class="sd">    undefined (Corey or LET, and which pc?)</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        params (dict): Dictionary of parameters to a WaterOil object.</span>
-<span class="sd">        failhard (bool): If True, will raise ValueError when</span>
+<span class="sd">        params: Dictionary of parameters to a WaterOil object.</span>
+<span class="sd">        failhard: If True, will raise ValueError when</span>
 <span class="sd">            parameters are insufficient. If defaulted, no</span>
 <span class="sd">            exception is raised.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        True if a WaterOil object should be attempted constructed</span>
-<span class="sd">            (but no guarantee for validity of numerical values)</span>
+<span class="sd">        (but no guarantee for validity of numerical values)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># pylint: disable=C1801</span>
     <span class="c1"># For case insensitiveness, all keys are converted to lower case:</span>
@@ -1190,7 +1217,7 @@
     <span class="k">return</span> <span class="n">water_ok</span> <span class="ow">and</span> <span class="n">oil_ok</span></div>
 
 
-<div class="viewcode-block" id="sufficient_gas_oil_params"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.sufficient_gas_oil_params">[docs]</a><span class="k">def</span> <span class="nf">sufficient_gas_oil_params</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">failhard</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="sufficient_gas_oil_params"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.sufficient_gas_oil_params">[docs]</a><span class="k">def</span> <span class="nf">sufficient_gas_oil_params</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">failhard</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Determine if the supplied parameters are sufficient for</span>
 <span class="sd">    attempting at creating a GasOil object.</span>
 
@@ -1199,14 +1226,14 @@
 <span class="sd">    undefined (Corey or LET, and which pc?)</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        params (dict): Dictionary of parameters to a GasOil object.</span>
-<span class="sd">        failhard (bool): If True, will raise ValueError when</span>
+<span class="sd">        params: Dictionary of parameters to a GasOil object.</span>
+<span class="sd">        failhard: If True, will raise ValueError when</span>
 <span class="sd">            parameters are insufficient. If defaulted, no</span>
 <span class="sd">            exception is raised.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        True if a GasOil object should be attempted constructed</span>
-<span class="sd">            (but no guarantee for validity of numerical values)</span>
+<span class="sd">        (but no guarantee for validity of numerical values)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="c1"># pylint: disable=C1801</span>
     <span class="c1"># For case insensitiveness, all keys are converted to lower case:</span>
@@ -1225,7 +1252,7 @@
     <span class="k">return</span> <span class="n">oil_ok</span> <span class="ow">and</span> <span class="n">gas_ok</span></div>
 
 
-<div class="viewcode-block" id="sufficient_gas_water_params"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.sufficient_gas_water_params">[docs]</a><span class="k">def</span> <span class="nf">sufficient_gas_water_params</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">failhard</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="sufficient_gas_water_params"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.sufficient_gas_water_params">[docs]</a><span class="k">def</span> <span class="nf">sufficient_gas_water_params</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">failhard</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Determine if the supplied parameters are sufficient for</span>
 <span class="sd">    attempting creating a WaterOilGas object to be used for gas water.</span>
 
@@ -1234,8 +1261,8 @@
 <span class="sd">    for the factory undefined (Corey or LET, and which pc?)</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        params (dict): Dictionary of parameters to a GasWater object.</span>
-<span class="sd">        failhard (bool): If True, will raise ValueError when</span>
+<span class="sd">        params: Dictionary of parameters to a GasWater object.</span>
+<span class="sd">        failhard: If True, will raise ValueError when</span>
 <span class="sd">            parameters are insufficient. If defaulted, no</span>
 <span class="sd">            exception is raised.</span>
 
@@ -1260,7 +1287,7 @@
     <span class="k">return</span> <span class="n">water_ok</span> <span class="ow">and</span> <span class="n">gas_ok</span></div>
 
 
-<div class="viewcode-block" id="filter_nan_from_dict"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.filter_nan_from_dict">[docs]</a><span class="k">def</span> <span class="nf">filter_nan_from_dict</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+<div class="viewcode-block" id="filter_nan_from_dict"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.filter_nan_from_dict">[docs]</a><span class="k">def</span> <span class="nf">filter_nan_from_dict</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Clean out keys with NaN values in a dict.</span>
 
 <span class="sd">    Key with string values are passed through (empty strings are allowed)</span>
@@ -1281,15 +1308,15 @@
     <span class="k">return</span> <span class="n">cleaned_params</span></div>
 
 
-<div class="viewcode-block" id="infer_tabular_file_format"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.infer_tabular_file_format">[docs]</a><span class="k">def</span> <span class="nf">infer_tabular_file_format</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+<div class="viewcode-block" id="infer_tabular_file_format"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.infer_tabular_file_format">[docs]</a><span class="k">def</span> <span class="nf">infer_tabular_file_format</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Determine the file format of a file containing tabular data,</span>
 <span class="sd">    distinguishes between csv, xls and xlsx</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        filename (str): Path to file, possibley pathlib Path object.</span>
+<span class="sd">        filename: Path to file</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        str: One of &quot;csv&quot;, &quot;xlsx&quot; or &quot;xls&quot;. Empty string if nothing found out.</span>
+<span class="sd">        One of &quot;csv&quot;, &quot;xlsx&quot; or &quot;xls&quot;. Empty string if nothing found out.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">try</span><span class="p">:</span>
         <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">engine</span><span class="o">=</span><span class="s2">&quot;openpyxl&quot;</span><span class="p">)</span>
@@ -1331,7 +1358,7 @@
     <span class="k">return</span> <span class="s2">&quot;&quot;</span></div>
 
 
-<div class="viewcode-block" id="check_deprecated"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.check_deprecated">[docs]</a><span class="k">def</span> <span class="nf">check_deprecated</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+<div class="viewcode-block" id="check_deprecated"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.check_deprecated">[docs]</a><span class="k">def</span> <span class="nf">check_deprecated</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Check for deprecated parameter names</span>
 
 <span class="sd">    Args:</span>

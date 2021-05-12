@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.utils.monotonicity &mdash; pyscal 0.7.8.dev7+g28df448 documentation</title>
+  <title>pyscal.utils.monotonicity &mdash; pyscal 0.7.8.dev8+g80b1e4e documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.7.8.dev7+g28df448
+                0.7.8.dev8+g80b1e4e
               </div>
             
           
@@ -168,7 +168,15 @@
   <h1>Source code for pyscal.utils.monotonicity</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Monotonocity support functions for pyscal&quot;&quot;&quot;</span>
 
+<span class="kn">import</span> <span class="nn">sys</span>
 <span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Dict</span>
+
+<span class="c1"># pylint: disable=wrong-import-position</span>
+<span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">TypedDict</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">typing_extensions</span> <span class="kn">import</span> <span class="n">TypedDict</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -179,7 +187,29 @@
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="modify_dframe_monotonicity"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.monotonicity.modify_dframe_monotonicity">[docs]</a><span class="k">def</span> <span class="nf">modify_dframe_monotonicity</span><span class="p">(</span><span class="n">dframe</span><span class="p">,</span> <span class="n">monotonicity</span><span class="p">,</span> <span class="n">digits</span><span class="p">):</span>
+<div class="viewcode-block" id="MonotonicitySpec"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.monotonicity.MonotonicitySpec">[docs]</a><span class="k">class</span> <span class="nc">MonotonicitySpec</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Specification of monotonicity for a vector of values&quot;&quot;&quot;</span>
+
+    <span class="n">sign</span><span class="p">:</span> <span class="nb">int</span>
+    <span class="sd">&quot;&quot;&quot;Value of +1 dictates strictly increasing,</span>
+<span class="sd">    value of -1 dictates scrictly decreasing. Required parameter.&quot;&quot;&quot;</span>
+
+    <span class="n">upper</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="sd">&quot;&quot;&quot;Values will be clipped at upper limit, and non-strict monotonicity is</span>
+<span class="sd">    allowed at limit. Optional parameter.&quot;&quot;&quot;</span>
+
+    <span class="n">lower</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="sd">&quot;&quot;&quot;Values will be clipped at lower limit, and non-strict monotonicity is</span>
+<span class="sd">    allowed at limit. Optional parameter.&quot;&quot;&quot;</span>
+
+    <span class="n">allowzero</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="sd">&quot;&quot;&quot;If True, consecutive zeros will be allowes in an otherwise strictly</span>
+<span class="sd">    monotonic column. Optional parameter.&quot;&quot;&quot;</span></div>
+
+
+<div class="viewcode-block" id="modify_dframe_monotonicity"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.monotonicity.modify_dframe_monotonicity">[docs]</a><span class="k">def</span> <span class="nf">modify_dframe_monotonicity</span><span class="p">(</span>
+    <span class="n">dframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">monotonicity</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">MonotonicitySpec</span><span class="p">],</span> <span class="n">digits</span><span class="p">:</span> <span class="nb">int</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Modify a dataframe for monotonicity.</span>
 
 <span class="sd">    Columns in the dataframe are modified in-place.</span>
@@ -210,9 +240,9 @@
 <span class="sd">    For non-strict monotocity, see the function clip_accumulate()</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        dframe (pd.DataFrame): Data to modify.</span>
-<span class="sd">        monotonicity (dict): see df2str() for syntax.</span>
-<span class="sd">        digits (int): Number of digits to ensure monotonicity for.</span>
+<span class="sd">        dframe: Data to modify.</span>
+<span class="sd">        monotonicity: Keys are column names</span>
+<span class="sd">        digits: Number of digits to ensure monotonicity for.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">validate_monotonicity_arg</span><span class="p">(</span><span class="n">monotonicity</span><span class="p">,</span> <span class="n">dframe</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
 
@@ -286,15 +316,16 @@
     <span class="k">return</span> <span class="n">dframe</span></div>
 
 
-<div class="viewcode-block" id="clip_accumulate"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.monotonicity.clip_accumulate">[docs]</a><span class="k">def</span> <span class="nf">clip_accumulate</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">monotonicity</span><span class="p">):</span>
+<div class="viewcode-block" id="clip_accumulate"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.monotonicity.clip_accumulate">[docs]</a><span class="k">def</span> <span class="nf">clip_accumulate</span><span class="p">(</span>
+    <span class="n">series</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">monotonicity</span><span class="p">:</span> <span class="n">MonotonicitySpec</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Modify a series (vector of numbers) for non-strict monotonicity, and</span>
 <span class="sd">    optionally clip at lower and upper limits.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        series (pd.Series or np.array): Vector of numbers to modify</span>
-<span class="sd">        monotonicity (dict): Monotonocity options. The keys &#39;lower&#39; and &#39;upper&#39;</span>
-<span class="sd">            can be provided for clipping the vector.</span>
+<span class="sd">        series: Vector of numbers to modify</span>
+<span class="sd">        monotonicity:</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        np.array, copy of original.</span>
@@ -316,7 +347,11 @@
     <span class="k">return</span> <span class="n">series</span></div>
 
 
-<div class="viewcode-block" id="check_limits"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.monotonicity.check_limits">[docs]</a><span class="k">def</span> <span class="nf">check_limits</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">monotonicity</span><span class="p">,</span> <span class="n">colname</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="check_limits"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.monotonicity.check_limits">[docs]</a><span class="k">def</span> <span class="nf">check_limits</span><span class="p">(</span>
+    <span class="n">series</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">monotonicity</span><span class="p">:</span> <span class="n">MonotonicitySpec</span><span class="p">,</span>
+    <span class="n">colname</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Check a series whether it obeys numerical limits.</span>
 <span class="sd">    Equivalence to limits is allowed.</span>
@@ -325,13 +360,10 @@
 <span class="sd">    when everything is ok.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        series (pd.Series): Vector of numbers to check</span>
-<span class="sd">        monotonicity (dict): Keys &#39;upper&#39; and &#39;lower&#39; are optional</span>
-<span class="sd">            and point to numerical limits.</span>
-<span class="sd">        colname (str): Optional string for a column name that will be</span>
+<span class="sd">        series: Vector of numbers to check</span>
+<span class="sd">        monotonicity:</span>
+<span class="sd">        colname: Optional string for a column name that will be</span>
 <span class="sd">            included in any error message.</span>
-<span class="sd">    Returns:</span>
-<span class="sd">        None</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
         <span class="n">series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float64&quot;</span><span class="p">)</span>
@@ -343,15 +375,15 @@
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Values smaller than lower limit in column </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">colname</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="rows_to_be_fixed"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.monotonicity.rows_to_be_fixed">[docs]</a><span class="k">def</span> <span class="nf">rows_to_be_fixed</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">monotonicity</span><span class="p">,</span> <span class="n">digits</span><span class="p">):</span>
+<div class="viewcode-block" id="rows_to_be_fixed"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.monotonicity.rows_to_be_fixed">[docs]</a><span class="k">def</span> <span class="nf">rows_to_be_fixed</span><span class="p">(</span>
+    <span class="n">series</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">monotonicity</span><span class="p">:</span> <span class="n">MonotonicitySpec</span><span class="p">,</span> <span class="n">digits</span><span class="p">:</span> <span class="nb">int</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Compute boolean array of rows that must be modified</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        series (pd.Series):</span>
-<span class="sd">        monotonicity (dict): Can contain &quot;upper&quot; or &quot;lower&quot;</span>
-<span class="sd">            numerical bounds, and &quot;sign&quot;, where &gt;0 means positive.</span>
-<span class="sd">            &quot;sign&quot; is mandatory.</span>
-<span class="sd">        digits (int): Accuracy required, how many digits</span>
+<span class="sd">        series:</span>
+<span class="sd">        monotonicity:</span>
+<span class="sd">        digits: Accuracy required, how many digits</span>
 <span class="sd">            that are to be printed, and to which we should relate</span>
 <span class="sd">            constancy to.</span>
 <span class="sd">    Returns:</span>
@@ -375,14 +407,14 @@
     <span class="k">return</span> <span class="n">constants</span></div>
 
 
-<div class="viewcode-block" id="check_almost_monotone"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.monotonicity.check_almost_monotone">[docs]</a><span class="k">def</span> <span class="nf">check_almost_monotone</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">digits</span><span class="p">,</span> <span class="n">sign</span><span class="p">):</span>
+<div class="viewcode-block" id="check_almost_monotone"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.monotonicity.check_almost_monotone">[docs]</a><span class="k">def</span> <span class="nf">check_almost_monotone</span><span class="p">(</span><span class="n">series</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">digits</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">sign</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Raise a ValueError if a series is not sufficiently close</span>
 <span class="sd">    to constant or monotone in a certain direction.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        series (pd.Series): Vector of numbers</span>
-<span class="sd">        digits (int):</span>
-<span class="sd">        sign (int): direction. &gt;0 means positive</span>
+<span class="sd">        series: Vector of numbers</span>
+<span class="sd">        digits:</span>
+<span class="sd">        sign: direction. &gt;0 means positive</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
         <span class="n">series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float64&quot;</span><span class="p">)</span>
@@ -396,7 +428,9 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Series is not almost monotone&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="validate_monotonicity_arg"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.monotonicity.validate_monotonicity_arg">[docs]</a><span class="k">def</span> <span class="nf">validate_monotonicity_arg</span><span class="p">(</span><span class="n">monotonicity</span><span class="p">,</span> <span class="n">dframe_colnames</span><span class="p">):</span>
+<div class="viewcode-block" id="validate_monotonicity_arg"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.monotonicity.validate_monotonicity_arg">[docs]</a><span class="k">def</span> <span class="nf">validate_monotonicity_arg</span><span class="p">(</span>
+    <span class="n">monotonicity</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">MonotonicitySpec</span><span class="p">],</span> <span class="n">dframe_colnames</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Validate a dictionary with monotonicity arguments that</span>
 <span class="sd">    can be given to df2str().</span>
@@ -404,13 +438,9 @@
 <span class="sd">    Will raise ValueError exceptions if anything is wrong.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        monotonicity (dict): Keys are &#39;sign&#39;, &#39;upper&#39;, &#39;lower&#39;</span>
-<span class="sd">            and  &#39;allowzero&#39;.</span>
-<span class="sd">        dframe_colnames (list of str): Names of column names</span>
+<span class="sd">        monotonicity: Keys are column names.</span>
+<span class="sd">        dframe_colnames: Names of column names</span>
 <span class="sd">            in dframes. Used in error messages.</span>
-
-<span class="sd">    Returns:</span>
-<span class="sd">        None</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">valid_keys</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;sign&quot;</span><span class="p">,</span> <span class="s2">&quot;upper&quot;</span><span class="p">,</span> <span class="s2">&quot;lower&quot;</span><span class="p">,</span> <span class="s2">&quot;allowzero&quot;</span><span class="p">]</span>
     <span class="k">if</span> <span class="n">monotonicity</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>

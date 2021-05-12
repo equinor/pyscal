@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.pyscallist &mdash; pyscal 0.7.8.dev7+g28df448 documentation</title>
+  <title>pyscal.pyscallist &mdash; pyscal 0.7.8.dev8+g80b1e4e documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.7.8.dev7+g28df448
+                0.7.8.dev8+g80b1e4e
               </div>
             
           
@@ -171,11 +171,15 @@
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span> <span class="nn">logging</span>
 
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span>
+
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 <span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">WaterOil</span><span class="p">,</span> <span class="n">GasOil</span><span class="p">,</span> <span class="n">GasWater</span><span class="p">,</span> <span class="n">WaterOilGas</span><span class="p">,</span> <span class="n">SCALrecommendation</span>
 
 <span class="n">PYSCAL_OBJECTS</span> <span class="o">=</span> <span class="p">[</span><span class="n">WaterOil</span><span class="p">,</span> <span class="n">GasOil</span><span class="p">,</span> <span class="n">GasWater</span><span class="p">,</span> <span class="n">WaterOilGas</span><span class="p">,</span> <span class="n">SCALrecommendation</span><span class="p">]</span>
+
+<span class="n">PyscalObjects</span> <span class="o">=</span> <span class="n">Union</span><span class="p">[</span><span class="n">WaterOil</span><span class="p">,</span> <span class="n">GasOil</span><span class="p">,</span> <span class="n">GasWater</span><span class="p">,</span> <span class="n">WaterOilGas</span><span class="p">,</span> <span class="n">SCALrecommendation</span><span class="p">]</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
@@ -193,23 +197,23 @@
 <span class="sd">        pyscal_list (list): List of objects if already ready. Can be empty or None.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pyscal_list</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pyscal_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">PyscalObjects</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pyscaltype</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Type</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pyscal_list</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="k">for</span> <span class="n">pyscal_obj</span> <span class="ow">in</span> <span class="n">pyscal_list</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pyscal_obj</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">pyscal_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pyscal_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">PyscalObjects</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
 
-<div class="viewcode-block" id="PyscalList.append"><a class="viewcode-back" href="../../pyscal.html#pyscal.pyscallist.PyscalList.append">[docs]</a>    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pyscal_obj</span><span class="p">):</span>
+<div class="viewcode-block" id="PyscalList.append"><a class="viewcode-back" href="../../pyscal.html#pyscal.pyscallist.PyscalList.append">[docs]</a>    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pyscal_obj</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PyscalObjects</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Append a pyscal object to the list</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            pyscal_obj (WaterOil, GasOil, WaterOilGas or SCALrecommendation)</span>
+<span class="sd">            pyscal_obj</span>
 
 <span class="sd">        Raises:</span>
 <span class="sd">            ValueError if the type of the incoming object does not</span>
-<span class="sd">                match existing objects in the list</span>
+<span class="sd">            match existing objects in the list</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="n">pyscal_obj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span>
@@ -232,7 +236,7 @@
             <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pyscal_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pyscal_obj</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PyscalList.df"><a class="viewcode-back" href="../../pyscal.html#pyscal.pyscallist.PyscalList.df">[docs]</a>    <span class="k">def</span> <span class="nf">df</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PyscalList.df"><a class="viewcode-back" href="../../pyscal.html#pyscal.pyscallist.PyscalList.df">[docs]</a>    <span class="k">def</span> <span class="nf">df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Dump dataframes of generated relperm data</span>
 
 <span class="sd">        Column names are compatible with ecl2df.satfunc. Always uppercase</span>
@@ -241,9 +245,6 @@
 <span class="sd">        If the PyscalList contains SCALrecommendations, the CASE column</span>
 <span class="sd">        will contain the strings &#39;pess&#39;, &#39;base&#39; and &#39;opt&#39; (independent of</span>
 <span class="sd">        any alias name potentially used in an input xlsx/csv)</span>
-
-<span class="sd">        Returns:</span>
-<span class="sd">            pd.DataFrame</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Names of dataframe columns in wateroil/gasoil.table:</span>
         <span class="n">wateroil_pyscal_cols</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;SW&quot;</span><span class="p">,</span> <span class="s2">&quot;KRW&quot;</span><span class="p">,</span> <span class="s2">&quot;KROW&quot;</span><span class="p">,</span> <span class="s2">&quot;PC&quot;</span><span class="p">}</span>
@@ -259,6 +260,9 @@
         <span class="n">df_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">==</span> <span class="n">WaterOilGas</span><span class="p">:</span>
             <span class="k">for</span> <span class="p">(</span><span class="n">satnum</span><span class="p">,</span> <span class="n">wateroilgas</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyscal_list</span><span class="p">):</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">wateroilgas</span><span class="p">,</span> <span class="n">WaterOilGas</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="n">wateroilgas</span><span class="o">.</span><span class="n">wateroil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="k">assert</span> <span class="n">wateroilgas</span><span class="o">.</span><span class="n">gasoil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
                 <span class="n">wateroil_cols</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">wateroilgas</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span>
                     <span class="n">wateroil_pyscal_cols</span>
                 <span class="p">)</span>
@@ -277,6 +281,16 @@
                 <span class="p">)</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">==</span> <span class="n">SCALrecommendation</span><span class="p">:</span>
             <span class="k">for</span> <span class="p">(</span><span class="n">satnum</span><span class="p">,</span> <span class="n">scalrec</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyscal_list</span><span class="p">):</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scalrec</span><span class="p">,</span> <span class="n">SCALrecommendation</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="n">scalrec</span><span class="o">.</span><span class="n">low</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="k">assert</span> <span class="n">scalrec</span><span class="o">.</span><span class="n">base</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="k">assert</span> <span class="n">scalrec</span><span class="o">.</span><span class="n">high</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="k">assert</span> <span class="n">scalrec</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">wateroil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="k">assert</span> <span class="n">scalrec</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">gasoil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="k">assert</span> <span class="n">scalrec</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">wateroil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="k">assert</span> <span class="n">scalrec</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">gasoil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="k">assert</span> <span class="n">scalrec</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">wateroil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="k">assert</span> <span class="n">scalrec</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">gasoil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
                 <span class="n">gasoil_cols</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">scalrec</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span>
                     <span class="n">gasoil_pyscal_cols</span>
                 <span class="p">)</span>
@@ -316,6 +330,8 @@
                 <span class="p">)</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">==</span> <span class="n">WaterOil</span><span class="p">:</span>
             <span class="k">for</span> <span class="p">(</span><span class="n">satnum</span><span class="p">,</span> <span class="n">wateroil</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyscal_list</span><span class="p">):</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">wateroil</span><span class="p">,</span> <span class="n">WaterOil</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="n">wateroil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
                 <span class="n">wateroil_cols</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span>
                     <span class="n">wateroil_pyscal_cols</span>
                 <span class="p">)</span>
@@ -326,6 +342,8 @@
                 <span class="p">)</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">==</span> <span class="n">GasOil</span><span class="p">:</span>
             <span class="k">for</span> <span class="p">(</span><span class="n">satnum</span><span class="p">,</span> <span class="n">gasoil</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyscal_list</span><span class="p">):</span>
+                <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gasoil</span><span class="p">,</span> <span class="n">GasOil</span><span class="p">)</span>
+                <span class="k">assert</span> <span class="n">gasoil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
                 <span class="n">gasoil_cols</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">gasoil_pyscal_cols</span><span class="p">)</span>
                 <span class="n">df_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                     <span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">gasoil_cols</span><span class="p">]</span>
@@ -338,13 +356,13 @@
             <span class="n">dframe</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">sort_rows_on</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">dframe</span></div>
 
-<div class="viewcode-block" id="PyscalList.dump_family_1"><a class="viewcode-back" href="../../pyscal.html#pyscal.pyscallist.PyscalList.dump_family_1">[docs]</a>    <span class="k">def</span> <span class="nf">dump_family_1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">slgof</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="PyscalList.dump_family_1"><a class="viewcode-back" href="../../pyscal.html#pyscal.pyscallist.PyscalList.dump_family_1">[docs]</a>    <span class="k">def</span> <span class="nf">dump_family_1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">slgof</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Dumps family 1 Eclipse saturation tables to one</span>
 <span class="sd">        filename. This means SWOF + SGOF (SGOF only if relevant)</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            filename (str): Filename for the output to be given to Eclips 100</span>
-<span class="sd">            slgof (bool): Set to true of SLGOF is wanted instead of SGOF</span>
+<span class="sd">            filename: Filename for the output to be given to Eclipse 100</span>
+<span class="sd">            slgof: Set to true of SLGOF is wanted instead of SGOF</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">==</span> <span class="n">SCALrecommendation</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
@@ -354,6 +372,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">==</span> <span class="n">WaterOilGas</span><span class="p">:</span>
             <span class="c1"># WaterOilGas can be of type WaterOil when it emerges</span>
             <span class="c1"># from a SCAL recommendation, do a fragile test:</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyscal_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">WaterOilGas</span><span class="p">)</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscal_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">gasoil</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">family_1_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SWOF</span><span class="p">()</span>
                 <span class="n">keywords</span> <span class="o">=</span> <span class="s2">&quot;SWOF&quot;</span>
@@ -387,7 +406,7 @@
             <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">family_1_str</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">family_1_str</span></div>
 
-<div class="viewcode-block" id="PyscalList.dump_family_2"><a class="viewcode-back" href="../../pyscal.html#pyscal.pyscallist.PyscalList.dump_family_2">[docs]</a>    <span class="k">def</span> <span class="nf">dump_family_2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PyscalList.dump_family_2"><a class="viewcode-back" href="../../pyscal.html#pyscal.pyscallist.PyscalList.dump_family_2">[docs]</a>    <span class="k">def</span> <span class="nf">dump_family_2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Dumps family 2 Eclipse saturation tables to one</span>
 <span class="sd">        filename. This means SWFN + SGFN + SOF3 (SOF3 only for WaterOilGas)</span>
 
@@ -420,20 +439,23 @@
             <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">family_2_str</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">family_2_str</span></div>
 
-<div class="viewcode-block" id="PyscalList.interpolate"><a class="viewcode-back" href="../../pyscal.html#pyscal.pyscallist.PyscalList.interpolate">[docs]</a>    <span class="k">def</span> <span class="nf">interpolate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">int_params_wo</span><span class="p">,</span> <span class="n">int_params_go</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PyscalList.interpolate"><a class="viewcode-back" href="../../pyscal.html#pyscal.pyscallist.PyscalList.interpolate">[docs]</a>    <span class="k">def</span> <span class="nf">interpolate</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">int_params_wo</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">]],</span>
+        <span class="n">int_params_go</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">h</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PyscalList&quot;</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;This function will interpolate each SCALrecommendation</span>
 <span class="sd">        object to the chosen parameters</span>
 
 <span class="sd">        This only works on lists of SCALrecommendation objects</span>
 
 <span class="sd">        Args:</span>
-<span class="sd">            int_params_wo (float or list of float): Interpolation parameters</span>
-<span class="sd">                for wateroil, or for both. If list,</span>
-<span class="sd">                separate parameter for each SATNUM. All numbers between</span>
-<span class="sd">                -1 and 1.</span>
-<span class="sd">            int_params_go (float or list of float): If specified, will</span>
-<span class="sd">                be used for GasOil interpolation.</span>
-<span class="sd">            h (float): Saturation step-length</span>
+<span class="sd">            int_params_wo: Interpolation parameters for wateroil, or for</span>
+<span class="sd">                both. If list, separate parameter for each SATNUM. All</span>
+<span class="sd">                numbers between -1 and 1 (inclusive).</span>
+<span class="sd">            int_params_go: If specified, will be used for GasOil interpolation.</span>
+<span class="sd">            h: Saturation step-length</span>
 
 <span class="sd">        Returns:</span>
 <span class="sd">            PyscalList of type WaterOilGas, with the same length.</span>
@@ -442,11 +464,11 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">!=</span> <span class="n">SCALrecommendation</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Can only interpolate PyscalList of type SCALrecommendation&quot;</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">TypeError</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">int_params_wo</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">int_params_wo</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
             <span class="n">int_params_wo</span> <span class="o">=</span> <span class="p">[</span><span class="n">int_params_wo</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__len__</span><span class="p">()</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">int_params_wo</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">int_params_wo</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">int_params_wo</span> <span class="o">=</span> <span class="n">int_params_wo</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__len__</span><span class="p">()</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">int_params_go</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">int_params_go</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">int_params_go</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
             <span class="n">int_params_go</span> <span class="o">=</span> <span class="p">[</span><span class="n">int_params_go</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">int_params_go</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">int_params_go</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">int_params_go</span> <span class="o">=</span> <span class="n">int_params_go</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__len__</span><span class="p">()</span>
@@ -466,14 +488,20 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Too many interpolation parameters given for GasOil </span><span class="si">{</span><span class="n">int_params_go</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
-        <span class="n">wog_list</span> <span class="o">=</span> <span class="n">PyscalList</span><span class="p">()</span>
+        <span class="n">wog_list</span><span class="p">:</span> <span class="n">PyscalList</span> <span class="o">=</span> <span class="n">PyscalList</span><span class="p">()</span>
         <span class="k">for</span> <span class="p">(</span><span class="n">satnum</span><span class="p">,</span> <span class="n">scalrec</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyscal_list</span><span class="p">):</span>
+            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scalrec</span><span class="p">,</span> <span class="n">SCALrecommendation</span><span class="p">)</span>
             <span class="n">wog_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="n">scalrec</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">int_params_wo</span><span class="p">[</span><span class="n">satnum</span><span class="p">],</span> <span class="n">int_params_go</span><span class="p">[</span><span class="n">satnum</span><span class="p">],</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">)</span>
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">wog_list</span></div>
 
-<div class="viewcode-block" id="PyscalList.make_ecl_output"><a class="viewcode-back" href="../../pyscal.html#pyscal.pyscallist.PyscalList.make_ecl_output">[docs]</a>    <span class="k">def</span> <span class="nf">make_ecl_output</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gaswater</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="PyscalList.make_ecl_output"><a class="viewcode-back" href="../../pyscal.html#pyscal.pyscallist.PyscalList.make_ecl_output">[docs]</a>    <span class="k">def</span> <span class="nf">make_ecl_output</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">write_to_filename</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">gaswater</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Internal helper function for constructing strings and writing to disk&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">==</span> <span class="n">SCALrecommendation</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
@@ -497,35 +525,39 @@
             <span class="n">Path</span><span class="p">(</span><span class="n">write_to_filename</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">string</span></div>
 
-<div class="viewcode-block" id="PyscalList.SWOF"><a class="viewcode-back" href="../../pyscal.html#pyscal.pyscallist.PyscalList.SWOF">[docs]</a>    <span class="k">def</span> <span class="nf">SWOF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PyscalList.SWOF"><a class="viewcode-back" href="../../pyscal.html#pyscal.pyscallist.PyscalList.SWOF">[docs]</a>    <span class="k">def</span> <span class="nf">SWOF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Make SWOF string and optionally print to file&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_ecl_output</span><span class="p">(</span><span class="s2">&quot;SWOF&quot;</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PyscalList.SGOF"><a class="viewcode-back" href="../../pyscal.html#pyscal.pyscallist.PyscalList.SGOF">[docs]</a>    <span class="k">def</span> <span class="nf">SGOF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PyscalList.SGOF"><a class="viewcode-back" href="../../pyscal.html#pyscal.pyscallist.PyscalList.SGOF">[docs]</a>    <span class="k">def</span> <span class="nf">SGOF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Make SGOF string and optionally print to file&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_ecl_output</span><span class="p">(</span><span class="s2">&quot;SGOF&quot;</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PyscalList.SLGOF"><a class="viewcode-back" href="../../pyscal.html#pyscal.pyscallist.PyscalList.SLGOF">[docs]</a>    <span class="k">def</span> <span class="nf">SLGOF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PyscalList.SLGOF"><a class="viewcode-back" href="../../pyscal.html#pyscal.pyscallist.PyscalList.SLGOF">[docs]</a>    <span class="k">def</span> <span class="nf">SLGOF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Make SLGOF string and optionally print to file&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_ecl_output</span><span class="p">(</span><span class="s2">&quot;SLGOF&quot;</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PyscalList.SGFN"><a class="viewcode-back" href="../../pyscal.html#pyscal.pyscallist.PyscalList.SGFN">[docs]</a>    <span class="k">def</span> <span class="nf">SGFN</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gaswater</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="PyscalList.SGFN"><a class="viewcode-back" href="../../pyscal.html#pyscal.pyscallist.PyscalList.SGFN">[docs]</a>    <span class="k">def</span> <span class="nf">SGFN</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">gaswater</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Make SGFN string and optionally print to file&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_ecl_output</span><span class="p">(</span><span class="s2">&quot;SGFN&quot;</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="p">,</span> <span class="n">gaswater</span><span class="o">=</span><span class="n">gaswater</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PyscalList.SWFN"><a class="viewcode-back" href="../../pyscal.html#pyscal.pyscallist.PyscalList.SWFN">[docs]</a>    <span class="k">def</span> <span class="nf">SWFN</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">gaswater</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="PyscalList.SWFN"><a class="viewcode-back" href="../../pyscal.html#pyscal.pyscallist.PyscalList.SWFN">[docs]</a>    <span class="k">def</span> <span class="nf">SWFN</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">gaswater</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Make SWFN string and optionally print to file&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_ecl_output</span><span class="p">(</span><span class="s2">&quot;SWFN&quot;</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="p">,</span> <span class="n">gaswater</span><span class="o">=</span><span class="n">gaswater</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PyscalList.SOF3"><a class="viewcode-back" href="../../pyscal.html#pyscal.pyscallist.PyscalList.SOF3">[docs]</a>    <span class="k">def</span> <span class="nf">SOF3</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="PyscalList.SOF3"><a class="viewcode-back" href="../../pyscal.html#pyscal.pyscallist.PyscalList.SOF3">[docs]</a>    <span class="k">def</span> <span class="nf">SOF3</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Make SOF3 string and optionally print to file&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_ecl_output</span><span class="p">(</span><span class="s2">&quot;SOF3&quot;</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="p">)</span></div>
 
-    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Return the count of Pyscal objects in the list&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyscal_list</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">satnum_idx</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">satnum_idx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PyscalObjects</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Get a specific List member.</span>
 
 <span class="sd">        The indexing starts at 1, not zero, similar</span>

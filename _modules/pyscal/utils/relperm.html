@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.utils.relperm &mdash; pyscal 0.7.8.dev7+g28df448 documentation</title>
+  <title>pyscal.utils.relperm &mdash; pyscal 0.7.8.dev8+g80b1e4e documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.7.8.dev7+g28df448
+                0.7.8.dev8+g80b1e4e
               </div>
             
           
@@ -169,6 +169,7 @@
 <span></span><span class="sd">&quot;&quot;&quot;Utility functions for computations on relative permeability curves&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span>
 
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
@@ -179,19 +180,18 @@
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="crosspoint"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.relperm.crosspoint">[docs]</a><span class="k">def</span> <span class="nf">crosspoint</span><span class="p">(</span><span class="n">dframe</span><span class="p">,</span> <span class="n">satcol</span><span class="p">,</span> <span class="n">kr1col</span><span class="p">,</span> <span class="n">kr2col</span><span class="p">):</span>
+<div class="viewcode-block" id="crosspoint"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.relperm.crosspoint">[docs]</a><span class="k">def</span> <span class="nf">crosspoint</span><span class="p">(</span><span class="n">dframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">satcol</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">kr1col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">kr2col</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Locate the crosspoint where kr1col == kr2col</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        dframe (pd.DataFrame): Dataframe with at least three columns</span>
-<span class="sd">        satcol (str): Column name for the saturation column</span>
-<span class="sd">        kr1col (str): Column name for first relperm column</span>
-<span class="sd">        kr2col (str): Columnn ame for second column</span>
+<span class="sd">        dframe: Dataframe with at least three columns</span>
+<span class="sd">        satcol: Column name for the saturation column</span>
+<span class="sd">        kr1col: Column name for first relperm column</span>
+<span class="sd">        kr2col: Columnn ame for second column</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        float, the saturation value (interpolated) where</span>
-<span class="sd">            kr1col == kr2col, when krXcol is linearly interpolated</span>
-<span class="sd">            as a function of the saturation values.</span>
+<span class="sd">        The saturation value (interpolated) where kr1col == kr2col, when krXcol</span>
+<span class="sd">        is linearly interpolated as a function of the saturation values.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">dframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">dframe</span><span class="p">[[</span><span class="n">satcol</span><span class="p">,</span> <span class="n">kr1col</span><span class="p">,</span> <span class="n">kr2col</span><span class="p">]])</span>  <span class="c1"># Copy</span>
     <span class="n">dframe</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;krdiff&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dframe</span><span class="p">[</span><span class="n">kr1col</span><span class="p">]</span> <span class="o">-</span> <span class="n">dframe</span><span class="p">[</span><span class="n">kr2col</span><span class="p">]</span>
@@ -211,7 +211,12 @@
     <span class="k">return</span> <span class="n">dframe</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">dframe</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)][</span><span class="n">satcol</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="estimate_diffjumppoint"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.relperm.estimate_diffjumppoint">[docs]</a><span class="k">def</span> <span class="nf">estimate_diffjumppoint</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">&quot;right&quot;</span><span class="p">):</span>
+<div class="viewcode-block" id="estimate_diffjumppoint"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.relperm.estimate_diffjumppoint">[docs]</a><span class="k">def</span> <span class="nf">estimate_diffjumppoint</span><span class="p">(</span>
+    <span class="n">table</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="n">xcol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">ycol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">side</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;right&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Estimate the point where the y-data jumps from being linear</span>
 <span class="sd">    in x to being nonlinear, or where it shift from one linear domain</span>
 <span class="sd">    to another (for a piecewise linear function)</span>
@@ -221,16 +226,16 @@
 <span class="sd">    give you swcr.</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        table (pd.DataFrame): A Dataframe with x and y data</span>
-<span class="sd">        xcol (string): The name of the column in table containing x-data. If</span>
+<span class="sd">        table: A Dataframe with x and y data</span>
+<span class="sd">        xcol: The name of the column in table containing x-data. If</span>
 <span class="sd">            None (default) the first column in table will be used.</span>
-<span class="sd">        ycol (string): The name of the column in table containing y-data.</span>
+<span class="sd">        ycol: The name of the column in table containing y-data.</span>
 <span class="sd">            If None (default) the second column in the table will be used.</span>
-<span class="sd">        side (string): Must be &#39;left&#39; or &#39;right&#39;. Decides whether to look from</span>
+<span class="sd">        side: Must be &#39;left&#39; or &#39;right&#39;. Decides whether to look from</span>
 <span class="sd">            the right side of the x-interval or from the left side for the</span>
 <span class="sd">            linear domain.</span>
 <span class="sd">    Returns:</span>
-<span class="sd">        float: The x value where the start-linear domain ends.</span>
+<span class="sd">        The x value where the start-linear domain ends.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">xcol</span><span class="p">:</span>
