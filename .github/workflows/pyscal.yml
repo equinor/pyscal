@@ -70,7 +70,6 @@ jobs:
 
       - name: Build documentation
         run: |
-          sphinx-apidoc -f -H "API for pyscal" -o docs pyscal
           python setup.py build_sphinx
 
       - name: Update GitHub pages

@@ -12,10 +12,17 @@ Relative permeability/SCAL support in reservoir simulation.
    introduction
    installation
    usage
-   modules
    history
    contributing
 
+.. toctree::
+   :hidden:
+   :maxdepth: 10
+   :caption: Python API
+
+   pyscal/pyscal
+
+￼
 Indices and tables
 ==================
 
