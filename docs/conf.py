@@ -14,15 +14,15 @@
 # import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
-
+import datetime
 
 # -- Project information -----------------------------------------------------
 
 import pyscal
 
 project = "pyscal"
-author = u"Håvard Berland"
-copyright = "Equinor 2019-2020"
+author = "Håvard Berland"
+copyright = f"Equinor 2019-{datetime.date.today().year}"
 
 version = pyscal.__version__
 # The full version, including alpha/beta/rc tags
@@ -39,7 +39,9 @@ release = pyscal.__version__
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    "autoapi.sphinx",
     "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
     "sphinx.ext.githubpages",
     "sphinx.ext.mathjax",
     "sphinx.ext.napoleon",
@@ -47,6 +49,12 @@ extensions = [
     "sphinx_autodoc_typehints",
     "sphinxarg.ext",
 ]
+
+autoapi_modules: dict = {"pyscal": None}
+
+autodoc_default_options = {"members": None}
+
+autosummary_generate = True
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -70,7 +78,7 @@ language = None
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = []
+exclude_patterns: list = []
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = None
@@ -115,7 +123,7 @@ htmlhelp_basename = "pyscaldoc"
 
 # -- Options for LaTeX output ------------------------------------------------
 
-latex_elements = {
+latex_elements: dict = {
     # The paper size ('letterpaper' or 'a4paper').
     #
     # 'papersize': 'letterpaper',
