@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.utils.monotonicity &mdash; pyscal 0.7.8.dev9+gcd3cc41 documentation</title>
+  <title>pyscal.utils.monotonicity &mdash; pyscal 0.7.8.dev10+g0c065a2 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.7.8.dev9+gcd3cc41
+                0.7.8.dev10+g0c065a2
               </div>
             
           
@@ -96,10 +96,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Introduction to pyscal</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../usage.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API for pyscal</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../history.html">History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../history.html#release-notes">Release notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to pyscal</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Python API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyscal/pyscal.html"><code class="docutils literal notranslate"><span class="pre">pyscal</span></code></a></li>
 </ul>
 
             
@@ -187,7 +190,7 @@
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="MonotonicitySpec"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.monotonicity.MonotonicitySpec">[docs]</a><span class="k">class</span> <span class="nc">MonotonicitySpec</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<div class="viewcode-block" id="MonotonicitySpec"><a class="viewcode-back" href="../../../pyscal/pyscal.utils.monotonicity.html#pyscal.utils.monotonicity.MonotonicitySpec">[docs]</a><span class="k">class</span> <span class="nc">MonotonicitySpec</span><span class="p">(</span><span class="n">TypedDict</span><span class="p">,</span> <span class="n">total</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Specification of monotonicity for a vector of values&quot;&quot;&quot;</span>
 
     <span class="n">sign</span><span class="p">:</span> <span class="nb">int</span>
@@ -207,7 +210,7 @@
 <span class="sd">    monotonic column. Optional parameter.&quot;&quot;&quot;</span></div>
 
 
-<div class="viewcode-block" id="modify_dframe_monotonicity"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.monotonicity.modify_dframe_monotonicity">[docs]</a><span class="k">def</span> <span class="nf">modify_dframe_monotonicity</span><span class="p">(</span>
+<div class="viewcode-block" id="modify_dframe_monotonicity"><a class="viewcode-back" href="../../../pyscal/pyscal.utils.monotonicity.html#pyscal.utils.monotonicity.modify_dframe_monotonicity">[docs]</a><span class="k">def</span> <span class="nf">modify_dframe_monotonicity</span><span class="p">(</span>
     <span class="n">dframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">monotonicity</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">MonotonicitySpec</span><span class="p">],</span> <span class="n">digits</span><span class="p">:</span> <span class="nb">int</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Modify a dataframe for monotonicity.</span>
@@ -316,7 +319,7 @@
     <span class="k">return</span> <span class="n">dframe</span></div>
 
 
-<div class="viewcode-block" id="clip_accumulate"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.monotonicity.clip_accumulate">[docs]</a><span class="k">def</span> <span class="nf">clip_accumulate</span><span class="p">(</span>
+<div class="viewcode-block" id="clip_accumulate"><a class="viewcode-back" href="../../../pyscal/pyscal.utils.monotonicity.html#pyscal.utils.monotonicity.clip_accumulate">[docs]</a><span class="k">def</span> <span class="nf">clip_accumulate</span><span class="p">(</span>
     <span class="n">series</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">monotonicity</span><span class="p">:</span> <span class="n">MonotonicitySpec</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -347,7 +350,7 @@
     <span class="k">return</span> <span class="n">series</span></div>
 
 
-<div class="viewcode-block" id="check_limits"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.monotonicity.check_limits">[docs]</a><span class="k">def</span> <span class="nf">check_limits</span><span class="p">(</span>
+<div class="viewcode-block" id="check_limits"><a class="viewcode-back" href="../../../pyscal/pyscal.utils.monotonicity.html#pyscal.utils.monotonicity.check_limits">[docs]</a><span class="k">def</span> <span class="nf">check_limits</span><span class="p">(</span>
     <span class="n">series</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
     <span class="n">monotonicity</span><span class="p">:</span> <span class="n">MonotonicitySpec</span><span class="p">,</span>
     <span class="n">colname</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
@@ -375,7 +378,7 @@
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Values smaller than lower limit in column </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">colname</span><span class="p">))</span></div>
 
 
-<div class="viewcode-block" id="rows_to_be_fixed"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.monotonicity.rows_to_be_fixed">[docs]</a><span class="k">def</span> <span class="nf">rows_to_be_fixed</span><span class="p">(</span>
+<div class="viewcode-block" id="rows_to_be_fixed"><a class="viewcode-back" href="../../../pyscal/pyscal.utils.monotonicity.html#pyscal.utils.monotonicity.rows_to_be_fixed">[docs]</a><span class="k">def</span> <span class="nf">rows_to_be_fixed</span><span class="p">(</span>
     <span class="n">series</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">monotonicity</span><span class="p">:</span> <span class="n">MonotonicitySpec</span><span class="p">,</span> <span class="n">digits</span><span class="p">:</span> <span class="nb">int</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Compute boolean array of rows that must be modified</span>
@@ -407,7 +410,7 @@
     <span class="k">return</span> <span class="n">constants</span></div>
 
 
-<div class="viewcode-block" id="check_almost_monotone"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.monotonicity.check_almost_monotone">[docs]</a><span class="k">def</span> <span class="nf">check_almost_monotone</span><span class="p">(</span><span class="n">series</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">digits</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">sign</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="check_almost_monotone"><a class="viewcode-back" href="../../../pyscal/pyscal.utils.monotonicity.html#pyscal.utils.monotonicity.check_almost_monotone">[docs]</a><span class="k">def</span> <span class="nf">check_almost_monotone</span><span class="p">(</span><span class="n">series</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">digits</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">sign</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Raise a ValueError if a series is not sufficiently close</span>
 <span class="sd">    to constant or monotone in a certain direction.</span>
 
@@ -428,7 +431,7 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Series is not almost monotone&quot;</span><span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="validate_monotonicity_arg"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.monotonicity.validate_monotonicity_arg">[docs]</a><span class="k">def</span> <span class="nf">validate_monotonicity_arg</span><span class="p">(</span>
+<div class="viewcode-block" id="validate_monotonicity_arg"><a class="viewcode-back" href="../../../pyscal/pyscal.utils.monotonicity.html#pyscal.utils.monotonicity.validate_monotonicity_arg">[docs]</a><span class="k">def</span> <span class="nf">validate_monotonicity_arg</span><span class="p">(</span>
     <span class="n">monotonicity</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">MonotonicitySpec</span><span class="p">],</span> <span class="n">dframe_colnames</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -487,7 +490,7 @@
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright Equinor 2019-2020.
+        &#169; Copyright Equinor 2019-2021.
 
     </p>
   </div>

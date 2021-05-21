@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.factory &mdash; pyscal 0.7.8.dev9+gcd3cc41 documentation</title>
+  <title>pyscal.factory &mdash; pyscal 0.7.8.dev10+g0c065a2 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.7.8.dev9+gcd3cc41
+                0.7.8.dev10+g0c065a2
               </div>
             
           
@@ -96,10 +96,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction to pyscal</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API for pyscal</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../history.html#release-notes">Release notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to pyscal</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Python API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../pyscal/pyscal.html"><code class="docutils literal notranslate"><span class="pre">pyscal</span></code></a></li>
 </ul>
 
             
@@ -189,7 +192,7 @@
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="slicedict"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.slicedict">[docs]</a><span class="k">def</span> <span class="nf">slicedict</span><span class="p">(</span><span class="n">dct</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">keys</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">):</span>
+<div class="viewcode-block" id="slicedict"><a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.slicedict">[docs]</a><span class="k">def</span> <span class="nf">slicedict</span><span class="p">(</span><span class="n">dct</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">keys</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Slice a dictionary for a set of keys.</span>
 <span class="sd">    Keys not existing will be ignored.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -259,7 +262,7 @@
 <span class="p">}</span>
 
 
-<div class="viewcode-block" id="PyscalFactory"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory">[docs]</a><span class="k">class</span> <span class="nc">PyscalFactory</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="PyscalFactory"><a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.PyscalFactory">[docs]</a><span class="k">class</span> <span class="nc">PyscalFactory</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Class for implementing the factory pattern for Pyscal objects</span>
 
 <span class="sd">    The factory functions herein can take multiple parameter sets,</span>
@@ -282,7 +285,7 @@
 <span class="sd">    spreadsheet.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="PyscalFactory.create_water_oil"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_water_oil">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="PyscalFactory.create_water_oil"><a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.PyscalFactory.create_water_oil">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">create_water_oil</span><span class="p">(</span>
         <span class="n">params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WaterOil</span><span class="p">:</span>
@@ -462,7 +465,7 @@
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">wateroil</span></div>
 
-<div class="viewcode-block" id="PyscalFactory.create_gas_oil"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_gas_oil">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="PyscalFactory.create_gas_oil"><a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.PyscalFactory.create_gas_oil">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">create_gas_oil</span><span class="p">(</span>
         <span class="n">params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GasOil</span><span class="p">:</span>
@@ -569,7 +572,7 @@
 
         <span class="k">return</span> <span class="n">gasoil</span></div>
 
-<div class="viewcode-block" id="PyscalFactory.create_water_oil_gas"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_water_oil_gas">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="PyscalFactory.create_water_oil_gas"><a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.PyscalFactory.create_water_oil_gas">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">create_water_oil_gas</span><span class="p">(</span>
         <span class="n">params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WaterOilGas</span><span class="p">:</span>
@@ -627,7 +630,7 @@
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">wateroilgas</span></div>
 
-<div class="viewcode-block" id="PyscalFactory.create_gas_water"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_gas_water">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="PyscalFactory.create_gas_water"><a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.PyscalFactory.create_gas_water">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">create_gas_water</span><span class="p">(</span>
         <span class="n">params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GasWater</span><span class="p">:</span>
@@ -669,7 +672,7 @@
         <span class="n">gaswater</span><span class="o">.</span><span class="n">gasoil</span> <span class="o">=</span> <span class="n">wog</span><span class="o">.</span><span class="n">gasoil</span>
         <span class="k">return</span> <span class="n">gaswater</span></div>
 
-<div class="viewcode-block" id="PyscalFactory.create_scal_recommendation"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_scal_recommendation">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="PyscalFactory.create_scal_recommendation"><a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.PyscalFactory.create_scal_recommendation">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">create_scal_recommendation</span><span class="p">(</span>
         <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span>
         <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
@@ -780,7 +783,7 @@
         <span class="n">scal</span> <span class="o">=</span> <span class="n">SCALrecommendation</span><span class="p">(</span><span class="n">wog_low</span><span class="p">,</span> <span class="n">wog_base</span><span class="p">,</span> <span class="n">wog_high</span><span class="p">,</span> <span class="n">tag</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">scal</span></div>
 
-<div class="viewcode-block" id="PyscalFactory.load_relperm_df"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.load_relperm_df">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="PyscalFactory.load_relperm_df"><a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.PyscalFactory.load_relperm_df">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">load_relperm_df</span><span class="p">(</span>
         <span class="n">inputfile</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span> <span class="n">sheet_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
@@ -965,7 +968,7 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">input_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;SATNUM&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PyscalFactory.remap_validate_cases"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.remap_validate_cases">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="PyscalFactory.remap_validate_cases"><a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.PyscalFactory.remap_validate_cases">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">remap_validate_cases</span><span class="p">(</span><span class="n">casevalues</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="sd">&quot;&quot;&quot;Remap values in the CASE column so that we can use aliases.</span>
 
@@ -999,7 +1002,7 @@
             <span class="p">)</span>
         <span class="k">return</span> <span class="n">remapped</span></div>
 
-<div class="viewcode-block" id="PyscalFactory.create_scal_recommendation_list"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_scal_recommendation_list">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="PyscalFactory.create_scal_recommendation_list"><a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.PyscalFactory.create_scal_recommendation_list">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">create_scal_recommendation_list</span><span class="p">(</span>
         <span class="n">input_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PyscalList</span><span class="p">:</span>
@@ -1037,7 +1040,7 @@
 
         <span class="k">return</span> <span class="n">scal_l</span></div>
 
-<div class="viewcode-block" id="PyscalFactory.create_pyscal_list"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_pyscal_list">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="PyscalFactory.create_pyscal_list"><a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.PyscalFactory.create_pyscal_list">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">create_pyscal_list</span><span class="p">(</span>
         <span class="n">relperm_params_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">):</span>
@@ -1068,7 +1071,7 @@
         <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Could not determine two or three phase from parameters&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">None</span></div>
 
-<div class="viewcode-block" id="PyscalFactory.create_wateroilgas_list"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_wateroilgas_list">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="PyscalFactory.create_wateroilgas_list"><a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.PyscalFactory.create_wateroilgas_list">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">create_wateroilgas_list</span><span class="p">(</span>
         <span class="n">relperm_params_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PyscalList</span><span class="p">:</span>
@@ -1096,7 +1099,7 @@
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error for SATNUM </span><span class="si">{</span><span class="n">row_idx</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span> <span class="nn">err</span>
         <span class="k">return</span> <span class="n">wogl</span></div>
 
-<div class="viewcode-block" id="PyscalFactory.create_wateroil_list"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_wateroil_list">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="PyscalFactory.create_wateroil_list"><a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.PyscalFactory.create_wateroil_list">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">create_wateroil_list</span><span class="p">(</span>
         <span class="n">relperm_params_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PyscalList</span><span class="p">:</span>
@@ -1124,7 +1127,7 @@
                 <span class="p">)</span> <span class="kn">from</span> <span class="nn">err</span>
         <span class="k">return</span> <span class="n">wol</span></div>
 
-<div class="viewcode-block" id="PyscalFactory.create_gasoil_list"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_gasoil_list">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="PyscalFactory.create_gasoil_list"><a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.PyscalFactory.create_gasoil_list">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">create_gasoil_list</span><span class="p">(</span>
         <span class="n">relperm_params_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PyscalList</span><span class="p">:</span>
@@ -1152,7 +1155,7 @@
                 <span class="p">)</span> <span class="kn">from</span> <span class="nn">err</span>
         <span class="k">return</span> <span class="n">gol</span></div>
 
-<div class="viewcode-block" id="PyscalFactory.create_gaswater_list"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.PyscalFactory.create_gaswater_list">[docs]</a>    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="PyscalFactory.create_gaswater_list"><a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.PyscalFactory.create_gaswater_list">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">create_gaswater_list</span><span class="p">(</span>
         <span class="n">relperm_params_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PyscalList</span><span class="p">:</span>
@@ -1181,7 +1184,7 @@
         <span class="k">return</span> <span class="n">gwl</span></div></div>
 
 
-<div class="viewcode-block" id="sufficient_water_oil_params"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.sufficient_water_oil_params">[docs]</a><span class="k">def</span> <span class="nf">sufficient_water_oil_params</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">failhard</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="sufficient_water_oil_params"><a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.sufficient_water_oil_params">[docs]</a><span class="k">def</span> <span class="nf">sufficient_water_oil_params</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">failhard</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Determine if the supplied parameters are sufficient for</span>
 <span class="sd">    attempting creating a WaterOil object.</span>
 
@@ -1217,7 +1220,7 @@
     <span class="k">return</span> <span class="n">water_ok</span> <span class="ow">and</span> <span class="n">oil_ok</span></div>
 
 
-<div class="viewcode-block" id="sufficient_gas_oil_params"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.sufficient_gas_oil_params">[docs]</a><span class="k">def</span> <span class="nf">sufficient_gas_oil_params</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">failhard</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="sufficient_gas_oil_params"><a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.sufficient_gas_oil_params">[docs]</a><span class="k">def</span> <span class="nf">sufficient_gas_oil_params</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">failhard</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Determine if the supplied parameters are sufficient for</span>
 <span class="sd">    attempting at creating a GasOil object.</span>
 
@@ -1252,7 +1255,7 @@
     <span class="k">return</span> <span class="n">oil_ok</span> <span class="ow">and</span> <span class="n">gas_ok</span></div>
 
 
-<div class="viewcode-block" id="sufficient_gas_water_params"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.sufficient_gas_water_params">[docs]</a><span class="k">def</span> <span class="nf">sufficient_gas_water_params</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">failhard</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="sufficient_gas_water_params"><a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.sufficient_gas_water_params">[docs]</a><span class="k">def</span> <span class="nf">sufficient_gas_water_params</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">failhard</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Determine if the supplied parameters are sufficient for</span>
 <span class="sd">    attempting creating a WaterOilGas object to be used for gas water.</span>
 
@@ -1287,7 +1290,7 @@
     <span class="k">return</span> <span class="n">water_ok</span> <span class="ow">and</span> <span class="n">gas_ok</span></div>
 
 
-<div class="viewcode-block" id="filter_nan_from_dict"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.filter_nan_from_dict">[docs]</a><span class="k">def</span> <span class="nf">filter_nan_from_dict</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<div class="viewcode-block" id="filter_nan_from_dict"><a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.filter_nan_from_dict">[docs]</a><span class="k">def</span> <span class="nf">filter_nan_from_dict</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Clean out keys with NaN values in a dict.</span>
 
 <span class="sd">    Key with string values are passed through (empty strings are allowed)</span>
@@ -1308,7 +1311,7 @@
     <span class="k">return</span> <span class="n">cleaned_params</span></div>
 
 
-<div class="viewcode-block" id="infer_tabular_file_format"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.infer_tabular_file_format">[docs]</a><span class="k">def</span> <span class="nf">infer_tabular_file_format</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="infer_tabular_file_format"><a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.infer_tabular_file_format">[docs]</a><span class="k">def</span> <span class="nf">infer_tabular_file_format</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Determine the file format of a file containing tabular data,</span>
 <span class="sd">    distinguishes between csv, xls and xlsx</span>
 
@@ -1358,7 +1361,7 @@
     <span class="k">return</span> <span class="s2">&quot;&quot;</span></div>
 
 
-<div class="viewcode-block" id="check_deprecated"><a class="viewcode-back" href="../../pyscal.html#pyscal.factory.check_deprecated">[docs]</a><span class="k">def</span> <span class="nf">check_deprecated</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="check_deprecated"><a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.check_deprecated">[docs]</a><span class="k">def</span> <span class="nf">check_deprecated</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Check for deprecated parameter names</span>
 
 <span class="sd">    Args:</span>
@@ -1382,7 +1385,7 @@
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright Equinor 2019-2020.
+        &#169; Copyright Equinor 2019-2021.
 
     </p>
   </div>

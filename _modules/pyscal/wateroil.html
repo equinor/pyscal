@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.wateroil &mdash; pyscal 0.7.8.dev9+gcd3cc41 documentation</title>
+  <title>pyscal.wateroil &mdash; pyscal 0.7.8.dev10+g0c065a2 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.7.8.dev9+gcd3cc41
+                0.7.8.dev10+g0c065a2
               </div>
             
           
@@ -96,10 +96,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction to pyscal</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../modules.html">API for pyscal</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../history.html#release-notes">Release notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to pyscal</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Python API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../pyscal/pyscal.html"><code class="docutils literal notranslate"><span class="pre">pyscal</span></code></a></li>
 </ul>
 
             
@@ -188,7 +191,7 @@
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="WaterOil"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil">[docs]</a><span class="k">class</span> <span class="nc">WaterOil</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="WaterOil"><a class="viewcode-back" href="../../pyscal/pyscal.wateroil.html#pyscal.wateroil.WaterOil">[docs]</a><span class="k">class</span> <span class="nc">WaterOil</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;A representation of two-phase properties for oil-water.</span>
 
 <span class="sd">    Can hold relative permeability data, and capillary pressure.</span>
@@ -342,7 +345,7 @@
             <span class="s2">&quot;Initialized WaterOil with </span><span class="si">%s</span><span class="s2"> saturation points&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">))</span>
         <span class="p">)</span>
 
-<div class="viewcode-block" id="WaterOil.add_fromtable"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.add_fromtable">[docs]</a>    <span class="k">def</span> <span class="nf">add_fromtable</span><span class="p">(</span>
+<div class="viewcode-block" id="WaterOil.add_fromtable"><a class="viewcode-back" href="../../pyscal/pyscal.wateroil.html#pyscal.wateroil.WaterOil.add_fromtable">[docs]</a>    <span class="k">def</span> <span class="nf">add_fromtable</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">dframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
         <span class="n">swcolname</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;SW&quot;</span><span class="p">,</span>
@@ -535,7 +538,7 @@
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;inf/nan in interpolated data, check input&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pccomment</span> <span class="o">=</span> <span class="s2">&quot;-- pc from tabular input&quot;</span> <span class="o">+</span> <span class="n">pccomment</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span></div>
 
-<div class="viewcode-block" id="WaterOil.add_corey_water"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.add_corey_water">[docs]</a>    <span class="k">def</span> <span class="nf">add_corey_water</span><span class="p">(</span>
+<div class="viewcode-block" id="WaterOil.add_corey_water"><a class="viewcode-back" href="../../pyscal/pyscal.wateroil.html#pyscal.wateroil.WaterOil.add_corey_water">[docs]</a>    <span class="k">def</span> <span class="nf">add_corey_water</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">nw</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">krwend</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">krwmax</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Add krw data through the Corey parametrization</span>
@@ -571,7 +574,7 @@
             <span class="n">krwmax</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="WaterOil.set_endpoints_linearpart_krw"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.set_endpoints_linearpart_krw">[docs]</a>    <span class="k">def</span> <span class="nf">set_endpoints_linearpart_krw</span><span class="p">(</span>
+<div class="viewcode-block" id="WaterOil.set_endpoints_linearpart_krw"><a class="viewcode-back" href="../../pyscal/pyscal.wateroil.html#pyscal.wateroil.WaterOil.set_endpoints_linearpart_krw">[docs]</a>    <span class="k">def</span> <span class="nf">set_endpoints_linearpart_krw</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">krwend</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">krwmax</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Set linear parts of krw outside endpoints.</span>
@@ -616,7 +619,7 @@
         <span class="c1"># Left linear section is all zero:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">swcr</span><span class="p">,</span> <span class="s2">&quot;KRW&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span></div>
 
-<div class="viewcode-block" id="WaterOil.set_endpoints_linearpart_krow"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.set_endpoints_linearpart_krow">[docs]</a>    <span class="k">def</span> <span class="nf">set_endpoints_linearpart_krow</span><span class="p">(</span>
+<div class="viewcode-block" id="WaterOil.set_endpoints_linearpart_krow"><a class="viewcode-back" href="../../pyscal/pyscal.wateroil.html#pyscal.wateroil.WaterOil.set_endpoints_linearpart_krow">[docs]</a>    <span class="k">def</span> <span class="nf">set_endpoints_linearpart_krow</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">kroend</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">kromax</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Set linear parts of krow outside endpoints</span>
@@ -639,7 +642,7 @@
         <span class="c1"># slightly bigger than krowend.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROW&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">kroend</span><span class="p">,</span> <span class="s2">&quot;KROW&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kroend</span></div>
 
-<div class="viewcode-block" id="WaterOil.add_LET_water"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.add_LET_water">[docs]</a>    <span class="k">def</span> <span class="nf">add_LET_water</span><span class="p">(</span>
+<div class="viewcode-block" id="WaterOil.add_LET_water"><a class="viewcode-back" href="../../pyscal/pyscal.wateroil.html#pyscal.wateroil.WaterOil.add_LET_water">[docs]</a>    <span class="k">def</span> <span class="nf">add_LET_water</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">l</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
         <span class="n">e</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
@@ -692,7 +695,7 @@
             <span class="n">krwmax</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="WaterOil.add_LET_oil"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.add_LET_oil">[docs]</a>    <span class="k">def</span> <span class="nf">add_LET_oil</span><span class="p">(</span>
+<div class="viewcode-block" id="WaterOil.add_LET_oil"><a class="viewcode-back" href="../../pyscal/pyscal.wateroil.html#pyscal.wateroil.WaterOil.add_LET_oil">[docs]</a>    <span class="k">def</span> <span class="nf">add_LET_oil</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">l</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
         <span class="n">e</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
@@ -739,7 +742,7 @@
             <span class="n">kroend</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="WaterOil.add_corey_oil"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.add_corey_oil">[docs]</a>    <span class="k">def</span> <span class="nf">add_corey_oil</span><span class="p">(</span>
+<div class="viewcode-block" id="WaterOil.add_corey_oil"><a class="viewcode-back" href="../../pyscal/pyscal.wateroil.html#pyscal.wateroil.WaterOil.add_corey_oil">[docs]</a>    <span class="k">def</span> <span class="nf">add_corey_oil</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">now</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">kroend</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">kromax</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Add kro data through the Corey parametrization</span>
@@ -770,7 +773,7 @@
             <span class="n">kroend</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="WaterOil.add_simple_J"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.add_simple_J">[docs]</a>    <span class="k">def</span> <span class="nf">add_simple_J</span><span class="p">(</span>
+<div class="viewcode-block" id="WaterOil.add_simple_J"><a class="viewcode-back" href="../../pyscal/pyscal.wateroil.html#pyscal.wateroil.WaterOil.add_simple_J">[docs]</a>    <span class="k">def</span> <span class="nf">add_simple_J</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">a</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">,</span>
         <span class="n">b</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.5</span><span class="p">,</span>
@@ -843,7 +846,7 @@
             <span class="o">%</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">poro_ref</span><span class="p">,</span> <span class="n">perm_ref</span><span class="p">,</span> <span class="n">drho</span><span class="p">,</span> <span class="n">g</span><span class="p">)</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="WaterOil.add_simple_J_petro"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.add_simple_J_petro">[docs]</a>    <span class="k">def</span> <span class="nf">add_simple_J_petro</span><span class="p">(</span>
+<div class="viewcode-block" id="WaterOil.add_simple_J_petro"><a class="viewcode-back" href="../../pyscal/pyscal.wateroil.html#pyscal.wateroil.WaterOil.add_simple_J_petro">[docs]</a>    <span class="k">def</span> <span class="nf">add_simple_J_petro</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">a</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">b</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -916,7 +919,7 @@
             <span class="o">%</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">poro_ref</span><span class="p">,</span> <span class="n">perm_ref</span><span class="p">,</span> <span class="n">drho</span><span class="p">,</span> <span class="n">g</span><span class="p">)</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="WaterOil.add_normalized_J"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.add_normalized_J">[docs]</a>    <span class="k">def</span> <span class="nf">add_normalized_J</span><span class="p">(</span>
+<div class="viewcode-block" id="WaterOil.add_normalized_J"><a class="viewcode-back" href="../../pyscal/pyscal.wateroil.html#pyscal.wateroil.WaterOil.add_normalized_J">[docs]</a>    <span class="k">def</span> <span class="nf">add_normalized_J</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">poro</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">perm</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">sigma_costau</span><span class="p">:</span> <span class="nb">float</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># Don&#39;t make this a raw string to avoid the \l warning,</span>
@@ -983,7 +986,7 @@
             <span class="o">%</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">poro</span><span class="p">,</span> <span class="n">perm</span><span class="p">,</span> <span class="n">sigma_costau</span><span class="p">)</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="WaterOil.add_skjaeveland_pc"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.add_skjaeveland_pc">[docs]</a>    <span class="k">def</span> <span class="nf">add_skjaeveland_pc</span><span class="p">(</span>
+<div class="viewcode-block" id="WaterOil.add_skjaeveland_pc"><a class="viewcode-back" href="../../pyscal/pyscal.wateroil.html#pyscal.wateroil.WaterOil.add_skjaeveland_pc">[docs]</a>    <span class="k">def</span> <span class="nf">add_skjaeveland_pc</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">cw</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">co</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -1055,7 +1058,7 @@
         <span class="c1"># the non-monotonicity be fixed in the output generators.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;PC&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;ffill&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="WaterOil.add_LET_pc_pd"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.add_LET_pc_pd">[docs]</a>    <span class="k">def</span> <span class="nf">add_LET_pc_pd</span><span class="p">(</span>
+<div class="viewcode-block" id="WaterOil.add_LET_pc_pd"><a class="viewcode-back" href="../../pyscal/pyscal.wateroil.html#pyscal.wateroil.WaterOil.add_LET_pc_pd">[docs]</a>    <span class="k">def</span> <span class="nf">add_LET_pc_pd</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">Lp</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">Ep</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -1105,7 +1108,7 @@
             <span class="o">%</span> <span class="p">(</span><span class="n">Lp</span><span class="p">,</span> <span class="n">Ep</span><span class="p">,</span> <span class="n">Tp</span><span class="p">,</span> <span class="n">Lt</span><span class="p">,</span> <span class="n">Et</span><span class="p">,</span> <span class="n">Tt</span><span class="p">,</span> <span class="n">Pcmax</span><span class="p">,</span> <span class="n">Pct</span><span class="p">)</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="WaterOil.add_LET_pc_imb"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.add_LET_pc_imb">[docs]</a>    <span class="k">def</span> <span class="nf">add_LET_pc_imb</span><span class="p">(</span>
+<div class="viewcode-block" id="WaterOil.add_LET_pc_imb"><a class="viewcode-back" href="../../pyscal/pyscal.wateroil.html#pyscal.wateroil.WaterOil.add_LET_pc_imb">[docs]</a>    <span class="k">def</span> <span class="nf">add_LET_pc_imb</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">Ls</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">Es</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -1162,7 +1165,7 @@
             <span class="o">%</span> <span class="p">(</span><span class="n">Ls</span><span class="p">,</span> <span class="n">Es</span><span class="p">,</span> <span class="n">Ts</span><span class="p">,</span> <span class="n">Lf</span><span class="p">,</span> <span class="n">Ef</span><span class="p">,</span> <span class="n">Tf</span><span class="p">,</span> <span class="n">Pcmax</span><span class="p">,</span> <span class="n">Pcmin</span><span class="p">,</span> <span class="n">Pct</span><span class="p">)</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="WaterOil.estimate_sorw"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.estimate_sorw">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_sorw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">curve</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;KRW&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<div class="viewcode-block" id="WaterOil.estimate_sorw"><a class="viewcode-back" href="../../pyscal/pyscal.wateroil.html#pyscal.wateroil.WaterOil.estimate_sorw">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_sorw</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">curve</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;KRW&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Estimate sorw of the current krw data.</span>
 
 <span class="sd">        This is mostly relevant when add_fromtable() has been used.</span>
@@ -1191,7 +1194,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="s2">&quot;SW&quot;</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="n">curve</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">&quot;right&quot;</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="WaterOil.estimate_swcr"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.estimate_swcr">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_swcr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">curve</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;KRW&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<div class="viewcode-block" id="WaterOil.estimate_swcr"><a class="viewcode-back" href="../../pyscal/pyscal.wateroil.html#pyscal.wateroil.WaterOil.estimate_swcr">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_swcr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">curve</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;KRW&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Estimate swcr of the current krw data.</span>
 
 <span class="sd">        kwcr is estimated by searching for a linear part in krw upwards from sw=swl.</span>
@@ -1212,7 +1215,7 @@
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">curve</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span>
         <span class="k">return</span> <span class="n">estimate_diffjumppoint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="s2">&quot;SW&quot;</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="n">curve</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="WaterOil.crosspoint"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.crosspoint">[docs]</a>    <span class="k">def</span> <span class="nf">crosspoint</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<div class="viewcode-block" id="WaterOil.crosspoint"><a class="viewcode-back" href="../../pyscal/pyscal.wateroil.html#pyscal.wateroil.WaterOil.crosspoint">[docs]</a>    <span class="k">def</span> <span class="nf">crosspoint</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Locate and return the saturation point where krw = krow</span>
 
 <span class="sd">        Accuracy of this crosspoint depends on the resolution chosen</span>
@@ -1224,7 +1227,7 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">crosspoint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="s2">&quot;SW&quot;</span><span class="p">,</span> <span class="s2">&quot;KRW&quot;</span><span class="p">,</span> <span class="s2">&quot;KROW&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="WaterOil.selfcheck"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.selfcheck">[docs]</a>    <span class="k">def</span> <span class="nf">selfcheck</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;SWOF&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="WaterOil.selfcheck"><a class="viewcode-back" href="../../pyscal/pyscal.wateroil.html#pyscal.wateroil.WaterOil.selfcheck">[docs]</a>    <span class="k">def</span> <span class="nf">selfcheck</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;SWOF&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Check validities of the data in the table.</span>
 
 <span class="sd">        An unfinished object will return False.</span>
@@ -1286,7 +1289,7 @@
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;WaterOil object is checked to be valid&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 
-<div class="viewcode-block" id="WaterOil.SWOF"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.SWOF">[docs]</a>    <span class="k">def</span> <span class="nf">SWOF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="WaterOil.SWOF"><a class="viewcode-back" href="../../pyscal/pyscal.wateroil.html#pyscal.wateroil.WaterOil.SWOF">[docs]</a>    <span class="k">def</span> <span class="nf">SWOF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Produce SWOF input for Eclipse reservoir simulator.</span>
 
@@ -1345,7 +1348,7 @@
         <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;/</span><span class="se">\n</span><span class="s2">&quot;</span>  <span class="c1"># Empty line at the end</span>
         <span class="k">return</span> <span class="n">string</span></div>
 
-<div class="viewcode-block" id="WaterOil.SWFN"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.SWFN">[docs]</a>    <span class="k">def</span> <span class="nf">SWFN</span><span class="p">(</span>
+<div class="viewcode-block" id="WaterOil.SWFN"><a class="viewcode-back" href="../../pyscal/pyscal.wateroil.html#pyscal.wateroil.WaterOil.SWFN">[docs]</a>    <span class="k">def</span> <span class="nf">SWFN</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">dataincommentrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -1416,7 +1419,7 @@
         <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;/</span><span class="se">\n</span><span class="s2">&quot;</span>  <span class="c1"># Empty line at the end</span>
         <span class="k">return</span> <span class="n">string</span></div>
 
-<div class="viewcode-block" id="WaterOil.WOTABLE"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.WOTABLE">[docs]</a>    <span class="k">def</span> <span class="nf">WOTABLE</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="WaterOil.WOTABLE"><a class="viewcode-back" href="../../pyscal/pyscal.wateroil.html#pyscal.wateroil.WaterOil.WOTABLE">[docs]</a>    <span class="k">def</span> <span class="nf">WOTABLE</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Return a string for a Nexus WOTABLE&quot;&quot;&quot;</span>
         <span class="n">string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">if</span> <span class="s2">&quot;PC&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
@@ -1455,7 +1458,7 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">string</span></div>
 
-<div class="viewcode-block" id="WaterOil.plotpc"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.plotpc">[docs]</a>    <span class="k">def</span> <span class="nf">plotpc</span><span class="p">(</span>
+<div class="viewcode-block" id="WaterOil.plotpc"><a class="viewcode-back" href="../../pyscal/pyscal.wateroil.html#pyscal.wateroil.WaterOil.plotpc">[docs]</a>    <span class="k">def</span> <span class="nf">plotpc</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">mpl_ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;blue&quot;</span><span class="p">,</span>
@@ -1497,7 +1500,7 @@
         <span class="k">if</span> <span class="n">mpl_ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="WaterOil.plotkrwkrow"><a class="viewcode-back" href="../../pyscal.html#pyscal.wateroil.WaterOil.plotkrwkrow">[docs]</a>    <span class="k">def</span> <span class="nf">plotkrwkrow</span><span class="p">(</span>
+<div class="viewcode-block" id="WaterOil.plotkrwkrow"><a class="viewcode-back" href="../../pyscal/pyscal.wateroil.html#pyscal.wateroil.WaterOil.plotkrwkrow">[docs]</a>    <span class="k">def</span> <span class="nf">plotkrwkrow</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">mpl_ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;blue&quot;</span><span class="p">,</span>
@@ -1563,7 +1566,7 @@
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright Equinor 2019-2020.
+        &#169; Copyright Equinor 2019-2021.
 
     </p>
   </div>

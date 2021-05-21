@@ -1,0 +1,318 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <title>pyscal.utils.string &mdash; pyscal 0.7.8.dev10+g0c065a2 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+
+  
+  
+
+  
+  
+
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="pyscal.utils.testing" href="pyscal.utils.testing.html" />
+    <link rel="prev" title="pyscal.utils.relperm" href="pyscal.utils.relperm.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> pyscal
+          
+
+          
+            
+            <img src="../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.7.8.dev10+g0c065a2
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction to pyscal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html#release-notes">Release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing to pyscal</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Python API</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="pyscal.html"><code class="docutils literal notranslate"><span class="pre">pyscal</span></code></a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="pyscal.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="pyscal.constants.html"><code class="docutils literal notranslate"><span class="pre">pyscal.constants</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.factory.html"><code class="docutils literal notranslate"><span class="pre">pyscal.factory</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gasoil.html"><code class="docutils literal notranslate"><span class="pre">pyscal.gasoil</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gaswater.html"><code class="docutils literal notranslate"><span class="pre">pyscal.gaswater</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.pyscalcli.html"><code class="docutils literal notranslate"><span class="pre">pyscal.pyscalcli</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.pyscallist.html"><code class="docutils literal notranslate"><span class="pre">pyscal.pyscallist</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.scalrecommendation.html"><code class="docutils literal notranslate"><span class="pre">pyscal.scalrecommendation</span></code></a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="pyscal.utils.html"><code class="docutils literal notranslate"><span class="pre">pyscal.utils</span></code></a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="pyscal.utils.html#submodules">Submodules</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.version.html"><code class="docutils literal notranslate"><span class="pre">pyscal.version</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroil.html"><code class="docutils literal notranslate"><span class="pre">pyscal.wateroil</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroilgas.html"><code class="docutils literal notranslate"><span class="pre">pyscal.wateroilgas</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pyscal</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="pyscal.html"><code class="docutils literal notranslate"><span class="pre">pyscal</span></code></a> &raquo;</li>
+        
+          <li><a href="pyscal.utils.html"><code class="docutils literal notranslate"><span class="pre">pyscal.utils</span></code></a> &raquo;</li>
+        
+      <li><code class="docutils literal notranslate"><span class="pre">pyscal.utils.string</span></code></li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="../_sources/pyscal/pyscal.utils.string.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-pyscal.utils.string">
+<span id="pyscal-utils-string"></span><h1><code class="docutils literal notranslate"><span class="pre">pyscal.utils.string</span></code><a class="headerlink" href="#module-pyscal.utils.string" title="Permalink to this headline">¶</a></h1>
+<p>Utility functions for creating strings from pyscal</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyscal.utils.string.comment_formatter">
+<span class="sig-prename descclassname"><span class="pre">pyscal.utils.string.</span></span><span class="sig-name descname"><span class="pre">comment_formatter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">multiline</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'--</span> <span class="pre">'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/string.html#comment_formatter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.string.comment_formatter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prepends comment characters to every line in input</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>multiline</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – String that can contain newlines</p></li>
+<li><p><strong>prefix</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Comment characters to prepend every line with
+Default is the Eclipse comment syntax ‘– ‘</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>string with newlines preserved, and where each line
+starts with the given prefix. Always ends with a newline.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyscal.utils.string.df2str">
+<span class="sig-prename descclassname"><span class="pre">pyscal.utils.string.</span></span><span class="sig-name descname"><span class="pre">df2str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dframe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">digits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roundlevel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monotonicity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/string.html#df2str"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.string.df2str" title="Permalink to this definition">¶</a></dt>
+<dd><p>Make a string representation of a dataframe with
+proper rounding.</p>
+<p>This is used to print the tables in the SWOF/SGOF include files,
+explicit rounding is necessary to avoid monotonicity errors
+from truncation. Examples in test code.</p>
+<p>Capillary pressure must be strictly monotone if nonzero, and if a
+column name is provided, the string representation of that column is
+ensured to be strictly monotone decreasing</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dframe</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code>) – A dataframe to print, all columns
+are included</p></li>
+<li><p><strong>digits</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of digits used in floating point format f.ex “.7f”
+It is not recommended to deviate from the default 7 uncritically
+for pyscal output, other code have to be tuned to ensure
+numerical robustness to the deviation.</p></li>
+<li><p><strong>roundlevel</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – To how many digits should we round prior to print.
+Recommended to be &gt; digits + 1, see test code.</p></li>
+<li><p><strong>header</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – If the dataframe column header should be included</p></li>
+<li><p><strong>monotonicity</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <a class="reference internal" href="pyscal.utils.monotonicity.html#pyscal.utils.monotonicity.MonotonicitySpec" title="pyscal.utils.monotonicity.MonotonicitySpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">MonotonicitySpec</span></code></a>]]) – Column names in dframe are the keys, pointing
+to a specification for monotonicity to be enforced.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+        <a href="pyscal.utils.testing.html" class="btn btn-neutral float-right" title="pyscal.utils.testing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="pyscal.utils.relperm.html" class="btn btn-neutral float-left" title="pyscal.utils.relperm" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &#169; Copyright Equinor 2019-2021.
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+    
+
+  <style>
+    /* Sidebar header (and topbar for mobile) */
+    .wy-side-nav-search, .wy-nav-top {
+      background: #ff1243;
+    }
+    /* Sidebar */
+    .wy-nav-side {
+      background: #474747;
+    }
+    .wy-side-nav-search > div.version {
+      color: white;
+    }
+  </style>
+
+
+</body>
+</html>

@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.utils.relperm &mdash; pyscal 0.7.8.dev9+gcd3cc41 documentation</title>
+  <title>pyscal.utils.relperm &mdash; pyscal 0.7.8.dev10+g0c065a2 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.7.8.dev9+gcd3cc41
+                0.7.8.dev10+g0c065a2
               </div>
             
           
@@ -96,10 +96,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Introduction to pyscal</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../usage.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API for pyscal</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../history.html">History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../history.html#release-notes">Release notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to pyscal</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Python API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyscal/pyscal.html"><code class="docutils literal notranslate"><span class="pre">pyscal</span></code></a></li>
 </ul>
 
             
@@ -180,7 +183,7 @@
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="crosspoint"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.relperm.crosspoint">[docs]</a><span class="k">def</span> <span class="nf">crosspoint</span><span class="p">(</span><span class="n">dframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">satcol</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">kr1col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">kr2col</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<div class="viewcode-block" id="crosspoint"><a class="viewcode-back" href="../../../pyscal/pyscal.utils.relperm.html#pyscal.utils.relperm.crosspoint">[docs]</a><span class="k">def</span> <span class="nf">crosspoint</span><span class="p">(</span><span class="n">dframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">satcol</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">kr1col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">kr2col</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Locate the crosspoint where kr1col == kr2col</span>
 
 <span class="sd">    Args:</span>
@@ -211,7 +214,7 @@
     <span class="k">return</span> <span class="n">dframe</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">dframe</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)][</span><span class="n">satcol</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
 
-<div class="viewcode-block" id="estimate_diffjumppoint"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.relperm.estimate_diffjumppoint">[docs]</a><span class="k">def</span> <span class="nf">estimate_diffjumppoint</span><span class="p">(</span>
+<div class="viewcode-block" id="estimate_diffjumppoint"><a class="viewcode-back" href="../../../pyscal/pyscal.utils.relperm.html#pyscal.utils.relperm.estimate_diffjumppoint">[docs]</a><span class="k">def</span> <span class="nf">estimate_diffjumppoint</span><span class="p">(</span>
     <span class="n">table</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
     <span class="n">xcol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">ycol</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -291,7 +294,7 @@
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright Equinor 2019-2020.
+        &#169; Copyright Equinor 2019-2021.
 
     </p>
   </div>

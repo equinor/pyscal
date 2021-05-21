@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.utils.testing &mdash; pyscal 0.7.8.dev9+gcd3cc41 documentation</title>
+  <title>pyscal.utils.testing &mdash; pyscal 0.7.8.dev10+g0c065a2 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.7.8.dev9+gcd3cc41
+                0.7.8.dev10+g0c065a2
               </div>
             
           
@@ -96,10 +96,13 @@
 <li class="toctree-l1"><a class="reference internal" href="../../../introduction.html">Introduction to pyscal</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../usage.html">Usage</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../modules.html">API for pyscal</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../history.html">History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../history.html#release-notes">Release notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../contributing.html">Contributing to pyscal</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Python API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../pyscal/pyscal.html"><code class="docutils literal notranslate"><span class="pre">pyscal</span></code></a></li>
 </ul>
 
             
@@ -178,7 +181,7 @@
 <span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">WaterOil</span><span class="p">,</span> <span class="n">GasOil</span>
 
 
-<div class="viewcode-block" id="series_decreasing"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.testing.series_decreasing">[docs]</a><span class="k">def</span> <span class="nf">series_decreasing</span><span class="p">(</span><span class="n">series</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>
+<div class="viewcode-block" id="series_decreasing"><a class="viewcode-back" href="../../../pyscal/pyscal.utils.testing.html#pyscal.utils.testing.series_decreasing">[docs]</a><span class="k">def</span> <span class="nf">series_decreasing</span><span class="p">(</span><span class="n">series</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Weaker than pd.Series.is_monotonic_decreasing,</span>
 <span class="sd">    allows constant parts.</span>
 
@@ -190,12 +193,12 @@
     <span class="k">return</span> <span class="p">(</span><span class="n">series</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mf">1e-8</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="series_increasing"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.testing.series_increasing">[docs]</a><span class="k">def</span> <span class="nf">series_increasing</span><span class="p">(</span><span class="n">series</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>
+<div class="viewcode-block" id="series_increasing"><a class="viewcode-back" href="../../../pyscal/pyscal.utils.testing.html#pyscal.utils.testing.series_increasing">[docs]</a><span class="k">def</span> <span class="nf">series_increasing</span><span class="p">(</span><span class="n">series</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Weaker than pd.Series.is_monotonic_increasing&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">series</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mf">1e-8</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="sat_table_str_ok"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.testing.sat_table_str_ok">[docs]</a><span class="k">def</span> <span class="nf">sat_table_str_ok</span><span class="p">(</span><span class="n">sat_table_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="sat_table_str_ok"><a class="viewcode-back" href="../../../pyscal/pyscal.utils.testing.html#pyscal.utils.testing.sat_table_str_ok">[docs]</a><span class="k">def</span> <span class="nf">sat_table_str_ok</span><span class="p">(</span><span class="n">sat_table_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Test that a supplied string from SWOF()/SGOF() etc is</span>
 <span class="sd">    probably ok for Eclipse.</span>
 
@@ -263,7 +266,7 @@
         <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">dframe</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="n">dframe</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="mi">1</span></div>
 
 
-<div class="viewcode-block" id="check_table"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.testing.check_table">[docs]</a><span class="k">def</span> <span class="nf">check_table</span><span class="p">(</span><span class="n">dframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="check_table"><a class="viewcode-back" href="../../../pyscal/pyscal.utils.testing.html#pyscal.utils.testing.check_table">[docs]</a><span class="k">def</span> <span class="nf">check_table</span><span class="p">(</span><span class="n">dframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Check that the numbers in a dataframe for WaterOil or GasOil</span>
 <span class="sd">    has the properties that Eclipse enforces&quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="ow">not</span> <span class="n">dframe</span><span class="o">.</span><span class="n">empty</span>
@@ -306,7 +309,7 @@
         <span class="k">assert</span> <span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;KRG&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span></div>
 
 
-<div class="viewcode-block" id="check_linear_sections"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.testing.check_linear_sections">[docs]</a><span class="k">def</span> <span class="nf">check_linear_sections</span><span class="p">(</span><span class="n">wo_or_go</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">WaterOil</span><span class="p">,</span> <span class="n">GasOil</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<div class="viewcode-block" id="check_linear_sections"><a class="viewcode-back" href="../../../pyscal/pyscal.utils.testing.html#pyscal.utils.testing.check_linear_sections">[docs]</a><span class="k">def</span> <span class="nf">check_linear_sections</span><span class="p">(</span><span class="n">wo_or_go</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">WaterOil</span><span class="p">,</span> <span class="n">GasOil</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
     <span class="sd">&quot;&quot;&quot;Check that the linear segments of a WaterOil or a GasOil</span>
 <span class="sd">    object are linear.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">wo_or_go</span><span class="p">,</span> <span class="n">WaterOil</span><span class="p">):</span>
@@ -349,7 +352,7 @@
             <span class="k">assert</span> <span class="n">left_lin_seg</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mf">1e-9</span></div>
 
 
-<div class="viewcode-block" id="float_df_checker"><a class="viewcode-back" href="../../../pyscal.utils.html#pyscal.utils.testing.float_df_checker">[docs]</a><span class="k">def</span> <span class="nf">float_df_checker</span><span class="p">(</span>
+<div class="viewcode-block" id="float_df_checker"><a class="viewcode-back" href="../../../pyscal/pyscal.utils.testing.html#pyscal.utils.testing.float_df_checker">[docs]</a><span class="k">def</span> <span class="nf">float_df_checker</span><span class="p">(</span>
     <span class="n">dframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">idxcol</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">compcol</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">answer</span><span class="p">:</span> <span class="nb">float</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
     <span class="sd">&quot;&quot;&quot;Looks up in a dataframe, selects the row where idxcol=value</span>
@@ -382,7 +385,7 @@
 
   <div role="contentinfo">
     <p>
-        &#169; Copyright Equinor 2019-2020.
+        &#169; Copyright Equinor 2019-2021.
 
     </p>
   </div>
