@@ -59,6 +59,18 @@ def test_pyscallist_basic():
     p_list.append(WaterOil())
     assert len(p_list) == 2
 
+    p_list.append([WaterOil()])
+    assert len(p_list) == 3
+
+    with pytest.raises(ValueError, match="Not a pyscal object"):
+        PyscalList([dict()])
+
+    init_from_list = PyscalList([WaterOil(), WaterOil()])
+    assert len(init_from_list) == 2
+
+    init_from_itself = PyscalList(PyscalList([WaterOil(), WaterOil()]))
+    assert len(init_from_itself) == 2
+
 
 def test_load_scalrec(tmpdir):
     """Load a SATNUM range from xlsx"""
@@ -280,6 +292,10 @@ def test_dump():
 
     fam2 = pyscal_list.dump_family_2()
     sat_table_str_ok(fam2)
+
+    # Empty PyscalLists should return empty strings:
+    assert PyscalList().dump_family_1() == ""
+    assert PyscalList().dump_family_2() == ""
 
 
 def test_capillary_pressure():

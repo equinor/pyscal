@@ -31,11 +31,13 @@ class PyscalList(object):
 
     def __init__(self, pyscal_list: List[PyscalObjects] = None):
         self.pyscaltype: Optional[Type] = None
+        self.pyscal_list: List[PyscalObjects] = []
         if isinstance(pyscal_list, list):
             for pyscal_obj in pyscal_list:
                 self.append(pyscal_obj)
-        else:
-            self.pyscal_list: List[PyscalObjects] = []
+        if isinstance(pyscal_list, PyscalList):
+            for idx in range(len(pyscal_list)):
+                self.append(pyscal_list[idx + 1])
 
     def append(self, pyscal_obj: Optional[PyscalObjects]) -> None:
         """Append a pyscal object to the list
@@ -196,6 +198,8 @@ class PyscalList(object):
             filename: Filename for the output to be given to Eclipse 100
             slgof: Set to true of SLGOF is wanted instead of SGOF
         """
+        if len(self) == 0:
+            return ""
         if self.pyscaltype == SCALrecommendation:
             logger.error(
                 "You need to interpolate before you can dump a SCAL recommendation"
@@ -247,6 +251,8 @@ class PyscalList(object):
         Args:
             filename (str): Filename for the output to be given to Eclipse 100
         """
+        if len(self) == 0:
+            return ""
         if self.pyscaltype == SCALrecommendation:
             logger.error(
                 "You need to interpolate before you can dump a SCAL recommendation"
