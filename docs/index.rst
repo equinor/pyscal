@@ -22,7 +22,6 @@ Relative permeability/SCAL support in reservoir simulation.
 
    pyscal/pyscal
 
-￼
 Indices and tables
 ==================
 
