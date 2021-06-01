@@ -46,8 +46,9 @@ class PyscalList(object):
             pyscal_obj
 
         Raises:
-            ValueError if the type of the incoming object does not
-            match existing objects in the list
+            ValueError
+                If the type of the incoming object does not
+                match existing objects in the list
         """
         if pyscal_obj is None:
             return
