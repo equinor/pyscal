@@ -213,6 +213,40 @@ def test_wo_singlecolumns():
     assert wateroil.table["PC"].sum() == 0
 
 
+@pytest.mark.parametrize(
+    "h, sw_mid",
+    [
+        (0.1, 0.1),
+        (0.2, 0.1),
+        (0.1, 0.2),
+        (0.1, 0.1000001),
+        (0.1, 0.9999999),
+        (1, 0.1),
+    ],
+)
+def test_linear_input(h, sw_mid):
+    """Linear input creates difficulties with sorw, which
+    is used in add_fromtable().
+
+    (estimate_sorw() returns 1 - (swl + h) on linear input)
+
+    This tests fails in pyscal v0.7.7"""
+    dframe = pd.DataFrame(
+        columns=["SW", "KRW", "KROW", "PC"],
+        data=[[sw, sw, 1 - sw, 1 - sw] for sw in [0, sw_mid, 1.0]],
+    )
+    wateroil = WaterOil(h=h, swl=0)
+    wateroil.add_fromtable(dframe)
+    assert wateroil.selfcheck()
+
+    # GasOil did not fail in v0.7.7, but test anyway:
+    gasoil = GasOil(h=h, swl=0)
+    gasoil.add_fromtable(
+        dframe, sgcolname="SW", krgcolname="KRW", krogcolname="KROW", pccolname="PCOW"
+    )
+    assert gasoil.selfcheck()
+
+
 def test_ieee_754():
     """Test difficult values from experienced bugs related to
     IEE754 representation errors"""
