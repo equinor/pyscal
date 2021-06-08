@@ -70,6 +70,7 @@ jobs:
 
       - name: Build documentation
         run: |
+          python docs/make_plots.py
           python setup.py build_sphinx
 
       - name: Update GitHub pages
