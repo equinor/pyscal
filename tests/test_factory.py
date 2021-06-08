@@ -438,7 +438,7 @@ def test_factory_gascondensate():
     """In gas condensate problems, the sgro and krosgro are relevant"""
     pyscal_factory = PyscalFactory()
     gasoil = pyscal_factory.create_gas_oil(
-        dict(sgro=0.1, tag="Good sand", ng=1, nog=2, krosgro=0.5, kroend=0.9)
+        dict(sgro=0.1, sgcr=0.1, tag="Good sand", ng=1, nog=2, krosgro=0.5, kroend=0.9)
     )
     assert isinstance(gasoil, GasOil)
     assert gasoil.sgro == 0.1

@@ -391,8 +391,7 @@ def test_interpolate_wo_pc(swl, dswcr, dswlhigh, sorw, a_l, a_h, b_l, b_h):
     st.floats(min_value=0, max_value=0.1),  # dsgcr
     st.floats(min_value=0, max_value=0.3),  # sorg
     st.floats(min_value=0, max_value=0.1),  # dsorg
-    st.floats(min_value=0, max_value=0.3),  # sgro
-    st.floats(min_value=0, max_value=0.1),  # dsgro
+    st.booleans(),  # sgrononzero
     st.floats(min_value=0.1, max_value=5),  # ng1
     st.floats(min_value=0.01, max_value=1),  # krgend1
     st.floats(min_value=0.1, max_value=5),  # nog1
@@ -411,8 +410,7 @@ def test_normalize_nonlinpart_go_hypo(
     dsgcr,
     sorg,
     dsorg,
-    sgro,
-    dsgro,
+    sgrononzero,
     ng1,
     krgend1,
     nog1,
@@ -431,11 +429,19 @@ def test_normalize_nonlinpart_go_hypo(
     fulfill this code"""
     krosgro1 = min(krosgro1, kroend1)
     krosgro2 = min(krosgro2, kroend2)
-    go_low = GasOil(swl=swl, sgcr=sgcr, sorg=sorg, sgro=sgro)
+
+    if sgrononzero:
+        sgro_low = sgcr
+        sgro_high = sgcr + dsgcr
+    else:
+        sgro_low = 0.0
+        sgro_high = 0.0
+
+    go_low = GasOil(swl=swl, sgcr=sgcr, sorg=sorg, sgro=sgro_low)
     go_high = GasOil(
         swl=swl + dswlhigh,
         sgcr=sgcr + dsgcr,
-        sgro=sgro + dsgro,
+        sgro=sgro_high,
         sorg=max(sorg - dsorg, 0),
     )
     go_low.add_corey_gas(ng=ng1, krgend=krgend1)
@@ -447,18 +453,24 @@ def test_normalize_nonlinpart_go_hypo(
     assert np.isclose(krgn1(0), 0)
     assert np.isclose(krgn1(1), krgend1)
     assert np.isclose(kron1(0), 0)
-    assert np.isclose(kron1(1), krosgro1)
+    if sgrononzero:
+        assert np.isclose(kron1(1), krosgro1)
+    else:
+        assert np.isclose(kron1(1), kroend1)
 
     krgn2, kron2 = normalize_nonlinpart_go(go_high)
     assert np.isclose(krgn2(0), 0)
     assert np.isclose(krgn2(1), krgend2)
     assert np.isclose(kron2(0), 0)
-    assert np.isclose(kron2(1), krosgro2)
+    if sgrononzero:
+        assert np.isclose(kron2(1), krosgro2)
+    else:
+        assert np.isclose(kron2(1), kroend2)
 
 
 def test_normalize_nonlinpart_go():
     """Manual tests for normalize_nonlinpart_go"""
-    gasoil = GasOil(swl=0.1, sgcr=0.12, sgro=0.11, sorg=0.05, h=0.05)
+    gasoil = GasOil(swl=0.1, sgcr=0.12, sgro=0.12, sorg=0.05, h=0.05)
     gasoil.add_corey_gas(ng=2.1, krgend=0.9)
     gasoil.add_corey_oil(nog=3, kroend=0.8, krosgro=0.75)
     krgn, kron = normalize_nonlinpart_go(gasoil)
@@ -540,7 +552,7 @@ def test_ip_wo_kroend():
 
 def test_ip_go_krosgro():
     """Test behaviour of krosgro under interpolation"""
-    go_low = GasOil(swl=0, sgro=0.1)
+    go_low = GasOil(swl=0, sgro=0.1, sgcr=0.1)
     go_high = GasOil(swl=0, sgro=0)
     go_low.add_corey_gas()
     go_low.add_corey_oil(nog=2, krosgro=0.5, kroend=1)

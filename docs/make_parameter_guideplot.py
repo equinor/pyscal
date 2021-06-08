@@ -82,17 +82,16 @@ def make_gasoil_plot(show=True, krgendanchor="sorg"):
         arrowprops=dict(arrowstyle="->"),
         xytext=(1 - swl - 0.2, krgmax + 0.1),
     )
+    axes.text(0.0, 0.07, "SGCR")
     axes.annotate(
-        "SGCR",
-        xy=(sgcr, 0),
-        arrowprops=dict(arrowstyle="->"),
-        xytext=(sgcr - 0.10, 0 + 0.12),
+        "", xy=(-0.01, 0.04), xytext=(sgcr, 0.04), arrowprops=dict(arrowstyle="<->")
     )
+    axes.text(0.0, 0.73, "SGRO")
     axes.annotate(
-        "SGRO",
-        xy=(sgro, 0),
-        arrowprops=dict(arrowstyle="->"),
-        xytext=(sgro + 0.03, 0 + 0.12),
+        "",
+        xy=(-0.01, krosgro - 0.02),
+        xytext=(sgro, krosgro - 0.02),
+        arrowprops=dict(arrowstyle="<->"),
     )
     plt.xlabel("SG", labelpad=-10)
     axes.annotate(

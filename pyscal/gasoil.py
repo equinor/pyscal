@@ -139,8 +139,8 @@ class GasOil(object):
 
         sg_list = (
             [0.0]
-            + [sgcr, sgro]
-            + list(np.arange(min(sgcr, sgro) + self.h, 1 - sorg - swl, self.h))
+            + [sgcr]
+            + list(np.arange(sgcr + self.h, 1 - sorg - swl, self.h))
             + [1 - sorg - swl]
             + [1 - swl]
         )
@@ -161,15 +161,6 @@ class GasOil(object):
         sgcrindex = (self.table["SG"] - (self.sgcr)).abs().sort_values().index[0]
         self.table.loc[sgcrindex, "SG"] = self.sgcr
         if sgcrindex == 0 and sgcr > 0.0:
-            # Need to conserve sg=0
-            zero_row = pd.DataFrame({"SG": 0}, index=[0])
-            self.table = pd.concat([zero_row, self.table], sort=False).reset_index(
-                drop=True
-            )
-        # and sg=sgro:
-        sgroindex = (self.table["SG"] - (self.sgro)).abs().sort_values().index[0]
-        self.table.loc[sgroindex, "SG"] = self.sgro
-        if sgroindex == 0 and sgro > 0.0:
             # Need to conserve sg=0
             zero_row = pd.DataFrame({"SG": 0}, index=[0])
             self.table = pd.concat([zero_row, self.table], sort=False).reset_index(
@@ -527,8 +518,9 @@ class GasOil(object):
             self.table["KROG"] = kroend * self.table["SON"] ** nog
         else:
             self.table["KROG"] = krosgro * self.table["SON"] ** nog
-            # If sgro is zero, this will be undone in
-            # set_endpoints_linearpart_krog()
+            # If sgro is zero, the value at sg=0 will be reset to
+            # kroend in set_endpoints_linearpart_krog(), and
+            # the curve is "discontinuous" from sg=0 to sg=h.
 
         self.set_endpoints_linearpart_krog(kroend, krosgro)
 
@@ -629,8 +621,16 @@ class GasOil(object):
             logger.error("kromax is DEPRECATED, ignored")
 
         # LET shape for the interval [sgcr, 1 - swl - sorg]
+        if krosgro is None:
+            kro_at_son1 = kroend
+        else:
+            kro_at_son1 = krosgro
+            # If sgro is zero, the value at sg=0 will be reset to
+            # kroend in set_endpoints_linearpart_krog(), and
+            # the curve is "discontinuous" from sg=0 to sg=h.
+
         self.table["KROG"] = (
-            kroend
+            kro_at_son1
             * self.table["SON"] ** l
             / ((self.table["SON"] ** l) + e * (1 - self.table["SON"]) ** t)
         )
@@ -654,6 +654,10 @@ class GasOil(object):
         sgro is estimated by searching for a linear part in kro
         from sg=0. In practice it is impossible to infer sgro = 0,
         since we are limited by h.
+
+        When initializing GasOil, sgro must be either zero or equal
+        to sgcr. This function only estimates sgro, and will not guarantee
+        that condition.
 
         If the curve is linear everywhere, sgro will be returned as 1 - swl + h
 
