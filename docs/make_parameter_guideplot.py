@@ -25,9 +25,9 @@ def make_gasoil_plot(show=True, krgendanchor="sorg"):
     plt.xkcd()
     _, axes = plt.subplots()
     swl = 0.1
-    sgcr = 0.2
-    sorg = 0.2
+    sgcr = 0.1
     sgro = 0.1
+    sorg = 0.2
     krgend = 0.7
     krgmax = 0.75
     kroend = 0.85
@@ -86,13 +86,13 @@ def make_gasoil_plot(show=True, krgendanchor="sorg"):
         "SGCR",
         xy=(sgcr, 0),
         arrowprops=dict(arrowstyle="->"),
-        xytext=(sgcr - 0.05, 0 + 0.14),
+        xytext=(sgcr - 0.10, 0 + 0.12),
     )
     axes.annotate(
         "SGRO",
         xy=(sgro, 0),
         arrowprops=dict(arrowstyle="->"),
-        xytext=(sgro - 0.05, 0 + 0.08),
+        xytext=(sgro + 0.03, 0 + 0.12),
     )
     plt.xlabel("SG", labelpad=-10)
     axes.annotate(

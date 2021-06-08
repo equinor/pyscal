@@ -75,9 +75,11 @@ def test_errors():
     with pytest.raises(ValueError, match="No saturation range left"):
         GasOil(swl=0.3, sorg=0.8)
     with pytest.raises(ValueError, match="No saturation range left"):
-        GasOil(swl=0.3, sgro=0.88)
+        GasOil(swl=0.3, sgro=0.88, sgcr=0.88)
     with pytest.raises(ValueError, match="No saturation range left"):
         GasOil(swl=0.3, sgcr=0.88)
+    with pytest.raises(ValueError, match="sgro must be zero or equal to sgcr"):
+        GasOil(swl=0.3, sgcr=0.1, sgro=0.2)
 
 
 def test_plotting():
@@ -143,7 +145,7 @@ def test_gasoil_normalization(swl, sgcr, sorg, h, tag):
     st.floats(min_value=0, max_value=0.3),  # swl
     st.floats(min_value=0, max_value=0.3),  # sgcr
     st.floats(min_value=0, max_value=0.4),  # sorg (sgn collapses when >0.4)
-    st.floats(min_value=0, max_value=0.3),  # sgro
+    st.booleans(),  # sgrononzero
     st.floats(min_value=0.1, max_value=1),  # kroend
     st.floats(min_value=0.1, max_value=1),  # krosgro
     st.floats(min_value=0.1, max_value=1),  # krgend
@@ -152,9 +154,13 @@ def test_gasoil_normalization(swl, sgcr, sorg, h, tag):
     st.booleans(),  # fast mode
 )
 def test_gasoil_krendmax(
-    swl, sgcr, sorg, sgro, kroend, krosgro, krgend, krgmax, h, fast
+    swl, sgcr, sorg, sgrononzero, kroend, krosgro, krgend, krgmax, h, fast
 ):
     """Test that relperm curves are valid in all numerical corner cases."""
+    if sgrononzero:
+        sgro = sgcr
+    else:
+        sgro = 0
     try:
         gasoil = GasOil(
             swl=swl, sgcr=sgcr, sorg=sorg, sgro=sgro, h=h, tag="", fast=fast

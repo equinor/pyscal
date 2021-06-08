@@ -45,7 +45,8 @@ class GasOil(object):
         sorg: Residual oil saturation after gas flooding. At this oil
             saturation, the oil has zero relative permeability.
         sgro: Residual gas, for use in gas-condensate modelling. Used
-            as an endpoint for parametrized oil curve.
+            as an endpoint for parametrized oil curve. Must be zero or equal
+            to sgcr for compatibility with Eclipse three-point scaling.
         krgendanchor: Set to `sorg` (default) or something else, where to
             anchor `krgend`. If `sorg`, then the normalized gas
             saturation will be equal to 1 at `1 - swl - sorg`,
@@ -128,6 +129,12 @@ class GasOil(object):
         if not 1 - swl - sorg - sgro > 0:
             raise ValueError(
                 "No saturation range left for oil curve between endpoints, check input"
+            )
+
+        if not (np.isclose(sgro, 0) or np.isclose(sgro, sgcr)):
+            raise ValueError(
+                "sgro must be zero or equal to sgcr, for compatibility with "
+                "Eclipse three-point scaling"
             )
 
         sg_list = (
