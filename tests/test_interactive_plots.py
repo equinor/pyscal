@@ -162,14 +162,20 @@ def test_interpolate_go():
     sgcr_h = random.uniform(0, 0.1)
     sorg_l = random.uniform(0, 0.2)
     sorg_h = random.uniform(0, 0.2)
-    sgro_l = random.uniform(0, 0.2)
-    sgro_h = random.uniform(0, 0.2)
+    if bool(random.getrandbits(1)):
+        # Interpolation is not possible if only
+        # one of the curves has nonzero sgro
+        sgro_l = sgcr_l
+        sgro_h = sgcr_h
+    else:
+        sgro_l = 0
+        sgro_h = 0
     krgend_l = random.uniform(0.5, 1)
     krgend_h = random.uniform(0.5, 1)
-    kroend_l = random.uniform(0.5, 1)
-    kroend_h = random.uniform(0.5, 1)
-    krosgro_l = min(random.uniform(0.5, 1), kroend_l)
-    krosgro_h = min(random.uniform(0.5, 1), kroend_h)
+    kromax_l = random.uniform(0.5, 1)
+    kromax_h = random.uniform(0.5, 1)
+    kroend_l = min(random.uniform(0.5, 1), kromax_l)
+    kroend_h = min(random.uniform(0.5, 1), kromax_h)
     if random.uniform(0, 1) > 0.5:
         krgendanchor_l = "sorg"
     else:
@@ -197,8 +203,8 @@ def test_interpolate_go():
     go_low.add_corey_gas(ng=random.uniform(1, 3), krgend=krgend_l)
     go_high.add_corey_gas(ng=random.uniform(1, 3), krgend=krgend_h)
 
-    go_low.add_corey_oil(nog=random.uniform(1, 3), krosgro=krosgro_l, kroend=kroend_l)
-    go_high.add_corey_oil(nog=random.uniform(1, 3), krosgro=krosgro_h, kroend=kroend_h)
+    go_low.add_corey_oil(nog=random.uniform(1, 3), kroend=kroend_l, kromax=kromax_l)
+    go_high.add_corey_oil(nog=random.uniform(1, 3), kroend=kroend_h, kromax=kromax_h)
     print(
         " ** Low curve GasOil (red):\n"
         + go_low.sgcomment

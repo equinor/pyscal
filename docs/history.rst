@@ -20,6 +20,23 @@ Detailed release history (with minor releases) at
 
   * https://github.com/equinor/pyscal/releases
 
+v1.0.x
+------
+**New features**
+  - New saturation endpoint for gas condensate modelling ``sgro``, and
+    reintroduced ``kromax`` endpoint when ``sgro > 0``.
+  - Pyscal is now type hinted.
+
+**Changes**
+  - The internal dataframes now have their column names upper cased. This
+    is not part of the public API.
+  - Deprecated API for monotonicity specification has been removed
+  - Deprecated interpolation code has been removed.
+
+**Fixes**
+  - Pyscallists had some initialization bugs that are now fixed for API users.
+
+
 v0.7.x
 ------
 **New features**

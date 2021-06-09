@@ -372,8 +372,8 @@ def interpolate_go(
     # Interpolate kr at saturation endpoints
     krgmax_new = weighted_value(go_low.table["KRG"].max(), go_high.table["KRG"].max())
     krgend_new = weighted_value(krg1(1), krg2(1))
-    # krosgro_new = weighted_value(kro1(1), kro2(1))
-    kroend_new = weighted_value(go_low.table["KROG"].max(), go_high.table["KROG"].max())
+    kromax_new = weighted_value(go_low.table["KROG"].max(), go_high.table["KROG"].max())
+    kroend_new = weighted_value(kro1(1), kro2(1))
 
     # Construct the new GasOil object, with interpolated
     # endpoints:
@@ -400,7 +400,7 @@ def interpolate_go(
         pc1(go_new.table["sgn_pc_intp"]), pc2(go_new.table["sgn_pc_intp"])
     )
 
-    go_new.set_endpoints_linearpart_krog(kroend=kroend_new)
+    go_new.set_endpoints_linearpart_krog(kroend=kroend_new, kromax=kromax_new)
 
     # Here we should have honored krgendanchor. Check github issue.
     go_new.set_endpoints_linearpart_krg(krgend=krgend_new, krgmax=krgmax_new)

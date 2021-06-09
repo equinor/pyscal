@@ -410,13 +410,13 @@ class GasOil(object):
     def set_endpoints_linearpart_krog(
         self,
         kroend: float,
-        krosgro: Optional[float] = None,
         kromax: Optional[float] = None,
     ):
         """Set linear parts of krog outside endpoints.
 
-        Linear for sg in [0, sgro], from kroend to krosgro, but nonzero
-        sgro should only be used in gas-condensate modelling.
+        Linear for sg in [0, sgro], from kromax to kroend, but nonzero
+        sgro should only be used in gas-condensate modelling. When sgro
+        is zero, kromax will be ignored.
 
         Zero for sg above 1 - sorg - swl.
 
@@ -424,16 +424,17 @@ class GasOil(object):
         utility functions. It should not be necessary for end-users.
 
         Args:
-            kroend: krog at sg=0
-            krosgro: krog at sg=sgro in gas-condensate problems.
+            kroend: krog at sg=sgro, also if sgro=0
+            kromax: krog at sg=0 for sgro > 0
         """
         if kromax is not None:
-            logger.error("kromax is DEPRECATED, ignored")
-
-        if krosgro is None:
-            krosgro = kroend
-
-        assert krosgro <= kroend
+            if np.isclose(self.sgro, 0) and not np.isclose(kromax, kroend):
+                logger.warning("kromax ignored when sgro is zero")
+                kromax = kroend
+            else:
+                assert kroend <= kromax
+        else:
+            kromax = kroend
 
         # Special handling of the part close to sg=1, set to zero.
         self.table.loc[
@@ -441,11 +442,9 @@ class GasOil(object):
         ] = 0
 
         # Floating point issues can cause a slight overshoot at sg=0:
-        self.table.loc[self.table["KROG"] > kroend, "KROG"] = kroend
+        self.table.loc[self.table["KROG"] > kromax, "KROG"] = kromax
 
-        # If sgro=0 and krosgro is not None, we get the wrong
-        # value at sg=0:
-        self.table.loc[0, "KROG"] = kroend
+        self.table.loc[0, "KROG"] = kromax
 
         # Linear part [0, sgro] for gas-condensate:
         sgroindex = (self.table["SG"] - (self.sgro)).abs().sort_values().index[0]
@@ -489,7 +488,6 @@ class GasOil(object):
         self,
         nog: float = 2,
         kroend: float = 1,
-        krosgro: Optional[float] = None,
         kromax: Optional[float] = None,
     ):
         """
@@ -503,7 +501,7 @@ class GasOil(object):
         Arguments:
             nog: Corey exponent for oil
             kroend: Value for krog at normalized oil saturation 1
-            krosgro: Value for krog at sgro in gas-condensate models.
+            kromax: Value for sg=0 if sgro > 0.
 
         Returns:
             None (modifies internal class state)
@@ -511,25 +509,13 @@ class GasOil(object):
         assert epsilon < nog < MAX_EXPONENT
         assert 0 < kroend <= 1.0
 
+        self.table["KROG"] = kroend * self.table["SON"] ** nog
+
+        self.set_endpoints_linearpart_krog(kroend, kromax)
+
+        self.krogcomment = "-- Corey krog, nog=%g, kroend=%g" % (nog, kroend)
         if kromax is not None:
-            logger.error("kromax is DEPRECATED, ignored")
-
-        if krosgro is None:
-            self.table["KROG"] = kroend * self.table["SON"] ** nog
-        else:
-            self.table["KROG"] = krosgro * self.table["SON"] ** nog
-            # If sgro is zero, the value at sg=0 will be reset to
-            # kroend in set_endpoints_linearpart_krog(), and
-            # the curve is "discontinuous" from sg=0 to sg=h.
-
-        self.set_endpoints_linearpart_krog(kroend, krosgro)
-
-        self.krogcomment = "-- Corey krog, nog=%g, kroend=%g" % (
-            nog,
-            kroend,
-        )
-        if krosgro is not None:
-            self.krogcomment += f", krosgro={krosgro:g}"
+            self.krogcomment += f", kromax={kromax:g}"
 
     def add_LET_gas(
         self,
@@ -595,7 +581,6 @@ class GasOil(object):
         e: float = 2.0,
         t: float = 2.0,
         kroend: float = 1.0,
-        krosgro: Optional[float] = None,
         kromax: Optional[float] = None,
     ):
         """Add oil (vs gas) relative permeability data through the Corey
@@ -610,34 +595,23 @@ class GasOil(object):
             e: E parameter
             t: T parameter
             kroend: The value at gas saturation sgcr
-            krosgro: Value for krog at sgro in gas-condensate models.
+            kromax: Value at sg=0 for sgro > 0
+
         """
         assert epsilon < l < MAX_EXPONENT
         assert epsilon < e < MAX_EXPONENT
         assert epsilon < t < MAX_EXPONENT
         assert 0 < kroend <= 1.0
 
-        if kromax is not None:
-            logger.error("kromax is DEPRECATED, ignored")
-
-        # LET shape for the interval [sgcr, 1 - swl - sorg]
-        if krosgro is None:
-            kro_at_son1 = kroend
-        else:
-            kro_at_son1 = krosgro
-            # If sgro is zero, the value at sg=0 will be reset to
-            # kroend in set_endpoints_linearpart_krog(), and
-            # the curve is "discontinuous" from sg=0 to sg=h.
-
         self.table["KROG"] = (
-            kro_at_son1
+            kroend
             * self.table["SON"] ** l
             / ((self.table["SON"] ** l) + e * (1 - self.table["SON"]) ** t)
         )
         # This equation is undefined for t a float and son=1, set explicitly:
         self.table.loc[np.isclose(self.table["SON"], 1.0), "KROG"] = kroend
 
-        self.set_endpoints_linearpart_krog(kroend, krosgro)
+        self.set_endpoints_linearpart_krog(kroend, kromax)
 
         self.krogcomment = "-- LET krog, l=%g, e=%g, t=%g, kroend=%g" % (
             l,
@@ -645,8 +619,8 @@ class GasOil(object):
             t,
             kroend,
         )
-        if krosgro is not None:
-            self.krogcomment += f", krosgro={krosgro:g}"
+        if kromax is not None:
+            self.krogcomment += f", kromax={kromax:g}"
 
     def estimate_sgro(self):
         """Estimate sgro of the current krog data
