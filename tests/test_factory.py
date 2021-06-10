@@ -637,6 +637,19 @@ def test_factory_wateroilgas_wo():
     wog.SGOF()
 
 
+def test_factory_wateroil_paleooil():
+    """Test making a WaterOil object with socr different from sorw."""
+    pyscal_factory = PyscalFactory()
+    wo = pyscal_factory.create_water_oil(
+        dict(nw=2, now=3, kroend=0.5, sorw=0.09, socr=0.1, swcr=0.1)
+    )
+    swof = wo.SWOF()
+    assert "Corey krw" in swof
+    assert "socr=0.1" in swof
+    sat_table_str_ok(swof)
+    check_table(wo.table)
+
+
 def test_load_relperm_df(tmp_path, caplog):
     """Test loading of dataframes with validation from excel or from csv"""
     testdir = Path(__file__).absolute().parent
@@ -1152,6 +1165,19 @@ def test_case_aliasing():
                 data=[[1, "base", 3, 1, 1, 1]],
             )
         )
+
+
+def test_socr_via_dframe():
+    """Test that the "socr" parameter is picked up from a dataframe/xlsx input"""
+    p_list = PyscalFactory.create_pyscal_list(
+        PyscalFactory.load_relperm_df(
+            pd.DataFrame(
+                columns=["SATNUM", "Nw", "Now", "socr"],
+                data=[[1, 2, 2, 0.5]],
+            )
+        )
+    )
+    assert "socr=0.5" in p_list.SWOF()
 
 
 def test_swirr_partially_missing(tmp_path):

@@ -24,6 +24,7 @@ def main():
         "gasoil-cid2",
         "gaswater-dci1",
         "gaswater-co2-icd2",
+        "wateroil-paleooil-idc1",
     ]:
         assert "_" not in plotname, "Keep names consistent please.."
         eval("make_" + plotname.replace("-", "_") + "(show=False)")
@@ -765,6 +766,97 @@ def make_gaswater_co2_icd2(show=True):
         facecolor="darkorange",
     )
     axes.legend(loc="upper center")
+
+    if show:
+        plt.show()
+
+
+def make_wateroil_paleooil_idc1(show=True):
+    plt.xkcd()
+    _, axes = plt.subplots()
+    swl = 0.1
+    swcr = 0.2
+    sorw = 0.15
+    socr = 0.25
+    krwend = 0.8
+    krwmax = 1
+    kroend = 0.85
+    wateroil = WaterOil(swl=swl, swcr=swcr, sorw=sorw, socr=socr)
+    wateroil.add_corey_water(nw=2, krwend=krwend, krwmax=krwmax)
+    wateroil.add_corey_oil(now=2, kroend=kroend)
+    wateroil.table.plot(
+        ax=axes, x="SW", y="KRW", c="blue", alpha=1, label="KRW", linewidth=2
+    )
+    wateroil.table.plot(
+        ax=axes, x="SW", y="KROW", c="green", alpha=1, label="KROW", linewidth=2
+    )
+    plt.ylim([-0.02, 1])
+    plt.xticks([0, 1])
+    plt.yticks([0, 1])
+    axes.annotate(
+        "KROEND",
+        xy=(swl, kroend),
+        arrowprops=dict(arrowstyle="->"),
+        xytext=(swl + 0.07, kroend),
+    )
+    axes.annotate(
+        "KRWEND",
+        xy=(1 - sorw, krwend),
+        arrowprops=dict(arrowstyle="->"),
+        xytext=(1 - sorw - 0.15, krwend + 0.05),
+    )
+    axes.annotate(
+        "KRWMAX",
+        xy=(1, krwmax),
+        arrowprops=dict(arrowstyle="->"),
+        xytext=(1 - 0.25, krwmax - 0.05),
+    )
+    axes.annotate(
+        "SWL",
+        xy=(swl, 0),
+        arrowprops=dict(arrowstyle="->"),
+        xytext=(swl - 0.05, 0 + 0.14),
+    )
+    axes.annotate(
+        "SWCR",
+        xy=(swcr, 0),
+        arrowprops=dict(arrowstyle="->"),
+        xytext=(swcr - 0.06, 0 + 0.21),
+    )
+    plt.xlabel("SW", labelpad=-10)
+    axes.annotate(
+        "", xy=(1 - sorw, krwend), xytext=(1, krwend), arrowprops=dict(arrowstyle="<->")
+    )
+    axes.text(1 - sorw + 0.03, krwend - 0.05, "SORW")
+    axes.annotate(
+        "",
+        xy=(1 - socr, 0.12),
+        xytext=(1, 0.12),
+        arrowprops=dict(arrowstyle="<->"),
+    )
+    axes.text(1 - socr + 0.05, 0.14, "SOCR")
+    axes.legend(loc="upper center")
+
+    # Initial state and saturation direction:
+    plt.vlines(1 - sorw, ymin=0, ymax=1, colors="darkorange", linestyles="dashed")
+    axes.arrow(
+        1 - sorw - 0.03,
+        krwend - 0.03,
+        -0.05,
+        -0.09,
+        head_width=0.025,
+        fill=True,
+        facecolor="darkorange",
+    )
+    axes.arrow(
+        1 - sorw - 0.03,
+        0.03,
+        -0.05,
+        0.01,
+        head_width=0.025,
+        fill=True,
+        facecolor="darkorange",
+    )
 
     if show:
         plt.show()
