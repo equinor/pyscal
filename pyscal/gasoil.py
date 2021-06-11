@@ -69,6 +69,7 @@ class GasOil(object):
         tag: str = "",
         krgendanchor: str = "sorg",
         fast: bool = False,
+        _sgl: float = None,  # Only to be used by GasWater.
     ) -> None:
         if h is None:
             h = 0.01
@@ -111,6 +112,12 @@ class GasOil(object):
 
         self.tag = tag
 
+        if _sgl is not None:
+            assert -epsilon < _sgl < sgcr + epsilon, "0 <= sgl <= sgcr is required"
+            self.sgl = truncate_zeroness(_sgl, name="_sgl")
+        else:
+            self.sgl = 0.0
+
         if krgendanchor in ["sorg", ""]:
             self.krgendanchor = krgendanchor
         else:
@@ -138,6 +145,7 @@ class GasOil(object):
 
         sg_list = (
             [0.0]
+            + [self.sgl]
             + [self.sgcr]
             + list(np.arange(self.sgcr + self.h, 1 - self.sorg - self.swl, self.h))
             + [1 - self.sorg - self.swl]

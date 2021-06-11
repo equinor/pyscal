@@ -268,3 +268,38 @@ interpreted as residual water.
     * - KRWMAX
       - KRW
       - Usually set to 1
+
+Gas paleo zone - DCI3
+---------------------
+
+.. image:: images/gaswater-paleogas-dci3.png
+    :width: 600
+
+.. list-table::
+   :widths: 25 25 50
+   :header-rows: 1
+
+   * - Pyscal
+     - Eclipse
+     - Comment
+   * - SWL
+     - SWL
+     - Residual water, SWCR must be set equal
+   * - SGL
+     - SGL
+     - Initial gas saturation
+   * - SGCR
+     - SGCR
+     - Critical gas, must be larger than SGRW
+   * - SGRW
+     - SGL
+     - Must be set equal to SGL
+   * - KRGEND
+     - KRG
+     - Krg at residual water
+   * - KRWEND
+     - KRW
+     - Krw at initial gas saturation
+   * - KRWMAX
+     -
+     - Not in use. Leave defaulted.

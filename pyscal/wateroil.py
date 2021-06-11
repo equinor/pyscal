@@ -23,11 +23,11 @@ class WaterOil(object):
 
     Can hold relative permeability data, and capillary pressure.
 
-    Parametrizations for relative permeability:
+    Parametrizations for relative permeability
      * Corey
      * LET
 
-    For capillary pressure:
+    For capillary pressure
      * Simplified J-function
 
     For object initialization, only saturation endpoints must be inputted,
@@ -70,11 +70,12 @@ class WaterOil(object):
         tag: str = "",
         fast: bool = False,
         _sgcr: float = None,
+        _sgl: float = None,
     ) -> None:
         """Sets up the saturation range. Swirr is only relevant
         for the capillary pressure, not for relperm data.
 
-        _sgcr is only to be used by the GasWater object.
+        _sgcr and _sgl are only to be used by the GasWater object.
         """
 
         assert -epsilon < swirr < 1.0 + epsilon
@@ -102,6 +103,13 @@ class WaterOil(object):
 
         if _sgcr is not None:
             self.sgcr = _sgcr
+        if _sgl is not None:
+            assert swl < 1 - _sgl < 1 + epsilon, "1-sgl must be between swl and 1"
+            assert self.sgcr + epsilon > _sgl, "sgcr must be larger than sgl"
+            assert sorw + epsilon > _sgl, "sorw/sgrw must be larger than sgl"
+            self.sgl = truncate_zeroness(_sgl, name="_sgl")
+        else:
+            self.sgl = 0.0
 
         self.swirr = swirr
         self.swl = max(swl, swirr)  # Cannot allow swl < swirr. Warn?
@@ -124,11 +132,11 @@ class WaterOil(object):
         self.tag = tag
         self.fast = fast
         sw_list = (
-            list(np.arange(self.swl, 1, self.h))
+            list(np.arange(self.swl, 1 - self.sgl, self.h))
             + [self.swcr]
             + [1 - self.sorw]
             + [1 - self.socr]
-            + [1]
+            + [1 - self.sgl]
         )
         sw_list.sort()  # Using default timsort on nearly sorted data.
         self.table = pd.DataFrame(sw_list, columns=["SW"])
@@ -154,9 +162,9 @@ class WaterOil(object):
         self.table.loc[swcrindex, "SW"] = self.swcr
 
         # If sw=1 was dropped, then sorw was close to zero:
-        if not np.isclose(self.table["SW"].max(), 1.0):
+        if not np.isclose(self.table["SW"].max(), 1.0 - self.sgl):
             # Add it as an extra row:
-            self.table.loc[len(self.table) + 1, "SW"] = 1.0
+            self.table.loc[len(self.table) + 1, "SW"] = 1.0 - self.sgl
             self.table.sort_values(by="SW", inplace=True)
 
         self.table.reset_index(inplace=True)
@@ -181,16 +189,18 @@ class WaterOil(object):
             )
             if self.socr > sorw:
                 self.swcomment += f" socr={self.socr:g}"
-            self.swcomment += "\n"
         else:
             # When _sgcr is defined, this object is in use by GasWater
-            self.swcomment = "-- swirr=%g swl=%g swcr=%g sgrw=%g sgcr=%g\n" % (
+            self.swcomment = "-- swirr=%g swl=%g swcr=%g sgrw=%g sgcr=%g" % (
                 self.swirr,
                 self.swl,
                 self.swcr,
                 self.sorw,
                 self.sgcr,
             )
+            if _sgl is not None:
+                self.swcomment += f" sgl={self.sgl:g}"
+        self.swcomment += "\n"
 
         self.krwcomment = ""
         self.krowcomment = ""
@@ -443,7 +453,7 @@ class WaterOil(object):
         """Set linear parts of krw outside endpoints.
 
         Curve will be linear from [1 - sorw, 1] (from krwmax to krwend)
-        and zero in [swl, swcr]
+        and zero in [swl, swcr].
 
         This function is used by add_corey_water(), and perhaps by other
         utility functions. It should not be necessary for end-users.

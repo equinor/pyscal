@@ -68,7 +68,7 @@ GO_OIL_ENDPOINTS = [
 GO_LET_GAS = ["lg", "eg", "tg"]
 GO_LET_OIL = ["log", "eog", "tog"]
 
-GW_INIT = ["swirr", "swl", "swcr", "sgrw", "sgcr", "h", "tag"]
+GW_INIT = ["swirr", "swl", "sgl", "swcr", "sgrw", "sgcr", "h", "tag"]
 GW_COREY_WATER = ["nw"]
 GW_COREY_GAS = ["ng"]
 GW_WATER_ENDPOINTS = ["krwmax", "krwend"]

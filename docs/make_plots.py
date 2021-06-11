@@ -24,6 +24,7 @@ def main():
         "gasoil-cid2",
         "gaswater-dci1",
         "gaswater-co2-icd2",
+        "gaswater-paleogas-dci3",
         "wateroil-paleooil-idc1",
     ]:
         assert "_" not in plotname, "Keep names consistent please.."
@@ -858,6 +859,90 @@ def make_wateroil_paleooil_idc1(show=True):
         facecolor="darkorange",
     )
 
+    if show:
+        plt.show()
+
+def make_gaswater_paleogas_dci3(show=True):
+    plt.xkcd()
+    _, axes = plt.subplots()
+    swl = 0.1
+    sgl = 0.1
+    swcr = 0.2
+    sgcr = 0.3
+    sgrw = sgl
+    krwend = 0.85
+    krgend = 0.9
+    gaswater = GasWater(swl=swl, sgl=sgl, swcr=swcr, sgrw=sgrw, sgcr=sgcr, h=0.001)
+    gaswater.add_corey_water(nw=3, krwend=krwend)
+    gaswater.add_corey_gas(ng=2, krgend=krgend)
+    gaswater.wateroil.table.plot(
+        ax=axes, x="SW", y="KRW", c="blue", alpha=1, label="KRW", linewidth=2
+    )
+    gaswater.gasoil.table.plot(
+        ax=axes, x="SL", y="KRG", c="red", alpha=1, label="KRG", linewidth=2
+    )
+    plt.ylim([-0.02, 1])
+    plt.xlim([0, 1.02])
+    plt.xticks([0, 1])
+    plt.yticks([0, 1])
+    axes.annotate(
+        "KRGEND",
+        xy=(swl, krgend),
+        arrowprops=dict(arrowstyle="->"),
+        xytext=(swl - 0.1, krgend - 0.3),
+    )
+    axes.annotate(
+        "KRWEND",
+        xy=(1 - sgrw, krwend),
+        arrowprops=dict(arrowstyle="->"),
+        xytext=(1 - sgrw - 0.23, krwend - 0.1),
+    )
+    axes.annotate(
+        "SWL=SWCR",
+        xy=(swl, 0),
+        arrowprops=dict(arrowstyle="->"),
+        xytext=(swl - 0.1, 0 + 0.14),
+    )
+    plt.xlabel("SW", labelpad=-10)
+    axes.legend(loc="upper center")
+
+    axes.text(1 - sgrw + 0.01, krwend - 0.05, "SGRW")
+    axes.annotate(
+        "", xy=(1 - sgrw, krwend), xytext=(1, krwend), arrowprops=dict(arrowstyle="<->")
+    )
+
+    axes.text(1 - sgcr + 0.04, 0.09, "SGCR")
+    axes.annotate(
+        "", xy=(1 - sgcr, 0.07), xytext=(1, 0.07), arrowprops=dict(arrowstyle="<->")
+    )
+
+    axes.text(1 - sgl + 0.02, 0.02, "SGL")
+    axes.annotate(
+        "", xy=(1 - sgl, 0.00), xytext=(1, 0.00), arrowprops=dict(arrowstyle="<->")
+    )
+
+    # Initial state and saturation direction:
+    plt.vlines(1 - sgl, ymin=0, ymax=1, colors="darkorange", linestyles="dashed")
+    # Upper arrow, along water curve:
+    axes.arrow(
+        1 - sgl - 0.03,
+        krwend - 0.06,
+        -0.05,
+        -0.13,
+        head_width=0.025,
+        fill=True,
+        facecolor="darkorange",
+    )
+    # Lower arrow, along gas curve:
+    axes.arrow(
+        1 - sgl - 0.03,
+        0.03,
+        -0.08,
+        0.00,
+        head_width=0.025,
+        fill=True,
+        facecolor="darkorange",
+    )
     if show:
         plt.show()
 
