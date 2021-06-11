@@ -25,34 +25,42 @@ def make_gasoil_plot(show=True, krgendanchor="sorg"):
     plt.xkcd()
     _, axes = plt.subplots()
     swl = 0.1
-    sgcr = 0.2
+    sgcr = 0.1
+    sgro = 0.1
     sorg = 0.2
     krgend = 0.7
     krgmax = 0.75
-    kroend = 0.85
-    gasoil = GasOil(sgcr=sgcr, sorg=sorg, swl=swl, krgendanchor=krgendanchor)
-    gasoil2 = GasOil(sgcr=sgcr, sorg=sorg, swl=swl, krgendanchor=None)
-    gasoil.add_corey_gas(ng=3, krgend=krgend, krgmax=krgmax)
-    gasoil2.add_corey_gas(ng=3, krgend=krgend)
-    gasoil.add_corey_oil(nog=3, kroend=kroend)
-    gasoil2.add_corey_oil(nog=3, kroend=kroend)
+    kroend = 0.8
+    kromax = 0.85
+    gasoil = GasOil(sgcr=sgcr, sorg=sorg, swl=swl, sgro=sgro, krgendanchor=krgendanchor)
+    gasoil2 = GasOil(sgcr=sgcr, sorg=sorg, swl=swl, sgro=sgro, krgendanchor=None)
+    gasoil.add_corey_gas(ng=2, krgend=krgend, krgmax=krgmax)
+    gasoil2.add_corey_gas(ng=2, krgend=krgend)
+    gasoil.add_corey_oil(nog=2, kroend=kroend, kromax=kromax)
+    gasoil2.add_corey_oil(nog=2, kroend=kroend, kromax=kromax)
     gasoil2.table.plot(
-        ax=axes, x="sg", y="krg", c="pink", alpha=0.7, label="KRG*", linewidth=2
+        ax=axes, x="SG", y="KRG", c="pink", alpha=0.7, label="KRG*", linewidth=2
     )
     gasoil.table.plot(
-        ax=axes, x="sg", y="krg", c="red", alpha=1, label="KRG", linewidth=2
+        ax=axes, x="SG", y="KRG", c="red", alpha=1, label="KRG", linewidth=2
     )
     gasoil.table.plot(
-        ax=axes, x="sg", y="krog", c="green", alpha=1, label="KROG", linewidth=2
+        ax=axes, x="SG", y="KROG", c="green", alpha=1, label="KROG", linewidth=2
     )
     plt.ylim([-0.02, 1])
     plt.xticks([0, 1])
     plt.yticks([0, 1])
     axes.annotate(
-        "KROEND",
-        xy=(0, kroend),
+        "KROMAX",
+        xy=(0, kromax),
         arrowprops=dict(arrowstyle="->"),
-        xytext=(0.1, kroend - 0.2),
+        xytext=(0.1, kromax + 0.07),
+    )
+    axes.annotate(
+        "KROEND",
+        xy=(sgro, kroend),
+        arrowprops=dict(arrowstyle="->"),
+        xytext=(sgro + 0.07, kroend + 0.05),
     )
     axes.annotate(
         "KRGEND",
@@ -74,11 +82,16 @@ def make_gasoil_plot(show=True, krgendanchor="sorg"):
         arrowprops=dict(arrowstyle="->"),
         xytext=(1 - swl - 0.2, krgmax + 0.1),
     )
+    axes.text(0.0, 0.07, "SGCR")
     axes.annotate(
-        "SGCR",
-        xy=(sgcr, 0),
-        arrowprops=dict(arrowstyle="->"),
-        xytext=(sgcr - 0.05, 0 + 0.14),
+        "", xy=(-0.01, 0.04), xytext=(sgcr, 0.04), arrowprops=dict(arrowstyle="<->")
+    )
+    axes.text(0.0, 0.73, "SGRO")
+    axes.annotate(
+        "",
+        xy=(-0.01, kroend - 0.02),
+        xytext=(sgro, kroend - 0.02),
+        arrowprops=dict(arrowstyle="<->"),
     )
     plt.xlabel("SG", labelpad=-10)
     axes.annotate(
@@ -112,10 +125,10 @@ def make_wateroil_plot(show=True):
     wateroil.add_corey_water(nw=2, krwend=krwend, krwmax=krwmax)
     wateroil.add_corey_oil(now=2, kroend=kroend)
     wateroil.table.plot(
-        ax=axes, x="sw", y="krw", c="blue", alpha=1, label="KRW", linewidth=2
+        ax=axes, x="SW", y="KRW", c="blue", alpha=1, label="KRW", linewidth=2
     )
     wateroil.table.plot(
-        ax=axes, x="sw", y="krow", c="green", alpha=1, label="KROW", linewidth=2
+        ax=axes, x="SW", y="KROW", c="green", alpha=1, label="KROW", linewidth=2
     )
     plt.ylim([-0.02, 1])
     plt.xticks([0, 1])
@@ -181,10 +194,10 @@ def make_gaswater_plot(show=True):
     gaswater.add_corey_water(nw=2, krwend=krwend, krwmax=krwmax)
     gaswater.add_corey_gas(ng=2, krgend=krgend)
     gaswater.wateroil.table.plot(
-        ax=axes, x="sw", y="krw", c="blue", alpha=1, label="KRW", linewidth=2
+        ax=axes, x="SW", y="KRW", c="blue", alpha=1, label="KRW", linewidth=2
     )
     gaswater.gasoil.table.plot(
-        ax=axes, x="sl", y="krg", c="red", alpha=1, label="KRG", linewidth=2
+        ax=axes, x="SL", y="KRG", c="red", alpha=1, label="KRG", linewidth=2
     )
     plt.ylim([-0.02, 1])
     plt.xticks([0, 1])

@@ -399,6 +399,7 @@ def test_factory_gasoil():
     )
     assert isinstance(gasoil, GasOil)
     assert gasoil.sgcr == 0.05
+    assert gasoil.sgro == 0.0
     assert gasoil.swl == 0.1
     assert gasoil.swirr == 0.01
     assert gasoil.tag == "Good sand"
@@ -431,6 +432,24 @@ def test_factory_gasoil():
     check_table(gasoil.table)
     assert "LET krg" in sgof
     assert "LET krog" in sgof
+
+
+def test_factory_gascondensate():
+    """In gas condensate problems, the sgro and kromax parameters are relevant"""
+    pyscal_factory = PyscalFactory()
+    gasoil = pyscal_factory.create_gas_oil(
+        dict(sgro=0.1, sgcr=0.1, tag="Good sand", ng=1, nog=2, kroend=0.5, kromax=0.9)
+    )
+    assert isinstance(gasoil, GasOil)
+    assert gasoil.sgro == 0.1
+    assert gasoil.tag == "Good sand"
+    sgof = gasoil.SGOF()
+    sat_table_str_ok(sgof)
+    check_table(gasoil.table)
+    assert "Corey krog" in sgof
+    assert "kroend=0.5" in sgof
+    assert "kromax=0.9" in sgof
+    assert "sgro=0.1" in sgof
 
 
 def test_factory_gaswater():
@@ -859,21 +878,6 @@ def test_check_deprecated_krowgend(caplog):
     assert "krogend" in caplog.text
     assert "deprecated" in caplog.text
     assert gasoil.table["KROG"].max() == 0.4
-
-
-def test_check_deprecated_kromax(caplog):
-    """Up until pyscal 0.5.x, kromax was a parameter to the oil
-    curve parametrization for WaterOil and GasOil, and kro was
-    linear between swl and swcr. From pyscal 0.6, that linear
-    segment is gone, and kromax is not needed as a parameter,
-    only krowend/krogend is used.
-
-    If kromax is encountered in input data, we should warn
-    it is ignored.
-    """
-    PyscalFactory.create_water_oil(dict(swl=0.1, nw=2, now=2, kroend=0.4, kromax=0.5))
-    assert "kromax" in caplog.text
-    assert "deprecated" in caplog.text
 
 
 def parse_gensatfuncline(conf_line):

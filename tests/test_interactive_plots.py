@@ -162,6 +162,20 @@ def test_interpolate_go():
     sgcr_h = random.uniform(0, 0.1)
     sorg_l = random.uniform(0, 0.2)
     sorg_h = random.uniform(0, 0.2)
+    if bool(random.getrandbits(1)):
+        # Interpolation is not possible if only
+        # one of the curves has nonzero sgro
+        sgro_l = sgcr_l
+        sgro_h = sgcr_h
+    else:
+        sgro_l = 0
+        sgro_h = 0
+    krgend_l = random.uniform(0.5, 1)
+    krgend_h = random.uniform(0.5, 1)
+    kromax_l = random.uniform(0.5, 1)
+    kromax_h = random.uniform(0.5, 1)
+    kroend_l = min(random.uniform(0.5, 1), kromax_l)
+    kroend_h = min(random.uniform(0.5, 1), kromax_h)
     if random.uniform(0, 1) > 0.5:
         krgendanchor_l = "sorg"
     else:
@@ -171,15 +185,26 @@ def test_interpolate_go():
     else:
         krgendanchor_h = ""
     go_low = GasOil(
-        swl=swl_l, sgcr=sgcr_l, sorg=sorg_l, krgendanchor=krgendanchor_l, h=0.001
+        swl=swl_l,
+        sgcr=sgcr_l,
+        sorg=sorg_l,
+        sgro=sgro_l,
+        krgendanchor=krgendanchor_l,
+        h=0.001,
     )
     go_high = GasOil(
-        swl=swl_h, sgcr=sgcr_h, sorg=sorg_h, krgendanchor=krgendanchor_h, h=0.001
+        swl=swl_h,
+        sgcr=sgcr_h,
+        sorg=sorg_h,
+        sgro=sgro_h,
+        krgendanchor=krgendanchor_h,
+        h=0.001,
     )
-    go_low.add_corey_gas(ng=random.uniform(1, 3), krgend=random.uniform(0.5, 1))
-    go_high.add_corey_gas(ng=random.uniform(1, 3), krgend=random.uniform(0.5, 1))
-    go_low.add_corey_oil(nog=random.uniform(1, 3), kroend=random.uniform(0.5, 1))
-    go_high.add_corey_oil(nog=random.uniform(1, 3), kroend=random.uniform(0.5, 1))
+    go_low.add_corey_gas(ng=random.uniform(1, 3), krgend=krgend_l)
+    go_high.add_corey_gas(ng=random.uniform(1, 3), krgend=krgend_h)
+
+    go_low.add_corey_oil(nog=random.uniform(1, 3), kroend=kroend_l, kromax=kromax_l)
+    go_high.add_corey_oil(nog=random.uniform(1, 3), kroend=kroend_h, kromax=kromax_h)
     print(
         " ** Low curve GasOil (red):\n"
         + go_low.sgcomment

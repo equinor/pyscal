@@ -1,5 +1,4 @@
-"""Utility function for pyscal
-"""
+"""Utility function for pyscal"""
 
 import logging
 from typing import Tuple, Callable, Union, Optional
@@ -81,11 +80,12 @@ def normalize_nonlinpart_go(curve: GasOil) -> Tuple[Callable, Callable]:
     is from sgcr to sorg. sgcr is mapped to sg=zero, and sg=1 - sorg - swl is mapped
     to 1. Then there is an assumed linear part from sorg to 1 which we ignore here.
 
-    For a GasOil krow curve, the nonlinear part
-    is from 1 - sorg (mapped to zero) to sg=0 (mapped to 1).
+    For a GasOil krog curve, the nonlinear part
+    is from 1 - sorg (mapped to zero) to sg=sgro (mapped to 1).
 
     These endpoints must be known the the GasOil object coming in (the object
-    can determine them using functions 'estimate_sorg()' and 'estimate_sgcr()'
+    can determine them using functions 'estimate_sorg()', 'estimate_sgcr()' and
+    'estimate_sgro()'
 
     If the entire curve is linear, it will not matter for this function, because
     this function only deals with the presumably known endpoints.
@@ -125,7 +125,9 @@ def normalize_nonlinpart_go(curve: GasOil) -> Tuple[Callable, Callable]:
     )
 
     def so_fn(son):
-        return curve.swl + curve.sorg + son * (1.0 - curve.swl - curve.sorg)
+        return (
+            curve.swl + curve.sorg + son * (1.0 - curve.swl - curve.sorg - curve.sgro)
+        )
 
     def kro_fn(son):
         return kro_interp(so_fn(son))
@@ -365,15 +367,19 @@ def interpolate_go(
     swl_new = weighted_value(go_low.swl, go_high.swl)
     sgcr_new = weighted_value(go_low.sgcr, go_high.sgcr)
     sorg_new = weighted_value(go_low.sorg, go_high.sorg)
+    sgro_new = weighted_value(go_low.sgro, go_high.sgro)
 
     # Interpolate kr at saturation endpoints
     krgmax_new = weighted_value(go_low.table["KRG"].max(), go_high.table["KRG"].max())
     krgend_new = weighted_value(krg1(1), krg2(1))
+    kromax_new = weighted_value(go_low.table["KROG"].max(), go_high.table["KROG"].max())
     kroend_new = weighted_value(kro1(1), kro2(1))
 
     # Construct the new GasOil object, with interpolated
     # endpoints:
-    go_new = GasOil(swl=swl_new, sgcr=sgcr_new, sorg=sorg_new, h=h, fast=fast)
+    go_new = GasOil(
+        swl=swl_new, sgcr=sgcr_new, sorg=sorg_new, sgro=sgro_new, h=h, fast=fast
+    )
 
     # Add interpolated relperm data in nonlinear parts:
     go_new.table["KRG"] = weighted_value(
@@ -394,7 +400,7 @@ def interpolate_go(
         pc1(go_new.table["sgn_pc_intp"]), pc2(go_new.table["sgn_pc_intp"])
     )
 
-    go_new.set_endpoints_linearpart_krog(kroend=kroend_new)
+    go_new.set_endpoints_linearpart_krog(kroend=kroend_new, kromax=kromax_new)
 
     # Here we should have honored krgendanchor. Check github issue.
     go_new.set_endpoints_linearpart_krg(krgend=krgend_new, krgmax=krgmax_new)
