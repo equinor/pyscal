@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.factory &mdash; pyscal 0.7.8.dev14+g95b4957 documentation</title>
+  <title>pyscal.factory &mdash; pyscal 0.7.8.dev15+g102c031 documentation</title>
   
 
   
@@ -69,7 +69,7 @@
             
             
               <div class="version">
-                0.7.8.dev14+g95b4957
+                0.7.8.dev15+g102c031
               </div>
             
           
@@ -214,6 +214,25 @@ the add_*() parameters are not. This is because the add_*() parameters
 are meant as a Python API, while the factory class is there to aid
 users when input is written in a different context, like an Excel
 spreadsheet.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyscal.factory.PyscalFactory.alias_sgrw">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">alias_sgrw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#PyscalFactory.alias_sgrw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.alias_sgrw" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allow sgrw as an alias for sorw by remapping a
+sgrw value to a sorw value in an incoming dict.</p>
+<p>Will error hard of sorw already exists and is not nan.</p>
+<p>This aliasing is relevant when GasWater is modelled
+as three-phase to allow for condensate forming, and mirrors
+GasWater.__init__() which performs the same aliasing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>params</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]) – Keys must be lower case.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="pyscal.factory.PyscalFactory.create_gas_oil">
 <em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">create_gas_oil</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#PyscalFactory.create_gas_oil"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_gas_oil" title="Permalink to this definition">¶</a></dt>
@@ -401,7 +420,7 @@ in their signatures, which is not precise enough in this
 context, so we require e.g. ‘Lw’ and ‘Low’ (which both will be
 translated to ‘l’)</p>
 <dl class="simple">
-<dt>Recognized parameters:</dt><dd><p>swirr, swl, swcr, sorw, h, tag, nw, now, krwmax, krwend,
+<dt>Recognized parameters:</dt><dd><p>swirr, swl, swcr, sorw, sgrw, h, tag, nw, now, krwmax, krwend,
 lw, ew, tw, low, eow, tow, lo, eo, to, kroend,
 a, a_petro, b, b_petro, poro_ref, perm_ref, drho,
 a, b, poro, perm, sigma_costau</p>

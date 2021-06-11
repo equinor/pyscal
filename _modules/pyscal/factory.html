@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.factory &mdash; pyscal 0.7.8.dev14+g95b4957 documentation</title>
+  <title>pyscal.factory &mdash; pyscal 0.7.8.dev15+g102c031 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.7.8.dev14+g95b4957
+                0.7.8.dev15+g102c031
               </div>
             
           
@@ -205,7 +205,7 @@
 <span class="c1"># for LET parameters, where the API is simplified to &#39;l&#39;, &#39;e&#39; and &#39;t&#39;.</span>
 <span class="c1"># We are case *insensitive* in this factory class, so everything here should</span>
 <span class="c1"># be lower case</span>
-<span class="n">WO_INIT</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;swirr&quot;</span><span class="p">,</span> <span class="s2">&quot;swl&quot;</span><span class="p">,</span> <span class="s2">&quot;swcr&quot;</span><span class="p">,</span> <span class="s2">&quot;sorw&quot;</span><span class="p">,</span> <span class="s2">&quot;h&quot;</span><span class="p">,</span> <span class="s2">&quot;tag&quot;</span><span class="p">]</span>
+<span class="n">WO_INIT</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;swirr&quot;</span><span class="p">,</span> <span class="s2">&quot;swl&quot;</span><span class="p">,</span> <span class="s2">&quot;swcr&quot;</span><span class="p">,</span> <span class="s2">&quot;sorw&quot;</span><span class="p">,</span> <span class="s2">&quot;sgrw&quot;</span><span class="p">,</span> <span class="s2">&quot;h&quot;</span><span class="p">,</span> <span class="s2">&quot;tag&quot;</span><span class="p">]</span>
 <span class="n">WO_COREY_WATER</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;nw&quot;</span><span class="p">]</span>
 <span class="n">WO_WATER_ENDPOINTS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;krwmax&quot;</span><span class="p">,</span> <span class="s2">&quot;krwend&quot;</span><span class="p">]</span>
 <span class="n">WO_COREY_OIL</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;now&quot;</span><span class="p">]</span>
@@ -309,7 +309,7 @@
 <span class="sd">        translated to &#39;l&#39;)</span>
 
 <span class="sd">        Recognized parameters:</span>
-<span class="sd">          swirr, swl, swcr, sorw, h, tag, nw, now, krwmax, krwend,</span>
+<span class="sd">          swirr, swl, swcr, sorw, sgrw, h, tag, nw, now, krwmax, krwend,</span>
 <span class="sd">          lw, ew, tw, low, eow, tow, lo, eo, to, kroend,</span>
 <span class="sd">          a, a_petro, b, b_petro, poro_ref, perm_ref, drho,</span>
 <span class="sd">          a, b, poro, perm, sigma_costau</span>
@@ -379,7 +379,9 @@
             <span class="n">params</span><span class="p">[</span><span class="s2">&quot;swcr&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;swl&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">params</span><span class="p">[</span><span class="n">WO_SWCR_ADD</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
 
         <span class="c1"># No requirements to the base objects, defaults are ok.</span>
-        <span class="n">wateroil</span> <span class="o">=</span> <span class="n">WaterOil</span><span class="p">(</span><span class="o">**</span><span class="n">slicedict</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">WO_INIT</span><span class="p">),</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">)</span>
+        <span class="n">wateroil</span> <span class="o">=</span> <span class="n">WaterOil</span><span class="p">(</span>
+            <span class="o">**</span><span class="n">PyscalFactory</span><span class="o">.</span><span class="n">alias_sgrw</span><span class="p">(</span><span class="n">slicedict</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">WO_INIT</span><span class="p">)),</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span>
+        <span class="p">)</span>
         <span class="n">usedparams</span> <span class="o">=</span> <span class="n">usedparams</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">slicedict</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">WO_INIT</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
             <span class="s2">&quot;Initialized WaterOil object from parameters </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">usedparams</span><span class="p">))</span>
@@ -970,6 +972,38 @@
             <span class="nb">str</span><span class="p">(</span><span class="n">input_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span><span class="p">),</span>
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">input_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;SATNUM&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PyscalFactory.alias_sgrw"><a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.PyscalFactory.alias_sgrw">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">alias_sgrw</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Allow sgrw as an alias for sorw by remapping a</span>
+<span class="sd">        sgrw value to a sorw value in an incoming dict.</span>
+
+<span class="sd">        Will error hard of sorw already exists and is not nan.</span>
+
+<span class="sd">        This aliasing is relevant when GasWater is modelled</span>
+<span class="sd">        as three-phase to allow for condensate forming, and mirrors</span>
+<span class="sd">        GasWater.__init__() which performs the same aliasing.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            params: Keys must be lower case.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;sgrw&quot;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">&quot;sorw&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">params</span> <span class="ow">or</span> <span class="n">pd</span><span class="o">.</span><span class="n">isnull</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;sorw&quot;</span><span class="p">]):</span>
+                <span class="n">params_copy</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+                <span class="n">params_copy</span><span class="p">[</span><span class="s2">&quot;sorw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;sgrw&quot;</span><span class="p">]</span>
+                <span class="k">del</span> <span class="n">params_copy</span><span class="p">[</span><span class="s2">&quot;sgrw&quot;</span><span class="p">]</span>
+                <span class="k">return</span> <span class="n">params_copy</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;sgrw&quot;</span><span class="p">],</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;sorw&quot;</span><span class="p">]):</span>
+                    <span class="n">params_copy</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+                    <span class="k">del</span> <span class="n">params_copy</span><span class="p">[</span><span class="s2">&quot;sgrw&quot;</span><span class="p">]</span>
+                    <span class="k">return</span> <span class="n">params_copy</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;sgrw (</span><span class="si">{</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;sgrw&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">) must equal sorw (</span><span class="si">{</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;sorw&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">) &quot;</span>
+                        <span class="s2">&quot;when both are supplied to WaterOil.&quot;</span>
+                    <span class="p">)</span>
+        <span class="k">return</span> <span class="n">params</span></div>
 
 <div class="viewcode-block" id="PyscalFactory.remap_validate_cases"><a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.PyscalFactory.remap_validate_cases">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">remap_validate_cases</span><span class="p">(</span><span class="n">casevalues</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
