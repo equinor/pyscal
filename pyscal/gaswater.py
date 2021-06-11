@@ -33,6 +33,7 @@ class GasWater(object):
     Args:
         swirr: Irreducible water saturation for capillary pressure
         swl: First water saturation point in outputted tables.
+        sgl: Minimum gas saturation in a gas paleozone.
         swcr: Critical water saturation, water is immobile below this
         sgrw: Residual gas saturation after water flooding.
         sgcr: Critical gas saturation, gas is immobile below this
@@ -46,6 +47,7 @@ class GasWater(object):
         self,
         swirr: float = 0.0,
         swl: float = 0.0,
+        sgl: float = 0.0,
         swcr: float = 0.0,
         sgrw: float = 0.0,
         sgcr: float = 0.0,
@@ -70,10 +72,12 @@ class GasWater(object):
             tag=tag,
             fast=fast,
             _sgcr=sgcr,
+            _sgl=sgl,
         )
 
         self.sgcr: float = sgcr
         self.sgrw: float = sgrw
+        self.sgl: float = sgl
         # (remaining parameters are implemented as property functions)
 
         self.gasoil: GasOil = GasOil(
@@ -84,10 +88,10 @@ class GasWater(object):
             h=h,
             tag=tag,
             fast=fast,
+            _sgl=sgl,
         )
 
-        # Dummy oil curves, just to avoid objects
-        # being invalid.
+        # Dummy oil curves, just to avoid objects being invalid.
         self.wateroil.add_corey_oil()
         self.gasoil.add_corey_oil()
 
@@ -118,7 +122,7 @@ class GasWater(object):
 
         Args:
             nw: Corey parameter for water.
-            krwend: value of krw at 1 - sorw.
+            krwend: value of krw at 1 - sgcr.
             krwmax: maximal value at Sw=1. Default 1
         """
         self.wateroil.add_corey_water(nw, krwend, krwmax)
