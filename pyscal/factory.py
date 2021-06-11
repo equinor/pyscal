@@ -34,7 +34,7 @@ def slicedict(dct: dict, keys: Iterable):
 # for LET parameters, where the API is simplified to 'l', 'e' and 't'.
 # We are case *insensitive* in this factory class, so everything here should
 # be lower case
-WO_INIT = ["swirr", "swl", "swcr", "sorw", "h", "tag"]
+WO_INIT = ["swirr", "swl", "swcr", "sorw", "sgrw", "h", "tag"]
 WO_COREY_WATER = ["nw"]
 WO_WATER_ENDPOINTS = ["krwmax", "krwend"]
 WO_COREY_OIL = ["now"]
@@ -138,7 +138,7 @@ class PyscalFactory(object):
         translated to 'l')
 
         Recognized parameters:
-          swirr, swl, swcr, sorw, h, tag, nw, now, krwmax, krwend,
+          swirr, swl, swcr, sorw, sgrw, h, tag, nw, now, krwmax, krwend,
           lw, ew, tw, low, eow, tow, lo, eo, to, kroend,
           a, a_petro, b, b_petro, poro_ref, perm_ref, drho,
           a, b, poro, perm, sigma_costau
@@ -208,7 +208,9 @@ class PyscalFactory(object):
             params["swcr"] = params["swl"] + params[WO_SWCR_ADD[0]]
 
         # No requirements to the base objects, defaults are ok.
-        wateroil = WaterOil(**slicedict(params, WO_INIT), fast=fast)
+        wateroil = WaterOil(
+            **PyscalFactory.alias_sgrw(slicedict(params, WO_INIT)), fast=fast
+        )
         usedparams = usedparams.union(set(slicedict(params, WO_INIT).keys()))
         logger.debug(
             "Initialized WaterOil object from parameters %s", str(list(usedparams))
@@ -799,6 +801,38 @@ class PyscalFactory(object):
             str(input_df.columns.values),
         )
         return input_df.sort_values("SATNUM")
+
+    @staticmethod
+    def alias_sgrw(params: Dict[str, Any]) -> Dict[str, Any]:
+        """Allow sgrw as an alias for sorw by remapping a
+        sgrw value to a sorw value in an incoming dict.
+
+        Will error hard of sorw already exists and is not nan.
+
+        This aliasing is relevant when GasWater is modelled
+        as three-phase to allow for condensate forming, and mirrors
+        GasWater.__init__() which performs the same aliasing.
+
+        Args:
+            params: Keys must be lower case.
+        """
+        if "sgrw" in params:
+            if "sorw" not in params or pd.isnull(params["sorw"]):
+                params_copy = dict(params)
+                params_copy["sorw"] = params["sgrw"]
+                del params_copy["sgrw"]
+                return params_copy
+            else:
+                if np.isclose(params["sgrw"], params["sorw"]):
+                    params_copy = dict(params)
+                    del params_copy["sgrw"]
+                    return params_copy
+                else:
+                    raise ValueError(
+                        f"sgrw ({params['sgrw']}) must equal sorw ({params['sorw']}) "
+                        "when both are supplied to WaterOil."
+                    )
+        return params
 
     @staticmethod
     def remap_validate_cases(casevalues: List[str]) -> List[str]:
