@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.utils.interpolation &mdash; pyscal 0.7.8.dev13+g7fa3d51 documentation</title>
+  <title>pyscal.utils.interpolation &mdash; pyscal 0.7.8.dev14+g95b4957 documentation</title>
   
 
   
@@ -69,7 +69,7 @@
             
             
               <div class="version">
-                0.7.8.dev13+g7fa3d51
+                0.7.8.dev14+g95b4957
               </div>
             
           
@@ -265,10 +265,11 @@ a normalized argument (0,1) on that interval.</p>
 <p>For a GasOil krg curve, the nonlinear part
 is from sgcr to sorg. sgcr is mapped to sg=zero, and sg=1 - sorg - swl is mapped
 to 1. Then there is an assumed linear part from sorg to 1 which we ignore here.</p>
-<p>For a GasOil krow curve, the nonlinear part
-is from 1 - sorg (mapped to zero) to sg=0 (mapped to 1).</p>
+<p>For a GasOil krog curve, the nonlinear part
+is from 1 - sorg (mapped to zero) to sg=sgro (mapped to 1).</p>
 <p>These endpoints must be known the the GasOil object coming in (the object
-can determine them using functions ‘estimate_sorg()’ and ‘estimate_sgcr()’</p>
+can determine them using functions ‘estimate_sorg()’, ‘estimate_sgcr()’ and
+‘estimate_sgro()’</p>
 <p>If the entire curve is linear, it will not matter for this function, because
 this function only deals with the presumably known endpoints.</p>
 <dl class="field-list simple">

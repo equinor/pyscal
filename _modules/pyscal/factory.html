@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.factory &mdash; pyscal 0.7.8.dev13+g7fa3d51 documentation</title>
+  <title>pyscal.factory &mdash; pyscal 0.7.8.dev14+g95b4957 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.7.8.dev13+g7fa3d51
+                0.7.8.dev14+g95b4957
               </div>
             
           
@@ -227,11 +227,15 @@
     <span class="s2">&quot;drho&quot;</span><span class="p">,</span>
 <span class="p">]</span>  <span class="c1"># &quot;g&quot; is optional</span>
 
-<span class="n">GO_INIT</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;swirr&quot;</span><span class="p">,</span> <span class="s2">&quot;sgcr&quot;</span><span class="p">,</span> <span class="s2">&quot;sorg&quot;</span><span class="p">,</span> <span class="s2">&quot;swl&quot;</span><span class="p">,</span> <span class="s2">&quot;krgendanchor&quot;</span><span class="p">,</span> <span class="s2">&quot;h&quot;</span><span class="p">,</span> <span class="s2">&quot;tag&quot;</span><span class="p">]</span>
+<span class="n">GO_INIT</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;swirr&quot;</span><span class="p">,</span> <span class="s2">&quot;sgcr&quot;</span><span class="p">,</span> <span class="s2">&quot;sorg&quot;</span><span class="p">,</span> <span class="s2">&quot;sgro&quot;</span><span class="p">,</span> <span class="s2">&quot;swl&quot;</span><span class="p">,</span> <span class="s2">&quot;krgendanchor&quot;</span><span class="p">,</span> <span class="s2">&quot;h&quot;</span><span class="p">,</span> <span class="s2">&quot;tag&quot;</span><span class="p">]</span>
 <span class="n">GO_COREY_GAS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;ng&quot;</span><span class="p">]</span>
 <span class="n">GO_GAS_ENDPOINTS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;krgend&quot;</span><span class="p">,</span> <span class="s2">&quot;krgmax&quot;</span><span class="p">]</span>
 <span class="n">GO_COREY_OIL</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;nog&quot;</span><span class="p">]</span>
-<span class="n">GO_OIL_ENDPOINTS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;kroend&quot;</span><span class="p">,</span> <span class="s2">&quot;krogend&quot;</span><span class="p">]</span>  <span class="c1"># krogend is deprecated in favour of kroend</span>
+<span class="n">GO_OIL_ENDPOINTS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;kroend&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;kromax&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;krogend&quot;</span><span class="p">,</span>
+<span class="p">]</span>
 <span class="n">GO_LET_GAS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;lg&quot;</span><span class="p">,</span> <span class="s2">&quot;eg&quot;</span><span class="p">,</span> <span class="s2">&quot;tg&quot;</span><span class="p">]</span>
 <span class="n">GO_LET_OIL</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="s2">&quot;eog&quot;</span><span class="p">,</span> <span class="s2">&quot;tog&quot;</span><span class="p">]</span>
 
@@ -258,7 +262,6 @@
 <span class="n">DEPRECATED</span> <span class="o">=</span> <span class="p">{</span>
     <span class="s2">&quot;krogend&quot;</span><span class="p">:</span> <span class="s2">&quot;and will be used as kroend for GasOil&quot;</span><span class="p">,</span>
     <span class="s2">&quot;krowend&quot;</span><span class="p">:</span> <span class="s2">&quot;and will be used as kroend for WaterOil&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;kromax&quot;</span><span class="p">:</span> <span class="s2">&quot;and will be ignored&quot;</span><span class="p">,</span>
 <span class="p">}</span>
 
 
@@ -484,7 +487,7 @@
 
 <span class="sd">        Recognized parameters:</span>
 <span class="sd">          swirr, sgcr, sorg, swl, krgendanchor, h, tag,</span>
-<span class="sd">          ng, krgend, krgmax, nog, kroend,</span>
+<span class="sd">          ng, krgend, krgmax, nog, kroend, kromax</span>
 <span class="sd">          lg, eg, tg, log, eog, tog</span>
 
 <span class="sd">        Args:</span>

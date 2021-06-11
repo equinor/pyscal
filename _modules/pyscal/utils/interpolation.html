@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.utils.interpolation &mdash; pyscal 0.7.8.dev13+g7fa3d51 documentation</title>
+  <title>pyscal.utils.interpolation &mdash; pyscal 0.7.8.dev14+g95b4957 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.7.8.dev13+g7fa3d51
+                0.7.8.dev14+g95b4957
               </div>
             
           
@@ -169,8 +169,7 @@
            <div itemprop="articleBody">
             
   <h1>Source code for pyscal.utils.interpolation</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Utility function for pyscal</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">&quot;&quot;&quot;Utility function for pyscal&quot;&quot;&quot;</span>
 
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span>
@@ -252,11 +251,12 @@
 <span class="sd">    is from sgcr to sorg. sgcr is mapped to sg=zero, and sg=1 - sorg - swl is mapped</span>
 <span class="sd">    to 1. Then there is an assumed linear part from sorg to 1 which we ignore here.</span>
 
-<span class="sd">    For a GasOil krow curve, the nonlinear part</span>
-<span class="sd">    is from 1 - sorg (mapped to zero) to sg=0 (mapped to 1).</span>
+<span class="sd">    For a GasOil krog curve, the nonlinear part</span>
+<span class="sd">    is from 1 - sorg (mapped to zero) to sg=sgro (mapped to 1).</span>
 
 <span class="sd">    These endpoints must be known the the GasOil object coming in (the object</span>
-<span class="sd">    can determine them using functions &#39;estimate_sorg()&#39; and &#39;estimate_sgcr()&#39;</span>
+<span class="sd">    can determine them using functions &#39;estimate_sorg()&#39;, &#39;estimate_sgcr()&#39; and</span>
+<span class="sd">    &#39;estimate_sgro()&#39;</span>
 
 <span class="sd">    If the entire curve is linear, it will not matter for this function, because</span>
 <span class="sd">    this function only deals with the presumably known endpoints.</span>
@@ -296,7 +296,9 @@
     <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">so_fn</span><span class="p">(</span><span class="n">son</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">curve</span><span class="o">.</span><span class="n">swl</span> <span class="o">+</span> <span class="n">curve</span><span class="o">.</span><span class="n">sorg</span> <span class="o">+</span> <span class="n">son</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">curve</span><span class="o">.</span><span class="n">swl</span> <span class="o">-</span> <span class="n">curve</span><span class="o">.</span><span class="n">sorg</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">curve</span><span class="o">.</span><span class="n">swl</span> <span class="o">+</span> <span class="n">curve</span><span class="o">.</span><span class="n">sorg</span> <span class="o">+</span> <span class="n">son</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">curve</span><span class="o">.</span><span class="n">swl</span> <span class="o">-</span> <span class="n">curve</span><span class="o">.</span><span class="n">sorg</span> <span class="o">-</span> <span class="n">curve</span><span class="o">.</span><span class="n">sgro</span><span class="p">)</span>
+        <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">kro_fn</span><span class="p">(</span><span class="n">son</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">kro_interp</span><span class="p">(</span><span class="n">so_fn</span><span class="p">(</span><span class="n">son</span><span class="p">))</span>
@@ -536,15 +538,19 @@
     <span class="n">swl_new</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span><span class="n">go_low</span><span class="o">.</span><span class="n">swl</span><span class="p">,</span> <span class="n">go_high</span><span class="o">.</span><span class="n">swl</span><span class="p">)</span>
     <span class="n">sgcr_new</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span><span class="n">go_low</span><span class="o">.</span><span class="n">sgcr</span><span class="p">,</span> <span class="n">go_high</span><span class="o">.</span><span class="n">sgcr</span><span class="p">)</span>
     <span class="n">sorg_new</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span><span class="n">go_low</span><span class="o">.</span><span class="n">sorg</span><span class="p">,</span> <span class="n">go_high</span><span class="o">.</span><span class="n">sorg</span><span class="p">)</span>
+    <span class="n">sgro_new</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span><span class="n">go_low</span><span class="o">.</span><span class="n">sgro</span><span class="p">,</span> <span class="n">go_high</span><span class="o">.</span><span class="n">sgro</span><span class="p">)</span>
 
     <span class="c1"># Interpolate kr at saturation endpoints</span>
     <span class="n">krgmax_new</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span><span class="n">go_low</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KRG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">go_high</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KRG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
     <span class="n">krgend_new</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span><span class="n">krg1</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">krg2</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">kromax_new</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span><span class="n">go_low</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">go_high</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
     <span class="n">kroend_new</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span><span class="n">kro1</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">kro2</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
 
     <span class="c1"># Construct the new GasOil object, with interpolated</span>
     <span class="c1"># endpoints:</span>
-    <span class="n">go_new</span> <span class="o">=</span> <span class="n">GasOil</span><span class="p">(</span><span class="n">swl</span><span class="o">=</span><span class="n">swl_new</span><span class="p">,</span> <span class="n">sgcr</span><span class="o">=</span><span class="n">sgcr_new</span><span class="p">,</span> <span class="n">sorg</span><span class="o">=</span><span class="n">sorg_new</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">)</span>
+    <span class="n">go_new</span> <span class="o">=</span> <span class="n">GasOil</span><span class="p">(</span>
+        <span class="n">swl</span><span class="o">=</span><span class="n">swl_new</span><span class="p">,</span> <span class="n">sgcr</span><span class="o">=</span><span class="n">sgcr_new</span><span class="p">,</span> <span class="n">sorg</span><span class="o">=</span><span class="n">sorg_new</span><span class="p">,</span> <span class="n">sgro</span><span class="o">=</span><span class="n">sgro_new</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span>
+    <span class="p">)</span>
 
     <span class="c1"># Add interpolated relperm data in nonlinear parts:</span>
     <span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KRG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span>
@@ -565,7 +571,7 @@
         <span class="n">pc1</span><span class="p">(</span><span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sgn_pc_intp&quot;</span><span class="p">]),</span> <span class="n">pc2</span><span class="p">(</span><span class="n">go_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sgn_pc_intp&quot;</span><span class="p">])</span>
     <span class="p">)</span>
 
-    <span class="n">go_new</span><span class="o">.</span><span class="n">set_endpoints_linearpart_krog</span><span class="p">(</span><span class="n">kroend</span><span class="o">=</span><span class="n">kroend_new</span><span class="p">)</span>
+    <span class="n">go_new</span><span class="o">.</span><span class="n">set_endpoints_linearpart_krog</span><span class="p">(</span><span class="n">kroend</span><span class="o">=</span><span class="n">kroend_new</span><span class="p">,</span> <span class="n">kromax</span><span class="o">=</span><span class="n">kromax_new</span><span class="p">)</span>
 
     <span class="c1"># Here we should have honored krgendanchor. Check github issue.</span>
     <span class="n">go_new</span><span class="o">.</span><span class="n">set_endpoints_linearpart_krg</span><span class="p">(</span><span class="n">krgend</span><span class="o">=</span><span class="n">krgend_new</span><span class="p">,</span> <span class="n">krgmax</span><span class="o">=</span><span class="n">krgmax_new</span><span class="p">)</span>

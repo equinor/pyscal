@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>History &mdash; pyscal 0.7.8.dev13+g7fa3d51 documentation</title>
+  <title>History &mdash; pyscal 0.7.8.dev14+g95b4957 documentation</title>
   
 
   
@@ -69,7 +69,7 @@
             
             
               <div class="version">
-                0.7.8.dev13+g7fa3d51
+                0.7.8.dev14+g95b4957
               </div>
             
           
@@ -100,6 +100,7 @@
 <li class="toctree-l1"><a class="reference internal" href="usage.html">Usage</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="#release-notes">Release notes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#v1-0-x">v1.0.x</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v0-7-x">v0.7.x</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v0-6-0">v0.6.0</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#v0-5-0">v0.5.0</a></li>
@@ -195,6 +196,28 @@ languages. Open sourced (LGPLv3) in 2019.</p>
 <li><p><a class="reference external" href="https://github.com/equinor/pyscal/releases">https://github.com/equinor/pyscal/releases</a></p></li>
 </ul>
 </div></blockquote>
+<div class="section" id="v1-0-x">
+<h2>v1.0.x<a class="headerlink" href="#v1-0-x" title="Permalink to this headline">¶</a></h2>
+<dl class="simple">
+<dt><strong>New features</strong></dt><dd><ul class="simple">
+<li><p>New saturation endpoint for gas condensate modelling <code class="docutils literal notranslate"><span class="pre">sgro</span></code>, and
+reintroduced <code class="docutils literal notranslate"><span class="pre">kromax</span></code> endpoint when <code class="docutils literal notranslate"><span class="pre">sgro</span> <span class="pre">&gt;</span> <span class="pre">0</span></code>.</p></li>
+<li><p>Pyscal is now type hinted.</p></li>
+</ul>
+</dd>
+<dt><strong>Changes</strong></dt><dd><ul class="simple">
+<li><p>The internal dataframes now have their column names upper cased. This
+is not part of the public API.</p></li>
+<li><p>Deprecated API for monotonicity specification has been removed</p></li>
+<li><p>Deprecated interpolation code has been removed.</p></li>
+</ul>
+</dd>
+<dt><strong>Fixes</strong></dt><dd><ul class="simple">
+<li><p>Pyscallists had some initialization bugs that are now fixed for API users.</p></li>
+</ul>
+</dd>
+</dl>
+</div>
 <div class="section" id="v0-7-x">
 <h2>v0.7.x<a class="headerlink" href="#v0-7-x" title="Permalink to this headline">¶</a></h2>
 <dl class="simple">
