@@ -5,6 +5,7 @@ import pandas as pd
 
 from matplotlib import pyplot as plt
 
+import pytest
 from hypothesis import given, settings
 import hypothesis.strategies as st
 
@@ -834,3 +835,50 @@ def test_interpolations_wo_fromtable():
     wo_ip = interpolate_wo(wo_base, wo_opt, 0.5, h=0.01)
     assert np.isclose(wo_ip.estimate_swcr(), 0.25)
     assert np.isclose(wo_ip.estimate_sorw(), 0.15)
+
+
+@given(
+    st.floats(min_value=0, max_value=0.1),  # sgro_low
+    st.floats(min_value=0, max_value=0.1),  # sgro_high
+)
+def test_gascond_interpolation(sgro_low, sgro_high):
+    """sgro is required to be either 0 or sgcr, and interpolations
+    will crash when this is not the case. This test validates that
+    we can let sgro and sgcr go to zero, and that we always are able
+    to interpolate without crashes."""
+    go_low = GasOil(sgro=sgro_low, sgcr=sgro_low)
+    go_high = GasOil(sgro=sgro_high, sgcr=sgro_high)
+    go_low.add_corey_gas()
+    go_low.add_corey_oil()
+    go_high.add_corey_gas()
+    go_high.add_corey_oil()
+
+    go_ip = interpolate_go(go_low, go_high, parameter=0.5)
+    check_table(go_ip.table)
+
+
+def test_gasoil_gascond_fails():
+    """Interpolation between an object for gas condendensate (sgro > 0)
+    and an object with sgro = 0 (regular gas-oil) should fail"""
+    gascond = GasOil(sgro=0.1, sgcr=0.1)
+    gasoil = GasOil(sgro=0.0, sgcr=0.1)
+
+    gasoil.add_corey_gas()
+    gasoil.add_corey_oil()
+    gascond.add_corey_gas()
+    gascond.add_corey_oil()
+
+    # interpolation parameter at zero is no interpolation, just lookup,
+    # so it works fine:
+    check_table(interpolate_go(gasoil, gascond, parameter=0.0).table)
+    check_table(interpolate_go(gasoil, gascond, parameter=epsilon).table)
+    check_table(interpolate_go(gasoil, gascond, parameter=10 * epsilon).table)
+
+    with pytest.raises(ValueError, match="Interpolated sgro"):
+        interpolate_go(gasoil, gascond, parameter=100 * epsilon)
+
+    with pytest.raises(ValueError, match="Interpolated sgro"):
+        interpolate_go(gasoil, gascond, parameter=0.5)
+
+    check_table(interpolate_go(gasoil, gascond, parameter=1.0 - epsilon).table)
+    check_table(interpolate_go(gasoil, gascond, parameter=1.0).table)
