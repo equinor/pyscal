@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.gasoil &mdash; pyscal 0.7.8.dev15+g102c031 documentation</title>
+  <title>pyscal.gasoil &mdash; pyscal 0.7.8.dev16+gbfc4961 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.7.8.dev15+g102c031
+                0.7.8.dev16+gbfc4961
               </div>
             
           
@@ -305,7 +305,8 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">sgro</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">sgro</span><span class="p">,</span> <span class="n">sgcr</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;sgro must be zero or equal to sgcr, for compatibility with &quot;</span>
-                <span class="s2">&quot;Eclipse three-point scaling&quot;</span>
+                <span class="s2">&quot;Eclipse three-point scaling. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;sgro: </span><span class="si">{</span><span class="n">sgro</span><span class="si">}</span><span class="s2">, sgcr: </span><span class="si">{</span><span class="n">sgcr</span><span class="si">}</span><span class="s2">.&quot;</span>
             <span class="p">)</span>
 
         <span class="n">sg_list</span> <span class="o">=</span> <span class="p">(</span>
@@ -497,7 +498,23 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">lower</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">krogcomment</span> <span class="o">=</span> <span class="s2">&quot;-- krog from tabular input&quot;</span> <span class="o">+</span> <span class="n">krogcomment</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sorg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">estimate_sorg</span><span class="p">()</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sgro</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">estimate_sgro</span><span class="p">()</span>
+
+            <span class="c1"># For tabulated relperm data, correct knowlegde of sgro</span>
+            <span class="c1"># is not important to pyscal (it is relevant when add_corey_gas()</span>
+            <span class="c1"># etc is called). It is estimated here just for convenience.</span>
+            <span class="n">sgro_estimate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">estimate_sgro</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">sgro_estimate</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">sgro_estimate</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sgcr</span><span class="p">)</span>
+            <span class="p">):</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;Estimated sgro (</span><span class="si">%s</span><span class="s2">) from tabulated data was not 0 or sgcr (</span><span class="si">%s</span><span class="s2">). &quot;</span>
+                    <span class="s2">&quot;Reset to zero.&quot;</span><span class="p">,</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="n">sgro_estimate</span><span class="p">),</span>
+                    <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sgcr</span><span class="p">),</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sgro</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sgro</span> <span class="o">=</span> <span class="n">sgro_estimate</span>
         <span class="k">if</span> <span class="n">pccolname</span> <span class="ow">in</span> <span class="n">dframe</span><span class="p">:</span>
             <span class="c1"># Incoming dataframe must cover the range:</span>
             <span class="k">if</span> <span class="n">dframe</span><span class="p">[</span><span class="n">sgcolname</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">():</span>
