@@ -3,6 +3,7 @@
 import logging
 from typing import Tuple, Callable, Union, Optional
 
+import numpy as np
 from scipy.interpolate import interp1d
 
 from pyscal import WaterOil, GasOil
@@ -368,6 +369,12 @@ def interpolate_go(
     sgcr_new = weighted_value(go_low.sgcr, go_high.sgcr)
     sorg_new = weighted_value(go_low.sorg, go_high.sorg)
     sgro_new = weighted_value(go_low.sgro, go_high.sgro)
+
+    if not (np.isclose(sgro_new, sgcr_new) or np.isclose(sgro_new, 0.0)):
+        raise ValueError(
+            f"Interpolated sgro ({sgro_new}) not equal "
+            f"to zero or interpolated sgcr ({sgcr_new})"
+        )
 
     # Interpolate kr at saturation endpoints
     krgmax_new = weighted_value(go_low.table["KRG"].max(), go_high.table["KRG"].max())

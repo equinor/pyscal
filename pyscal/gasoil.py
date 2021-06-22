@@ -134,7 +134,8 @@ class GasOil(object):
         if not (np.isclose(sgro, 0) or np.isclose(sgro, sgcr)):
             raise ValueError(
                 "sgro must be zero or equal to sgcr, for compatibility with "
-                "Eclipse three-point scaling"
+                "Eclipse three-point scaling. "
+                f"sgro: {sgro}, sgcr: {sgcr}."
             )
 
         sg_list = (
@@ -326,7 +327,23 @@ class GasOil(object):
             self.table["KROG"].clip(lower=0.0, upper=1.0, inplace=True)
             self.krogcomment = "-- krog from tabular input" + krogcomment + "\n"
             self.sorg = self.estimate_sorg()
-            self.sgro = self.estimate_sgro()
+
+            # For tabulated relperm data, correct knowlegde of sgro
+            # is not important to pyscal (it is relevant when add_corey_gas()
+            # etc is called). It is estimated here just for convenience.
+            sgro_estimate = self.estimate_sgro()
+            if not (
+                np.isclose(sgro_estimate, 0.0) or np.isclose(sgro_estimate, self.sgcr)
+            ):
+                logger.warning(
+                    "Estimated sgro (%s) from tabulated data was not 0 or sgcr (%s). "
+                    "Reset to zero.",
+                    str(sgro_estimate),
+                    str(self.sgcr),
+                )
+                self.sgro = 0.0
+            else:
+                self.sgro = sgro_estimate
         if pccolname in dframe:
             # Incoming dataframe must cover the range:
             if dframe[sgcolname].min() > self.table["SG"].min():

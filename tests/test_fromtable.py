@@ -1,4 +1,4 @@
-"""Test module for pyscal...fromtable()"""
+"""Test module for pyscal.*.add_fromtable()"""
 
 import pandas as pd
 import numpy as np
@@ -127,6 +127,47 @@ def test_go_fromtable_problems():
         # Should say krg is above 1.0
         print(df4)
         gasoil.add_fromtable(df4, krgcolname="KRG")
+
+
+def test_gascondensate():
+    """Test how sgro works when data is tabulated. Sgro is to be used
+    for gas condensate modelling. sgro is tricky because only 0 and sgcr
+    are valid values for sgro when constructing the objects."""
+
+    # When sgro is nonzero, we are doing gas condensate modelling:
+    gascond_orig = GasOil(sgro=0.2, sgcr=0.2, h=0.1)
+    gascond_orig.add_corey_gas()
+    gascond_orig.add_corey_oil(kroend=0.8)
+
+    # Make a new object without assuming anything about sgro and sgcr:
+    gascond_tabulated = GasOil(h=0.1)
+    gascond_tabulated.add_fromtable(gascond_orig.table)
+    check_table(gascond_tabulated.table)
+
+    # sgro is estimated correctly in this case:
+    assert np.isclose(gascond_tabulated.sgro, gascond_orig.sgro)
+
+    # The object constructed from the table has an extra row at SG=0.1, because
+    # we didn't tell it that sgcr was 0.2, otherwise they are numerically
+    # equivalent:
+    assert len(gascond_tabulated.table) == len(gascond_orig.table) + 1
+    pd.testing.assert_frame_equal(
+        gascond_orig.table.iloc[1:][["SG", "KRG", "KROG"]].reset_index(drop=True),
+        gascond_tabulated.table.iloc[2:][["SG", "KRG", "KROG"]].reset_index(drop=True),
+    )
+
+    # Make a tricky gascondensate object which has a linear oil curve. The sgro
+    # estimate will become 1.0, we should still be able to use this as a table.
+    gascond_linear = GasOil(sgro=0.2, sgcr=0.2, h=0.1)
+    gascond_linear.add_corey_gas()
+    gascond_linear.add_corey_oil(kroend=0.8, kromax=1, nog=1)
+    gascond_linear_tabulated = GasOil(h=0.1)
+    gascond_linear_tabulated.add_fromtable(gascond_linear.table)
+
+    check_table(gascond_linear_tabulated.table)
+
+    # sgro could not be guessed here, and is reset to zero:
+    assert np.isclose(gascond_linear_tabulated.sgro, 0.0)
 
 
 def test_wo_singlecolumns():
