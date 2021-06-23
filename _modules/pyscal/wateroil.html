@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.wateroil &mdash; pyscal 0.7.8.dev16+gbfc4961 documentation</title>
+  <title>pyscal.wateroil &mdash; pyscal 0.7.8.dev17+g78d0af4 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.7.8.dev16+gbfc4961
+                0.7.8.dev17+g78d0af4
               </div>
             
           
@@ -418,7 +418,7 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;SW data not sorted&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">krwcolname</span> <span class="ow">in</span> <span class="n">dframe</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">sorw</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">sorw</span> <span class="o">=</span> <span class="n">dframe</span><span class="p">[</span><span class="n">swcolname</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">estimate_diffjumppoint</span><span class="p">(</span>
+                <span class="n">sorw</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="n">swcolname</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span> <span class="o">-</span> <span class="n">estimate_diffjumppoint</span><span class="p">(</span>
                     <span class="n">dframe</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="n">swcolname</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="n">krwcolname</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">&quot;right&quot;</span>
                 <span class="p">)</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Estimated sorw in tabular data to </span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">sorw</span><span class="p">)</span>
@@ -430,12 +430,17 @@
             <span class="n">linearpart</span> <span class="o">=</span> <span class="n">dframe</span><span class="p">[</span><span class="n">swcolname</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span>
             <span class="n">nonlinearpart</span> <span class="o">=</span> <span class="n">dframe</span><span class="p">[</span><span class="n">swcolname</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span>  <span class="c1"># (overlapping at sorw)</span>
             <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">linearpart</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="c1"># A linear section of length 1 is not a linear section,</span>
+                <span class="c1"># recategorize as nonlinear:</span>
                 <span class="n">linearpart</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="kc">False</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">linearpart</span><span class="p">))</span>
                 <span class="n">nonlinearpart</span> <span class="o">=</span> <span class="o">~</span><span class="n">linearpart</span>
                 <span class="n">sorw</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">nonlinearpart</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="c1"># A nonlinear section of length 1 is not a nonlinear section,</span>
+                <span class="c1"># recategorize as linear:</span>
                 <span class="n">nonlinearpart</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="kc">False</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">nonlinearpart</span><span class="p">))</span>
                 <span class="n">linearpart</span> <span class="o">=</span> <span class="o">~</span><span class="n">nonlinearpart</span>
+                <span class="n">sorw</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="n">swcolname</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()):</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Incompatible swl&quot;</span><span class="p">)</span>
             <span class="c1"># Verify that incoming data is increasing (or level):</span>
@@ -458,8 +463,10 @@
                     <span class="n">dframe</span><span class="p">[</span><span class="n">linearpart</span><span class="p">][</span><span class="n">swcolname</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span>
                     <span class="n">dframe</span><span class="p">[</span><span class="n">linearpart</span><span class="p">][</span><span class="n">krwcolname</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span>
                 <span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span><span class="p">,</span> <span class="s2">&quot;KRW&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">linearinterpolator</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span><span class="p">,</span> <span class="s2">&quot;SW&quot;</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span><span class="p">,</span> <span class="s2">&quot;KRW&quot;</span>
+                <span class="p">]</span> <span class="o">=</span> <span class="n">linearinterpolator</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span><span class="p">,</span> <span class="s2">&quot;SW&quot;</span><span class="p">]</span>
                 <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KRW&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">lower</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span> <span class="o">=</span> <span class="n">sorw</span>
@@ -468,7 +475,7 @@
 
         <span class="k">if</span> <span class="n">krowcolname</span> <span class="ow">in</span> <span class="n">dframe</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">sorw</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">sorw</span> <span class="o">=</span> <span class="n">dframe</span><span class="p">[</span><span class="n">swcolname</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">estimate_diffjumppoint</span><span class="p">(</span>
+                <span class="n">sorw</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="n">swcolname</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span> <span class="o">-</span> <span class="n">estimate_diffjumppoint</span><span class="p">(</span>
                     <span class="n">dframe</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="n">swcolname</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="n">krowcolname</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">&quot;right&quot;</span>
                 <span class="p">)</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Estimated sorw in tabular data from krow to </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">sorw</span><span class="p">)</span>
@@ -482,6 +489,7 @@
             <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">nonlinearpart</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
                 <span class="n">nonlinearpart</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="kc">False</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">nonlinearpart</span><span class="p">))</span>
                 <span class="n">linearpart</span> <span class="o">=</span> <span class="o">~</span><span class="n">nonlinearpart</span>
+                <span class="n">sorw</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="n">swcolname</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()):</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Incompatible swl&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="n">krowcolname</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
@@ -504,9 +512,9 @@
                     <span class="n">dframe</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">linearpart</span><span class="p">,</span> <span class="n">krowcolname</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span>
                 <span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span><span class="p">,</span> <span class="s2">&quot;KROW&quot;</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span><span class="p">,</span> <span class="s2">&quot;KROW&quot;</span>
                 <span class="p">]</span> <span class="o">=</span> <span class="n">linearinterpolator</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span><span class="p">,</span> <span class="s2">&quot;SW&quot;</span><span class="p">]</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span><span class="p">,</span> <span class="s2">&quot;SW&quot;</span><span class="p">]</span>
                 <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROW&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">lower</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span> <span class="o">=</span> <span class="n">sorw</span>
@@ -1176,7 +1184,7 @@
 <span class="sd">        not return zero in the future (one could argue that sorw = h should be</span>
 <span class="sd">        specially treated to mean sorw = 0)</span>
 
-<span class="sd">        If the curve is linear everywhere, sorw will be returned as swl + h</span>
+<span class="sd">        If the curve is linear everywhere, sorw will be returned as 1 - (swl + h)</span>
 
 <span class="sd">        krow is not used, and should probably not be, as it can be very close to</span>
 <span class="sd">        zero before approaching sorw.</span>

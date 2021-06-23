@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.wateroil &mdash; pyscal 0.7.8.dev16+gbfc4961 documentation</title>
+  <title>pyscal.wateroil &mdash; pyscal 0.7.8.dev17+g78d0af4 documentation</title>
   
 
   
@@ -70,7 +70,7 @@
             
             
               <div class="version">
-                0.7.8.dev16+gbfc4961
+                0.7.8.dev17+g78d0af4
               </div>
             
           
@@ -598,7 +598,7 @@ h, and the last segment from sw=1-h to sw=1 can always be assumed linear.
 Expect sorw = h if the real sorw = 0, but do not depend that it might
 not return zero in the future (one could argue that sorw = h should be
 specially treated to mean sorw = 0)</p>
-<p>If the curve is linear everywhere, sorw will be returned as swl + h</p>
+<p>If the curve is linear everywhere, sorw will be returned as 1 - (swl + h)</p>
 <p>krow is not used, and should probably not be, as it can be very close to
 zero before approaching sorw.</p>
 <dl class="field-list simple">
