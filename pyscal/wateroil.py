@@ -247,7 +247,7 @@ class WaterOil(object):
             raise ValueError("SW data not sorted")
         if krwcolname in dframe:
             if sorw is None:
-                sorw = dframe[swcolname].max() - estimate_diffjumppoint(
+                sorw = float(dframe[swcolname].max()) - estimate_diffjumppoint(
                     dframe, xcol=swcolname, ycol=krwcolname, side="right"
                 )
                 logger.info("Estimated sorw in tabular data to %f", sorw)
@@ -259,12 +259,17 @@ class WaterOil(object):
             linearpart = dframe[swcolname] >= 1 - sorw
             nonlinearpart = dframe[swcolname] <= 1 - sorw  # (overlapping at sorw)
             if sum(linearpart) < 2:
+                # A linear section of length 1 is not a linear section,
+                # recategorize as nonlinear:
                 linearpart = pd.Series([False] * len(linearpart))
                 nonlinearpart = ~linearpart
                 sorw = 0
             if sum(nonlinearpart) < 2:
+                # A nonlinear section of length 1 is not a nonlinear section,
+                # recategorize as linear:
                 nonlinearpart = pd.Series([False] * len(nonlinearpart))
                 linearpart = ~nonlinearpart
+                sorw = 1 - float(self.table["SW"].min())
             if not np.isclose(dframe[swcolname].min(), self.table["SW"].min()):
                 raise ValueError("Incompatible swl")
             # Verify that incoming data is increasing (or level):
@@ -287,8 +292,10 @@ class WaterOil(object):
                     dframe[linearpart][swcolname].astype(float),
                     dframe[linearpart][krwcolname].astype(float),
                 )
-                self.table.loc[self.table["SW"] > 1 - sorw, "KRW"] = linearinterpolator(
-                    self.table.loc[self.table["SW"] > 1 - sorw, "SW"]
+                self.table.loc[
+                    self.table["SW"] >= 1 - sorw, "KRW"
+                ] = linearinterpolator(
+                    self.table.loc[self.table["SW"] >= 1 - sorw, "SW"]
                 )
             self.table["KRW"].clip(lower=0.0, upper=1.0, inplace=True)
             self.sorw = sorw
@@ -297,7 +304,7 @@ class WaterOil(object):
 
         if krowcolname in dframe:
             if sorw is None:
-                sorw = dframe[swcolname].max() - estimate_diffjumppoint(
+                sorw = float(dframe[swcolname].max()) - estimate_diffjumppoint(
                     dframe, xcol=swcolname, ycol=krowcolname, side="right"
                 )
                 logger.info("Estimated sorw in tabular data from krow to %s", sorw)
@@ -311,6 +318,7 @@ class WaterOil(object):
             if sum(nonlinearpart) < 2:
                 nonlinearpart = pd.Series([False] * len(nonlinearpart))
                 linearpart = ~nonlinearpart
+                sorw = 1 - float(self.table["SW"].min())
             if not np.isclose(dframe[swcolname].min(), self.table["SW"].min()):
                 raise ValueError("Incompatible swl")
             if not (dframe[krowcolname].diff().dropna() < epsilon).all():
@@ -333,9 +341,9 @@ class WaterOil(object):
                     dframe.loc[linearpart, krowcolname].astype(float),
                 )
                 self.table.loc[
-                    self.table["SW"] > 1 - sorw, "KROW"
+                    self.table["SW"] >= 1 - sorw, "KROW"
                 ] = linearinterpolator(
-                    self.table.loc[self.table["SW"] > 1 - sorw, "SW"]
+                    self.table.loc[self.table["SW"] >= 1 - sorw, "SW"]
                 )
             self.table["KROW"].clip(lower=0.0, upper=1.0, inplace=True)
             self.sorw = sorw
@@ -1005,7 +1013,7 @@ class WaterOil(object):
         not return zero in the future (one could argue that sorw = h should be
         specially treated to mean sorw = 0)
 
-        If the curve is linear everywhere, sorw will be returned as swl + h
+        If the curve is linear everywhere, sorw will be returned as 1 - (swl + h)
 
         krow is not used, and should probably not be, as it can be very close to
         zero before approaching sorw.
