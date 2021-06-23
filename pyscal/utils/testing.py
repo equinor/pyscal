@@ -33,7 +33,8 @@ def sat_table_str_ok(sat_table_str: str) -> None:
 
     Number of floats pr. line must be constant
     All numerical lines must be parseable to a rectangular dataframe
-    with only floats.
+    with only floats. The first column must contain only unique values
+    for every SATNUM.
     """
     assert sat_table_str
 
@@ -87,6 +88,11 @@ def sat_table_str_ok(sat_table_str: str) -> None:
     # The first column holds saturations, for pyscal test-data that
     # is always between zero and 1
     assert 0 <= dframe[0].min() <= dframe[0].max() <= 1
+
+    # Saturations should be unique, but only within each SATNUM.
+    # Assert this by checking that the two consecutive numbers in the
+    # first column are never the same:
+    assert (~np.isclose(dframe[0].diff().dropna(), 0)).all()
 
     # Second column is never capillary pressure, so there we can enforce the same
     assert 0 <= dframe[1].min() <= dframe[1].max() <= 1
