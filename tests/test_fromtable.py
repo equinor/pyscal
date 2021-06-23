@@ -225,10 +225,13 @@ def test_wo_singlecolumns():
     ],
 )
 def test_linear_input(h, sw_mid):
-    """Linear input creates difficulties with sorw, which
-    is used in add_fromtable().
+    """Linear input creates difficulties with sorw, which is used in
+    add_fromtable(). The intention of the test is to avoid crashes when
+    add_fromtable().
 
-    (estimate_sorw() returns 1 - (swl + h) on linear input)
+    estimate_sorw() is unreliable on linear input, and returns 0 or 1 on the
+    given test dataset. Correctness of sorw should not be needed for
+    add_fromtable().
 
     This tests fails in pyscal v0.7.7"""
     dframe = pd.DataFrame(
