@@ -20,11 +20,13 @@ Detailed release history (with minor releases) at
 
   * https://github.com/equinor/pyscal/releases
 
-v1.0.x
+v0.8.x
 ------
 **New features**
   - New saturation endpoint for gas condensate modelling ``sgro``, and
     reintroduced ``kromax`` endpoint when ``sgro > 0``.
+  - sgrw can be used as an alias for sorw, relevant for gas-water problems
+    with condensate.
   - Pyscal is now type hinted.
 
 **Changes**
@@ -32,10 +34,12 @@ v1.0.x
     is not part of the public API.
   - Deprecated API for monotonicity specification has been removed
   - Deprecated interpolation code has been removed.
+  - Individual interpolation parameters pr SATNUM can no longer be given to
+    the command line tool.
 
 **Fixes**
   - Pyscallists had some initialization bugs that are now fixed for API users.
-
+  - Avoid bug when initializing from tabulated values with linear curves.
 
 v0.7.x
 ------
