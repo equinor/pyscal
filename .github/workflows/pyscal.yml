@@ -82,6 +82,7 @@ jobs:
             git config --local user.email "pyscal-github-action"
             git config --local user.name "pyscal-github-action"
             git fetch origin gh-pages
+            git stash  # Due to make_plots.py above maybe having modified png files
             git checkout --track origin/gh-pages
             git clean -f -f -d -x  # Double -f is intentional
             git rm -r *
