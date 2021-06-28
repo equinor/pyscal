@@ -44,23 +44,19 @@ The values in the CASE column are also case-insensitive. Remember to always
 supply interpolation parameters to the command line client whenever the
 data set contains a CASE column.
 
-Saturation and relative permeability endpoints
-----------------------------------------------
+Pyscal endpoints
+----------------
 
-The endpoints used in the parametrization. These parameters usually
-correspond to API argument names for WaterOil, OilGas and GasWater objects,
-where they must be given in lower-case version. When provided through
-PyscalFactory (xlsx or csv input), the parameter are case-insensitive.
+The endpoints, both for saturation and for the relative permeability curves
+(independent of LET or Corey) for each of the objects are given in the figures
+below. In the XLSX input these endpoints are taken (case-insensitive) from the
+column names, and in the API these arguments are used in a lower-case version.
 
 Water-Oil
 ^^^^^^^^^
 
 .. image:: images/wateroil-endpoints.png
     :width: 600
-
-*Note*: Pyscal prior to 0.6.0 had the oil relperm anchord at swcr, and then used the
-parameters krowend and krowmax. krowmax is now deprecated, and krowend and krogend must be
-equal and renamed to kroend.
 
 When initialized through xlsx/csv (through PyscalFactory) a parameter called
 ``swcr_add`` is available. If ``swcr_add`` is provided, ``swcr`` will be
@@ -95,7 +91,7 @@ Supported capillary pressure parametrizations are
     "RMS" version of the coefficients *a* and *b*.
     Required parameters:  ``a``, ``b``, ``poro_ref``, ``perm_ref``, ``drho``.
  2. :func:`Simple J, petrophysical version <pyscal.wateroil.WaterOil.add_simple_J_petro>`,
-    different definition of *a* and *b*
+    different definition of *a* and *b*.
     compared to simple J.
     Required parameters:  ``a_petro``, ``b_petro``, ``poro_ref``, ``perm_ref``, ``drho``.
  3. :func:`Normalized J <pyscal.wateroil.WaterOil.add_normalized_J>`,
