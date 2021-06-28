@@ -18,13 +18,14 @@ def main():
         "gaswater-endpoints",
         "wateroil-endpoints",
         # Remaining plots are for dedicated flowing processes:
-        "wateroil_idc2",
+        "wateroil-idc2",
         "gasoil-cdi2",
         "gaswater-icd2",
         "gasoil-cid2",
         "gaswater-dci1",
         "gaswater-co2-icd2",
     ]:
+        assert "_" not in plotname, "Keep names consistent please.."
         eval("make_" + plotname.replace("-", "_") + "(show=False)")
         plt.tight_layout()
         plt.savefig(IMG_DIR / (plotname + ".png"), dpi=200)
