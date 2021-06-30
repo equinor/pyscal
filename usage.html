@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Usage &mdash; pyscal 0.8.0 documentation</title>
+  <title>Usage &mdash; pyscal 0.8.1.dev2+g2e314b4.d20210630 documentation</title>
   
 
   
@@ -41,7 +41,7 @@
     
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="History" href="history.html" />
+    <link rel="next" title="Modelling of flooding processes" href="modelling.html" />
     <link rel="prev" title="Installation" href="installation.html" /> 
 </head>
 
@@ -69,7 +69,7 @@
             
             
               <div class="version">
-                0.8.0
+                0.8.1.dev2+g2e314b4.d20210630
               </div>
             
           
@@ -103,7 +103,7 @@
 <li class="toctree-l3"><a class="reference internal" href="#Named Arguments">Named Arguments</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="#saturation-and-relative-permeability-endpoints">Saturation and relative permeability endpoints</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#pyscal-endpoints">Pyscal endpoints</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="#water-oil">Water-Oil</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#gas-oil">Gas-Oil</a></li>
 <li class="toctree-l3"><a class="reference internal" href="#gas-water">Gas-Water</a></li>
@@ -120,6 +120,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="modelling.html">Modelling of flooding processes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="history.html">History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="history.html#release-notes">Release notes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="contributing.html">Contributing to pyscal</a></li>
@@ -200,7 +201,7 @@
 line tool is a short wrapper utilizing the underlying pyscal functionality.</p>
 <div class="section" id="the-command-line-tool">
 <h2>The command line tool<a class="headerlink" href="#the-command-line-tool" title="Permalink to this headline">¶</a></h2>
-<p><p>pyscal (0.8.0) is a tool to create Eclipse include files for relative permeability input from tabulated parameters.</p>
+<p><p>pyscal (0.8.1.dev2+g2e314b4.d20210630) is a tool to create Eclipse include files for relative permeability input from tabulated parameters.</p>
 </p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">pyscal</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">debug</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">version</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">o</span> <span class="n">OUTPUT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">delta_s</span> <span class="n">DELTA_S</span><span class="p">]</span>
               <span class="p">[</span><span class="o">--</span><span class="n">int_param_wo</span> <span class="n">INT_PARAM_WO</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">int_param_go</span> <span class="n">INT_PARAM_GO</span><span class="p">]</span>
@@ -485,18 +486,15 @@ vice versa. An example table could be</p>
 supply interpolation parameters to the command line client whenever the
 data set contains a CASE column.</p>
 </div>
-<div class="section" id="saturation-and-relative-permeability-endpoints">
-<h2>Saturation and relative permeability endpoints<a class="headerlink" href="#saturation-and-relative-permeability-endpoints" title="Permalink to this headline">¶</a></h2>
-<p>The endpoints used in the parametrization. These parameters usually
-correspond to API argument names for WaterOil, OilGas and GasWater objects,
-where they must be given in lower-case version. When provided through
-PyscalFactory (xlsx or csv input), the parameter are case-insensitive.</p>
+<div class="section" id="pyscal-endpoints">
+<h2>Pyscal endpoints<a class="headerlink" href="#pyscal-endpoints" title="Permalink to this headline">¶</a></h2>
+<p>The endpoints, both for saturation and for the relative permeability curves
+(independent of LET or Corey) for each of the objects are given in the figures
+below. In the XLSX input these endpoints are taken (case-insensitive) from the
+column names, and in the API these arguments are used in a lower-case version.</p>
 <div class="section" id="water-oil">
 <h3>Water-Oil<a class="headerlink" href="#water-oil" title="Permalink to this headline">¶</a></h3>
 <a class="reference internal image-reference" href="_images/wateroil-endpoints.png"><img alt="_images/wateroil-endpoints.png" src="_images/wateroil-endpoints.png" style="width: 600px;" /></a>
-<p><em>Note</em>: Pyscal prior to 0.6.0 had the oil relperm anchord at swcr, and then used the
-parameters krowend and krowmax. krowmax is now deprecated, and krowend and krogend must be
-equal and renamed to kroend.</p>
 <p>When initialized through xlsx/csv (through PyscalFactory) a parameter called
 <code class="docutils literal notranslate"><span class="pre">swcr_add</span></code> is available. If <code class="docutils literal notranslate"><span class="pre">swcr_add</span></code> is provided, <code class="docutils literal notranslate"><span class="pre">swcr</span></code> will be
 calculated as <code class="docutils literal notranslate"><span class="pre">swl</span></code> plus this delta value.</p>
@@ -525,7 +523,7 @@ saturation used for relative permeability.</p>
 “RMS” version of the coefficients <em>a</em> and <em>b</em>.
 Required parameters:  <code class="docutils literal notranslate"><span class="pre">a</span></code>, <code class="docutils literal notranslate"><span class="pre">b</span></code>, <code class="docutils literal notranslate"><span class="pre">poro_ref</span></code>, <code class="docutils literal notranslate"><span class="pre">perm_ref</span></code>, <code class="docutils literal notranslate"><span class="pre">drho</span></code>.</p></li>
 <li><p><a class="reference internal" href="pyscal/pyscal.wateroil.html#pyscal.wateroil.WaterOil.add_simple_J_petro" title="pyscal.wateroil.WaterOil.add_simple_J_petro"><code class="xref py py-func docutils literal notranslate"><span class="pre">Simple</span> <span class="pre">J,</span> <span class="pre">petrophysical</span> <span class="pre">version</span></code></a>,
-different definition of <em>a</em> and <em>b</em>
+different definition of <em>a</em> and <em>b</em>.
 compared to simple J.
 Required parameters:  <code class="docutils literal notranslate"><span class="pre">a_petro</span></code>, <code class="docutils literal notranslate"><span class="pre">b_petro</span></code>, <code class="docutils literal notranslate"><span class="pre">poro_ref</span></code>, <code class="docutils literal notranslate"><span class="pre">perm_ref</span></code>, <code class="docutils literal notranslate"><span class="pre">drho</span></code>.</p></li>
 <li><p><a class="reference internal" href="pyscal/pyscal.wateroil.html#pyscal.wateroil.WaterOil.add_normalized_J" title="pyscal.wateroil.WaterOil.add_normalized_J"><code class="xref py py-func docutils literal notranslate"><span class="pre">Normalized</span> <span class="pre">J</span></code></a>,
@@ -718,7 +716,7 @@ the SCAL recommendation holds three GasWater objects, but works similarly.</p>
           </div>
           <footer>
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="history.html" class="btn btn-neutral float-right" title="History" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="modelling.html" class="btn btn-neutral float-right" title="Modelling of flooding processes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
         <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
