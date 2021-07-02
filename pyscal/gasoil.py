@@ -1,10 +1,10 @@
 """Representing a GasOil object"""
 
 import logging
+from typing import Optional
 
 import numpy as np
 import pandas as pd
-from typing import Optional
 
 from scipy.interpolate import PchipInterpolator
 

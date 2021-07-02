@@ -887,6 +887,14 @@ def test_scalrecommendation():
     with pytest.raises(ValueError, match='"high" case not supplied'):
         pyscal_factory.create_scal_recommendation(baselow)
 
+    with pytest.raises(
+        ValueError, match="All values in parameter dict must be dictionaries"
+    ):
+
+        pyscal_factory.create_scal_recommendation(
+            {"low": [1, 2], "base": {"swl": 0.1}, "high": {"swl": 0.1}}
+        )
+
 
 def test_scalrecommendation_gaswater():
     """Testing making SCAL rec from dict of dict for gaswater input"""
