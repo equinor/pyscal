@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.utils.interpolation &mdash; pyscal 0.8.1.dev2+g2e314b4.d20210702 documentation</title>
+  <title>pyscal.utils.interpolation &mdash; pyscal 0.8.1.dev3+g9134a6c.d20210702 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.8.1.dev2+g2e314b4.d20210702
+                0.8.1.dev3+g9134a6c.d20210702
               </div>
             
           
@@ -429,10 +429,7 @@
     <span class="c1"># Extrapolation is refused, but perhaps later implemented with truncation to (0,1)</span>
 
     <span class="c1"># Running fast mode if both interpolants have fast mode</span>
-    <span class="k">if</span> <span class="n">wo_low</span><span class="o">.</span><span class="n">fast</span> <span class="ow">and</span> <span class="n">wo_high</span><span class="o">.</span><span class="n">fast</span><span class="p">:</span>
-        <span class="n">fast</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">fast</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">fast</span> <span class="o">=</span> <span class="n">wo_low</span><span class="o">.</span><span class="n">fast</span> <span class="ow">and</span> <span class="n">wo_high</span><span class="o">.</span><span class="n">fast</span>
 
     <span class="c1"># Constructs functions that works on normalized saturation interval</span>
     <span class="n">krw1</span><span class="p">,</span> <span class="n">kro1</span> <span class="o">=</span> <span class="n">normalize_nonlinpart_wo</span><span class="p">(</span><span class="n">wo_low</span><span class="p">)</span>
@@ -520,10 +517,7 @@
     <span class="c1"># Extrapolation is refused, but perhaps later implemented with truncation to (0,1)</span>
 
     <span class="c1"># Running fast mode if both interpolants have fast mode</span>
-    <span class="k">if</span> <span class="n">go_low</span><span class="o">.</span><span class="n">fast</span> <span class="ow">and</span> <span class="n">go_high</span><span class="o">.</span><span class="n">fast</span><span class="p">:</span>
-        <span class="n">fast</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">fast</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">fast</span> <span class="o">=</span> <span class="n">go_low</span><span class="o">.</span><span class="n">fast</span> <span class="ow">and</span> <span class="n">go_high</span><span class="o">.</span><span class="n">fast</span>
 
     <span class="c1"># Constructs functions that works on normalized saturation interval</span>
     <span class="n">krg1</span><span class="p">,</span> <span class="n">kro1</span> <span class="o">=</span> <span class="n">normalize_nonlinpart_go</span><span class="p">(</span><span class="n">go_low</span><span class="p">)</span>

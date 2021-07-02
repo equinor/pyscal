@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.scalrecommendation &mdash; pyscal 0.8.1.dev2+g2e314b4.d20210702 documentation</title>
+  <title>pyscal.scalrecommendation &mdash; pyscal 0.8.1.dev3+g9134a6c.d20210702 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.8.1.dev2+g2e314b4.d20210702
+                0.8.1.dev3+g9134a6c.d20210702
               </div>
             
           
@@ -400,7 +400,7 @@
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                     <span class="sa">f</span><span class="s2">&quot;Interpolation parameter must be in [-1,1], got </span><span class="si">{</span><span class="n">parameter</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="p">)</span>
-            <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">):</span>
                 <span class="n">interpolant</span><span class="o">.</span><span class="n">wateroil</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">wateroil</span><span class="p">)</span>
                 <span class="n">interpolant</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">tag</span> <span class="o">=</span> <span class="n">tag</span>
             <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">):</span>
@@ -441,7 +441,7 @@
                     <span class="s2">&quot;Interpolation parameter for gas must &quot;</span>
                     <span class="sa">f</span><span class="s2">&quot;be in [-1,1], got </span><span class="si">{</span><span class="n">gasparameter</span><span class="si">}</span><span class="s2">&quot;</span>
                 <span class="p">)</span>
-            <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">gasparameter</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">gasparameter</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">):</span>
                 <span class="n">interpolant</span><span class="o">.</span><span class="n">gasoil</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">gasoil</span><span class="p">)</span>
                 <span class="n">interpolant</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">tag</span> <span class="o">=</span> <span class="n">tag</span>
             <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">gasparameter</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">):</span>

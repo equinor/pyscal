@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.utils.capillarypressure &mdash; pyscal 0.8.1.dev2+g2e314b4.d20210702 documentation</title>
+  <title>pyscal.utils.capillarypressure &mdash; pyscal 0.8.1.dev3+g9134a6c.d20210702 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.8.1.dev2+g2e314b4.d20210702
+                0.8.1.dev3+g9134a6c.d20210702
               </div>
             
           
@@ -247,18 +247,21 @@
 
 
 <span class="k">def</span> <span class="nf">_sw_to_simpleJ</span><span class="p">(</span><span class="n">sw</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="c1"># pylint: disable=invalid-name</span>
     <span class="sd">&quot;&quot;&quot;Convert a water saturation value to the associated J-value,</span>
 <span class="sd">    using RMS simple-J&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">*</span> <span class="n">sw</span> <span class="o">**</span> <span class="nb">float</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
 
 
 <span class="k">def</span> <span class="nf">_simpleJ_to_sw</span><span class="p">(</span><span class="n">J</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="c1"># pylint: disable=invalid-name</span>
     <span class="sd">&quot;&quot;&quot;Convert a J-function-value to a water saturation value,</span>
 <span class="sd">    using RMS simple-J&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">J</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">b</span><span class="p">))</span>
 
 
 <span class="k">def</span> <span class="nf">_simpleJ_to_height</span><span class="p">(</span><span class="n">J</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">poro_ref</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">perm_ref</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="c1"># pylint: disable=invalid-name</span>
     <span class="sd">&quot;&quot;&quot;Convert a J-function value to a height-value in meters</span>
 
 <span class="sd">    This scales the J-value with the inverse of characteristic</span>
@@ -275,6 +278,7 @@
 
 
 <span class="k">def</span> <span class="nf">_height_to_simpleJ</span><span class="p">(</span><span class="n">H</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">poro_ref</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">perm_ref</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+    <span class="c1"># pylint: disable=invalid-name</span>
     <span class="sd">&quot;&quot;&quot;Convert a height value (in meters) to a corresponding J-function</span>
 
 <span class="sd">    This scales the J-value with the characteristic</span>
