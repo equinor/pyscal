@@ -1,9 +1,10 @@
 """Container object for one WaterOil and one GasOil object"""
 
 import logging
+from typing import Optional
+
 import numpy as np
 import pandas as pd
-from typing import Optional
 
 import pyscal
 from pyscal.constants import SWINTEGERS

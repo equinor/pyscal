@@ -257,10 +257,7 @@ def interpolate_wo(
     # Extrapolation is refused, but perhaps later implemented with truncation to (0,1)
 
     # Running fast mode if both interpolants have fast mode
-    if wo_low.fast and wo_high.fast:
-        fast = True
-    else:
-        fast = False
+    fast = wo_low.fast and wo_high.fast
 
     # Constructs functions that works on normalized saturation interval
     krw1, kro1 = normalize_nonlinpart_wo(wo_low)
@@ -348,10 +345,7 @@ def interpolate_go(
     # Extrapolation is refused, but perhaps later implemented with truncation to (0,1)
 
     # Running fast mode if both interpolants have fast mode
-    if go_low.fast and go_high.fast:
-        fast = True
-    else:
-        fast = False
+    fast = go_low.fast and go_high.fast
 
     # Constructs functions that works on normalized saturation interval
     krg1, kro1 = normalize_nonlinpart_go(go_low)

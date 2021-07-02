@@ -75,18 +75,21 @@ def _height_to_pc(height: float, drho: float, g: float) -> float:
 
 
 def _sw_to_simpleJ(sw: float, a: float, b: float) -> float:
+    # pylint: disable=invalid-name
     """Convert a water saturation value to the associated J-value,
     using RMS simple-J"""
     return float(a) * sw ** float(b)
 
 
 def _simpleJ_to_sw(J: float, a: float, b: float) -> float:
+    # pylint: disable=invalid-name
     """Convert a J-function-value to a water saturation value,
     using RMS simple-J"""
     return math.pow(J / float(a), 1.0 / float(b))
 
 
 def _simpleJ_to_height(J: float, poro_ref: float, perm_ref: float) -> float:
+    # pylint: disable=invalid-name
     """Convert a J-function value to a height-value in meters
 
     This scales the J-value with the inverse of characteristic
@@ -103,6 +106,7 @@ def _simpleJ_to_height(J: float, poro_ref: float, perm_ref: float) -> float:
 
 
 def _height_to_simpleJ(H: float, poro_ref: float, perm_ref: float):
+    # pylint: disable=invalid-name
     """Convert a height value (in meters) to a corresponding J-function
 
     This scales the J-value with the characteristic

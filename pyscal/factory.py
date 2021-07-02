@@ -553,7 +553,11 @@ class PyscalFactory(object):
             raise ValueError('"base" case not supplied')
         if "high" not in params:
             raise ValueError('"high" case not supplied')
-        if not all([isinstance(x, dict) for x in params.values()]):
+        if not (
+            isinstance(params["low"], dict)
+            and isinstance(params["base"], dict)
+            and isinstance(params["high"], dict)
+        ):
             raise ValueError("All values in parameter dict must be dictionaries")
 
         check_deprecated(params["low"])
@@ -568,13 +572,11 @@ class PyscalFactory(object):
 
         # Check parameter availability, in order to determine phase configuration
         gaswater = all(
-            [sufficient_gas_water_params(params[case]) for case in params.keys()]
+            sufficient_gas_water_params(params[case]) for case in params.keys()
         )
-        gasoil = all(
-            [sufficient_gas_oil_params(params[case]) for case in params.keys()]
-        )
+        gasoil = all(sufficient_gas_oil_params(params[case]) for case in params.keys())
         wateroil = all(
-            [sufficient_water_oil_params(params[case]) for case in params.keys()]
+            sufficient_water_oil_params(params[case]) for case in params.keys()
         )
 
         wog_low: Union[WaterOilGas, GasWater]
@@ -609,7 +611,7 @@ class PyscalFactory(object):
             except ValueError as err:
                 raise ValueError(f"Problem with high/opt case: {err}") from err
 
-        errored = all([not wog.selfcheck() for wog in [wog_low, wog_base, wog_high]])
+        errored = all(not wog.selfcheck() for wog in [wog_low, wog_base, wog_high])
 
         if errored:
             raise ValueError("Incomplete SCAL recommendation")
@@ -822,16 +824,14 @@ class PyscalFactory(object):
                 params_copy["sorw"] = params["sgrw"]
                 del params_copy["sgrw"]
                 return params_copy
-            else:
-                if np.isclose(params["sgrw"], params["sorw"]):
-                    params_copy = dict(params)
-                    del params_copy["sgrw"]
-                    return params_copy
-                else:
-                    raise ValueError(
-                        f"sgrw ({params['sgrw']}) must equal sorw ({params['sorw']}) "
-                        "when both are supplied to WaterOil."
-                    )
+            if np.isclose(params["sgrw"], params["sorw"]):
+                params_copy = dict(params)
+                del params_copy["sgrw"]
+                return params_copy
+            raise ValueError(
+                f"sgrw ({params['sgrw']}) must equal sorw ({params['sorw']}) "
+                "when both are supplied to WaterOil."
+            )
         return params
 
     @staticmethod
