@@ -1205,7 +1205,7 @@ def infer_tabular_file_format(filename: Union[str, Path]) -> str:
     try:
         pd.read_excel(filename, engine="xlrd")
         return "xls"
-    except (ValueError, xlrd.biffh.XLRDError):
+    except (ValueError, TypeError, xlrd.biffh.XLRDError):
         # We get here for both CSV and XLSX files.
         pass
     try:
