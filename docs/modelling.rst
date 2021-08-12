@@ -117,6 +117,9 @@ dropout can occur it should be modelled as a three-phase simulation.
     * - SGRW
       - SGCR
       - Trapped gas/residual gas. SGCR must be set equal to SGRW
+    * - SGL
+      - SGL
+      - Set to zero
     * - KRGEND
       - KRG
       - Usually 1
@@ -190,7 +193,7 @@ Wet gas/condensate field, oil displacing gas (CID2)
       - SGCR
       - Critical gas.
     * - SGRW
-      -
+      - SGL
       - Set to 0
     * - KRGEND
       - KRG
