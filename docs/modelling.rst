@@ -68,6 +68,9 @@ Gas injection or solution gas drive (CDI2)
     * - SORG
       - SOGCR
       - Residual oil
+    * - SGCR
+      - SGCR
+      - Critical gas
     * - KRGEND
       - KRGR
       - krg @ SORG
@@ -127,8 +130,8 @@ dropout can occur it should be modelled as a three-phase simulation.
       - KRW
       -
 
-Wet gas field, oil displacing gas (CID2)
-----------------------------------------
+Wet gas/condensate field, oil displacing gas (CID2)
+---------------------------------------------------
 
 .. image:: images/gasoil-cid2.png
     :width: 600
@@ -162,9 +165,10 @@ Wet gas field, oil displacing gas (CID2)
       - KRO
       -
 
+.. |CO2| replace:: CO\ :sub:`2`\
 
-CO2-injection (gas displacing water, DCI1)
-------------------------------------------
+|CO2|-injection (gas displacing water, DCI1)
+--------------------------------------------
 
 .. image:: images/gaswater-dci1.png
     :width: 600
@@ -195,8 +199,10 @@ CO2-injection (gas displacing water, DCI1)
       - KRW
       - Usually set to 1
 
-CO2 trapping (ICD2)
--------------------
+|CO2| trapping (ICD2)
+---------------------
+
+Process is analoguous to "Dry gas field".
 
 .. image:: images/gaswater-co2-icd2.png
     :width: 600
@@ -216,7 +222,7 @@ CO2 trapping (ICD2)
       - Residual water. Set equal to SWL
     * - SGCR
       - SGCR
-      - Critical gas. Must equal SGRW
+      - Trapped gas. Must equal SGRW
     * - SGRW
       - SGCR
       - Set to SGCR
