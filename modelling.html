@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>Modelling of flooding processes &mdash; pyscal 0.8.1.dev4+g82a376c.d20210817 documentation</title>
+  <title>Modelling of flooding processes &mdash; pyscal 0.8.1.dev5+gdb7888f.d20210817 documentation</title>
   
 
   
@@ -69,7 +69,7 @@
             
             
               <div class="version">
-                0.8.1.dev4+g82a376c.d20210817
+                0.8.1.dev5+gdb7888f.d20210817
               </div>
             
           
@@ -102,9 +102,9 @@
 <li class="toctree-l2"><a class="reference internal" href="#water-injection-in-oil-field-idc2">Water injection in oil field (IDC2)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#gas-injection-or-solution-gas-drive-cdi2">Gas injection or solution gas drive (CDI2)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#dry-gas-field-invading-water-icd2">Dry gas field (invading water) (ICD2)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#wet-gas-field-oil-displacing-gas-cid2">Wet gas field, oil displacing gas (CID2)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#co2-injection-gas-displacing-water-dci1">CO2-injection (gas displacing water, DCI1)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#co2-trapping-icd2">CO2 trapping (ICD2)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#wet-gas-condensate-field-oil-displacing-gas-cid2">Wet gas/condensate field, oil displacing gas (CID2)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#co2-injection-gas-displacing-water-dci1">CO<sub>2</sub>-injection (gas displacing water, DCI1)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#co2-trapping-icd2">CO<sub>2</sub> trapping (ICD2)</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="history.html">History</a></li>
@@ -263,27 +263,31 @@ initial state for the relevant flooding process, and the saturation direction.</
 <td><p>SOGCR</p></td>
 <td><p>Residual oil</p></td>
 </tr>
-<tr class="row-even"><td><p>KRGEND</p></td>
+<tr class="row-even"><td><p>SGCR</p></td>
+<td><p>SGCR</p></td>
+<td><p>Critical gas</p></td>
+</tr>
+<tr class="row-odd"><td><p>KRGEND</p></td>
 <td><p>KRGR</p></td>
 <td><p>krg &#64; SORG</p></td>
 </tr>
-<tr class="row-odd"><td><p>KRGMAX</p></td>
+<tr class="row-even"><td><p>KRGMAX</p></td>
 <td><p>KRG</p></td>
 <td><p>Usually 1</p></td>
 </tr>
-<tr class="row-even"><td><p>KROEND</p></td>
+<tr class="row-odd"><td><p>KROEND</p></td>
 <td><p>KRO</p></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td></td>
+<tr class="row-even"><td></td>
 <td><p>KRORG</p></td>
 <td><p>Not used in Pyscal</p></td>
 </tr>
-<tr class="row-even"><td><p>krgendanchor=sorg</p></td>
+<tr class="row-odd"><td><p>krgendanchor=sorg</p></td>
 <td></td>
 <td></td>
 </tr>
-<tr class="row-odd"><td><p>SGRO=0</p></td>
+<tr class="row-even"><td><p>SGRO=0</p></td>
 <td></td>
 <td></td>
 </tr>
@@ -340,8 +344,8 @@ higher than SWL.</p></td>
 </tbody>
 </table>
 </div>
-<div class="section" id="wet-gas-field-oil-displacing-gas-cid2">
-<h2>Wet gas field, oil displacing gas (CID2)<a class="headerlink" href="#wet-gas-field-oil-displacing-gas-cid2" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="wet-gas-condensate-field-oil-displacing-gas-cid2">
+<h2>Wet gas/condensate field, oil displacing gas (CID2)<a class="headerlink" href="#wet-gas-condensate-field-oil-displacing-gas-cid2" title="Permalink to this headline">¶</a></h2>
 <a class="reference internal image-reference" href="_images/gasoil-cid2.png"><img alt="_images/gasoil-cid2.png" src="_images/gasoil-cid2.png" style="width: 600px;" /></a>
 <table class="colwidths-given docutils align-default">
 <colgroup>
@@ -388,7 +392,7 @@ higher than SWL.</p></td>
 </table>
 </div>
 <div class="section" id="co2-injection-gas-displacing-water-dci1">
-<h2>CO2-injection (gas displacing water, DCI1)<a class="headerlink" href="#co2-injection-gas-displacing-water-dci1" title="Permalink to this headline">¶</a></h2>
+<h2>CO<sub>2</sub>-injection (gas displacing water, DCI1)<a class="headerlink" href="#co2-injection-gas-displacing-water-dci1" title="Permalink to this headline">¶</a></h2>
 <a class="reference internal image-reference" href="_images/gaswater-dci1.png"><img alt="_images/gaswater-dci1.png" src="_images/gaswater-dci1.png" style="width: 600px;" /></a>
 <table class="colwidths-given docutils align-default">
 <colgroup>
@@ -431,7 +435,8 @@ higher than SWL.</p></td>
 </table>
 </div>
 <div class="section" id="co2-trapping-icd2">
-<h2>CO2 trapping (ICD2)<a class="headerlink" href="#co2-trapping-icd2" title="Permalink to this headline">¶</a></h2>
+<h2>CO<sub>2</sub> trapping (ICD2)<a class="headerlink" href="#co2-trapping-icd2" title="Permalink to this headline">¶</a></h2>
+<p>Process is analoguous to “Dry gas field”.</p>
 <a class="reference internal image-reference" href="_images/gaswater-co2-icd2.png"><img alt="_images/gaswater-co2-icd2.png" src="_images/gaswater-co2-icd2.png" style="width: 600px;" /></a>
 <table class="colwidths-given docutils align-default">
 <colgroup>
@@ -456,7 +461,7 @@ higher than SWL.</p></td>
 </tr>
 <tr class="row-even"><td><p>SGCR</p></td>
 <td><p>SGCR</p></td>
-<td><p>Critical gas. Must equal SGRW</p></td>
+<td><p>Trapped gas. Must equal SGRW</p></td>
 </tr>
 <tr class="row-odd"><td><p>SGRW</p></td>
 <td><p>SGCR</p></td>
