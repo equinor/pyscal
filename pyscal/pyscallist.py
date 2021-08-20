@@ -1,13 +1,12 @@
 """Container class for list of Pyscal objects"""
 
-from pathlib import Path
 import logging
-
-from typing import List, Union, Optional, Type
+from pathlib import Path
+from typing import List, Optional, Type, Union
 
 import pandas as pd
 
-from pyscal import WaterOil, GasOil, GasWater, WaterOilGas, SCALrecommendation
+from pyscal import GasOil, GasWater, SCALrecommendation, WaterOil, WaterOilGas
 
 PYSCAL_OBJECTS = [WaterOil, GasOil, GasWater, WaterOilGas, SCALrecommendation]
 

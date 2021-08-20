@@ -5,7 +5,7 @@ from typing import Dict, Optional
 
 import pandas as pd
 
-from .monotonicity import modify_dframe_monotonicity, MonotonicitySpec
+from .monotonicity import MonotonicitySpec, modify_dframe_monotonicity
 
 logger = logging.getLogger(__name__)
 

@@ -1,15 +1,12 @@
 """Test module for pyscal.*.add_fromtable()"""
 
-import pandas as pd
-import numpy as np
-
-import pytest
-
-from hypothesis import given, settings
 import hypothesis.strategies as st
+import numpy as np
+import pandas as pd
+import pytest
+from hypothesis import given, settings
 
-from pyscal import WaterOil, GasOil, WaterOilGas
-
+from pyscal import GasOil, WaterOil, WaterOilGas
 from pyscal.utils.testing import check_table, float_df_checker
 
 

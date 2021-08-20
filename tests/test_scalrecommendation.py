@@ -1,14 +1,12 @@
 """Test module for SCAL recommendation objects"""
 
-import pandas as pd
-
-from hypothesis import given, settings
 import hypothesis.strategies as st
+import pandas as pd
+from hypothesis import given, settings
 
-from pyscal import SCALrecommendation, PyscalFactory, GasWater, WaterOilGas
+from pyscal import GasWater, PyscalFactory, SCALrecommendation, WaterOilGas
 from pyscal.factory import slicedict
-from pyscal.utils.testing import sat_table_str_ok, check_table
-
+from pyscal.utils.testing import check_table, sat_table_str_ok
 
 # Example SCAL recommendation, low case
 LOW_SAMPLE_LET = {

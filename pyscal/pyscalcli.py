@@ -1,14 +1,14 @@
 """Command line tool for pyscal"""
 
-import sys
 import argparse
-import warnings
+import logging
+import sys
 import traceback
+import warnings
 from typing import List, Optional
 
-import logging
+from pyscal import GasWater, SCALrecommendation, WaterOilGas, __version__
 
-from pyscal import __version__, WaterOilGas, GasWater, SCALrecommendation
 from .factory import PyscalFactory
 
 logger = logging.getLogger(__name__)

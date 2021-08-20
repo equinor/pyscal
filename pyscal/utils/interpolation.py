@@ -1,12 +1,12 @@
 """Utility function for pyscal"""
 
 import logging
-from typing import Tuple, Callable, Union, Optional
+from typing import Callable, Optional, Tuple, Union
 
 import numpy as np
 from scipy.interpolate import interp1d
 
-from pyscal import WaterOil, GasOil
+from pyscal import GasOil, WaterOil
 
 logger = logging.getLogger(__name__)
 

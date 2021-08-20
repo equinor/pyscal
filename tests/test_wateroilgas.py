@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from pyscal import WaterOilGas, WaterOil, GasOil
+from pyscal import GasOil, WaterOil, WaterOilGas
 from pyscal.utils.testing import sat_table_str_ok
 
 try:

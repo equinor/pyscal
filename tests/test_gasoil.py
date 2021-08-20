@@ -1,25 +1,21 @@
 """Test module for GasOil objects"""
 import io
 
-import numpy as np
-import pandas as pd
-
+import hypothesis.strategies as st
 import matplotlib
 import matplotlib.pyplot
-
+import numpy as np
+import pandas as pd
 import pytest
-
 from hypothesis import given, settings
-import hypothesis.strategies as st
 
 from pyscal import GasOil
 from pyscal.constants import SWINTEGERS
-
 from pyscal.utils.testing import (
-    float_df_checker,
-    check_table,
-    sat_table_str_ok,
     check_linear_sections,
+    check_table,
+    float_df_checker,
+    sat_table_str_ok,
 )
 
 

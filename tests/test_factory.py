@@ -4,20 +4,18 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-
 import pytest
 
 from pyscal import (
-    factory,
-    WaterOil,
     GasOil,
     GasWater,
-    WaterOilGas,
     PyscalFactory,
     SCALrecommendation,
+    WaterOil,
+    WaterOilGas,
+    factory,
 )
-
-from pyscal.utils.testing import sat_table_str_ok, check_table
+from pyscal.utils.testing import check_table, sat_table_str_ok
 
 
 def test_factory_wateroil():

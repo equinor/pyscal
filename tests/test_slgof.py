@@ -1,15 +1,12 @@
 """Test module for SLGOF export from GasOil"""
 
-from hypothesis import given, settings
 import hypothesis.strategies as st
-
 import numpy as np
-
 import pytest
+from hypothesis import given, settings
 
-from pyscal import WaterOilGas, GasOil
-from pyscal.constants import SWINTEGERS, EPSILON
-
+from pyscal import GasOil, WaterOilGas
+from pyscal.constants import EPSILON, SWINTEGERS
 from pyscal.utils.testing import sat_table_str_ok
 
 

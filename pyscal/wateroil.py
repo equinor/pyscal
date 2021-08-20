@@ -1,21 +1,19 @@
 """Wateroil module"""
 
-import math
 import logging
+import math
 from typing import Optional
 
 import numpy as np
 import pandas as pd
-
 from scipy.interpolate import PchipInterpolator, interp1d
 
 import pyscal
-from pyscal.utils.relperm import estimate_diffjumppoint, crosspoint
-from pyscal.utils.string import df2str, comment_formatter
-from pyscal.utils.capillarypressure import simple_J
 from pyscal.constants import EPSILON as epsilon
-from pyscal.constants import SWINTEGERS, MAX_EXPONENT
-
+from pyscal.constants import MAX_EXPONENT, SWINTEGERS
+from pyscal.utils.capillarypressure import simple_J
+from pyscal.utils.relperm import crosspoint, estimate_diffjumppoint
+from pyscal.utils.string import comment_formatter, df2str
 
 logger = logging.getLogger(__name__)
 
@@ -1312,8 +1310,8 @@ class WaterOil(object):
         """
         # pylint: disable=import-outside-toplevel
         # Lazy import for speed reaons.
-        import matplotlib.pyplot as plt
         import matplotlib
+        import matplotlib.pyplot as plt
 
         if mpl_ax is None:
             matplotlib.style.use("ggplot")
@@ -1355,8 +1353,8 @@ class WaterOil(object):
         the specified axis."""
         # pylint: disable=import-outside-toplevel
         # Lazy import for speed reaons.
-        import matplotlib.pyplot as plt
         import matplotlib
+        import matplotlib.pyplot as plt
 
         if mpl_ax is None:
             matplotlib.style.use("ggplot")

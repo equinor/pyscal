@@ -8,10 +8,10 @@ import pandas as pd
 
 import pyscal
 from pyscal.constants import SWINTEGERS
+from pyscal.utils.string import comment_formatter, df2str
 
-from pyscal.utils.string import df2str, comment_formatter
-from .wateroil import WaterOil
 from .gasoil import GasOil
+from .wateroil import WaterOil
 
 logger = logging.getLogger(__name__)
 

@@ -2,17 +2,16 @@
 
 import numpy as np
 import pandas as pd
-
 import pytest
 
-from pyscal.utils.string import df2str
 from pyscal.utils.monotonicity import (
-    clip_accumulate,
-    check_limits,
-    rows_to_be_fixed,
     check_almost_monotone,
+    check_limits,
+    clip_accumulate,
+    rows_to_be_fixed,
     validate_monotonicity_arg,
 )
+from pyscal.utils.string import df2str
 
 
 def test_df2str_monotone():

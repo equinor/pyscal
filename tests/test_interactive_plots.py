@@ -5,16 +5,14 @@ instructions for what to check."""
 
 import random
 
-import numpy as np
-
-from matplotlib import pyplot
 import matplotlib
-
+import numpy as np
 import pytest
+from matplotlib import pyplot
 
-from pyscal import WaterOil, GasOil, GasWater, utils, PyscalFactory
+from pyscal import GasOil, GasWater, PyscalFactory, WaterOil, utils
 
-from .test_scalrecommendation import LOW_SAMPLE_LET, BASE_SAMPLE_LET, HIGH_SAMPLE_LET
+from .test_scalrecommendation import BASE_SAMPLE_LET, HIGH_SAMPLE_LET, LOW_SAMPLE_LET
 
 
 @pytest.mark.plot

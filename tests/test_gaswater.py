@@ -1,23 +1,19 @@
 """Test module for the GasWater object"""
 
-import numpy as np
-
-from hypothesis import given, settings
 import hypothesis.strategies as st
-
 import matplotlib
 import matplotlib.pyplot
-
+import numpy as np
 import pytest
+from hypothesis import given, settings
 
 from pyscal import GasWater
 from pyscal.constants import SWINTEGERS
-
 from pyscal.utils.testing import (
+    check_linear_sections,
     check_table,
     float_df_checker,
     sat_table_str_ok,
-    check_linear_sections,
 )
 
 

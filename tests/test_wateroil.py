@@ -1,24 +1,21 @@
 """Test module for the WaterOil object"""
 import io
 
-import pandas as pd
-import numpy as np
-
+import hypothesis.strategies as st
 import matplotlib
 import matplotlib.pyplot
-
+import numpy as np
+import pandas as pd
 import pytest
 from hypothesis import given, settings
-import hypothesis.strategies as st
 
 from pyscal import WaterOil
 from pyscal.constants import SWINTEGERS
-
 from pyscal.utils.testing import (
+    check_linear_sections,
     check_table,
     float_df_checker,
     sat_table_str_ok,
-    check_linear_sections,
 )
 
 

@@ -5,9 +5,11 @@ import logging
 from typing import Optional
 
 import pandas as pd
+
 from pyscal.utils.relperm import crosspoint
-from .wateroil import WaterOil
+
 from .gasoil import GasOil
+from .wateroil import WaterOil
 
 logger = logging.getLogger(__name__)
 
@@ -317,8 +319,8 @@ class GasWater(object):
 
         # pylint: disable=import-outside-toplevel
         # Lazy import of matplotlib for speed reasons.
-        import matplotlib.pyplot as plt
         import matplotlib
+        import matplotlib.pyplot as plt
 
         if mpl_ax is None:
             matplotlib.style.use("ggplot")

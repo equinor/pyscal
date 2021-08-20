@@ -1,25 +1,22 @@
 """Test module for relperm interpolation support code"""
 
+import hypothesis.strategies as st
 import numpy as np
 import pandas as pd
-
-from matplotlib import pyplot as plt
-
 import pytest
 from hypothesis import given, settings
-import hypothesis.strategies as st
+from matplotlib import pyplot as plt
 
-
-from pyscal import WaterOil, GasOil
+from pyscal import GasOil, WaterOil
+from pyscal.constants import EPSILON as epsilon
 from pyscal.utils.interpolation import (
-    normalize_nonlinpart_wo,
-    normalize_nonlinpart_go,
-    normalize_pc,
-    interpolate_wo,
     interpolate_go,
+    interpolate_wo,
+    normalize_nonlinpart_go,
+    normalize_nonlinpart_wo,
+    normalize_pc,
 )
 from pyscal.utils.testing import check_table, float_df_checker, sat_table_str_ok
-from pyscal.constants import EPSILON as epsilon
 
 
 @settings(deadline=1000)

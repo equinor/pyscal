@@ -2,12 +2,12 @@
 
 import copy
 import logging
-from typing import Optional, Union, Set, Type
+from typing import Optional, Set, Type, Union
 
 import numpy as np
 
-from pyscal import WaterOilGas, GasWater
-from pyscal.utils.interpolation import interpolate_wo, interpolate_go
+from pyscal import GasWater, WaterOilGas
+from pyscal.utils.interpolation import interpolate_go, interpolate_wo
 
 logger = logging.getLogger(__name__)
 
