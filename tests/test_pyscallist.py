@@ -4,19 +4,17 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-
 import pytest
 
 from pyscal import (
-    WaterOil,
     GasOil,
     GasWater,
-    WaterOilGas,
     PyscalFactory,
     PyscalList,
     SCALrecommendation,
+    WaterOil,
+    WaterOilGas,
 )
-
 from pyscal.utils.testing import sat_table_str_ok
 
 try:

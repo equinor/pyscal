@@ -36,28 +36,20 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Check code style
-        run: |
-          pip install black
-          black --check pyscal/*py tests/test_*py setup.py docs/conf.py
-          pip install flake8
-          flake8 pyscal tests
-
-      - name: Enforce static typing
-        run: |
-          pip install mypy
-          mypy pyscal
-
       - name: Install pyscal with dependencies
         run: |
           pip install --upgrade pip
-          pip install .
-
-      - name: Install test dependencies
-        run: pip install .[tests]
+          pip install .[tests]
 
       - name: List all installed packages
         run: pip freeze
+
+      - name: Check code style and typing
+        run: |
+          black --check pyscal/*py tests/test_*py setup.py docs/conf.py
+          flake8 pyscal tests
+          isort --check-only --profile black pyscal tests
+          mypy pyscal
 
       - name: Run tests
         run: |

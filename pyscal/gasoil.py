@@ -5,14 +5,13 @@ from typing import Optional
 
 import numpy as np
 import pandas as pd
-
 from scipy.interpolate import PchipInterpolator
 
 import pyscal
-from pyscal.utils.relperm import estimate_diffjumppoint, crosspoint
-from pyscal.utils.string import df2str, comment_formatter
 from pyscal.constants import EPSILON as epsilon
-from pyscal.constants import SWINTEGERS, MAX_EXPONENT
+from pyscal.constants import MAX_EXPONENT, SWINTEGERS
+from pyscal.utils.relperm import crosspoint, estimate_diffjumppoint
+from pyscal.utils.string import comment_formatter, df2str
 
 logger = logging.getLogger(__name__)
 
@@ -1077,8 +1076,8 @@ class GasOil(object):
         """
         # pylint: disable=import-outside-toplevel
         # Lazy import of matplotlib for speed reasons
-        import matplotlib.pyplot as plt
         import matplotlib
+        import matplotlib.pyplot as plt
 
         if mpl_ax is None:
             matplotlib.style.use("ggplot")

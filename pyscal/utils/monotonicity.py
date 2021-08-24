@@ -1,8 +1,8 @@
 """Monotonocity support functions for pyscal"""
 
-import sys
 import logging
-from typing import Union, List, Dict
+import sys
+from typing import Dict, List, Union
 
 # pylint: disable=wrong-import-position
 if sys.version_info >= (3, 8):
@@ -14,7 +14,6 @@ import numpy as np
 import pandas as pd
 
 from pyscal.constants import EPSILON as epsilon
-
 
 logger = logging.getLogger(__name__)
 

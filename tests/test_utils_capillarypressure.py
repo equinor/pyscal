@@ -1,14 +1,13 @@
 """Test module for capillary pressure support code in pyscal"""
 import math
 
+import hypothesis.strategies as st
 import numpy as np
 import pytest
 from hypothesis import given
-import hypothesis.strategies as st
 
 from pyscal.constants import EPSILON
 from pyscal.utils import capillarypressure
-
 
 PASCAL = 1e-05  # One pascal in bar.
 

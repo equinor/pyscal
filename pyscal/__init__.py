@@ -1,6 +1,7 @@
 """pyscal"""
 
 
+# The order of imports must be conserved to avoid circular imports:
 from .wateroil import WaterOil  # noqa
 from .wateroilgas import WaterOilGas  # noqa
 from .gasoil import GasOil  # noqa

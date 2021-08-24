@@ -1,22 +1,23 @@
 """Factory functions for creating the pyscal objects"""
 
 import logging
-from pathlib import Path
 import zipfile
-from typing import Set, Dict, Optional, Union, List, Any, Iterable
+from pathlib import Path
+from typing import Any, Dict, Iterable, List, Optional, Set, Union
 
-import pandas as pd
 import numpy as np
-import xlrd
 import openpyxl
+import pandas as pd
+import xlrd
 
 from pyscal.utils import capillarypressure
-from .wateroil import WaterOil
+
 from .gasoil import GasOil
 from .gaswater import GasWater
-from .wateroilgas import WaterOilGas
-from .scalrecommendation import SCALrecommendation
 from .pyscallist import PyscalList
+from .scalrecommendation import SCALrecommendation
+from .wateroil import WaterOil
+from .wateroilgas import WaterOilGas
 
 logger = logging.getLogger(__name__)
 

@@ -1,16 +1,13 @@
 """Test module for capillary pressure in WaterOil"""
 
-import numpy as np
-
-import pytest
-
-from hypothesis import given, settings
 import hypothesis.strategies as st
+import numpy as np
+import pytest
+from hypothesis import given, settings
 
 from pyscal import WaterOil
 from pyscal.constants import MAX_EXPONENT
-
-from pyscal.utils.testing import float_df_checker, check_table, sat_table_str_ok
+from pyscal.utils.testing import check_table, float_df_checker, sat_table_str_ok
 
 
 def test_simple_j():

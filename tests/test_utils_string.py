@@ -2,8 +2,7 @@
 
 import pandas as pd
 
-
-from pyscal.utils.string import df2str, comment_formatter
+from pyscal.utils.string import comment_formatter, df2str
 
 
 def test_df2str():

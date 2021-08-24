@@ -1,12 +1,11 @@
 """Test module for the saturation ranges in WaterOil objects"""
 
-from hypothesis import given, settings
 import hypothesis.strategies as st
+from hypothesis import given, settings
 
 from pyscal import WaterOil
 from pyscal.constants import SWINTEGERS
-
-from pyscal.utils.testing import float_df_checker, check_table
+from pyscal.utils.testing import check_table, float_df_checker
 
 
 @given(

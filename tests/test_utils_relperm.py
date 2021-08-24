@@ -2,7 +2,6 @@
 
 import pandas as pd
 
-
 from pyscal.utils.relperm import estimate_diffjumppoint
 
 # pyscal.utils.relperm.crosspoint() is tested by test_wateroil and test_gasoil.

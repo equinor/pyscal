@@ -6,8 +6,7 @@ from typing import Union
 import numpy as np
 import pandas as pd
 
-
-from pyscal import WaterOil, GasOil
+from pyscal import GasOil, WaterOil
 
 
 def series_decreasing(series: pd.Series):
