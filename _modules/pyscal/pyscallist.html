@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <title>pyscal.pyscallist &mdash; pyscal 0.8.1.dev5+gdb7888f.d20210824 documentation</title>
+  <title>pyscal.pyscallist &mdash; pyscal 0.8.1.dev6+gc4be76a.d20210824 documentation</title>
   
 
   
@@ -67,7 +67,7 @@
             
             
               <div class="version">
-                0.8.1.dev5+gdb7888f.d20210824
+                0.8.1.dev6+gc4be76a.d20210824
               </div>
             
           
@@ -172,14 +172,13 @@
   <h1>Source code for pyscal.pyscallist</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Container class for list of Pyscal objects&quot;&quot;&quot;</span>
 
-<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">import</span> <span class="nn">logging</span>
-
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span>
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
-<span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">WaterOil</span><span class="p">,</span> <span class="n">GasOil</span><span class="p">,</span> <span class="n">GasWater</span><span class="p">,</span> <span class="n">WaterOilGas</span><span class="p">,</span> <span class="n">SCALrecommendation</span>
+<span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">GasOil</span><span class="p">,</span> <span class="n">GasWater</span><span class="p">,</span> <span class="n">SCALrecommendation</span><span class="p">,</span> <span class="n">WaterOil</span><span class="p">,</span> <span class="n">WaterOilGas</span>
 
 <span class="n">PYSCAL_OBJECTS</span> <span class="o">=</span> <span class="p">[</span><span class="n">WaterOil</span><span class="p">,</span> <span class="n">GasOil</span><span class="p">,</span> <span class="n">GasWater</span><span class="p">,</span> <span class="n">WaterOilGas</span><span class="p">,</span> <span class="n">SCALrecommendation</span><span class="p">]</span>
 
