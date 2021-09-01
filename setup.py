@@ -63,5 +63,5 @@ setup(
     test_suite="tests",
     install_requires=REQUIREMENTS,
     setup_requires=SETUP_REQUIREMENTS,
-    extras_require=EXTRAS_REQUIRE,
+    #    extras_require=EXTRAS_REQUIRE,
 )
