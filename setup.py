@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from setuptools import setup, find_packages
+from setuptools import find_packages, setup
 
 try:
     from sphinx.setup_command import BuildDoc
@@ -25,7 +25,7 @@ REQUIREMENTS = [
 
 TEST_REQUIREMENTS = Path("test_requirements.txt").read_text().splitlines()
 
-SETUP_REQUIREMENTS = ["pytest-runner", "setuptools >=28", "setuptools_scm"]
+SETUP_REQUIREMENTS = ["pytest-runner", "setuptools >=28", "setuptools_scm < 6.1"]
 EXTRAS_REQUIRE = {"tests": TEST_REQUIREMENTS}
 
 setup(
