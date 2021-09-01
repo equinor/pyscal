@@ -25,7 +25,7 @@ REQUIREMENTS = [
 
 TEST_REQUIREMENTS = Path("test_requirements.txt").read_text().splitlines()
 
-SETUP_REQUIREMENTS = ["pytest-runner", "setuptools", "setuptools_scm"]
+SETUP_REQUIREMENTS = ["setuptools", "setuptools_scm"]  # "pytest-runner",
 EXTRAS_REQUIRE = {"tests": TEST_REQUIREMENTS}
 
 setup(
@@ -59,7 +59,7 @@ setup(
     ],
     packages=find_packages(),
     package_data={"pyscal": ["py.typed"]},
-    # zip_safe=False,
+    zip_safe=False,
     test_suite="tests",
     install_requires=REQUIREMENTS,
     setup_requires=SETUP_REQUIREMENTS,
