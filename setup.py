@@ -26,7 +26,7 @@ REQUIREMENTS = [
 
 TEST_REQUIREMENTS = Path("test_requirements.txt").read_text().splitlines()
 
-SETUP_REQUIREMENTS = ["pytest-runner", "setuptools >=28", "setuptools_scm"]
+SETUP_REQUIREMENTS = ["pytest-runner", "setuptools >=42", "setuptools_scm"]
 EXTRAS_REQUIRE = {"tests": TEST_REQUIREMENTS}
 
 setup(
