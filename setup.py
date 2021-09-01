@@ -59,9 +59,9 @@ setup(
     ],
     packages=find_packages(),
     package_data={"pyscal": ["py.typed"]},
-    zip_safe=False,
+    # zip_safe=False,
     test_suite="tests",
     install_requires=REQUIREMENTS,
     setup_requires=SETUP_REQUIREMENTS,
-    #    extras_require=EXTRAS_REQUIRE,
+    extras_require=EXTRAS_REQUIRE,
 )
