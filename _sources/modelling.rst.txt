@@ -31,7 +31,7 @@ Water injection in oil field (IDC2)
       -
     * - SWCR
       - SWCR
-      - Critical water, often SWL + 0.01
+      - Critical water. Equal to SWL or SWL + 0.01 if this improves simulation performance
     * - SORW
       - SOWCR
       - Residual oil
