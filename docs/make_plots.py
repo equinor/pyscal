@@ -3,7 +3,7 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 
-from pyscal import WaterOil, GasOil, GasWater
+from pyscal import GasOil, GasWater, WaterOil
 
 IMG_DIR = Path(__file__).absolute().parent / "images"
 
@@ -313,10 +313,10 @@ def make_wateroil_idc2(show=True):
         xytext=(swirr - 0.12, 0 + 0.1),
     )
     axes.annotate(
-        "SWL",
+        "SWL≈SWCR",
         xy=(swl, 0),
         arrowprops=dict(arrowstyle="->"),
-        xytext=(swl - 0.035, 0 + 0.14),
+        xytext=(swl - 0.055, 0 + 0.14),
     )
     plt.xlabel("SW", labelpad=-10)
     axes.legend(loc="upper center")
