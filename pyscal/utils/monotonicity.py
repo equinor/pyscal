@@ -111,8 +111,10 @@ def modify_dframe_monotonicity(
         sign = monotonicity[col]["sign"]
         while constants.any():
             iterations += 1
-            if iterations > 2 * len(dframe[col]):
-                raise Exception("Too many iterations for monotonicity fix")
+
+            assert iterations <= 2 * len(
+                dframe[col]
+            ), "Too many iterations for monotonicity fix"
 
             dframe.loc[constants, col] = (
                 dframe.loc[constants, col] + sign / 10.0 ** digits - epsilon
@@ -135,15 +137,16 @@ def modify_dframe_monotonicity(
                 str(len(dframe[col])),
             )
 
-        # Check result for monotonicity:
-        # Is this possible when rows_to_be_fixed returns none??
+        # Assert that we have successfully managed to force monotonicity
         allowance = 1.0 / 10.0 ** digits
         if sign > 0:
-            if (dframe[col].round(digits).diff() < -allowance).any():
-                raise ValueError("Not possible to make colum monotonically increasing")
+            assert not (
+                dframe[col].round(digits).diff() < -allowance
+            ).any(), "Not possible to make column monotonically increasing"
         else:
-            if (dframe[col].round(digits).diff() > allowance).any():
-                raise ValueError("Not possible to make colum monotonically decreasing")
+            assert not (
+                dframe[col].round(digits).diff() > allowance
+            ).any(), "Not possible to make column monotonically decreasing"
     return dframe
 
 

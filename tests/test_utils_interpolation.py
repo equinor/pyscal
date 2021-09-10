@@ -80,6 +80,12 @@ def test_normalize_pc(swirr, dswl):
     assert np.isclose(pc_fn(1), pc_min)
 
 
+def test_normalize_pc_wrongobject():
+    """Test error message when wrong object is provided"""
+    with pytest.raises(ValueError, match="Only WaterOil or GasOil"):
+        normalize_pc({})
+
+
 def test_normalize_emptypc():
     """Test that we can normalize both
     when pc is missing, and when it is all zero"""

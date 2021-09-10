@@ -8,6 +8,7 @@ from pyscal.utils.monotonicity import (
     check_almost_monotone,
     check_limits,
     clip_accumulate,
+    modify_dframe_monotonicity,
     rows_to_be_fixed,
     validate_monotonicity_arg,
 )
@@ -366,6 +367,7 @@ def test_check_almost_monotone(series, digits, sign, expected_error):
 @pytest.mark.parametrize(
     "monotonicity, dframe_colnames, error_str",
     [
+        (None, [], None),
         ({}, [], None),
         ("sign", [], "monotonicity argument must be a dict"),
         ({"sign": 1}, [], "monotonicity argument must be a dict of dicts"),
@@ -398,3 +400,12 @@ def test_validate_monotonicity_arg(monotonicity, dframe_colnames, error_str):
         assert error_str in str(err)
     else:
         validate_monotonicity_arg(monotonicity, dframe_colnames)
+
+
+def test_modify_dframe_monotonicity_many_iterations():
+    """This dataframe should be the worst kind scenario (?) in terms of how many
+    iterations are needed. This gives len(dframe) - 1 iterations, and the code
+    would bail (AssertionError) if we get to 2*len(dframe) iterations."""
+    modify_dframe_monotonicity(
+        pd.DataFrame({"SW": [0.1, 0.1, 0.1, 0.09]}), {"SW": {"sign": -1}}, 2
+    )

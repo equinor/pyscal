@@ -11,20 +11,32 @@ from ..constants import EPSILON as epsilon
 logger = logging.getLogger(__name__)
 
 
-def crosspoint(dframe: pd.DataFrame, satcol: str, kr1col: str, kr2col: str) -> float:
+def crosspoint(
+    inputframe: pd.DataFrame, satcol: str, kr1col: str, kr2col: str
+) -> float:
     """Locate the crosspoint where kr1col == kr2col
 
     Args:
-        dframe: Dataframe with at least three columns
+        inputframe: Dataframe with at least three columns
         satcol: Column name for the saturation column
         kr1col: Column name for first relperm column
         kr2col: Columnn ame for second column
 
     Returns:
         The saturation value (interpolated) where kr1col == kr2col, when krXcol
-        is linearly interpolated as a function of the saturation values.
+        is linearly interpolated as a function of the saturation values. In case
+        of errors, the function will return the value -1
     """
-    dframe = pd.DataFrame(dframe[[satcol, kr1col, kr2col]])  # Copy
+    if len(inputframe) < 2:
+        return -1
+
+    dframe = pd.DataFrame(inputframe[[satcol, kr1col, kr2col]])
+
+    if dframe.isna().any().any():
+        logger.error("nan in input to crosspoint()")
+        logger.debug(str(dframe))
+        return -1
+
     dframe.loc[:, "krdiff"] = dframe[kr1col] - dframe[kr2col]
 
     # Add a zero value for the difference column, and interpolate
@@ -32,12 +44,12 @@ def crosspoint(dframe: pd.DataFrame, satcol: str, kr1col: str, kr2col: str) -> f
     zerodf = pd.DataFrame(index=[len(dframe)], data={"krdiff": 0.0})
     dframe = pd.concat([dframe, zerodf], sort=True).set_index("krdiff")
 
-    if dframe.index.isnull().any():
-        logger.warning("Could not compute crosspoint. Bug?")
+    dframe.interpolate(method="slinear", inplace=True)
+
+    if dframe.isna().any().any():
+        logger.error("Could not compute crosspoint)")
         logger.debug(str(dframe))
         return -1
-
-    dframe.interpolate(method="slinear", inplace=True)
 
     return dframe[np.isclose(dframe.index, 0.0)][satcol].values[0]
 
@@ -106,7 +118,7 @@ def estimate_diffjumppoint(
         maxcumsum = table["_lindevcumsum"].max()
         linearpart = table[(table["_lindevcumsum"] - maxcumsum).abs() < epsilon]
         return linearpart.iloc[1][xcol]
-    # else:
+
     linearpart = table[(table["_lindevcumsum"] < epsilon)]
     if len(linearpart) == 1:
         linearpart = table[(table["_lindevcumsum"].shift(1) < epsilon)]
