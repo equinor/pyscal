@@ -1,80 +1,38 @@
-
-
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" />
-  
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <title>pyscal.utils.monotonicity &mdash; pyscal 0.8.1.dev8+ge8eb3b3.d20210913 documentation</title>
-  
-
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-
-  
-  
-
-  
-  
-
-  
-
-  
+  <title>pyscal.utils.monotonicity &mdash; pyscal 0.8.1.dev8+ge8eb3b3.d20210914 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-    
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
-
-    
+    <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="pyscal.utils.relperm" href="pyscal.utils.relperm.html" />
     <link rel="prev" title="pyscal.utils.interpolation" href="pyscal.utils.interpolation.html" /> 
 </head>
 
-<body class="wy-body-for-nav">
-
-   
+<body class="wy-body-for-nav"> 
   <div class="wy-grid-for-nav">
-    
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-          
-
-          
             <a href="../index.html" class="icon icon-home"> pyscal
-          
-
-          
-            
             <img src="../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
-          
           </a>
-
-          
-            
-            
               <div class="version">
-                0.8.1.dev8+ge8eb3b3.d20210913
+                0.8.1.dev8+ge8eb3b3.d20210914
               </div>
-            
-          
-
-          
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
     <input type="text" name="q" placeholder="Search docs" />
@@ -82,18 +40,7 @@
     <input type="hidden" name="area" value="default" />
   </form>
 </div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <ul>
 <li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction to pyscal</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
@@ -127,106 +74,63 @@
 </li>
 </ul>
 
-            
-          
         </div>
-        
       </div>
     </nav>
 
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
           <a href="../index.html">pyscal</a>
-        
       </nav>
 
-
       <div class="wy-nav-content">
-        
         <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
+          <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-    
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-        
           <li><a href="pyscal.html"><code class="docutils literal notranslate"><span class="pre">pyscal</span></code></a> &raquo;</li>
-        
           <li><a href="pyscal.utils.html"><code class="docutils literal notranslate"><span class="pre">pyscal.utils</span></code></a> &raquo;</li>
-        
       <li><code class="docutils literal notranslate"><span class="pre">pyscal.utils.monotonicity</span></code></li>
-    
-    
       <li class="wy-breadcrumbs-aside">
-        
-          
             <a href="../_sources/pyscal/pyscal.utils.monotonicity.rst.txt" rel="nofollow"> View page source</a>
-          
-        
       </li>
-    
   </ul>
-
-  
   <hr/>
 </div>
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
-            
-  <div class="section" id="module-pyscal.utils.monotonicity">
-<span id="pyscal-utils-monotonicity"></span><h1><code class="docutils literal notranslate"><span class="pre">pyscal.utils.monotonicity</span></code><a class="headerlink" href="#module-pyscal.utils.monotonicity" title="Permalink to this headline">¶</a></h1>
+             
+  <section id="module-pyscal.utils.monotonicity">
+<span id="pyscal-utils-monotonicity"></span><h1><code class="docutils literal notranslate"><span class="pre">pyscal.utils.monotonicity</span></code><a class="headerlink" href="#module-pyscal.utils.monotonicity" title="Permalink to this headline"></a></h1>
 <p>Monotonocity support functions for pyscal</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pyscal.utils.monotonicity.MonotonicitySpec">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pyscal.utils.monotonicity.</span></span><span class="sig-name descname"><span class="pre">MonotonicitySpec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/monotonicity.html#MonotonicitySpec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.monotonicity.MonotonicitySpec" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pyscal.utils.monotonicity.</span></span><span class="sig-name descname"><span class="pre">MonotonicitySpec</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/monotonicity.html#MonotonicitySpec"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.monotonicity.MonotonicitySpec" title="Permalink to this definition"></a></dt>
 <dd><p>Specification of monotonicity for a vector of values</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyscal.utils.monotonicity.MonotonicitySpec.allowzero">
-<span class="sig-name descname"><span class="pre">allowzero</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#pyscal.utils.monotonicity.MonotonicitySpec.allowzero" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">allowzero</span></span><em class="property"><span class="pre">:</span> <span class="pre">bool</span></em><a class="headerlink" href="#pyscal.utils.monotonicity.MonotonicitySpec.allowzero" title="Permalink to this definition"></a></dt>
 <dd><p>If True, consecutive zeros will be allowes in an otherwise strictly
 monotonic column. Optional parameter.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyscal.utils.monotonicity.MonotonicitySpec.lower">
-<span class="sig-name descname"><span class="pre">lower</span></span><em class="property"><span class="pre">:</span> <span class="pre">float</span></em><a class="headerlink" href="#pyscal.utils.monotonicity.MonotonicitySpec.lower" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">lower</span></span><em class="property"><span class="pre">:</span> <span class="pre">float</span></em><a class="headerlink" href="#pyscal.utils.monotonicity.MonotonicitySpec.lower" title="Permalink to this definition"></a></dt>
 <dd><p>Values will be clipped at lower limit, and non-strict monotonicity is
 allowed at limit. Optional parameter.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyscal.utils.monotonicity.MonotonicitySpec.sign">
-<span class="sig-name descname"><span class="pre">sign</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#pyscal.utils.monotonicity.MonotonicitySpec.sign" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">sign</span></span><em class="property"><span class="pre">:</span> <span class="pre">int</span></em><a class="headerlink" href="#pyscal.utils.monotonicity.MonotonicitySpec.sign" title="Permalink to this definition"></a></dt>
 <dd><p>Value of +1 dictates strictly increasing,
 value of -1 dictates scrictly decreasing. Required parameter.</p>
 </dd></dl>
 
 <dl class="py attribute">
 <dt class="sig sig-object py" id="pyscal.utils.monotonicity.MonotonicitySpec.upper">
-<span class="sig-name descname"><span class="pre">upper</span></span><em class="property"><span class="pre">:</span> <span class="pre">float</span></em><a class="headerlink" href="#pyscal.utils.monotonicity.MonotonicitySpec.upper" title="Permalink to this definition">¶</a></dt>
+<span class="sig-name descname"><span class="pre">upper</span></span><em class="property"><span class="pre">:</span> <span class="pre">float</span></em><a class="headerlink" href="#pyscal.utils.monotonicity.MonotonicitySpec.upper" title="Permalink to this definition"></a></dt>
 <dd><p>Values will be clipped at upper limit, and non-strict monotonicity is
 allowed at limit. Optional parameter.</p>
 </dd></dl>
@@ -235,7 +139,7 @@ allowed at limit. Optional parameter.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyscal.utils.monotonicity.check_almost_monotone">
-<span class="sig-prename descclassname"><span class="pre">pyscal.utils.monotonicity.</span></span><span class="sig-name descname"><span class="pre">check_almost_monotone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">digits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sign</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/monotonicity.html#check_almost_monotone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.monotonicity.check_almost_monotone" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyscal.utils.monotonicity.</span></span><span class="sig-name descname"><span class="pre">check_almost_monotone</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">digits</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sign</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/monotonicity.html#check_almost_monotone"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.monotonicity.check_almost_monotone" title="Permalink to this definition"></a></dt>
 <dd><p>Raise a ValueError if a series is not sufficiently close
 to constant or monotone in a certain direction.</p>
 <dl class="field-list simple">
@@ -254,7 +158,7 @@ to constant or monotone in a certain direction.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyscal.utils.monotonicity.check_limits">
-<span class="sig-prename descclassname"><span class="pre">pyscal.utils.monotonicity.</span></span><span class="sig-name descname"><span class="pre">check_limits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monotonicity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/monotonicity.html#check_limits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.monotonicity.check_limits" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyscal.utils.monotonicity.</span></span><span class="sig-name descname"><span class="pre">check_limits</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monotonicity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/monotonicity.html#check_limits"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.monotonicity.check_limits" title="Permalink to this definition"></a></dt>
 <dd><p>Check a series whether it obeys numerical limits.
 Equivalence to limits is allowed.</p>
 <p>Exceptions will be raised in case of error. Nothing is returned
@@ -276,7 +180,7 @@ included in any error message.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyscal.utils.monotonicity.clip_accumulate">
-<span class="sig-prename descclassname"><span class="pre">pyscal.utils.monotonicity.</span></span><span class="sig-name descname"><span class="pre">clip_accumulate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monotonicity</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/monotonicity.html#clip_accumulate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.monotonicity.clip_accumulate" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyscal.utils.monotonicity.</span></span><span class="sig-name descname"><span class="pre">clip_accumulate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monotonicity</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/monotonicity.html#clip_accumulate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.monotonicity.clip_accumulate" title="Permalink to this definition"></a></dt>
 <dd><p>Modify a series (vector of numbers) for non-strict monotonicity, and
 optionally clip at lower and upper limits.</p>
 <dl class="field-list simple">
@@ -297,7 +201,7 @@ optionally clip at lower and upper limits.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyscal.utils.monotonicity.modify_dframe_monotonicity">
-<span class="sig-prename descclassname"><span class="pre">pyscal.utils.monotonicity.</span></span><span class="sig-name descname"><span class="pre">modify_dframe_monotonicity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dframe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monotonicity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">digits</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/monotonicity.html#modify_dframe_monotonicity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.monotonicity.modify_dframe_monotonicity" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyscal.utils.monotonicity.</span></span><span class="sig-name descname"><span class="pre">modify_dframe_monotonicity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dframe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monotonicity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">digits</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/monotonicity.html#modify_dframe_monotonicity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.monotonicity.modify_dframe_monotonicity" title="Permalink to this definition"></a></dt>
 <dd><p>Modify a dataframe for monotonicity.</p>
 <p>Columns in the dataframe are modified in-place.</p>
 <p>Number intervals to consider when enforcing monotonicity:</p>
@@ -338,7 +242,7 @@ for all-zero vectors if that option is activated.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyscal.utils.monotonicity.rows_to_be_fixed">
-<span class="sig-prename descclassname"><span class="pre">pyscal.utils.monotonicity.</span></span><span class="sig-name descname"><span class="pre">rows_to_be_fixed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monotonicity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">digits</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/monotonicity.html#rows_to_be_fixed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.monotonicity.rows_to_be_fixed" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyscal.utils.monotonicity.</span></span><span class="sig-name descname"><span class="pre">rows_to_be_fixed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monotonicity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">digits</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/monotonicity.html#rows_to_be_fixed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.monotonicity.rows_to_be_fixed" title="Permalink to this definition"></a></dt>
 <dd><p>Compute boolean array of rows that must be modified</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -361,7 +265,7 @@ constancy to.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyscal.utils.monotonicity.validate_monotonicity_arg">
-<span class="sig-prename descclassname"><span class="pre">pyscal.utils.monotonicity.</span></span><span class="sig-name descname"><span class="pre">validate_monotonicity_arg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">monotonicity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dframe_colnames</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/monotonicity.html#validate_monotonicity_arg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.monotonicity.validate_monotonicity_arg" title="Permalink to this definition">¶</a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyscal.utils.monotonicity.</span></span><span class="sig-name descname"><span class="pre">validate_monotonicity_arg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">monotonicity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dframe_colnames</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/monotonicity.html#validate_monotonicity_arg"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.monotonicity.validate_monotonicity_arg" title="Permalink to this definition"></a></dt>
 <dd><p>Validate a dictionary with monotonicity arguments that
 can be given to df2str().</p>
 <p>Will raise ValueError exceptions if anything is wrong.</p>
@@ -379,54 +283,37 @@ in dframes. Used in error messages.</p></li>
 </dl>
 </dd></dl>
 
-</div>
+</section>
 
 
            </div>
-           
           </div>
-          <footer>
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-        <a href="pyscal.utils.relperm.html" class="btn btn-neutral float-right" title="pyscal.utils.relperm" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="pyscal.utils.interpolation.html" class="btn btn-neutral float-left" title="pyscal.utils.interpolation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pyscal.utils.relperm.html" class="btn btn-neutral float-right" title="pyscal.utils.relperm" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>
-        &#169; Copyright Equinor 2019-2021.
-
-    </p>
+    <p>&#169; Copyright Equinor 2019-2021.</p>
   </div>
-    
-    
-    
-    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
-    
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
     <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
 
 </footer>
         </div>
       </div>
-
     </section>
-
   </div>
-  
-
-  <script type="text/javascript">
+  <script>
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script>
-
-  
-  
-    
-    
+  </script>  
 
   <style>
     /* Sidebar header (and topbar for mobile) */
