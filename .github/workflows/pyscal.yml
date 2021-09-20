@@ -66,7 +66,6 @@ jobs:
           python setup.py build_sphinx
 
       - name: Update GitHub pages
-        # if: github.event_name == 'release' && ....   # Possibly add this back later
         if: github.repository_owner == 'equinor' && github.ref == 'refs/heads/master' && matrix.python-version == '3.6'
         run: |
             cp -R ./build/sphinx/html ../html

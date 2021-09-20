@@ -14,6 +14,7 @@
 # import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
+import pkg_resources
 import datetime
 
 # -- Project information -----------------------------------------------------
@@ -24,9 +25,8 @@ project = "pyscal"
 author = "Håvard Berland"
 copyright = f"Equinor 2019-{datetime.date.today().year}"
 
-version = pyscal.__version__
-# The full version, including alpha/beta/rc tags
-release = pyscal.__version__
+release = pkg_resources.get_distribution("pyscal").version
+version = release
 
 
 # -- General configuration ---------------------------------------------------
