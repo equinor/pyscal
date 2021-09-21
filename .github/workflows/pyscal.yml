@@ -63,6 +63,7 @@ jobs:
       - name: Build documentation
         run: |
           sudo apt-get install -y fonts-humor-sans
+          python -c "import matplotlib.font_manager; matplotlib.font_manager._rebuild()"
           python docs/make_plots.py
           python setup.py build_sphinx
 
