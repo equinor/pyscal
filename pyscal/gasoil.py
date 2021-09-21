@@ -305,7 +305,7 @@ class GasOil(object):
             self.sgcr = self.estimate_sgcr()
         if krogcolname in dframe:
             if not (dframe[krogcolname].diff().dropna() < epsilon).all():
-                raise ValueError("Incoming krogcolname not decreasing")
+                raise ValueError("Incoming krog not decreasing")
             if dframe[krogcolname].max() > 1.0:
                 raise ValueError("krog is above 1 in incoming table")
             if dframe[krogcolname].min() < 0.0:
@@ -338,8 +338,6 @@ class GasOil(object):
                 self.sgro = sgro_estimate
         if pccolname in dframe:
             # Incoming dataframe must cover the range:
-            if dframe[sgcolname].min() > self.table["SG"].min():
-                raise ValueError("Too large sgcr for pcog interpolation")
             if dframe[sgcolname].max() < self.table["SG"].max():
                 raise ValueError(
                     f"Too large swl for pcog interpolation, "
@@ -745,7 +743,7 @@ class GasOil(object):
                 logger.error("KROG data not monotonically increasing")
                 error = True
         if "KRG" in self.table and not np.isclose(min(self.table["KRG"]), 0.0):
-            logger.error("KRG Must start at zero")
+            logger.error("KRG must start at zero")
             error = True
         if "PC" in self.table and self.table["PC"][0] > -epsilon:
             if not (self.table["PC"].diff().dropna() < epsilon).all():
