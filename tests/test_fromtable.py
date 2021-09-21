@@ -45,12 +45,25 @@ def test_go_fromtable_simple():
     assert np.isclose(sum(gasoil.table["PC"]), 11)  # Linearly increasing PCOG
     check_table(gasoil.table)
 
+    # Check that we can read the table also when the dataframe dtypes are strings
+    gasoil_str = GasOil(h=0.1)
+    gasoil_str.add_fromtable(
+        df1.astype(str),
+        sgcolname="SG",
+        krgcolname="KRG",
+        krogcolname="KROG",
+        pccolname="PC",
+    )
+    assert sum(gasoil_str.table["KRG"]) > 0
+    assert sum(gasoil_str.table["KROG"]) > 0
+    check_table(gasoil_str.table)
+
 
 def test_wo_fromtable_multiindex():
     """Test that we accept multiindex dataframes,
     (but a warning will be issued)"""
     # Test an example dataframe that easily gets sent in from ecl2df.satfunc:
-    df1 = pd.DataFrame(
+    dframe = pd.DataFrame(
         columns=["KEYWORD", "SATNUM", "SW", "KRW", "KROW", "PC"],
         data=[
             ["SWOF", 1, 0, 0, 1, 2],
@@ -60,16 +73,42 @@ def test_wo_fromtable_multiindex():
     ).set_index(["KEYWORD", "SATNUM"])
 
     # Check that we have a MultiIndex:
-    assert len(df1.index.names) == 2
+    assert len(dframe.index.names) == 2
 
     wateroil = WaterOil(h=0.1)
     wateroil.add_fromtable(
-        df1, swcolname="SW", krwcolname="KRW", krowcolname="KROW", pccolname="PC"
+        dframe, swcolname="SW", krwcolname="KRW", krowcolname="KROW", pccolname="PC"
     )
     assert "KRW" in wateroil.table.columns
     assert "KROW" in wateroil.table.columns
     assert "PC" in wateroil.table.columns
     check_table(wateroil.table)
+
+
+def test_go_fromtable_multiindex():
+    """Test that we accept multiindex dataframes,
+    (but a warning will be issued)"""
+    # Test an example dataframe that easily gets sent in from ecl2df.satfunc:
+    dframe = pd.DataFrame(
+        columns=["KEYWORD", "SATNUM", "SG", "KRG", "KROG", "PC"],
+        data=[
+            ["SGOF", 1, 0, 0, 1, 0],
+            ["SGOF", 1, 0.5, 0.5, 0.5, 0],
+            ["SGOF", 1, 1, 1, 0, 0],
+        ],
+    ).set_index(["KEYWORD", "SATNUM"])
+
+    # Check that we have a MultiIndex:
+    assert len(dframe.index.names) == 2
+
+    gasoil = GasOil(h=0.1)
+    gasoil.add_fromtable(
+        dframe, sgcolname="SG", krgcolname="KRG", krogcolname="KROG", pccolname="PC"
+    )
+    assert "KRG" in gasoil.table.columns
+    assert "KROG" in gasoil.table.columns
+    assert "PC" in gasoil.table.columns
+    check_table(gasoil.table)
 
 
 def test_go_fromtable_problems():
@@ -79,9 +118,10 @@ def test_go_fromtable_problems():
     )
     # Now sgcr and swl is wrong:
     gasoil = GasOil(h=0.1)
-    with pytest.raises(ValueError):
-        # Should say sg must start at zero.
-        gasoil.add_fromtable(df1, pccolname="PCOG")
+
+    with pytest.raises(ValueError, match="SBOGUS not found in dataframe"):
+        gasoil.add_fromtable(df1, sgcolname="SBOGUS")
+
     df2 = pd.DataFrame(
         columns=["SG", "KRG", "KROG", "PCOG"], data=[[0.0, 0, 1, 0], [0.9, 0.8, 0, 2]]
     )
@@ -105,25 +145,92 @@ def test_go_fromtable_problems():
     float_df_checker(gasoil.table, "SG", 1.0, "KRG", 0.8)
     float_df_checker(gasoil.table, "SG", 1.0, "KROG", 0.0)
     gasoil = GasOil(h=0.1, swl=0.1)
-    gasoil.add_fromtable(df2, krgcolname="KRG", krogcolname="KROG")
+    gasoil.add_fromtable(df2)
 
-    df3 = pd.DataFrame(
-        columns=["SG", "KRG", "KROG", "PCOG"], data=[[0, -0.01, 1, 0], [1, 1, 0, 0]]
-    )
-    gasoil = GasOil(h=0.1)
-    with pytest.raises(ValueError):
-        # Should say krg is negative
-        gasoil.add_fromtable(df3, krgcolname="KRG")
 
-    df4 = pd.DataFrame(
-        columns=["SG", "KRG", "KROG", "PCOG"],
-        data=[[0, 0, 1, 0], [1, 1.0000000001, 0, 0]],
-    )
+@pytest.mark.parametrize(
+    "dframe, exception, message",
+    [
+        (
+            pd.DataFrame(
+                columns=["SG", "KRG", "KROG", "PCOG"],
+                data=[[0, -0.01, 1, 0], [1, 1, 0, 0]],
+            ),
+            ValueError,
+            "krg is below 0 in incoming table",
+        ),
+        (
+            pd.DataFrame(
+                columns=["SG", "KRG", "KROG", "PCOG"],
+                data=[[0, 0, 1, 0], [1, 1.0000000001, 0, 0]],
+            ),
+            ValueError,
+            "krg is above 1 in incoming table",
+        ),
+        (
+            pd.DataFrame(
+                columns=["SG", "KRG", "KROG", "PCOG"],
+                data=[[0, 0, 0.5, 0], [1, 1, 0.9, 0]],
+            ),
+            ValueError,
+            "Incoming krog not decreasing",
+        ),
+        (
+            pd.DataFrame(
+                columns=["SG", "KRG", "KROG", "PCOG"],
+                data=[[0, 0, 1, 0], [1, 1, -0.1, 0]],
+            ),
+            ValueError,
+            "krog is below 0 in incoming table",
+        ),
+        (
+            pd.DataFrame(
+                columns=["SG", "KRG", "KROG", "PCOG"],
+                data=[[0.1, 0, 1, 0], [1, 1, 0.1, 0]],
+            ),
+            ValueError,
+            "sg must start at zero",
+        ),
+        (
+            pd.DataFrame(
+                columns=["SG", "KRG", "KROG", "PCOG"],
+                data=[[0.0, 0, 1, 1], [1, 1, 0.1, 0]],
+            ),
+            ValueError,
+            "Incoming pc not increasing",
+        ),
+        (
+            pd.DataFrame(
+                columns=["SG", "KRG", "KROG", "PCOG"],
+                data=[[0.0, 0, 1, 0], [1, 1, 0.1, np.inf]],
+            ),
+            ValueError,
+            # This one is from scipy/interpolate/_cubic.py
+            "must contain at least 2 elements",
+        ),
+        (
+            pd.DataFrame(
+                columns=["SG", "KRG", "KROG", "PCOG"],
+                data=[[0.0, 0, 1, 0], [1, 1, 0.1, np.nan]],
+            ),
+            ValueError,
+            # This one is from scipy/interpolate/_cubic.py
+            "must contain at least 2 elements",
+        ),
+        (
+            pd.DataFrame(
+                columns=["SG", "KRG", "KROG", "PCOG"],
+                data=[[0.0, 0, 1, 0], [0.5, 0.5, 0.5, 0.5], [1, 1, 0.1, np.inf]],
+            ),
+            ValueError,
+            "inf/nan in interpolated data",
+        ),
+    ],
+)
+def test_go_from_table_exceptions(dframe, exception, message):
     gasoil = GasOil(h=0.1)
-    with pytest.raises(ValueError):
-        # Should say krg is above 1.0
-        print(df4)
-        gasoil.add_fromtable(df4, krgcolname="KRG")
+    with pytest.raises(exception, match=message):
+        gasoil.add_fromtable(dframe)
 
 
 def test_gascondensate():
