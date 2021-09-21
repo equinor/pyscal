@@ -58,24 +58,58 @@ def test_slgof(swl, sorg, sgcr):
 @pytest.mark.parametrize(
     "swl, sorg, sgcr",
     [
-        # Parameter combinations exposed by pytest.hypothesis:
-        (0.029950000000000105, 0.0, 0.01994999999999992),
-        (0.285053445121882, 0.24900257734119435, 0.1660017182274629),
+        (0.0, 0.0, 0.1),
+        (1e-18, 0.0, 0.1),
+        (1e-17, 0.0, 0.1),
+        (1e-16, 0.0, 0.1),
+        (1e-15, 0.0, 0.1),
+        (1e-14, 0.0, 0.1),
+        (1e-13, 0.0, 0.1),
+        (1e-12, 0.0, 0.1),
+        (1e-11, 0.0, 0.1),
+        (1e-10, 0.0, 0.1),
+        #
+        (0.1, 0.0, 0.1),
+        (0.1, 1e-18, 0.1),
+        (0.1, 1e-17, 0.1),
+        (0.1, 1e-16, 0.1),
+        (0.1, 1e-15, 0.1),
+        (0.1, 1e-14, 0.1),
+        (0.1, 1e-13, 0.1),
+        (0.1, 1e-12, 0.1),
+        (0.1, 1e-11, 0.1),
+        (0.1, 1e-10, 0.1),
+        #
+        (0.1, 0.0, 0.0),
+        (0.1, 0.0, 1e-18),
+        (0.1, 0.0, 1e-17),
+        (0.1, 0.0, 1e-16),
+        (0.1, 0.0, 1e-15),
+        (0.1, 0.0, 1e-14),
+        (0.1, 0.0, 1e-13),
+        (0.1, 0.0, 1e-12),
+        (0.1, 0.0, 1e-11),
+        (0.1, 0.0, 1e-10),
+        #
+        (0.1 - 0.0, 0.0, 0.1),
+        (0.1 - 1e-18, 0.0, 0.1),
+        (0.1 - 1e-17, 0.0, 0.1),
+        (0.1 - 1e-16, 0.0, 0.1),
+        (0.1 - 1e-15, 0.0, 0.1),
+        (0.1 - 1e-14, 0.0, 0.1),
+        (0.1 - 1e-13, 0.0, 0.1),
+        (0.1 - 1e-12, 0.0, 0.1),
+        (0.1 - 1e-11, 0.0, 0.1),
+        (0.1 - 1e-10, 0.0, 0.1),
     ],
 )
 def test_numerical_problems(swl, sorg, sgcr):
-    """Test fine-tuned numerics for slgof, this function should
-    trigger the code path in slgof_df() where slgof_sl_mismatch is small.
-
-    Note: The code path taken may depend on hardware/OS etc.
-    """
+    """Test fine-tuned numerics for slgof"""
 
     # Because we cut away some saturation points due to SWINTEGERS, we easily
     # end in a situation where the wrong saturation point of to "equal" ones
     # is removed (because in SLGOF, sg is flipped to sl)
 
-    # Unrounded, this represents a numerical difficulty, when h is low enough,
-    # but there is special code in slgof_df() to workaround this.
     gasoil = GasOil(swl=swl, sorg=sorg, sgcr=sgcr, h=0.001)
     gasoil.add_corey_gas()
     gasoil.add_corey_oil()
@@ -91,7 +125,7 @@ def test_numerical_problems(swl, sorg, sgcr):
     st.floats(min_value=0.0, max_value=0.3),
     st.floats(min_value=0.0, max_value=0.3),
     st.floats(min_value=0.0, max_value=0.3),
-    st.floats(min_value=1.0 / float(SWINTEGERS), max_value=0.5),
+    st.floats(min_value=1.0 / float(1000 * SWINTEGERS), max_value=0.5),
 )
 def test_slgof_hypo(swl, sorg, sgcr, h):
     """Shotgun-testing of slgof"""
