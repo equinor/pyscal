@@ -167,16 +167,9 @@ class GasOil(object):
                 drop=True
             )
 
-        # If sg=1-swl was dropped, then sorg was close to zero:
-        if not np.isclose(self.table["SG"].max(), 1 - self.swl):
-            # Add it as an extra row:
-            self.table.loc[len(self.table) + 1, "SG"] = 1 - self.swl
-            self.table.sort_values(by="SG", inplace=True)
-        # Ensure the value closest to 1-swl is actually 1-swl:
-        swl_right_index = (
-            (self.table["SG"] - (1 - self.swl)).abs().sort_values().index[0]
-        )
-        self.table.loc[swl_right_index, "SG"] = 1 - self.swl
+        assert np.isclose(
+            self.table["SG"].max(), 1 - self.swl
+        ), "Bug, max(sg) was not close to 1-swl"
 
         self.table.reset_index(inplace=True)
         self.table = self.table[["SG"]]
@@ -851,28 +844,10 @@ class GasOil(object):
             .reset_index(drop=True)
         )
         # It is a strict requirement that the first sl value should be swl + sorg,
-        # so we modify it if it close. If it is not close, we do not dare to fix
-        # it, to ensure we don't cover bugs.
         slgof_sl_mismatch = abs(slgof["SL"].values[0] - (self.sorg + self.swl))
-        if slgof_sl_mismatch > epsilon:
-            if slgof_sl_mismatch < 2 * 1.0 / float(SWINTEGERS):
-                # Repair the table in-place:
-                slgof.loc[0, "SL"] = self.sorg + self.swl
-                # After modification, we can get duplicate sl values,
-                # so drop duplicates:
-                slgof["slint"] = list(
-                    map(int, list(map(round, slgof["SL"] * SWINTEGERS)))
-                )
-                slgof.drop_duplicates("slint", inplace=True)
-                # Delete the temporary column:
-                slgof.drop(labels="slint", axis="columns", inplace=True)
-            else:
-                # Give up repairing the table:
-                logger.critical(
-                    "SLGOF does not start at the correct value. Please report as bug."
-                )
-                logger.error("slgof_sl_mismatch: %f", slgof_sl_mismatch)
-                logger.error(str(slgof.head()))
+        assert (
+            slgof_sl_mismatch < epsilon
+        ), f"Bug: slgof_sl_mismatch was {slgof_sl_mismatch}, too large"
         return slgof
 
     def SLGOF(self, header: bool = True, dataincommentrow: bool = True) -> str:
