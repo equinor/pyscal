@@ -190,15 +190,20 @@ def test_linearsegments():
     check_linear_sections(wateroil)
 
 
-def test_plotting():
+def test_plotting(mocker):
     """Test that plotting code pass through (nothing displayed)"""
+    mocker.patch("matplotlib.pyplot.show", return_value=None)
     wateroil = WaterOil(swl=0.1, h=0.1)
     wateroil.add_corey_water()
     wateroil.add_corey_oil()
     wateroil.plotkrwkrow(mpl_ax=matplotlib.pyplot.subplots()[1])
+    wateroil.plotkrwkrow(logyscale=True, mpl_ax=matplotlib.pyplot.subplots()[1])
+    wateroil.plotkrwkrow(mpl_ax=None)
 
     wateroil.add_simple_J()
     wateroil.plotpc(mpl_ax=matplotlib.pyplot.subplots()[1])
+    wateroil.plotpc(mpl_ax=None)
+    wateroil.plotpc(logyscale=True)
 
 
 def test_wateroil_linear():

@@ -45,6 +45,10 @@ def test_gasoil_init():
     assert isinstance(gasoil, GasOil)
     assert gasoil.krgendanchor == ""
 
+    gasoil = GasOil(krgendanchor=None)
+    assert isinstance(gasoil, GasOil)
+    assert gasoil.krgendanchor == ""
+
     # Test with h=1
     gasoil = GasOil(h=1)
     gasoil.add_corey_gas()
@@ -74,16 +78,33 @@ def test_errors():
         GasOil(swl=0.3, sgro=0.88, sgcr=0.88)
     with pytest.raises(ValueError, match="No saturation range left"):
         GasOil(swl=0.3, sgcr=0.88)
+
+    # This only raises error if krgendanchor is non-default:
+    GasOil(swl=0.3, sgcr=0.4, sorg=0.4, krgendanchor="")
+    with pytest.raises(ValueError, match="No saturation range left"):
+        GasOil(swl=0.3, sgcr=0.4, sorg=0.4)
+
+    with pytest.raises(ValueError, match="No saturation range left"):
+        GasOil(swl=0.3, sgcr=0.8, sorg=0.4, krgendanchor="")
+
+    with pytest.raises(ValueError, match="No saturation range left"):
+        GasOil(swl=0.3, sgcr=0.88, krgendanchor="")
     with pytest.raises(ValueError, match="sgro must be zero or equal to sgcr"):
         GasOil(swl=0.3, sgcr=0.1, sgro=0.2)
 
+    with pytest.raises(ValueError, match="sgro must be zero or equal to sgcr"):
+        GasOil(swl=0.4, sorg=0.4, sgro=0.4)
 
-def test_plotting():
+
+def test_plotting(mocker):
     """Test that plotting code pass through (nothing displayed)"""
+    mocker.patch("matplotlib.pyplot.show", return_value=None)
     gasoil = GasOil(swl=0.1, h=0.1)
     gasoil.add_corey_gas()
     gasoil.add_corey_oil()
     gasoil.plotkrgkrog(mpl_ax=matplotlib.pyplot.subplots()[1])
+    gasoil.plotkrgkrog(mpl_ax=None)
+    gasoil.plotkrgkrog(logyscale=True, mpl_ax=None)
 
 
 @settings(deadline=300)
@@ -521,6 +542,7 @@ def test_roundoff():
         ("SG", [0, 2]),
         ("KRG", [1, 0]),
         ("KRG", [0, 2]),
+        ("KRG", [1, 2]),
         ("KROG", [0, 1]),
         ("KROG", [2, 0]),
         ("PC", [np.inf, 0]),
