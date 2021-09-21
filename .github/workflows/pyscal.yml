@@ -60,10 +60,14 @@ jobs:
         run: |
           rstcheck -r docs
 
-      - name: Build documentation
+      - name: Install font (xkcd) for documentation
+        if: matrix.python-version == '3.6'
         run: |
           sudo apt-get install -y fonts-humor-sans
           python -c "import matplotlib.font_manager; matplotlib.font_manager._rebuild()"
+
+      - name: Build documentation
+        run: |
           python docs/make_plots.py
           python setup.py build_sphinx
 
