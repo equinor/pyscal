@@ -61,10 +61,10 @@ jobs:
           rstcheck -r docs
 
       - name: Install font (xkcd) for documentation
-        if: matrix.python-version == '3.6'
+        if: matrix.python-version == '3.8'
         run: |
           sudo apt-get install -y fonts-humor-sans
-          python -c "import matplotlib.font_manager; matplotlib.font_manager._rebuild()"
+          #python -c "import matplotlib.font_manager; matplotlib.font_manager._rebuild()"
 
       - name: Build documentation
         run: |
@@ -72,7 +72,7 @@ jobs:
           python setup.py build_sphinx
 
       - name: Update GitHub pages
-        if: github.repository_owner == 'equinor' && github.ref == 'refs/heads/master' && matrix.python-version == '3.6'
+        if: github.repository_owner == 'equinor' && github.ref == 'refs/heads/master' && matrix.python-version == '3.8'
         run: |
             cp -R ./build/sphinx/html ../html
 
