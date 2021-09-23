@@ -4,9 +4,10 @@ import argparse
 import logging
 import sys
 import traceback
-import warnings
 from pathlib import Path
-from typing import List, Optional
+from typing import Optional
+
+import pandas as pd
 
 from pyscal import GasWater, SCALrecommendation, WaterOilGas, __version__
 
@@ -172,8 +173,8 @@ def pyscal_main(
     debug: bool = False,
     output: str = "relperm.inc",
     delta_s: Optional[float] = None,
-    int_param_wo: Optional[List[float]] = None,
-    int_param_go: Optional[List[Optional[float]]] = None,
+    int_param_wo: Optional[float] = None,
+    int_param_go: Optional[float] = None,
     sheet_name: str = None,
     slgof: bool = False,
     family2: bool = False,
@@ -188,8 +189,8 @@ def pyscal_main(
         debug: debug mode or not
         output: Output filename
         delta_s: Saturation step-length
-        int_param_wo: Interpolation params for wateroil
-        int_param_go: Interpolation params for gasoil
+        int_param_wo: Interpolation parameter for wateroil
+        int_param_go: Interpolation parameter for gasoil
         sheet_name: Which sheet in XLSX file
         slgof: Use SLGOF
         family2: Dump family 2 keywords
@@ -200,35 +201,32 @@ def pyscal_main(
     if debug:
         logging.basicConfig(level=logging.DEBUG)
 
-    scalinput_df = PyscalFactory.load_relperm_df(parametertable, sheet_name=sheet_name)
+    parametertable = PyscalFactory.load_relperm_df(
+        parametertable, sheet_name=sheet_name
+    )
 
-    logger.debug("Input data:\n%s", scalinput_df.to_string(index=False))
+    assert isinstance(parametertable, pd.DataFrame)
+    logger.debug("Input data:\n%s", parametertable.to_string(index=False))
 
     if int_param_go is not None and int_param_wo is None:
         raise ValueError("Don't use int_param_go alone, only int_param_wo")
-    if (
-        int_param_wo is not None
-        and isinstance(int_param_wo, list)
-        and len(int_param_wo) > 1
-    ) or (
-        int_param_go is not None
-        and isinstance(int_param_go, list)
-        and len(int_param_go) > 1
-    ):
-        warnings.warn(
-            "SATNUM specific interpolation parameters are deprecated in "
-            "the pyscal command line client. "
-            "Use interp_relperm from subscript or the API directly",
-            FutureWarning,
+    if isinstance(int_param_wo, list) or isinstance(int_param_go, list):
+        raise TypeError(
+            "SATNUM specific interpolation parameters are not supported in pyscalcli"
         )
-    if "SATNUM" not in scalinput_df:
+    if int_param_wo is not None and "CASE" not in parametertable:
+        raise ValueError(
+            "Interpolation parameter provided but no CASE column in input data"
+        )
+    if "SATNUM" not in parametertable:
         raise ValueError("There is no column called SATNUM in the input data")
-    if "CASE" in scalinput_df:
+
+    if "CASE" in parametertable:
         # Then we should do interpolation
         if int_param_wo is None:
             raise ValueError("No interpolation parameters provided")
         scalrec_list = PyscalFactory.create_scal_recommendation_list(
-            scalinput_df, h=delta_s
+            parametertable, h=delta_s
         )
         assert isinstance(scalrec_list[1], SCALrecommendation)
         if scalrec_list[1].type == WaterOilGas:
@@ -246,15 +244,8 @@ def pyscal_main(
             wog_list = scalrec_list.interpolate(int_param_wo, None, h=delta_s)
     else:
         wog_list = PyscalFactory.create_pyscal_list(
-            scalinput_df, h=delta_s
+            parametertable, h=delta_s
         )  # can be both water-oil, water-oil-gas, or gas-water
-
-    if (
-        int_param_wo is not None or int_param_go is not None
-    ) and "CASE" not in scalinput_df:
-        raise ValueError(
-            "Interpolation parameter provided but no CASE column in input data"
-        )
 
     if family2 or wog_list.pyscaltype == GasWater:
         family = 2
@@ -274,7 +265,3 @@ def pyscal_main(
             wog_list.build_eclipse_data(family=family, slgof=slgof), encoding="utf-8"
         )
         print("Written to " + output)
-
-
-if __name__ == "__main__":
-    main()
