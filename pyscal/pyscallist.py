@@ -356,7 +356,6 @@ class PyscalList(object):
         self,
         keyword: str,
         write_to_filename: Optional[str] = None,
-        gaswater: bool = False,
     ) -> str:
         """Internal helper function for constructing strings and writing to disk"""
         if self.pyscaltype == SCALrecommendation:
@@ -365,17 +364,11 @@ class PyscalList(object):
             )
         first_obj = self.pyscal_list[0]
         outputter = getattr(first_obj, keyword)
-        if gaswater:
-            string = outputter(header=True, gaswater=gaswater)
-        else:
-            string = outputter(header=True)
+        string = outputter(header=True)
         if len(self.pyscal_list) > 1:
             for pyscal_obj in self.pyscal_list[1:]:
                 outputter = getattr(pyscal_obj, keyword)
-                if gaswater:
-                    string += outputter(header=False, gaswater=gaswater)
-                else:
-                    string += outputter(header=False)
+                string += outputter(header=False)
         if write_to_filename:
             Path(write_to_filename).parent.mkdir(parents=True, exist_ok=True)
             Path(write_to_filename).write_text(string, encoding="utf-8")
@@ -393,17 +386,13 @@ class PyscalList(object):
         """Make SLGOF string and optionally print to file"""
         return self.make_ecl_output("SLGOF", write_to_filename)
 
-    def SGFN(
-        self, write_to_filename: Optional[str] = None, gaswater: bool = False
-    ) -> str:
+    def SGFN(self, write_to_filename: Optional[str] = None) -> str:
         """Make SGFN string and optionally print to file"""
-        return self.make_ecl_output("SGFN", write_to_filename, gaswater=gaswater)
+        return self.make_ecl_output("SGFN", write_to_filename)
 
-    def SWFN(
-        self, write_to_filename: Optional[str] = None, gaswater: bool = False
-    ) -> str:
+    def SWFN(self, write_to_filename: Optional[str] = None) -> str:
         """Make SWFN string and optionally print to file"""
-        return self.make_ecl_output("SWFN", write_to_filename, gaswater=gaswater)
+        return self.make_ecl_output("SWFN", write_to_filename)
 
     def SOF3(self, write_to_filename: Optional[str] = None) -> str:
         """Make SOF3 string and optionally print to file"""
