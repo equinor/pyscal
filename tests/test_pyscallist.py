@@ -102,20 +102,32 @@ def test_load_scalrec(tmp_path):
     with pytest.raises((AssertionError, ValueError)):
         scalrec_list.interpolate([-1, 0, 1.1])
 
-    # Not enough interpolation parameters
-    with pytest.raises(ValueError):
-        scalrec_list.interpolate([-1, 1])
-    with pytest.raises(ValueError):
-        scalrec_list.interpolate([-1, 1, 0, 0])
+    with pytest.raises(
+        TypeError, match="Can only interpolate PyscalList of type SCALrecommendation"
+    ):
+        wog_list.interpolate(-0.5)
 
     scalrec_list.interpolate(-1, 1)
     scalrec_list.interpolate(-1, [0, -1, 1])
 
-    with pytest.raises(ValueError):
+    with pytest.raises(
+        ValueError, match="Too few interpolation parameters given for WaterOil"
+    ):
+        scalrec_list.interpolate([-1, 1])
+    with pytest.raises(
+        ValueError, match="Too few interpolation parameters given for GasOil"
+    ):
+        scalrec_list.interpolate(1, [-1, 1])
+    with pytest.raises(
+        ValueError, match="Too many interpolation parameters given for WaterOil"
+    ):
+        scalrec_list.interpolate([-1, 1, 0, 0])
+    with pytest.raises(
+        ValueError, match="Too many interpolation parameters given for GasOil"
+    ):
         scalrec_list.interpolate(1, [-1, 1, 0, 0])
 
-    # Test slicing the scalrec to base, this is relevant for
-    # API usage.
+    # Test slicing the scalrec to base, this is relevant for API usage.
     base_data = scalrec_data[scalrec_data["CASE"] == "base"].drop("CASE", axis=1)
     PyscalFactory.load_relperm_df(base_data)  # Ensure no errors.
     pyscal_list = PyscalFactory.create_pyscal_list(base_data)
@@ -192,8 +204,8 @@ def test_df():
     # WaterOil list
     input_dframe = pd.DataFrame(columns=["SATNUM", "Nw", "Now"], data=[[1, 2, 2]])
     relperm_data = PyscalFactory.load_relperm_df(input_dframe)
-    p_list = PyscalFactory.create_pyscal_list(relperm_data, h=0.2)
-    dframe = p_list.df()
+    wo_list = PyscalFactory.create_pyscal_list(relperm_data, h=0.2)
+    dframe = wo_list.df()
     assert "SW" in dframe
     assert "KRW" in dframe
     assert "KROW" in dframe
@@ -205,8 +217,8 @@ def test_df():
     # GasOil list
     input_dframe = pd.DataFrame(columns=["SATNUM", "Ng", "Nog"], data=[[1, 2, 2]])
     relperm_data = PyscalFactory.load_relperm_df(input_dframe)
-    p_list = PyscalFactory.create_pyscal_list(relperm_data, h=0.2)
-    dframe = p_list.df()
+    go_list = PyscalFactory.create_pyscal_list(relperm_data, h=0.2)
+    dframe = go_list.df()
     assert "SG" in dframe
     assert "KRG" in dframe
     assert "KROG" in dframe
@@ -214,6 +226,12 @@ def test_df():
     assert "SATNUM" in dframe
     assert len(dframe.columns) == 4
     assert not dframe.empty
+
+    gasoil_family1 = go_list.dump_family_1()
+    assert "SGOF" in gasoil_family1
+
+    with pytest.raises(ValueError, match="SLGOF not meaningful for GasOil"):
+        go_list.dump_family_1(slgof=True)
 
 
 def test_load_scalrec_tags():
@@ -276,7 +294,7 @@ def test_load_scalrec_tags():
         assert swof.count(tag) == 1
 
 
-def test_dump():
+def test_dump(tmpdir):
     """Test dumping Eclipse include data to file"""
     testdir = Path(__file__).absolute().parent
 
@@ -294,6 +312,13 @@ def test_dump():
     # Empty PyscalLists should return empty strings:
     assert PyscalList().dump_family_1() == ""
     assert PyscalList().dump_family_2() == ""
+
+    # Dump directly to file:
+    tmpdir.chdir()
+    pyscal_list.dump_family_1(filename="output-fam1.inc")
+    assert "SWOF" in Path("output-fam1.inc").read_text()
+    pyscal_list.dump_family_2(filename="output-fam2.inc")
+    assert "SOF3" in Path("output-fam2.inc").read_text()
 
 
 def test_capillary_pressure():
@@ -458,7 +483,7 @@ def test_swl_from_height():
     assert np.isclose(pyscal_list[1].swl, 0.157461)
 
 
-def test_twophase():
+def test_twophase_scal_wateroil():
     """Test interpolation for a two-phase setup water-oil"""
     # Triggers bug in pyscal <= 0.5.0
     dframe = pd.DataFrame(
@@ -483,6 +508,27 @@ def test_twophase():
     assert "SGOF" not in swof
 
 
+def test_twophase_scal_gasoil():
+    """Test interpolation for a two-phase setup gas-oil"""
+    dframe = pd.DataFrame(
+        columns=["SATNUM", "CASE", "NG", "NOG", "TAG"],
+        data=[
+            [1, "pess", 1, 1, "thetag"],
+            [1, "base", 2, 2, "thetag"],
+            [1, "opt", 3, 3, "thetag"],
+        ],
+    )
+    pyscal_list = PyscalFactory.create_scal_recommendation_list(
+        PyscalFactory.load_relperm_df(dframe)
+    )
+    pyscal_list = pyscal_list.interpolate(-0.5)
+
+    sgof = pyscal_list.dump_family_1()
+    assert "thetag" in sgof
+    assert "SGOF" in sgof
+    assert "SWOF" not in sgof
+
+
 def test_gaswater():
     """Test list of gas-water objects"""
     dframe = pd.DataFrame(
@@ -502,9 +548,20 @@ def test_gaswater():
     assert "othertag" in dump
     assert "thetag" in dump
 
-    with pytest.raises(ValueError):
-        # Does not make sense for GasWater:
+    with pytest.raises(ValueError, match="Family 1 output not possible for GasWater"):
         pyscal_list.dump_family_1()
+
+    sgfn = pyscal_list.SGFN()
+    assert "SGFN" in sgfn
+    assert "krw = krg" in sgfn
+    swfn = pyscal_list.SWFN()
+    assert "SWFN" in swfn
+    assert "krw = krg" in swfn
+
+    with pytest.raises(
+        AttributeError, match="'GasWater' object has no attribute 'SWOF'"
+    ):
+        pyscal_list.SWOF()
 
 
 def test_gaswater_scal():
@@ -521,6 +578,10 @@ def test_gaswater_scal():
         PyscalFactory.load_relperm_df(dframe), h=0.1
     )
     assert pyscal_list.pyscaltype == SCALrecommendation
+
+    dump = pyscal_list.interpolate(-1).dump_family_2()
+    assert "SWFN" in dump
+    assert "SGFN" in dump
 
 
 def test_explicit_df():

@@ -47,7 +47,7 @@ def test_log_levels(tmp_path, verbosity_flag):
         assert "INFO:" in output
         assert "DEBUG:" not in output
         assert "Loaded input data" in output
-        assert "Dumping" in output
+        assert "Keywords SWOF, SGOF (family 1) for 3 SATNUMs generated" in output
     elif verbosity_flag == "--debug":
         assert "INFO:" in output
         assert "DEBUG:" in output

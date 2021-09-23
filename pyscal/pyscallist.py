@@ -190,57 +190,89 @@ class PyscalList(object):
             dframe.sort_values(sort_rows_on, inplace=True)
         return dframe
 
+    def relevant_keywords(self, family: int = 1, slgof: bool = False) -> List[str]:
+        """Construct a list of relevant Eclipse keywords for the data in this
+        Pyscallist object. This depends on the Pyscaltype, and which family is
+        requested"""
+        if family not in [1, 2]:
+            raise ValueError("Family must be either 1 or 2")
+        if self.pyscaltype == WaterOilGas:
+            # WaterOilGas can be of type WaterOil or GasOil when it emerges
+            # from a SCAL recommendation, signified by None-ness of attributes
+            if family == 2:
+                return ["SWFN", "SGFN", "SOF3"]
+            if self.pyscal_list[0].gasoil is None:  # type: ignore
+                return ["SWOF"]
+            elif self.pyscal_list[0].wateroil is None:  # type: ignore
+                return ["SGOF"]
+            elif not slgof:
+                return ["SWOF", "SGOF"]
+            else:
+                return ["SWOF", "SLGOF"]
+        elif self.pyscaltype == WaterOil:
+            if family == 2:
+                raise ValueError("Family 2 only supported for WaterOilGas and GasWater")
+            return ["SWOF"]
+        elif self.pyscaltype == GasOil:
+            if family == 2:
+                raise ValueError("Family 2 only supported for WaterOilGas and GasWater")
+            if slgof:
+                raise ValueError("SLGOF not meaningful for GasOil")
+            return ["SGOF"]
+        else:
+            assert self.pyscaltype == GasWater
+            if family == 2:
+                return ["SWFN", "SGFN"]
+            raise ValueError("Family 1 output not possible for GasWater")
+
+    def build_eclipse_data(self, family: int = 1, slgof: bool = False) -> str:
+        """Construct Eclipse keywords and data for relative permeability
+        properties of family 1 or 2 type.
+
+        Args:
+            slgof: Set to true of SLGOF is wanted instead of SGOF. Only applicable
+            if family is 1.
+        """
+        if family not in [1, 2]:
+            raise ValueError("Family must be either 1 or 2")
+        if len(self) == 0:
+            return ""
+        if self.pyscaltype == SCALrecommendation:
+            raise TypeError(
+                "You need to interpolate before you can dump a SCAL recommendation"
+            )
+        if family == 2 and slgof is True:
+            raise ValueError("SLGOF not meaningful for family 2")
+        keywords = self.relevant_keywords(family=family, slgof=slgof)
+        logger.info(
+            "Keywords %s (family %d) for %d SATNUMs generated",
+            ", ".join(keywords),
+            family,
+            len(self),
+        )
+        return "\n".join([getattr(self, keyword)() for keyword in keywords])
+
     def dump_family_1(self, filename: Optional[str] = None, slgof: bool = False) -> str:
         """Dumps family 1 Eclipse saturation tables to one
         filename. This means SWOF + SGOF (SGOF only if relevant)
+
+        This function is deprecated. Use make_family_1() and write to
+        disk in calling code.
 
         Args:
             filename: Filename for the output to be given to Eclipse 100
             slgof: Set to true of SLGOF is wanted instead of SGOF
         """
-        if len(self) == 0:
-            return ""
-        if self.pyscaltype == SCALrecommendation:
-            logger.error(
-                "You need to interpolate before you can dump a SCAL recommendation"
-            )
-            raise TypeError
-        if self.pyscaltype == WaterOilGas:
-            # WaterOilGas can be of type WaterOil when it emerges
-            # from a SCAL recommendation, do a fragile test:
-            assert isinstance(self.pyscal_list[0], WaterOilGas)
-            if self.pyscal_list[0].gasoil is None:
-                family_1_str = self.SWOF()
-                keywords = "SWOF"
-            elif self.pyscal_list[0].wateroil is None:
-                family_1_str = self.SGOF()
-                keywords = "SGOF"
-            elif not slgof:
-                family_1_str = self.SWOF() + "\n" + self.SGOF()
-                keywords = "SWOF and SGOF"
-            else:
-                family_1_str = self.SWOF() + "\n" + self.SLGOF()
-                keywords = "SWOF and SLGOF"
-        if self.pyscaltype == WaterOil:
-            family_1_str = self.SWOF()
-            keywords = "SWOF"
-        if self.pyscaltype == GasOil:
-            family_1_str = self.SGOF()
-            keywords = "SGOF"
-            if slgof:
-                logger.warning("SLGOF not meaningful for GasOil. Ignored")
-        if self.pyscaltype == GasWater:
-            raise ValueError("Family 1 output not possible for GasWater")
+        logger.warning("dump_family_1() is deprecated")
+        string = self.build_eclipse_data(family=1, slgof=slgof)
         if filename is not None:
-            logger.info(
-                "Dumping family 1 keywords (%s) for %d SATNUMs to %s",
-                keywords,
-                len(self),
-                filename,
-            )
-            Path(filename).parent.mkdir(exist_ok=True, parents=True)
-            Path(filename).write_text(family_1_str, encoding="utf-8")
-        return family_1_str
+            if not Path(filename).parent.exists():
+                logger.warning(
+                    "Please create the output directory prior to calling pyscal."
+                )
+                Path(filename).parent.mkdir(exist_ok=True, parents=True)
+            Path(filename).write_text(string, encoding="utf-8")
+        return string
 
     def dump_family_2(self, filename: Optional[str] = None) -> str:
         """Dumps family 2 Eclipse saturation tables to one
@@ -251,31 +283,16 @@ class PyscalList(object):
         Args:
             filename (str): Filename for the output to be given to Eclipse 100
         """
-        if len(self) == 0:
-            return ""
-        if self.pyscaltype == SCALrecommendation:
-            logger.error(
-                "You need to interpolate before you can dump a SCAL recommendation"
-            )
-            raise TypeError
-        if self.pyscaltype == WaterOilGas:
-            family_2_str = self.SWFN() + "\n" + self.SGFN() + "\n" + self.SOF3()
-            keywords = "SWFN, SGFN and SOF3"
-        elif self.pyscaltype == GasWater:
-            family_2_str = self.SWFN() + "\n" + self.SGFN() + "\n"
-            keywords = "SWFN and SGFN"
-        else:
-            raise ValueError("Family 2 only supported for WaterOilGas and GasWater")
+        logger.warning("dump_family_2() is deprecated")
+        string = self.build_eclipse_data(family=2, slgof=False)
         if filename is not None:
-            logger.info(
-                "Dumping family 2 keywords (%s) for %d SATNUMs to %s",
-                keywords,
-                len(self),
-                filename,
-            )
-            Path(filename).parent.mkdir(exist_ok=True, parents=True)
-            Path(filename).write_text(family_2_str, encoding="utf-8")
-        return family_2_str
+            if not Path(filename).parent.exists():
+                logger.warning(
+                    "Please create the output directory prior to calling pyscal."
+                )
+                Path(filename).parent.mkdir(exist_ok=True, parents=True)
+            Path(filename).write_text(string, encoding="utf-8")
+        return string
 
     def interpolate(
         self,
@@ -300,8 +317,9 @@ class PyscalList(object):
         """
 
         if self.pyscaltype != SCALrecommendation:
-            logger.error("Can only interpolate PyscalList of type SCALrecommendation")
-            raise TypeError
+            raise TypeError(
+                "Can only interpolate PyscalList of type SCALrecommendation"
+            )
         if isinstance(int_params_wo, (float, int)):
             int_params_wo = [int_params_wo] * self.__len__()
         if isinstance(int_params_wo, list) and len(int_params_wo) == 1:

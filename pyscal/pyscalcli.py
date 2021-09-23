@@ -5,6 +5,7 @@ import logging
 import sys
 import traceback
 import warnings
+from pathlib import Path
 from typing import List, Optional
 
 from pyscal import GasWater, SCALrecommendation, WaterOilGas, __version__
@@ -256,19 +257,23 @@ def pyscal_main(
         )
 
     if family2 or wog_list.pyscaltype == GasWater:
-        logger.info("Generating family 2 keywords.")
-        if output == "-":
-            print(wog_list.dump_family_2())
-        else:
-            wog_list.dump_family_2(filename=output)
-            print("Written to " + output)
+        family = 2
     else:
-        logger.info("Generating family 1 keywords.")
-        if output == "-":
-            print(wog_list.dump_family_1(slgof=slgof))
-        else:
-            wog_list.dump_family_1(filename=output, slgof=slgof)
-            print("Written to " + output)
+        family = 1
+
+    if output == "-":
+        print(wog_list.build_eclipse_data(family=family, slgof=slgof))
+    else:
+        if not Path(output).parent.exists():
+            logger.warning(
+                "Implicit directory creation is deprecated.\n"
+                "Please create the output directory prior to calling pyscal."
+            )
+            Path(output).parent.mkdir(exist_ok=True, parents=True)
+        Path(output).write_text(
+            wog_list.build_eclipse_data(family=family, slgof=slgof), encoding="utf-8"
+        )
+        print("Written to " + output)
 
 
 if __name__ == "__main__":
