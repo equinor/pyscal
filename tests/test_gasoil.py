@@ -119,7 +119,9 @@ def test_gasoil_normalization(swl, sgcr, sorg, h, tag):
     # Check that son is 1 at sg=0
     assert float_df_checker(gasoil.table, "SG", 0, "SON", 1)
 
-    # Check that son is 0 at sorg with this krgendanchor
+    # Check that son is 0 at sorg with this krgendanchor.
+    # It is important to use the endpoints from the returned gasoil
+    # object, as they can be modified in case they are too close to zero.
     assert float_df_checker(gasoil.table, "SG", 1 - gasoil.sorg - gasoil.swl, "SON", 0)
 
     # Check that sgn is 0 at sgcr
@@ -170,6 +172,7 @@ def test_gasoil_krendmax(
     check_table(gasoil.table)
     check_linear_sections(gasoil)
     assert gasoil.selfcheck()
+    sat_table_str_ok(gasoil.SGOF())
     check_endpoints(gasoil, krgend, krgmax, kroend, kromax)
     assert 0 < gasoil.crosspoint() < 1
 
@@ -199,13 +202,14 @@ def check_endpoints(gasoil, krgend, krgmax, kroend, kromax):
     swtol = 1 / SWINTEGERS
 
     # Oil curve, from sg = 0 to sg = 1:
-    if gasoil.sgro < swtol:
-        assert float_df_checker(gasoil.table, "SG", 0, "KROG", kroend)
-        assert np.isclose(gasoil.table["KROG"].max(), kroend)
-    else:
+    if gasoil.sgro > 0:
+        # Gas-condensate: sgcr = sgro > 0
         assert float_df_checker(gasoil.table, "SG", 0, "KROG", kromax)
         assert float_df_checker(gasoil.table, "SON", 1.0, "KROG", kroend)
         assert np.isclose(gasoil.table["KROG"].max(), kromax)
+    else:
+        assert float_df_checker(gasoil.table, "SG", 0, "KROG", kroend)
+        assert np.isclose(gasoil.table["KROG"].max(), kroend)
 
     # son=0 @ 1 - sorg - swl or 1 - swl) should be zero:
     assert float_df_checker(gasoil.table, "SON", 0.0, "KROG", 0)

@@ -98,11 +98,30 @@ class GasOil(object):
         if not np.isclose(sorg, 0.0) and sorg < 1.0 / SWINTEGERS:
             # Too small but nonzero sorg gives too many numerical issues.
             logger.warning("sorg was close to zero, set to zero")
-            sorg = 0.0
-        self.sorg = sorg
-        self.sgro = sgro
+            self.sorg = 0.0
+        else:
+            self.sorg = sorg
 
-        self.sgcr = sgcr
+        if not np.isclose(sgcr, 0.0) and sgcr < 1.0 / SWINTEGERS:
+            # Too small but nonzero sgcr gives too many numerical issues.
+            logger.warning("sgcr was close to zero, set to zero")
+            self.sgcr = 0.0
+        else:
+            self.sgcr = sgcr
+
+        if not np.isclose(sgro, 0.0) and sgro < 1.0 / SWINTEGERS:
+            # Too small but nonzero sgro gives too many numerical issues.
+            logger.warning("sgro was close to zero, set to zero")
+            self.sgro = 0.0
+        else:
+            self.sgro = sgro
+        if not (np.isclose(self.sgro, 0) or np.isclose(self.sgro, self.sgcr)):
+            raise ValueError(
+                "sgro must be zero or equal to sgcr, for compatibility with "
+                "Eclipse three-point scaling. "
+                f"sgro: {sgro}, sgcr: {sgcr}."
+            )
+
         self.tag = tag
 
         if krgendanchor in ["sorg", ""]:
@@ -125,24 +144,17 @@ class GasOil(object):
                 "No saturation range left for gas curve between endpoints, check input"
             )
 
-        if not 1 - swl - sorg - sgro > 0:
+        if not 1 - self.swl - self.sorg - self.sgro > 0:
             raise ValueError(
                 "No saturation range left for oil curve between endpoints, check input"
             )
 
-        if not (np.isclose(sgro, 0) or np.isclose(sgro, sgcr)):
-            raise ValueError(
-                "sgro must be zero or equal to sgcr, for compatibility with "
-                "Eclipse three-point scaling. "
-                f"sgro: {sgro}, sgcr: {sgcr}."
-            )
-
         sg_list = (
             [0.0]
-            + [sgcr]
-            + list(np.arange(sgcr + self.h, 1 - sorg - swl, self.h))
-            + [1 - sorg - swl]
-            + [1 - swl]
+            + [self.sgcr]
+            + list(np.arange(self.sgcr + self.h, 1 - self.sorg - self.swl, self.h))
+            + [1 - self.sorg - self.swl]
+            + [1 - self.swl]
         )
         sg_list.sort()
         self.table = pd.DataFrame(sg_list, columns=["SG"])
@@ -160,7 +172,7 @@ class GasOil(object):
 
         sgcrindex = (self.table["SG"] - (self.sgcr)).abs().sort_values().index[0]
         self.table.loc[sgcrindex, "SG"] = self.sgcr
-        if sgcrindex == 0 and sgcr > 0.0:
+        if sgcrindex == 0 and self.sgcr > 0.0:
             # Need to conserve sg=0
             zero_row = pd.DataFrame({"SG": 0}, index=[0])
             self.table = pd.concat([zero_row, self.table], sort=False).reset_index(
@@ -184,13 +196,19 @@ class GasOil(object):
         if krgendanchor == "sorg":
             # Normalized sg (sgn) is 0 at sgcr, and 1 at 1-swl-sorg
             assert 1 - swl - sgcr - sorg > epsilon
-            self.table["SGN"] = (self.table["SG"] - sgcr) / (1 - swl - sgcr - sorg)
+            self.table["SGN"] = (self.table["SG"] - self.sgcr) / (
+                1 - self.swl - self.sgcr - self.sorg
+            )
         else:
             assert 1 - swl - sgcr > epsilon
-            self.table["SGN"] = (self.table["SG"] - sgcr) / (1 - swl - sgcr)
+            self.table["SGN"] = (self.table["SG"] - self.sgcr) / (
+                1 - self.swl - self.sgcr
+            )
 
         # Normalized oil saturation should be 0 at sg=1-swl-sorg, and 1 at sg=sgro
-        self.table["SON"] = (self.table["SL"] - sorg - swl) / (1 - sorg - swl - sgro)
+        self.table["SON"] = (self.table["SL"] - self.sorg - self.swl) / (
+            1 - self.sorg - self.swl - self.sgro
+        )
         self.sgcomment = (
             "-- swirr=%g, sgcr=%g, swl=%g, sorg=%g, sgro=%g, krgendanchor=%s\n"
             % (
