@@ -7,8 +7,21 @@ import numpy as np
 import pandas as pd
 
 from ..constants import EPSILON as epsilon
+from ..constants import SWINTEGERS
 
 logger = logging.getLogger(__name__)
+
+
+def truncate_zeroness(
+    value: float, zeronesslimit: float = 1 / SWINTEGERS, name: str = "", log=True
+) -> float:
+    """Check a value for closeness to zero, and return as zero if below
+    a given limit, if not return the value"""
+    if value < zeronesslimit:
+        if log and name and not np.isclose(value, 0.0):
+            logger.warning("%s was close to zero, set to zero")
+        return 0.0
+    return value
 
 
 def crosspoint(dframe: pd.DataFrame, satcol: str, kr1col: str, kr2col: str) -> float:

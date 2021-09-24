@@ -12,7 +12,7 @@ import pyscal
 from pyscal.constants import EPSILON as epsilon
 from pyscal.constants import MAX_EXPONENT, SWINTEGERS
 from pyscal.utils.capillarypressure import simple_J
-from pyscal.utils.relperm import crosspoint, estimate_diffjumppoint
+from pyscal.utils.relperm import crosspoint, estimate_diffjumppoint, truncate_zeroness
 from pyscal.utils.string import comment_formatter, df2str
 
 logger = logging.getLogger(__name__)
@@ -98,14 +98,11 @@ class WaterOil(object):
 
         self.swirr = swirr
         self.swl = max(swl, swirr)  # Cannot allow swl < swirr. Warn?
-        if not np.isclose(sorw, 0) and sorw < 1 / SWINTEGERS:
-            # Give up handling sorw very close to zero
-            sorw = 0.0
+        self.sorw = truncate_zeroness(sorw, name="sorw")
         if self.swl < swcr < self.swl + 1 / SWINTEGERS + epsilon:
             # Give up handling swcr so close to swl
             swcr = self.swl
         self.swcr = max(self.swl, swcr)  # Cannot allow swcr < swl. Warn?
-        self.sorw = sorw
         self.tag = tag
         self.fast = fast
         sw_list = list(np.arange(self.swl, 1, self.h)) + [self.swcr] + [1 - sorw] + [1]
