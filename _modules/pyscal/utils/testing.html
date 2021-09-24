@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.utils.testing &mdash; pyscal 0.8.1.dev11+g2e20069 documentation</title>
+  <title>pyscal.utils.testing &mdash; pyscal 0.8.1.dev13+ga3a2742 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -28,7 +28,7 @@
             <img src="../../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.8.1.dev11+g2e20069
+                0.8.1.dev13+ga3a2742
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -111,7 +111,8 @@
 
 <span class="sd">    Number of floats pr. line must be constant</span>
 <span class="sd">    All numerical lines must be parseable to a rectangular dataframe</span>
-<span class="sd">    with only floats.</span>
+<span class="sd">    with only floats. The first column must contain only unique values</span>
+<span class="sd">    for every SATNUM.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="n">sat_table_str</span>
 
@@ -165,6 +166,11 @@
     <span class="c1"># The first column holds saturations, for pyscal test-data that</span>
     <span class="c1"># is always between zero and 1</span>
     <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">dframe</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="n">dframe</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="mi">1</span>
+
+    <span class="c1"># Saturations should be unique, but only within each SATNUM.</span>
+    <span class="c1"># Assert this by checking that the two consecutive numbers in the</span>
+    <span class="c1"># first column are never the same:</span>
+    <span class="k">assert</span> <span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">(),</span> <span class="mi">0</span><span class="p">))</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
 
     <span class="c1"># Second column is never capillary pressure, so there we can enforce the same</span>
     <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">dframe</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="n">dframe</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&lt;=</span> <span class="mi">1</span>

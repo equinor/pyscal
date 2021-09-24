@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.gasoil &mdash; pyscal 0.8.1.dev11+g2e20069 documentation</title>
+  <title>pyscal.gasoil &mdash; pyscal 0.8.1.dev13+ga3a2742 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -28,7 +28,7 @@
             <img src="../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.8.1.dev11+g2e20069
+                0.8.1.dev13+ga3a2742
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -177,11 +177,30 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">sorg</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span> <span class="ow">and</span> <span class="n">sorg</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">SWINTEGERS</span><span class="p">:</span>
             <span class="c1"># Too small but nonzero sorg gives too many numerical issues.</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;sorg was close to zero, set to zero&quot;</span><span class="p">)</span>
-            <span class="n">sorg</span> <span class="o">=</span> <span class="mf">0.0</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sorg</span> <span class="o">=</span> <span class="n">sorg</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sgro</span> <span class="o">=</span> <span class="n">sgro</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sorg</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sorg</span> <span class="o">=</span> <span class="n">sorg</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">sgcr</span> <span class="o">=</span> <span class="n">sgcr</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">sgcr</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span> <span class="ow">and</span> <span class="n">sgcr</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">SWINTEGERS</span><span class="p">:</span>
+            <span class="c1"># Too small but nonzero sgcr gives too many numerical issues.</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;sgcr was close to zero, set to zero&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sgcr</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sgcr</span> <span class="o">=</span> <span class="n">sgcr</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">sgro</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span> <span class="ow">and</span> <span class="n">sgro</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">SWINTEGERS</span><span class="p">:</span>
+            <span class="c1"># Too small but nonzero sgro gives too many numerical issues.</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;sgro was close to zero, set to zero&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sgro</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sgro</span> <span class="o">=</span> <span class="n">sgro</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sgro</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sgro</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sgcr</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;sgro must be zero or equal to sgcr, for compatibility with &quot;</span>
+                <span class="s2">&quot;Eclipse three-point scaling. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;sgro: </span><span class="si">{</span><span class="n">sgro</span><span class="si">}</span><span class="s2">, sgcr: </span><span class="si">{</span><span class="n">sgcr</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
         <span class="bp">self</span><span class="o">.</span><span class="n">tag</span> <span class="o">=</span> <span class="n">tag</span>
 
         <span class="k">if</span> <span class="n">krgendanchor</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;sorg&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">]:</span>
@@ -204,24 +223,17 @@
                 <span class="s2">&quot;No saturation range left for gas curve between endpoints, check input&quot;</span>
             <span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">swl</span> <span class="o">-</span> <span class="n">sorg</span> <span class="o">-</span> <span class="n">sgro</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorg</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sgro</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;No saturation range left for oil curve between endpoints, check input&quot;</span>
             <span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">sgro</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">sgro</span><span class="p">,</span> <span class="n">sgcr</span><span class="p">)):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;sgro must be zero or equal to sgcr, for compatibility with &quot;</span>
-                <span class="s2">&quot;Eclipse three-point scaling. &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;sgro: </span><span class="si">{</span><span class="n">sgro</span><span class="si">}</span><span class="s2">, sgcr: </span><span class="si">{</span><span class="n">sgcr</span><span class="si">}</span><span class="s2">.&quot;</span>
-            <span class="p">)</span>
-
         <span class="n">sg_list</span> <span class="o">=</span> <span class="p">(</span>
             <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span>
-            <span class="o">+</span> <span class="p">[</span><span class="n">sgcr</span><span class="p">]</span>
-            <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">sgcr</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorg</span> <span class="o">-</span> <span class="n">swl</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">))</span>
-            <span class="o">+</span> <span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">sorg</span> <span class="o">-</span> <span class="n">swl</span><span class="p">]</span>
-            <span class="o">+</span> <span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">swl</span><span class="p">]</span>
+            <span class="o">+</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">sgcr</span><span class="p">]</span>
+            <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sgcr</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorg</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">))</span>
+            <span class="o">+</span> <span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorg</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span><span class="p">]</span>
+            <span class="o">+</span> <span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span><span class="p">]</span>
         <span class="p">)</span>
         <span class="n">sg_list</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sg_list</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;SG&quot;</span><span class="p">])</span>
@@ -239,7 +251,7 @@
 
         <span class="n">sgcrindex</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SG&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sgcr</span><span class="p">))</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">sort_values</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sgcrindex</span><span class="p">,</span> <span class="s2">&quot;SG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sgcr</span>
-        <span class="k">if</span> <span class="n">sgcrindex</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">sgcr</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">sgcrindex</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">sgcr</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
             <span class="c1"># Need to conserve sg=0</span>
             <span class="n">zero_row</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;SG&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">zero_row</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">],</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span>
@@ -263,13 +275,19 @@
         <span class="k">if</span> <span class="n">krgendanchor</span> <span class="o">==</span> <span class="s2">&quot;sorg&quot;</span><span class="p">:</span>
             <span class="c1"># Normalized sg (sgn) is 0 at sgcr, and 1 at 1-swl-sorg</span>
             <span class="k">assert</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">swl</span> <span class="o">-</span> <span class="n">sgcr</span> <span class="o">-</span> <span class="n">sorg</span> <span class="o">&gt;</span> <span class="n">epsilon</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SGN&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SG&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">sgcr</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">swl</span> <span class="o">-</span> <span class="n">sgcr</span> <span class="o">-</span> <span class="n">sorg</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SGN&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SG&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sgcr</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span>
+                <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sgcr</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorg</span>
+            <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">assert</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">swl</span> <span class="o">-</span> <span class="n">sgcr</span> <span class="o">&gt;</span> <span class="n">epsilon</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SGN&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SG&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">sgcr</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">swl</span> <span class="o">-</span> <span class="n">sgcr</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SGN&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SG&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sgcr</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span>
+                <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sgcr</span>
+            <span class="p">)</span>
 
         <span class="c1"># Normalized oil saturation should be 0 at sg=1-swl-sorg, and 1 at sg=sgro</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SON&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SL&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">sorg</span> <span class="o">-</span> <span class="n">swl</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">sorg</span> <span class="o">-</span> <span class="n">swl</span> <span class="o">-</span> <span class="n">sgro</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SON&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SL&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorg</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span>
+            <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorg</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sgro</span>
+        <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sgcomment</span> <span class="o">=</span> <span class="p">(</span>
             <span class="s2">&quot;-- swirr=</span><span class="si">%g</span><span class="s2">, sgcr=</span><span class="si">%g</span><span class="s2">, swl=</span><span class="si">%g</span><span class="s2">, sorg=</span><span class="si">%g</span><span class="s2">, sgro=</span><span class="si">%g</span><span class="s2">, krgendanchor=</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="o">%</span> <span class="p">(</span>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.utils.relperm &mdash; pyscal 0.8.1.dev11+g2e20069 documentation</title>
+  <title>pyscal.utils.relperm &mdash; pyscal 0.8.1.dev13+ga3a2742 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -28,7 +28,7 @@
             <img src="../../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.8.1.dev11+g2e20069
+                0.8.1.dev13+ga3a2742
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -91,34 +91,44 @@
 
 
 <div class="viewcode-block" id="crosspoint"><a class="viewcode-back" href="../../../pyscal/pyscal.utils.relperm.html#pyscal.utils.relperm.crosspoint">[docs]</a><span class="k">def</span> <span class="nf">crosspoint</span><span class="p">(</span><span class="n">dframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">satcol</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">kr1col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">kr2col</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Locate the crosspoint where kr1col == kr2col</span>
+    <span class="sd">&quot;&quot;&quot;Locate the saturation value (crosspoint) where kr1col == kr2col</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        dframe: Dataframe with at least three columns</span>
 <span class="sd">        satcol: Column name for the saturation column</span>
 <span class="sd">        kr1col: Column name for first relperm column</span>
-<span class="sd">        kr2col: Columnn ame for second column</span>
+<span class="sd">        kr2col: Column name for second column</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        The saturation value (interpolated) where kr1col == kr2col, when krXcol</span>
-<span class="sd">        is linearly interpolated as a function of the saturation values.</span>
+<span class="sd">        is linearly interpolated as a function of the saturation values. In case</span>
+<span class="sd">        of errors, the function will return the value -1</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">dframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">dframe</span><span class="p">[[</span><span class="n">satcol</span><span class="p">,</span> <span class="n">kr1col</span><span class="p">,</span> <span class="n">kr2col</span><span class="p">]])</span>  <span class="c1"># Copy</span>
-    <span class="n">dframe</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;krdiff&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dframe</span><span class="p">[</span><span class="n">kr1col</span><span class="p">]</span> <span class="o">-</span> <span class="n">dframe</span><span class="p">[</span><span class="n">kr2col</span><span class="p">]</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dframe</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+
+    <span class="n">cross_dframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">dframe</span><span class="p">[[</span><span class="n">satcol</span><span class="p">,</span> <span class="n">kr1col</span><span class="p">,</span> <span class="n">kr2col</span><span class="p">]])</span>
+
+    <span class="k">if</span> <span class="n">cross_dframe</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;nan in input to crosspoint()&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">cross_dframe</span><span class="p">))</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+
+    <span class="n">cross_dframe</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;krdiff&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cross_dframe</span><span class="p">[</span><span class="n">kr1col</span><span class="p">]</span> <span class="o">-</span> <span class="n">cross_dframe</span><span class="p">[</span><span class="n">kr2col</span><span class="p">]</span>
 
     <span class="c1"># Add a zero value for the difference column, and interpolate</span>
     <span class="c1"># the saturation column to the zero value</span>
-    <span class="n">zerodf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">dframe</span><span class="p">)],</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;krdiff&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">})</span>
-    <span class="n">dframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">dframe</span><span class="p">,</span> <span class="n">zerodf</span><span class="p">],</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;krdiff&quot;</span><span class="p">)</span>
+    <span class="n">zerodf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">cross_dframe</span><span class="p">)],</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;krdiff&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">})</span>
+    <span class="n">cross_dframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">cross_dframe</span><span class="p">,</span> <span class="n">zerodf</span><span class="p">],</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;krdiff&quot;</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">dframe</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Could not compute crosspoint. Bug?&quot;</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">dframe</span><span class="p">))</span>
+    <span class="n">cross_dframe</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;slinear&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">cross_dframe</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Could not compute crosspoint)&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">cross_dframe</span><span class="p">))</span>
         <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
 
-    <span class="n">dframe</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;slinear&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">dframe</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">dframe</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)][</span><span class="n">satcol</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+    <span class="k">return</span> <span class="n">cross_dframe</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">cross_dframe</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)][</span><span class="n">satcol</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
 
 
 <div class="viewcode-block" id="estimate_diffjumppoint"><a class="viewcode-back" href="../../../pyscal/pyscal.utils.relperm.html#pyscal.utils.relperm.estimate_diffjumppoint">[docs]</a><span class="k">def</span> <span class="nf">estimate_diffjumppoint</span><span class="p">(</span>
@@ -185,7 +195,7 @@
         <span class="n">maxcumsum</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;_lindevcumsum&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
         <span class="n">linearpart</span> <span class="o">=</span> <span class="n">table</span><span class="p">[(</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;_lindevcumsum&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">maxcumsum</span><span class="p">)</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">linearpart</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">xcol</span><span class="p">]</span>
-    <span class="c1"># else:</span>
+
     <span class="n">linearpart</span> <span class="o">=</span> <span class="n">table</span><span class="p">[(</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;_lindevcumsum&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">)]</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">linearpart</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
         <span class="n">linearpart</span> <span class="o">=</span> <span class="n">table</span><span class="p">[(</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;_lindevcumsum&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">)]</span>

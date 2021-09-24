@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.utils.relperm &mdash; pyscal 0.8.1.dev11+g2e20069 documentation</title>
+  <title>pyscal.utils.relperm &mdash; pyscal 0.8.1.dev13+ga3a2742 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -31,7 +31,7 @@
             <img src="../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.8.1.dev11+g2e20069
+                0.8.1.dev13+ga3a2742
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -106,14 +106,14 @@
 <dl class="py function">
 <dt class="sig sig-object py" id="pyscal.utils.relperm.crosspoint">
 <span class="sig-prename descclassname"><span class="pre">pyscal.utils.relperm.</span></span><span class="sig-name descname"><span class="pre">crosspoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dframe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">satcol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kr1col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kr2col</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/relperm.html#crosspoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.relperm.crosspoint" title="Permalink to this definition"></a></dt>
-<dd><p>Locate the crosspoint where kr1col == kr2col</p>
+<dd><p>Locate the saturation value (crosspoint) where kr1col == kr2col</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dframe</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code>) – Dataframe with at least three columns</p></li>
 <li><p><strong>satcol</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Column name for the saturation column</p></li>
 <li><p><strong>kr1col</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Column name for first relperm column</p></li>
-<li><p><strong>kr2col</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Columnn ame for second column</p></li>
+<li><p><strong>kr2col</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Column name for second column</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -121,7 +121,8 @@
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The saturation value (interpolated) where kr1col == kr2col, when krXcol
-is linearly interpolated as a function of the saturation values.</p>
+is linearly interpolated as a function of the saturation values. In case
+of errors, the function will return the value -1</p>
 </dd>
 </dl>
 </dd></dl>
