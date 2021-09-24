@@ -22,14 +22,16 @@ class WaterOilGas(object):
 
     Use one object for each satnum.
 
-    One WaterOil and one GasOil object will be created, with
-    compatible saturation ranges. Access the class members 'wateroil'
-    and 'gasoil' directly to add curves.
+    One WaterOil and one GasOil object will be created, with compatible
+    saturation ranges. Access the class members 'wateroil' and 'gasoil'
+    directly to add curves.
 
-    All arguments to the initializer can be defaulted, and all are zero except h.
+    All arguments to the initializer can be defaulted, and all are zero except
+    h.
 
-    Either the gasoil or the wateroil member is allowed to be None
-    in case of only two phases present.
+    Either the gasoil or the wateroil member is allowed to be None in case of
+    only two phases present. It is allowed for functions to set these members
+    to None after initialization, as done in SCALrecommendation.interpolate()
 
     Args:
         swirr: Irreducible water saturation for capillary pressure
@@ -242,7 +244,7 @@ class WaterOilGas(object):
             return self.wateroil.tag + " " + self.gasoil.tag
         if self.wateroil is not None:
             return self.wateroil.tag
-        if self.gasoil is not None:
+        elif self.gasoil is not None:
             return self.gasoil.tag
         return ""
 

@@ -73,6 +73,53 @@ def test_empty():
     assert wog.SGFN() == ""
 
 
+def test_manipulated_attributes_none():
+    """It is allowed to manipulate the WaterOilGas by setting the wateroil
+    and/or the gasoil attributes to None, this is performed in
+    SCALrecommendation.interpolate() for example. Test this behaviour."""
+
+    wog_go = WaterOilGas(tag="gasoilonly")
+    # Make it into a two-phase object:
+    wog_go.wateroil = None
+    wog_go.gasoil.add_corey_gas()
+    wog_go.gasoil.add_corey_oil()
+    assert wog_go.SWFN() == ""
+    assert wog_go.SWOF() == ""
+    assert wog_go.SOF3() == ""
+    with pytest.raises(ValueError, match="wateroil is None in WaterOilGas"):
+        wog_go.swirr
+    with pytest.raises(ValueError, match="wateroil is None in WaterOilGas"):
+        wog_go.swl
+    with pytest.raises(ValueError, match="wateroil is None in WaterOilGas"):
+        wog_go.sorw
+    assert wog_go.tag == "gasoilonly"
+    assert wog_go.threephaseconsistency() is True
+
+    wog_wo = WaterOilGas(tag="wateroilonly")
+    wog_wo.gasoil = None
+    wog_wo.wateroil.add_corey_water()
+    wog_wo.wateroil.add_corey_oil()
+    assert wog_wo.SLGOF() == ""
+    assert wog_wo.SGFN() == ""
+    assert wog_wo.SOF3() == ""
+    assert wog_wo.SGOF() == ""
+    with pytest.raises(ValueError, match="gasoil is None in WaterOilGas"):
+        wog_wo.sorg
+    assert wog_wo.tag == "wateroilonly"
+    assert wog_wo.threephaseconsistency() is True
+
+    wog_nones = WaterOilGas()
+    wog_nones.wateroil = None
+    wog_nones.gasoil = None
+    wog_nones.tag == ""
+    assert wog_nones.threephaseconsistency() is True
+    assert wog_nones.SWOF() == ""
+    assert wog_nones.SGOF() == ""
+    assert wog_nones.selfcheck() is False
+    with pytest.raises(ValueError, match="wateroil is None"):
+        wog_nones.swirr
+
+
 def test_not_threephase_consistency():
     wog = WaterOilGas()
     # To trigger this, we need to hack the WaterOilGas object
