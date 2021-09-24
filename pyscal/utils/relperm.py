@@ -20,7 +20,7 @@ def crosspoint(
         inputframe: Dataframe with at least three columns
         satcol: Column name for the saturation column
         kr1col: Column name for first relperm column
-        kr2col: Columnn ame for second column
+        kr2col: Column name for second column
 
     Returns:
         The saturation value (interpolated) where kr1col == kr2col, when krXcol
