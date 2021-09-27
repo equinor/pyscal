@@ -105,7 +105,9 @@ class WaterOil(object):
         self.swcr = max(self.swl, swcr)  # Cannot allow swcr < swl. Warn?
         self.tag = tag
         self.fast = fast
-        sw_list = list(np.arange(self.swl, 1, self.h)) + [self.swcr] + [1 - sorw] + [1]
+        sw_list = (
+            list(np.arange(self.swl, 1, self.h)) + [self.swcr] + [1 - self.sorw] + [1]
+        )
         sw_list.sort()  # Using default timsort on nearly sorted data.
         self.table = pd.DataFrame(sw_list, columns=["SW"])
 
