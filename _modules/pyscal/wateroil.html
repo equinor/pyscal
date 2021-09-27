@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.wateroil &mdash; pyscal 0.8.1.dev13+ga3a2742 documentation</title>
+  <title>pyscal.wateroil &mdash; pyscal 0.8.1.dev14+g57e9f1b documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -28,7 +28,7 @@
             <img src="../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.8.1.dev13+ga3a2742
+                0.8.1.dev14+g57e9f1b
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -91,7 +91,7 @@
 <span class="kn">from</span> <span class="nn">pyscal.constants</span> <span class="kn">import</span> <span class="n">EPSILON</span> <span class="k">as</span> <span class="n">epsilon</span>
 <span class="kn">from</span> <span class="nn">pyscal.constants</span> <span class="kn">import</span> <span class="n">MAX_EXPONENT</span><span class="p">,</span> <span class="n">SWINTEGERS</span>
 <span class="kn">from</span> <span class="nn">pyscal.utils.capillarypressure</span> <span class="kn">import</span> <span class="n">simple_J</span>
-<span class="kn">from</span> <span class="nn">pyscal.utils.relperm</span> <span class="kn">import</span> <span class="n">crosspoint</span><span class="p">,</span> <span class="n">estimate_diffjumppoint</span>
+<span class="kn">from</span> <span class="nn">pyscal.utils.relperm</span> <span class="kn">import</span> <span class="n">crosspoint</span><span class="p">,</span> <span class="n">estimate_diffjumppoint</span><span class="p">,</span> <span class="n">truncate_zeroness</span>
 <span class="kn">from</span> <span class="nn">pyscal.utils.string</span> <span class="kn">import</span> <span class="n">comment_formatter</span><span class="p">,</span> <span class="n">df2str</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
@@ -177,14 +177,11 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">swirr</span> <span class="o">=</span> <span class="n">swirr</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">swl</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">swl</span><span class="p">,</span> <span class="n">swirr</span><span class="p">)</span>  <span class="c1"># Cannot allow swl &lt; swirr. Warn?</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">sorw</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="n">sorw</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">SWINTEGERS</span><span class="p">:</span>
-            <span class="c1"># Give up handling sorw very close to zero</span>
-            <span class="n">sorw</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span> <span class="o">=</span> <span class="n">truncate_zeroness</span><span class="p">(</span><span class="n">sorw</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;sorw&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span> <span class="o">&lt;</span> <span class="n">swcr</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">SWINTEGERS</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">:</span>
             <span class="c1"># Give up handling swcr so close to swl</span>
             <span class="n">swcr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">swcr</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">swl</span><span class="p">,</span> <span class="n">swcr</span><span class="p">)</span>  <span class="c1"># Cannot allow swcr &lt; swl. Warn?</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span> <span class="o">=</span> <span class="n">sorw</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tag</span> <span class="o">=</span> <span class="n">tag</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fast</span> <span class="o">=</span> <span class="n">fast</span>
         <span class="n">sw_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">swl</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">))</span> <span class="o">+</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">swcr</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>

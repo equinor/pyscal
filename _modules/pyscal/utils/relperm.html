@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.utils.relperm &mdash; pyscal 0.8.1.dev13+ga3a2742 documentation</title>
+  <title>pyscal.utils.relperm &mdash; pyscal 0.8.1.dev14+g57e9f1b documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -28,7 +28,7 @@
             <img src="../../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.8.1.dev13+ga3a2742
+                0.8.1.dev14+g57e9f1b
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -86,8 +86,21 @@
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
 <span class="kn">from</span> <span class="nn">..constants</span> <span class="kn">import</span> <span class="n">EPSILON</span> <span class="k">as</span> <span class="n">epsilon</span>
+<span class="kn">from</span> <span class="nn">..constants</span> <span class="kn">import</span> <span class="n">SWINTEGERS</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="truncate_zeroness"><a class="viewcode-back" href="../../../pyscal/pyscal.utils.relperm.html#pyscal.utils.relperm.truncate_zeroness">[docs]</a><span class="k">def</span> <span class="nf">truncate_zeroness</span><span class="p">(</span>
+    <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">zeronesslimit</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">SWINTEGERS</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">log</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;Check a value for closeness to zero, and return as zero if below</span>
+<span class="sd">    a given limit, if not return the value&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="n">zeronesslimit</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">log</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> was close to zero, set to zero&quot;</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+    <span class="k">return</span> <span class="n">value</span></div>
 
 
 <div class="viewcode-block" id="crosspoint"><a class="viewcode-back" href="../../../pyscal/pyscal.utils.relperm.html#pyscal.utils.relperm.crosspoint">[docs]</a><span class="k">def</span> <span class="nf">crosspoint</span><span class="p">(</span><span class="n">dframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">satcol</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">kr1col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">kr2col</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
