@@ -119,7 +119,7 @@ class GasOil(object):
 
         self.fast = fast
 
-        if np.isclose(sorg, 0.0) and self.krgendanchor == "sorg":
+        if np.isclose(self.sorg, 0.0) and self.krgendanchor == "sorg":
             self.krgendanchor = ""  # This is critical to avoid bugs due to numerics.
 
         if krgendanchor == "sorg" and not 1 - sorg - swl - sgcr > 0:
