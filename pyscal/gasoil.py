@@ -10,7 +10,7 @@ from scipy.interpolate import PchipInterpolator
 import pyscal
 from pyscal.constants import EPSILON as epsilon
 from pyscal.constants import MAX_EXPONENT, SWINTEGERS
-from pyscal.utils.relperm import crosspoint, estimate_diffjumppoint
+from pyscal.utils.relperm import crosspoint, estimate_diffjumppoint, truncate_zeroness
 from pyscal.utils.string import comment_formatter, df2str
 
 logger = logging.getLogger(__name__)
@@ -95,26 +95,13 @@ class GasOil(object):
         swl = max(swl, swirr)  # Can't allow swl < swirr, should we warn user?
         self.swl = swl
         self.swirr = swirr
-        if not np.isclose(sorg, 0.0) and sorg < 1.0 / SWINTEGERS:
-            # Too small but nonzero sorg gives too many numerical issues.
-            logger.warning("sorg was close to zero, set to zero")
-            self.sorg = 0.0
-        else:
-            self.sorg = sorg
 
-        if not np.isclose(sgcr, 0.0) and sgcr < 1.0 / SWINTEGERS:
-            # Too small but nonzero sgcr gives too many numerical issues.
-            logger.warning("sgcr was close to zero, set to zero")
-            self.sgcr = 0.0
-        else:
-            self.sgcr = sgcr
+        # Avoid endpoints close to zero, set them to zero if
+        # they are below a certain limit:
+        self.sorg = truncate_zeroness(sorg, name="sorg")
+        self.sgcr = truncate_zeroness(sgcr, name="sgcr")
+        self.sgro = truncate_zeroness(sgro, name="sgro")
 
-        if not np.isclose(sgro, 0.0) and sgro < 1.0 / SWINTEGERS:
-            # Too small but nonzero sgro gives too many numerical issues.
-            logger.warning("sgro was close to zero, set to zero")
-            self.sgro = 0.0
-        else:
-            self.sgro = sgro
         if not (np.isclose(self.sgro, 0) or np.isclose(self.sgro, self.sgcr)):
             raise ValueError(
                 "sgro must be zero or equal to sgcr, for compatibility with "

@@ -4,9 +4,17 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from pyscal.utils.relperm import crosspoint, estimate_diffjumppoint
+from pyscal.utils.relperm import crosspoint, estimate_diffjumppoint, truncate_zeroness
 
 # pyscal.utils.relperm.crosspoint() is also tested in test_wateroil and test_gasoil.
+
+
+@pytest.mark.parametrize(
+    "value, zeronesslimit, expected",
+    [(0, 0.1, 0), (0.01, 0.1, 0), (0.1, 0.1, 0.1), (1, 0.1, 1)],
+)
+def test_truncate_zeroness(value, zeronesslimit, expected):
+    assert truncate_zeroness(value, zeronesslimit=zeronesslimit) == expected
 
 
 @pytest.mark.parametrize(
