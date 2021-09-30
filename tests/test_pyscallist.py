@@ -70,7 +70,7 @@ def test_pyscallist_basic():
     assert len(init_from_itself) == 2
 
 
-def test_load_scalrec(tmpdir):
+def test_load_scalrec(tmp_path):
     """Load a SATNUM range from xlsx"""
     testdir = Path(__file__).absolute().parent
 

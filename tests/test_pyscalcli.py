@@ -1,6 +1,7 @@
 """Test the pyscal client"""
 
 import logging
+import os
 import subprocess
 import sys
 from pathlib import Path
@@ -24,7 +25,7 @@ def test_installed():
 
 @pytest.mark.skipif(sys.version_info < (3, 7), reason="Requires Python 3.7 or higher")
 @pytest.mark.parametrize("verbosity_flag", [None, "--verbose", "--debug"])
-def test_log_levels(tmpdir, verbosity_flag):
+def test_log_levels(tmp_path, verbosity_flag):
     """Test that we can control the log level from the command line
     client, and get log output from modules deep down"""
 
@@ -36,7 +37,7 @@ def test_log_levels(tmpdir, verbosity_flag):
     if verbosity_flag is not None:
         commands.append(verbosity_flag)
 
-    result = subprocess.run(commands, cwd=tmpdir, capture_output=True, check=True)
+    result = subprocess.run(commands, cwd=tmp_path, capture_output=True, check=True)
     output = result.stdout.decode() + result.stderr.decode()
 
     if verbosity_flag is None:
@@ -56,14 +57,14 @@ def test_log_levels(tmpdir, verbosity_flag):
         raise ValueError("Unknown value for 'verbosity_flag'")
 
 
-def test_pyscal_client_static(tmpdir, caplog, default_loglevel, mocker):
+def test_pyscal_client_static(tmp_path, caplog, default_loglevel, mocker):
     # pylint: disable=unused-argument
     # default_loglevel fixture is in conftest.py
     """Test pyscal client for static relperm input"""
     testdir = Path(__file__).absolute().parent
     relperm_file = testdir / "data/relperm-input-example.xlsx"
 
-    tmpdir.chdir()
+    os.chdir(tmp_path)
 
     caplog.clear()
     mocker.patch("sys.argv", ["pyscal", str(relperm_file)])
@@ -246,9 +247,9 @@ def test_pyscalcli_exception_catching(capsys, mocker):
     assert "raise" in outerr  # This is the traceback.
 
 
-def test_pyscalcli_oilwater(tmpdir, caplog, mocker):
+def test_pyscalcli_oilwater(tmp_path, caplog, mocker):
     """Test the command line client in two-phase oil-water"""
-    tmpdir.chdir()
+    os.chdir(tmp_path)
     relperm_file = "oilwater.csv"
     pd.DataFrame(
         columns=["SATNUM", "nw", "now", "tag"], data=[[1, 2, 3, "fooå"]]
@@ -297,9 +298,9 @@ def test_pyscalcli_oilwater(tmpdir, caplog, mocker):
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
 
 
-def test_pyscalcli_gaswater(tmpdir, caplog, mocker):
+def test_pyscalcli_gaswater(tmp_path, caplog, mocker):
     """Test the command line endpoint on gas-water problems"""
-    tmpdir.chdir()
+    os.chdir(tmp_path)
     relperm_file = "gaswater.csv"
     pd.DataFrame(columns=["SATNUM", "nw", "ng"], data=[[1, 2, 3]]).to_csv(
         relperm_file, index=False
@@ -329,10 +330,10 @@ def test_pyscalcli_gaswater(tmpdir, caplog, mocker):
     assert len(lines) > 40
 
 
-def test_pyscalcli_gaswater_scal(tmpdir, caplog, mocker):
+def test_pyscalcli_gaswater_scal(tmp_path, caplog, mocker):
     """Test the command line endpoint on gas-water problems, with
     interpolation"""
-    tmpdir.chdir()
+    os.chdir(tmp_path)
     relperm_file = "gaswater.csv"
     pd.DataFrame(
         columns=["SATNUM", "CASE", "nw", "ng"],
@@ -367,13 +368,13 @@ def test_pyscalcli_gaswater_scal(tmpdir, caplog, mocker):
     assert len(lines) > 40
 
 
-def test_pyscal_client_scal(tmpdir, caplog, default_loglevel, mocker):
+def test_pyscal_client_scal(tmp_path, caplog, default_loglevel, mocker):
     # pylint: disable=unused-argument
     # default_loglevel fixture is in conftest.py
     """Test the command line endpoint on SCAL recommendation"""
     scalrec_file = Path(__file__).absolute().parent / "data/scal-pc-input-example.xlsx"
 
-    tmpdir.chdir()
+    os.chdir(tmp_path)
 
     mocker.patch("sys.argv", ["pyscal", str(scalrec_file)])
     with pytest.raises(SystemExit):
