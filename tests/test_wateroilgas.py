@@ -1,5 +1,6 @@
 """Test module for the WaterOilGas object"""
 
+import os
 from pathlib import Path
 
 import pytest
@@ -86,7 +87,7 @@ def test_not_threephase_consistency():
 
 
 @pytest.mark.skipif(not HAVE_OPM, reason="ecl2df not installed")
-def test_parse_with_opm(tmpdir):
+def test_parse_with_opm(tmp_path):
     """Test that the SWOF+SGOF output from pyscal can be
     injected into a valid Eclipse deck"""
     wog = WaterOilGas()
@@ -149,7 +150,7 @@ EQUIL
    1000    100     1040    0   1010      0 /"""
     )
 
-    tmpdir.chdir()
+    os.chdir(tmp_path)
     Path("RELPERMTEST.DATA").write_text(ecldeck)
     deck = opm.io.Parser().parse("RELPERMTEST.DATA")
     assert "SWOF" in deck

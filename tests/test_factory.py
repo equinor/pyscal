@@ -637,7 +637,7 @@ def test_factory_wateroilgas_wo():
     wog.SGOF()
 
 
-def test_load_relperm_df(tmpdir, caplog):
+def test_load_relperm_df(tmp_path, caplog):
     """Test loading of dataframes with validation from excel or from csv"""
     testdir = Path(__file__).absolute().parent
 
@@ -654,7 +654,7 @@ def test_load_relperm_df(tmpdir, caplog):
     assert "CASE" in scaldata
     assert not scaldata.empty
 
-    tmpdir.chdir()
+    os.chdir(tmp_path)
     scaldata.to_csv("scal-input.csv")
     scaldata_fromcsv = PyscalFactory.load_relperm_df("scal-input.csv")
     assert "CASE" in scaldata_fromcsv
@@ -1154,7 +1154,7 @@ def test_case_aliasing():
         )
 
 
-def test_swirr_partially_missing(tmpdir):
+def test_swirr_partially_missing(tmp_path):
     """Test that swirr can be present for only a subset of the rows,
     and interpreted as zero when not there."""
     dframe = pd.DataFrame(
@@ -1180,7 +1180,7 @@ def test_swirr_partially_missing(tmpdir):
     assert "a=2, b=-2" in p_list[1].pccomment
     assert p_list[2].pccomment == ""
 
-    tmpdir.chdir()
+    os.chdir(tmp_path)
     dframe.to_excel("partial_pc.xlsx")
     relperm_data_via_xlsx = PyscalFactory.load_relperm_df("partial_pc.xlsx")
     p_list = PyscalFactory.create_pyscal_list(relperm_data_via_xlsx, h=0.2)
@@ -1205,7 +1205,7 @@ def test_corey_let_mix():
     assert "Corey krow" in swof2
 
 
-def test_infer_tabular_file_format(tmpdir, caplog):
+def test_infer_tabular_file_format(tmp_path, caplog):
 
     testdir = Path(__file__).absolute().parent
     assert (
@@ -1222,7 +1222,7 @@ def test_infer_tabular_file_format(tmpdir, caplog):
         factory.infer_tabular_file_format(testdir / "data/scal-pc-input-example.xls")
         == "xls"
     )
-    tmpdir.chdir()
+    os.chdir(tmp_path)
     pd.DataFrame([{"SATNUM": 1, "NW": 2}]).to_csv("some.csv", index=False)
     assert factory.infer_tabular_file_format("some.csv") == "csv"
 
