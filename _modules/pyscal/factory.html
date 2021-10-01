@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.factory &mdash; pyscal 0.8.1.dev17+gc8c4685 documentation</title>
+  <title>pyscal.factory &mdash; pyscal 0.8.1.dev19+g059902e documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -28,7 +28,7 @@
             <img src="../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.8.1.dev17+gc8c4685
+                0.8.1.dev19+g059902e
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -121,7 +121,7 @@
 <span class="n">WO_LET_WATER</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;lw&quot;</span><span class="p">,</span> <span class="s2">&quot;ew&quot;</span><span class="p">,</span> <span class="s2">&quot;tw&quot;</span><span class="p">]</span>  <span class="c1"># Will translated to l, e and t in code below.</span>
 <span class="n">WO_LET_OIL</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;low&quot;</span><span class="p">,</span> <span class="s2">&quot;eow&quot;</span><span class="p">,</span> <span class="s2">&quot;tow&quot;</span><span class="p">]</span>
 <span class="n">WO_LET_OIL_ALT</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;lo&quot;</span><span class="p">,</span> <span class="s2">&quot;eo&quot;</span><span class="p">,</span> <span class="s2">&quot;to&quot;</span><span class="p">]</span>  <span class="c1"># Alternative parameter names.</span>
-<span class="n">WO_OIL_ENDPOINTS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;kroend&quot;</span><span class="p">,</span> <span class="s2">&quot;krowend&quot;</span><span class="p">]</span>  <span class="c1"># krowend is deprecated in favour of kroend</span>
+<span class="n">WO_OIL_ENDPOINTS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;kroend&quot;</span><span class="p">]</span>
 <span class="n">WO_SIMPLE_J</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="s2">&quot;poro_ref&quot;</span><span class="p">,</span> <span class="s2">&quot;perm_ref&quot;</span><span class="p">,</span> <span class="s2">&quot;drho&quot;</span><span class="p">]</span>  <span class="c1"># &quot;g&quot; is optional</span>
 <span class="n">WO_SWLHEIGHT</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;swlheight&quot;</span><span class="p">]</span>
 <span class="n">WO_SWCR_ADD</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;swcr_add&quot;</span><span class="p">]</span>  <span class="c1"># Relevant when swlheight is in use.</span>
@@ -143,7 +143,6 @@
 <span class="n">GO_OIL_ENDPOINTS</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;kroend&quot;</span><span class="p">,</span>
     <span class="s2">&quot;kromax&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;krogend&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 <span class="n">GO_LET_GAS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;lg&quot;</span><span class="p">,</span> <span class="s2">&quot;eg&quot;</span><span class="p">,</span> <span class="s2">&quot;tg&quot;</span><span class="p">]</span>
 <span class="n">GO_LET_OIL</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="s2">&quot;eog&quot;</span><span class="p">,</span> <span class="s2">&quot;tog&quot;</span><span class="p">]</span>
@@ -167,11 +166,6 @@
 <span class="p">]</span>  <span class="c1"># &quot;g&quot; is optional</span>
 
 <span class="n">WOG_INIT</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;swirr&quot;</span><span class="p">,</span> <span class="s2">&quot;swl&quot;</span><span class="p">,</span> <span class="s2">&quot;swcr&quot;</span><span class="p">,</span> <span class="s2">&quot;sorw&quot;</span><span class="p">,</span> <span class="s2">&quot;sorg&quot;</span><span class="p">,</span> <span class="s2">&quot;sgcr&quot;</span><span class="p">,</span> <span class="s2">&quot;h&quot;</span><span class="p">,</span> <span class="s2">&quot;tag&quot;</span><span class="p">]</span>
-
-<span class="n">DEPRECATED</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;krogend&quot;</span><span class="p">:</span> <span class="s2">&quot;and will be used as kroend for GasOil&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;krowend&quot;</span><span class="p">:</span> <span class="s2">&quot;and will be used as kroend for WaterOil&quot;</span><span class="p">,</span>
-<span class="p">}</span>
 
 
 <div class="viewcode-block" id="PyscalFactory"><a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.PyscalFactory">[docs]</a><span class="k">class</span> <span class="nc">PyscalFactory</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
@@ -321,9 +315,6 @@
             <span class="n">params</span><span class="p">,</span> <span class="n">WO_LET_OIL</span> <span class="o">+</span> <span class="n">WO_LET_OIL_ALT</span> <span class="o">+</span> <span class="n">WO_OIL_ENDPOINTS</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">WO_COREY_OIL</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">params_corey_oil</span><span class="p">)):</span>
-            <span class="k">if</span> <span class="s2">&quot;krowend&quot;</span> <span class="ow">in</span> <span class="n">params_corey_oil</span><span class="p">:</span>
-                <span class="c1"># (deprecation warning is triggered)</span>
-                <span class="n">params_corey_oil</span><span class="p">[</span><span class="s2">&quot;kroend&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params_corey_oil</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;krowend&quot;</span><span class="p">)</span>
             <span class="n">wateroil</span><span class="o">.</span><span class="n">add_corey_oil</span><span class="p">(</span><span class="o">**</span><span class="n">params_corey_oil</span><span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
                 <span class="s2">&quot;Added Corey water to WaterOil object from parameters </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
@@ -333,9 +324,6 @@
             <span class="n">params_let_oil</span><span class="p">[</span><span class="s2">&quot;l&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params_let_oil</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;low&quot;</span><span class="p">)</span>
             <span class="n">params_let_oil</span><span class="p">[</span><span class="s2">&quot;e&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params_let_oil</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;eow&quot;</span><span class="p">)</span>
             <span class="n">params_let_oil</span><span class="p">[</span><span class="s2">&quot;t&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params_let_oil</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;tow&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="s2">&quot;krowend&quot;</span> <span class="ow">in</span> <span class="n">params_let_oil</span><span class="p">:</span>
-                <span class="c1"># (deprecation warning is triggered)</span>
-                <span class="n">params_let_oil</span><span class="p">[</span><span class="s2">&quot;kroend&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params_let_oil</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;krowend&quot;</span><span class="p">)</span>
             <span class="n">wateroil</span><span class="o">.</span><span class="n">add_LET_oil</span><span class="p">(</span><span class="o">**</span><span class="n">params_let_oil</span><span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
                 <span class="s2">&quot;Added LET water to WaterOil object from parameters </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
@@ -345,9 +333,6 @@
             <span class="n">params_let_oil</span><span class="p">[</span><span class="s2">&quot;l&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params_let_oil</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;lo&quot;</span><span class="p">)</span>
             <span class="n">params_let_oil</span><span class="p">[</span><span class="s2">&quot;e&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params_let_oil</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;eo&quot;</span><span class="p">)</span>
             <span class="n">params_let_oil</span><span class="p">[</span><span class="s2">&quot;t&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params_let_oil</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;to&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="s2">&quot;krowend&quot;</span> <span class="ow">in</span> <span class="n">params_let_oil</span><span class="p">:</span>
-                <span class="c1"># (deprecation warning is triggered)</span>
-                <span class="n">params_let_oil</span><span class="p">[</span><span class="s2">&quot;kroend&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params_let_oil</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;krowend&quot;</span><span class="p">)</span>
             <span class="n">wateroil</span><span class="o">.</span><span class="n">add_LET_oil</span><span class="p">(</span><span class="o">**</span><span class="n">params_let_oil</span><span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
                 <span class="s2">&quot;Added LET water to WaterOil object from parameters </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
@@ -455,9 +440,6 @@
         <span class="n">params_corey_oil</span> <span class="o">=</span> <span class="n">slicedict</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">GO_COREY_OIL</span> <span class="o">+</span> <span class="n">GO_OIL_ENDPOINTS</span><span class="p">)</span>
         <span class="n">params_let_oil</span> <span class="o">=</span> <span class="n">slicedict</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">GO_LET_OIL</span> <span class="o">+</span> <span class="n">GO_OIL_ENDPOINTS</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">GO_COREY_OIL</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">params_corey_oil</span><span class="p">)):</span>
-            <span class="k">if</span> <span class="s2">&quot;krogend&quot;</span> <span class="ow">in</span> <span class="n">params_corey_oil</span><span class="p">:</span>
-                <span class="c1"># (deprecation warning will be triggered)</span>
-                <span class="n">params_corey_oil</span><span class="p">[</span><span class="s2">&quot;kroend&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params_corey_oil</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;krogend&quot;</span><span class="p">)</span>
             <span class="n">gasoil</span><span class="o">.</span><span class="n">add_corey_oil</span><span class="p">(</span><span class="o">**</span><span class="n">params_corey_oil</span><span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
                 <span class="s2">&quot;Added Corey gas to GasOil object from parameters </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
@@ -467,9 +449,6 @@
             <span class="n">params_let_oil</span><span class="p">[</span><span class="s2">&quot;l&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params_let_oil</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
             <span class="n">params_let_oil</span><span class="p">[</span><span class="s2">&quot;e&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params_let_oil</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;eog&quot;</span><span class="p">)</span>
             <span class="n">params_let_oil</span><span class="p">[</span><span class="s2">&quot;t&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params_let_oil</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;tog&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="s2">&quot;krogend&quot;</span> <span class="ow">in</span> <span class="n">params_corey_oil</span><span class="p">:</span>
-                <span class="c1"># (deprecation warning will be triggered)</span>
-                <span class="n">params_let_oil</span><span class="p">[</span><span class="s2">&quot;kroend&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params_let_oil</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;krogend&quot;</span><span class="p">)</span>
             <span class="n">gasoil</span><span class="o">.</span><span class="n">add_LET_oil</span><span class="p">(</span><span class="o">**</span><span class="n">params_let_oil</span><span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span>
                 <span class="s2">&quot;Added LET gas to GasOil object from parameters </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
@@ -1313,13 +1292,12 @@
 <span class="sd">    Args:</span>
 <span class="sd">        params: Dictionary of parameters for which only the keys are used here.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">DEPRECATED</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;The key </span><span class="si">%s</span><span class="s2"> is deprecated </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="n">key</span><span class="p">,</span>
-                <span class="n">DEPRECATED</span><span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">()],</span>
-            <span class="p">)</span></div>
+    <span class="c1"># Block long deprecated parameters with an exception.</span>
+    <span class="c1"># Remove this block in pyscal 1.x</span>
+    <span class="k">if</span> <span class="s2">&quot;krowend&quot;</span> <span class="ow">in</span> <span class="n">params</span> <span class="ow">and</span> <span class="s2">&quot;kroend&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;krowend is not supported by pyscal. Use kroend&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s2">&quot;krogend&quot;</span> <span class="ow">in</span> <span class="n">params</span> <span class="ow">and</span> <span class="s2">&quot;kroend&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;krogend is not supported by pyscal. Use kroend&quot;</span><span class="p">)</span></div>
 </pre></div>
 
            </div>
