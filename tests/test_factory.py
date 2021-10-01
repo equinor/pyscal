@@ -934,7 +934,7 @@ def test_check_deprecated_krowgend(caplog):
     with pytest.raises(ValueError):
         PyscalFactory.create_gas_oil(dict(swl=0.1, ng=2, nog=2, krogend=0.4))
 
-    # If krogend and kroend is both present, krogend is to be silently ignored
+    # If krogend and kroend are both present, krogend is to be silently ignored
     # (random columns are in general accepted and ignored by pyscal)
 
     gasoil = PyscalFactory.create_gas_oil(
