@@ -56,7 +56,7 @@ def test_log_levels(tmpdir, verbosity_flag):
         raise ValueError("Unknown value for 'verbosity_flag'")
 
 
-def test_pyscal_client_static(tmpdir, caplog, default_loglevel):
+def test_pyscal_client_static(tmpdir, caplog, default_loglevel, mocker):
     # pylint: disable=unused-argument
     # default_loglevel fixture is in conftest.py
     """Test pyscal client for static relperm input"""
@@ -66,7 +66,7 @@ def test_pyscal_client_static(tmpdir, caplog, default_loglevel):
     tmpdir.chdir()
 
     caplog.clear()
-    sys.argv = ["pyscal", str(relperm_file)]
+    mocker.patch("sys.argv", ["pyscal", str(relperm_file)])
     pyscalcli.main()
     assert Path("relperm.inc").is_file()
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
@@ -83,19 +83,23 @@ def test_pyscal_client_static(tmpdir, caplog, default_loglevel):
     sat_table_str_ok(relpermlines)
 
     caplog.clear()
-    sys.argv = ["pyscal", str(relperm_file), "--output", "alt2relperm.inc"]
+    mocker.patch(
+        "sys.argv", ["pyscal", str(relperm_file), "--output", "alt2relperm.inc"]
+    )
     pyscalcli.main()
     assert Path("alt2relperm.inc").is_file()
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
 
     caplog.clear()
-    sys.argv = ["pyscal", str(relperm_file), "-o", "altrelperm.inc"]
+    mocker.patch("sys.argv", ["pyscal", str(relperm_file), "-o", "altrelperm.inc"])
     pyscalcli.main()
     assert Path("altrelperm.inc").is_file()
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
 
     caplog.clear()
-    sys.argv = ["pyscal", str(relperm_file), "--family2", "-o", "relperm-fam2.inc"]
+    mocker.patch(
+        "sys.argv", ["pyscal", str(relperm_file), "--family2", "-o", "relperm-fam2.inc"]
+    )
     pyscalcli.main()
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
     assert Path("relperm-fam2.inc").is_file()
@@ -108,7 +112,10 @@ def test_pyscal_client_static(tmpdir, caplog, default_loglevel):
     sat_table_str_ok(relpermlines)
 
     caplog.clear()
-    sys.argv = ["pyscal", str(relperm_file), "--slgof", "--output", "relperm-slgof.inc"]
+    mocker.patch(
+        "sys.argv",
+        ["pyscal", str(relperm_file), "--slgof", "--output", "relperm-slgof.inc"],
+    )
     pyscalcli.main()
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
     assert Path("relperm-slgof.inc").is_file()
@@ -121,33 +128,41 @@ def test_pyscal_client_static(tmpdir, caplog, default_loglevel):
 
     caplog.clear()
     # Dump to deep directory structure that does not exists
-    sys.argv = [
-        "pyscal",
-        str(relperm_file),
-        "--family2",
-        "-o",
-        "eclipse/include/props/relperm-fam2.inc",
-    ]
+    mocker.patch(
+        "sys.argv",
+        [
+            "pyscal",
+            str(relperm_file),
+            "--family2",
+            "-o",
+            "eclipse/include/props/relperm-fam2.inc",
+        ],
+    )
     pyscalcli.main()
     assert Path("eclipse/include/props/relperm-fam2.inc").is_file()
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
 
     caplog.clear()
-    sys.argv = ["pyscal", str(relperm_file), "-o", "include/props/relperm.inc"]
+    mocker.patch(
+        "sys.argv", ["pyscal", str(relperm_file), "-o", "include/props/relperm.inc"]
+    )
     pyscalcli.main()
     assert Path("include/props/relperm.inc").is_file()
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
 
     caplog.clear()
     # Check that we can read specific sheets
-    sys.argv = [
-        "pyscal",
-        str(relperm_file),
-        "--sheet_name",
-        "relperm",
-        "--output",
-        "relperm-firstsheet.inc",
-    ]
+    mocker.patch(
+        "sys.argv",
+        [
+            "pyscal",
+            str(relperm_file),
+            "--sheet_name",
+            "relperm",
+            "--output",
+            "relperm-firstsheet.inc",
+        ],
+    )
     pyscalcli.main()
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
 
@@ -158,14 +173,17 @@ def test_pyscal_client_static(tmpdir, caplog, default_loglevel):
 
     # Check that we can read specific sheets
     caplog.clear()
-    sys.argv = [
-        "pyscal",
-        str(relperm_file),
-        "--sheet_name",
-        "simple",
-        "--output",
-        "relperm-secondsheet.inc",
-    ]
+    mocker.patch(
+        "sys.argv",
+        [
+            "pyscal",
+            str(relperm_file),
+            "--sheet_name",
+            "simple",
+            "--output",
+            "relperm-secondsheet.inc",
+        ],
+    )
     pyscalcli.main()
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
     secondsheet = "\n".join(open("relperm-secondsheet.inc").readlines())
@@ -175,51 +193,60 @@ def test_pyscal_client_static(tmpdir, caplog, default_loglevel):
 
     # Check that we can read specific sheets
     caplog.clear()
-    sys.argv = [
-        "pyscal",
-        str(relperm_file),
-        "--sheet_name",
-        u"NOTEXISTINGÆÅ",
-        "--output",
-        "relperm-empty.inc",
-    ]
+    mocker.patch(
+        "sys.argv",
+        [
+            "pyscal",
+            str(relperm_file),
+            "--sheet_name",
+            u"NOTEXISTINGÆÅ",
+            "--output",
+            "relperm-empty.inc",
+        ],
+    )
     with pytest.raises(SystemExit):
         pyscalcli.main()
     assert not Path("relperm-empty.inc").is_file()
 
     caplog.clear()
-    sys.argv = ["pyscal", str(relperm_file), "--delta_s", "0.1", "-o", "deltas0p1.inc"]
+    mocker.patch(
+        "sys.argv",
+        ["pyscal", str(relperm_file), "--delta_s", "0.1", "-o", "deltas0p1.inc"],
+    )
     pyscalcli.main()
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
     linecount1 = len(open("deltas0p1.inc").readlines())
 
     caplog.clear()
-    sys.argv = [
-        "pyscal",
-        str(relperm_file),
-        "--delta_s",
-        "0.01",
-        "-o",
-        "deltas0p01.inc",
-    ]
+    mocker.patch(
+        "sys.argv",
+        [
+            "pyscal",
+            str(relperm_file),
+            "--delta_s",
+            "0.01",
+            "-o",
+            "deltas0p01.inc",
+        ],
+    )
     pyscalcli.main()
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
     linecount2 = len(open("deltas0p01.inc").readlines())
     assert linecount2 > linecount1 * 4  # since we don't filter out non-numerical lines
 
 
-def test_pyscalcli_exception_catching(capsys):
+def test_pyscalcli_exception_catching(capsys, mocker):
     """The command line client catches selected exceptions.
 
     Traceback is always included."""
-    sys.argv = ["pyscal", "notexisting.xlsx"]
+    mocker.patch("sys.argv", ["pyscal", "notexisting.xlsx"])
     with pytest.raises(SystemExit, match="File not found"):
         pyscalcli.main()
     outerr = capsys.readouterr().out + capsys.readouterr().err
     assert "raise" in outerr  # This is the traceback.
 
 
-def test_pyscalcli_oilwater(tmpdir, caplog):
+def test_pyscalcli_oilwater(tmpdir, caplog, mocker):
     """Test the command line client in two-phase oil-water"""
     tmpdir.chdir()
     relperm_file = "oilwater.csv"
@@ -227,12 +254,15 @@ def test_pyscalcli_oilwater(tmpdir, caplog):
         columns=["SATNUM", "nw", "now", "tag"], data=[[1, 2, 3, "fooå"]]
     ).to_csv(relperm_file, index=False)
     caplog.clear()
-    sys.argv = [
-        "pyscal",
-        relperm_file,
-        "--output",
-        "ow.inc",
-    ]
+    mocker.patch(
+        "sys.argv",
+        [
+            "pyscal",
+            relperm_file,
+            "--output",
+            "ow.inc",
+        ],
+    )
     pyscalcli.main()
     assert not any(record.levelno == logging.WARNING for record in caplog.records)
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
@@ -251,20 +281,23 @@ def test_pyscalcli_oilwater(tmpdir, caplog):
         ],
     ).to_csv(relperm_file, index=False)
     caplog.clear()
-    sys.argv = [
-        "pyscal",
-        relperm_file,
-        "--int_param_wo",
-        "-0.1",
-        "--output",
-        "ow-int.inc",
-    ]
+    mocker.patch(
+        "sys.argv",
+        [
+            "pyscal",
+            relperm_file,
+            "--int_param_wo",
+            "-0.1",
+            "--output",
+            "ow-int.inc",
+        ],
+    )
     pyscalcli.main()
     assert not any(record.levelno == logging.WARNING for record in caplog.records)
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
 
 
-def test_pyscalcli_gaswater(tmpdir, caplog):
+def test_pyscalcli_gaswater(tmpdir, caplog, mocker):
     """Test the command line endpoint on gas-water problems"""
     tmpdir.chdir()
     relperm_file = "gaswater.csv"
@@ -272,12 +305,15 @@ def test_pyscalcli_gaswater(tmpdir, caplog):
         relperm_file, index=False
     )
     caplog.clear()
-    sys.argv = [
-        "pyscal",
-        relperm_file,
-        "--output",
-        "gw.inc",
-    ]
+    mocker.patch(
+        "sys.argv",
+        [
+            "pyscal",
+            relperm_file,
+            "--output",
+            "gw.inc",
+        ],
+    )
     pyscalcli.main()
     assert not any(record.levelno == logging.WARNING for record in caplog.records)
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
@@ -293,7 +329,7 @@ def test_pyscalcli_gaswater(tmpdir, caplog):
     assert len(lines) > 40
 
 
-def test_pyscalcli_gaswater_scal(tmpdir, caplog):
+def test_pyscalcli_gaswater_scal(tmpdir, caplog, mocker):
     """Test the command line endpoint on gas-water problems, with
     interpolation"""
     tmpdir.chdir()
@@ -304,14 +340,17 @@ def test_pyscalcli_gaswater_scal(tmpdir, caplog):
     ).to_csv(relperm_file, index=False)
 
     caplog.clear()
-    sys.argv = [
-        "pyscal",
-        relperm_file,
-        "--int_param_wo",
-        "-0.2",
-        "--output",
-        "gw.inc",
-    ]
+    mocker.patch(
+        "sys.argv",
+        [
+            "pyscal",
+            relperm_file,
+            "--int_param_wo",
+            "-0.2",
+            "--output",
+            "gw.inc",
+        ],
+    )
     pyscalcli.main()
     assert not any(record.levelno == logging.INFO for record in caplog.records)
     assert not any(record.levelno == logging.WARNING for record in caplog.records)
@@ -328,7 +367,7 @@ def test_pyscalcli_gaswater_scal(tmpdir, caplog):
     assert len(lines) > 40
 
 
-def test_pyscal_client_scal(tmpdir, caplog, default_loglevel):
+def test_pyscal_client_scal(tmpdir, caplog, default_loglevel, mocker):
     # pylint: disable=unused-argument
     # default_loglevel fixture is in conftest.py
     """Test the command line endpoint on SCAL recommendation"""
@@ -336,12 +375,15 @@ def test_pyscal_client_scal(tmpdir, caplog, default_loglevel):
 
     tmpdir.chdir()
 
-    sys.argv = ["pyscal", str(scalrec_file)]
+    mocker.patch("sys.argv", ["pyscal", str(scalrec_file)])
     with pytest.raises(SystemExit):
         pyscalcli.main()
 
     caplog.clear()
-    sys.argv = ["pyscal", str(scalrec_file), "--int_param_wo", 0, "-o", "relperm1.inc"]
+    mocker.patch(
+        "sys.argv",
+        ["pyscal", str(scalrec_file), "--int_param_wo", 0, "-o", "relperm1.inc"],
+    )
     pyscalcli.main()
     assert not any(record.levelno == logging.INFO for record in caplog.records)
     assert not any(record.levelno == logging.WARNING for record in caplog.records)
@@ -356,14 +398,17 @@ def test_pyscal_client_scal(tmpdir, caplog, default_loglevel):
     # assert "int_param_wo: 0\n" in relpermlines  # this should be in the tag.
 
     caplog.clear()
-    sys.argv = [
-        "pyscal",
-        str(scalrec_file),
-        "--int_param_wo",
-        "-0.5",
-        "-o",
-        "relperm2.inc",
-    ]
+    mocker.patch(
+        "sys.argv",
+        [
+            "pyscal",
+            str(scalrec_file),
+            "--int_param_wo",
+            "-0.5",
+            "-o",
+            "relperm2.inc",
+        ],
+    )
     pyscalcli.main()
     assert not any(record.levelno == logging.INFO for record in caplog.records)
     assert not any(record.levelno == logging.WARNING for record in caplog.records)
@@ -372,6 +417,8 @@ def test_pyscal_client_scal(tmpdir, caplog, default_loglevel):
 
     # Multiple interpolation parameters, this was supported in pyscal <= 0.7.7,
     # but is now an error:
-    sys.argv = ["pyscal", str(scalrec_file), "--int_param_wo", "-0.5", "0"]
+    mocker.patch(
+        "sys.argv", ["pyscal", str(scalrec_file), "--int_param_wo", "-0.5", "0"]
+    )
     with pytest.raises(SystemExit):
         pyscalcli.main()
