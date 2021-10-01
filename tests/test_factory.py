@@ -744,8 +744,11 @@ def test_load_relperm_df(tmp_path, caplog):
 
     # Make an empty csv file
     Path("empty.csv").write_text("")
-    # A ValueError would also make sense here
-    assert PyscalFactory.load_relperm_df("empty.csv").empty
+    with pytest.raises(ValueError, match="Impossible to infer file format"):
+        PyscalFactory.load_relperm_df("empty.csv")
+
+    with pytest.raises(ValueError, match="SATNUM must be present"):
+        PyscalFactory.load_relperm_df(pd.DataFrame())
 
     # Merge tags and comments if both are supplied
     Path("tagandcomment.csv").write_text(
@@ -820,16 +823,52 @@ def test_xls_factory():
         assert "LET krog" in sgof
 
 
-def test_create_lists():
-    """Test the factory methods for making pyscal lists"""
+def test_create_scal_recommendation_list():
+    """Test the factory methods for making scalrecommendation lists"""
     testdir = Path(__file__).absolute().parent
-
     scalfile_xls = testdir / "data/scal-pc-input-example.xlsx"
     scaldata = PyscalFactory.load_relperm_df(scalfile_xls)
+
     scalrec_list = PyscalFactory.create_scal_recommendation_list(scaldata)
     assert len(scalrec_list) == 3
     assert scalrec_list.pyscaltype == SCALrecommendation
 
+    # Erroneous input:
+    with pytest.raises(ValueError, match="Too many cases supplied for SATNUM 2"):
+        PyscalFactory.create_scal_recommendation_list(
+            pd.DataFrame(
+                columns=["SATNUM", "CASE", "NW", "NOW"],
+                data=[
+                    [1, "low", 1, 1],
+                    [1, "base", 2, 2],
+                    [1, "high", 3, 3],
+                    [2, "low", 1, 1],
+                    [2, "nearlylow", 1.4, 1.2],
+                    [2, "base", 2, 2],
+                    [2, "high", 3, 3],
+                ],
+            )
+        )
+    with pytest.raises(ValueError, match="Too few cases supplied for SATNUM 2"):
+        PyscalFactory.create_scal_recommendation_list(
+            pd.DataFrame(
+                columns=["SATNUM", "CASE", "NW", "NOW"],
+                data=[
+                    [1, "low", 1, 1],
+                    [1, "base", 2, 2],
+                    [1, "high", 3, 3],
+                    [2, "low", 1, 1],
+                    [2, "high", 3, 3],
+                ],
+            )
+        )
+
+
+def test_create_pyscal_list():
+    """Test the factory methods for making pyscal lists"""
+    testdir = Path(__file__).absolute().parent
+    scalfile_xls = testdir / "data/scal-pc-input-example.xlsx"
+    scaldata = PyscalFactory.load_relperm_df(scalfile_xls)
     basecasedata = scaldata[scaldata["CASE"] == "base"].reset_index()
     relpermlist = PyscalFactory.create_pyscal_list(basecasedata)
     assert len(relpermlist) == 3
@@ -848,6 +887,20 @@ def test_create_lists():
 
     assert len(go_list) == 3
     assert go_list.pyscaltype == GasOil
+
+    gw_list = PyscalFactory.create_pyscal_list(
+        basecasedata.drop(["Low", "Eow", "Tow", "Log", "Eog", "Tog"], axis="columns")
+    )
+
+    assert len(gw_list) == 3
+    assert gw_list.pyscaltype == GasWater
+
+    with pytest.raises(
+        ValueError, match="Could not determine two or three phase from parameters"
+    ):
+        PyscalFactory.create_pyscal_list(
+            basecasedata.drop(["Ew", "Eg"], axis="columns")
+        )
 
 
 def test_scalrecommendation():
@@ -1272,8 +1325,6 @@ def test_infer_tabular_file_format(tmp_path, caplog):
     assert factory.infer_tabular_file_format("empty.csv") == ""
     # Ensure Pandas's error message got through:
     assert "No columns to parse from file" in caplog.text
-    # Ensure factory.py's error message got through:
-    assert "Impossible to infer file format for empty.csv" in caplog.text
 
     # We don't want ISO-8859 files, ensure we fail
     norw_chars = "Dette,er,en,CSV,fil\nmed,iso-8859:,æ,ø,å"
@@ -1288,7 +1339,6 @@ def test_infer_tabular_file_format(tmp_path, caplog):
     # little probability give a valid xlsx/xls/csv file.
     Path("wrong.csv").write_bytes(os.urandom(100))
     assert factory.infer_tabular_file_format("wrong.csv") == ""
-    assert "Impossible to infer file format for wrong.csv" in caplog.text
 
 
 @pytest.mark.parametrize(
