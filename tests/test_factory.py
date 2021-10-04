@@ -613,7 +613,7 @@ def test_factory_wateroilgas():
     assert wateroil.gasoil is None
 
 
-def test_factory_wateroilgas_deprecated_krowgend(caplog):
+def test_factory_wateroilgas_deprecated_krowgend():
     """Using long-time deprecated krowend and krogend will fail"""
     with pytest.raises(ValueError):
         PyscalFactory.create_water_oil_gas(
@@ -637,17 +637,33 @@ def test_factory_wateroilgas_wo():
     wog.SGOF()
 
 
-def test_factory_wateroil_paleooil():
+def test_factory_wateroil_paleooil(caplog):
     """Test making a WaterOil object with socr different from sorw."""
     pyscal_factory = PyscalFactory()
+    sorw = 0.09
     wo = pyscal_factory.create_water_oil(
-        dict(nw=2, now=3, kroend=0.5, sorw=0.09, socr=0.1, swcr=0.1)
+        dict(nw=2, now=3, kroend=0.5, sorw=sorw, socr=sorw + 0.01, swcr=0.1)
     )
     swof = wo.SWOF()
     assert "Corey krw" in swof
     assert "socr=0.1" in swof
     sat_table_str_ok(swof)
     check_table(wo.table)
+
+    # If socr is close to sorw, socr is reset to sorw.
+    for socr in [sorw - 1e-9, sorw, sorw + 1e-9]:
+        wo_socrignored = pyscal_factory.create_water_oil(
+            dict(nw=2, now=3, kroend=0.5, sorw=0.09, socr=socr, swcr=0.1)
+        )
+        swof = wo_socrignored.SWOF()
+        assert "socr" not in swof  # socr is effectively ignored when = sorw.
+        sat_table_str_ok(swof)
+        assert "socr was close to sorw, reset to sorw" in caplog.text
+
+    with pytest.raises(ValueError, match="socr must be equal to or larger than sorw"):
+        pyscal_factory.create_water_oil(
+            dict(nw=2, now=3, kroend=0.5, sorw=0.09, socr=0.001, swcr=0.1, h=0.1)
+        )
 
 
 def test_load_relperm_df(tmp_path, caplog):

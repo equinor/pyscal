@@ -113,7 +113,9 @@ class WaterOil(object):
 
         if socr is not None:
             self.socr = truncate_zeroness(socr, name="socr")
-            if self.sorw < self.socr < self.sorw + 1 / SWINTEGERS + epsilon:
+            if socr < self.sorw - epsilon:
+                raise ValueError("socr must be equal to or larger than sorw")
+            if self.sorw - epsilon < self.socr < self.sorw + 1 / SWINTEGERS + epsilon:
                 logger.warning("socr was close to sorw, reset to sorw")
                 self.socr = self.sorw
         else:
