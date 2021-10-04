@@ -130,7 +130,7 @@ def test_sat_table_str_ok(string):
     ],
 )
 def test_float_df_checker(data, value, expected):
-    float_df_checker(
+    assert float_df_checker(
         pd.DataFrame(columns=["idx", "values"], data=data),
         "idx",
         value,
