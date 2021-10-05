@@ -2,9 +2,10 @@
 
 import hypothesis.strategies as st
 import pandas as pd
+import pytest
 from hypothesis import given, settings
 
-from pyscal import GasWater, PyscalFactory, SCALrecommendation, WaterOilGas
+from pyscal import GasWater, PyscalFactory, SCALrecommendation, WaterOil, WaterOilGas
 from pyscal.factory import slicedict
 from pyscal.utils.testing import check_table, sat_table_str_ok
 
@@ -115,8 +116,11 @@ def test_make_scalrecommendation():
     assert "SCAL recommendation interpolation to -0.777" in interpolant.SWOF()
     assert "SCAL recommendation interpolation to 0.888" in interpolant.SGOF()
 
+    with pytest.raises(ValueError, match="Wrong arguments to SCALrecommendation"):
+        SCALrecommendation([], [], [])
 
-def test_make_scalrecommendation_wo():
+
+def test_make_scalrecommendation_wo(caplog):
     """Test that we can make scal recommendation objects
     from three WaterOilGas objects, but only with WaterOil
     objects"""
@@ -153,6 +157,10 @@ def test_make_scalrecommendation_wo():
 
     # This should return empty string
     assert not interpolant.SGOF()
+
+    # Meaningless extra argument is ignored, only warning printed:
+    rec.interpolate(-1, parameter2=1)
+    assert "parameter2 is meaningless for water-oil only" in caplog.text
 
 
 def test_make_scalrecommendation_go():
@@ -193,6 +201,9 @@ def test_make_scalrecommendation_go():
 
     # This should return empty string
     assert not interpolant.SWOF()
+
+    with pytest.raises(ValueError, match="Interpolation parameter for gas must be in"):
+        rec.interpolate(2)
 
 
 @settings(max_examples=10, deadline=2000)
@@ -336,7 +347,29 @@ def test_boundary_cases():
     )
 
 
-def test_gaswater_scal():
+def test_corner_errors():
+    """Test more or less likely error scenarios"""
+
+    # This could possibly also have been exception scenarios:
+    assert (
+        SCALrecommendation(GasWater(), GasWater(), GasWater()).interpolate(0).SWFN()
+        == ""
+    )
+    assert (
+        SCALrecommendation(WaterOilGas(), WaterOilGas(), WaterOilGas())
+        .interpolate(0)
+        .SWFN()
+        == ""
+    )
+
+    with pytest.raises(ValueError, match="Wrong arguments to SCALrecommendation"):
+        SCALrecommendation(WaterOil(), WaterOil(), WaterOil())
+
+    with pytest.raises(ValueError, match="Wrong arguments to SCALrecommendation"):
+        SCALrecommendation(WaterOilGas(), WaterOilGas(), GasWater())
+
+
+def test_gaswater_scal(caplog):
     """Test list of gas-water objects in scal recommendation"""
     dframe = pd.DataFrame(
         columns=["SATNUM", "CASE", "NW", "NG", "TAG"],
@@ -356,6 +389,17 @@ def test_gaswater_scal():
     assert "SCAL recommendation interpolation to -1" in str_fam2
     assert "SGFN" in str_fam2
     assert "SWFN" in str_fam2
+
+    # Meaningless extra argument is ignored, only warning printed:
+    rec_list[1].interpolate(-1, parameter2=1)
+    assert "parameter2 is meaningless for gas-water" in caplog.text
+    caplog.clear()
+
+    rec_list.interpolate(-1, int_params_go=1)
+    assert "parameter2 is meaningless for gas-water" in caplog.text
+
+    with pytest.raises(ValueError, match="Interpolation parameter must be in"):
+        rec_list[1].interpolate(2)
 
 
 def test_fast():

@@ -169,12 +169,6 @@ class SCALrecommendation(object):
                 and self.high.gasoil is not None
             )
 
-        if not do_gaswater:
-            if not do_wateroil and not do_gasoil:
-                raise ValueError(
-                    "Neither WaterOil or GasOil is complete in SCAL recommendation"
-                )
-
         if parameter2 is not None:
             if not do_gasoil:
                 logger.warning("parameter2 is meaningless for water-oil only")
@@ -208,11 +202,6 @@ class SCALrecommendation(object):
         tagstring = "\n".join(tags)
         if do_gaswater:
             interpolant = GasWater(h=h, tag=tagstring)
-            if gasparameter != parameter:
-                logger.warning(
-                    "Different interpolation parameters for Water and for "
-                    "gas in GasWater, this is maybe not what you want"
-                )
         else:
             interpolant = WaterOilGas(h=h, tag=tagstring)
 
