@@ -25,12 +25,11 @@ def check_endpoints(wateroil, krwend, krwmax, kroend):
     swtol = 1 / SWINTEGERS
 
     # Check endpoints for oil curve:
-    # krow at swcr should be kroend:
-    if wateroil.swcr > wateroil.swl + swtol:
-        assert float_df_checker(wateroil.table, "SON", 1.0, "KROW", kroend)
-    # krow at sorw should be zero:
-    assert float_df_checker(wateroil.table, "SON", 0.0, "KROW", 0.0)
+    assert float_df_checker(wateroil.table, "SW", wateroil.swl, "KROW", kroend)
+    assert float_df_checker(wateroil.table, "SON", 1, "KROW", kroend)
     assert np.isclose(wateroil.table["KROW"].max(), kroend)
+    assert float_df_checker(wateroil.table, "SON", 0.0, "KROW", 0.0)
+    assert float_df_checker(wateroil.table, "SW", 1 - wateroil.socr, "KROW", 0.0)
 
     # Check endpoints for water curve: (np.isclose is only reliable around 1)
     assert float_df_checker(wateroil.table, "SWN", 0.0, "KRW", 0.0)
@@ -101,16 +100,19 @@ def test_wateroil_let1(l, e, t, krwend, krwmax):
     st.floats(min_value=0, max_value=0.4),
     st.floats(min_value=0, max_value=0.4),
     st.floats(min_value=0, max_value=0.4),
+    st.floats(min_value=0, max_value=0.1),
     st.floats(min_value=0.1, max_value=1),
     st.floats(min_value=0.1, max_value=1),
     st.floats(min_value=0.1, max_value=1),
     st.floats(min_value=0.0001, max_value=1),
     st.booleans(),
 )
-def test_wateroil_krendmax(swl, swcr, sorw, kroend, krwend, krwmax, h, fast):
+def test_wateroil_krendmax(swl, swcr, sorw, socr_add, kroend, krwend, krwmax, h, fast):
     """Test endpoints for wateroil using hypothesis testing"""
     try:
-        wateroil = WaterOil(swl=swl, swcr=swcr, sorw=sorw, h=h, fast=fast)
+        wateroil = WaterOil(
+            swl=swl, swcr=swcr, socr=sorw + socr_add, sorw=sorw, h=h, fast=fast
+        )
     except AssertionError:
         return
     krwend = min(krwend, krwmax)
@@ -238,6 +240,7 @@ def test_comments():
     assert "swcr=0" in swfn
     assert "swl=0" in swfn
     assert "sorw=0" in swfn
+    assert "socr=0" not in swfn  # Only included when nonzero
     assert "nw=2" in swfn
     assert "krwend=1" in swfn
     assert "Corey" in swfn
@@ -255,6 +258,7 @@ def test_comments():
     assert "swcr=0" in swof
     assert "swl=0" in swof
     assert "sorw=0" in swof
+    assert "socr=0" not in swof  # Only included when nonzero
     assert "nw=2" in swof
     assert "now=2" in swof
     assert "krwend=1" in swof
@@ -265,6 +269,12 @@ def test_comments():
     assert "KRW" in swof
     assert "KROW" in swof
     assert "PC" in swof
+
+    paleo_wo = WaterOil(h=0.3, socr=0.1)
+    paleo_wo.add_corey_water()
+    paleo_wo.add_corey_oil()
+    assert "socr=0.1" in paleo_wo.SWFN()
+    assert "socr=0.1" in paleo_wo.SWOF()
 
 
 def test_nexus():

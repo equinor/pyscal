@@ -232,3 +232,39 @@ Process is analoguous to "Dry gas field".
     * - KRWEND
       - KRWR
       - Usually set to 1
+
+Oil paleo zone - IDC1
+---------------------
+
+In an oil paleo zone, the saturation starts at `sorw`. `socr` (critical oil
+saturation) must be larger than `sorw`. The `swcr` parameter is to be
+interpreted as residual water.
+
+.. image:: images/wateroil-paleooil-idc1.png
+    :width: 600
+
+.. list-table::
+    :widths: 25 25 50
+    :header-rows: 1
+
+    * - Pyscal
+      - Eclipse
+      - Comment
+    * - SWL
+      - SWL
+      -
+    * - SWCR
+      - SWCR
+      - Residual water. Set equal to SWL
+    * - SORW
+      - SOWCR
+      - "Initial" oil
+    * - SOCR
+      -
+      - Critical oil saturation. SOCR > SORW.
+    * - KRWEND
+      - KRWR
+      -
+    * - KRWMAX
+      - KRW
+      - Usually set to 1

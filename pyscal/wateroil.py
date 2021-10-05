@@ -48,6 +48,10 @@ class WaterOil(object):
             water saturation is above this value.
         sorw: Residual oil saturation after water flooding. At this oil
             saturation, the oil has zero relative permeability.
+        socr: Critical oil saturation, oil will not be mobile before the
+            oil saturation is above socr. This parameter will default to sorw
+            and is to be used larger than sorw for oil paleo zone modelling
+            cases.
         h: Saturation step-length in the outputted table.
         tag: Optional string identifier, only used in comments.
         fast: Set to True if in order to skip some integrity checks
@@ -61,6 +65,7 @@ class WaterOil(object):
         swl: float = 0.0,
         swcr: float = 0.0,
         sorw: float = 0.0,
+        socr: Optional[float] = None,
         h: Optional[float] = None,
         tag: str = "",
         fast: bool = False,
@@ -76,6 +81,8 @@ class WaterOil(object):
         assert -epsilon < swl < 1.0 + epsilon
         assert -epsilon < swcr < 1.0 + epsilon
         assert -epsilon < sorw < 1.0 + epsilon
+        if socr is not None:
+            assert -epsilon < socr < 1.0 + epsilon
 
         if h is None:
             h = 0.01
@@ -103,10 +110,25 @@ class WaterOil(object):
             # Give up handling swcr so close to swl
             swcr = self.swl
         self.swcr = max(self.swl, swcr)  # Cannot allow swcr < swl. Warn?
+
+        if socr is not None:
+            self.socr = truncate_zeroness(socr, name="socr")
+            if socr < self.sorw - epsilon:
+                raise ValueError("socr must be equal to or larger than sorw")
+            if self.sorw - epsilon < self.socr < self.sorw + 1 / SWINTEGERS + epsilon:
+                logger.warning("socr was close to sorw, reset to sorw")
+                self.socr = self.sorw
+        else:
+            self.socr = sorw
+
         self.tag = tag
         self.fast = fast
         sw_list = (
-            list(np.arange(self.swl, 1, self.h)) + [self.swcr] + [1 - self.sorw] + [1]
+            list(np.arange(self.swl, 1, self.h))
+            + [self.swcr]
+            + [1 - self.sorw]
+            + [1 - self.socr]
+            + [1]
         )
         sw_list.sort()  # Using default timsort on nearly sorted data.
         self.table = pd.DataFrame(sw_list, columns=["SW"])
@@ -122,6 +144,10 @@ class WaterOil(object):
         # have it by replacing the closest value by 1-sorw exactly
         sorwindex = (self.table["SW"] - (1 - self.sorw)).abs().sort_values().index[0]
         self.table.loc[sorwindex, "SW"] = 1 - self.sorw
+
+        # Same for sw=1-socr
+        socrindex = (self.table["SW"] - (1 - self.socr)).abs().sort_values().index[0]
+        self.table.loc[socrindex, "SW"] = 1 - self.socr
 
         # Same for sw=swcr:
         swcrindex = (self.table["SW"] - (self.swcr)).abs().sort_values().index[0]
@@ -139,20 +165,23 @@ class WaterOil(object):
         # Normalize for krw:
         self.table["SWN"] = (self.table["SW"] - self.swcr) / (1 - self.swcr - self.sorw)
         # Normalize for krow:
-        self.table["SON"] = (1 - self.table["SW"] - self.sorw) / (
-            1 - self.sorw - self.swl
+        self.table["SON"] = (1 - self.table["SW"] - self.socr) / (
+            1 - self.swl - self.socr
         )
 
         # Different normalization for Sw used for capillary pressure
         self.table["SWNPC"] = (self.table["SW"] - swirr) / (1 - swirr)
 
         if _sgcr is None:
-            self.swcomment = "-- swirr=%g swl=%g swcr=%g sorw=%g\n" % (
+            self.swcomment = "-- swirr=%g swl=%g swcr=%g sorw=%g" % (
                 self.swirr,
                 self.swl,
                 self.swcr,
                 self.sorw,
             )
+            if self.socr > sorw:
+                self.swcomment += f" socr={self.socr:g}"
+            self.swcomment += "\n"
         else:
             # When _sgcr is defined, this object is in use by GasWater
             self.swcomment = "-- swirr=%g swl=%g swcr=%g sgrw=%g sgcr=%g\n" % (
@@ -458,7 +487,7 @@ class WaterOil(object):
     ) -> None:
         """Set linear parts of krow outside endpoints
 
-        Curve will be zero in [1 - sorw, 1].
+        Curve will be zero in [1 - socr, 1].
 
         This function is used by add_corey_water(), and perhaps by other
         utility functions. It should not be necessary for end-users.
@@ -469,8 +498,8 @@ class WaterOil(object):
         if kromax is not None:
             logger.error("kromax is DEPRECATED, ignored")
 
-        # Set to zero above sorw:
-        self.table.loc[self.table["SW"] > 1 - self.sorw, "KROW"] = 0
+        # Set to zero above socr (usually equal to sorw):
+        self.table.loc[self.table["SW"] > 1 - self.socr - epsilon, "KROW"] = 0
 
         # Floating point issues can cause this to have become
         # slightly bigger than krowend.
@@ -1026,6 +1055,13 @@ class WaterOil(object):
         assert self.table[curve].sum() > 0
         return self.table["SW"].max() - estimate_diffjumppoint(
             self.table, xcol="SW", ycol=curve, side="right"
+        )
+
+    def estimate_socr(self) -> float:
+        """Estimate socr from the current kro data."""
+        assert self.table["KRO"].sum() > 0
+        return self.table["SW"].max() - estimate_diffjumppoint(
+            self.table, xcol="SW", ycol="KRO", side="right"
         )
 
     def estimate_swcr(self, curve: str = "KRW") -> float:

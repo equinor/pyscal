@@ -35,7 +35,7 @@ def slicedict(dct: dict, keys: Iterable):
 # for LET parameters, where the API is simplified to 'l', 'e' and 't'.
 # We are case *insensitive* in this factory class, so everything here should
 # be lower case
-WO_INIT = ["swirr", "swl", "swcr", "sorw", "sgrw", "h", "tag"]
+WO_INIT = ["swirr", "swl", "swcr", "sorw", "socr", "sgrw", "h", "tag"]
 WO_COREY_WATER = ["nw"]
 WO_WATER_ENDPOINTS = ["krwmax", "krwend"]
 WO_COREY_OIL = ["now"]
@@ -86,7 +86,7 @@ GW_SIMPLE_J_PETRO = [
     "drho",
 ]  # "g" is optional
 
-WOG_INIT = ["swirr", "swl", "swcr", "sorw", "sorg", "sgcr", "h", "tag"]
+WOG_INIT = ["swirr", "swl", "swcr", "sorw", "socr", "sorg", "sgcr", "h", "tag"]
 
 
 class PyscalFactory(object):
@@ -133,7 +133,7 @@ class PyscalFactory(object):
         translated to 'l')
 
         Recognized parameters:
-          swirr, swl, swcr, sorw, sgrw, h, tag, nw, now, krwmax, krwend,
+          swirr, swl, swcr, sorw, socr, sgrw, h, tag, nw, now, krwmax, krwend,
           lw, ew, tw, low, eow, tow, lo, eo, to, kroend,
           a, a_petro, b, b_petro, poro_ref, perm_ref, drho,
           a, b, poro, perm, sigma_costau

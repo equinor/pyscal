@@ -13,10 +13,11 @@ from pyscal.utils.testing import check_table, float_df_checker
     st.floats(),
     st.floats(),
     st.floats(),
+    st.floats(),
     st.floats(min_value=-0.1, max_value=2),
     st.text(),
 )
-def test_wateroil_random(swirr, swl, swcr, sorw, h, tag):
+def test_wateroil_random(swirr, swl, swcr, sorw, socr, h, tag):
     """Shoot wildly with arguments, the code should throw ValueError
     or AssertionError when input is invalid, but we don't want other crashes"""
     try:
@@ -29,22 +30,25 @@ def test_wateroil_random(swirr, swl, swcr, sorw, h, tag):
     st.floats(min_value=0, max_value=0.1),
     st.floats(min_value=0, max_value=0.15),
     st.floats(min_value=0, max_value=0.3),
+    st.floats(min_value=0, max_value=0.3),
     st.floats(min_value=0, max_value=0.05),
     st.floats(min_value=0.01, max_value=0.2),
     st.text(),
 )
-def test_wateroil_normalization(swirr, swl, swcr, sorw, h, tag):
+def test_wateroil_normalization(swirr, swl, swcr, sorw, socr_add, h, tag):
     """Shoot with more realistic values and test normalized saturations"""
-    wateroil = WaterOil(swirr=swirr, swl=swl, swcr=swcr, sorw=sorw, h=h, tag=tag)
+    wateroil = WaterOil(
+        swirr=swirr, swl=swl, swcr=swcr, sorw=sorw, socr=sorw + socr_add, h=h, tag=tag
+    )
     assert not wateroil.table.empty
     assert not wateroil.table.isnull().values.any()
 
     # Check that son is 1 at swl:
     assert float_df_checker(wateroil.table, "SW", wateroil.swl, "SON", 1)
 
-    # Check that son is 0 at sorw:
-    if wateroil.sorw > h:
-        assert float_df_checker(wateroil.table, "SW", 1 - wateroil.sorw, "SON", 0)
+    # Check that son is 0 at socr:
+    if wateroil.socr > h:
+        assert float_df_checker(wateroil.table, "SW", 1 - wateroil.socr, "SON", 0)
 
     # Check that swn is 0 at swcr:
     assert float_df_checker(wateroil.table, "SW", wateroil.swcr, "SWN", 0)
@@ -88,6 +92,13 @@ def test_wateroil_swcr(swcr):
 def test_wateroil_sorw(sorw):
     """Check that the saturation values are valid for all sorw"""
     wateroil = WaterOil(sorw=sorw)
+    check_table(wateroil.table)
+
+
+@given(st.floats(min_value=0, max_value=1))
+def test_wateroil_socr(socr):
+    """Check that the saturation values are valid for all socr"""
+    wateroil = WaterOil(socr=socr)
     check_table(wateroil.table)
 
 
