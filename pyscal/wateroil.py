@@ -127,7 +127,7 @@ class WaterOil(object):
                 logger.warning("socr was close to sorw, reset to sorw")
                 self.socr = self.sorw
         else:
-            self.socr = sorw
+            self.socr = self.sorw
 
         self.tag = tag
         self.fast = fast
