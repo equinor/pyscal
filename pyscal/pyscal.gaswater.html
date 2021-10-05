@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.gaswater &mdash; pyscal 0.8.1.dev23+g718459a documentation</title>
+  <title>pyscal.gaswater &mdash; pyscal 0.8.1.dev29+ge9fb245 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -32,7 +32,7 @@
             <img src="../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.8.1.dev23+g718459a
+                0.8.1.dev29+ge9fb245
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -103,7 +103,7 @@
 object for one WaterOil and one GasOil object</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pyscal.gaswater.GasWater">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pyscal.gaswater.</span></span><span class="sig-name descname"><span class="pre">GasWater</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">swirr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swcr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sgrw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sgcr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/gaswater.html#GasWater"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.gaswater.GasWater" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pyscal.gaswater.</span></span><span class="sig-name descname"><span class="pre">GasWater</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">swirr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sgl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swcr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sgrw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sgcr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/gaswater.html#GasWater"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.gaswater.GasWater" title="Permalink to this definition"></a></dt>
 <dd><p>A representation of two-phase properties for gas-water</p>
 <p>Internally, this class handles gas-water by using one WaterOil
 object and one GasOil object, with dummy parameters for oil.</p>
@@ -112,6 +112,7 @@ object and one GasOil object, with dummy parameters for oil.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>swirr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Irreducible water saturation for capillary pressure</p></li>
 <li><p><strong>swl</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – First water saturation point in outputted tables.</p></li>
+<li><p><strong>sgl</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Minimum gas saturation in a gas paleozone.</p></li>
 <li><p><strong>swcr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Critical water saturation, water is immobile below this</p></li>
 <li><p><strong>sgrw</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Residual gas saturation after water flooding.</p></li>
 <li><p><strong>sgcr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Critical gas saturation, gas is immobile below this</p></li>
@@ -240,7 +241,7 @@ water saturations, krw is linear between krwend and krwmax.</p>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>nw</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Corey parameter for water.</p></li>
-<li><p><strong>krwend</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – value of krw at 1 - sorw.</p></li>
+<li><p><strong>krwend</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – value of krw at 1 - sgcr.</p></li>
 <li><p><strong>krwmax</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – maximal value at Sw=1. Default 1</p></li>
 </ul>
 </dd>

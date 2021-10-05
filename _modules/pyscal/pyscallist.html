@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.pyscallist &mdash; pyscal 0.8.1.dev23+g718459a documentation</title>
+  <title>pyscal.pyscallist &mdash; pyscal 0.8.1.dev29+ge9fb245 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -28,7 +28,7 @@
             <img src="../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.8.1.dev23+g718459a
+                0.8.1.dev29+ge9fb245
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -269,57 +269,89 @@
             <span class="n">dframe</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">sort_rows_on</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">dframe</span></div>
 
+<div class="viewcode-block" id="PyscalList.relevant_keywords"><a class="viewcode-back" href="../../pyscal/pyscal.pyscallist.html#pyscal.pyscallist.PyscalList.relevant_keywords">[docs]</a>    <span class="k">def</span> <span class="nf">relevant_keywords</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">family</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">slgof</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+        <span class="sd">&quot;&quot;&quot;Construct a list of relevant Eclipse keywords for the data in this</span>
+<span class="sd">        Pyscallist object. This depends on the Pyscaltype, and which family is</span>
+<span class="sd">        requested&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">family</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Family must be either 1 or 2&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">==</span> <span class="n">WaterOilGas</span><span class="p">:</span>
+            <span class="c1"># WaterOilGas can be of type WaterOil or GasOil when it emerges</span>
+            <span class="c1"># from a SCAL recommendation, signified by None-ness of attributes</span>
+            <span class="k">if</span> <span class="n">family</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;SWFN&quot;</span><span class="p">,</span> <span class="s2">&quot;SGFN&quot;</span><span class="p">,</span> <span class="s2">&quot;SOF3&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscal_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">gasoil</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+                <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;SWOF&quot;</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscal_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">wateroil</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1"># type: ignore</span>
+                <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;SGOF&quot;</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="n">slgof</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;SWOF&quot;</span><span class="p">,</span> <span class="s2">&quot;SGOF&quot;</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;SWOF&quot;</span><span class="p">,</span> <span class="s2">&quot;SLGOF&quot;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">==</span> <span class="n">WaterOil</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">family</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Family 2 only supported for WaterOilGas and GasWater&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;SWOF&quot;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">==</span> <span class="n">GasOil</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">family</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Family 2 only supported for WaterOilGas and GasWater&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">slgof</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;SLGOF not meaningful for GasOil&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;SGOF&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">==</span> <span class="n">GasWater</span>
+            <span class="k">if</span> <span class="n">family</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">[</span><span class="s2">&quot;SWFN&quot;</span><span class="p">,</span> <span class="s2">&quot;SGFN&quot;</span><span class="p">]</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Family 1 output not possible for GasWater&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PyscalList.build_eclipse_data"><a class="viewcode-back" href="../../pyscal/pyscal.pyscallist.html#pyscal.pyscallist.PyscalList.build_eclipse_data">[docs]</a>    <span class="k">def</span> <span class="nf">build_eclipse_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">family</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">slgof</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Construct Eclipse keywords and data for relative permeability</span>
+<span class="sd">        properties of family 1 or 2 type.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            slgof: Set to true of SLGOF is wanted instead of SGOF. Only applicable</span>
+<span class="sd">            if family is 1.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">family</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Family must be either 1 or 2&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">==</span> <span class="n">SCALrecommendation</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;You need to interpolate before you can dump a SCAL recommendation&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="n">family</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">slgof</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;SLGOF not meaningful for family 2&quot;</span><span class="p">)</span>
+        <span class="n">keywords</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">relevant_keywords</span><span class="p">(</span><span class="n">family</span><span class="o">=</span><span class="n">family</span><span class="p">,</span> <span class="n">slgof</span><span class="o">=</span><span class="n">slgof</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+            <span class="s2">&quot;Keywords </span><span class="si">%s</span><span class="s2"> (family </span><span class="si">%d</span><span class="s2">) for </span><span class="si">%d</span><span class="s2"> SATNUMs generated&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">keywords</span><span class="p">),</span>
+            <span class="n">family</span><span class="p">,</span>
+            <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">)()</span> <span class="k">for</span> <span class="n">keyword</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">])</span></div>
+
 <div class="viewcode-block" id="PyscalList.dump_family_1"><a class="viewcode-back" href="../../pyscal/pyscal.pyscallist.html#pyscal.pyscallist.PyscalList.dump_family_1">[docs]</a>    <span class="k">def</span> <span class="nf">dump_family_1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">slgof</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Dumps family 1 Eclipse saturation tables to one</span>
 <span class="sd">        filename. This means SWOF + SGOF (SGOF only if relevant)</span>
+
+<span class="sd">        This function is deprecated. Use make_family_1() and write to</span>
+<span class="sd">        disk in calling code.</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            filename: Filename for the output to be given to Eclipse 100</span>
 <span class="sd">            slgof: Set to true of SLGOF is wanted instead of SGOF</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">==</span> <span class="n">SCALrecommendation</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="s2">&quot;You need to interpolate before you can dump a SCAL recommendation&quot;</span>
-            <span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">==</span> <span class="n">WaterOilGas</span><span class="p">:</span>
-            <span class="c1"># WaterOilGas can be of type WaterOil when it emerges</span>
-            <span class="c1"># from a SCAL recommendation, do a fragile test:</span>
-            <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyscal_list</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">WaterOilGas</span><span class="p">)</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscal_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">gasoil</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">family_1_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SWOF</span><span class="p">()</span>
-                <span class="n">keywords</span> <span class="o">=</span> <span class="s2">&quot;SWOF&quot;</span>
-            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscal_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">wateroil</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">family_1_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SGOF</span><span class="p">()</span>
-                <span class="n">keywords</span> <span class="o">=</span> <span class="s2">&quot;SGOF&quot;</span>
-            <span class="k">elif</span> <span class="ow">not</span> <span class="n">slgof</span><span class="p">:</span>
-                <span class="n">family_1_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SWOF</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">SGOF</span><span class="p">()</span>
-                <span class="n">keywords</span> <span class="o">=</span> <span class="s2">&quot;SWOF and SGOF&quot;</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">family_1_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SWOF</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">SLGOF</span><span class="p">()</span>
-                <span class="n">keywords</span> <span class="o">=</span> <span class="s2">&quot;SWOF and SLGOF&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">==</span> <span class="n">WaterOil</span><span class="p">:</span>
-            <span class="n">family_1_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SWOF</span><span class="p">()</span>
-            <span class="n">keywords</span> <span class="o">=</span> <span class="s2">&quot;SWOF&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">==</span> <span class="n">GasOil</span><span class="p">:</span>
-            <span class="n">family_1_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SGOF</span><span class="p">()</span>
-            <span class="n">keywords</span> <span class="o">=</span> <span class="s2">&quot;SGOF&quot;</span>
-            <span class="k">if</span> <span class="n">slgof</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;SLGOF not meaningful for GasOil. Ignored&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">==</span> <span class="n">GasWater</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Family 1 output not possible for GasWater&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;dump_family_1() is deprecated&quot;</span><span class="p">)</span>
+        <span class="n">string</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_eclipse_data</span><span class="p">(</span><span class="n">family</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">slgof</span><span class="o">=</span><span class="n">slgof</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="s2">&quot;Dumping family 1 keywords (</span><span class="si">%s</span><span class="s2">) for </span><span class="si">%d</span><span class="s2"> SATNUMs to </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="n">keywords</span><span class="p">,</span>
-                <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span>
-                <span class="n">filename</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">family_1_str</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">family_1_str</span></div>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;Please create the output directory prior to calling pyscal.&quot;</span>
+                <span class="p">)</span>
+                <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">string</span></div>
 
 <div class="viewcode-block" id="PyscalList.dump_family_2"><a class="viewcode-back" href="../../pyscal/pyscal.pyscallist.html#pyscal.pyscallist.PyscalList.dump_family_2">[docs]</a>    <span class="k">def</span> <span class="nf">dump_family_2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Dumps family 2 Eclipse saturation tables to one</span>
@@ -330,31 +362,16 @@
 <span class="sd">        Args:</span>
 <span class="sd">            filename (str): Filename for the output to be given to Eclipse 100</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">==</span> <span class="n">SCALrecommendation</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-                <span class="s2">&quot;You need to interpolate before you can dump a SCAL recommendation&quot;</span>
-            <span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">==</span> <span class="n">WaterOilGas</span><span class="p">:</span>
-            <span class="n">family_2_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SWFN</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">SGFN</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">SOF3</span><span class="p">()</span>
-            <span class="n">keywords</span> <span class="o">=</span> <span class="s2">&quot;SWFN, SGFN and SOF3&quot;</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">==</span> <span class="n">GasWater</span><span class="p">:</span>
-            <span class="n">family_2_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SWFN</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">SGFN</span><span class="p">()</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">keywords</span> <span class="o">=</span> <span class="s2">&quot;SWFN and SGFN&quot;</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Family 2 only supported for WaterOilGas and GasWater&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;dump_family_2() is deprecated&quot;</span><span class="p">)</span>
+        <span class="n">string</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">build_eclipse_data</span><span class="p">(</span><span class="n">family</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">slgof</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">filename</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="s2">&quot;Dumping family 2 keywords (</span><span class="si">%s</span><span class="s2">) for </span><span class="si">%d</span><span class="s2"> SATNUMs to </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="n">keywords</span><span class="p">,</span>
-                <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span>
-                <span class="n">filename</span><span class="p">,</span>
-            <span class="p">)</span>
-            <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">family_2_str</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">family_2_str</span></div>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                    <span class="s2">&quot;Please create the output directory prior to calling pyscal.&quot;</span>
+                <span class="p">)</span>
+                <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">Path</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">string</span></div>
 
 <div class="viewcode-block" id="PyscalList.interpolate"><a class="viewcode-back" href="../../pyscal/pyscal.pyscallist.html#pyscal.pyscallist.PyscalList.interpolate">[docs]</a>    <span class="k">def</span> <span class="nf">interpolate</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -379,8 +396,9 @@
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">!=</span> <span class="n">SCALrecommendation</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Can only interpolate PyscalList of type SCALrecommendation&quot;</span><span class="p">)</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;Can only interpolate PyscalList of type SCALrecommendation&quot;</span>
+            <span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">int_params_wo</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
             <span class="n">int_params_wo</span> <span class="o">=</span> <span class="p">[</span><span class="n">int_params_wo</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__len__</span><span class="p">()</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">int_params_wo</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">int_params_wo</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
@@ -417,7 +435,6 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">write_to_filename</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">gaswater</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Internal helper function for constructing strings and writing to disk&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">==</span> <span class="n">SCALrecommendation</span><span class="p">:</span>
@@ -426,17 +443,11 @@
             <span class="p">)</span>
         <span class="n">first_obj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscal_list</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">outputter</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">first_obj</span><span class="p">,</span> <span class="n">keyword</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">gaswater</span><span class="p">:</span>
-            <span class="n">string</span> <span class="o">=</span> <span class="n">outputter</span><span class="p">(</span><span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">gaswater</span><span class="o">=</span><span class="n">gaswater</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">string</span> <span class="o">=</span> <span class="n">outputter</span><span class="p">(</span><span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">string</span> <span class="o">=</span> <span class="n">outputter</span><span class="p">(</span><span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyscal_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">pyscal_obj</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscal_list</span><span class="p">[</span><span class="mi">1</span><span class="p">:]:</span>
                 <span class="n">outputter</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">pyscal_obj</span><span class="p">,</span> <span class="n">keyword</span><span class="p">)</span>
-                <span class="k">if</span> <span class="n">gaswater</span><span class="p">:</span>
-                    <span class="n">string</span> <span class="o">+=</span> <span class="n">outputter</span><span class="p">(</span><span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">gaswater</span><span class="o">=</span><span class="n">gaswater</span><span class="p">)</span>
-                <span class="k">else</span><span class="p">:</span>
-                    <span class="n">string</span> <span class="o">+=</span> <span class="n">outputter</span><span class="p">(</span><span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="n">string</span> <span class="o">+=</span> <span class="n">outputter</span><span class="p">(</span><span class="n">header</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">write_to_filename</span><span class="p">:</span>
             <span class="n">Path</span><span class="p">(</span><span class="n">write_to_filename</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="n">Path</span><span class="p">(</span><span class="n">write_to_filename</span><span class="p">)</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="n">string</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span>
@@ -454,17 +465,13 @@
         <span class="sd">&quot;&quot;&quot;Make SLGOF string and optionally print to file&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_ecl_output</span><span class="p">(</span><span class="s2">&quot;SLGOF&quot;</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PyscalList.SGFN"><a class="viewcode-back" href="../../pyscal/pyscal.pyscallist.html#pyscal.pyscallist.PyscalList.SGFN">[docs]</a>    <span class="k">def</span> <span class="nf">SGFN</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">gaswater</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="PyscalList.SGFN"><a class="viewcode-back" href="../../pyscal/pyscal.pyscallist.html#pyscal.pyscallist.PyscalList.SGFN">[docs]</a>    <span class="k">def</span> <span class="nf">SGFN</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Make SGFN string and optionally print to file&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_ecl_output</span><span class="p">(</span><span class="s2">&quot;SGFN&quot;</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="p">,</span> <span class="n">gaswater</span><span class="o">=</span><span class="n">gaswater</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_ecl_output</span><span class="p">(</span><span class="s2">&quot;SGFN&quot;</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="PyscalList.SWFN"><a class="viewcode-back" href="../../pyscal/pyscal.pyscallist.html#pyscal.pyscallist.PyscalList.SWFN">[docs]</a>    <span class="k">def</span> <span class="nf">SWFN</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">gaswater</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<div class="viewcode-block" id="PyscalList.SWFN"><a class="viewcode-back" href="../../pyscal/pyscal.pyscallist.html#pyscal.pyscallist.PyscalList.SWFN">[docs]</a>    <span class="k">def</span> <span class="nf">SWFN</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Make SWFN string and optionally print to file&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_ecl_output</span><span class="p">(</span><span class="s2">&quot;SWFN&quot;</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="p">,</span> <span class="n">gaswater</span><span class="o">=</span><span class="n">gaswater</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">make_ecl_output</span><span class="p">(</span><span class="s2">&quot;SWFN&quot;</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PyscalList.SOF3"><a class="viewcode-back" href="../../pyscal/pyscal.pyscallist.html#pyscal.pyscallist.PyscalList.SOF3">[docs]</a>    <span class="k">def</span> <span class="nf">SOF3</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Make SOF3 string and optionally print to file&quot;&quot;&quot;</span>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.wateroil &mdash; pyscal 0.8.1.dev23+g718459a documentation</title>
+  <title>pyscal.wateroil &mdash; pyscal 0.8.1.dev29+ge9fb245 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -28,7 +28,7 @@
             <img src="../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.8.1.dev23+g718459a
+                0.8.1.dev29+ge9fb245
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -102,11 +102,11 @@
 
 <span class="sd">    Can hold relative permeability data, and capillary pressure.</span>
 
-<span class="sd">    Parametrizations for relative permeability:</span>
+<span class="sd">    Parametrizations for relative permeability</span>
 <span class="sd">     * Corey</span>
 <span class="sd">     * LET</span>
 
-<span class="sd">    For capillary pressure:</span>
+<span class="sd">    For capillary pressure</span>
 <span class="sd">     * Simplified J-function</span>
 
 <span class="sd">    For object initialization, only saturation endpoints must be inputted,</span>
@@ -149,11 +149,12 @@
         <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
         <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
         <span class="n">_sgcr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">_sgl</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Sets up the saturation range. Swirr is only relevant</span>
 <span class="sd">        for the capillary pressure, not for relperm data.</span>
 
-<span class="sd">        _sgcr is only to be used by the GasWater object.</span>
+<span class="sd">        _sgcr and _sgl are only to be used by the GasWater object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">assert</span> <span class="o">-</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">swirr</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">epsilon</span>
@@ -181,6 +182,13 @@
 
         <span class="k">if</span> <span class="n">_sgcr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sgcr</span> <span class="o">=</span> <span class="n">_sgcr</span>
+        <span class="k">if</span> <span class="n">_sgl</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">swl</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">_sgl</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">,</span> <span class="s2">&quot;1-sgl must be between swl and 1&quot;</span>
+            <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">sgcr</span> <span class="o">+</span> <span class="n">epsilon</span> <span class="o">&gt;</span> <span class="n">_sgl</span><span class="p">,</span> <span class="s2">&quot;sgcr must be larger than sgl&quot;</span>
+            <span class="k">assert</span> <span class="n">sorw</span> <span class="o">+</span> <span class="n">epsilon</span> <span class="o">&gt;</span> <span class="n">_sgl</span><span class="p">,</span> <span class="s2">&quot;sorw/sgrw must be larger than sgl&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sgl</span> <span class="o">=</span> <span class="n">truncate_zeroness</span><span class="p">(</span><span class="n">_sgl</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;_sgl&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sgl</span> <span class="o">=</span> <span class="mf">0.0</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">swirr</span> <span class="o">=</span> <span class="n">swirr</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">swl</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">swl</span><span class="p">,</span> <span class="n">swirr</span><span class="p">)</span>  <span class="c1"># Cannot allow swl &lt; swirr. Warn?</span>
@@ -203,11 +211,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">tag</span> <span class="o">=</span> <span class="n">tag</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fast</span> <span class="o">=</span> <span class="n">fast</span>
         <span class="n">sw_list</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">swl</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">))</span>
+            <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">swl</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sgl</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">))</span>
             <span class="o">+</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">swcr</span><span class="p">]</span>
             <span class="o">+</span> <span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span><span class="p">]</span>
             <span class="o">+</span> <span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">socr</span><span class="p">]</span>
-            <span class="o">+</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="o">+</span> <span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sgl</span><span class="p">]</span>
         <span class="p">)</span>
         <span class="n">sw_list</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>  <span class="c1"># Using default timsort on nearly sorted data.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sw_list</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">])</span>
@@ -233,9 +241,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">swcrindex</span><span class="p">,</span> <span class="s2">&quot;SW&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">swcr</span>
 
         <span class="c1"># If sw=1 was dropped, then sorw was close to zero:</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="mf">1.0</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sgl</span><span class="p">):</span>
             <span class="c1"># Add it as an extra row:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;SW&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;SW&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sgl</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s2">&quot;SW&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
@@ -260,16 +268,18 @@
             <span class="p">)</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">socr</span> <span class="o">&gt;</span> <span class="n">sorw</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">swcomment</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; socr=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">socr</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">swcomment</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># When _sgcr is defined, this object is in use by GasWater</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">swcomment</span> <span class="o">=</span> <span class="s2">&quot;-- swirr=</span><span class="si">%g</span><span class="s2"> swl=</span><span class="si">%g</span><span class="s2"> swcr=</span><span class="si">%g</span><span class="s2"> sgrw=</span><span class="si">%g</span><span class="s2"> sgcr=</span><span class="si">%g</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">swcomment</span> <span class="o">=</span> <span class="s2">&quot;-- swirr=</span><span class="si">%g</span><span class="s2"> swl=</span><span class="si">%g</span><span class="s2"> swcr=</span><span class="si">%g</span><span class="s2"> sgrw=</span><span class="si">%g</span><span class="s2"> sgcr=</span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">swirr</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">swl</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">swcr</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span><span class="p">,</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">sgcr</span><span class="p">,</span>
             <span class="p">)</span>
+            <span class="k">if</span> <span class="n">_sgl</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">swcomment</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; sgl=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sgl</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">swcomment</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">krwcomment</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">krowcomment</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -522,7 +532,7 @@
         <span class="sd">&quot;&quot;&quot;Set linear parts of krw outside endpoints.</span>
 
 <span class="sd">        Curve will be linear from [1 - sorw, 1] (from krwmax to krwend)</span>
-<span class="sd">        and zero in [swl, swcr]</span>
+<span class="sd">        and zero in [swl, swcr].</span>
 
 <span class="sd">        This function is used by add_corey_water(), and perhaps by other</span>
 <span class="sd">        utility functions. It should not be necessary for end-users.</span>

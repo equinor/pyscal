@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.gaswater &mdash; pyscal 0.8.1.dev23+g718459a documentation</title>
+  <title>pyscal.gaswater &mdash; pyscal 0.8.1.dev29+ge9fb245 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -28,7 +28,7 @@
             <img src="../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.8.1.dev23+g718459a
+                0.8.1.dev29+ge9fb245
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -112,6 +112,7 @@
 <span class="sd">    Args:</span>
 <span class="sd">        swirr: Irreducible water saturation for capillary pressure</span>
 <span class="sd">        swl: First water saturation point in outputted tables.</span>
+<span class="sd">        sgl: Minimum gas saturation in a gas paleozone.</span>
 <span class="sd">        swcr: Critical water saturation, water is immobile below this</span>
 <span class="sd">        sgrw: Residual gas saturation after water flooding.</span>
 <span class="sd">        sgcr: Critical gas saturation, gas is immobile below this</span>
@@ -125,6 +126,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">swirr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
         <span class="n">swl</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">sgl</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
         <span class="n">swcr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
         <span class="n">sgrw</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
         <span class="n">sgcr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
@@ -149,10 +151,12 @@
             <span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">,</span>
             <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">,</span>
             <span class="n">_sgcr</span><span class="o">=</span><span class="n">sgcr</span><span class="p">,</span>
+            <span class="n">_sgl</span><span class="o">=</span><span class="n">sgl</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">sgcr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">sgcr</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sgrw</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">sgrw</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sgl</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">sgl</span>
         <span class="c1"># (remaining parameters are implemented as property functions)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="p">:</span> <span class="n">GasOil</span> <span class="o">=</span> <span class="n">GasOil</span><span class="p">(</span>
@@ -163,10 +167,10 @@
             <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span>
             <span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">,</span>
             <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">,</span>
+            <span class="n">_sgl</span><span class="o">=</span><span class="n">sgl</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="c1"># Dummy oil curves, just to avoid objects</span>
-        <span class="c1"># being invalid.</span>
+        <span class="c1"># Dummy oil curves, just to avoid objects being invalid.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">add_corey_oil</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">add_corey_oil</span><span class="p">()</span>
 
@@ -197,7 +201,7 @@
 
 <span class="sd">        Args:</span>
 <span class="sd">            nw: Corey parameter for water.</span>
-<span class="sd">            krwend: value of krw at 1 - sorw.</span>
+<span class="sd">            krwend: value of krw at 1 - sgcr.</span>
 <span class="sd">            krwmax: maximal value at Sw=1. Default 1</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">add_corey_water</span><span class="p">(</span><span class="n">nw</span><span class="p">,</span> <span class="n">krwend</span><span class="p">,</span> <span class="n">krwmax</span><span class="p">)</span></div>
