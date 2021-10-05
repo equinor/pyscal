@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Usage &mdash; pyscal 0.8.1.dev21+g39f3b10 documentation</title>
+  <title>Usage &mdash; pyscal 0.8.1.dev22+g21c3c71 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -31,7 +31,7 @@
             <img src="_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.8.1.dev21+g39f3b10
+                0.8.1.dev22+g21c3c71
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -107,7 +107,7 @@
 line tool is a short wrapper utilizing the underlying pyscal functionality.</p>
 <section id="the-command-line-tool">
 <h2>The command line tool<a class="headerlink" href="#the-command-line-tool" title="Permalink to this headline"></a></h2>
-<p><p>pyscal (0.8.1.dev21+g39f3b10.d20211005) is a tool to create Eclipse include files for relative permeability input from tabulated parameters.</p>
+<p><p>pyscal (0.8.1.dev22+g21c3c71.d20211005) is a tool to create Eclipse include files for relative permeability input from tabulated parameters.</p>
 </p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">pyscal</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">debug</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">version</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">o</span> <span class="n">OUTPUT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">delta_s</span> <span class="n">DELTA_S</span><span class="p">]</span>
               <span class="p">[</span><span class="o">--</span><span class="n">int_param_wo</span> <span class="n">INT_PARAM_WO</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">int_param_go</span> <span class="n">INT_PARAM_GO</span><span class="p">]</span>
@@ -401,6 +401,8 @@ column names, and in the API these arguments are used in a lower-case version.</
 <section id="water-oil">
 <h3>Water-Oil<a class="headerlink" href="#water-oil" title="Permalink to this headline"></a></h3>
 <a class="reference internal image-reference" href="_images/wateroil-endpoints.png"><img alt="_images/wateroil-endpoints.png" src="_images/wateroil-endpoints.png" style="width: 600px;" /></a>
+<p>The <code class="docutils literal notranslate"><span class="pre">socr</span></code> parameter is optional, and will default to <code class="docutils literal notranslate"><span class="pre">sorw</span></code>. It is only
+meant to be different from <code class="docutils literal notranslate"><span class="pre">sorw</span></code> in oil paleo zone modelling problems.</p>
 <p>When initialized through xlsx/csv (through PyscalFactory) a parameter called
 <code class="docutils literal notranslate"><span class="pre">swcr_add</span></code> is available. If <code class="docutils literal notranslate"><span class="pre">swcr_add</span></code> is provided, <code class="docutils literal notranslate"><span class="pre">swcr</span></code> will be
 calculated as <code class="docutils literal notranslate"><span class="pre">swl</span></code> plus this delta value.</p>
@@ -479,7 +481,7 @@ resolution on the saturation scale.</p>
 <p>The output from the code above is:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="go">SWOF</span>
 <span class="go">-- Foobarites</span>
-<span class="go">-- pyscal: 0.7.x</span>
+<span class="go">-- pyscal: 0.8.x</span>
 <span class="go">-- swirr=0 swl=0.05 swcr=0.05 sorw=0.03</span>
 <span class="go">-- Corey krw, nw=2.1, krwend=0.6, krwmax=1</span>
 <span class="go">-- Corey krow, now=2.5, kroend=0.9</span>

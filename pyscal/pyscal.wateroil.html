@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.wateroil &mdash; pyscal 0.8.1.dev21+g39f3b10 documentation</title>
+  <title>pyscal.wateroil &mdash; pyscal 0.8.1.dev22+g21c3c71 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -32,7 +32,7 @@
             <img src="../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.8.1.dev21+g39f3b10
+                0.8.1.dev22+g21c3c71
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -102,7 +102,7 @@
 <p>Wateroil module</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pyscal.wateroil.WaterOil">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pyscal.wateroil.</span></span><span class="sig-name descname"><span class="pre">WaterOil</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">swirr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swcr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sorw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_sgcr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/wateroil.html#WaterOil"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pyscal.wateroil.</span></span><span class="sig-name descname"><span class="pre">WaterOil</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">swirr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swcr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sorw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">socr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">_sgcr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/wateroil.html#WaterOil"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil" title="Permalink to this definition"></a></dt>
 <dd><p>A representation of two-phase properties for oil-water.</p>
 <p>Can hold relative permeability data, and capillary pressure.</p>
 <dl class="simple">
@@ -133,6 +133,10 @@ for normalized saturations.</p></li>
 water saturation is above this value.</p></li>
 <li><p><strong>sorw</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Residual oil saturation after water flooding. At this oil
 saturation, the oil has zero relative permeability.</p></li>
+<li><p><strong>socr</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Critical oil saturation, oil will not be mobile before the
+oil saturation is above socr. This parameter will default to sorw
+and is to be used larger than sorw for oil paleo zone modelling
+cases.</p></li>
 <li><p><strong>h</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Saturation step-length in the outputted table.</p></li>
 <li><p><strong>tag</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Optional string identifier, only used in comments.</p></li>
 <li><p><strong>fast</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Set to True if in order to skip some integrity checks
@@ -494,6 +498,17 @@ linearly interpolated in water saturation.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="pyscal.wateroil.WaterOil.estimate_socr">
+<span class="sig-name descname"><span class="pre">estimate_socr</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/wateroil.html#WaterOil.estimate_socr"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.estimate_socr" title="Permalink to this definition"></a></dt>
+<dd><p>Estimate socr from the current kro data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="pyscal.wateroil.WaterOil.estimate_sorw">
 <span class="sig-name descname"><span class="pre">estimate_sorw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">curve</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'KRW'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/wateroil.html#WaterOil.estimate_sorw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.estimate_sorw" title="Permalink to this definition"></a></dt>
 <dd><p>Estimate sorw of the current krw data.</p>
@@ -595,7 +610,7 @@ the error and give an error.</p>
 <dt class="sig sig-object py" id="pyscal.wateroil.WaterOil.set_endpoints_linearpart_krow">
 <span class="sig-name descname"><span class="pre">set_endpoints_linearpart_krow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">kroend</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kromax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/wateroil.html#WaterOil.set_endpoints_linearpart_krow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.set_endpoints_linearpart_krow" title="Permalink to this definition"></a></dt>
 <dd><p>Set linear parts of krow outside endpoints</p>
-<p>Curve will be zero in [1 - sorw, 1].</p>
+<p>Curve will be zero in [1 - socr, 1].</p>
 <p>This function is used by add_corey_water(), and perhaps by other
 utility functions. It should not be necessary for end-users.</p>
 <dl class="field-list simple">

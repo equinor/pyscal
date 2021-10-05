@@ -58,6 +58,9 @@ Water-Oil
 .. image:: images/wateroil-endpoints.png
     :width: 600
 
+The ``socr`` parameter is optional, and will default to ``sorw``. It is only
+meant to be different from ``sorw`` in oil paleo zone modelling problems.
+
 When initialized through xlsx/csv (through PyscalFactory) a parameter called
 ``swcr_add`` is available. If ``swcr_add`` is provided, ``swcr`` will be
 calculated as ``swl`` plus this delta value.
@@ -152,7 +155,7 @@ The output from the code above is:
 
     SWOF
     -- Foobarites
-    -- pyscal: 0.7.x
+    -- pyscal: 0.8.x
     -- swirr=0 swl=0.05 swcr=0.05 sorw=0.03
     -- Corey krw, nw=2.1, krwend=0.6, krwmax=1
     -- Corey krow, now=2.5, kroend=0.9

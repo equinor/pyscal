@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Modelling of flooding processes &mdash; pyscal 0.8.1.dev21+g39f3b10 documentation</title>
+  <title>Modelling of flooding processes &mdash; pyscal 0.8.1.dev22+g21c3c71 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -31,7 +31,7 @@
             <img src="_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.8.1.dev21+g39f3b10
+                0.8.1.dev22+g21c3c71
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -52,6 +52,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#wet-gas-condensate-field-oil-displacing-gas-cid2">Wet gas/condensate field, oil displacing gas (CID2)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#co2-injection-gas-displacing-water-dci1">CO<sub>2</sub>-injection (gas displacing water, DCI1)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#co2-trapping-icd2">CO<sub>2</sub> trapping (ICD2)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oil-paleo-zone-idc1">Oil paleo zone - IDC1</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="history.html">History</a></li>
@@ -379,6 +380,52 @@ higher than SWL.</p></td>
 </tr>
 <tr class="row-odd"><td><p>KRWEND</p></td>
 <td><p>KRWR</p></td>
+<td><p>Usually set to 1</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="oil-paleo-zone-idc1">
+<h2>Oil paleo zone - IDC1<a class="headerlink" href="#oil-paleo-zone-idc1" title="Permalink to this headline"></a></h2>
+<p>In an oil paleo zone, the saturation starts at <cite>sorw</cite>. <cite>socr</cite> (critical oil
+saturation) must be larger than <cite>sorw</cite>. The <cite>swcr</cite> parameter is to be
+interpreted as residual water.</p>
+<a class="reference internal image-reference" href="_images/wateroil-paleooil-idc1.png"><img alt="_images/wateroil-paleooil-idc1.png" src="_images/wateroil-paleooil-idc1.png" style="width: 600px;" /></a>
+<table class="colwidths-given docutils align-default">
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Pyscal</p></th>
+<th class="head"><p>Eclipse</p></th>
+<th class="head"><p>Comment</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SWL</p></td>
+<td><p>SWL</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>SWCR</p></td>
+<td><p>SWCR</p></td>
+<td><p>Residual water. Set equal to SWL</p></td>
+</tr>
+<tr class="row-even"><td><p>SORW</p></td>
+<td><p>SOWCR</p></td>
+<td><p>“Initial” oil</p></td>
+</tr>
+<tr class="row-odd"><td><p>SOCR</p></td>
+<td></td>
+<td><p>Critical oil saturation. SOCR &gt; SORW.</p></td>
+</tr>
+<tr class="row-even"><td><p>KRWEND</p></td>
+<td><p>KRWR</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>KRWMAX</p></td>
+<td><p>KRW</p></td>
 <td><p>Usually set to 1</p></td>
 </tr>
 </tbody>
