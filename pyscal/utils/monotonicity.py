@@ -204,9 +204,9 @@ def check_limits(
     if series.empty:
         return
     if "upper" in monotonicity and (series > monotonicity["upper"]).any():
-        raise ValueError("Values larger than upper limit in column {}".format(colname))
+        raise ValueError(f"Values larger than upper limit in column {colname}")
     if "lower" in monotonicity and (series < monotonicity["lower"]).any():
-        raise ValueError("Values smaller than lower limit in column {}".format(colname))
+        raise ValueError(f"Values smaller than lower limit in column {colname}")
 
 
 def rows_to_be_fixed(
@@ -285,18 +285,16 @@ def validate_monotonicity_arg(
         if not isinstance(monotonicity[col], dict):
             raise ValueError("monotonicity argument must be a dict of dicts")
         if not set(monotonicity[col].keys()).issubset(valid_keys):
-            raise ValueError(
-                "Unknown keys in monotonicity {}".format(monotonicity[col].keys())
-            )
+            raise ValueError(f"Unknown keys in monotonicity {monotonicity[col].keys()}")
         if col not in dframe_colnames:
-            raise ValueError("Column {} does not exist in dataframe".format(col))
+            raise ValueError(f"Column {col} does not exist in dataframe")
         if "sign" not in monotonicity[col]:
-            raise ValueError("Monotonocity sign not specified for {}".format(col))
+            raise ValueError(f"Monotonocity sign not specified for {col}")
         try:
             signvalue = float(monotonicity[col]["sign"])
         except ValueError as err:
             raise ValueError(
-                "Monotonocity sign {} not valid".format(monotonicity[col]["sign"])
+                f"Monotonocity sign {monotonicity[col]['sign']} not valid"
             ) from err
         if "upper" in monotonicity[col]:
             float(monotonicity[col]["upper"])

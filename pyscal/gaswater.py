@@ -228,7 +228,7 @@ class GasWater(object):
         else:
             crosspoint_value = self.crosspoint()
             if crosspoint_value is not None:
-                crosspointcomment = "-- krw = krg @ sw=%1.5f\n" % crosspoint_value
+                crosspointcomment = f"-- krw = krg @ sw={crosspoint_value:1.5f}\n"
             else:
                 crosspointcomment = ""
         return self.wateroil.SWFN(
@@ -258,7 +258,7 @@ class GasWater(object):
         else:
             crosspoint_value = self.crosspoint()
             if crosspoint_value is not None:
-                crosspointcomment = "-- krw = krg @ sw=%1.5f\n" % crosspoint_value
+                crosspointcomment = f"-- krw = krg @ sw={crosspoint_value:1.5f}\n"
             else:
                 crosspointcomment = ""
         return self.gasoil.SGFN(

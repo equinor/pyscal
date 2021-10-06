@@ -143,7 +143,7 @@ class PyscalFactory(object):
             fast: If fast-mode should be set for constructed object.
         """
         if not params:
-            params = dict()
+            params = {}
         if not isinstance(params, dict):
             raise TypeError("Parameter to create_water_oil must be a dictionary")
 
@@ -174,16 +174,14 @@ class PyscalFactory(object):
             logger.debug("Computed swl from swlwheight to %s", str(params["swl"]))
             if "swcr" in params and params["swcr"] < params["swl"]:
                 raise ValueError(
-                    "Provided swcr={} is lower than computed swl={}".format(
-                        params["swcr"], params["swl"]
-                    )
+                    f'Provided swcr={params["swcr"]} is lower than '
+                    f'computed swl={params["swl"]}'
                 )
         elif set(WO_SWLHEIGHT).issubset(params):
             raise ValueError(
                 (
-                    "Can't initialize from SWLHEIGHT without "
-                    "sufficient simple-J parameters, needs all of: "
-                    "{}".format(WO_SWL_FROM_HEIGHT)
+                    "Can't initialize from SWLHEIGHT without sufficient "
+                    f"simple-J parameters, needs all of: {WO_SWL_FROM_HEIGHT}"
                 )
             )
 
@@ -312,7 +310,7 @@ class PyscalFactory(object):
             fast: If fast-mode should be set for constructed object.
         """
         if not params:
-            params = dict()
+            params = {}
         if not isinstance(params, dict):
             raise TypeError("Parameter to create_gas_oil must be a dictionary")
 
@@ -403,7 +401,7 @@ class PyscalFactory(object):
             fast: If fast-mode should be set for constructed object.
         """
         if not params:
-            params = dict()
+            params = {}
         if not isinstance(params, dict):
             raise TypeError("Parameter to create_water_oil_gas must be a dictionary")
 
@@ -458,7 +456,7 @@ class PyscalFactory(object):
             fast: If fast-mode should be set for constructed object.
         """
         if not params:
-            params = dict()
+            params = {}
         if not isinstance(params, dict):
             raise TypeError("Parameter to create_gas_water must be a dictionary")
 
@@ -629,8 +627,7 @@ class PyscalFactory(object):
             tabular_file_format = infer_tabular_file_format(inputfile)
             if not tabular_file_format:
                 raise ValueError(
-                    "Impossible to infer file format for %s, not CSV/XLS/XLSX",
-                    inputfile,
+                    f"Impossible to infer file format for {inputfile}, not CSV/XLS/XLSX"
                 )
 
             if tabular_file_format == "csv" and sheet_name is not None:
@@ -837,9 +834,7 @@ class PyscalFactory(object):
             "opt": "high",
         }
         lowered = [value.lower() for value in casevalues]
-        remapped = [
-            aliases[value] if value in aliases.keys() else value for value in lowered
-        ]
+        remapped = [aliases.get(value, value) for value in lowered]
         not_understood = set(remapped) - set(accepted)
         if not_understood:
             raise ValueError(f"Invalid case values: {not_understood}")

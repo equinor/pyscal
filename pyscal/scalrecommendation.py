@@ -206,10 +206,7 @@ class SCALrecommendation(object):
             interpolant = WaterOilGas(h=h, tag=tagstring)
 
         if do_wateroil or do_gaswater:
-            tag = (
-                "SCAL recommendation interpolation to {}\n".format(parameter)
-                + tagstring
-            )
+            tag = f"SCAL recommendation interpolation to {parameter}\n" + tagstring
             assert self.low.wateroil is not None
             assert self.base.wateroil is not None
             assert self.high.wateroil is not None
@@ -249,10 +246,7 @@ class SCALrecommendation(object):
             assert self.low.gasoil is not None
             assert self.base.gasoil is not None
             assert self.high.gasoil is not None
-            tag = (
-                "SCAL recommendation interpolation to {}\n".format(gasparameter)
-                + tagstring
-            )
+            tag = f"SCAL recommendation interpolation to {gasparameter}\n" + tagstring
             if abs(gasparameter) > 1.0:
                 raise ValueError(
                     "Interpolation parameter for gas must "

@@ -212,12 +212,10 @@ def _interpolate_tags(
     if tag is None:
         if low.tag == high.tag:
             if low.tag:
-                return "Interpolated to {} in {}".format(parameter, low.tag)
+                return f"Interpolated to {parameter} in {low.tag}"
             # No tags defined.
-            return "Interpolated to {}".format(parameter)
-        return "Interpolated to {} between {} and {}".format(
-            parameter, low.tag, high.tag
-        )
+            return f"Interpolated to {parameter}"
+        return f"Interpolated to {parameter} between {low.tag} and {high.tag}"
     return tag
 
 

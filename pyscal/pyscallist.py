@@ -194,8 +194,10 @@ class PyscalList(object):
         """Construct a list of relevant Eclipse keywords for the data in this
         Pyscallist object. This depends on the Pyscaltype, and which family is
         requested"""
+
         if family not in [1, 2]:
             raise ValueError("Family must be either 1 or 2")
+
         if self.pyscaltype == WaterOilGas:
             # WaterOilGas can be of type WaterOil or GasOil when it emerges
             # from a SCAL recommendation, signified by None-ness of attributes
@@ -203,27 +205,28 @@ class PyscalList(object):
                 return ["SWFN", "SGFN", "SOF3"]
             if self.pyscal_list[0].gasoil is None:  # type: ignore
                 return ["SWOF"]
-            elif self.pyscal_list[0].wateroil is None:  # type: ignore
+            if self.pyscal_list[0].wateroil is None:  # type: ignore
                 return ["SGOF"]
-            elif not slgof:
+            if not slgof:
                 return ["SWOF", "SGOF"]
-            else:
-                return ["SWOF", "SLGOF"]
-        elif self.pyscaltype == WaterOil:
+            return ["SWOF", "SLGOF"]
+
+        if self.pyscaltype == WaterOil:
             if family == 2:
                 raise ValueError("Family 2 only supported for WaterOilGas and GasWater")
             return ["SWOF"]
-        elif self.pyscaltype == GasOil:
+
+        if self.pyscaltype == GasOil:
             if family == 2:
                 raise ValueError("Family 2 only supported for WaterOilGas and GasWater")
             if slgof:
                 raise ValueError("SLGOF not meaningful for GasOil")
             return ["SGOF"]
-        else:
-            assert self.pyscaltype == GasWater
-            if family == 2:
-                return ["SWFN", "SGFN"]
-            raise ValueError("Family 1 output not possible for GasWater")
+
+        assert self.pyscaltype == GasWater
+        if family == 2:
+            return ["SWFN", "SGFN"]
+        raise ValueError("Family 1 output not possible for GasWater")
 
     def build_eclipse_data(self, family: int = 1, slgof: bool = False) -> str:
         """Construct Eclipse keywords and data for relative permeability

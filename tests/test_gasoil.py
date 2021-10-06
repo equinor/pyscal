@@ -379,7 +379,7 @@ def test_gasoil_corey1(ng, nog):
     assert len(sgofstr) > 100
     sat_table_str_ok(sgofstr)
 
-    gasoil.resetsorg()
+    gasoil.update_sgcomment_and_sorg()
     check_table(gasoil.table)
     check_linear_sections(gasoil)
     sgofstr = gasoil.SGOF()

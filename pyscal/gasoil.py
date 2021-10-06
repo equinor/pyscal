@@ -193,17 +193,7 @@ class GasOil(object):
         self.table["SON"] = (self.table["SL"] - self.sorg - self.swl) / (
             1 - self.sorg - self.swl - self.sgro
         )
-        self.sgcomment = (
-            "-- swirr=%g, sgcr=%g, swl=%g, sorg=%g, sgro=%g, krgendanchor=%s\n"
-            % (
-                self.swirr,
-                self.sgcr,
-                self.swl,
-                self.sorg,
-                self.sgro,
-                self.krgendanchor,
-            )
-        )
+        self.update_sgcomment_and_sorg()
         self.krgcomment = ""
         self.krogcomment = ""
         self.pccomment = ""
@@ -212,24 +202,18 @@ class GasOil(object):
             "Initialized GasOil with %s saturation points", str(len(self.table))
         )
 
-    def resetsorg(self):
+    def update_sgcomment_and_sorg(self):
         """Recalculate sorg in case it has table data has been manipulated"""
+        self.sgcomment = (
+            f"-- swirr={self.swirr:g}, sgcr={self.sgcr:g}, swl={self.swl:g}, "
+            f"sorg={self.sorg:g}, sgro={self.sgro:g}, "
+            f"krgendanchor={self.krgendanchor}\n"
+        )
         if "KROG" in self.table.columns:
             self.sorg = (
                 1
                 - self.swl
                 - self.table[np.isclose(self.table["KROG"], 0.0)].min()["SG"]
-            )
-            self.sgcomment = (
-                "-- swirr=%g, sgcr=%g, swl=%g, sorg=%g, sgro=%g, krgendanchor=%s\n"
-                % (
-                    self.swirr,
-                    self.sgcr,
-                    self.swl,
-                    self.sorg,
-                    self.sgro,
-                    self.krgendanchor,
-                )
             )
 
     def add_fromtable(
@@ -494,10 +478,8 @@ class GasOil(object):
 
         if not krgmax:
             krgmax = 1
-        self.krgcomment = "-- Corey krg, ng=%g, krgend=%g, krgmax=%g\n" % (
-            ng,
-            krgend,
-            krgmax,
+        self.krgcomment = (
+            f"-- Corey krg, ng={ng:g}, krgend={krgend:g}, krgmax={krgmax:g}\n"
         )
 
     def add_corey_oil(
@@ -529,7 +511,7 @@ class GasOil(object):
 
         self.set_endpoints_linearpart_krog(kroend, kromax)
 
-        self.krogcomment = "-- Corey krog, nog=%g, kroend=%g" % (nog, kroend)
+        self.krogcomment = f"-- Corey krog, nog={nog:g}, kroend={kroend:g}"
         if kromax is not None:
             self.krogcomment += f", kromax={kromax:g}"
 
@@ -583,12 +565,9 @@ class GasOil(object):
 
         if not krgmax:
             krgmax = 1
-        self.krgcomment = "-- LET krg, l=%g, e=%g, t=%g, krgend=%g, krgmax=%g\n" % (
-            l,
-            e,
-            t,
-            krgend,
-            krgmax,
+        self.krgcomment = (
+            f"-- LET krg, l={l:g}, e={e:g}, t={t:g}, "
+            f"krgend={krgend:g}, krgmax={krgmax:g}\n"
         )
 
     def add_LET_oil(
@@ -629,12 +608,7 @@ class GasOil(object):
 
         self.set_endpoints_linearpart_krog(kroend, kromax)
 
-        self.krogcomment = "-- LET krog, l=%g, e=%g, t=%g, kroend=%g" % (
-            l,
-            e,
-            t,
-            kroend,
-        )
+        self.krogcomment = f"-- LET krog, l={l:g}, e={e:g}, t={t:g}, kroend={kroend:g}"
         if kromax is not None:
             self.krogcomment += f", kromax={kromax:g}"
 
@@ -811,7 +785,7 @@ class GasOil(object):
             string += self.krgcomment
             string += self.krogcomment
             if not self.fast:
-                string += "-- krg = krog @ sg=%1.5f\n" % self.crosspoint()
+                string += f"-- krg = krog @ sg={self.crosspoint():1.5f}\n"
             string += self.pccomment
         width = 10
         string += (
@@ -890,7 +864,7 @@ class GasOil(object):
             string += self.sgcomment
             string += self.krgcomment
             string += self.krogcomment
-            string += "-- krg = krog @ sg=%1.5f\n" % self.crosspoint()
+            string += f"-- krg = krog @ sg={self.crosspoint():1.5f}\n"
             string += self.pccomment
         width = 10
         string += (
@@ -963,7 +937,7 @@ class GasOil(object):
             string += self.krgcomment
             if crosspointcomment is None:
                 if "KROG" in self.table.columns:
-                    string += "-- krg = krog @ sg=%1.5f\n" % self.crosspoint()
+                    string += f"-- krg = krog @ sg={self.crosspoint():1.5f}\n"
             else:
                 string += crosspointcomment
             string += self.pccomment
@@ -1017,7 +991,7 @@ class GasOil(object):
             string += self.sgcomment.replace("--", "!")
             string += self.krgcomment.replace("--", "!")
             string += self.krogcomment.replace("--", "!")
-            string += "! krg = krog @ sw=%1.5f\n" % self.crosspoint()
+            string += f"! krg = krog @ sw={self.crosspoint():1.5f}\n"
             string += self.pccomment.replace("--", "!")
         width = 10
         string += (
