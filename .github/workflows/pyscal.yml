@@ -49,6 +49,7 @@ jobs:
           black --check pyscal/*py tests/test_*py setup.py docs/conf.py
           flake8 pyscal tests
           isort --check-only --profile black pyscal tests
+          pylint-ignore pyscal
           mypy pyscal
 
       - name: Run tests
