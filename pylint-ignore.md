@@ -23,9 +23,10 @@ The recommended approach to using `pylint-ignore` is:
 
 # Overview
 
+ - [W0715: raising-format-tuple (1x)](#w0715-raising-format-tuple)
  - [C0201: consider-iterating-dictionary (1x)](#c0201-consider-iterating-dictionary)
  - [C0209: consider-using-f-string (38x)](#c0209-consider-using-f-string)
- - [R0401: cyclic-import (6x)](#r0401-cyclic-import)
+ - [R0401: cyclic-import (8x)](#r0401-cyclic-import)
  - [R0801: duplicate-code (11x)](#r0801-duplicate-code)
  - [R0902: too-many-instance-attributes (2x)](#r0902-too-many-instance-attributes)
  - [R0904: too-many-public-methods (1x)](#r0904-too-many-public-methods)
@@ -38,22 +39,41 @@ The recommended approach to using `pylint-ignore` is:
  - [R1735: use-dict-literal (1x)](#r1735-use-dict-literal)
 
 
+# W0715: raising-format-tuple
+
+## File pyscal/factory.py - Line 631 - W0715 (raising-format-tuple)
+
+- `message: Exception arguments suggest string formatting might be intended`
+- `author : Håvard Berland <havb@equinor.com>`
+- `date   : 2021-10-06T11:04:02`
+
+```
+  603:     def load_relperm_df(
+  ...
+  629:             tabular_file_format = infer_tabular_file_format(inputfile)
+  630:             if not tabular_file_format:
+> 631:                 raise ValueError(
+  632:                     "Impossible to infer file format for %s, not CSV/XLS/XLSX",
+  633:                     inputfile,
+```
+
+
 # C0201: consider-iterating-dictionary
 
-## File pyscal/factory.py - Line 840 - C0201 (consider-iterating-dictionary)
+## File pyscal/factory.py - Line 841 - C0201 (consider-iterating-dictionary)
 
 - `message: Consider iterating the dictionary directly instead of calling .keys()`
 - `author : Håvard Berland <havb@equinor.com>`
 - `date   : 2021-10-06T10:51:32`
 
 ```
-  818:     def remap_validate_cases(casevalues: List[str]) -> List[str]:
+  819:     def remap_validate_cases(casevalues: List[str]) -> List[str]:
   ...
-  838:         lowered = [value.lower() for value in casevalues]
-  839:         remapped = [
-> 840:             aliases[value] if value in aliases.keys() else value for value in lowered
-  841:         ]
-  842:         not_understood = set(remapped) - set(accepted)
+  839:         lowered = [value.lower() for value in casevalues]
+  840:         remapped = [
+> 841:             aliases[value] if value in aliases.keys() else value for value in lowered
+  842:         ]
+  843:         not_understood = set(remapped) - set(accepted)
 ```
 
 
@@ -709,16 +729,9 @@ The recommended approach to using `pylint-ignore` is:
 
 ## File pyscal/utils/interpolation.py - R0401 (cyclic-import)
 
-- `message: Cyclic import (pyscal -> pyscal.factory -> pyscal.pyscallist)`
+- `message: Cyclic import (pyscal -> pyscal.factory -> pyscal.wateroil)`
 - `author : Håvard Berland <havb@equinor.com>`
 - `date   : 2021-10-06T09:03:57`
-
-
-## File pyscal/utils/interpolation.py - R0401 (cyclic-import)
-
-- `message: Cyclic import (pyscal -> pyscal.factory -> pyscal.scalrecommendation -> pyscal.utils.interpolation)`
-- `author : Håvard Berland <havb@equinor.com>`
-- `date   : 2021-10-06T10:51:32`
 
 
 ## File pyscal/utils/interpolation.py - R0401 (cyclic-import)
@@ -732,7 +745,28 @@ The recommended approach to using `pylint-ignore` is:
 
 - `message: Cyclic import (pyscal -> pyscal.pyscallist)`
 - `author : Håvard Berland <havb@equinor.com>`
-- `date   : 2021-10-06T09:03:57`
+- `date   : 2021-10-06T11:05:00`
+
+
+## File pyscal/utils/interpolation.py - R0401 (cyclic-import)
+
+- `message: Cyclic import (pyscal -> pyscal.scalrecommendation -> pyscal.utils.interpolation)`
+- `author : Håvard Berland <havb@equinor.com>`
+- `date   : 2021-10-06T11:05:00`
+
+
+## File pyscal/utils/interpolation.py - R0401 (cyclic-import)
+
+- `message: Cyclic import (pyscal -> pyscal.scalrecommendation)`
+- `author : Håvard Berland <havb@equinor.com>`
+- `date   : 2021-10-06T11:05:00`
+
+
+## File pyscal/utils/interpolation.py - R0401 (cyclic-import)
+
+- `message: Cyclic import (pyscal -> pyscal.wateroil)`
+- `author : Håvard Berland <havb@equinor.com>`
+- `date   : 2021-10-06T11:04:02`
 
 
 ## File pyscal/utils/interpolation.py - R0401 (cyclic-import)
@@ -908,7 +942,7 @@ The recommended approach to using `pylint-ignore` is:
 
 - `message: Similar lines in 2 files`
 - `author : Håvard Berland <havb@equinor.com>`
-- `date   : 2021-10-06T10:51:32`
+- `date   : 2021-10-06T11:04:02`
 
 ```
 ==pyscal.gaswater:[141:163]
@@ -935,6 +969,9 @@ The recommended approach to using `pylint-ignore` is:
             krwend: value of krw at 1 - sorw
             krwmax: maximal value at Sw=1. Default 1
         """
+        # Similar code in gasoil.add_LET_gas, but readability is
+        # better by having them separate.
+        # pylint: disable=duplicate-code
 ```
 
 
@@ -1474,7 +1511,7 @@ The recommended approach to using `pylint-ignore` is:
 
 ## File pyscal/factory.py - Line 603 - R0915 (too-many-statements)
 
-- `message: Too many statements (77/50)`
+- `message: Too many statements (78/50)`
 - `author : Håvard Berland <havb@equinor.com>`
 - `date   : 2021-10-06T09:03:57`
 
