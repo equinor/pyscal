@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.factory &mdash; pyscal 0.8.1.dev31+gdf1a2f0 documentation</title>
+  <title>pyscal.factory &mdash; pyscal 0.8.1.dev32+geb1df7c documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -28,7 +28,7 @@
             <img src="../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.8.1.dev31+gdf1a2f0
+                0.8.1.dev32+geb1df7c
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -707,8 +707,10 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputfile</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">))</span> <span class="ow">and</span> <span class="n">Path</span><span class="p">(</span><span class="n">inputfile</span><span class="p">)</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
             <span class="n">tabular_file_format</span> <span class="o">=</span> <span class="n">infer_tabular_file_format</span><span class="p">(</span><span class="n">inputfile</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">tabular_file_format</span><span class="p">:</span>
-                <span class="c1"># Error message emitted by infer_file_format()</span>
-                <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">()</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;Impossible to infer file format for </span><span class="si">%s</span><span class="s2">, not CSV/XLS/XLSX&quot;</span><span class="p">,</span>
+                    <span class="n">inputfile</span><span class="p">,</span>
+                <span class="p">)</span>
 
             <span class="k">if</span> <span class="n">tabular_file_format</span> <span class="o">==</span> <span class="s2">&quot;csv&quot;</span> <span class="ow">and</span> <span class="n">sheet_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
@@ -776,7 +778,6 @@
         <span class="c1"># It is tempting to detect any NaN&#39;s at this point because that can</span>
         <span class="c1"># indicate merged cells, which is not supported, but that could</span>
         <span class="c1"># break optional comment columns which might only be defined on certain lines.</span>
-
         <span class="k">if</span> <span class="s2">&quot;SATNUM&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_df</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;SATNUM must be present in CSV/XLSX file/dataframe&quot;</span><span class="p">)</span>
 
@@ -985,6 +986,7 @@
         <span class="n">water_oil</span> <span class="o">=</span> <span class="n">sufficient_water_oil_params</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="n">gas_oil</span> <span class="o">=</span> <span class="n">sufficient_gas_oil_params</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="n">gas_water</span> <span class="o">=</span> <span class="n">sufficient_gas_water_params</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+
         <span class="k">if</span> <span class="n">water_oil</span> <span class="ow">and</span> <span class="n">gas_oil</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_wateroilgas_list</span><span class="p">(</span><span class="n">relperm_params_df</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">fast</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">water_oil</span><span class="p">:</span>
@@ -993,8 +995,7 @@
             <span class="k">return</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_gasoil_list</span><span class="p">(</span><span class="n">relperm_params_df</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">fast</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">gas_water</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">PyscalFactory</span><span class="o">.</span><span class="n">create_gaswater_list</span><span class="p">(</span><span class="n">relperm_params_df</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">fast</span><span class="p">)</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Could not determine two or three phase from parameters&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="kc">None</span></div>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Could not determine two or three phase from parameters&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PyscalFactory.create_wateroilgas_list"><a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.PyscalFactory.create_wateroilgas_list">[docs]</a>    <span class="nd">@staticmethod</span>
     <span class="k">def</span> <span class="nf">create_wateroilgas_list</span><span class="p">(</span>
@@ -1280,9 +1281,6 @@
         <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Message from CSV parser: </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">csverror</span><span class="p">))</span>
         <span class="c1"># (Some text file that is not CSV)</span>
 
-    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span>
-        <span class="s2">&quot;Impossible to infer file format for </span><span class="si">%s</span><span class="s2">, not CSV/XLS/XLSX&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
-    <span class="p">)</span>
     <span class="k">return</span> <span class="s2">&quot;&quot;</span></div>
 
 
