@@ -729,16 +729,30 @@ The recommended approach to using `pylint-ignore` is:
 
 ## File pyscal/utils/interpolation.py - R0401 (cyclic-import)
 
-- `message: Cyclic import (pyscal -> pyscal.factory -> pyscal.wateroil)`
+- `message: Cyclic import (pyscal -> pyscal.factory -> pyscal.gaswater -> pyscal.gasoil)`
 - `author : Håvard Berland <havb@equinor.com>`
-- `date   : 2021-10-06T09:03:57`
+- `date   : 2021-10-06T11:09:08`
 
 
 ## File pyscal/utils/interpolation.py - R0401 (cyclic-import)
 
-- `message: Cyclic import (pyscal -> pyscal.gaswater -> pyscal.wateroil)`
+- `message: Cyclic import (pyscal -> pyscal.factory -> pyscal.pyscallist)`
 - `author : Håvard Berland <havb@equinor.com>`
-- `date   : 2021-10-06T09:03:57`
+- `date   : 2021-10-06T11:09:08`
+
+
+## File pyscal/utils/interpolation.py - R0401 (cyclic-import)
+
+- `message: Cyclic import (pyscal -> pyscal.factory -> pyscal.scalrecommendation -> pyscal.utils.interpolation)`
+- `author : Håvard Berland <havb@equinor.com>`
+- `date   : 2021-10-06T11:09:08`
+
+
+## File pyscal/utils/interpolation.py - R0401 (cyclic-import)
+
+- `message: Cyclic import (pyscal -> pyscal.factory -> pyscal.scalrecommendation)`
+- `author : Håvard Berland <havb@equinor.com>`
+- `date   : 2021-10-06T11:09:08`
 
 
 ## File pyscal/utils/interpolation.py - R0401 (cyclic-import)
@@ -746,27 +760,6 @@ The recommended approach to using `pylint-ignore` is:
 - `message: Cyclic import (pyscal -> pyscal.pyscallist)`
 - `author : Håvard Berland <havb@equinor.com>`
 - `date   : 2021-10-06T11:05:00`
-
-
-## File pyscal/utils/interpolation.py - R0401 (cyclic-import)
-
-- `message: Cyclic import (pyscal -> pyscal.scalrecommendation -> pyscal.utils.interpolation)`
-- `author : Håvard Berland <havb@equinor.com>`
-- `date   : 2021-10-06T11:05:00`
-
-
-## File pyscal/utils/interpolation.py - R0401 (cyclic-import)
-
-- `message: Cyclic import (pyscal -> pyscal.scalrecommendation)`
-- `author : Håvard Berland <havb@equinor.com>`
-- `date   : 2021-10-06T11:05:00`
-
-
-## File pyscal/utils/interpolation.py - R0401 (cyclic-import)
-
-- `message: Cyclic import (pyscal -> pyscal.wateroil)`
-- `author : Håvard Berland <havb@equinor.com>`
-- `date   : 2021-10-06T11:04:02`
 
 
 ## File pyscal/utils/interpolation.py - R0401 (cyclic-import)
@@ -781,6 +774,13 @@ The recommended approach to using `pylint-ignore` is:
 - `message: Cyclic import (pyscal -> pyscal.wateroilgas -> pyscal.wateroil)`
 - `author : Håvard Berland <havb@equinor.com>`
 - `date   : 2021-10-06T10:51:32`
+
+
+## File pyscal/utils/interpolation.py - R0401 (cyclic-import)
+
+- `message: Cyclic import (pyscal -> pyscal.wateroilgas)`
+- `author : Håvard Berland <havb@equinor.com>`
+- `date   : 2021-10-06T11:04:02`
 
 
 # R0801: duplicate-code
@@ -942,7 +942,7 @@ The recommended approach to using `pylint-ignore` is:
 
 - `message: Similar lines in 2 files`
 - `author : Håvard Berland <havb@equinor.com>`
-- `date   : 2021-10-06T11:04:02`
+- `date   : 2021-10-06T11:09:08`
 
 ```
 ==pyscal.gaswater:[141:163]
@@ -969,9 +969,6 @@ The recommended approach to using `pylint-ignore` is:
             krwend: value of krw at 1 - sorw
             krwmax: maximal value at Sw=1. Default 1
         """
-        # Similar code in gasoil.add_LET_gas, but readability is
-        # better by having them separate.
-        # pylint: disable=duplicate-code
 ```
 
 
