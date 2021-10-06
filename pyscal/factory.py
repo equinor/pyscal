@@ -628,8 +628,10 @@ class PyscalFactory(object):
         if isinstance(inputfile, (str, Path)) and Path(inputfile).is_file():
             tabular_file_format = infer_tabular_file_format(inputfile)
             if not tabular_file_format:
-                # Error message emitted by infer_file_format()
-                return pd.DataFrame()
+                raise ValueError(
+                    "Impossible to infer file format for %s, not CSV/XLS/XLSX",
+                    inputfile,
+                )
 
             if tabular_file_format == "csv" and sheet_name is not None:
                 logger.warning(
@@ -697,7 +699,6 @@ class PyscalFactory(object):
         # It is tempting to detect any NaN's at this point because that can
         # indicate merged cells, which is not supported, but that could
         # break optional comment columns which might only be defined on certain lines.
-
         if "SATNUM" not in input_df:
             raise ValueError("SATNUM must be present in CSV/XLSX file/dataframe")
 
@@ -906,6 +907,7 @@ class PyscalFactory(object):
         water_oil = sufficient_water_oil_params(params)
         gas_oil = sufficient_gas_oil_params(params)
         gas_water = sufficient_gas_water_params(params)
+
         if water_oil and gas_oil:
             return PyscalFactory.create_wateroilgas_list(relperm_params_df, h, fast)
         if water_oil:
@@ -914,8 +916,7 @@ class PyscalFactory(object):
             return PyscalFactory.create_gasoil_list(relperm_params_df, h, fast)
         if gas_water:
             return PyscalFactory.create_gaswater_list(relperm_params_df, h, fast)
-        logger.error("Could not determine two or three phase from parameters")
-        return None
+        raise ValueError("Could not determine two or three phase from parameters")
 
     @staticmethod
     def create_wateroilgas_list(
@@ -1201,9 +1202,6 @@ def infer_tabular_file_format(filename: Union[str, Path]) -> str:
         logger.error("Message from CSV parser: %s", str(csverror))
         # (Some text file that is not CSV)
 
-    logger.error(
-        "Impossible to infer file format for %s, not CSV/XLS/XLSX", str(filename)
-    )
     return ""
 
 
