@@ -29,11 +29,11 @@ Corey or LET parametrization are based on presence of the columns
 'Nw', 'Now', 'Nog', 'Ng', 'Lw', 'Ew', 'Tw', 'Low', 'Eow', 'Tow',
 'Log', 'Eog', 'Tog', 'Lg', 'Eg', 'Tg'.
 
-Simple J-function for capillary pressure is used if the columns
-'a', 'b', 'poro_ref', 'perm_ref' and 'drho' are found. If you provide
-'a_petro', or 'b_petro', the petrophysical formulation of the simple
-J-function is used. Check API for exact formulas. Normalized J-function
-is used if 'a', 'b', 'poro', 'perm' and 'sigma_costau' is provided.
+Simple J-function for capillary pressure ("RMS" version) is used if the columns
+'a', 'b' , 'poro_ref', 'perm_ref' and 'drho' are found.  If you provide
+'a_petro', or 'b_petro', the petrophysical formulation of the simple J-function
+is used. Check API for exact formulas. Normalized J-function is used if 'a',
+'b', 'poro', 'perm' and 'sigma_costau' is provided.
 
 For SCAL recommendations, there should be exactly three rows for each SATNUM,
 tagged with the strings 'low', 'base' and 'high' in the column 'CASE'
