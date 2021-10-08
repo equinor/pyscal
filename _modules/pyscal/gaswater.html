@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.gaswater &mdash; pyscal 0.8.1.dev32+geb1df7c documentation</title>
+  <title>pyscal.gaswater &mdash; pyscal 0.8.1.dev33+gc5abbe2 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -28,7 +28,7 @@
             <img src="../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.8.1.dev32+geb1df7c
+                0.8.1.dev33+gc5abbe2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -307,7 +307,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">crosspoint_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">crosspoint</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">crosspoint_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">crosspointcomment</span> <span class="o">=</span> <span class="s2">&quot;-- krw = krg @ sw=</span><span class="si">%1.5f</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">crosspoint_value</span>
+                <span class="n">crosspointcomment</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;-- krw = krg @ sw=</span><span class="si">{</span><span class="n">crosspoint_value</span><span class="si">:</span><span class="s2">1.5f</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">crosspointcomment</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">SWFN</span><span class="p">(</span>
@@ -337,7 +337,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="n">crosspoint_value</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">crosspoint</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">crosspoint_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">crosspointcomment</span> <span class="o">=</span> <span class="s2">&quot;-- krw = krg @ sw=</span><span class="si">%1.5f</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">crosspoint_value</span>
+                <span class="n">crosspointcomment</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;-- krw = krg @ sw=</span><span class="si">{</span><span class="n">crosspoint_value</span><span class="si">:</span><span class="s2">1.5f</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">crosspointcomment</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">SGFN</span><span class="p">(</span>

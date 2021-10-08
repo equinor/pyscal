@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.utils.monotonicity &mdash; pyscal 0.8.1.dev32+geb1df7c documentation</title>
+  <title>pyscal.utils.monotonicity &mdash; pyscal 0.8.1.dev33+gc5abbe2 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -28,7 +28,7 @@
             <img src="../../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.8.1.dev32+geb1df7c
+                0.8.1.dev33+gc5abbe2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -283,9 +283,9 @@
     <span class="k">if</span> <span class="n">series</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
         <span class="k">return</span>
     <span class="k">if</span> <span class="s2">&quot;upper&quot;</span> <span class="ow">in</span> <span class="n">monotonicity</span> <span class="ow">and</span> <span class="p">(</span><span class="n">series</span> <span class="o">&gt;</span> <span class="n">monotonicity</span><span class="p">[</span><span class="s2">&quot;upper&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Values larger than upper limit in column </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">colname</span><span class="p">))</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Values larger than upper limit in column </span><span class="si">{</span><span class="n">colname</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="s2">&quot;lower&quot;</span> <span class="ow">in</span> <span class="n">monotonicity</span> <span class="ow">and</span> <span class="p">(</span><span class="n">series</span> <span class="o">&lt;</span> <span class="n">monotonicity</span><span class="p">[</span><span class="s2">&quot;lower&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Values smaller than lower limit in column </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">colname</span><span class="p">))</span></div>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Values smaller than lower limit in column </span><span class="si">{</span><span class="n">colname</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="rows_to_be_fixed"><a class="viewcode-back" href="../../../pyscal/pyscal.utils.monotonicity.html#pyscal.utils.monotonicity.rows_to_be_fixed">[docs]</a><span class="k">def</span> <span class="nf">rows_to_be_fixed</span><span class="p">(</span>
@@ -364,18 +364,16 @@
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">monotonicity</span><span class="p">[</span><span class="n">col</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;monotonicity argument must be a dict of dicts&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">set</span><span class="p">(</span><span class="n">monotonicity</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">valid_keys</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Unknown keys in monotonicity </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">monotonicity</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
-            <span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown keys in monotonicity </span><span class="si">{</span><span class="n">monotonicity</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dframe_colnames</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Column </span><span class="si">{}</span><span class="s2"> does not exist in dataframe&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">col</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Column </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2"> does not exist in dataframe&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="s2">&quot;sign&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">monotonicity</span><span class="p">[</span><span class="n">col</span><span class="p">]:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Monotonocity sign not specified for </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">col</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Monotonocity sign not specified for </span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">signvalue</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">monotonicity</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;sign&quot;</span><span class="p">])</span>
         <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;Monotonocity sign </span><span class="si">{}</span><span class="s2"> not valid&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">monotonicity</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;sign&quot;</span><span class="p">])</span>
+                <span class="sa">f</span><span class="s2">&quot;Monotonocity sign </span><span class="si">{</span><span class="n">monotonicity</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s1">&#39;sign&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> not valid&quot;</span>
             <span class="p">)</span> <span class="kn">from</span> <span class="nn">err</span>
         <span class="k">if</span> <span class="s2">&quot;upper&quot;</span> <span class="ow">in</span> <span class="n">monotonicity</span><span class="p">[</span><span class="n">col</span><span class="p">]:</span>
             <span class="nb">float</span><span class="p">(</span><span class="n">monotonicity</span><span class="p">[</span><span class="n">col</span><span class="p">][</span><span class="s2">&quot;upper&quot;</span><span class="p">])</span>

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.gasoil &mdash; pyscal 0.8.1.dev32+geb1df7c documentation</title>
+  <title>pyscal.gasoil &mdash; pyscal 0.8.1.dev33+gc5abbe2 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -28,7 +28,7 @@
             <img src="../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.8.1.dev32+geb1df7c
+                0.8.1.dev33+gc5abbe2
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -272,17 +272,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SON&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SL&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorg</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span>
             <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorg</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sgro</span>
         <span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">sgcomment</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s2">&quot;-- swirr=</span><span class="si">%g</span><span class="s2">, sgcr=</span><span class="si">%g</span><span class="s2">, swl=</span><span class="si">%g</span><span class="s2">, sorg=</span><span class="si">%g</span><span class="s2">, sgro=</span><span class="si">%g</span><span class="s2">, krgendanchor=</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="o">%</span> <span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">swirr</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">sgcr</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">swl</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">sorg</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">sgro</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">krgendanchor</span><span class="p">,</span>
-            <span class="p">)</span>
-        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_sgcomment_and_sorg</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">krgcomment</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">krogcomment</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pccomment</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -291,24 +281,18 @@
             <span class="s2">&quot;Initialized GasOil with </span><span class="si">%s</span><span class="s2"> saturation points&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">))</span>
         <span class="p">)</span>
 
-<div class="viewcode-block" id="GasOil.resetsorg"><a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.resetsorg">[docs]</a>    <span class="k">def</span> <span class="nf">resetsorg</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="GasOil.update_sgcomment_and_sorg"><a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.update_sgcomment_and_sorg">[docs]</a>    <span class="k">def</span> <span class="nf">update_sgcomment_and_sorg</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;Recalculate sorg in case it has table data has been manipulated&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sgcomment</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;-- swirr=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">swirr</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">, sgcr=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sgcr</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">, swl=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">swl</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;sorg=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sorg</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">, sgro=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sgro</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;krgendanchor=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">krgendanchor</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
         <span class="k">if</span> <span class="s2">&quot;KROG&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sorg</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="mi">1</span>
                 <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span>
                 <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROG&quot;</span><span class="p">],</span> <span class="mf">0.0</span><span class="p">)]</span><span class="o">.</span><span class="n">min</span><span class="p">()[</span><span class="s2">&quot;SG&quot;</span><span class="p">]</span>
-            <span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sgcomment</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="s2">&quot;-- swirr=</span><span class="si">%g</span><span class="s2">, sgcr=</span><span class="si">%g</span><span class="s2">, swl=</span><span class="si">%g</span><span class="s2">, sorg=</span><span class="si">%g</span><span class="s2">, sgro=</span><span class="si">%g</span><span class="s2">, krgendanchor=</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span>
-                <span class="o">%</span> <span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">swirr</span><span class="p">,</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">sgcr</span><span class="p">,</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">swl</span><span class="p">,</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">sorg</span><span class="p">,</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">sgro</span><span class="p">,</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">krgendanchor</span><span class="p">,</span>
-                <span class="p">)</span>
             <span class="p">)</span></div>
 
 <div class="viewcode-block" id="GasOil.add_fromtable"><a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.add_fromtable">[docs]</a>    <span class="k">def</span> <span class="nf">add_fromtable</span><span class="p">(</span>
@@ -573,10 +557,8 @@
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">krgmax</span><span class="p">:</span>
             <span class="n">krgmax</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">krgcomment</span> <span class="o">=</span> <span class="s2">&quot;-- Corey krg, ng=</span><span class="si">%g</span><span class="s2">, krgend=</span><span class="si">%g</span><span class="s2">, krgmax=</span><span class="si">%g</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
-            <span class="n">ng</span><span class="p">,</span>
-            <span class="n">krgend</span><span class="p">,</span>
-            <span class="n">krgmax</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">krgcomment</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;-- Corey krg, ng=</span><span class="si">{</span><span class="n">ng</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">, krgend=</span><span class="si">{</span><span class="n">krgend</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">, krgmax=</span><span class="si">{</span><span class="n">krgmax</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="GasOil.add_corey_oil"><a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.add_corey_oil">[docs]</a>    <span class="k">def</span> <span class="nf">add_corey_oil</span><span class="p">(</span>
@@ -608,7 +590,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">set_endpoints_linearpart_krog</span><span class="p">(</span><span class="n">kroend</span><span class="p">,</span> <span class="n">kromax</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">krogcomment</span> <span class="o">=</span> <span class="s2">&quot;-- Corey krog, nog=</span><span class="si">%g</span><span class="s2">, kroend=</span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">nog</span><span class="p">,</span> <span class="n">kroend</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">krogcomment</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;-- Corey krog, nog=</span><span class="si">{</span><span class="n">nog</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">, kroend=</span><span class="si">{</span><span class="n">kroend</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">if</span> <span class="n">kromax</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">krogcomment</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;, kromax=</span><span class="si">{</span><span class="n">kromax</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">&quot;</span></div>
 
@@ -662,12 +644,9 @@
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">krgmax</span><span class="p">:</span>
             <span class="n">krgmax</span> <span class="o">=</span> <span class="mi">1</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">krgcomment</span> <span class="o">=</span> <span class="s2">&quot;-- LET krg, l=</span><span class="si">%g</span><span class="s2">, e=</span><span class="si">%g</span><span class="s2">, t=</span><span class="si">%g</span><span class="s2">, krgend=</span><span class="si">%g</span><span class="s2">, krgmax=</span><span class="si">%g</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
-            <span class="n">l</span><span class="p">,</span>
-            <span class="n">e</span><span class="p">,</span>
-            <span class="n">t</span><span class="p">,</span>
-            <span class="n">krgend</span><span class="p">,</span>
-            <span class="n">krgmax</span><span class="p">,</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">krgcomment</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;-- LET krg, l=</span><span class="si">{</span><span class="n">l</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">, e=</span><span class="si">{</span><span class="n">e</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">, t=</span><span class="si">{</span><span class="n">t</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;krgend=</span><span class="si">{</span><span class="n">krgend</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">, krgmax=</span><span class="si">{</span><span class="n">krgmax</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="GasOil.add_LET_oil"><a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.add_LET_oil">[docs]</a>    <span class="k">def</span> <span class="nf">add_LET_oil</span><span class="p">(</span>
@@ -708,12 +687,7 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">set_endpoints_linearpart_krog</span><span class="p">(</span><span class="n">kroend</span><span class="p">,</span> <span class="n">kromax</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">krogcomment</span> <span class="o">=</span> <span class="s2">&quot;-- LET krog, l=</span><span class="si">%g</span><span class="s2">, e=</span><span class="si">%g</span><span class="s2">, t=</span><span class="si">%g</span><span class="s2">, kroend=</span><span class="si">%g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span>
-            <span class="n">l</span><span class="p">,</span>
-            <span class="n">e</span><span class="p">,</span>
-            <span class="n">t</span><span class="p">,</span>
-            <span class="n">kroend</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">krogcomment</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;-- LET krog, l=</span><span class="si">{</span><span class="n">l</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">, e=</span><span class="si">{</span><span class="n">e</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">, t=</span><span class="si">{</span><span class="n">t</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">, kroend=</span><span class="si">{</span><span class="n">kroend</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="k">if</span> <span class="n">kromax</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">krogcomment</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;, kromax=</span><span class="si">{</span><span class="n">kromax</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">&quot;</span></div>
 
@@ -890,7 +864,7 @@
             <span class="n">string</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">krgcomment</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">krogcomment</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">fast</span><span class="p">:</span>
-                <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;-- krg = krog @ sg=</span><span class="si">%1.5f</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">crosspoint</span><span class="p">()</span>
+                <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;-- krg = krog @ sg=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">crosspoint</span><span class="p">()</span><span class="si">:</span><span class="s2">1.5f</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pccomment</span>
         <span class="n">width</span> <span class="o">=</span> <span class="mi">10</span>
         <span class="n">string</span> <span class="o">+=</span> <span class="p">(</span>
@@ -969,7 +943,7 @@
             <span class="n">string</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sgcomment</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">krgcomment</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">krogcomment</span>
-            <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;-- krg = krog @ sg=</span><span class="si">%1.5f</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">crosspoint</span><span class="p">()</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;-- krg = krog @ sg=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">crosspoint</span><span class="p">()</span><span class="si">:</span><span class="s2">1.5f</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pccomment</span>
         <span class="n">width</span> <span class="o">=</span> <span class="mi">10</span>
         <span class="n">string</span> <span class="o">+=</span> <span class="p">(</span>
@@ -1042,7 +1016,7 @@
             <span class="n">string</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">krgcomment</span>
             <span class="k">if</span> <span class="n">crosspointcomment</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="k">if</span> <span class="s2">&quot;KROG&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
-                    <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;-- krg = krog @ sg=</span><span class="si">%1.5f</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">crosspoint</span><span class="p">()</span>
+                    <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;-- krg = krog @ sg=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">crosspoint</span><span class="p">()</span><span class="si">:</span><span class="s2">1.5f</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">string</span> <span class="o">+=</span> <span class="n">crosspointcomment</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pccomment</span>
@@ -1096,7 +1070,7 @@
             <span class="n">string</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sgcomment</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="s2">&quot;!&quot;</span><span class="p">)</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">krgcomment</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="s2">&quot;!&quot;</span><span class="p">)</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">krogcomment</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="s2">&quot;!&quot;</span><span class="p">)</span>
-            <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;! krg = krog @ sw=</span><span class="si">%1.5f</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">crosspoint</span><span class="p">()</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;! krg = krog @ sw=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">crosspoint</span><span class="p">()</span><span class="si">:</span><span class="s2">1.5f</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pccomment</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="s2">&quot;!&quot;</span><span class="p">)</span>
         <span class="n">width</span> <span class="o">=</span> <span class="mi">10</span>
         <span class="n">string</span> <span class="o">+=</span> <span class="p">(</span>
