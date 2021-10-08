@@ -181,22 +181,18 @@ class WaterOil(object):
         self.table["SWNPC"] = (self.table["SW"] - swirr) / (1 - swirr)
 
         if _sgcr is None:
-            self.swcomment = "-- swirr=%g swl=%g swcr=%g sorw=%g" % (
-                self.swirr,
-                self.swl,
-                self.swcr,
-                self.sorw,
+            self.swcomment = (
+                f"-- swirr={self.swirr:g} swl={self.swl:g} "
+                f"swcr={self.swcr:g} sorw={self.sorw:g}"
             )
             if self.socr > sorw:
                 self.swcomment += f" socr={self.socr:g}"
         else:
             # When _sgcr is defined, this object is in use by GasWater
-            self.swcomment = "-- swirr=%g swl=%g swcr=%g sgrw=%g sgcr=%g" % (
-                self.swirr,
-                self.swl,
-                self.swcr,
-                self.sorw,
-                self.sgcr,
+            # (sorw is aliased as sgrw, and sgcr is relevant)
+            self.swcomment = (
+                f"-- swirr={self.swirr:g} swl={self.swl:g} "
+                f"swcr={self.swcr:g} sgrw={self.sorw:g} sgcr={self.sgcr:g}"
             )
             if _sgl is not None:
                 self.swcomment += f" sgl={self.sgl:g}"
@@ -441,10 +437,8 @@ class WaterOil(object):
 
         if not krwmax:
             krwmax = 1
-        self.krwcomment = "-- Corey krw, nw=%g, krwend=%g, krwmax=%g\n" % (
-            nw,
-            krwend,
-            krwmax,
+        self.krwcomment = (
+            f"-- Corey krw, nw={nw:g}, krwend={krwend:g}, krwmax={krwmax:g}\n"
         )
 
     def set_endpoints_linearpart_krw(
@@ -560,12 +554,9 @@ class WaterOil(object):
 
         if not krwmax:
             krwmax = 1
-        self.krwcomment = "-- LET krw, l=%g, e=%g, t=%g, krwend=%g, krwmax=%g\n" % (
-            l,
-            e,
-            t,
-            krwend,
-            krwmax,
+        self.krwcomment = (
+            f"-- LET krw, l={l:g}, e={e:g}, t={t:g}, "
+            f"krwend={krwend:g}, krwmax={krwmax:g}\n"
         )
 
     def add_LET_oil(
@@ -608,12 +599,7 @@ class WaterOil(object):
 
         self.set_endpoints_linearpart_krow(kroend)
 
-        self.krowcomment = "-- LET krow, l=%g, e=%g, t=%g, kroend=%g\n" % (
-            l,
-            e,
-            t,
-            kroend,
-        )
+        self.krowcomment = "-- LET krow, l={l:g}, e={e:g}, t={t:g}, kroend={kroend:g}\n"
 
     def add_corey_oil(
         self, now: float = 2.0, kroend: float = 1.0, kromax: Optional[float] = None
@@ -641,10 +627,7 @@ class WaterOil(object):
 
         self.set_endpoints_linearpart_krow(kroend)
 
-        self.krowcomment = "-- Corey krow, now=%g, kroend=%g\n" % (
-            now,
-            kroend,
-        )
+        self.krowcomment = f"-- Corey krow, now={now:g}, kroend={kroend:g}\n"
 
     def add_simple_J(
         self,
@@ -715,8 +698,8 @@ class WaterOil(object):
         )
         self.pccomment = (
             "-- Simplified J-function for Pc; rms version, in bar\n--   "
-            + "a=%g, b=%g, poro_ref=%g, perm_ref=%g mD, drho=%g kg/m^3, g=%g m/s^2\n"
-            % (a, b, poro_ref, perm_ref, drho, g)
+            f"a={a:g}, b={b:g}, poro_ref={poro_ref:g}, perm_ref={perm_ref:g} mD,"
+            f" drho={drho:g} kg/m^3, g={g:g} m/s^2\n"
         )
 
     def add_simple_J_petro(
@@ -788,8 +771,8 @@ class WaterOil(object):
 
         self.pccomment = (
             "-- Simplified J-function for Pc, petrophysical version, in bar \n--   "
-            + "a=%g, b=%g, poro_ref=%g, perm_ref=%g mD, drho=%g kg/m^3, g=%g m/s^2\n"
-            % (a, b, poro_ref, perm_ref, drho, g)
+            f"a={a:g}, b={b:g}, poro_ref={poro_ref:g}, perm_ref={perm_ref:g} mD, "
+            f"drho={drho:g} kg/m^3, g={g:g} m/s^2\n"
         )
 
     def add_normalized_J(
@@ -855,8 +838,8 @@ class WaterOil(object):
         self.table["PC"] = tmp * pascal_to_bar
         self.pccomment = (
             "-- Capillary pressure from normalized J-function, in bar\n"
-            + "-- a=%g, b=%g, poro=%g, perm=%g mD, sigma_costau=%g mN/m\n"
-            % (a, b, poro, perm, sigma_costau)
+            f"-- a={a:g}, b={b:g}, poro={poro:g}, perm={perm:g} mD, "
+            f"sigma_costau={sigma_costau:g} mN/m\n"
         )
 
     def add_skjaeveland_pc(
@@ -907,8 +890,7 @@ class WaterOil(object):
 
         self.pccomment = (
             "-- Skjæveland correlation for Pc;\n"
-            + "-- cw=%g, co=%g, aw=%g, ao=%g, swr=%g, sor=%g\n"
-            % (cw, co, aw, ao, swr, sor)
+            f"-- cw={cw:g}, co={co:g}, aw={aw:g}, ao={ao:g}, swr={swr:g}, sor={sor:g}\n"
         )
 
         # swnpc is a normalized saturation, but normalized with
@@ -977,8 +959,9 @@ class WaterOil(object):
         self.table.loc[self.table["SWN"] < epsilon, "PC"] = Pcmax
         self.pccomment = (
             "-- LET correlation for primary drainage Pc;\n"
-            "-- Lp=%g, Ep=%g, Tp=%g, Lt=%g, Et=%g, Tt=%g, Pcmax=%g, Pct=%g\n"
-            % (Lp, Ep, Tp, Lt, Et, Tt, Pcmax, Pct)
+            f"-- Lp={Lp:g}, Ep={Ep:g}, Tp={Tp:g}, "
+            f"Lt={Lt:g}, Et={Et:g}, Tt={Tt:g}, "
+            f"Pcmax={Pcmax:g}, Pct={Pct:g}\n"
         )
 
     def add_LET_pc_imb(
@@ -1034,8 +1017,9 @@ class WaterOil(object):
         self.table.loc[self.table["SWNPCO"] > 1 - epsilon, "PC"] = Pcmin
         self.pccomment = (
             "-- LET correlation for imbibition Pc;\n"
-            "-- Ls=%g, Es=%g, Ts=%g, Lf=%g, Ef=%g, Tf=%g, Pcmax=%g, Pcmin=%g, Pct=%g\n"
-            % (Ls, Es, Ts, Lf, Ef, Tf, Pcmax, Pcmin, Pct)
+            f"-- Ls={Ls:g}, Es={Es:g}, Ts={Ts:g}, "
+            f"Lf={Lf:g}, Ef={Ef:g}, Tf={Tf:g}, "
+            f"Pcmax={Pcmax:g}, Pcmin={Pcmin:g}, Pct={Pct:g}\n"
         )
 
     def estimate_sorw(self, curve: str = "KRW") -> float:
@@ -1204,7 +1188,7 @@ class WaterOil(object):
             string += self.krwcomment
             string += self.krowcomment
             if not self.fast:
-                string += "-- krw = krow @ sw=%1.5f\n" % self.crosspoint()
+                string += f"-- krw = krow @ sw={self.crosspoint():1.5f}\n"
             string += self.pccomment
         width = 10
         string += (
@@ -1275,7 +1259,7 @@ class WaterOil(object):
             string += self.krwcomment
             if crosspointcomment is None:
                 if "KROW" in self.table.columns and not self.fast:
-                    string += "-- krw = krow @ sw=%1.5f\n" % self.crosspoint()
+                    string += f"-- krw = krow @ sw={self.crosspoint():1.5f}\n"
             else:
                 string += crosspointcomment
             string += self.pccomment
@@ -1315,7 +1299,7 @@ class WaterOil(object):
             string += self.krwcomment.replace("--", "!")
             string += self.krowcomment.replace("--", "!")
             if not self.fast:
-                string += "! krw = krow @ sw=%1.5f\n" % self.crosspoint()
+                string += f"! krw = krow @ sw={self.crosspoint():1.5f}\n"
             string += self.pccomment.replace("--", "!")
         width = 10
         string += (

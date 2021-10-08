@@ -244,7 +244,7 @@ class WaterOilGas(object):
             return self.wateroil.tag + " " + self.gasoil.tag
         if self.wateroil is not None:
             return self.wateroil.tag
-        elif self.gasoil is not None:
+        if self.gasoil is not None:
             return self.gasoil.tag
         return ""
 
