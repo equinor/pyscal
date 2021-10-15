@@ -46,7 +46,7 @@ jobs:
 
       - name: Check code style and typing
         run: |
-          black --check pyscal/*py tests/test_*py setup.py docs/conf.py
+          black --check --force-exclude="pyscal/version.py" pyscal/*py tests/test_*py setup.py docs/conf.py
           flake8 pyscal tests
           isort --check-only --profile black pyscal tests
           mypy pyscal
