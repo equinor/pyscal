@@ -1,6 +1,5 @@
 """Representing a GasOil object"""
 
-import logging
 from typing import Optional
 
 import numpy as np
@@ -12,8 +11,7 @@ from pyscal.constants import EPSILON as epsilon
 from pyscal.constants import MAX_EXPONENT, SWINTEGERS
 from pyscal.utils.relperm import crosspoint, estimate_diffjumppoint, truncate_zeroness
 from pyscal.utils.string import comment_formatter, df2str
-
-logger = logging.getLogger(__name__)
+from pyscal import getLogger_pyscal
 
 
 class GasOil(object):
@@ -56,6 +54,8 @@ class GasOil(object):
         fast: Set to True if in order to skip some integrity checks
             and nice-to-have features. Not needed to set for normal pyscal
             runs, as speed is seldom crucial. Default False
+        args: Verbose, debug and output arguments from CLI
+            to create logger that splits log messages to stdout and stderr
     """
 
     def __init__(
@@ -70,6 +70,7 @@ class GasOil(object):
         krgendanchor: str = "sorg",
         fast: bool = False,
         _sgl: float = None,  # Only to be used by GasWater.
+        args: Optional[dict] = None,
     ) -> None:
         if h is None:
             h = 0.01
@@ -81,12 +82,13 @@ class GasOil(object):
 
         if krgendanchor is None:
             krgendanchor = ""
-
         assert isinstance(krgendanchor, str), "krgendanchor must be a string"
+
+        self.logger: Optional[object] = getLogger_pyscal(__name__, args)
 
         h_min = 1.0 / float(SWINTEGERS)
         if h < h_min:
-            logger.warning(
+            self.logger.warning(
                 "Requested saturation step length (%g) too small, reset to %g", h, h_min
             )
             self.h = h_min
@@ -121,7 +123,7 @@ class GasOil(object):
         if krgendanchor in ["sorg", ""]:
             self.krgendanchor = krgendanchor
         else:
-            logger.warning("Unknown krgendanchor %s, ignored", str(krgendanchor))
+            self.logger.warning("Unknown krgendanchor %s, ignored", str(krgendanchor))
             self.krgendanchor = ""
 
         self.fast = fast
@@ -198,7 +200,7 @@ class GasOil(object):
         self.krogcomment = ""
         self.pccomment = ""
 
-        logger.debug(
+        self.logger.debug(
             "Initialized GasOil with %s saturation points", str(len(self.table))
         )
 
@@ -241,7 +243,7 @@ class GasOil(object):
         """
         # Avoid having to deal with multi-indices:
         if len(dframe.index.names) > 1:
-            logger.warning(
+            self.logger.warning(
                 "add_fromtable() did a reset_index(), consider not supplying MultiIndex"
             )
             dframe = dframe.reset_index()
@@ -257,7 +259,9 @@ class GasOil(object):
                 # Try to convert to numeric type
                 try:
                     dframe[col] = dframe[col].astype(float)
-                    logger.info("Converted column %s to numbers for fromtable()", col)
+                    self.logger.info(
+                        "Converted column %s to numbers for fromtable()", col
+                    )
                 except (TypeError, ValueError) as err:
                     raise ValueError(
                         f"Failed to parse column {col} as numbers for add_fromtable()"
@@ -267,12 +271,12 @@ class GasOil(object):
             raise ValueError("sg must start at zero")
         swlfrominput = 1 - dframe[sgcolname].max()
         if abs(swlfrominput - self.swl) > epsilon:
-            logger.warning(
+            self.logger.warning(
                 "swl=%f and 1-max(sg)=%f from incoming table do not seem compatible",
                 self.swl,
                 swlfrominput,
             )
-            logger.warning("         Do not trust the result near the endpoint.")
+            self.logger.warning("         Do not trust the result near the endpoint.")
 
         if 0 < swlfrominput - self.swl < epsilon:
             # Perturb max sg in incoming dataframe when we are this close,
@@ -320,7 +324,7 @@ class GasOil(object):
             if not (
                 np.isclose(sgro_estimate, 0.0) or np.isclose(sgro_estimate, self.sgcr)
             ):
-                logger.warning(
+                self.logger.warning(
                     "Estimated sgro (%s) from tabulated data was not 0 or sgcr (%s). "
                     "Reset to zero.",
                     str(sgro_estimate),
@@ -338,7 +342,7 @@ class GasOil(object):
                     f"and existing max(SG) is {self.table['SG'].max()}"
                 )
             if np.isinf(dframe[pccolname]).any():
-                logger.warning(
+                self.logger.warning(
                     (
                         "Infinity pc values detected. Will be dropped, "
                         "risk of extrapolation"
@@ -405,12 +409,10 @@ class GasOil(object):
             ] = krgend
             if krgmax and krgmax < 1.0 and self.sorg > 0:
                 # Only warn if something else than default is in use
-                logger.warning("krgmax ignored when not anchoring to sorg")
+                self.logger.warning("krgmax ignored when not anchoring to sorg")
 
     def set_endpoints_linearpart_krog(
-        self,
-        kroend: float,
-        kromax: Optional[float] = None,
+        self, kroend: float, kromax: Optional[float] = None,
     ):
         """Set linear parts of krog outside endpoints.
 
@@ -429,7 +431,7 @@ class GasOil(object):
         """
         if kromax is not None:
             if np.isclose(self.sgro, 0) and not np.isclose(kromax, kroend):
-                logger.warning("kromax ignored when sgro is zero")
+                self.logger.warning("kromax ignored when sgro is zero")
                 kromax = kroend
             else:
                 assert kroend <= kromax
@@ -483,10 +485,7 @@ class GasOil(object):
         )
 
     def add_corey_oil(
-        self,
-        nog: float = 2,
-        kroend: float = 1,
-        kromax: Optional[float] = None,
+        self, nog: float = 2, kroend: float = 1, kromax: Optional[float] = None,
     ):
         """
         Add kro data through the Corey parametrization
@@ -703,40 +702,40 @@ class GasOil(object):
         """
         error = False
         if "KRG" not in self.table:
-            logger.error("KRG data missing")
+            self.logger.error("KRG data missing")
             error = True
         if not (self.table["SG"].diff().dropna() > -epsilon).all():
-            logger.error("SG data not strictly increasing")
+            self.logger.error("SG data not strictly increasing")
             error = True
         if (
             "KRG" in self.table
             and not (self.table["KRG"].diff().dropna() >= -epsilon).all()
         ):
-            logger.error("KRG data not monotonically decreasing")
+            self.logger.error("KRG data not monotonically decreasing")
             error = True
 
         if mode != "SGFN":
             if "KROG" not in self.table:
-                logger.error("KROG data missing")
+                self.logger.error("KROG data missing")
                 error = True
             if (
                 "KROG" in self.table
                 and not (self.table["KROG"].diff().dropna() <= epsilon).all()
             ):
-                logger.error("KROG data not monotonically increasing")
+                self.logger.error("KROG data not monotonically increasing")
                 error = True
         if "KRG" in self.table and not np.isclose(min(self.table["KRG"]), 0.0):
-            logger.error("KRG must start at zero")
+            self.logger.error("KRG must start at zero")
             error = True
         if "PC" in self.table and self.table["PC"][0] > -epsilon:
             if not (self.table["PC"].diff().dropna() < epsilon).all():
-                logger.error("PC data for gas-oil not strictly decreasing")
+                self.logger.error("PC data for gas-oil not strictly decreasing")
                 error = True
         if "PC" in self.table and np.isinf(self.table["PC"].max()):
-            logger.error("PC goes to infinity for gas-oil. ")
+            self.logger.error("PC goes to infinity for gas-oil. ")
             error = True
         if "PC" in self.table.columns and np.isnan(self.table["PC"]).any():
-            logger.error("pc data contains NaN")
+            self.logger.error("pc data contains NaN")
             error = True
 
         for col in list(set(["SG", "KRG", "KROG"]) & set(self.table.columns)):
@@ -744,11 +743,11 @@ class GasOil(object):
                 (min(self.table[col]) >= -epsilon)
                 and (max(self.table[col]) <= 1 + epsilon)
             ):
-                logger.error("%s data should be contained in [0,1]", col)
+                self.logger.error("%s data should be contained in [0,1]", col)
                 error = True
         if error:
             return False
-        logger.debug("GasOil object is checked to be valid")
+        self.logger.debug("GasOil object is checked to be valid")
         return True
 
     def SGOF(self, header: bool = True, dataincommentrow: bool = True) -> str:

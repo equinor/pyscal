@@ -1,18 +1,22 @@
 """Command line tool for pyscal"""
 
 import argparse
-import logging
 import sys
 import traceback
 import warnings
 from pathlib import Path
 from typing import List, Optional
 
-from pyscal import GasWater, SCALrecommendation, WaterOilGas, __version__
+from pyscal import (
+    GasWater,
+    SCALrecommendation,
+    WaterOilGas,
+    __version__,
+    getLogger_pyscal,
+)
 
 from .factory import PyscalFactory
 
-logger = logging.getLogger(__name__)
 
 EPILOG = """
 The parameter file should contain a table with at least the column
@@ -74,14 +78,10 @@ def get_parser() -> argparse.ArgumentParser:
         help="Print informational messages while processing input",
     )
     parser.add_argument(
-        "--debug",
-        action="store_true",
-        help="Print debug information",
+        "--debug", action="store_true", help="Print debug information",
     )
     parser.add_argument(
-        "--version",
-        action="version",
-        version="%(prog)s (version " + __version__ + ")",
+        "--version", action="version", version="%(prog)s (version " + __version__ + ")",
     )
     parser.add_argument(
         "-o",
@@ -147,7 +147,6 @@ def main() -> None:
     Translates from argparse API to Pyscal's Python API"""
     parser = get_parser()
     args = parser.parse_args()
-
     try:
         pyscal_main(
             parametertable=args.parametertable,
@@ -194,16 +193,13 @@ def pyscal_main(
         slgof: Use SLGOF
         family2: Dump family 2 keywords
     """
+    args = {"debug": debug, "verbose": verbose, "output": output}
+    logger = getLogger_pyscal(__name__, args)
 
-    if verbose:
-        logging.basicConfig(level=logging.INFO)
-    if debug:
-        logging.basicConfig(level=logging.DEBUG)
-
-    scalinput_df = PyscalFactory.load_relperm_df(parametertable, sheet_name=sheet_name)
-
+    scalinput_df = PyscalFactory.load_relperm_df(
+        parametertable, sheet_name=sheet_name, args=args
+    )
     logger.debug("Input data:\n%s", scalinput_df.to_string(index=False))
-
     if int_param_go is not None and int_param_wo is None:
         raise ValueError("Don't use int_param_go alone, only int_param_wo")
     if (
@@ -228,7 +224,7 @@ def pyscal_main(
         if int_param_wo is None:
             raise ValueError("No interpolation parameters provided")
         scalrec_list = PyscalFactory.create_scal_recommendation_list(
-            scalinput_df, h=delta_s
+            scalinput_df, h=delta_s, args=args
         )
         assert isinstance(scalrec_list[1], SCALrecommendation)
         if scalrec_list[1].type == WaterOilGas:
@@ -237,16 +233,19 @@ def pyscal_main(
                 str(int_param_wo),
                 str(int_param_go),
             )
-            wog_list = scalrec_list.interpolate(int_param_wo, int_param_go, h=delta_s)
+            wog_list = scalrec_list.interpolate(
+                int_param_wo, int_param_go, h=delta_s, args=args
+            )
         elif scalrec_list[1].type == GasWater:
             logger.info(
-                "Interpolating, gaswater=%s",
-                str(int_param_wo),
+                "Interpolating, gaswater=%s", str(int_param_wo),
             )
-            wog_list = scalrec_list.interpolate(int_param_wo, None, h=delta_s)
+            wog_list = scalrec_list.interpolate(
+                int_param_wo, None, h=delta_s, args=args
+            )
     else:
         wog_list = PyscalFactory.create_pyscal_list(
-            scalinput_df, h=delta_s
+            scalinput_df, h=delta_s, args=args
         )  # can be both water-oil, water-oil-gas, or gas-water
 
     if (

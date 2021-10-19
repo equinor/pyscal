@@ -1,18 +1,25 @@
 """Container class for list of Pyscal objects"""
 
-import logging
 from pathlib import Path
 from typing import List, Optional, Type, Union
 
 import pandas as pd
 
-from pyscal import GasOil, GasWater, SCALrecommendation, WaterOil, WaterOilGas
+from pyscal import (
+    GasOil,
+    GasWater,
+    SCALrecommendation,
+    WaterOil,
+    WaterOilGas,
+    getLogger_pyscal,
+)
 
 PYSCAL_OBJECTS = [WaterOil, GasOil, GasWater, WaterOilGas, SCALrecommendation]
 
 PyscalObjects = Union[WaterOil, GasOil, GasWater, WaterOilGas, SCALrecommendation]
 
-logger = logging.getLogger(__name__)
+# logger = logging.getLogger(__name__)
+# logger = getLogger_pyscal(__name__)
 
 
 class PyscalList(object):
@@ -26,9 +33,13 @@ class PyscalList(object):
 
     Args:
         pyscal_list (list): List of objects if already ready. Can be empty or None.
+        args: Verbose, debug and output arguments from CLI
+            to create logger that splits log messages to stdout and stderr
     """
 
-    def __init__(self, pyscal_list: List[PyscalObjects] = None):
+    def __init__(
+        self, pyscal_list: List[PyscalObjects] = None, args: Optional[dict] = None,
+    ):
         self.pyscaltype: Optional[Type] = None
         self.pyscal_list: List[PyscalObjects] = []
         if isinstance(pyscal_list, list):
@@ -37,6 +48,7 @@ class PyscalList(object):
         if isinstance(pyscal_list, PyscalList):
             for idx in range(len(pyscal_list)):
                 self.append(pyscal_list[idx + 1])
+        self.logger: Optional[object] = getLogger_pyscal(__name__, args)
 
     def append(self, pyscal_obj: Optional[PyscalObjects]) -> None:
         """Append a pyscal object to the list
@@ -247,7 +259,7 @@ class PyscalList(object):
         if family == 2 and slgof is True:
             raise ValueError("SLGOF not meaningful for family 2")
         keywords = self.relevant_keywords(family=family, slgof=slgof)
-        logger.info(
+        self.logger.info(
             "Keywords %s (family %d) for %d SATNUMs generated",
             ", ".join(keywords),
             family,
@@ -266,11 +278,11 @@ class PyscalList(object):
             filename: Filename for the output to be given to Eclipse 100
             slgof: Set to true of SLGOF is wanted instead of SGOF
         """
-        logger.warning("dump_family_1() is deprecated")
+        self.logger.warning("dump_family_1() is deprecated")
         string = self.build_eclipse_data(family=1, slgof=slgof)
         if filename is not None:
             if not Path(filename).parent.exists():
-                logger.warning(
+                self.logger.warning(
                     "Please create the output directory prior to calling pyscal."
                 )
                 Path(filename).parent.mkdir(exist_ok=True, parents=True)
@@ -286,11 +298,11 @@ class PyscalList(object):
         Args:
             filename (str): Filename for the output to be given to Eclipse 100
         """
-        logger.warning("dump_family_2() is deprecated")
+        self.logger.warning("dump_family_2() is deprecated")
         string = self.build_eclipse_data(family=2, slgof=False)
         if filename is not None:
             if not Path(filename).parent.exists():
-                logger.warning(
+                self.logger.warning(
                     "Please create the output directory prior to calling pyscal."
                 )
                 Path(filename).parent.mkdir(exist_ok=True, parents=True)
@@ -302,6 +314,7 @@ class PyscalList(object):
         int_params_wo: Union[float, int, List[float]],
         int_params_go: Optional[Union[float, int, List[Optional[float]]]] = None,
         h: Optional[float] = None,
+        args: Optional[dict] = None,
     ) -> "PyscalList":
         """This function will interpolate each SCALrecommendation
         object to the chosen parameters
@@ -347,18 +360,18 @@ class PyscalList(object):
             raise ValueError(
                 f"Too many interpolation parameters given for GasOil {int_params_go}"
             )
-        wog_list: PyscalList = PyscalList()
+        wog_list: PyscalList = PyscalList(args=args)
         for (satnum, scalrec) in enumerate(self.pyscal_list):
             assert isinstance(scalrec, SCALrecommendation)
             wog_list.append(
-                scalrec.interpolate(int_params_wo[satnum], int_params_go[satnum], h=h)
+                scalrec.interpolate(
+                    int_params_wo[satnum], int_params_go[satnum], h=h, args=args
+                )
             )
         return wog_list
 
     def make_ecl_output(
-        self,
-        keyword: str,
-        write_to_filename: Optional[str] = None,
+        self, keyword: str, write_to_filename: Optional[str] = None,
     ) -> str:
         """Internal helper function for constructing strings and writing to disk"""
         if self.pyscaltype == SCALrecommendation:
@@ -420,10 +433,10 @@ class PyscalList(object):
         """
         if satnum_idx < 1:
             e_msg = "SATNUM must be 1 or higher"
-            logger.error(e_msg)
+            self.logger.error(e_msg)
             raise IndexError(e_msg)
         if satnum_idx > self.__len__():
             e_msg = "SATNUM index out of range, length is " + str(self.__len__())
-            logger.error(e_msg)
+            self.logger.error(e_msg)
             raise IndexError(e_msg)
         return self.pyscal_list[satnum_idx - 1]

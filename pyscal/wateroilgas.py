@@ -1,6 +1,5 @@
 """Container object for one WaterOil and one GasOil object"""
 
-import logging
 from typing import Optional
 
 import numpy as np
@@ -9,11 +8,10 @@ import pandas as pd
 import pyscal
 from pyscal.constants import SWINTEGERS
 from pyscal.utils.string import comment_formatter, df2str
+from pyscal import getLogger_pyscal
 
 from .gasoil import GasOil
 from .wateroil import WaterOil
-
-logger = logging.getLogger(__name__)
 
 
 class WaterOilGas(object):
@@ -43,6 +41,8 @@ class WaterOilGas(object):
         tag: Optional text that will be included as comments.
         fast: Set to True if you prefer speed over robustness. Not recommended,
             pyscal will not guarantee valid output in this mode.
+        args: Verbose, debug and output arguments from CLI
+            to create logger that splits log messages to stdout and stderr
     """
 
     def __init__(
@@ -56,15 +56,31 @@ class WaterOilGas(object):
         h: Optional[float] = None,
         tag: str = "",
         fast: bool = False,
+        args: Optional[dict] = None,
     ) -> None:
         """Sets up the saturation range for three phases"""
         self.fast: bool = fast
         self.wateroil: Optional[WaterOil] = WaterOil(
-            swirr=swirr, swl=swl, swcr=swcr, sorw=sorw, h=h, tag=tag, fast=fast
+            swirr=swirr,
+            swl=swl,
+            swcr=swcr,
+            sorw=sorw,
+            h=h,
+            tag=tag,
+            fast=fast,
+            args=args,
         )
         self.gasoil: Optional[GasOil] = GasOil(
-            swirr=swirr, sgcr=sgcr, sorg=sorg, swl=swl, h=h, tag=tag, fast=fast
+            swirr=swirr,
+            sgcr=sgcr,
+            sorg=sorg,
+            swl=swl,
+            h=h,
+            tag=tag,
+            fast=fast,
+            args=args,
         )
+        self.logger: Optional[object] = getLogger_pyscal(__name__, args)
 
     def selfcheck(self) -> bool:
         """Run selfcheck on both wateroil and gasoil.
@@ -80,56 +96,56 @@ class WaterOilGas(object):
             return self.wateroil.selfcheck()
         if self.gasoil is not None:
             return self.gasoil.selfcheck()
-        logger.error("Both wateroil and gasoil are None in WaterOilGas")
+        self.logger.error("Both wateroil and gasoil are None in WaterOilGas")
         return False
 
     def SWOF(self, header: bool = True, dataincommentrow: bool = True) -> str:
         """Return a SWOF string. Delegated to the wateroil object"""
         if self.wateroil is None:
-            logger.error("No WaterOil object in this WaterOilGas object")
+            self.logger.error("No WaterOil object in this WaterOilGas object")
             return ""
         if "KRW" not in self.wateroil.table or "KROW" not in self.wateroil.table:
-            logger.error("Missing KRW/KROW curves in WaterOilGas object")
+            self.logger.error("Missing KRW/KROW curves in WaterOilGas object")
             return ""
         return self.wateroil.SWOF(header, dataincommentrow)
 
     def SGOF(self, header: bool = True, dataincommentrow: bool = True) -> str:
         """Return a SGOF string. Delegated to the gasoil object."""
         if self.gasoil is None:
-            logger.error("No GasOil object in this WaterOilGas object")
+            self.logger.error("No GasOil object in this WaterOilGas object")
             return ""
         if "KRG" not in self.gasoil.table or "KROG" not in self.gasoil.table:
-            logger.error("Missing KRG/KROG curves in WaterOilGas object")
+            self.logger.error("Missing KRG/KROG curves in WaterOilGas object")
             return ""
         return self.gasoil.SGOF(header, dataincommentrow)
 
     def SLGOF(self, header: bool = True, dataincommentrow: bool = True) -> str:
         """Return a SLGOF string. Delegated to the gasoil object."""
         if self.gasoil is None:
-            logger.error("No GasOil object in this WaterOilGas object")
+            self.logger.error("No GasOil object in this WaterOilGas object")
             return ""
         if "KRG" not in self.gasoil.table or "KROG" not in self.gasoil.table:
-            logger.error("Missing KRG/KROG in WaterOilGas object")
+            self.logger.error("Missing KRG/KROG in WaterOilGas object")
             return ""
         return self.gasoil.SLGOF(header, dataincommentrow)
 
     def SGFN(self, header: bool = True, dataincommentrow: bool = True) -> str:
         """Return a SGFN string. Delegated to the gasoil object."""
         if self.gasoil is None:
-            logger.error("No GasOil object in this WaterOilGas object")
+            self.logger.error("No GasOil object in this WaterOilGas object")
             return ""
         if "KRG" not in self.gasoil.table:
-            logger.error("Missing KRG in WaterOilGas object")
+            self.logger.error("Missing KRG in WaterOilGas object")
             return ""
         return self.gasoil.SGFN(header, dataincommentrow)
 
     def SWFN(self, header: bool = True, dataincommentrow: bool = True) -> str:
         """Return a SWFN string. Delegated to the wateroil object."""
         if self.wateroil is None:
-            logger.error("No WaterOil object in this WaterOilGas object")
+            self.logger.error("No WaterOil object in this WaterOilGas object")
             return ""
         if "KRW" not in self.wateroil.table:
-            logger.error("Missing KRW in WaterOilGas object")
+            self.logger.error("Missing KRW in WaterOilGas object")
             return ""
         return self.wateroil.SWFN(header, dataincommentrow)
 
@@ -143,7 +159,7 @@ class WaterOilGas(object):
         if (self.wateroil is None or self.gasoil is None) or (
             "KROW" not in self.wateroil.table or "KROG" not in self.gasoil.table
         ):
-            logger.error("Both WaterOil and GasOil krow/krog is needed for SOF3")
+            self.logger.error("Both WaterOil and GasOil krow/krog is needed for SOF3")
             return ""
         self.threephaseconsistency()
 
@@ -276,7 +292,7 @@ class WaterOilGas(object):
         if not np.isclose(
             self.wateroil.table["KROW"].max(), self.gasoil.table["KROG"].max()
         ):
-            logger.warning(
+            self.logger.warning(
                 "Eclipse will fail, max(KROW)=%g is not equal to max(KROG)=%g",
                 self.wateroil.table["KROW"].max(),
                 self.gasoil.table["KROG"].max(),
@@ -287,7 +303,7 @@ class WaterOilGas(object):
         # gas saturation (0.91) plus the connate water saturation
         # (0.10) must not exceed 1.0
         if self.gasoil.table["SG"].max() + self.wateroil.table["SW"].min() > 1.0:
-            logger.warning("Eclipse will fail, max(SG) + swl > 1.0")
+            self.logger.warning("Eclipse will fail, max(SG) + swl > 1.0")
             wog_is_ok = False
 
         # 3: Warning: Consistency problem for gas phase endpoint (krgr > krg)

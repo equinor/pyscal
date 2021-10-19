@@ -1,15 +1,12 @@
 """SCALrecommendation, container for low, base and high WaterOilGas objects"""
 
 import copy
-import logging
 from typing import Optional, Set, Type, Union
 
 import numpy as np
 
-from pyscal import GasWater, WaterOilGas
+from pyscal import GasWater, WaterOilGas, getLogger_pyscal
 from pyscal.utils.interpolation import interpolate_go, interpolate_wo
-
-logger = logging.getLogger(__name__)
 
 
 class SCALrecommendation(object):
@@ -24,6 +21,8 @@ class SCALrecommendation(object):
         base: An object representing the base case
         high: An object representing the high case
         tag: A string that describes the recommendation. Optional.
+        args: Verbose, debug and output arguments from CLI
+            to create logger that splits log messages to stdout and stderr
     """
 
     def __init__(
@@ -33,6 +32,7 @@ class SCALrecommendation(object):
         high: Union[WaterOilGas, GasWater],
         tag: Optional[str] = None,
         h: float = 0.01,
+        args: Optional[dict] = None,
     ) -> None:
         """Set up a SCAL recommendation curve set from WaterOilGas objects
 
@@ -50,6 +50,7 @@ class SCALrecommendation(object):
         self.base: Union[WaterOilGas, GasWater]
         self.high: Union[WaterOilGas, GasWater]
         self.type: Type
+        self.logger: Optional[object] = getLogger_pyscal(__name__, args)
 
         if (
             isinstance(low, WaterOilGas)
@@ -79,7 +80,7 @@ class SCALrecommendation(object):
             self.fast = True
         elif any([self.low.fast, self.base.fast, self.high.fast]):
             self.fast = self.low.fast = self.base.fast = self.high.fast = False
-            logger.warning(
+            self.logger.warning(
                 (
                     "One or more of the low/base/high objects are set to be run in "
                     "fast mode, but not all. Fast mode set to false in all objects. "
@@ -119,6 +120,7 @@ class SCALrecommendation(object):
         parameter: float,
         parameter2: Optional[float] = None,
         h: Optional[float] = None,
+        args: Optional[dict] = None,
     ) -> Union[WaterOilGas, GasWater]:
         """Interpolate between low, base and high
 
@@ -171,9 +173,9 @@ class SCALrecommendation(object):
 
         if parameter2 is not None:
             if not do_gasoil:
-                logger.warning("parameter2 is meaningless for water-oil only")
+                self.logger.warning("parameter2 is meaningless for water-oil only")
             if do_gaswater:
-                logger.warning("parameter2 is meaningless for gas-water")
+                self.logger.warning("parameter2 is meaningless for gas-water")
 
         # Initialize wateroil and gasoil curves to be filled with
         # interpolated curves:
@@ -201,9 +203,9 @@ class SCALrecommendation(object):
             )
         tagstring = "\n".join(tags)
         if do_gaswater:
-            interpolant = GasWater(h=h, tag=tagstring)
+            interpolant = GasWater(h=h, tag=tagstring, args=args)
         else:
-            interpolant = WaterOilGas(h=h, tag=tagstring)
+            interpolant = WaterOilGas(h=h, tag=tagstring, args=args)
 
         if do_wateroil or do_gaswater:
             tag = f"SCAL recommendation interpolation to {parameter}\n" + tagstring
@@ -225,19 +227,11 @@ class SCALrecommendation(object):
                 interpolant.wateroil.tag = tag
             elif parameter < 0.0:
                 interpolant.wateroil = interpolate_wo(
-                    self.base.wateroil,
-                    self.low.wateroil,
-                    -parameter,
-                    h=h,
-                    tag=tag,
+                    self.base.wateroil, self.low.wateroil, -parameter, h=h, tag=tag,
                 )
             elif parameter > 0.0:
                 interpolant.wateroil = interpolate_wo(
-                    self.base.wateroil,
-                    self.high.wateroil,
-                    parameter,
-                    h=h,
-                    tag=tag,
+                    self.base.wateroil, self.high.wateroil, parameter, h=h, tag=tag,
                 )
         else:
             interpolant.wateroil = None
@@ -263,19 +257,11 @@ class SCALrecommendation(object):
                 interpolant.gasoil.tag = tag
             elif gasparameter < 0.0:
                 interpolant.gasoil = interpolate_go(
-                    self.base.gasoil,
-                    self.low.gasoil,
-                    -1 * gasparameter,
-                    h=h,
-                    tag=tag,
+                    self.base.gasoil, self.low.gasoil, -1 * gasparameter, h=h, tag=tag,
                 )
             elif gasparameter > 0.0:
                 interpolant.gasoil = interpolate_go(
-                    self.base.gasoil,
-                    self.high.gasoil,
-                    gasparameter,
-                    h=h,
-                    tag=tag,
+                    self.base.gasoil, self.high.gasoil, gasparameter, h=h, tag=tag,
                 )
         else:
             interpolant.gasoil = None

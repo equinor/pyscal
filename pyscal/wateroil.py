@@ -1,6 +1,5 @@
-"""Wateroil module"""
-
-import logging
+﻿"""Wateroil module"""
+from pyscal import getLogger_pyscal
 import math
 from typing import Optional
 
@@ -14,8 +13,6 @@ from pyscal.constants import MAX_EXPONENT, SWINTEGERS
 from pyscal.utils.capillarypressure import simple_J
 from pyscal.utils.relperm import crosspoint, estimate_diffjumppoint, truncate_zeroness
 from pyscal.utils.string import comment_formatter, df2str
-
-logger = logging.getLogger(__name__)
 
 
 class WaterOil(object):
@@ -57,6 +54,8 @@ class WaterOil(object):
         fast: Set to True if in order to skip some integrity checks
             and nice-to-have features. Not needed to set for normal pyscal
             runs, as speed is seldom crucial. Default False
+        args: Verbose, debug and output arguments from CLI
+            to create logger that splits log messages to stdout and stderr
     """
 
     def __init__(
@@ -71,6 +70,7 @@ class WaterOil(object):
         fast: bool = False,
         _sgcr: float = None,
         _sgl: float = None,
+        args: Optional[dict] = None,
     ) -> None:
         """Sets up the saturation range. Swirr is only relevant
         for the capillary pressure, not for relperm data.
@@ -85,6 +85,8 @@ class WaterOil(object):
         if socr is not None:
             assert -epsilon < socr < 1.0 + epsilon
 
+        self.logger: Optional[object] = getLogger_pyscal(__name__, args)
+
         if h is None:
             h = 0.01
 
@@ -94,7 +96,7 @@ class WaterOil(object):
 
         h_min = 1.0 / float(SWINTEGERS)
         if h < h_min:
-            logger.warning(
+            self.logger.warning(
                 "Requested saturation step length (%g) too small, reset to %g", h, h_min
             )
             self.h = h_min
@@ -124,7 +126,7 @@ class WaterOil(object):
             if socr < self.sorw - epsilon:
                 raise ValueError("socr must be equal to or larger than sorw")
             if self.sorw - epsilon < self.socr < self.sorw + 1 / SWINTEGERS + epsilon:
-                logger.warning("socr was close to sorw, reset to sorw")
+                self.logger.warning("socr was close to sorw, reset to sorw")
                 self.socr = self.sorw
         else:
             self.socr = self.sorw
@@ -202,7 +204,7 @@ class WaterOil(object):
         self.krowcomment = ""
         self.pccomment = ""
 
-        logger.debug(
+        self.logger.debug(
             "Initialized WaterOil with %s saturation points", str(len(self.table))
         )
 
@@ -252,13 +254,13 @@ class WaterOil(object):
         """
         # Avoid having to deal with multi-indices:
         if len(dframe.index.names) > 1:
-            logger.warning(
+            self.logger.warning(
                 "add_fromtable() did a reset_index(), consider not supplying MultiIndex"
             )
             dframe = dframe.reset_index()
 
         if swcolname not in dframe:
-            logger.critical(
+            self.logger.critical(
                 "%s not found in dataframe, can't read table data", swcolname
             )
             raise ValueError
@@ -269,7 +271,9 @@ class WaterOil(object):
                 # Try to convert to numeric type
                 try:
                     dframe[col] = dframe[col].astype(float)
-                    logger.info("Converted column %s to numbers for fromtable()", col)
+                    self.logger.info(
+                        "Converted column %s to numbers for fromtable()", col
+                    )
                 except (TypeError, ValueError) as err:
                     raise ValueError(
                         f"Failed to parse column {col} as numbers for add_fromtable()"
@@ -282,7 +286,7 @@ class WaterOil(object):
                 sorw = float(dframe[swcolname].max()) - estimate_diffjumppoint(
                     dframe, xcol=swcolname, ycol=krwcolname, side="right"
                 )
-                logger.info("Estimated sorw in tabular data to %f", sorw)
+                self.logger.info("Estimated sorw in tabular data to %f", sorw)
             assert -epsilon <= sorw <= 1 + epsilon
             if dframe[krwcolname].max() > 1.0:
                 raise ValueError("KRW is above 1 in incoming table")
@@ -339,7 +343,7 @@ class WaterOil(object):
                 sorw = float(dframe[swcolname].max()) - estimate_diffjumppoint(
                     dframe, xcol=swcolname, ycol=krowcolname, side="right"
                 )
-                logger.info("Estimated sorw in tabular data from krow to %s", sorw)
+                self.logger.info("Estimated sorw in tabular data from krow to %s", sorw)
             assert -epsilon <= sorw <= 1 + epsilon
             linearpart = dframe[swcolname] >= 1 - sorw
             nonlinearpart = dframe[swcolname] <= 1 - sorw  # (overlapping at sorw)
@@ -387,7 +391,7 @@ class WaterOil(object):
             if dframe[swcolname].max() < self.table["SW"].max():
                 raise ValueError("max(sw) of incoming data not large enough")
             if np.isinf(dframe[pccolname]).any():
-                logger.warning(
+                self.logger.warning(
                     (
                         "Infinity pc values detected. Will be dropped. "
                         "Risk of extrapolation"
@@ -470,7 +474,7 @@ class WaterOil(object):
             self.table.iloc[linear_section_indices[-1]]["KRW"] = krwmax
         else:
             if krwmax is not None:
-                logger.info("krwmax ignored when sorw is zero")
+                self.logger.info("krwmax ignored when sorw is zero")
 
         # If the linear section is longer than two rows, do linear
         # interpolation inside for krw:
@@ -500,7 +504,7 @@ class WaterOil(object):
             kroend: value of kro at swcr
         """
         if kromax is not None:
-            logger.error("kromax is DEPRECATED, ignored")
+            self.logger.error("kromax is DEPRECATED, ignored")
 
         # Set to zero above socr (usually equal to sorw):
         self.table.loc[self.table["SW"] > 1 - self.socr - epsilon, "KROW"] = 0
@@ -585,7 +589,7 @@ class WaterOil(object):
         assert 0 < kroend <= 1.0
 
         if kromax is not None:
-            logger.error("kromax is DEPRECATED, ignored")
+            self.logger.error("kromax is DEPRECATED, ignored")
 
         self.table["KROW"] = (
             kroend
@@ -620,7 +624,7 @@ class WaterOil(object):
         assert 0 < kroend <= 1.0
 
         if kromax is not None:
-            logger.error("kromax is DEPRECATED, ignored")
+            self.logger.error("kromax is DEPRECATED, ignored")
 
         self.table["KROW"] = kroend * self.table["SON"] ** now
         self.table.loc[self.table["SW"] >= (1 - self.sorw), "KROW"] = 0
@@ -685,7 +689,7 @@ class WaterOil(object):
             )
 
         if b > 0:
-            logger.warning(
+            self.logger.warning(
                 "positive b will give increasing capillary pressure with saturation"
             )
 
@@ -812,17 +816,17 @@ class WaterOil(object):
             raise ValueError("swl must be larger than swirr to avoid infinite p_c")
 
         if abs(b) < 0.01:
-            logger.warning(
+            self.logger.warning(
                 "b exponent is very small, risk of infinite capillary pressure"
             )
 
         if abs(a) < 0.01:
-            logger.warning(
+            self.logger.warning(
                 "a parameter is very small, risk of infinite capillary pressure"
             )
 
         if abs(a) > 5:
-            logger.warning(
+            self.logger.warning(
                 "a parameter is very high, risk of infinite capillary pressure"
             )
 
@@ -1106,20 +1110,20 @@ class WaterOil(object):
         """
         error = False
         if "KRW" not in self.table:
-            logger.error("krw data not found")
+            self.logger.error("krw data not found")
             error = True
         if not (self.table["SW"].diff().dropna().round(10) > -epsilon).all():
-            logger.error("SW data not strictly increasing")
+            self.logger.error("SW data not strictly increasing")
             error = True
         if (
             "KRW" in self.table
             and not (self.table["KRW"].diff().dropna().round(10) >= -epsilon).all()
         ):
-            logger.error("KRW data not monotonically increasing")
+            self.logger.error("KRW data not monotonically increasing")
             error = True
         if mode != "SWFN":
             if "KROW" not in self.table:
-                logger.error("KROW data not found")
+                self.logger.error("KROW data not found")
                 error = True
 
             if (
@@ -1129,28 +1133,28 @@ class WaterOil(object):
                 # In normal Eclipse runs, krow needs to be level or decreasing.
                 # In hysteresis runs, it needs to be strictly decreasing, that must
                 # be the users responsibility.
-                logger.error("KROW data not level or monotonically decreasing")
+                self.logger.error("KROW data not level or monotonically decreasing")
                 error = True
         if "PC" in self.table.columns and self.table["PC"][0] > -epsilon:
             if not (self.table["PC"].diff().dropna().round(10) < epsilon).all():
-                logger.error("PC data not strictly decreasing")
+                self.logger.error("PC data not strictly decreasing")
                 error = True
         if "PC" in self.table.columns and np.isnan(self.table["PC"]).any():
-            logger.error("pc data contains NaN")
+            self.logger.error("pc data contains NaN")
             error = True
         if "PC" in self.table.columns and np.isinf(self.table["PC"].max()):
-            logger.error("pc goes to infinity. Maybe swirr=swl?")
+            self.logger.error("pc goes to infinity. Maybe swirr=swl?")
             error = True
         for col in list(set(["SW", "KRW", "KROW"]) & set(self.table.columns)):
             if not (
                 (round(min(self.table[col]), 10) >= -epsilon)
                 and (round(max(self.table[col]), 10) <= 1 + epsilon)
             ):
-                logger.error("%s data should be contained in [0,1]", col)
+                self.logger.error("%s data should be contained in [0,1]", col)
                 error = True
         if error:
             return False
-        logger.debug("WaterOil object is checked to be valid")
+        self.logger.debug("WaterOil object is checked to be valid")
         return True
 
     def SWOF(self, header: bool = True, dataincommentrow: bool = True) -> str:

@@ -11,6 +11,7 @@ import pandas as pd
 import xlrd
 
 from pyscal.utils import capillarypressure
+from pyscal import getLogger_pyscal
 
 from .gasoil import GasOil
 from .gaswater import GasWater
@@ -18,8 +19,6 @@ from .pyscallist import PyscalList
 from .scalrecommendation import SCALrecommendation
 from .wateroil import WaterOil
 from .wateroilgas import WaterOilGas
-
-logger = logging.getLogger(__name__)
 
 
 def slicedict(dct: dict, keys: Iterable):
@@ -114,7 +113,9 @@ class PyscalFactory(object):
 
     @staticmethod
     def create_water_oil(
-        params: Optional[Dict[str, float]] = None, fast: bool = False
+        params: Optional[Dict[str, float]] = None,
+        fast: bool = False,
+        args: Optional[dict] = None,
     ) -> WaterOil:
         """Create a WaterOil object from a dictionary of parameters.
 
@@ -141,12 +142,14 @@ class PyscalFactory(object):
         Args:
             params: Dictionary with parameters describing the WaterOil object.
             fast: If fast-mode should be set for constructed object.
+            args: Verbose, debug and output arguments from CLI
+                to create logger that splits log messages to stdout and stderr
         """
         if not params:
             params = {}
         if not isinstance(params, dict):
             raise TypeError("Parameter to create_water_oil must be a dictionary")
-
+        logger = getLogger_pyscal(__name__, args)
         check_deprecated(params)
 
         sufficient_water_oil_params(params, failhard=True)
@@ -202,7 +205,7 @@ class PyscalFactory(object):
 
         # No requirements to the base objects, defaults are ok.
         wateroil = WaterOil(
-            **PyscalFactory.alias_sgrw(slicedict(params, WO_INIT)), fast=fast
+            **PyscalFactory.alias_sgrw(slicedict(params, WO_INIT)), fast=fast, args=args
         )
         usedparams = usedparams.union(set(slicedict(params, WO_INIT).keys()))
         logger.debug(
@@ -281,11 +284,14 @@ class PyscalFactory(object):
             raise ValueError(
                 ("Incomplete WaterOil object, some parameters missing to factory")
             )
+
         return wateroil
 
     @staticmethod
     def create_gas_oil(
-        params: Optional[Dict[str, float]] = None, fast: bool = False
+        params: Optional[Dict[str, float]] = None,
+        fast: bool = False,
+        args: Optional[dict] = None,
     ) -> GasOil:
         """Create a GasOil object from a dictionary of parameters.
 
@@ -308,11 +314,15 @@ class PyscalFactory(object):
         Args:
             params: Dictionary with parameters describing the GasOil object.
             fast: If fast-mode should be set for constructed object.
+            args: Verbose, debug and output arguments from CLI
+                to create logger that splits log messages to stdout and stderr
         """
         if not params:
             params = {}
         if not isinstance(params, dict):
             raise TypeError("Parameter to create_gas_oil must be a dictionary")
+
+        logger = getLogger_pyscal(__name__, args)
 
         check_deprecated(params)
 
@@ -326,7 +336,7 @@ class PyscalFactory(object):
 
         usedparams: Set[str] = set()
         # No requirements to the base objects, defaults are ok.
-        gasoil = GasOil(**slicedict(params, GO_INIT), fast=fast)
+        gasoil = GasOil(**slicedict(params, GO_INIT), fast=fast, args=args)
         usedparams = usedparams.union(set(slicedict(params, GO_INIT).keys()))
         logger.debug(
             "Initialized GasOil object from parameters %s", str(list(usedparams))
@@ -386,7 +396,9 @@ class PyscalFactory(object):
 
     @staticmethod
     def create_water_oil_gas(
-        params: Optional[Dict[str, float]] = None, fast: bool = False
+        params: Optional[Dict[str, float]] = None,
+        fast: bool = False,
+        args: Optional[dict] = None,
     ) -> WaterOilGas:
         """Create a WaterOilGas object from a dictionary of parameters
 
@@ -399,11 +411,15 @@ class PyscalFactory(object):
         Params:
             params: Dictionary with parameters describing the WaterOilGas object.
             fast: If fast-mode should be set for constructed object.
+            args: Verbose, debug and output arguments from CLI
+                to create logger that splits log messages to stdout and stderr
         """
         if not params:
             params = {}
         if not isinstance(params, dict):
             raise TypeError("Parameter to create_water_oil_gas must be a dictionary")
+
+        logger = getLogger_pyscal(__name__, args)
 
         check_deprecated(params)
 
@@ -412,7 +428,7 @@ class PyscalFactory(object):
 
         wateroil: Optional[WaterOil]
         if sufficient_water_oil_params(params, failhard=False):
-            wateroil = PyscalFactory.create_water_oil(params, fast=fast)
+            wateroil = PyscalFactory.create_water_oil(params, fast=fast, args=args)
         else:
             logger.info("No wateroil parameters. Assuming only gas-oil in wateroilgas")
             wateroil = None
@@ -424,13 +440,13 @@ class PyscalFactory(object):
 
         gasoil: Optional[GasOil]
         if sufficient_gas_oil_params(params, failhard=False):
-            gasoil = PyscalFactory.create_gas_oil(params, fast=fast)
+            gasoil = PyscalFactory.create_gas_oil(params, fast=fast, args=args)
         else:
             logger.info("No gasoil parameters, assuming two-phase oilwatergas")
             gasoil = None
 
         wog_init_params = slicedict(params, WOG_INIT)
-        wateroilgas = WaterOilGas(**wog_init_params, fast=fast)
+        wateroilgas = WaterOilGas(**wog_init_params, fast=fast, args=args)
         # The wateroilgas __init__ has already created WaterOil and GasOil objects
         # but we overwrite the references with newly created ones, this factory function
         # must then guarantee that they are compatible.
@@ -440,11 +456,14 @@ class PyscalFactory(object):
             raise ValueError(
                 f"Inconsistent WaterOilGas object. Bug? Input was {params}"
             )
+
         return wateroilgas
 
     @staticmethod
     def create_gas_water(
-        params: Optional[Dict[str, float]] = None, fast: bool = False
+        params: Optional[Dict[str, float]] = None,
+        fast: bool = False,
+        args: Optional[dict] = None,
     ) -> GasWater:
         """Create a GasWater object.
 
@@ -454,6 +473,8 @@ class PyscalFactory(object):
         Args:
             params: Dictionary with parameters for GasWater.
             fast: If fast-mode should be set for constructed object.
+            args: Verbose, debug and output arguments from CLI
+                to create logger that splits log messages to stdout and stderr
         """
         if not params:
             params = {}
@@ -466,7 +487,7 @@ class PyscalFactory(object):
         sufficient_gas_water_params(params, failhard=True)
 
         gw_init_params = slicedict(params, GW_INIT)
-        gaswater = GasWater(**gw_init_params, fast=fast)
+        gaswater = GasWater(**gw_init_params, fast=fast, args=args)
 
         # We are using the create_water_oil_gas factory function
         # to avoid replicating code. It works because GasWater and
@@ -477,7 +498,7 @@ class PyscalFactory(object):
         # Set some dummy parameters for oil:
         wog_params["nog"] = 1
         wog_params["now"] = 1
-        wog = PyscalFactory.create_water_oil_gas(wog_params, fast=fast)
+        wog = PyscalFactory.create_water_oil_gas(wog_params, fast=fast, args=args)
         assert wog.wateroil is not None
         assert wog.gasoil is not None
         gaswater.wateroil = wog.wateroil
@@ -490,6 +511,7 @@ class PyscalFactory(object):
         tag: str = "",
         h: Optional[float] = None,
         fast: bool = False,
+        args: Optional[dict] = None,
     ) -> SCALrecommendation:
         """
         Set up a SCAL recommendation curve set from input as a
@@ -518,6 +540,8 @@ class PyscalFactory(object):
             tag: String to be used as the tag, will end up in comments.
             h: Saturation step length
             fast: If fast-mode should be set for constructed object.
+            args: Verbose, debug and output arguments from CLI
+                to create logger that splits log messages to stdout and stderr
         """
         if not isinstance(params, dict):
             raise ValueError("Input must be a dictionary (of dictionaries)")
@@ -563,29 +587,41 @@ class PyscalFactory(object):
 
         if wateroil or gasoil:
             try:
-                wog_low = PyscalFactory.create_water_oil_gas(params["low"], fast=fast)
+                wog_low = PyscalFactory.create_water_oil_gas(
+                    params["low"], fast=fast, args=args
+                )
             except ValueError as err:
                 raise ValueError(f"Problem with low/pess case: {err}") from err
             try:
-                wog_base = PyscalFactory.create_water_oil_gas(params["base"], fast=fast)
+                wog_base = PyscalFactory.create_water_oil_gas(
+                    params["base"], fast=fast, args=args
+                )
             except ValueError as err:
                 raise ValueError(f"Problem with base case: {err}") from err
             try:
-                wog_high = PyscalFactory.create_water_oil_gas(params["high"], fast=fast)
+                wog_high = PyscalFactory.create_water_oil_gas(
+                    params["high"], fast=fast, args=args
+                )
             except ValueError as err:
                 raise ValueError(f"Problem with high/opt case: {err}") from err
         elif gaswater:
             # Note that gaswater will be True in three-phase configs.
             try:
-                wog_low = PyscalFactory.create_gas_water(params["low"], fast=fast)
+                wog_low = PyscalFactory.create_gas_water(
+                    params["low"], fast=fast, args=args
+                )
             except ValueError as err:
                 raise ValueError(f"Problem with low/pess case: {err}") from err
             try:
-                wog_base = PyscalFactory.create_gas_water(params["base"], fast=fast)
+                wog_base = PyscalFactory.create_gas_water(
+                    params["base"], fast=fast, args=args
+                )
             except ValueError as err:
                 raise ValueError(f"Problem with base case: {err}") from err
             try:
-                wog_high = PyscalFactory.create_gas_water(params["high"], fast=fast)
+                wog_high = PyscalFactory.create_gas_water(
+                    params["high"], fast=fast, args=args
+                )
             except ValueError as err:
                 raise ValueError(f"Problem with high/opt case: {err}") from err
 
@@ -594,12 +630,14 @@ class PyscalFactory(object):
         if errored:
             raise ValueError("Incomplete SCAL recommendation")
 
-        scal = SCALrecommendation(wog_low, wog_base, wog_high, tag)
+        scal = SCALrecommendation(wog_low, wog_base, wog_high, tag, args=args)
         return scal
 
     @staticmethod
     def load_relperm_df(
-        inputfile: Union[str, pd.DataFrame], sheet_name: Optional[str] = None
+        inputfile: Union[str, pd.DataFrame],
+        sheet_name: Optional[str] = None,
+        args: Optional[dict] = None,
     ) -> pd.DataFrame:
         """Read CSV or XLSX from file and return scal/relperm data
         a dataframe.
@@ -618,11 +656,16 @@ class PyscalFactory(object):
             inputfile: Filename for XLSX or CSV file, or a
                 pandas DataFrame.
             sheet_name: Sheet-name, only used when loading xlsx files.
+            args: Verbose, debug and output arguments from CLI
+                to create logger that splits log messages to stdout and stderr
 
         Returns:
             To be handed over to pyscal list factory methods.
             Empty dataframe in case of errors (messages will be logged).
         """
+
+        logger = getLogger_pyscal(__name__, args)
+
         if isinstance(inputfile, (str, Path)) and Path(inputfile).is_file():
             tabular_file_format = infer_tabular_file_format(inputfile)
             if not tabular_file_format:
@@ -775,11 +818,15 @@ class PyscalFactory(object):
                 "the given data. Check documentation for what you need to supply. "
                 f"You provided the columns {input_df.columns.values}"
             )
+        if args:
+            if args["verbose"] is True:
+                logger.setLevel(logging.INFO)
         logger.info(
             "Loaded input data with %s SATNUMS, column %s",
             str(len(input_df["SATNUM"].unique())),
             str(input_df.columns.values),
         )
+
         return input_df.sort_values("SATNUM")
 
     @staticmethod
@@ -846,7 +893,10 @@ class PyscalFactory(object):
 
     @staticmethod
     def create_scal_recommendation_list(
-        input_df: pd.DataFrame, h: Optional[float] = None, fast: bool = False
+        input_df: pd.DataFrame,
+        h: Optional[float] = None,
+        fast: bool = False,
+        args: Optional[dict] = None,
     ) -> PyscalList:
         """Requires SATNUM and CASE to be defined in the input data
 
@@ -855,11 +905,13 @@ class PyscalFactory(object):
                 through load_relperm_df().
             h: Saturation step-value
             fast: If fast-mode should be set for constructed object
+            args: Verbose, debug and output arguments from CLI
+                to create logger that splits log messages to stdout and stderr
 
         Returns:
             PyscalList, consisting of SCALrecommendation objects
         """
-        scal_l = PyscalList()
+        scal_l = PyscalList(args=args)
         assert isinstance(input_df, pd.DataFrame)
 
         scalinput = input_df.set_index(["SATNUM", "CASE"])
@@ -874,7 +926,10 @@ class PyscalFactory(object):
             try:
                 scal_l.append(
                     PyscalFactory.create_scal_recommendation(
-                        scalinput.loc[satnum, :].to_dict(orient="index"), h=h, fast=fast
+                        scalinput.loc[satnum, :].to_dict(orient="index"),
+                        h=h,
+                        fast=fast,
+                        args=args,
                     )
                 )
             except ValueError as err:
@@ -884,7 +939,10 @@ class PyscalFactory(object):
 
     @staticmethod
     def create_pyscal_list(
-        relperm_params_df: pd.DataFrame, h: Optional[float] = None, fast: bool = False
+        relperm_params_df: pd.DataFrame,
+        h: Optional[float] = None,
+        fast: bool = False,
+        args: Optional[dict] = None,
     ):
         """Create WaterOilGas, WaterOil, GasOil or GasWater list
         based on what is available
@@ -894,6 +952,8 @@ class PyscalFactory(object):
                 through load_relperm_df().
             h: Saturation step-value
             fast: If fast-mode should be set for constructed object
+            args: Verbose, debug and output arguments from CLI
+                to create logger that splits log messages to stdout and stderr
 
         Returns:
             PyscalList, consisting of either WaterOil, GasOil or WaterOilGas objects
@@ -904,18 +964,29 @@ class PyscalFactory(object):
         gas_water = sufficient_gas_water_params(params)
 
         if water_oil and gas_oil:
-            return PyscalFactory.create_wateroilgas_list(relperm_params_df, h, fast)
+            return PyscalFactory.create_wateroilgas_list(
+                relperm_params_df, h, fast, args=args
+            )
         if water_oil:
-            return PyscalFactory.create_wateroil_list(relperm_params_df, h, fast)
+            return PyscalFactory.create_wateroil_list(
+                relperm_params_df, h, fast, args=args
+            )
         if gas_oil:
-            return PyscalFactory.create_gasoil_list(relperm_params_df, h, fast)
+            return PyscalFactory.create_gasoil_list(
+                relperm_params_df, h, fast, args=args
+            )
         if gas_water:
-            return PyscalFactory.create_gaswater_list(relperm_params_df, h, fast)
+            return PyscalFactory.create_gaswater_list(
+                relperm_params_df, h, fast, args=args
+            )
         raise ValueError("Could not determine two or three phase from parameters")
 
     @staticmethod
     def create_wateroilgas_list(
-        relperm_params_df: pd.DataFrame, h: Optional[float] = None, fast: bool = False
+        relperm_params_df: pd.DataFrame,
+        h: Optional[float] = None,
+        fast: bool = False,
+        args: Optional[dict] = None,
     ) -> PyscalList:
         """Create a PyscalList with WaterOilGas objects from
         a dataframe
@@ -925,17 +996,21 @@ class PyscalFactory(object):
                 through load_relperm_df().
             h: Saturation step-value
             fast: If fast-mode should be set for constructed object
+            args: Verbose, debug and output arguments from CLI
+                to create logger that splits log messages to stdout and stderr
 
         Returns:
             PyscalList, consisting of WaterOilGas objects
         """
-        wogl = PyscalList()
+        wogl = PyscalList(args=args)
         for (row_idx, params) in relperm_params_df.sort_values("SATNUM").iterrows():
             if h is not None:
                 params["h"] = h
             try:
                 wogl.append(
-                    PyscalFactory.create_water_oil_gas(params.to_dict(), fast=fast)
+                    PyscalFactory.create_water_oil_gas(
+                        params.to_dict(), fast=fast, args=args
+                    )
                 )
             except (AssertionError, ValueError, TypeError) as err:
                 raise ValueError(f"Error for SATNUM {row_idx+1}: {str(err)}") from err
@@ -943,7 +1018,10 @@ class PyscalFactory(object):
 
     @staticmethod
     def create_wateroil_list(
-        relperm_params_df: pd.DataFrame, h: Optional[float] = None, fast: bool = False
+        relperm_params_df: pd.DataFrame,
+        h: Optional[float] = None,
+        fast: bool = False,
+        args: Optional[dict] = None,
     ) -> PyscalList:
         """Create a PyscalList with WaterOil objects from
         a dataframe
@@ -953,16 +1031,22 @@ class PyscalFactory(object):
                 WaterOil parameters, processed through load_relperm_df()
             h: Saturation steplength
             fast: If fast-mode should be set for constructed object
+            args: Verbose, debug and output arguments from CLI
+                to create logger that splits log messages to stdout and stderr
 
         Returns:
             PyscalList, consisting of WaterOil objects
         """
-        wol = PyscalList()
+        wol = PyscalList(args=args)
         for (_, params) in relperm_params_df.iterrows():
             if h is not None:
                 params["h"] = h
             try:
-                wol.append(PyscalFactory.create_water_oil(params.to_dict(), fast=fast))
+                wol.append(
+                    PyscalFactory.create_water_oil(
+                        params.to_dict(), fast=fast, args=args
+                    )
+                )
             except (AssertionError, ValueError, TypeError) as err:
                 raise ValueError(
                     f"Error for SATNUM {params['SATNUM']}: {str(err)}"
@@ -971,7 +1055,10 @@ class PyscalFactory(object):
 
     @staticmethod
     def create_gasoil_list(
-        relperm_params_df: pd.DataFrame, h: Optional[float] = None, fast: bool = False
+        relperm_params_df: pd.DataFrame,
+        h: Optional[float] = None,
+        fast: bool = False,
+        args: Optional[dict] = None,
     ) -> PyscalList:
         """Create a PyscalList with GasOil objects from
         a dataframe
@@ -981,16 +1068,20 @@ class PyscalFactory(object):
                 processed through load_relperm_df()
             h: Saturation steplength
             fast: If fast-mode should be set for constructed object
+            args: Verbose, debug and output arguments from CLI
+                to create logger that splits log messages to stdout and stderr
 
         Returns:
             PyscalList, consisting of GasOil objects
         """
-        gol = PyscalList()
+        gol = PyscalList(args=args)
         for (_, params) in relperm_params_df.iterrows():
             if h is not None:
                 params["h"] = h
             try:
-                gol.append(PyscalFactory.create_gas_oil(params.to_dict(), fast=fast))
+                gol.append(
+                    PyscalFactory.create_gas_oil(params.to_dict(), fast=fast, args=args)
+                )
             except (AssertionError, ValueError, TypeError) as err:
                 raise ValueError(
                     f"Error for SATNUM {params['SATNUM']}: {str(err)}"
@@ -999,7 +1090,10 @@ class PyscalFactory(object):
 
     @staticmethod
     def create_gaswater_list(
-        relperm_params_df: pd.DataFrame, h: Optional[float] = None, fast: bool = False
+        relperm_params_df: pd.DataFrame,
+        h: Optional[float] = None,
+        fast: bool = False,
+        args: Optional[dict] = None,
     ) -> PyscalList:
         """Create a PyscalList with WaterOilGas objects from
         a dataframe, to be used for GasWater
@@ -1009,16 +1103,22 @@ class PyscalFactory(object):
                 parameters, processed through load_relperm_df()
             h: Saturation steplength
             fast: If fast-mode should be set for constructed object
+            args: Verbose, debug and output arguments from CLI
+                to create logger that splits log messages to stdout and stderr
 
         Returns:
             PyscalList, consisting of GasWater objects
         """
-        gwl = PyscalList()
+        gwl = PyscalList(args=args)
         for (_, params) in relperm_params_df.iterrows():
             if h is not None:
                 params["h"] = h
             try:
-                gwl.append(PyscalFactory.create_gas_water(params.to_dict(), fast=fast))
+                gwl.append(
+                    PyscalFactory.create_gas_water(
+                        params.to_dict(), fast=fast, args=args
+                    )
+                )
             except (AssertionError, ValueError, TypeError) as err:
                 raise ValueError(
                     f"Error for SATNUM {params['SATNUM']}: {str(err)}"
@@ -1153,16 +1253,21 @@ def filter_nan_from_dict(params: dict) -> dict:
     return cleaned_params
 
 
-def infer_tabular_file_format(filename: Union[str, Path]) -> str:
+def infer_tabular_file_format(
+    filename: Union[str, Path], args: Optional[dict] = None,
+) -> str:
     """Determine the file format of a file containing tabular data,
     distinguishes between csv, xls and xlsx
 
     Args:
         filename: Path to file
+        args: Verbose, debug and output arguments from CLI
+            to create logger that splits log messages to stdout and stderr
 
     Returns:
         One of "csv", "xlsx" or "xls". Empty string if nothing found out.
     """
+    logger = getLogger_pyscal(__name__, args)
     try:
         pd.read_excel(filename, engine="openpyxl")
         return "xlsx"
