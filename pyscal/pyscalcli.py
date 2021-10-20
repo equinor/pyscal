@@ -30,7 +30,7 @@ Corey or LET parametrization are based on presence of the columns
 'Log', 'Eog', 'Tog', 'Lg', 'Eg', 'Tg'.
 
 Simple J-function for capillary pressure ("RMS" version) is used if the columns
-'a', 'b' , 'poro_ref', 'perm_ref' and 'drho' are found.  If you provide
+'a', 'b', 'poro_ref', 'perm_ref' and 'drho' are found. If you provide
 'a_petro', or 'b_petro', the petrophysical formulation of the simple J-function
 is used. Check API for exact formulas. Normalized J-function is used if 'a',
 'b', 'poro', 'perm' and 'sigma_costau' is provided.
