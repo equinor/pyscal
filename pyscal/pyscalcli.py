@@ -196,9 +196,7 @@ def pyscal_main(
     args = {"debug": debug, "verbose": verbose, "output": output}
     logger = getLogger_pyscal(__name__, args)
 
-    scalinput_df = PyscalFactory.load_relperm_df(
-        parametertable, sheet_name=sheet_name, args=args
-    )
+    scalinput_df = PyscalFactory.load_relperm_df(parametertable, sheet_name=sheet_name)
     logger.debug("Input data:\n%s", scalinput_df.to_string(index=False))
     if int_param_go is not None and int_param_wo is None:
         raise ValueError("Don't use int_param_go alone, only int_param_wo")
@@ -224,7 +222,7 @@ def pyscal_main(
         if int_param_wo is None:
             raise ValueError("No interpolation parameters provided")
         scalrec_list = PyscalFactory.create_scal_recommendation_list(
-            scalinput_df, h=delta_s, args=args
+            scalinput_df, h=delta_s
         )
         assert isinstance(scalrec_list[1], SCALrecommendation)
         if scalrec_list[1].type == WaterOilGas:
@@ -233,19 +231,15 @@ def pyscal_main(
                 str(int_param_wo),
                 str(int_param_go),
             )
-            wog_list = scalrec_list.interpolate(
-                int_param_wo, int_param_go, h=delta_s, args=args
-            )
+            wog_list = scalrec_list.interpolate(int_param_wo, int_param_go, h=delta_s)
         elif scalrec_list[1].type == GasWater:
             logger.info(
                 "Interpolating, gaswater=%s", str(int_param_wo),
             )
-            wog_list = scalrec_list.interpolate(
-                int_param_wo, None, h=delta_s, args=args
-            )
+            wog_list = scalrec_list.interpolate(int_param_wo, None, h=delta_s)
     else:
         wog_list = PyscalFactory.create_pyscal_list(
-            scalinput_df, h=delta_s, args=args
+            scalinput_df, h=delta_s
         )  # can be both water-oil, water-oil-gas, or gas-water
 
     if (

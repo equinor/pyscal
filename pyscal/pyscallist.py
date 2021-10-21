@@ -18,8 +18,7 @@ PYSCAL_OBJECTS = [WaterOil, GasOil, GasWater, WaterOilGas, SCALrecommendation]
 
 PyscalObjects = Union[WaterOil, GasOil, GasWater, WaterOilGas, SCALrecommendation]
 
-# logger = logging.getLogger(__name__)
-# logger = getLogger_pyscal(__name__)
+logger = getLogger_pyscal(__name__)
 
 
 class PyscalList(object):
@@ -33,13 +32,9 @@ class PyscalList(object):
 
     Args:
         pyscal_list (list): List of objects if already ready. Can be empty or None.
-        args: Verbose, debug and output arguments from CLI
-            to create logger that splits log messages to stdout and stderr
     """
 
-    def __init__(
-        self, pyscal_list: List[PyscalObjects] = None, args: Optional[dict] = None,
-    ):
+    def __init__(self, pyscal_list: List[PyscalObjects] = None):
         self.pyscaltype: Optional[Type] = None
         self.pyscal_list: List[PyscalObjects] = []
         if isinstance(pyscal_list, list):
@@ -48,7 +43,6 @@ class PyscalList(object):
         if isinstance(pyscal_list, PyscalList):
             for idx in range(len(pyscal_list)):
                 self.append(pyscal_list[idx + 1])
-        self.logger: Optional[object] = getLogger_pyscal(__name__, args)
 
     def append(self, pyscal_obj: Optional[PyscalObjects]) -> None:
         """Append a pyscal object to the list
@@ -259,7 +253,7 @@ class PyscalList(object):
         if family == 2 and slgof is True:
             raise ValueError("SLGOF not meaningful for family 2")
         keywords = self.relevant_keywords(family=family, slgof=slgof)
-        self.logger.info(
+        logger.info(
             "Keywords %s (family %d) for %d SATNUMs generated",
             ", ".join(keywords),
             family,
@@ -278,11 +272,11 @@ class PyscalList(object):
             filename: Filename for the output to be given to Eclipse 100
             slgof: Set to true of SLGOF is wanted instead of SGOF
         """
-        self.logger.warning("dump_family_1() is deprecated")
+        logger.warning("dump_family_1() is deprecated")
         string = self.build_eclipse_data(family=1, slgof=slgof)
         if filename is not None:
             if not Path(filename).parent.exists():
-                self.logger.warning(
+                logger.warning(
                     "Please create the output directory prior to calling pyscal."
                 )
                 Path(filename).parent.mkdir(exist_ok=True, parents=True)
@@ -298,11 +292,11 @@ class PyscalList(object):
         Args:
             filename (str): Filename for the output to be given to Eclipse 100
         """
-        self.logger.warning("dump_family_2() is deprecated")
+        logger.warning("dump_family_2() is deprecated")
         string = self.build_eclipse_data(family=2, slgof=False)
         if filename is not None:
             if not Path(filename).parent.exists():
-                self.logger.warning(
+                logger.warning(
                     "Please create the output directory prior to calling pyscal."
                 )
                 Path(filename).parent.mkdir(exist_ok=True, parents=True)
@@ -314,7 +308,6 @@ class PyscalList(object):
         int_params_wo: Union[float, int, List[float]],
         int_params_go: Optional[Union[float, int, List[Optional[float]]]] = None,
         h: Optional[float] = None,
-        args: Optional[dict] = None,
     ) -> "PyscalList":
         """This function will interpolate each SCALrecommendation
         object to the chosen parameters
@@ -360,13 +353,11 @@ class PyscalList(object):
             raise ValueError(
                 f"Too many interpolation parameters given for GasOil {int_params_go}"
             )
-        wog_list: PyscalList = PyscalList(args=args)
+        wog_list: PyscalList = PyscalList()
         for (satnum, scalrec) in enumerate(self.pyscal_list):
             assert isinstance(scalrec, SCALrecommendation)
             wog_list.append(
-                scalrec.interpolate(
-                    int_params_wo[satnum], int_params_go[satnum], h=h, args=args
-                )
+                scalrec.interpolate(int_params_wo[satnum], int_params_go[satnum], h=h)
             )
         return wog_list
 
@@ -433,10 +424,10 @@ class PyscalList(object):
         """
         if satnum_idx < 1:
             e_msg = "SATNUM must be 1 or higher"
-            self.logger.error(e_msg)
+            logger.error(e_msg)
             raise IndexError(e_msg)
         if satnum_idx > self.__len__():
             e_msg = "SATNUM index out of range, length is " + str(self.__len__())
-            self.logger.error(e_msg)
+            logger.error(e_msg)
             raise IndexError(e_msg)
         return self.pyscal_list[satnum_idx - 1]

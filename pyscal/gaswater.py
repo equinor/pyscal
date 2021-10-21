@@ -6,10 +6,13 @@ from typing import Optional
 import pandas as pd
 
 from pyscal.utils.relperm import crosspoint
-from pyscal import getLogger_pyscal
 
 from .gasoil import GasOil
 from .wateroil import WaterOil
+
+from pyscal import getLogger_pyscal
+
+logger = getLogger_pyscal(__name__)
 
 
 def is_documented_by(original):
@@ -39,8 +42,6 @@ class GasWater(object):
         tag: Optional text that will be included as comments.
         fast: Set to True if you prefer speed over robustness. Not recommended,
             pyscal will not guarantee valid output in this mode.
-        args: Verbose, debug and output arguments from CLI
-            to create logger that splits log messages to stdout and stderr
     """
 
     def __init__(
@@ -54,14 +55,11 @@ class GasWater(object):
         h: Optional[float] = None,
         tag: str = "",
         fast: bool = False,
-        args: Optional[dict] = None,
     ) -> None:
         """Sets up the saturation range for a GasWater object,
         by initializing one WaterOil and one GasOil object, with
         endpoints set to fit with the GasWater proxy object."""
         self.fast: bool = fast
-
-        self.logger: Optional[object] = getLogger_pyscal(__name__, args)
 
         if h is None:
             h = 0.01
@@ -76,7 +74,6 @@ class GasWater(object):
             fast=fast,
             _sgcr=sgcr,
             _sgl=sgl,
-            args=args,
         )
 
         self.sgcr: float = sgcr
@@ -93,7 +90,6 @@ class GasWater(object):
             tag=tag,
             fast=fast,
             _sgl=sgl,
-            args=args,
         )
 
         # Dummy oil curves, just to avoid objects being invalid.
@@ -109,7 +105,7 @@ class GasWater(object):
         """
         if self.wateroil is not None and self.gasoil is not None:
             return self.wateroil.selfcheck() and self.gasoil.selfcheck()
-        self.logger.error("None objects in GasWater (bug)")
+        logger.error("None objects in GasWater (bug)")
         return False
 
     def add_corey_water(
@@ -285,10 +281,10 @@ class GasWater(object):
             interpolated in water saturation.
         """
         if not {"SW", "KRW"}.issubset(self.wateroil.table.columns):
-            self.logger.warning("Can't compute crosspoint when KRW is not present")
+            logger.warning("Can't compute crosspoint when KRW is not present")
             return None
         if not {"SL", "KRG"}.issubset(self.gasoil.table.columns):
-            self.logger.warning("Can't compute crosspoint when KRG is not present")
+            logger.warning("Can't compute crosspoint when KRG is not present")
             return None
         dframe = pd.concat(
             [self.wateroil.table[["SW", "KRW"]], self.gasoil.table[["SL", "KRG"]]],

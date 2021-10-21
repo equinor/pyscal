@@ -28,6 +28,7 @@ def getLogger_pyscal(
     logger = logging.getLogger(module_name)
     if len(logger.handlers) != 0:
         return logger
+
     if args_dict is None:
         args_dict = {}
     formatter = logging.Formatter("%(levelname)s:%(name)s:%(message)s")
@@ -57,6 +58,23 @@ def getLogger_pyscal(
         logger.setLevel(logging.INFO)
     else:
         logger.setLevel(logging.WARNING)
+
+    if module_name == "pyscal.pyscalcli":
+        all_modules = [
+            "factory",
+            "gasoil",
+            "gaswater",
+            "pyscallist",
+            "scalrecommendation",
+            "wateroil",
+            "wateroilgas",
+        ]
+        for module in all_modules:
+            module_logger = logging.getLogger("pyscal." + module)
+            module_logger.handlers = []
+            for handler in logger.handlers:
+                module_logger.addHandler(handler)
+            module_logger.setLevel(logger.level)
 
     return logger
 
