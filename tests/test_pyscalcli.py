@@ -481,7 +481,52 @@ def test_pyscal_client_error(tmp_path, mocker):
         pyscalcli.main()
 
 
-def test_pycal_main():
+@pytest.mark.parametrize(
+    "int_param_wo, int_param_go, raises, match",
+    [
+        (-1, None, None, None),
+        (-2, None, ValueError, "must be in"),
+        (-1, -2, ValueError, "must be in"),
+        (None, -1, ValueError, "int_param_go alone"),
+        (None, None, ValueError, None),
+        ([], None, TypeError, "SATNUM specific interpolation"),
+        ([-1], None, TypeError, "SATNUM specific interpolation"),
+        ([1, 1], None, TypeError, "SATNUM specific interpolation"),
+        ([], [], TypeError, "SATNUM specific interpolation"),
+        (-1, [], TypeError, "SATNUM specific interpolation"),
+        (None, [], ValueError, "int_param_go alone"),
+    ],
+)
+def test_pyscal_main_interpolation_parameters(
+    int_param_wo, int_param_go, raises, match
+):
+    """Define the behaviour on different interpolation parameter combinations.
+
+    Earlier pyscal versions allowed lists of parameters as input.
+
+    The command line client will also catch these errors through argparse, but
+    when pyscal is used e.g. in fm_pyscal.py in semeio, these errors need to
+    be caught by the main() function.
+    """
+    scalrec_file = Path(__file__).absolute().parent / "data/scal-pc-input-example.xlsx"
+    if raises is not None:
+        with pytest.raises(raises, match=match):
+            pyscalcli.pyscal_main(
+                scalrec_file,
+                int_param_wo=int_param_wo,
+                int_param_go=int_param_go,
+                output=os.devnull,
+            )
+    else:
+        pyscalcli.pyscal_main(
+            scalrec_file,
+            int_param_wo=int_param_wo,
+            int_param_go=int_param_go,
+            output=os.devnull,
+        )
+
+
+def test_pyscal_main():
     """The pyscal client is a wrapper main() function that runs argparse, and then
     hands over responsibility to pyscal_main(). This wrapping is to facilitate
     fm_pyscal.py in semeio f.ex.
@@ -489,22 +534,8 @@ def test_pycal_main():
     This test function is for testing e.g error scenarios that argparse
     would catch, but that we also need to check on behalf of semeio usage."""
 
-    scalrec_file = Path(__file__).absolute().parent / "data/scal-pc-input-example.xlsx"
+    # This input file has no CASE column, and interpolation is not meaningful.
     relperm_file = Path(__file__).absolute().parent / "data/relperm-input-example.xlsx"
-
-    pyscalcli.pyscal_main(scalrec_file, int_param_wo=-1, output=os.devnull)
-
-    with pytest.raises(
-        TypeError,
-        match="SATNUM specific interpolation parameters are not supported in pyscalcli",
-    ):
-        pyscalcli.pyscal_main(scalrec_file, int_param_wo=[-1, 1], output=os.devnull)
-
-    with pytest.raises(
-        TypeError,
-        match="SATNUM specific interpolation parameters are not supported in pyscalcli",
-    ):
-        pyscalcli.pyscal_main(scalrec_file, int_param_wo=-1, int_param_go=[-1, 1])
 
     pyscalcli.pyscal_main(relperm_file, output=os.devnull)
 
