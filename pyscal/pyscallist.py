@@ -343,7 +343,7 @@ class PyscalList(object):
             )
         if len(int_params_wo) > len(self):
             raise ValueError(
-                f"Too many interpolation parameters given for WaterOil {int_params_wo}",
+                f"Too many interpolation parameters given for WaterOil {int_params_wo}"
             )
         if 1 < len(int_params_go) < len(self):
             raise ValueError(
@@ -362,9 +362,7 @@ class PyscalList(object):
         return wog_list
 
     def make_ecl_output(
-        self,
-        keyword: str,
-        write_to_filename: Optional[str] = None,
+        self, keyword: str, write_to_filename: Optional[str] = None
     ) -> str:
         """Internal helper function for constructing strings and writing to disk"""
         if self.pyscaltype == SCALrecommendation:

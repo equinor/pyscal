@@ -3,9 +3,10 @@
 import argparse
 import sys
 import traceback
-import warnings
 from pathlib import Path
-from typing import List, Optional
+from typing import Optional
+
+import pandas as pd
 
 from pyscal import (
     GasWater,
@@ -23,25 +24,20 @@ The parameter file should contain a table with at least the column
 SATNUM, containing only consecutive integers starting at 1. Each row
 provides the data for the corresponding SATNUM. Comments are put in a
 column called TAG or COMMENT. Column headers are case insensitive.
-
 Saturation endpoints are put in columns 'swirr', 'swl', 'swcr', 'sorw',
 'sgcr' and 'sorg'. Relative permeability endpoints are put in columns
 'krwend', 'krwmax', 'krowend', 'krogend', 'krgend' and 'krgmax'.
 These columns are optional and are defaulted to 0 or 1.
-
 Corey or LET parametrization are based on presence of the columns
 'Nw', 'Now', 'Nog', 'Ng', 'Lw', 'Ew', 'Tw', 'Low', 'Eow', 'Tow',
 'Log', 'Eog', 'Tog', 'Lg', 'Eg', 'Tg'.
-
-Simple J-function for capillary pressure is used if the columns
+Simple J-function for capillary pressure ("RMS" version) is used if the columns
 'a', 'b', 'poro_ref', 'perm_ref' and 'drho' are found. If you provide
-'a_petro', or 'b_petro', the petrophysical formulation of the simple
-J-function is used. Check API for exact formulas. Normalized J-function
-is used if 'a', 'b', 'poro', 'perm' and 'sigma_costau' is provided.
-
+'a_petro', or 'b_petro', the petrophysical formulation of the simple J-function
+is used. Check API for exact formulas. Normalized J-function is used if 'a',
+'b', 'poro', 'perm' and 'sigma_costau' is provided.
 For SCAL recommendations, there should be exactly three rows for each SATNUM,
 tagged with the strings 'low', 'base' and 'high' in the column 'CASE'
-
 When interpolating in a SCAL recommendation, 'int_param_wo' is the main parameter
 that is used for water-oil, gas-oil and gas-water, and for all SATNUMs if nothing
 more is provided. Provide int_param_go in addition if separate interpolation
@@ -52,7 +48,6 @@ if individual interpolation for each SATNUM is needed.
 
 def get_parser() -> argparse.ArgumentParser:
     """Construct the argparse parser for the command line script.
-
     Returns:
         argparse.Parser
     """
@@ -77,15 +72,9 @@ def get_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Print informational messages while processing input",
     )
+    parser.add_argument("--debug", action="store_true", help="Print debug information")
     parser.add_argument(
-        "--debug",
-        action="store_true",
-        help="Print debug information",
-    )
-    parser.add_argument(
-        "--version",
-        action="version",
-        version="%(prog)s (version " + __version__ + ")",
+        "--version", action="version", version="%(prog)s (version " + __version__ + ")"
     )
     parser.add_argument(
         "-o",
@@ -147,10 +136,10 @@ def get_parser() -> argparse.ArgumentParser:
 
 def main() -> None:
     """Endpoint for pyscals command line utility.
-
     Translates from argparse API to Pyscal's Python API"""
     parser = get_parser()
     args = parser.parse_args()
+
     try:
         pyscal_main(
             parametertable=args.parametertable,
@@ -175,8 +164,8 @@ def pyscal_main(
     debug: bool = False,
     output: str = "relperm.inc",
     delta_s: Optional[float] = None,
-    int_param_wo: Optional[List[float]] = None,
-    int_param_go: Optional[List[Optional[float]]] = None,
+    int_param_wo: Optional[float] = None,
+    int_param_go: Optional[float] = None,
     sheet_name: str = None,
     slgof: bool = False,
     family2: bool = False,
@@ -184,49 +173,48 @@ def pyscal_main(
     """A "main()" method not relying on argparse. This can be used
     for testing, and also by an ERT forward model, e.g.
     in semeio (github.com/equinor/semeio)
-
     Args:
         parametertable: Filename (CSV or XLSX) to load
         verbose: verbose or not
         debug: debug mode or not
         output: Output filename
         delta_s: Saturation step-length
-        int_param_wo: Interpolation params for wateroil
-        int_param_go: Interpolation params for gasoil
+        int_param_wo: Interpolation parameter for wateroil
+        int_param_go: Interpolation parameter for gasoil
         sheet_name: Which sheet in XLSX file
         slgof: Use SLGOF
         family2: Dump family 2 keywords
     """
+
     args = {"debug": debug, "verbose": verbose, "output": output}
     logger = getLogger_pyscal(__name__, args)
 
-    scalinput_df = PyscalFactory.load_relperm_df(parametertable, sheet_name=sheet_name)
-    logger.debug("Input data:\n%s", scalinput_df.to_string(index=False))
+    parametertable = PyscalFactory.load_relperm_df(
+        parametertable, sheet_name=sheet_name
+    )
+
+    assert isinstance(parametertable, pd.DataFrame)
+    logger.debug("Input data:\n%s", parametertable.to_string(index=False))
+
     if int_param_go is not None and int_param_wo is None:
         raise ValueError("Don't use int_param_go alone, only int_param_wo")
-    if (
-        int_param_wo is not None
-        and isinstance(int_param_wo, list)
-        and len(int_param_wo) > 1
-    ) or (
-        int_param_go is not None
-        and isinstance(int_param_go, list)
-        and len(int_param_go) > 1
-    ):
-        warnings.warn(
-            "SATNUM specific interpolation parameters are deprecated in "
-            "the pyscal command line client. "
-            "Use interp_relperm from subscript or the API directly",
-            FutureWarning,
+    if isinstance(int_param_wo, list) or isinstance(int_param_go, list):
+        raise TypeError(
+            "SATNUM specific interpolation parameters are not supported in pyscalcli"
         )
-    if "SATNUM" not in scalinput_df:
+    if int_param_wo is not None and "CASE" not in parametertable:
+        raise ValueError(
+            "Interpolation parameter provided but no CASE column in input data"
+        )
+    if "SATNUM" not in parametertable:
         raise ValueError("There is no column called SATNUM in the input data")
-    if "CASE" in scalinput_df:
+
+    if "CASE" in parametertable:
         # Then we should do interpolation
         if int_param_wo is None:
             raise ValueError("No interpolation parameters provided")
         scalrec_list = PyscalFactory.create_scal_recommendation_list(
-            scalinput_df, h=delta_s
+            parametertable, h=delta_s
         )
         assert isinstance(scalrec_list[1], SCALrecommendation)
         if scalrec_list[1].type == WaterOilGas:
@@ -237,22 +225,12 @@ def pyscal_main(
             )
             wog_list = scalrec_list.interpolate(int_param_wo, int_param_go, h=delta_s)
         elif scalrec_list[1].type == GasWater:
-            logger.info(
-                "Interpolating, gaswater=%s",
-                str(int_param_wo),
-            )
+            logger.info("Interpolating, gaswater=%s", str(int_param_wo))
             wog_list = scalrec_list.interpolate(int_param_wo, None, h=delta_s)
     else:
         wog_list = PyscalFactory.create_pyscal_list(
-            scalinput_df, h=delta_s
+            parametertable, h=delta_s
         )  # can be both water-oil, water-oil-gas, or gas-water
-
-    if (
-        int_param_wo is not None or int_param_go is not None
-    ) and "CASE" not in scalinput_df:
-        raise ValueError(
-            "Interpolation parameter provided but no CASE column in input data"
-        )
 
     if family2 or wog_list.pyscaltype == GasWater:
         family = 2
@@ -272,7 +250,3 @@ def pyscal_main(
             wog_list.build_eclipse_data(family=family, slgof=slgof), encoding="utf-8"
         )
         print("Written to " + output)
-
-
-if __name__ == "__main__":
-    main()
