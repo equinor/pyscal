@@ -18,9 +18,6 @@ def test_installed():
     """Test that the command line client is installed in PATH and
     starts up nicely"""
     assert subprocess.check_output(["pyscal", "-h"])
-    assert subprocess.check_output(["pyscal", "--help"])
-
-    assert subprocess.check_output(["pyscal", "--version"])
 
 
 @pytest.mark.skipif(sys.platform == "win32", reason="UTF-8 problems on Windows")
@@ -240,6 +237,34 @@ def test_pyscal_client_static(tmp_path, caplog, default_loglevel, mocker):
     assert linecount2 > linecount1 * 4  # since we don't filter out non-numerical lines
 
 
+def test_pyscalcli_stdout_output(capsys, mocker):
+    """Test that we can write to stdout"""
+    scalrec_file = Path(__file__).absolute().parent / "data/scal-pc-input-example.xlsx"
+    mocker.patch(
+        "sys.argv",
+        ["pyscal", str(scalrec_file), "--int_param_wo", "0", "--output", "-"],
+    )
+    pyscalcli.main()
+    captured = capsys.readouterr()
+    assert "SWOF" in captured.out
+
+    mocker.patch(
+        "sys.argv",
+        [
+            "pyscal",
+            str(scalrec_file),
+            "--family2",
+            "--int_param_wo",
+            "0",
+            "--output",
+            "-",
+        ],
+    )
+    pyscalcli.main()
+    captured = capsys.readouterr()
+    assert "SOF3" in captured.out
+
+
 def test_pyscalcli_exception_catching(capsys, mocker):
     """The command line client catches selected exceptions.
 
@@ -423,10 +448,103 @@ def test_pyscal_client_scal(tmp_path, caplog, default_loglevel, mocker):
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
     # assert something about -0.5 in the comments
 
+
+def test_pyscal_client_error(tmp_path, mocker):
+    """Test various error conditions, asserting the the correct error message is emitted
+
+    Some error are caught in pyscalcli.py, some errors are caught when loading the xlsx
+    file"""
+
+    os.chdir(tmp_path)
+    scalrec_file = Path(__file__).absolute().parent / "data/scal-pc-input-example.xlsx"
+
+    # int_param_go should not be used alone:
+    mocker.patch("sys.argv", ["pyscal", str(scalrec_file), "--int_param_go", "-0.5"])
+    with pytest.raises(SystemExit, match="Don't use int_param_go alone"):
+        pyscalcli.main()
+
+    # Delete SATNUM from xlsx input:
+    pd.read_excel(scalrec_file, engine="openpyxl").drop("SATNUM", axis=1).to_csv(
+        "no_satnum.csv"
+    )
+    mocker.patch("sys.argv", ["pyscal", "no_satnum.csv", "--int_param_wo", "-0.5"])
+    with pytest.raises(SystemExit, match="SATNUM must be present"):
+        pyscalcli.main()
+
+    # Delete CASE from xlsx input:
+    pd.read_excel(scalrec_file, engine="openpyxl").drop("CASE", axis=1).to_csv(
+        "no_case.csv"
+    )
+    mocker.patch("sys.argv", ["pyscal", "no_case.csv", "--int_param_wo", "-0.5"])
+    with pytest.raises(SystemExit, match="Non-unique SATNUMs"):
+        pyscalcli.main()
+
     # Multiple interpolation parameters, this was supported in pyscal <= 0.7.7,
-    # but is now an error:
+    # but is now an error (raised by argparse):
     mocker.patch(
         "sys.argv", ["pyscal", str(scalrec_file), "--int_param_wo", "-0.5", "0"]
     )
     with pytest.raises(SystemExit):
         pyscalcli.main()
+
+
+@pytest.mark.parametrize(
+    "int_param_wo, int_param_go, raises, match",
+    [
+        (-1, None, None, None),
+        (-2, None, ValueError, "must be in"),
+        (-1, -2, ValueError, "must be in"),
+        (None, -1, ValueError, "int_param_go alone"),
+        (None, None, ValueError, None),
+        ([], None, TypeError, "SATNUM specific interpolation"),
+        ([-1], None, TypeError, "SATNUM specific interpolation"),
+        ([1, 1], None, TypeError, "SATNUM specific interpolation"),
+        ([], [], TypeError, "SATNUM specific interpolation"),
+        (-1, [], TypeError, "SATNUM specific interpolation"),
+        (None, [], ValueError, "int_param_go alone"),
+    ],
+)
+def test_pyscal_main_interpolation_parameters(
+    int_param_wo, int_param_go, raises, match
+):
+    """Define the behaviour on different interpolation parameter combinations.
+
+    Earlier pyscal versions allowed lists of parameters as input.
+
+    The command line client will also catch these errors through argparse, but
+    when pyscal is used e.g. in fm_pyscal.py in semeio, these errors need to
+    be caught by the main() function.
+    """
+    scalrec_file = Path(__file__).absolute().parent / "data/scal-pc-input-example.xlsx"
+    if raises is not None:
+        with pytest.raises(raises, match=match):
+            pyscalcli.pyscal_main(
+                scalrec_file,
+                int_param_wo=int_param_wo,
+                int_param_go=int_param_go,
+                output=os.devnull,
+            )
+    else:
+        pyscalcli.pyscal_main(
+            scalrec_file,
+            int_param_wo=int_param_wo,
+            int_param_go=int_param_go,
+            output=os.devnull,
+        )
+
+
+def test_pyscal_main():
+    """The pyscal client is a wrapper main() function that runs argparse, and then
+    hands over responsibility to pyscal_main(). This wrapping is to facilitate
+    fm_pyscal.py in semeio f.ex.
+
+    This test function is for testing e.g error scenarios that argparse
+    would catch, but that we also need to check on behalf of semeio usage."""
+
+    # This input file has no CASE column, and interpolation is not meaningful.
+    relperm_file = Path(__file__).absolute().parent / "data/relperm-input-example.xlsx"
+
+    pyscalcli.pyscal_main(relperm_file, output=os.devnull)
+
+    with pytest.raises(ValueError, match="Interpolation parameter provided"):
+        pyscalcli.pyscal_main(relperm_file, int_param_wo=-1, output=os.devnull)
