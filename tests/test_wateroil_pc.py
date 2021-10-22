@@ -225,9 +225,8 @@ def test_skjaeveland_pc():
     check_table(wateroil.table)
     swfn = wateroil.SWFN()
 
-    # Defaulting swr:
-    wateroil.add_skjaeveland_pc(swr=0.1, cw=0.1, co=-0.1, aw=0.1, ao=0.1)
-    wateroil.add_skjaeveland_pc(swr=0.1, cw=0.1, co=-0.1, aw=0.1, ao=0.1)
+    # Defaulting swr should give the same since swr==swirr above:
+    wateroil.add_skjaeveland_pc(swr=None, cw=0.1, co=-0.1, aw=0.1, ao=0.1)
     assert wateroil.SWFN() == swfn
 
     # Add with wrong numbers
@@ -249,3 +248,12 @@ def test_skjaeveland_pc():
 
     with pytest.raises(ValueError, match="swr must be contained in"):
         wateroil.add_skjaeveland_pc(swr=-1.2, sor=0.3, cw=0.1, co=-0.1, aw=0.1, ao=0.1)
+
+    with pytest.raises(ValueError, match="swr must be contained in"):
+        wateroil.add_skjaeveland_pc(swr=1.2, sor=0.3, cw=0.1, co=-0.1, aw=0.1, ao=0.1)
+
+    with pytest.raises(ValueError, match="sor must be contained in"):
+        wateroil.add_skjaeveland_pc(swr=0.1, sor=-0.2, cw=0.1, co=-0.1, aw=0.1, ao=0.1)
+
+    with pytest.raises(ValueError, match="sor must be contained in"):
+        wateroil.add_skjaeveland_pc(swr=0.1, sor=1.2, cw=0.1, co=-0.1, aw=0.1, ao=0.1)

@@ -867,12 +867,12 @@ class WaterOil(object):
         if sor is None:
             sor = self.sorw
 
-        if swr >= 1 - sor:
-            raise ValueError("swr (swirr) must be less than 1 - sor")
         if swr < 0 or swr > 1:
             raise ValueError("swr must be contained in [0,1]")
         if sor < 0 or sor > 1:
             raise ValueError("sor must be contained in [0,1]")
+        if swr >= 1 - sor:
+            raise ValueError("swr (swirr) must be less than 1 - sor")
 
         self.pccomment = (
             "-- Skjæveland correlation for Pc;\n"
