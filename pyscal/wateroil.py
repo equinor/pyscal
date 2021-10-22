@@ -121,9 +121,14 @@ class WaterOil(object):
         if socr is not None:
             self.socr = truncate_zeroness(socr, name="socr")
             if socr < self.sorw - epsilon:
-                raise ValueError("socr must be equal to or larger than sorw")
+                raise ValueError(
+                    "socr must be equal to or larger than sorw, "
+                    f"socr={socr}, sorw={self.sorw}"
+                )
             if self.sorw - epsilon < self.socr < self.sorw + 1 / SWINTEGERS + epsilon:
-                logger.warning("socr was close to sorw, reset to sorw")
+                if self.sorw < self.socr or self.sorw > self.socr:
+                    # Only warn if it seems the user actually tried to set socr
+                    logger.warning("socr was close to sorw, reset to sorw")
                 self.socr = self.sorw
         else:
             self.socr = self.sorw
@@ -216,6 +221,7 @@ class WaterOil(object):
         krowcomment: str = "",
         pccomment: str = "",
         sorw: Optional[float] = None,
+        socr: Optional[float] = None,
     ) -> None:
         """Interpolate relpermdata from a dataframe.
 
@@ -247,7 +253,9 @@ class WaterOil(object):
             krowcomment: Inserted into comment
             pccomment: Inserted into comment
             sorw: Explicit sorw. If None, it will be estimated from
-                the numbers in krw (or krow)
+                the numbers in krw
+            socr: Explicit socr. If None, it will be estimated from
+                the numbers in krow
         """
         # Avoid having to deal with multi-indices:
         if len(dframe.index.names) > 1:
@@ -276,12 +284,14 @@ class WaterOil(object):
 
         if (dframe[swcolname].diff() < 0).any():
             raise ValueError("SW data not sorted")
+        if sorw is None and krwcolname in dframe:
+            sorw = float(dframe[swcolname].max()) - estimate_diffjumppoint(
+                dframe, xcol=swcolname, ycol=krwcolname, side="right"
+            )
+            logger.info("Estimated sorw in tabular data to %f", sorw)
+        else:
+            sorw = 0
         if krwcolname in dframe:
-            if sorw is None:
-                sorw = float(dframe[swcolname].max()) - estimate_diffjumppoint(
-                    dframe, xcol=swcolname, ycol=krwcolname, side="right"
-                )
-                logger.info("Estimated sorw in tabular data to %f", sorw)
             assert -epsilon <= sorw <= 1 + epsilon
             if dframe[krwcolname].max() > 1.0:
                 raise ValueError("KRW is above 1 in incoming table")
@@ -306,10 +316,6 @@ class WaterOil(object):
             # Verify that incoming data is increasing (or level):
             if not (dframe[krwcolname].diff().dropna() > -epsilon).all():
                 raise ValueError("Incoming KRW not increasing")
-            if dframe[krwcolname].max() > 1.0:
-                raise ValueError("KRW is above 1 in incoming table")
-            if dframe[krwcolname].min() < 0.0:
-                raise ValueError("KRW is below 0 in incoming table")
             if sum(nonlinearpart) >= 2:
                 pchip = PchipInterpolator(
                     dframe[nonlinearpart][swcolname].astype(float),
@@ -334,22 +340,25 @@ class WaterOil(object):
             self.swcr = self.estimate_swcr()
 
         if krowcolname in dframe:
-            if sorw is None:
-                sorw = float(dframe[swcolname].max()) - estimate_diffjumppoint(
+            if socr is None:
+                socr = float(dframe[swcolname].max()) - estimate_diffjumppoint(
                     dframe, xcol=swcolname, ycol=krowcolname, side="right"
                 )
-                logger.info("Estimated sorw in tabular data from krow to %s", sorw)
-            assert -epsilon <= sorw <= 1 + epsilon
-            linearpart = dframe[swcolname] >= 1 - sorw
-            nonlinearpart = dframe[swcolname] <= 1 - sorw  # (overlapping at sorw)
+                if socr > sorw + epsilon:
+                    logger.info("Estimated socr in tabular data from krow to %s", socr)
+                else:
+                    socr = sorw
+            assert -epsilon <= socr <= 1 + epsilon
+            linearpart = dframe[swcolname] >= 1 - socr
+            nonlinearpart = dframe[swcolname] <= 1 - socr  # (overlapping at sorw)
             if sum(linearpart) < 2:
                 linearpart = pd.Series([False] * len(linearpart))
                 nonlinearpart = ~linearpart
-                sorw = 0
+                socr = 0
             if sum(nonlinearpart) < 2:
                 nonlinearpart = pd.Series([False] * len(nonlinearpart))
                 linearpart = ~nonlinearpart
-                sorw = 1 - float(self.table["SW"].min())
+                socr = 1 - float(self.table["SW"].min())
             if not np.isclose(dframe[swcolname].min(), self.table["SW"].min()):
                 raise ValueError("Incompatible swl")
             if not (dframe[krowcolname].diff().dropna() < epsilon).all():
@@ -363,8 +372,8 @@ class WaterOil(object):
                     dframe.loc[nonlinearpart, swcolname].astype(float),
                     dframe.loc[nonlinearpart, krowcolname].astype(float),
                 )
-                self.table.loc[self.table["SW"] <= 1 - sorw, "KROW"] = pchip(
-                    self.table.loc[self.table["SW"] <= 1 - sorw, "SW"]
+                self.table.loc[self.table["SW"] <= 1 - socr, "KROW"] = pchip(
+                    self.table.loc[self.table["SW"] <= 1 - socr, "SW"]
                 )
             if sum(linearpart) >= 2:
                 linearinterpolator = interp1d(
@@ -372,12 +381,12 @@ class WaterOil(object):
                     dframe.loc[linearpart, krowcolname].astype(float),
                 )
                 self.table.loc[
-                    self.table["SW"] >= 1 - sorw, "KROW"
+                    self.table["SW"] >= 1 - socr, "KROW"
                 ] = linearinterpolator(
-                    self.table.loc[self.table["SW"] >= 1 - sorw, "SW"]
+                    self.table.loc[self.table["SW"] >= 1 - socr, "SW"]
                 )
             self.table["KROW"].clip(lower=0.0, upper=1.0, inplace=True)
-            self.sorw = sorw
+            self.socr = socr
             self.krowcomment = "-- krow from tabular input" + krowcomment + "\n"
         if pccolname in dframe:
             # Incoming dataframe must cover the range:
@@ -1040,9 +1049,9 @@ class WaterOil(object):
 
     def estimate_socr(self) -> float:
         """Estimate socr from the current kro data."""
-        assert self.table["KRO"].sum() > 0
+        assert self.table["KROW"].sum() > 0
         return self.table["SW"].max() - estimate_diffjumppoint(
-            self.table, xcol="SW", ycol="KRO", side="right"
+            self.table, xcol="SW", ycol="KROW", side="right"
         )
 
     def estimate_swcr(self, curve: str = "KRW") -> float:

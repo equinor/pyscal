@@ -25,6 +25,7 @@ from pyscal.utils.testing import check_table, float_df_checker, sat_table_str_ok
     st.floats(min_value=0, max_value=0.0),  # dswcr
     st.floats(min_value=0, max_value=0.1),  # dswlhigh
     st.floats(min_value=0, max_value=0.3),  # sorw
+    st.floats(min_value=0, max_value=0.2),  # dsocrsorw
     st.floats(min_value=0.1, max_value=5),  # nw1
     st.floats(min_value=0.1, max_value=1),  # krwend1
     st.floats(min_value=0.1, max_value=5),  # now1
@@ -35,16 +36,32 @@ from pyscal.utils.testing import check_table, float_df_checker, sat_table_str_ok
     st.floats(min_value=0.1, max_value=1),  # kroend2
 )
 def test_normalize_nonlinpart_wo_hypo(
-    swl, dswcr, dswlhigh, sorw, nw1, krwend1, now1, kroend1, nw2, krwend2, now2, kroend2
+    swl,
+    dswcr,
+    dswlhigh,
+    sorw,
+    dsocrsorw,
+    nw1,
+    krwend1,
+    now1,
+    kroend1,
+    nw2,
+    krwend2,
+    now2,
+    kroend2,
 ):
     # pylint: disable=too-many-arguments,too-many-locals
     """Test the normalization code in utils.
 
     In particular the fill_value argument to scipy has been tuned to
     fulfill this code"""
-    wo_low = WaterOil(swl=swl, swcr=swl + dswcr, sorw=sorw)
+    wo_low = WaterOil(swl=swl, swcr=swl + dswcr, sorw=sorw, socr=sorw + dsocrsorw)
+    sorw_high = max(sorw - 0.01, 0)
     wo_high = WaterOil(
-        swl=swl + dswlhigh, swcr=swl + dswlhigh + dswcr, sorw=max(sorw - 0.01, 0)
+        swl=swl + dswlhigh,
+        swcr=swl + dswlhigh + dswcr,
+        sorw=sorw_high,
+        socr=sorw_high + dsocrsorw,
     )
     wo_low.add_corey_water(nw=nw1, krwend=krwend1)
     wo_high.add_corey_water(nw=nw2, krwend=krwend2)
@@ -228,6 +245,7 @@ def test_tag_preservation():
     st.floats(min_value=0, max_value=0.0),  # dswcr
     st.floats(min_value=0, max_value=0.1),  # dswlhigh
     st.floats(min_value=0, max_value=0.3),  # sorw
+    st.floats(min_value=0, max_value=0.3),  # dsocrsorw
     st.floats(min_value=1, max_value=5),  # nw_l
     st.floats(min_value=1, max_value=5),  # nw_h
     st.floats(min_value=1, max_value=5),  # now_l
@@ -242,6 +260,7 @@ def test_interpolate_wo(
     dswcr,
     dswlhigh,
     sorw,
+    dsocrsorw,
     nw_l,
     nw_h,
     now_l,
@@ -258,9 +277,13 @@ def test_interpolate_wo(
     this essentially checks that we can go continously between the
     two functions.
     """
-    wo_low = WaterOil(swl=swl, swcr=swl + dswcr, sorw=sorw)
+    wo_low = WaterOil(swl=swl, swcr=swl + dswcr, sorw=sorw, socr=sorw + dsocrsorw)
+    sorw_high = max(sorw - 0.01, 0)
     wo_high = WaterOil(
-        swl=swl + dswlhigh, swcr=swl + dswlhigh + dswcr, sorw=max(sorw - 0.01, 0)
+        swl=swl + dswlhigh,
+        swcr=swl + dswlhigh + dswcr,
+        sorw=max(sorw - 0.01, 0),
+        socr=sorw_high + dsocrsorw,
     )
     wo_low.add_corey_water(nw=nw_l, krwend=krwend_l)
     wo_high.add_corey_water(nw=nw_h, krwend=krwend_h)
@@ -279,6 +302,8 @@ def test_interpolate_wo(
     dists = [
         (wo_low.table - interp.table)[["KRW", "KROW"]].sum().sum() for interp in ips
     ]
+
+    # wo_low should be reproduced exactly:
     assert np.isclose(dists[0], 0)
 
     # Distance between high and the last interpolant
@@ -292,7 +317,6 @@ def test_interpolate_wo(
         f"Interpolation, mean: {np.mean(dists)}, min: {min(dists)}, "
         f"max: {max(dists)}, std: {np.std(np.diff(dists[1:]))} ip-par-dist: {ip_dist}"
     )
-    assert np.isclose(dists[0], 0)  # Reproducing wo_low
     # All curves that are close in parameter t, should be close in sum().sum().
     # That means that diff of the distances should be similar,
     # that is the std.dev of the distances is low:
@@ -835,6 +859,51 @@ def test_interpolations_wo_fromtable():
     wo_ip = interpolate_wo(wo_base, wo_opt, 0.5, h=0.01)
     assert np.isclose(wo_ip.estimate_swcr(), 0.25)
     assert np.isclose(wo_ip.estimate_sorw(), 0.15)
+
+
+def test_interpolations_wo_fromtable_socr():
+    """Test that socr is correctly handled through
+    both add_fromtable() and interpolation."""
+    base = pd.DataFrame(
+        columns=["SW", "KRW", "KROW"],
+        data=[
+            [0.0, 0.0, 1.0],
+            [0.1, 0.0, 1.0],
+            [0.2, 0.0, 1.0],  # swcr
+            [0.3, 0.1, 0.9],
+            [0.7, 0.3, 0.0],  # socr
+            [0.8, 0.8, 0.0],  # sorw
+            [0.9, 0.9, 0.0],
+            [1.0, 1.0, 0.0],
+        ],
+    )
+    opt = pd.DataFrame(
+        columns=["SW", "KRW", "KROW"],
+        data=[
+            [0.0, 0.0, 1.0],
+            [0.1, 0.0, 1.0],
+            [0.3, 0.0, 1.0],
+            [0.4, 0.1, 0.2],  # swcr
+            [0.9, 0.9, 0.0],  # sorw == socr
+            [0.95, 0.95, 0.0],
+            [1.0, 1.0, 0.0],
+        ],
+    )
+    wo_base = WaterOil(h=0.01)
+    wo_base.add_fromtable(base)
+    assert np.isclose(wo_base.estimate_swcr(), 0.2)
+    assert np.isclose(wo_base.estimate_sorw(), 0.2)
+    assert np.isclose(wo_base.estimate_socr(), 0.3)
+    wo_opt = WaterOil(h=0.01)
+    wo_opt.add_fromtable(opt)
+    assert np.isclose(wo_opt.estimate_swcr(), 0.3)
+    assert np.isclose(wo_opt.estimate_sorw(), 0.1)
+    assert np.isclose(wo_opt.estimate_socr(), 0.1)
+
+    wo_ip = interpolate_wo(wo_base, wo_opt, 0.5, h=0.01)
+    assert np.isclose(wo_ip.estimate_swcr(), 0.25)
+    assert np.isclose(wo_ip.estimate_sorw(), 0.15)
+    assert np.isclose(wo_ip.estimate_socr(), 0.2)
 
 
 @given(

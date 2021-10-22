@@ -24,7 +24,8 @@ def normalize_nonlinpart_wo(curve: WaterOil) -> Tuple[Callable, Callable]:
     is from 1 - sorw (mapped to zero) to swl (mapped to 1).
 
     These endpoints must be known the the WaterOil object coming in (the object
-    can determine them using functions 'estimate_sorw()' and 'estimate_swcr()'
+    can determine them using functions estimate_sorw(), estimate_swcr() and
+    estimate_socr()
 
     If the entire curve is linear, it will not matter for this function, because
     this function only deals with the presumably known endpoints.
@@ -64,7 +65,7 @@ def normalize_nonlinpart_wo(curve: WaterOil) -> Tuple[Callable, Callable]:
     )
 
     def so_fn(son):
-        return curve.sorw + son * (1.0 - curve.sorw - curve.swl)
+        return curve.socr + son * (1.0 - curve.socr - curve.swl)
 
     def kro_fn(son):
         return kro_interp(so_fn(son))
@@ -272,6 +273,7 @@ def interpolate_wo(
     swl_new = weighted_value(wo_low.swl, wo_high.swl)
     swcr_new = weighted_value(wo_low.swcr, wo_high.swcr)
     sorw_new = weighted_value(wo_low.sorw, wo_high.sorw)
+    socr_new = weighted_value(wo_low.socr, wo_high.socr)
 
     # Interpolate kr at saturation endpoints
     krwmax_new = weighted_value(wo_low.table["KRW"].max(), wo_high.table["KRW"].max())
@@ -280,7 +282,9 @@ def interpolate_wo(
 
     # Construct the new WaterOil object, with interpolated
     # endpoints:
-    wo_new = WaterOil(swl=swl_new, swcr=swcr_new, sorw=sorw_new, h=h, fast=fast)
+    wo_new = WaterOil(
+        swl=swl_new, swcr=swcr_new, sorw=sorw_new, socr=socr_new, h=h, fast=fast
+    )
 
     # Add interpolated relperm data in nonlinear parts:
     wo_new.table["KRW"] = weighted_value(
