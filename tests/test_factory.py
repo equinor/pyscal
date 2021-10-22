@@ -658,7 +658,10 @@ def test_factory_wateroil_paleooil(caplog):
         swof = wo_socrignored.SWOF()
         assert "socr" not in swof  # socr is effectively ignored when = sorw.
         sat_table_str_ok(swof)
-        assert "socr was close to sorw, reset to sorw" in caplog.text
+        if socr != sorw:
+            # This warning should only occur when it seems like the user
+            # has tried to explicitly set socr
+            assert "socr was close to sorw, reset to sorw" in caplog.text
 
     with pytest.raises(ValueError, match="socr must be equal to or larger than sorw"):
         pyscal_factory.create_water_oil(
