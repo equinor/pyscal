@@ -1,6 +1,5 @@
 """Command line tool for pyscal"""
 
-
 import argparse
 import sys
 import traceback
@@ -9,15 +8,10 @@ from typing import Optional
 
 import pandas as pd
 
-from pyscal import (
-    GasWater,
-    SCALrecommendation,
-    WaterOilGas,
-    __version__,
-    getLogger_pyscal,
-)
+from pyscal import GasWater, SCALrecommendation, WaterOilGas, __version__, getLoggerPyscal
 
 from .factory import PyscalFactory
+
 
 EPILOG = """
 The parameter file should contain a table with at least the column
@@ -53,6 +47,7 @@ if individual interpolation for each SATNUM is needed.
 
 def get_parser() -> argparse.ArgumentParser:
     """Construct the argparse parser for the command line script.
+
     Returns:
         argparse.Parser
     """
@@ -77,9 +72,15 @@ def get_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="Print informational messages while processing input",
     )
-    parser.add_argument("--debug", action="store_true", help="Print debug information")
     parser.add_argument(
-        "--version", action="version", version="%(prog)s (version " + __version__ + ")"
+        "--debug",
+        action="store_true",
+        help="Print debug information",
+    )
+    parser.add_argument(
+        "--version",
+        action="version",
+        version="%(prog)s (version " + __version__ + ")",
     )
     parser.add_argument(
         "-o",
@@ -141,6 +142,7 @@ def get_parser() -> argparse.ArgumentParser:
 
 def main() -> None:
     """Endpoint for pyscals command line utility.
+
     Translates from argparse API to Pyscal's Python API"""
     parser = get_parser()
     args = parser.parse_args()
@@ -178,6 +180,7 @@ def pyscal_main(
     """A "main()" method not relying on argparse. This can be used
     for testing, and also by an ERT forward model, e.g.
     in semeio (github.com/equinor/semeio)
+
     Args:
         parametertable: Filename (CSV or XLSX) to load
         verbose: verbose or not
@@ -230,7 +233,10 @@ def pyscal_main(
             )
             wog_list = scalrec_list.interpolate(int_param_wo, int_param_go, h=delta_s)
         elif scalrec_list[1].type == GasWater:
-            logger.info("Interpolating, gaswater=%s", str(int_param_wo))
+            logger.info(
+                "Interpolating, gaswater=%s",
+                str(int_param_wo),
+            )
             wog_list = scalrec_list.interpolate(int_param_wo, None, h=delta_s)
     else:
         wog_list = PyscalFactory.create_pyscal_list(
