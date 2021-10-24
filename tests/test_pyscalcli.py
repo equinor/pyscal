@@ -267,6 +267,7 @@ def test_pyscalcli_stdout_output(capsys, mocker):
 
 def test_pyscalcli_exception_catching(capsys, mocker):
     """The command line client catches selected exceptions.
+
     Traceback is always included."""
     mocker.patch("sys.argv", ["pyscal", "notexisting.xlsx"])
     with pytest.raises(SystemExit, match="File not found"):
@@ -451,7 +452,7 @@ def test_pyscal_client_scal(tmp_path, caplog, default_loglevel, mocker):
 def test_pyscal_client_error(tmp_path, mocker):
     """Test various error conditions, asserting the the correct error message is emitted
 
-     Some error are caught in pyscalcli.py, some errors are caught when loading the xlsx
+    Some error are caught in pyscalcli.py, some errors are caught when loading the xlsx
     file"""
 
     os.chdir(tmp_path)
@@ -507,7 +508,7 @@ def test_pyscal_main_interpolation_parameters(
     int_param_wo, int_param_go, raises, match
 ):
     """Define the behaviour on different interpolation parameter combinations.
- 
+
     Earlier pyscal versions allowed lists of parameters as input.
 
     The command line client will also catch these errors through argparse, but
