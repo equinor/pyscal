@@ -6,16 +6,9 @@ import traceback
 from pathlib import Path
 from typing import Optional
 
-
 import pandas as pd
 
-from pyscal import (
-    GasWater,
-    SCALrecommendation,
-    WaterOilGas,
-    __version__,
-    getLogger_pyscal,
-)
+from pyscal import GasWater, SCALrecommendation, WaterOilGas, __version__, getLogger_pyscal
 
 from .factory import PyscalFactory
 
