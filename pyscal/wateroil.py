@@ -486,9 +486,7 @@ class WaterOil(object):
         # Left linear section is all zero:
         self.table.loc[self.table["SW"] < self.swcr, "KRW"] = 0
 
-    def set_endpoints_linearpart_krow(
-        self, kroend: float, kromax: Optional[float] = None
-    ) -> None:
+    def set_endpoints_linearpart_krow(self, kroend: float) -> None:
         """Set linear parts of krow outside endpoints
 
         Curve will be zero in [1 - socr, 1].
@@ -499,9 +497,6 @@ class WaterOil(object):
         Args:
             kroend: value of kro at swcr
         """
-        if kromax is not None:
-            logger.error("kromax is DEPRECATED, ignored")
-
         # Set to zero above socr (usually equal to sorw):
         self.table.loc[self.table["SW"] > 1 - self.socr - epsilon, "KROW"] = 0
 
@@ -565,7 +560,6 @@ class WaterOil(object):
         e: float = 2.0,
         t: float = 2.0,
         kroend: float = 1,
-        kromax: Optional[float] = None,
     ) -> None:
         """
         Add kro data through LET parametrization
@@ -584,9 +578,6 @@ class WaterOil(object):
         assert epsilon < t < MAX_EXPONENT
         assert 0 < kroend <= 1.0
 
-        if kromax is not None:
-            logger.error("kromax is DEPRECATED, ignored")
-
         self.table["KROW"] = (
             kroend
             * self.table["SON"] ** l
@@ -601,9 +592,7 @@ class WaterOil(object):
 
         self.krowcomment = "-- LET krow, l={l:g}, e={e:g}, t={t:g}, kroend={kroend:g}\n"
 
-    def add_corey_oil(
-        self, now: float = 2.0, kroend: float = 1.0, kromax: Optional[float] = None
-    ) -> None:
+    def add_corey_oil(self, now: float = 2.0, kroend: float = 1.0) -> None:
         """Add kro data through the Corey parametrization
 
         Corey applies to the interval between swcr and 1 - sorw
@@ -618,9 +607,6 @@ class WaterOil(object):
         """
         assert epsilon < now < MAX_EXPONENT
         assert 0 < kroend <= 1.0
-
-        if kromax is not None:
-            logger.error("kromax is DEPRECATED, ignored")
 
         self.table["KROW"] = kroend * self.table["SON"] ** now
         self.table.loc[self.table["SW"] >= (1 - self.sorw), "KROW"] = 0
@@ -881,12 +867,12 @@ class WaterOil(object):
         if sor is None:
             sor = self.sorw
 
-        if swr >= 1 - sor:
-            raise ValueError("swr (swirr) must be less than 1 - sor")
         if swr < 0 or swr > 1:
             raise ValueError("swr must be contained in [0,1]")
         if sor < 0 or sor > 1:
             raise ValueError("sor must be contained in [0,1]")
+        if swr >= 1 - sor:
+            raise ValueError("swr (swirr) must be less than 1 - sor")
 
         self.pccomment = (
             "-- Skjæveland correlation for Pc;\n"

@@ -17,10 +17,22 @@ on:
 jobs:
 
   pyscal:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: ['3.6', '3.7', '3.8', '3.9']
+        include:
+          - os: 'ubuntu-latest'
+            python-version: '3.6'
+          - os: 'ubuntu-latest'
+            python-version: '3.7'
+          - os: 'ubuntu-latest'
+            python-version: '3.8'
+          - os: 'ubuntu-latest'
+            python-version: '3.9'
+          - os: 'macos-latest'
+            python-version: '3.9'
+          - os: 'windows-latest'
+            python-version: '3.9'
 
     steps:
       - name: Checkout commit locally
@@ -46,7 +58,7 @@ jobs:
 
       - name: Check code style and typing
         run: |
-          black --check pyscal/*py tests/test_*py setup.py docs/conf.py
+          black --check --force-exclude="pyscal/version.py" pyscal/*py tests/test_*py setup.py docs/conf.py
           flake8 pyscal tests
           isort --check-only --profile black pyscal tests
           mypy pyscal
@@ -96,7 +108,7 @@ jobs:
             fi
 
       - name: Build python package and publish to pypi
-        if: github.event_name == 'release' && matrix.python-version == '3.6'
+        if: github.event_name == 'release' && matrix.python-version == '3.6' && matrix.os == 'ubuntu-latest'
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.pyscal_pypi_token }}
