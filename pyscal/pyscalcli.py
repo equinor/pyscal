@@ -1,5 +1,6 @@
 """Command line tool for pyscal"""
 
+
 import argparse
 import sys
 import traceback
@@ -8,7 +9,13 @@ from typing import Optional
 
 import pandas as pd
 
-from pyscal import GasWater, SCALrecommendation, WaterOilGas, __version__, getLogger_pyscal
+from pyscal import (
+    GasWater,
+    SCALrecommendation,
+    WaterOilGas,
+    __version__,
+    getLogger_pyscal,
+)
 
 from .factory import PyscalFactory
 
