@@ -5,7 +5,7 @@ import sys
 import traceback
 from pathlib import Path
 from typing import Optional
-
+ 
 import pandas as pd
 
 from pyscal import (
@@ -17,7 +17,6 @@ from pyscal import (
 )
 
 from .factory import PyscalFactory
-
 
 EPILOG = """
 The parameter file should contain a table with at least the column
