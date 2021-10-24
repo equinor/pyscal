@@ -24,20 +24,25 @@ The parameter file should contain a table with at least the column
 SATNUM, containing only consecutive integers starting at 1. Each row
 provides the data for the corresponding SATNUM. Comments are put in a
 column called TAG or COMMENT. Column headers are case insensitive.
+
 Saturation endpoints are put in columns 'swirr', 'swl', 'swcr', 'sorw',
 'sgcr' and 'sorg'. Relative permeability endpoints are put in columns
 'krwend', 'krwmax', 'krowend', 'krogend', 'krgend' and 'krgmax'.
 These columns are optional and are defaulted to 0 or 1.
+
 Corey or LET parametrization are based on presence of the columns
 'Nw', 'Now', 'Nog', 'Ng', 'Lw', 'Ew', 'Tw', 'Low', 'Eow', 'Tow',
 'Log', 'Eog', 'Tog', 'Lg', 'Eg', 'Tg'.
+
 Simple J-function for capillary pressure ("RMS" version) is used if the columns
 'a', 'b', 'poro_ref', 'perm_ref' and 'drho' are found. If you provide
 'a_petro', or 'b_petro', the petrophysical formulation of the simple J-function
 is used. Check API for exact formulas. Normalized J-function is used if 'a',
 'b', 'poro', 'perm' and 'sigma_costau' is provided.
+
 For SCAL recommendations, there should be exactly three rows for each SATNUM,
 tagged with the strings 'low', 'base' and 'high' in the column 'CASE'
+
 When interpolating in a SCAL recommendation, 'int_param_wo' is the main parameter
 that is used for water-oil, gas-oil and gas-water, and for all SATNUMs if nothing
 more is provided. Provide int_param_go in addition if separate interpolation

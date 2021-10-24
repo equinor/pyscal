@@ -450,6 +450,7 @@ def test_pyscal_client_scal(tmp_path, caplog, default_loglevel, mocker):
 
 def test_pyscal_client_error(tmp_path, mocker):
     """Test various error conditions, asserting the the correct error message is emitted
+    
     Some error are caught in pyscalcli.py, some errors are caught when loading the xlsx
     file"""
 
@@ -506,7 +507,9 @@ def test_pyscal_main_interpolation_parameters(
     int_param_wo, int_param_go, raises, match
 ):
     """Define the behaviour on different interpolation parameter combinations.
+    
     Earlier pyscal versions allowed lists of parameters as input.
+    
     The command line client will also catch these errors through argparse, but
     when pyscal is used e.g. in fm_pyscal.py in semeio, these errors need to
     be caught by the main() function.
@@ -533,6 +536,7 @@ def test_pyscal_main():
     """The pyscal client is a wrapper main() function that runs argparse, and then
     hands over responsibility to pyscal_main(). This wrapping is to facilitate
     fm_pyscal.py in semeio f.ex.
+    
     This test function is for testing e.g error scenarios that argparse
     would catch, but that we also need to check on behalf of semeio usage."""
 
