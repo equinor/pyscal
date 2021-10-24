@@ -8,7 +8,7 @@ from typing import Optional
 
 import pandas as pd
 
-from pyscal import GasWater, SCALrecommendation, WaterOilGas, __version__, getLoggerPyscal
+from pyscal import GasWater, SCALrecommendation, WaterOilGas, __version__, getLogger_pyscal
 
 from .factory import PyscalFactory
 
