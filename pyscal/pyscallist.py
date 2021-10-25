@@ -355,12 +355,16 @@ class PyscalList(object):
             )
         return wog_list
 
-    def make_ecl_output(
+    def _make_ecl_output(
         self,
         keyword: str,
-        write_to_filename: Optional[str] = None,
+        write_to_filename: Optional[str] = None,  # Deprecated
     ) -> str:
-        """Internal helper function for constructing strings and writing to disk"""
+        """Internal helper function for constructing Eclipse include file strings
+        for individual keywords.
+
+        build_eclipse_data() will use this function.
+        """
         if self.pyscaltype == SCALrecommendation:
             raise TypeError(
                 "You need to interpolate before you can dump a SCAL recommendation"
@@ -373,33 +377,35 @@ class PyscalList(object):
                 outputter = getattr(pyscal_obj, keyword)
                 string += outputter(header=False)
         if write_to_filename:
+            logger.warning("Writing to files in pyscallist is deprecated")
             Path(write_to_filename).parent.mkdir(parents=True, exist_ok=True)
             Path(write_to_filename).write_text(string, encoding="utf-8")
         return string
 
     def SWOF(self, write_to_filename: Optional[str] = None) -> str:
-        """Make SWOF string and optionally print to file"""
-        return self.make_ecl_output("SWOF", write_to_filename)
+        """Build SWOF string"""
+        # _make_ecl_output() will warn about non-None filename being deprecated
+        return self._make_ecl_output("SWOF", write_to_filename)
 
     def SGOF(self, write_to_filename: Optional[str] = None) -> str:
-        """Make SGOF string and optionally print to file"""
-        return self.make_ecl_output("SGOF", write_to_filename)
+        """Build SGOF string"""
+        return self._make_ecl_output("SGOF", write_to_filename)
 
     def SLGOF(self, write_to_filename: Optional[str] = None) -> str:
-        """Make SLGOF string and optionally print to file"""
-        return self.make_ecl_output("SLGOF", write_to_filename)
+        """Build SLGOF string"""
+        return self._make_ecl_output("SLGOF", write_to_filename)
 
     def SGFN(self, write_to_filename: Optional[str] = None) -> str:
-        """Make SGFN string and optionally print to file"""
-        return self.make_ecl_output("SGFN", write_to_filename)
+        """Build SGFN string"""
+        return self._make_ecl_output("SGFN", write_to_filename)
 
     def SWFN(self, write_to_filename: Optional[str] = None) -> str:
-        """Make SWFN string and optionally print to file"""
-        return self.make_ecl_output("SWFN", write_to_filename)
+        """Build SWFN string"""
+        return self._make_ecl_output("SWFN", write_to_filename)
 
     def SOF3(self, write_to_filename: Optional[str] = None) -> str:
-        """Make SOF3 string and optionally print to file"""
-        return self.make_ecl_output("SOF3", write_to_filename)
+        """Build SOF3 string"""
+        return self._make_ecl_output("SOF3", write_to_filename)
 
     def __len__(self) -> int:
         """Return the count of Pyscal objects in the list"""
