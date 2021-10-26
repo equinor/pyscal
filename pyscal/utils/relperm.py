@@ -19,7 +19,7 @@ def truncate_zeroness(
     a given limit, if not return the value"""
     if value < zeronesslimit:
         if log and name and not np.isclose(value, 0.0):
-            logger.warning("%s was close to zero, set to zero", name)
+            logger.warning(f"{name}={value} was close to zero, truncated to 0")
         return 0.0
     return value
 

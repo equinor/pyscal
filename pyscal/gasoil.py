@@ -801,7 +801,7 @@ class GasOil(object):
     def slgof_df(self) -> pd.DataFrame:
         """Slice out an SLGOF table.
 
-        This is a used by the SLGOF() function, it is
+        This is used by the SLGOF() function, it is
         extracted as a single function to facilitate testing."""
         if "PC" not in self.table.columns:
             # Only happens when the SLGOF function is skipped (test code)
@@ -813,12 +813,6 @@ class GasOil(object):
             .sort_values("SL")[["SL", "KRG", "KROG", "PC"]]
             .reset_index(drop=True)
         )
-        # It is a strict requirement that the first sl value should be swl + sorg,
-        slgof_sl_mismatch = abs(slgof["SL"].values[0] - (self.sorg + self.swl))
-        if slgof_sl_mismatch > epsilon:
-            raise ValueError(
-                f"Bug: slgof_sl_mismatch was {slgof_sl_mismatch}, too large"
-            )
         return slgof
 
     def SLGOF(self, header: bool = True, dataincommentrow: bool = True) -> str:

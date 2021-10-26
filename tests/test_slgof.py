@@ -54,6 +54,11 @@ def test_slgof(swl, sorg, sgcr):
     assert np.isclose(slgof["KRG"].values[-1], 0)
     assert np.isclose(slgof["KROG"].values[0], 0)
 
+    # If we ruin the object, SLGOF() will return an empty string:
+    wog.gasoil.table.drop("KRG", axis="columns", inplace=True)
+    assert wog.gasoil.SLGOF() == ""
+    assert wog.SLGOF() == ""
+
 
 @pytest.mark.parametrize(
     "swl, sorg, sgcr",
@@ -143,3 +148,20 @@ def test_slgof_hypo(swl, sorg, sgcr, h):
     assert isinstance(slgof_str, str)
     assert slgof_str
     sat_table_str_ok(slgof_str)
+
+
+@settings(deadline=2000)
+@given(
+    st.floats(min_value=0.0, max_value=0.3),
+    st.floats(min_value=0.0, max_value=0.3),
+    st.floats(min_value=1.0 / float(1000 * SWINTEGERS), max_value=0.5),
+)
+def test_slgof_sl_mismatch(swl, sorg, h):
+    """Test numerical robustness on slgof table creation."""
+    gasoil = GasOil(h=h, swl=swl, sorg=sorg)
+    gasoil.add_corey_gas()
+    gasoil.add_corey_oil()
+
+    # It is a strict requirement that the first sl value should be swl + sorg,
+    # but GasOil might have truncated the values.
+    assert np.isclose(gasoil.slgof_df()["SL"].values[0] - (gasoil.swl + gasoil.sorg), 0)
