@@ -430,37 +430,51 @@ def test_wo_invalidcurves():
     assert wateroil.table["PC"].max() > pc3.iloc[1:]["PC"].max()
 
 
-def test_go_invalidcurves():
-    """Test  fromtable on invalid gasoil data"""
-    # Sw data not ordered:
-    krg1 = pd.DataFrame(columns=["SG", "KRG"], data=[[0.15, 0], [0.1, 1], [1, 1]])
+@pytest.mark.parametrize(
+    "dframe, match",
+    [
+        (pd.DataFrame(columns=["SG"], data=[[0.15], [1]]), "sg must start at zero"),
+        (
+            pd.DataFrame(columns=["SG", "KRG"], data=[[0.0, 0], [0.1, 0.4], [0.1, 1]]),
+            # error emitted by PchipInterpolator, not pyscal:
+            "`x` must be strictly increasing",
+        ),
+        (
+            pd.DataFrame(
+                columns=["SG", "KRG"], data=[[0.0, 0], [0.4, 0.6], [0.6, 0.4], [1, 1]]
+            ),
+            "krg not increasing",
+        ),
+        (
+            pd.DataFrame(
+                columns=["SG", "KROG"], data=[[0, 1], [0.4, 0.4], [0.6, 0.6], [1, 0]]
+            ),
+            "krog not decreasing",
+        ),
+        (
+            pd.DataFrame(
+                columns=["SG", "PCOG"], data=[[0, 1], [0.4, 0.4], [0.6, 0.6], [1, 0]]
+            ),
+            "Incoming pc not increasing",
+        ),
+        (
+            pd.DataFrame(
+                columns=["SG", "KRG"], data=[[0, 1], [0.4, 0.6], [0.6, 0.4], [1, 1]]
+            ),
+            "Incoming krg not increasing",
+        ),
+        (
+            pd.DataFrame(
+                columns=["SG", "KROG"], data=[[0, 1.2], [0.4, 0.4], [0.6, 0.2], [1, 0]]
+            ),
+            "krog is above 1",
+        ),
+    ],
+)
+def test_go_invalidcurves(dframe, match):
     gasoil = GasOil(h=0.1)
-    with pytest.raises(ValueError):
-        # pchip-interpolator raises this error;
-        # x coordinates are not in increasing order
-        gasoil.add_fromtable(krg1, krgcolname="KRG")
-
-    krg2 = pd.DataFrame(
-        columns=["SG", "KRG"], data=[[0.15, 0], [0.4, 0.6], [0.6, 0.4], [1, 1]]
-    )
-    gasoil = GasOil(h=0.1)
-    with pytest.raises(ValueError):
-        # Should get notified that krg is not monotonous
-        gasoil.add_fromtable(krg2, krgcolname="KRG")
-    krog2 = pd.DataFrame(
-        columns=["SG", "KROG"], data=[[0.15, 1], [0.4, 0.4], [0.6, 0.6], [1, 0]]
-    )
-    gasoil = GasOil(h=0.1)
-    with pytest.raises(ValueError):
-        # Should get notified that krog is not monotonous
-        gasoil.add_fromtable(krog2, krogcolname="KROG")
-    pc2 = pd.DataFrame(
-        columns=["SG", "PC"], data=[[0.15, 1], [0.4, 0.4], [0.6, 0.6], [1, 0]]
-    )
-    gasoil = GasOil(h=0.1)
-    with pytest.raises(ValueError):
-        # Should get notified that pc is not monotonous
-        gasoil.add_fromtable(pc2, pccolname="PC")
+    with pytest.raises(ValueError, match=match):
+        gasoil.add_fromtable(dframe)
 
 
 def test_wo_fromtable_problems():
