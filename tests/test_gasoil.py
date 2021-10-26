@@ -275,6 +275,24 @@ def check_endpoints(gasoil, krgend, krgmax, kroend, kromax):
     assert np.isclose(gasoil.table["KRG"].min(), 0.0)
 
 
+def test_sgro_vs_sgcr():
+    """Test that a sgro that is close enough to sgcr does not cause problems"""
+    with pytest.raises(ValueError, match="sgro must be zero or equal to sgcr"):
+        GasOil(sgcr=0.1, sgro=0.1 + 1e-7, h=0.01)
+    with pytest.raises(ValueError, match="sgro must be zero or equal to sgcr"):
+        GasOil(sgcr=0.1, sgro=0.1 - 1e-7, h=0.01)
+
+    # This is close enough to sgcr:
+    gasoil = GasOil(sgcr=0.1, sgro=0.1 + 1e-8, h=0.01)
+    gasoil.add_corey_oil(nog=2, kroend=0.5, kromax=1)
+
+    # KROG should not be affected at sg=0.1, even if sgro is "larger":
+    assert float_df_checker(gasoil.table, "SG", 0.0, "KROG", 1.0)
+    assert float_df_checker(gasoil.table, "SG", 0.1, "KROG", 0.5)
+    assert gasoil.table["SG"][0] == 0
+    assert gasoil.table["SG"][1] == 0.1
+
+
 def test_gasoil_krgendanchor():
     """Test behaviour of the krgendanchor"""
     gasoil = GasOil(krgendanchor="sorg", sorg=0.2, h=0.1)
