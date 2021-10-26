@@ -362,8 +362,8 @@ class PyscalList(object):
         return wog_list
 
     def make_ecl_output(
-        self, 
-        keyword: str, 
+        self,
+        keyword: str,
         write_to_filename: Optional[str] = None,
     ) -> str:
         """Internal helper function for constructing strings and writing to disk"""

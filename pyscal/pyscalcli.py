@@ -200,7 +200,9 @@ def pyscal_main(
         family2: Dump family 2 keywords
     """
 
-    logger = getLogger_pyscal(__name__, {"debug": debug, "verbose": verbose, "output": output})
+    logger = getLogger_pyscal(
+        __name__, {"debug": debug, "verbose": verbose, "output": output}
+    )
 
     parametertable = PyscalFactory.load_relperm_df(
         parametertable, sheet_name=sheet_name
