@@ -113,6 +113,8 @@ jobs:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.pyscal_pypi_token }}
         run: |
+          git checkout master  # In case the Github pages workflow has just been run
+          git reset --hard  # make_plots.py has potentially tainted the files
           python -m pip install --upgrade setuptools wheel twine
           python setup.py sdist bdist_wheel
           twine upload dist/*
