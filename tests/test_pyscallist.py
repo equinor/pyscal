@@ -294,7 +294,7 @@ def test_load_scalrec_tags():
         assert swof.count(tag) == 1
 
 
-def test_dump(tmpdir):
+def test_dump(tmpdir, caplog):
     """Test dumping Eclipse include data to file"""
     testdir = Path(__file__).absolute().parent
 
@@ -313,12 +313,25 @@ def test_dump(tmpdir):
     assert PyscalList().dump_family_1() == ""
     assert PyscalList().dump_family_2() == ""
 
-    # Dump directly to file:
+    # Dump directly to files, this is deprecated and will be removed:
+
     tmpdir.chdir()
-    pyscal_list.dump_family_1(filename="output-fam1.inc")
-    assert "SWOF" in Path("output-fam1.inc").read_text()
-    pyscal_list.dump_family_2(filename="output-fam2.inc")
-    assert "SOF3" in Path("output-fam2.inc").read_text()
+    # (logger warning is printed)
+    pyscal_list.dump_family_1(filename="outputdir/output-fam1.inc")
+    assert "SWOF" in Path("outputdir/output-fam1.inc").read_text()
+    logtxt_1 = caplog.text
+    assert "dump_family_1() is deprecated" in logtxt_1
+    assert "Please create the output directory prior" in logtxt_1
+
+    pyscal_list.dump_family_2(filename="anotherdir/output-fam2.inc")
+    assert "SOF3" in Path("anotherdir/output-fam2.inc").read_text()
+    logtxt_2 = caplog.text
+    assert "dump_family_2() is deprecated" in logtxt_2
+    assert "Please create the output directory prior" in logtxt_2
+
+    pyscal_list.SWOF(write_to_filename="swof.inc")
+    assert "SWOF" in Path("swof.inc").read_text()
+    assert "deprecated" in caplog.text
 
 
 def test_capillary_pressure():
