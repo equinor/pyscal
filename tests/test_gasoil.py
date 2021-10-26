@@ -11,6 +11,7 @@ from hypothesis import given, settings
 
 from pyscal import GasOil
 from pyscal.constants import SWINTEGERS
+from pyscal.utils.relperm import truncate_zeroness
 from pyscal.utils.testing import (
     check_linear_sections,
     check_table,
@@ -68,6 +69,28 @@ def test_gasoil_init():
     gasoil = GasOil(swl=0.1, h=0.00000000000000000001)
     # (a warning is printed that h is truncated)
     assert gasoil.h == 1 / SWINTEGERS
+
+
+def test_conserve_sgcr(mocker):
+    """sgcr in the table can be hard to conserve"""
+    low_sgcrvalue = 0.00001  # 1/10 of 1/SWINTEGERS
+    # Verify the default behaviour of truncation:
+    assert truncate_zeroness(low_sgcrvalue) == 0
+    mocker.patch(
+        # Remove the effect of zeroness truncation in order to provoke
+        # the safeguarding measures for sgcr.
+        "pyscal.gasoil.truncate_zeroness",
+        return_value=low_sgcrvalue,
+    )
+    gasoil = GasOil(swl=0, sgcr=low_sgcrvalue, h=0.2)
+    assert gasoil.sgcr == low_sgcrvalue  # To check that we have not truncated it away
+    assert gasoil.table["SG"][0] == 0
+    assert gasoil.table["SG"][1] == low_sgcrvalue
+
+    gasoil.add_corey_gas()
+    gasoil.add_corey_oil()
+    assert gasoil.selfcheck()
+    assert "SGOF" in gasoil.SGOF()
 
 
 def test_errors():

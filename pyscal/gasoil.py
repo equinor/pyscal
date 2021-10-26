@@ -128,18 +128,13 @@ class GasOil(object):
         if np.isclose(self.sorg, 0.0) and self.krgendanchor == "sorg":
             self.krgendanchor = ""  # This is critical to avoid bugs due to numerics.
 
-        if krgendanchor == "sorg" and not 1 - sorg - swl - sgcr > 0:
+        if self.krgendanchor == "sorg" and not 1 - self.sorg - self.swl - self.sgcr > 0:
             raise ValueError(
                 "No saturation range left for gas curve between endpoints, check input"
             )
-        if krgendanchor == "" and not 1 - swl - sgcr > 0:
+        if self.krgendanchor == "" and not 1 - self.swl - self.sgcr > 0:
             raise ValueError(
                 "No saturation range left for gas curve between endpoints, check input"
-            )
-
-        if not 1 - self.swl - self.sorg - self.sgro > 0:
-            raise ValueError(
-                "No saturation range left for oil curve between endpoints, check input"
             )
 
         sg_list = (
@@ -166,8 +161,11 @@ class GasOil(object):
 
         sgcrindex = (self.table["SG"] - (self.sgcr)).abs().sort_values().index[0]
         self.table.loc[sgcrindex, "SG"] = self.sgcr
+
+        # Need to conserve sg=0 and sgcr:
         if sgcrindex == 0 and self.sgcr > 0.0:
-            # Need to conserve sg=0
+            # This code is a safeguard againts truncate_zeroness(), which normally
+            # prevents this from happening.
             zero_row = pd.DataFrame({"SG": 0}, index=[0])
             self.table = pd.concat([zero_row, self.table], sort=False).reset_index(
                 drop=True
