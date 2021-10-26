@@ -10,10 +10,10 @@ import pandas as pd
 
 from pyscal import (
     GasWater,
+    getLogger_pyscal,
     SCALrecommendation,
     WaterOilGas,
     __version__,
-    getLogger_pyscal,
 )
 
 from .factory import PyscalFactory

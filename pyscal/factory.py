@@ -9,6 +9,7 @@ import openpyxl
 import pandas as pd
 import xlrd
 
+from pyscal import getLogger_pyscal
 from pyscal.utils import capillarypressure
 
 from .gasoil import GasOil
@@ -18,7 +19,6 @@ from .scalrecommendation import SCALrecommendation
 from .wateroil import WaterOil
 from .wateroilgas import WaterOilGas
 
-from pyscal import getLogger_pyscal
 
 logger = getLogger_pyscal(__name__)
 
