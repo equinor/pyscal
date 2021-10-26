@@ -226,11 +226,19 @@ class SCALrecommendation(object):
                 interpolant.wateroil.tag = tag
             elif parameter < 0.0:
                 interpolant.wateroil = interpolate_wo(
-                    self.base.wateroil, self.low.wateroil, -parameter, h=h, tag=tag
+                    self.base.wateroil, 
+                    self.low.wateroil, 
+                    -parameter, 
+                    h=h, 
+                    tag=tag,
                 )
             elif parameter > 0.0:
                 interpolant.wateroil = interpolate_wo(
-                    self.base.wateroil, self.high.wateroil, parameter, h=h, tag=tag
+                    self.base.wateroil, 
+                    self.high.wateroil, 
+                    parameter, 
+                    h=h, 
+                    tag=tag,
                 )
         else:
             interpolant.wateroil = None
@@ -256,11 +264,19 @@ class SCALrecommendation(object):
                 interpolant.gasoil.tag = tag
             elif gasparameter < 0.0:
                 interpolant.gasoil = interpolate_go(
-                    self.base.gasoil, self.low.gasoil, -1 * gasparameter, h=h, tag=tag
+                    self.base.gasoil, 
+                    self.low.gasoil, 
+                    -1 * gasparameter, 
+                    h=h, 
+                    tag=tag,
                 )
             elif gasparameter > 0.0:
                 interpolant.gasoil = interpolate_go(
-                    self.base.gasoil, self.high.gasoil, gasparameter, h=h, tag=tag
+                    self.base.gasoil, 
+                    self.high.gasoil, 
+                    gasparameter, 
+                    h=h, 
+                    tag=tag,
                 )
         else:
             interpolant.gasoil = None

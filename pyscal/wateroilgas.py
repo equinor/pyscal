@@ -11,9 +11,8 @@ from pyscal.utils.string import comment_formatter, df2str
 
 from .gasoil import GasOil
 from .wateroil import WaterOil
-from pyscal import getLogger_pyscal
 
-logger = getLogger_pyscal(__name__)
+logger = pyscal.getLogger_pyscal(__name__)
 
 
 class WaterOilGas(object):

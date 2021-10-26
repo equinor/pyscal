@@ -22,8 +22,8 @@ def getLogger_pyscal(
     Args:
         module_name: A suggested name for the logger, usually
             __name__ should be supplied
-        args_dict: Dictionary with contents from the argparse namespace object.
-            Only keys "output", "verbose" and "debug" will be looked at.
+        args_dict: Dictionary with contents from the argparse namespace object containing
+            only keys "output", "verbose" and "debug".
     """
     logger = logging.getLogger(module_name)
     if len(logger.handlers) != 0:

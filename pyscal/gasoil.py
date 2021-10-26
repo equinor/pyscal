@@ -12,9 +12,8 @@ from pyscal.constants import MAX_EXPONENT, SWINTEGERS
 from pyscal.utils.relperm import crosspoint, estimate_diffjumppoint, truncate_zeroness
 from pyscal.utils.string import comment_formatter, df2str
 
-from pyscal import getLogger_pyscal
 
-logger = getLogger_pyscal(__name__)
+logger = pyscal.getLogger_pyscal(__name__)
 
 
 class GasOil(object):
@@ -409,7 +408,9 @@ class GasOil(object):
                 logger.warning("krgmax ignored when not anchoring to sorg")
 
     def set_endpoints_linearpart_krog(
-        self, kroend: float, kromax: Optional[float] = None
+        self, 
+        kroend: float, 
+        kromax: Optional[float] = None,
     ):
         """Set linear parts of krog outside endpoints.
 
@@ -482,7 +483,10 @@ class GasOil(object):
         )
 
     def add_corey_oil(
-        self, nog: float = 2, kroend: float = 1, kromax: Optional[float] = None
+        self, 
+        nog: float = 2, 
+        kroend: float = 1, 
+        kromax: Optional[float] = None,
     ):
         """
         Add kro data through the Corey parametrization
