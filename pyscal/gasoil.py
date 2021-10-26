@@ -102,7 +102,7 @@ class GasOil(object):
         self.sgcr = truncate_zeroness(sgcr, name="sgcr")
         self.sgro = truncate_zeroness(sgro, name="sgro")
 
-        if not (np.isclose(self.sgro, 0) or np.isclose(self.sgro, self.sgcr)):
+        if not (np.isclose(self.sgro, 0) or np.isclose(self.sgro - self.sgcr, 0)):
             raise ValueError(
                 "sgro must be zero or equal to sgcr, for compatibility with "
                 "Eclipse three-point scaling. "
@@ -442,14 +442,6 @@ class GasOil(object):
         self.table.loc[self.table["KROG"] > kromax, "KROG"] = kromax
 
         self.table.loc[0, "KROG"] = kromax
-
-        # Linear part [0, sgro] for gas-condensate:
-        sgroindex = (self.table["SG"] - (self.sgro)).abs().sort_values().index[0]
-        if sgroindex > 1:
-            self.table.loc[1 : sgroindex - 1, "KROG"] = np.nan
-            self.table["KROG"] = (
-                self.table.set_index("SG")["KROG"].interpolate(method="index").values
-            )
 
     def add_corey_gas(
         self, ng: float = 2.0, krgend: float = 1.0, krgmax: Optional[float] = None
