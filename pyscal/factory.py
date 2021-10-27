@@ -5,10 +5,10 @@ from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Set, Union
 
 import numpy as np
+
 import openpyxl
 import pandas as pd
 import xlrd
-
 from pyscal import getLogger_pyscal
 from pyscal.utils import capillarypressure
 
@@ -18,7 +18,6 @@ from .pyscallist import PyscalList
 from .scalrecommendation import SCALrecommendation
 from .wateroil import WaterOil
 from .wateroilgas import WaterOilGas
-
 
 logger = getLogger_pyscal(__name__)
 

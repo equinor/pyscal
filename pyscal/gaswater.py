@@ -4,13 +4,11 @@ object for one WaterOil and one GasOil object"""
 from typing import Optional
 
 import pandas as pd
-
 from pyscal import getLogger_pyscal
 from pyscal.utils.relperm import crosspoint
 
 from .gasoil import GasOil
 from .wateroil import WaterOil
-
 
 logger = getLogger_pyscal(__name__)
 

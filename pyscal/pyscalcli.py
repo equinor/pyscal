@@ -7,17 +7,15 @@ from pathlib import Path
 from typing import Optional
 
 import pandas as pd
-
 from pyscal import (
     GasWater,
-    getLogger_pyscal,
     SCALrecommendation,
     WaterOilGas,
     __version__,
+    getLogger_pyscal,
 )
 
 from .factory import PyscalFactory
-
 
 EPILOG = """
 The parameter file should contain a table with at least the column

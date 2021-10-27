@@ -3,15 +3,14 @@
 from typing import Optional
 
 import numpy as np
-import pandas as pd
-from scipy.interpolate import PchipInterpolator
 
+import pandas as pd
 import pyscal
 from pyscal.constants import EPSILON as epsilon
 from pyscal.constants import MAX_EXPONENT, SWINTEGERS
 from pyscal.utils.relperm import crosspoint, estimate_diffjumppoint, truncate_zeroness
 from pyscal.utils.string import comment_formatter, df2str
-
+from scipy.interpolate import PchipInterpolator
 
 logger = pyscal.getLogger_pyscal(__name__)
 

@@ -5,9 +5,8 @@ from typing import Optional, Set, Type, Union
 
 import numpy as np
 
-from pyscal import GasWater, getLogger_pyscal, WaterOilGas
+from pyscal import GasWater, WaterOilGas, getLogger_pyscal
 from pyscal.utils.interpolation import interpolate_go, interpolate_wo
-
 
 logger = getLogger_pyscal(__name__)
 

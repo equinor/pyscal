@@ -4,7 +4,6 @@ from pathlib import Path
 from typing import List, Optional, Type, Union
 
 import pandas as pd
-
 from pyscal import (
     GasOil,
     GasWater,

@@ -4,8 +4,8 @@ import io
 from typing import Union
 
 import numpy as np
-import pandas as pd
 
+import pandas as pd
 from pyscal import GasOil, WaterOil
 
 

@@ -3,8 +3,8 @@
 from typing import Optional
 
 import numpy as np
-import pandas as pd
 
+import pandas as pd
 import pyscal
 from pyscal.constants import SWINTEGERS
 from pyscal.utils.string import comment_formatter, df2str
