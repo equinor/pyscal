@@ -14,6 +14,8 @@ from pyscal.utils.relperm import crosspoint, estimate_diffjumppoint, truncate_ze
     [(0, 0.1, 0), (0.01, 0.1, 0), (0.1, 0.1, 0.1), (1, 0.1, 1)],
 )
 def test_truncate_zeroness(value, zeronesslimit, expected):
+    """Test truncation of zeroness, that is that numbers close to zero
+    end up as zero, but others don't"""
     assert truncate_zeroness(value, zeronesslimit=zeronesslimit) == expected
 
 

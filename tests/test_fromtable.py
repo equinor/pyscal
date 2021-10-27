@@ -228,6 +228,7 @@ def test_go_fromtable_problems():
     ],
 )
 def test_go_from_table_exceptions(dframe, exception, message):
+    """Test exceptions in loading tabular data for gasoil"""
     gasoil = GasOil(h=0.1)
     with pytest.raises(exception, match=message):
         gasoil.add_fromtable(dframe)
@@ -575,6 +576,7 @@ def test_wo_fromtable_problems():
     ],
 )
 def test_wo_from_table_exceptions(dframe, swl, exception, message):
+    """Test exceptions when loading wateroil data from tables"""
     wateroil = WaterOil(h=0.1, swl=swl)
     with pytest.raises(exception, match=message):
         wateroil.add_fromtable(dframe)

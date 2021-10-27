@@ -77,6 +77,7 @@ def test_manipulated_attributes_none():
     """It is allowed to manipulate the WaterOilGas by setting the wateroil
     and/or the gasoil attributes to None, this is performed in
     SCALrecommendation.interpolate() for example. Test this behaviour."""
+    # pylint: disable=pointless-statement  # The pointless statements trigger errors
 
     wog_go = WaterOilGas(tag="gasoilonly")
     # Make it into a two-phase object:
@@ -121,6 +122,7 @@ def test_manipulated_attributes_none():
 
 
 def test_not_threephase_consistency():
+    """Mock a WaterOilGas object that fails threephase consistency"""
     wog = WaterOilGas()
     # To trigger this, we need to hack the WaterOilGas object
     # by overriding the effect of its __init__
@@ -198,7 +200,7 @@ EQUIL
     )
 
     os.chdir(tmp_path)
-    Path("RELPERMTEST.DATA").write_text(ecldeck)
+    Path("RELPERMTEST.DATA").write_text(ecldeck, encoding="utf8")
     deck = opm.io.Parser().parse("RELPERMTEST.DATA")
     assert "SWOF" in deck
     assert "SGOF" in deck

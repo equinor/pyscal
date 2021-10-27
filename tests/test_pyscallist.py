@@ -61,7 +61,7 @@ def test_pyscallist_basic():
     assert len(p_list) == 3
 
     with pytest.raises(ValueError, match="Not a pyscal object"):
-        PyscalList([dict()])
+        PyscalList([{}])
 
     init_from_list = PyscalList([WaterOil(), WaterOil()])
     assert len(init_from_list) == 2
@@ -70,7 +70,7 @@ def test_pyscallist_basic():
     assert len(init_from_itself) == 2
 
 
-def test_load_scalrec(tmp_path):
+def test_load_scalrec():
     """Load a SATNUM range from xlsx"""
     testdir = Path(__file__).absolute().parent
 
@@ -317,15 +317,15 @@ def test_deprecated_dump_to_file(tmpdir):
     tmpdir.chdir()
     with pytest.warns(DeprecationWarning):
         pyscal_list.dump_family_1(filename="outputdir/output-fam1.inc")
-    assert "SWOF" in Path("outputdir/output-fam1.inc").read_text()
+    assert "SWOF" in Path("outputdir/output-fam1.inc").read_text(encoding="utf8")
 
     with pytest.warns(DeprecationWarning):
         pyscal_list.dump_family_2(filename="anotherdir/output-fam2.inc")
-    assert "SOF3" in Path("anotherdir/output-fam2.inc").read_text()
+    assert "SOF3" in Path("anotherdir/output-fam2.inc").read_text(encoding="utf8")
 
     with pytest.warns(DeprecationWarning):
         pyscal_list.SWOF(write_to_filename="swof.inc")
-    assert "SWOF" in Path("swof.inc").read_text()
+    assert "SWOF" in Path("swof.inc").read_text(encoding="utf8")
 
 
 def test_capillary_pressure():
@@ -718,7 +718,7 @@ def test_comments_df():
     assert p_list.build_eclipse_data(family=1).count("æøå") == 2
 
 
-def test_error_messages_pr_satnum(caplog):
+def test_error_messages_pr_satnum():
     """When errors are somewhere in a big dataframe, we should
     provide hints to the user for where to look"""
 
@@ -791,7 +791,7 @@ def test_error_messages_pr_satnum(caplog):
 
 
 def test_fast():
-    """Test fast mode for SCALrecommendation"""
+    """Test fast mode for SCALrecmmendation"""
     testdir = Path(__file__).absolute().parent
 
     scalrec_data = PyscalFactory.load_relperm_df(

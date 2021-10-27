@@ -310,6 +310,7 @@ def test_interpolate_gw():
 @pytest.mark.plot
 def test_SCAL_interpolation():
     """Demonstration of interpolation between LET curves, 2x2 subplot"""
+    # pylint: disable=invalid-name
     matplotlib.style.use("ggplot")
 
     rec = PyscalFactory.create_scal_recommendation(
@@ -425,8 +426,8 @@ def test_letspan():
     }
 
     # We need sorted versions for the random function
-    slimw = {x: sorted(let_w[x]) for x in let_w}
-    slimo = {x: sorted(let_o[x]) for x in let_o}
+    slimw = {x: sorted(value) for x, value in let_w.items()}
+    slimo = {x: sorted(value) for x, value in let_o.items()}
 
     _, mpl_ax = pyplot.subplots()
     for _ in range(100):

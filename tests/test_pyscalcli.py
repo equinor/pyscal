@@ -77,7 +77,9 @@ def test_pyscal_client_static(tmp_path, caplog, default_loglevel, mocker):
     # We get one warning due to empty cells in xlsx:
     assert sum(record.levelno == logging.WARNING for record in caplog.records) == 1
 
-    relpermlines = os.linesep.join(open("relperm.inc").readlines())
+    relpermlines = os.linesep.join(
+        Path("relperm.inc").read_text(encoding="utf8").splitlines()
+    )
     assert "SWOF" in relpermlines
     assert "SGOF" in relpermlines
     assert "SLGOF" not in relpermlines
@@ -105,7 +107,9 @@ def test_pyscal_client_static(tmp_path, caplog, default_loglevel, mocker):
     pyscalcli.main()
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
     assert Path("relperm-fam2.inc").is_file()
-    relpermlines = os.linesep.join(open("relperm-fam2.inc").readlines())
+    relpermlines = os.linesep.join(
+        Path("relperm-fam2.inc").read_text(encoding="utf8").splitlines()
+    )
     assert "SWFN" in relpermlines
     assert "SGFN" in relpermlines
     assert "SOF3" in relpermlines
@@ -121,7 +125,9 @@ def test_pyscal_client_static(tmp_path, caplog, default_loglevel, mocker):
     pyscalcli.main()
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
     assert Path("relperm-slgof.inc").is_file()
-    relpermlines = os.linesep.join(open("relperm-slgof.inc").readlines())
+    relpermlines = os.linesep.join(
+        Path("relperm-slgof.inc").read_text(encoding="utf8").splitlines()
+    )
     assert "SWOF" in relpermlines
     assert "SGOF" not in relpermlines
     assert "SLGOF" in relpermlines
@@ -169,9 +175,9 @@ def test_pyscal_client_static(tmp_path, caplog, default_loglevel, mocker):
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
 
     # Identical files:
-    assert len(open("relperm-firstsheet.inc").readlines()) == len(
-        open("relperm.inc").readlines()
-    )
+    assert len(
+        Path("relperm-firstsheet.inc").read_text(encoding="utf8").splitlines()
+    ) == len(Path("relperm.inc").read_text(encoding="utf8").splitlines())
 
     # Check that we can read specific sheets
     caplog.clear()
@@ -188,7 +194,9 @@ def test_pyscal_client_static(tmp_path, caplog, default_loglevel, mocker):
     )
     pyscalcli.main()
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
-    secondsheet = os.linesep.join(open("relperm-secondsheet.inc").readlines())
+    secondsheet = os.linesep.join(
+        Path("relperm-secondsheet.inc").read_text(encoding="utf8").splitlines()
+    )
     assert "SATNUM 3" not in secondsheet
     assert "sand" in secondsheet
     assert "mud" in secondsheet  # From the comment column in sheet: simple
@@ -217,7 +225,7 @@ def test_pyscal_client_static(tmp_path, caplog, default_loglevel, mocker):
     )
     pyscalcli.main()
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
-    linecount1 = len(open("deltas0p1.inc").readlines())
+    linecount1 = len(Path("deltas0p1.inc").read_text(encoding="utf8").splitlines())
 
     caplog.clear()
     mocker.patch(
@@ -233,7 +241,7 @@ def test_pyscal_client_static(tmp_path, caplog, default_loglevel, mocker):
     )
     pyscalcli.main()
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
-    linecount2 = len(open("deltas0p01.inc").readlines())
+    linecount2 = len(Path("deltas0p01.inc").read_text(encoding="utf8").splitlines())
     assert linecount2 > linecount1 * 4  # since we don't filter out non-numerical lines
 
 
@@ -299,7 +307,7 @@ def test_pyscalcli_oilwater(tmp_path, caplog, mocker):
     pyscalcli.main()
     assert not any(record.levelno == logging.WARNING for record in caplog.records)
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
-    lines = open("ow.inc").readlines()
+    lines = Path("ow.inc").read_text(encoding="utf8").splitlines()
     joined = os.linesep.join(lines)
     assert "fooå" in joined
     assert 100 < len(lines) < 120  # weak test..
@@ -350,7 +358,7 @@ def test_pyscalcli_gaswater(tmp_path, caplog, mocker):
     pyscalcli.main()
     assert not any(record.levelno == logging.WARNING for record in caplog.records)
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
-    lines = open("gw.inc").readlines()
+    lines = Path("gw.inc").read_text(encoding="utf8").splitlines()
     joined = os.linesep.join(lines)
     assert "SWFN" in joined
     assert "SGFN" in joined
@@ -388,7 +396,7 @@ def test_pyscalcli_gaswater_scal(tmp_path, caplog, mocker):
     assert not any(record.levelno == logging.INFO for record in caplog.records)
     assert not any(record.levelno == logging.WARNING for record in caplog.records)
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
-    lines = open("gw.inc").readlines()
+    lines = Path("gw.inc").read_text(encoding="utf8").splitlines()
     joined = os.linesep.join(lines)
     assert "SWFN" in joined
     assert "SGFN" in joined
@@ -422,7 +430,9 @@ def test_pyscal_client_scal(tmp_path, caplog, default_loglevel, mocker):
     assert not any(record.levelno == logging.WARNING for record in caplog.records)
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
 
-    relpermlines = os.linesep.join(open("relperm1.inc").readlines())
+    relpermlines = os.linesep.join(
+        Path("relperm1.inc").read_text(encoding="utf8").splitlines()
+    )
     assert "SWOF" in relpermlines
     assert "SGOF" in relpermlines
     assert "SLGOF" not in relpermlines

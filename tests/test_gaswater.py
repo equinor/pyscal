@@ -59,6 +59,7 @@ def test_constructor():
     gaswater.wateroil.tag = "Foo"
     gaswater.gasoil.tag = "Bar"
     with pytest.raises(ValueError, match="Internal tag-inconsistency in GasWater"):
+        # pylint: disable=pointless-statement
         gaswater.tag
 
     # Trigger self-check bug warning:
