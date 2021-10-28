@@ -61,6 +61,10 @@ def test_constructor():
     with pytest.raises(ValueError, match="Internal tag-inconsistency in GasWater"):
         gaswater.tag
 
+    # Trigger self-check bug warning:
+    gaswater.gasoil = None
+    assert gaswater.selfcheck() is False
+
 
 def test_fast():
     """Test the fast mode, skipping some computations"""
@@ -182,6 +186,17 @@ def test_swfn():
     swfnstr = gaswater.SWFN()
     assert "SWFN" in swfnstr
     assert len(swfnstr) > 15
+    assert "krw = krg" not in swfnstr
+
+
+def test_sgfn():
+    """Test that we can dump SGFN without giving water relperm"""
+    gaswater = GasWater(h=0.1)
+    gaswater.add_corey_gas()
+    sgfnstr = gaswater.SGFN()
+    assert "SGFN" in sgfnstr
+    assert len(sgfnstr) > 15
+    assert "krw = krg" not in sgfnstr
 
 
 def test_linearsegments():
@@ -297,12 +312,15 @@ def test_gaswater_pc():
     assert "0.1000000 0.0000000 0.014715" in swfn  # first row
 
 
-def test_plotting():
+def test_plotting(mocker):
     """Test that plotting code pass through (nothing displayed)"""
+    mocker.patch("matplotlib.pyplot.show", return_value=None)
     gaswater = GasWater(swl=0.1, h=0.1)
     gaswater.add_corey_gas()
     gaswater.add_corey_water()
     gaswater.plotkrwkrg(mpl_ax=matplotlib.pyplot.subplots()[1])
+    gaswater.plotkrwkrg(logyscale=True, mpl_ax=matplotlib.pyplot.subplots()[1])
+    gaswater.plotkrwkrg(mpl_ax=None)
 
 
 def test_comments():
