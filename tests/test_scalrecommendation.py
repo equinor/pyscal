@@ -385,7 +385,7 @@ def test_gaswater_scal(caplog):
     assert rec_list.pyscaltype == SCALrecommendation
     assert rec_list[1].type == GasWater
     low_list = rec_list.interpolate(-1)
-    str_fam2 = low_list.dump_family_2()
+    str_fam2 = low_list.build_eclipse_data(family=2)
     assert "SCAL recommendation interpolation to -1" in str_fam2
     assert "SGFN" in str_fam2
     assert "SWFN" in str_fam2
