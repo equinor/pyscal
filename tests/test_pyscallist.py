@@ -92,9 +92,9 @@ def test_load_scalrec(tmp_path):
     assert wog_list.pyscaltype == WaterOilGas
 
     with pytest.raises(TypeError):
-        scalrec_list.dump_family_1()
+        scalrec_list.build_eclipse_data(family=1)
     with pytest.raises(TypeError):
-        scalrec_list.dump_family_2()
+        scalrec_list.build_eclipse_data(family=2)
     with pytest.raises(TypeError):
         scalrec_list.SWOF()
 
@@ -131,7 +131,7 @@ def test_load_scalrec(tmp_path):
     base_data = scalrec_data[scalrec_data["CASE"] == "base"].drop("CASE", axis=1)
     PyscalFactory.load_relperm_df(base_data)  # Ensure no errors.
     pyscal_list = PyscalFactory.create_pyscal_list(base_data)
-    assert "LET" in pyscal_list.dump_family_1()
+    assert "LET" in pyscal_list.build_eclipse_data(family=1)
 
 
 def test_df():
@@ -227,11 +227,11 @@ def test_df():
     assert len(dframe.columns) == 4
     assert not dframe.empty
 
-    gasoil_family1 = go_list.dump_family_1()
+    gasoil_family1 = go_list.build_eclipse_data(family=1)
     assert "SGOF" in gasoil_family1
 
     with pytest.raises(ValueError, match="SLGOF not meaningful for GasOil"):
-        go_list.dump_family_1(slgof=True)
+        go_list.build_eclipse_data(family=1, slgof=True)
 
 
 def test_load_scalrec_tags():
@@ -294,8 +294,9 @@ def test_load_scalrec_tags():
         assert swof.count(tag) == 1
 
 
-def test_dump(tmpdir, caplog):
-    """Test dumping Eclipse include data to file"""
+def test_deprecated_dump_to_file(tmpdir):
+    """Test dumping Eclipse include data to file. This
+    functionality is deprecated in pyscallist"""
     testdir = Path(__file__).absolute().parent
 
     relperm_data = PyscalFactory.load_relperm_df(
@@ -303,35 +304,28 @@ def test_dump(tmpdir, caplog):
     )
     pyscal_list = PyscalFactory.create_pyscal_list(relperm_data)
 
-    fam1 = pyscal_list.dump_family_1()
+    fam1 = pyscal_list.build_eclipse_data(family=1)
     sat_table_str_ok(fam1)
 
-    fam2 = pyscal_list.dump_family_2()
+    fam2 = pyscal_list.build_eclipse_data(family=2)
     sat_table_str_ok(fam2)
 
     # Empty PyscalLists should return empty strings:
-    assert PyscalList().dump_family_1() == ""
-    assert PyscalList().dump_family_2() == ""
-
-    # Dump directly to files, this is deprecated and will be removed:
+    assert PyscalList().build_eclipse_data(family=1) == ""
+    assert PyscalList().build_eclipse_data(family=2) == ""
 
     tmpdir.chdir()
-    # (logger warning is printed)
-    pyscal_list.dump_family_1(filename="outputdir/output-fam1.inc")
+    with pytest.warns(DeprecationWarning):
+        pyscal_list.dump_family_1(filename="outputdir/output-fam1.inc")
     assert "SWOF" in Path("outputdir/output-fam1.inc").read_text()
-    logtxt_1 = caplog.text
-    assert "dump_family_1() is deprecated" in logtxt_1
-    assert "Please create the output directory prior" in logtxt_1
 
-    pyscal_list.dump_family_2(filename="anotherdir/output-fam2.inc")
+    with pytest.warns(DeprecationWarning):
+        pyscal_list.dump_family_2(filename="anotherdir/output-fam2.inc")
     assert "SOF3" in Path("anotherdir/output-fam2.inc").read_text()
-    logtxt_2 = caplog.text
-    assert "dump_family_2() is deprecated" in logtxt_2
-    assert "Please create the output directory prior" in logtxt_2
 
-    pyscal_list.SWOF(write_to_filename="swof.inc")
+    with pytest.warns(DeprecationWarning):
+        pyscal_list.SWOF(write_to_filename="swof.inc")
     assert "SWOF" in Path("swof.inc").read_text()
-    assert "deprecated" in caplog.text
 
 
 def test_capillary_pressure():
@@ -353,7 +347,7 @@ def test_capillary_pressure():
     pyscal_list = PyscalFactory.create_pyscal_list(
         PyscalFactory.load_relperm_df(dframe)
     )
-    swof = pyscal_list.dump_family_1()
+    swof = pyscal_list.build_eclipse_data(family=1)
     assert "Simplified J-function" in swof
     assert "petrophysical" not in swof
 
@@ -374,7 +368,7 @@ def test_capillary_pressure():
     pyscal_list = PyscalFactory.create_pyscal_list(
         PyscalFactory.load_relperm_df(dframe)
     )
-    swof = pyscal_list.dump_family_1()
+    swof = pyscal_list.build_eclipse_data(family=1)
     assert "Simplified J-function" in swof
     assert "petrophysical" in swof
 
@@ -395,7 +389,7 @@ def test_capillary_pressure():
     pyscal_list = PyscalFactory.create_pyscal_list(
         PyscalFactory.load_relperm_df(dframe)
     )
-    swof = pyscal_list.dump_family_1()
+    swof = pyscal_list.build_eclipse_data(family=1)
     assert "normalized J-function" in swof
     assert "sigma_costau" in swof
     assert "petrophysical" not in swof
@@ -512,10 +506,10 @@ def test_twophase_scal_wateroil():
     )
     pyscal_list = pyscal_list.interpolate(-0.5)
 
-    # This works, but provides an error message that Gas.
+    # This works, but provides an error message for Gas.
     # The correct usage would be to call .SWOF(), but the pyscal
-    # client calls dump_family_1 on two-phase problems.
-    swof = pyscal_list.dump_family_1()
+    # client calls 1 on two-phase problems.
+    swof = pyscal_list.build_eclipse_data(family=1)
     assert "thetag" in swof
     assert "SWOF" in swof
     assert "SGOF" not in swof
@@ -536,7 +530,7 @@ def test_twophase_scal_gasoil():
     )
     pyscal_list = pyscal_list.interpolate(-0.5)
 
-    sgof = pyscal_list.dump_family_1()
+    sgof = pyscal_list.build_eclipse_data(family=1)
     assert "thetag" in sgof
     assert "SGOF" in sgof
     assert "SWOF" not in sgof
@@ -552,7 +546,7 @@ def test_gaswater():
         PyscalFactory.load_relperm_df(dframe), h=0.1
     )
     assert pyscal_list.pyscaltype == GasWater
-    dump = pyscal_list.dump_family_2()
+    dump = pyscal_list.build_eclipse_data(family=2)
     assert "SATNUM 2" in dump
     assert "SATNUM 1" in dump
     assert "SATNUM 3" not in dump
@@ -562,7 +556,7 @@ def test_gaswater():
     assert "thetag" in dump
 
     with pytest.raises(ValueError, match="Family 1 output not possible for GasWater"):
-        pyscal_list.dump_family_1()
+        pyscal_list.build_eclipse_data(family=1)
 
     sgfn = pyscal_list.SGFN()
     assert "SGFN" in sgfn
@@ -592,7 +586,7 @@ def test_gaswater_scal():
     )
     assert pyscal_list.pyscaltype == SCALrecommendation
 
-    dump = pyscal_list.interpolate(-1).dump_family_2()
+    dump = pyscal_list.interpolate(-1).build_eclipse_data(family=2)
     assert "SWFN" in dump
     assert "SGFN" in dump
 
@@ -637,15 +631,15 @@ def test_explicit_df():
     dframe = pd.DataFrame(columns=["SATNUM", "Nw", "Now"], data=[[1, 2, 2]])
     relperm_data = PyscalFactory.load_relperm_df(dframe)
     p_list = PyscalFactory.create_pyscal_list(relperm_data, h=0.2)
-    p_list.dump_family_1()
+    p_list.build_eclipse_data(family=1)
     with pytest.raises(ValueError):
-        p_list.dump_family_2()
+        p_list.build_eclipse_data(family=2)
 
     # Case insensitive for parameters
     dframe = pd.DataFrame(columns=["SATNUM", "nw", "now"], data=[[1, 2, 2]])
     relperm_data = PyscalFactory.load_relperm_df(dframe)
     p_list = PyscalFactory.create_pyscal_list(relperm_data, h=0.2)
-    p_list.dump_family_1()
+    p_list.build_eclipse_data(family=1)
 
     # Minimal wateroilgas
     dframe = pd.DataFrame(
@@ -653,7 +647,7 @@ def test_explicit_df():
     )
     relperm_data = PyscalFactory.load_relperm_df(dframe)
     p_list = PyscalFactory.create_pyscal_list(relperm_data, h=0.2)
-    relperm_str = p_list.dump_family_1()
+    relperm_str = p_list.build_eclipse_data(family=1)
     assert "SWOF" in relperm_str
     assert "SGOF" in relperm_str
     assert "SLGOF" not in relperm_str
@@ -678,7 +672,7 @@ def test_explicit_df():
     )
     relperm_data = PyscalFactory.load_relperm_df(dframe)
     p_list = PyscalFactory.create_pyscal_list(relperm_data, h=0.2)
-    relperm_str = p_list.dump_family_1()
+    relperm_str = p_list.build_eclipse_data(family=1)
     assert "SWOF" in relperm_str
     assert "Simplified" in relperm_str  # Bad practice, testing for stuff in comments
     assert "a=1.5" in relperm_str
@@ -692,7 +686,7 @@ def test_comments_df():
     )
     relperm_data = PyscalFactory.load_relperm_df(dframe)
     p_list = PyscalFactory.create_pyscal_list(relperm_data, h=0.2)
-    relperm_str = p_list.dump_family_1()
+    relperm_str = p_list.build_eclipse_data(family=1)
     assert "thisisacomment" in relperm_str
 
     # tag vs comment in dataframe should not matter.
@@ -702,7 +696,7 @@ def test_comments_df():
     )
     relperm_data = PyscalFactory.load_relperm_df(dframe)
     p_list = PyscalFactory.create_pyscal_list(relperm_data, h=0.2)
-    relperm_str = p_list.dump_family_1()
+    relperm_str = p_list.build_eclipse_data(family=1)
     assert relperm_str.count("thisisacomment") == 2
 
     # Check case insensitiveness:
@@ -712,7 +706,7 @@ def test_comments_df():
     )
     relperm_data = PyscalFactory.load_relperm_df(dframe)
     p_list = PyscalFactory.create_pyscal_list(relperm_data, h=0.2)
-    assert p_list.dump_family_1().count("thisisacomment") == 2
+    assert p_list.build_eclipse_data(family=1).count("thisisacomment") == 2
 
     # UTF-8 stuff:
     dframe = pd.DataFrame(
@@ -721,7 +715,7 @@ def test_comments_df():
     )
     relperm_data = PyscalFactory.load_relperm_df(dframe)
     p_list = PyscalFactory.create_pyscal_list(relperm_data, h=0.2)
-    assert p_list.dump_family_1().count("æøå") == 2
+    assert p_list.build_eclipse_data(family=1).count("æøå") == 2
 
 
 def test_error_messages_pr_satnum(caplog):
