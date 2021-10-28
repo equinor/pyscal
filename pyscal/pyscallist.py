@@ -343,7 +343,7 @@ class PyscalList(object):
             )
         if len(int_params_wo) > len(self):
             raise ValueError(
-                f"Too many interpolation parameters given for WaterOil {int_params_wo}"
+                f"Too many interpolation parameters given for WaterOil {int_params_wo}",
             )
         if 1 < len(int_params_go) < len(self):
             raise ValueError(
