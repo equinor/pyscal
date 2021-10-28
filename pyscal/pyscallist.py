@@ -1,5 +1,6 @@
 """Container class for list of Pyscal objects"""
 
+import warnings
 from pathlib import Path
 from typing import List, Optional, Type, Union
 
@@ -19,6 +20,8 @@ PYSCAL_OBJECTS = [WaterOil, GasOil, GasWater, WaterOilGas, SCALrecommendation]
 PyscalObjects = Union[WaterOil, GasOil, GasWater, WaterOilGas, SCALrecommendation]
 
 logger = getLogger_pyscal(__name__)
+
+warnings.filterwarnings("default", category=DeprecationWarning, module="pyscal")
 
 
 class PyscalList(object):
@@ -265,19 +268,20 @@ class PyscalList(object):
         """Dumps family 1 Eclipse saturation tables to one
         filename. This means SWOF + SGOF (SGOF only if relevant)
 
-        This function is deprecated. Use make_family_1() and write to
+        This function is deprecated. Use build_eclipse_data() and write to
         disk in calling code.
 
         Args:
             filename: Filename for the output to be given to Eclipse 100
             slgof: Set to true of SLGOF is wanted instead of SGOF
         """
-        logger.warning("dump_family_1() is deprecated")
+        warnings.warn("dump_family_1() is deprecated", DeprecationWarning)
         string = self.build_eclipse_data(family=1, slgof=slgof)
         if filename is not None:
             if not Path(filename).parent.exists():
-                logger.warning(
-                    "Please create the output directory prior to calling pyscal."
+                warnings.warn(
+                    "Please create the output directory prior to calling pyscal.",
+                    DeprecationWarning,
                 )
                 Path(filename).parent.mkdir(exist_ok=True, parents=True)
             Path(filename).write_text(string, encoding="utf-8")
@@ -292,12 +296,13 @@ class PyscalList(object):
         Args:
             filename (str): Filename for the output to be given to Eclipse 100
         """
-        logger.warning("dump_family_2() is deprecated")
+        warnings.warn("dump_family_2() is deprecated", DeprecationWarning)
         string = self.build_eclipse_data(family=2, slgof=False)
         if filename is not None:
             if not Path(filename).parent.exists():
-                logger.warning(
-                    "Please create the output directory prior to calling pyscal."
+                warnings.warn(
+                    "Please create the output directory prior to calling pyscal.",
+                    DeprecationWarning,
                 )
                 Path(filename).parent.mkdir(exist_ok=True, parents=True)
             Path(filename).write_text(string, encoding="utf-8")
@@ -361,12 +366,16 @@ class PyscalList(object):
             )
         return wog_list
 
-    def make_ecl_output(
+    def _make_ecl_output(
         self,
         keyword: str,
-        write_to_filename: Optional[str] = None,
+        write_to_filename: Optional[str] = None,  # Deprecated
     ) -> str:
-        """Internal helper function for constructing strings and writing to disk"""
+        """Internal helper function for constructing Eclipse include file strings
+        for individual keywords.
+
+        build_eclipse_data() will use this function.
+        """
         if self.pyscaltype == SCALrecommendation:
             raise TypeError(
                 "You need to interpolate before you can dump a SCAL recommendation"
@@ -379,33 +388,37 @@ class PyscalList(object):
                 outputter = getattr(pyscal_obj, keyword)
                 string += outputter(header=False)
         if write_to_filename:
+            warnings.warn(
+                "Writing to files in pyscallist is deprecated", DeprecationWarning
+            )
             Path(write_to_filename).parent.mkdir(parents=True, exist_ok=True)
             Path(write_to_filename).write_text(string, encoding="utf-8")
         return string
 
     def SWOF(self, write_to_filename: Optional[str] = None) -> str:
-        """Make SWOF string and optionally print to file"""
-        return self.make_ecl_output("SWOF", write_to_filename)
+        """Build SWOF string"""
+        # _make_ecl_output() will warn about non-None filename being deprecated
+        return self._make_ecl_output("SWOF", write_to_filename)
 
     def SGOF(self, write_to_filename: Optional[str] = None) -> str:
-        """Make SGOF string and optionally print to file"""
-        return self.make_ecl_output("SGOF", write_to_filename)
+        """Build SGOF string"""
+        return self._make_ecl_output("SGOF", write_to_filename)
 
     def SLGOF(self, write_to_filename: Optional[str] = None) -> str:
-        """Make SLGOF string and optionally print to file"""
-        return self.make_ecl_output("SLGOF", write_to_filename)
+        """Build SLGOF string"""
+        return self._make_ecl_output("SLGOF", write_to_filename)
 
     def SGFN(self, write_to_filename: Optional[str] = None) -> str:
-        """Make SGFN string and optionally print to file"""
-        return self.make_ecl_output("SGFN", write_to_filename)
+        """Build SGFN string"""
+        return self._make_ecl_output("SGFN", write_to_filename)
 
     def SWFN(self, write_to_filename: Optional[str] = None) -> str:
-        """Make SWFN string and optionally print to file"""
-        return self.make_ecl_output("SWFN", write_to_filename)
+        """Build SWFN string"""
+        return self._make_ecl_output("SWFN", write_to_filename)
 
     def SOF3(self, write_to_filename: Optional[str] = None) -> str:
-        """Make SOF3 string and optionally print to file"""
-        return self.make_ecl_output("SOF3", write_to_filename)
+        """Build SOF3 string"""
+        return self._make_ecl_output("SOF3", write_to_filename)
 
     def __len__(self) -> int:
         """Return the count of Pyscal objects in the list"""
