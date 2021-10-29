@@ -66,7 +66,7 @@ def test_default_logger_levels_and_split(capsys):
     "verbose, fileexport",
     itertools.product([False, True], [True, False]),
 )
-def test_pyscal_logging(tmp_path, pyscal_module, verbose, fileexport, mocker, capsys):
+def test_pyscal_logging(tmp_path, verbose, fileexport, mocker, capsys):
     """Test that the command line client for each submodule logs correctly.
     Each submodule should write logs to stdout for INFO and WARNING messages
     when they write to dedicated output files, but must write to stderr when
