@@ -22,7 +22,7 @@ def test_wateroil_random(swirr, swl, swcr, sorw, socr, h, tag):
     or AssertionError when input is invalid, but we don't want other crashes"""
     try:
         WaterOil(swirr=swirr, swl=swl, swcr=swcr, sorw=sorw, socr=socr, h=h, tag=tag)
-    except AssertionError:
+    except (ValueError, AssertionError):
         pass
 
 
