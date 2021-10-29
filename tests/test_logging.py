@@ -91,7 +91,7 @@ def test_pyscal_logging(tmp_path, verbose, fileexport, mocker, capsys):
 
     mocker.patch("sys.argv", commands)
 
-    pyscal.pyscal.main()
+    pyscal.main()
     captured = capsys.readouterr()
     stdout_output = captured.out
     stderr_output = captured.err
