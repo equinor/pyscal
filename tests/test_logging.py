@@ -1,4 +1,5 @@
 import itertools
+from pathlib import Path
 
 import pytest
 
@@ -79,7 +80,9 @@ def test_pyscal_logging(tmp_path, verbose, fileexport, mocker, capsys):
     test invocation.
     """
 
-    commands = ["pyscal", "data/relperm-input-example.xlsx", "--output"]
+    testdir = Path(__file__).absolute().parent
+    relperm_file = testdir / "data/relperm-input-example.xlsx"
+    commands = ["pyscal", str(relperm_file), "--output"]
 
     if fileexport:
         commands.append(str(tmp_path / "output.csv"))
