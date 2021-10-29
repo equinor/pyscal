@@ -317,7 +317,7 @@ def test_nexus():
     gasoil.add_corey_gas(ng=10, krgend=0.5)
     nexus_lines = gasoil.GOTABLE().splitlines()
     non_comments = [
-        line for line in nexus_lines if not line.startswith("!") or not len(line)
+        line for line in nexus_lines if not line.startswith("!") or not line
     ]
     assert non_comments[0] == "GOTABLE"
     assert non_comments[1] == "SG KRG KROG PC"
@@ -327,6 +327,7 @@ def test_nexus():
         sep=r"\s+",
         header=None,
     )
+    # pylint: disable=no-member  # false positive on Pandas dataframe
     assert (df.values <= 1.0).all()
     assert (df.values >= 0.0).all()
 

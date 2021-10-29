@@ -84,6 +84,10 @@ from pyscal.utils.testing import float_df_checker, sat_table_str_ok
     ],
 )
 def test_sat_table_str_ok(string):
+    """Test that we can determine whether a string is accepted by Eclipse
+
+    (this is instead of actually testing in the simulator)
+    """
     sat_table_str_ok(string)
 
 
@@ -130,6 +134,7 @@ def test_sat_table_str_ok(string):
     ],
 )
 def test_float_df_checker(data, value, expected):
+    """Test that we can lookup in a dataframe for values and test them"""
     assert float_df_checker(
         pd.DataFrame(columns=["idx", "values"], data=data),
         "idx",

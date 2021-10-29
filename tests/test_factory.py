@@ -641,14 +641,14 @@ def test_factory_wateroil_paleooil(caplog):
     """Test making a WaterOil object with socr different from sorw."""
     pyscal_factory = PyscalFactory()
     sorw = 0.09
-    wo = pyscal_factory.create_water_oil(
+    wateroil = pyscal_factory.create_water_oil(
         dict(nw=2, now=3, kroend=0.5, sorw=sorw, socr=sorw + 0.01, swcr=0.1)
     )
-    swof = wo.SWOF()
+    swof = wateroil.SWOF()
     assert "Corey krw" in swof
     assert "socr=0.1" in swof
     sat_table_str_ok(swof)
-    check_table(wo.table)
+    check_table(wateroil.table)
 
     # If socr is close to sorw, socr is reset to sorw.
     for socr in [sorw - 1e-9, sorw, sorw + 1e-9]:
@@ -738,12 +738,12 @@ def test_load_relperm_df(tmp_path, caplog):
     assert "foobar" in swof_str  # Random string injected in xlsx.
 
     # Make a dummy text file
-    Path("dummy.txt").write_text("foo\nbar, com")
+    Path("dummy.txt").write_text("foo\nbar, com", encoding="utf8")
     with pytest.raises(ValueError):
         PyscalFactory.load_relperm_df("dummy.txt")
 
     # Make an empty csv file
-    Path("empty.csv").write_text("")
+    Path("empty.csv").write_text("", encoding="utf8")
     with pytest.raises(ValueError, match="Impossible to infer file format"):
         PyscalFactory.load_relperm_df("empty.csv")
 
@@ -752,7 +752,7 @@ def test_load_relperm_df(tmp_path, caplog):
 
     # Merge tags and comments if both are supplied
     Path("tagandcomment.csv").write_text(
-        "SATNUM,nw,now,tag,comment\n1,1,1,a-tag,a-comment"
+        "SATNUM,nw,now,tag,comment\n1,1,1,a-tag,a-comment", encoding="utf8"
     )
     tagandcomment_df = PyscalFactory.load_relperm_df("tagandcomment.csv")
     assert (
@@ -760,20 +760,20 @@ def test_load_relperm_df(tmp_path, caplog):
     )
 
     # Missing SATNUMs:
-    Path("wrongsatnum.csv").write_text("SATNUM,nw,now\n1,1,1\n3,1,1")
+    Path("wrongsatnum.csv").write_text("SATNUM,nw,now\n1,1,1\n3,1,1", encoding="utf8")
     with pytest.raises(ValueError, match="Missing SATNUMs?"):
         PyscalFactory.load_relperm_df("wrongsatnum.csv")
 
     # Missing SATNUMs, like merged cells:
     Path("mergedcells.csv").write_text(
-        "CASE,SATNUM,nw,now\nlow,,1,1\nlow,1,2,2\nlow,,3,32"
+        "CASE,SATNUM,nw,now\nlow,,1,1\nlow,1,2,2\nlow,,3,32", encoding="utf8"
     )
     with pytest.raises(ValueError, match="Found not-a-number"):
         PyscalFactory.load_relperm_df("mergedcells.csv")
 
     # Missing SATNUMs, like merged cells:
     Path("mergedcellscase.csv").write_text(
-        "CASE,SATNUM,nw,now\n,1,1,1\nlow,1,2,2\n,1,3,32"
+        "CASE,SATNUM,nw,now\n,1,1,1\nlow,1,2,2\n,1,3,32", encoding="utf8"
     )
     with pytest.raises(ValueError, match="Found not-a-number"):
         PyscalFactory.load_relperm_df("mergedcellscase.csv")
@@ -1004,7 +1004,7 @@ def test_no_gasoil():
         PyscalFactory.load_relperm_df(dframe)
 
 
-def test_check_deprecated_krowgend(caplog):
+def test_check_deprecated_krowgend():
     """Up until pyscal 0.5.x, krogend and krowend were parameters
     to the oil curve parametrization for WaterOil and GasOil. From
     pyscal 0.6.0, krogend and krowend are merged to kroend.
@@ -1128,7 +1128,7 @@ def test_sufficient_params():
     with pytest.raises(ValueError):
         factory.sufficient_gas_oil_params({"ng": 0}, failhard=True)
     assert not factory.sufficient_gas_oil_params({"ng": 0}, failhard=False)
-    assert not factory.sufficient_gas_oil_params(dict())
+    assert not factory.sufficient_gas_oil_params({})
     with pytest.raises(ValueError):
         factory.sufficient_gas_oil_params({"lg": 0}, failhard=True)
     assert not factory.sufficient_gas_oil_params({"lg": 0}, failhard=False)
@@ -1139,7 +1139,7 @@ def test_sufficient_params():
     assert factory.sufficient_water_oil_params({"nw": 0, "now": 0})
     with pytest.raises(ValueError):
         factory.sufficient_water_oil_params({"nw": 0}, failhard=True)
-    assert not factory.sufficient_water_oil_params(dict())
+    assert not factory.sufficient_water_oil_params({})
     with pytest.raises(ValueError):
         factory.sufficient_water_oil_params({"lw": 0}, failhard=True)
     assert factory.sufficient_water_oil_params(
@@ -1301,7 +1301,7 @@ def test_corey_let_mix():
 
 
 def test_infer_tabular_file_format(tmp_path, caplog):
-
+    """Test code that infers the fileformat of files with tabular data"""
     testdir = Path(__file__).absolute().parent
     assert (
         factory.infer_tabular_file_format(testdir / "data/scal-pc-input-example.xlsx")
@@ -1321,7 +1321,7 @@ def test_infer_tabular_file_format(tmp_path, caplog):
     pd.DataFrame([{"SATNUM": 1, "NW": 2}]).to_csv("some.csv", index=False)
     assert factory.infer_tabular_file_format("some.csv") == "csv"
 
-    Path("empty.csv").write_text("")
+    Path("empty.csv").write_text("", encoding="utf8")
     assert factory.infer_tabular_file_format("empty.csv") == ""
     # Ensure Pandas's error message got through:
     assert "No columns to parse from file" in caplog.text
@@ -1352,4 +1352,5 @@ def test_infer_tabular_file_format(tmp_path, caplog):
     ],
 )
 def test_slicedict(orig_dict, keylist, expected_dict):
+    """Test that dictionaries can be sliced for subsets"""
     assert factory.slicedict(orig_dict, keylist) == expected_dict

@@ -288,17 +288,16 @@ def test_nexus():
     wateroil.add_corey_oil(now=10, kroend=0.5)
     wateroil.add_corey_water(nw=10, krwend=0.5)
     nexus_lines = wateroil.WOTABLE().splitlines()
-    non_comments = [
-        line for line in nexus_lines if not line.startswith("!") or not len(line)
-    ]
-    assert non_comments[0] == "WOTABLE"
-    assert non_comments[1] == "SW KRW KROW PC"
+    no_comments = [line for line in nexus_lines if not line.startswith("!") or not line]
+    assert no_comments[0] == "WOTABLE"
+    assert no_comments[1] == "SW KRW KROW PC"
     df = pd.read_table(
-        io.StringIO("\n".join(non_comments[2:])),
+        io.StringIO("\n".join(no_comments[2:])),
         engine="python",
         sep=r"\s+",
         header=None,
     )
+    # pylint: disable=no-member  # false positive on Pandas dataframe
     assert (df.values <= 1.0).all()
     assert (df.values >= 0.0).all()
 

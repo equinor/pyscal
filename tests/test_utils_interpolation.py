@@ -289,9 +289,8 @@ def test_interpolate_wo(
         (wo_low.table - interp.table)[["KRW", "KROW"]].sum().sum() for interp in ips
     ]
     print(
-        "Interpolation, mean: {}, min: {}, max: {}, std: {} ip-par-dist: {}".format(
-            np.mean(dists), min(dists), max(dists), np.std(np.diff(dists[1:])), ip_dist
-        )
+        f"Interpolation, mean: {np.mean(dists)}, min: {min(dists)}, "
+        f"max: {max(dists)}, std: {np.std(np.diff(dists[1:]))} ip-par-dist: {ip_dist}"
     )
     assert np.isclose(dists[0], 0)  # Reproducing wo_low
     # All curves that are close in parameter t, should be close in sum().sum().
@@ -300,7 +299,7 @@ def test_interpolate_wo(
     ip_dist_std = np.std(np.diff(dists[1:]))  # This number depends on 'h' and 't' range
     # (avoiding the first which reproduces go_low
     if ip_dist_std > 1.0:  # Found by trial and error
-        print("ip_dist_std: {}".format(ip_dist_std))
+        print(f"ip_dist_std: {ip_dist_std}")
         print(dists)
 
         _, mpl_ax = plt.subplots()
@@ -362,9 +361,8 @@ def test_interpolate_wo_pc(swl, dswcr, dswlhigh, sorw, a_l, a_h, b_l, b_h):
     # Distances between low and interpolants:
     dists = [(wo_low.table - interp.table)[["PC"]].sum().sum() for interp in ips]
     print(
-        "Interpolation, mean: {}, min: {}, max: {}, std: {} ip-par-dist: {}".format(
-            np.mean(dists), min(dists), max(dists), np.std(np.diff(dists[1:])), ip_dist
-        )
+        f"Interpolation, mean: {np.mean(dists)}, min: {min(dists)}, "
+        f"max: {max(dists)}, std: {np.std(np.diff(dists[1:]))} ip-par-dist: {ip_dist}"
     )
     assert np.isclose(dists[0], 0)  # Reproducing wo_low
     # All curves that are close in parameter t, should be close in sum().sum().
@@ -373,7 +371,7 @@ def test_interpolate_wo_pc(swl, dswcr, dswlhigh, sorw, a_l, a_h, b_l, b_h):
     ip_dist_std = np.std(np.diff(dists[1:]))  # This number depends on 'h' and 't' range
     # (avoiding the first which reproduces go_low
     if ip_dist_std > 1.0:  # Found by trial and error
-        print("ip_dist_std: {}".format(ip_dist_std))
+        print(f"ip_dist_std: {ip_dist_std}")
         print(dists)
         _, mpl_ax = plt.subplots()
         wo_low.plotpc(mpl_ax=mpl_ax, color="red", logyscale=True)
@@ -727,9 +725,8 @@ def test_interpolate_go(
         (go_low.table - interp.table)[["KRG", "KROG"]].sum().sum() for interp in ips
     ]
     print(
-        "Interpolation, mean: {}, min: {}, max: {}, std: {} ip-par-dist: {}".format(
-            np.mean(dists), min(dists), max(dists), np.std(np.diff(dists[1:])), ip_dist
-        )
+        f"Interpolation, mean: {np.mean(dists)}, min: {min(dists)}, "
+        f"max: {max(dists)}, std: {np.std(np.diff(dists[1:]))} ip-par-dist: {ip_dist}"
     )
     assert np.isclose(dists[0], 0)  # Reproducing go_low
     # All curves that are close in parameter t, should be close in sum().sum().
@@ -741,7 +738,7 @@ def test_interpolate_go(
     # by how different the low and high is.
     # (avoiding the first which reproduces go_low
     if ip_dist_std > 1.0:  # number found from trial and error.
-        print("ip_dist_std: {}".format(ip_dist_std))
+        print(f"ip_dist_std: {ip_dist_std}")
         print(dists)
         _, mpl_ax = plt.subplots()
         go_low.plotkrgkrog(mpl_ax=mpl_ax, color="red")

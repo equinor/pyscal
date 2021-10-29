@@ -21,6 +21,7 @@ def default_loglevel():
 
 
 def pytest_addoption(parser):
+    """Add option(s) that can be used on the pytest command line"""
     parser.addoption(
         "--plot",
         action="store_true",
@@ -30,6 +31,7 @@ def pytest_addoption(parser):
 
 
 def pytest_collection_modifyitems(config, items):
+    """Act on options set on the command line"""
     if config.getoption("--plot"):
         # Do not skip tests when --plot is supplied on pytest command line
         return

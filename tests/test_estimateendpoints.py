@@ -41,14 +41,14 @@ def test_swcrsorw():
         wateroil.add_corey_water(nw=2, krwend=0.9)
         est_sorw = wateroil.estimate_sorw()
         mis = abs(est_sorw - real_sorw)
-        print("Testing sorw={}, swcr={} on h={}".format(real_sorw, real_swcr, h))
+        print(f"Testing sorw={real_sorw}, swcr={real_swcr} on h={h}")
         if mis > 0.01:
-            print("Missed, estimated was {}".format(est_sorw))
+            print(f"Missed, estimated was {est_sorw}")
         assert mis < h + epsilon  # Can't guarantee better than h.
         est_swcr = wateroil.estimate_swcr()
         mis_swcr = abs(est_swcr - real_swcr)
         if mis_swcr > 0.0:
-            print("Missed swcr, estimate was {}".format(est_swcr))
+            print(f"Missed swcr, estimate was {est_swcr}")
         assert mis_swcr < h + epsilon
 
 
@@ -72,11 +72,11 @@ def test_sorg():
         gasoil = GasOil(sgcr=0.03, sorg=real_sorg, h=h, swl=swl)
         gasoil.add_corey_oil(nog=2)
         gasoil.add_corey_gas(ng=2, krgend=0.9)
-        print("Testing sorg={} on h={}, swl={}".format(real_sorg, h, swl))
+        print(f"Testing sorg={real_sorg} on h={h}, swl={swl}")
         est_sorg = gasoil.estimate_sorg()
         mis = abs(est_sorg - real_sorg)
         if mis > 0.01:
-            print("Missed, estimated was {}".format(est_sorg))
+            print(f"Missed, estimated was {est_sorg}")
         assert mis < h + epsilon  # Can't guarantee better than h.
 
         # If krgendanchor is not sorg (default), then krg cannot be used
@@ -86,7 +86,7 @@ def test_sorg():
         gasoil.add_corey_oil(nog=2)
         gasoil.add_corey_gas(ng=2, krgend=0.8)
         est_sorg = gasoil.estimate_sorg()
-        print("Estimated to {}".format(est_sorg))
+        print(f"Estimated to {est_sorg}")
         mis = abs(est_sorg - real_sorg)
         assert mis < h + epsilon
 
@@ -146,8 +146,8 @@ def test_sorw_hypo(h, sorw, nw):
         # expect sorw estimation to be robust
         error_requirement = 3 * h
     if est_error > error_requirement:
-        print("h = {}, sorw = {}".format(h, sorw))
-        print("estimated sorw = {}".format(est_sorw))
+        print(f"h = {h}, sorw = {sorw}")
+        print(f"estimated sorw = {est_sorw}")
         print(wateroil.table)
 
     # We don't bother to tune the code better than this:
