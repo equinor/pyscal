@@ -4,6 +4,7 @@ from pathlib import Path
 import pytest
 
 import pyscal
+from pyscal import pyscalcli
 
 try:
     import opm  # noqa
@@ -94,7 +95,7 @@ def test_pyscal_logging(tmp_path, verbose, fileexport, mocker, capsys):
 
     mocker.patch("sys.argv", commands)
 
-    pyscal.pyscalcli.main()
+    pyscalcli.main()
     captured = capsys.readouterr()
     stdout_output = captured.out
     stderr_output = captured.err
