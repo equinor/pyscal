@@ -66,7 +66,7 @@ def test_default_logger_levels_and_split(capsys):
 @pytest.mark.skipif(not HAVE_OPM, reason="Command line client requires OPM")
 @pytest.mark.parametrize(
     "verbose, fileexport",
-    itertools.product([False, True], [True, False]),
+    itertools.product([True, False], [True, False]),
 )
 def test_pyscal_logging(tmp_path, verbose, fileexport, mocker, capsys):
     """Test that the command line client for each submodule logs correctly.
@@ -86,7 +86,7 @@ def test_pyscal_logging(tmp_path, verbose, fileexport, mocker, capsys):
     commands = ["pyscal", str(relperm_file), "--output"]
 
     if fileexport:
-        commands.append(str(tmp_path / "output.csv"))
+        commands.append(str(tmp_path / "output.inc"))
     else:
         commands.append("-")
 
