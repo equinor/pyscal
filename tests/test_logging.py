@@ -1,16 +1,7 @@
 from pathlib import Path
 
-import pytest
-
 import pyscal
 from pyscal import pyscalcli
-
-try:
-    import opm  # noqa
-
-    HAVE_OPM = True
-except ImportError:
-    HAVE_OPM = False
 
 
 def test_default_logger_levels_and_split(capsys):
@@ -62,7 +53,6 @@ def test_default_logger_levels_and_split(capsys):
     assert "ERROR-text" in captured.err
 
 
-@pytest.mark.skipif(not HAVE_OPM, reason="Command line client requires OPM")
 def test_pyscal_logging_verbose(tmp_path, mocker, capsys):
     """Test that the command line client logs correctly with output set to
     stdout and verbose set to true.
@@ -70,10 +60,7 @@ def test_pyscal_logging_verbose(tmp_path, mocker, capsys):
 
     testdir = Path(__file__).absolute().parent
     relperm_file = testdir / "data/relperm-input-example.xlsx"
-    commands = ["pyscal", str(relperm_file), "--output"]
-    commands.append("-")
-
-    commands.append("-v")
+    commands = ["pyscal", str(relperm_file), "--output", "-", "-v"]
 
     mocker.patch("sys.argv", commands)
 
@@ -86,7 +73,6 @@ def test_pyscal_logging_verbose(tmp_path, mocker, capsys):
     assert "INFO:" not in stdout_output
 
 
-@pytest.mark.skipif(not HAVE_OPM, reason="Command line client requires OPM")
 def test_pyscal_logging(tmp_path, mocker, capsys):
     """Test that the command line client logs correctly with output set to
     stdout and verbose set to false.
@@ -94,8 +80,7 @@ def test_pyscal_logging(tmp_path, mocker, capsys):
 
     testdir = Path(__file__).absolute().parent
     relperm_file = testdir / "data/relperm-input-example.xlsx"
-    commands = ["pyscal", str(relperm_file), "--output"]
-    commands.append("-")
+    commands = ["pyscal", str(relperm_file), "--output", "-"]
 
     mocker.patch("sys.argv", commands)
 
