@@ -15,7 +15,7 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -103,7 +103,7 @@
 object for one WaterOil and one GasOil object</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pyscal.gaswater.GasWater">
-<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">pyscal.gaswater.</span></span><span class="sig-name descname"><span class="pre">GasWater</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">swirr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sgl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swcr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sgrw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sgcr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/gaswater.html#GasWater"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.gaswater.GasWater" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyscal.gaswater.</span></span><span class="sig-name descname"><span class="pre">GasWater</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">swirr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sgl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swcr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sgrw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sgcr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/gaswater.html#GasWater"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.gaswater.GasWater" title="Permalink to this definition"></a></dt>
 <dd><p>A representation of two-phase properties for gas-water</p>
 <p>Internally, this class handles gas-water by using one WaterOil
 object and one GasOil object, with dummy parameters for oil.</p>
@@ -344,7 +344,7 @@ interpolated in water saturation.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyscal.gaswater.GasWater.krgcomment">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">krgcomment</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#pyscal.gaswater.GasWater.krgcomment" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">krgcomment</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pyscal.gaswater.GasWater.krgcomment" title="Permalink to this definition"></a></dt>
 <dd><p>Get a string representation describing krg</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -355,7 +355,7 @@ interpolated in water saturation.</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyscal.gaswater.GasWater.krwcomment">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">krwcomment</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#pyscal.gaswater.GasWater.krwcomment" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">krwcomment</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pyscal.gaswater.GasWater.krwcomment" title="Permalink to this definition"></a></dt>
 <dd><p>Get a string representation describing krw</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -389,7 +389,7 @@ properties (direction and monotonicity)</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyscal.gaswater.GasWater.sgcomment">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">sgcomment</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#pyscal.gaswater.GasWater.sgcomment" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sgcomment</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pyscal.gaswater.GasWater.sgcomment" title="Permalink to this definition"></a></dt>
 <dd><p>Get a string representation of the endpoints used for gas</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -400,7 +400,7 @@ properties (direction and monotonicity)</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyscal.gaswater.GasWater.swcomment">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">swcomment</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#pyscal.gaswater.GasWater.swcomment" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">swcomment</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pyscal.gaswater.GasWater.swcomment" title="Permalink to this definition"></a></dt>
 <dd><p>Get a string representation of the endpoints used for water</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -411,7 +411,7 @@ properties (direction and monotonicity)</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyscal.gaswater.GasWater.swcr">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">swcr</span></span><em class="property"><span class="pre">:</span> <span class="pre">float</span></em><a class="headerlink" href="#pyscal.gaswater.GasWater.swcr" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">swcr</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#pyscal.gaswater.GasWater.swcr" title="Permalink to this definition"></a></dt>
 <dd><p>Get the swcr</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -422,7 +422,7 @@ properties (direction and monotonicity)</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyscal.gaswater.GasWater.swirr">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">swirr</span></span><em class="property"><span class="pre">:</span> <span class="pre">float</span></em><a class="headerlink" href="#pyscal.gaswater.GasWater.swirr" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">swirr</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#pyscal.gaswater.GasWater.swirr" title="Permalink to this definition"></a></dt>
 <dd><p>Get the swirr, irreducible water saturation used for pc-init</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -433,7 +433,7 @@ properties (direction and monotonicity)</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyscal.gaswater.GasWater.swl">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">swl</span></span><em class="property"><span class="pre">:</span> <span class="pre">float</span></em><a class="headerlink" href="#pyscal.gaswater.GasWater.swl" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">swl</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">float</span></em><a class="headerlink" href="#pyscal.gaswater.GasWater.swl" title="Permalink to this definition"></a></dt>
 <dd><p>Get the swl</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -444,7 +444,7 @@ properties (direction and monotonicity)</p>
 
 <dl class="py property">
 <dt class="sig sig-object py" id="pyscal.gaswater.GasWater.tag">
-<em class="property"><span class="pre">property</span> </em><span class="sig-name descname"><span class="pre">tag</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#pyscal.gaswater.GasWater.tag" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">tag</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#pyscal.gaswater.GasWater.tag" title="Permalink to this definition"></a></dt>
 <dd><p>Get the user configured tag</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
