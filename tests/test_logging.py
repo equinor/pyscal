@@ -1,3 +1,4 @@
+import subprocess
 from pathlib import Path
 
 import pyscal
@@ -90,6 +91,23 @@ def test_pyscal_logging(tmp_path, mocker, capsys):
     stderr_output = captured.err
 
     assert "INFO:" not in stdout_output
+    assert "INFO:" not in stderr_output
+
+
+def test_pyscal_logging_output_to_file(tmp_path, mocker, capsys):
+    """Test that the command line client logs correctly with output set to
+    file and verbose set to true.
+    """
+
+    testdir = Path(__file__).absolute().parent
+    relperm_file = testdir / "data/relperm-input-example.xlsx"
+    commands = ["pyscal", str(relperm_file), "--output", "relperm.inc", "-v"]
+
+    result = subprocess.run(commands, cwd=tmp_path, capture_output=True, check=True)
+    stdout_output = result.stdout.decode()
+    stderr_output = result.stderr.decode()
+
+    assert "INFO:" in stdout_output
     assert "INFO:" not in stderr_output
 
 
