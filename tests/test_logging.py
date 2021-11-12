@@ -1,5 +1,8 @@
 import subprocess
+import sys
 from pathlib import Path
+
+import pytest
 
 import pyscal
 from pyscal import pyscalcli
@@ -94,6 +97,7 @@ def test_pyscal_logging(tmp_path, mocker, capsys):
     assert "INFO:" not in stderr_output
 
 
+@pytest.mark.skipif(sys.version_info < (3, 7), reason="requires python3.7 or higher")
 def test_pyscal_logging_output_to_file(tmp_path, mocker, capsys):
     """Test that the command line client logs correctly with output set to
     file and verbose set to true.
