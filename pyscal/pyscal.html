@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal &mdash; pyscal 0.9.1.dev3+gf1fd9e1 documentation</title>
+  <title>pyscal &mdash; pyscal 0.9.1.dev4+gd727f07 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -31,7 +31,7 @@
             <img src="../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.9.1.dev3+gf1fd9e1
+                0.9.1.dev4+gd727f07
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -103,6 +103,25 @@
 <li><p><a class="reference internal" href="#submodules" id="id1">Submodules</a></p></li>
 </ul>
 </div>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyscal.getLogger_pyscal">
+<span class="sig-prename descclassname"><span class="pre">pyscal.</span></span><span class="sig-name descname"><span class="pre">getLogger_pyscal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pyscal'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal.html#getLogger_pyscal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.getLogger_pyscal" title="Permalink to this definition"></a></dt>
+<dd><p>Provide a custom logger for pyscal
+Logging output is by default split by logging levels (split between WARNING and
+ERROR) to stdout and stderr, each log occurs in only one of the streams.
+:type module_name: <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>
+:param module_name: A suggested name for the logger, usually __name__ should be supplied
+:type args_dict: <code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>]]]
+:param args_dict: Dictionary with contents from the argparse namespace object containing
+:param only keys “output”:
+:param “verbose” and “debug”.:</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
 <section id="submodules">
 <h2><a class="toc-backref" href="#id1">Submodules</a><a class="headerlink" href="#submodules" title="Permalink to this headline"></a></h2>
 <div class="toctree-wrapper compound">

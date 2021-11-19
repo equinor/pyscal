@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.factory &mdash; pyscal 0.9.1.dev3+gf1fd9e1 documentation</title>
+  <title>pyscal.factory &mdash; pyscal 0.9.1.dev4+gd727f07 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -28,7 +28,7 @@
             <img src="../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.9.1.dev3+gf1fd9e1
+                0.9.1.dev4+gd727f07
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -67,6 +67,7 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
           <li><a href="../index.html">Module code</a> &raquo;</li>
+          <li><a href="../pyscal.html">pyscal</a> &raquo;</li>
       <li>pyscal.factory</li>
       <li class="wy-breadcrumbs-aside">
       </li>
@@ -79,7 +80,6 @@
   <h1>Source code for pyscal.factory</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Factory functions for creating the pyscal objects&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">zipfile</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Union</span>
@@ -89,6 +89,7 @@
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 <span class="kn">import</span> <span class="nn">xlrd</span>
 
+<span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">getLogger_pyscal</span>
 <span class="kn">from</span> <span class="nn">pyscal.utils</span> <span class="kn">import</span> <span class="n">capillarypressure</span>
 
 <span class="kn">from</span> <span class="nn">.gasoil</span> <span class="kn">import</span> <span class="n">GasOil</span>
@@ -98,7 +99,7 @@
 <span class="kn">from</span> <span class="nn">.wateroil</span> <span class="kn">import</span> <span class="n">WaterOil</span>
 <span class="kn">from</span> <span class="nn">.wateroilgas</span> <span class="kn">import</span> <span class="n">WaterOilGas</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">getLogger_pyscal</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="slicedict"><a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.slicedict">[docs]</a><span class="k">def</span> <span class="nf">slicedict</span><span class="p">(</span><span class="n">dct</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">keys</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">):</span>
@@ -144,6 +145,7 @@
     <span class="s2">&quot;kroend&quot;</span><span class="p">,</span>
     <span class="s2">&quot;kromax&quot;</span><span class="p">,</span>
 <span class="p">]</span>
+
 <span class="n">GO_LET_GAS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;lg&quot;</span><span class="p">,</span> <span class="s2">&quot;eg&quot;</span><span class="p">,</span> <span class="s2">&quot;tg&quot;</span><span class="p">]</span>
 <span class="n">GO_LET_OIL</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;log&quot;</span><span class="p">,</span> <span class="s2">&quot;eog&quot;</span><span class="p">,</span> <span class="s2">&quot;tog&quot;</span><span class="p">]</span>
 
