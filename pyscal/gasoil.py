@@ -1,6 +1,5 @@
 """Representing a GasOil object"""
 
-import logging
 from typing import Optional
 
 import numpy as np
@@ -13,7 +12,7 @@ from pyscal.constants import MAX_EXPONENT, SWINTEGERS
 from pyscal.utils.relperm import crosspoint, estimate_diffjumppoint, truncate_zeroness
 from pyscal.utils.string import comment_formatter, df2str
 
-logger = logging.getLogger(__name__)
+logger = pyscal.getLogger_pyscal(__name__)
 
 
 class GasOil(object):

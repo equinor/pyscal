@@ -1,6 +1,5 @@
 """Container object for one WaterOil and one GasOil object"""
 
-import logging
 from typing import Optional
 
 import numpy as np
@@ -13,7 +12,7 @@ from pyscal.utils.string import comment_formatter, df2str
 from .gasoil import GasOil
 from .wateroil import WaterOil
 
-logger = logging.getLogger(__name__)
+logger = pyscal.getLogger_pyscal(__name__)
 
 
 class WaterOilGas(object):

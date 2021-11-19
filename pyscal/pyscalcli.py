@@ -1,7 +1,6 @@
 """Command line tool for pyscal"""
 
 import argparse
-import logging
 import sys
 import traceback
 from pathlib import Path
@@ -9,11 +8,15 @@ from typing import Optional
 
 import pandas as pd
 
-from pyscal import GasWater, SCALrecommendation, WaterOilGas, __version__
+from pyscal import (
+    GasWater,
+    SCALrecommendation,
+    WaterOilGas,
+    __version__,
+    getLogger_pyscal,
+)
 
 from .factory import PyscalFactory
-
-logger = logging.getLogger(__name__)
 
 EPILOG = """
 The parameter file should contain a table with at least the column
@@ -196,10 +199,9 @@ def pyscal_main(
         family2: Dump family 2 keywords
     """
 
-    if verbose:
-        logging.basicConfig(level=logging.INFO)
-    if debug:
-        logging.basicConfig(level=logging.DEBUG)
+    logger = getLogger_pyscal(
+        __name__, {"debug": debug, "verbose": verbose, "output": output}
+    )
 
     parametertable = PyscalFactory.load_relperm_df(
         parametertable, sheet_name=sheet_name

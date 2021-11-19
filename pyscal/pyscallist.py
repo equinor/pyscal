@@ -1,19 +1,25 @@
 """Container class for list of Pyscal objects"""
 
-import logging
 import warnings
 from pathlib import Path
 from typing import List, Optional, Type, Union
 
 import pandas as pd
 
-from pyscal import GasOil, GasWater, SCALrecommendation, WaterOil, WaterOilGas
+from pyscal import (
+    GasOil,
+    GasWater,
+    SCALrecommendation,
+    WaterOil,
+    WaterOilGas,
+    getLogger_pyscal,
+)
 
 PYSCAL_OBJECTS = [WaterOil, GasOil, GasWater, WaterOilGas, SCALrecommendation]
 
 PyscalObjects = Union[WaterOil, GasOil, GasWater, WaterOilGas, SCALrecommendation]
 
-logger = logging.getLogger(__name__)
+logger = getLogger_pyscal(__name__)
 
 warnings.filterwarnings("default", category=DeprecationWarning, module="pyscal")
 

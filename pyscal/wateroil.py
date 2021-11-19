@@ -1,6 +1,5 @@
 """Wateroil module"""
 
-import logging
 import math
 from typing import Optional
 
@@ -15,7 +14,7 @@ from pyscal.utils.capillarypressure import simple_J
 from pyscal.utils.relperm import crosspoint, estimate_diffjumppoint, truncate_zeroness
 from pyscal.utils.string import comment_formatter, df2str
 
-logger = logging.getLogger(__name__)
+logger = pyscal.getLogger_pyscal(__name__)
 
 
 class WaterOil(object):

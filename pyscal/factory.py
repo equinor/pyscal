@@ -1,6 +1,5 @@
 """Factory functions for creating the pyscal objects"""
 
-import logging
 import zipfile
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Set, Union
@@ -10,6 +9,7 @@ import openpyxl
 import pandas as pd
 import xlrd
 
+from pyscal import getLogger_pyscal
 from pyscal.utils import capillarypressure
 
 from .gasoil import GasOil
@@ -19,7 +19,7 @@ from .scalrecommendation import SCALrecommendation
 from .wateroil import WaterOil
 from .wateroilgas import WaterOilGas
 
-logger = logging.getLogger(__name__)
+logger = getLogger_pyscal(__name__)
 
 
 def slicedict(dct: dict, keys: Iterable):
@@ -65,6 +65,7 @@ GO_OIL_ENDPOINTS = [
     "kroend",
     "kromax",
 ]
+
 GO_LET_GAS = ["lg", "eg", "tg"]
 GO_LET_OIL = ["log", "eog", "tog"]
 

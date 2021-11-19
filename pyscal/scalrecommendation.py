@@ -1,15 +1,14 @@
 """SCALrecommendation, container for low, base and high WaterOilGas objects"""
 
 import copy
-import logging
 from typing import Optional, Set, Type, Union
 
 import numpy as np
 
-from pyscal import GasWater, WaterOilGas
+from pyscal import GasWater, WaterOilGas, getLogger_pyscal
 from pyscal.utils.interpolation import interpolate_go, interpolate_wo
 
-logger = logging.getLogger(__name__)
+logger = getLogger_pyscal(__name__)
 
 
 class SCALrecommendation(object):

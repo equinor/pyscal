@@ -1,17 +1,17 @@
 """Object to represent GasWater, implemented as a Container
 object for one WaterOil and one GasOil object"""
 
-import logging
 from typing import Optional
 
 import pandas as pd
 
+from pyscal import getLogger_pyscal
 from pyscal.utils.relperm import crosspoint
 
 from .gasoil import GasOil
 from .wateroil import WaterOil
 
-logger = logging.getLogger(__name__)
+logger = getLogger_pyscal(__name__)
 
 
 def is_documented_by(original):
