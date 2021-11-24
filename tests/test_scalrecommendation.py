@@ -5,8 +5,14 @@ import pandas as pd
 import pytest
 from hypothesis import given, settings
 
-from pyscal import GasWater, PyscalFactory, SCALrecommendation, WaterOil, WaterOilGas
-from pyscal.factory import slicedict
+from pyscal import GasWater, SCALrecommendation, WaterOil, WaterOilGas
+from pyscal.factory import (
+    create_water_oil_gas,
+    create_scal_recommendation,
+    create_scal_recommendation_list,
+    load_relperm_df,
+    slicedict,
+)
 from pyscal.utils.testing import check_table, sat_table_str_ok
 
 # Example SCAL recommendation, low case
@@ -92,9 +98,9 @@ def test_make_scalrecommendation():
     """Test that we can make scal recommendation objects
     from three WaterOilGas objects"""
 
-    low = PyscalFactory.create_water_oil_gas(LOW_SAMPLE_LET)
-    base = PyscalFactory.create_water_oil_gas(BASE_SAMPLE_LET)
-    high = PyscalFactory.create_water_oil_gas(HIGH_SAMPLE_LET)
+    low = create_water_oil_gas(LOW_SAMPLE_LET)
+    base = create_water_oil_gas(BASE_SAMPLE_LET)
+    high = create_water_oil_gas(HIGH_SAMPLE_LET)
     rec = SCALrecommendation(low, base, high)
     interpolant = rec.interpolate(-0.5, h=0.2)
     check_table(interpolant.wateroil.table)
@@ -142,12 +148,12 @@ def test_make_scalrecommendation_wo(caplog):
     ]
 
     low_let_wo = slicedict(LOW_SAMPLE_LET, wo_param_names)
-    low = PyscalFactory.create_water_oil_gas(low_let_wo)
+    low = create_water_oil_gas(low_let_wo)
     base_let_wo = slicedict(BASE_SAMPLE_LET, wo_param_names)
-    base = PyscalFactory.create_water_oil_gas(base_let_wo)
+    base = create_water_oil_gas(base_let_wo)
     high_let_wo = slicedict(HIGH_SAMPLE_LET, wo_param_names)
     assert "Lg" not in high_let_wo
-    high = PyscalFactory.create_water_oil_gas(high_let_wo)
+    high = create_water_oil_gas(high_let_wo)
     rec = SCALrecommendation(low, base, high)
     interpolant = rec.interpolate(-0.5)
     check_table(interpolant.wateroil.table)
@@ -185,12 +191,12 @@ def test_make_scalrecommendation_go():
     ]
 
     low_let_go = slicedict(LOW_SAMPLE_LET, go_param_names)
-    low = PyscalFactory.create_water_oil_gas(low_let_go)
+    low = create_water_oil_gas(low_let_go)
     base_let_go = slicedict(BASE_SAMPLE_LET, go_param_names)
-    base = PyscalFactory.create_water_oil_gas(base_let_go)
+    base = create_water_oil_gas(base_let_go)
     high_let_go = slicedict(HIGH_SAMPLE_LET, go_param_names)
     assert "Lw" not in high_let_go
-    high = PyscalFactory.create_water_oil_gas(high_let_go)
+    high = create_water_oil_gas(high_let_go)
     rec = SCALrecommendation(low, base, high)
     assert rec.type == WaterOilGas
     interpolant = rec.interpolate(-0.5)
@@ -214,7 +220,7 @@ def test_interpolation(param_wo, param_go):
     """Test interpolation with random interpolation parameters,
     looking for numerical corner cases"""
 
-    rec = PyscalFactory.create_scal_recommendation(
+    rec = create_scal_recommendation(
         {"low": LOW_SAMPLE_LET, "base": BASE_SAMPLE_LET, "high": HIGH_SAMPLE_LET},
         "foo",
         h=0.1,
@@ -247,7 +253,7 @@ def test_interpolation(param_wo, param_go):
 def test_boundary_cases():
     """Test that interpolation is able to return the boundaries
     at +/- 1"""
-    rec = PyscalFactory.create_scal_recommendation(
+    rec = create_scal_recommendation(
         {"low": LOW_SAMPLE_LET, "base": BASE_SAMPLE_LET, "high": HIGH_SAMPLE_LET},
         "foo",
         h=0.1,
@@ -379,9 +385,7 @@ def test_gaswater_scal(caplog):
             [1, "opt", 4, 4, "sometag"],
         ],
     )
-    rec_list = PyscalFactory.create_scal_recommendation_list(
-        PyscalFactory.load_relperm_df(dframe), h=0.1
-    )
+    rec_list = create_scal_recommendation_list(load_relperm_df(dframe), h=0.1)
     assert rec_list.pyscaltype == SCALrecommendation
     assert rec_list[1].type == GasWater
     low_list = rec_list.interpolate(-1)
@@ -404,9 +408,9 @@ def test_gaswater_scal(caplog):
 
 def test_fast():
     """Test the fast option"""
-    low_fast = PyscalFactory.create_water_oil_gas(LOW_SAMPLE_LET, fast=True)
-    base_fast = PyscalFactory.create_water_oil_gas(BASE_SAMPLE_LET, fast=True)
-    high_fast = PyscalFactory.create_water_oil_gas(HIGH_SAMPLE_LET, fast=True)
+    low_fast = create_water_oil_gas(LOW_SAMPLE_LET, fast=True)
+    base_fast = create_water_oil_gas(BASE_SAMPLE_LET, fast=True)
+    high_fast = create_water_oil_gas(HIGH_SAMPLE_LET, fast=True)
 
     rec = SCALrecommendation(low_fast, base_fast, high_fast)
     interp = rec.interpolate(-0.5)
@@ -414,9 +418,9 @@ def test_fast():
     assert interp.fast
 
     # test that one or more inputs not being set to fast does not trigger fast mode
-    low = PyscalFactory.create_water_oil_gas(LOW_SAMPLE_LET)
-    base = PyscalFactory.create_water_oil_gas(BASE_SAMPLE_LET)
-    high = PyscalFactory.create_water_oil_gas(HIGH_SAMPLE_LET)
+    low = create_water_oil_gas(LOW_SAMPLE_LET)
+    base = create_water_oil_gas(BASE_SAMPLE_LET)
+    high = create_water_oil_gas(HIGH_SAMPLE_LET)
 
     rec = SCALrecommendation(low_fast, base_fast, high)
     interp = rec.interpolate(-0.5)
