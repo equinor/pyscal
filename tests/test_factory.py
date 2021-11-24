@@ -780,9 +780,7 @@ def test_many_nans():
             {"SATNUM": np.nan, "nw": np.nan, "now": np.nan, "Unnamed: 15": np.nan},
         ]
     )
-    wateroil_list = factory.create_pyscal_list(
-        factory.load_relperm_df(nanframe)
-    )
+    wateroil_list = factory.create_pyscal_list(factory.load_relperm_df(nanframe))
     assert len(wateroil_list) == 1
     sat_table_str_ok(wateroil_list.SWOF())
 
@@ -887,9 +885,7 @@ def test_create_pyscal_list():
     with pytest.raises(
         ValueError, match="Could not determine two or three phase from parameters"
     ):
-        factory.create_pyscal_list(
-            basecasedata.drop(["Ew", "Eg"], axis="columns")
-        )
+        factory.create_pyscal_list(basecasedata.drop(["Ew", "Eg"], axis="columns"))
 
 
 def test_scalrecommendation():
@@ -1006,9 +1002,7 @@ def test_check_deprecated_krowgend():
     # If krogend and kroend are both present, krogend is to be silently ignored
     # (random columns are in general accepted and ignored by pyscal)
 
-    gasoil = factory.create_gas_oil(
-        dict(swl=0.1, ng=2, nog=2, krogend=0.4, kroend=0.3)
-    )
+    gasoil = factory.create_gas_oil(dict(swl=0.1, ng=2, nog=2, krogend=0.4, kroend=0.3))
     assert gasoil.table["KROG"].max() == 0.3
 
     wateroil = factory.create_water_oil(
@@ -1092,9 +1086,7 @@ def test_gensatfunc():
 
     # sigma_costau is missing here:
     conf_line_almost_pc = "RELPERM 4 2 1 3 2 1 0.15 0.10 0.5 20 100 0.2 0.22 -0.5"
-    wateroil = factory.create_water_oil(
-        parse_gensatfuncline(conf_line_almost_pc)
-    )
+    wateroil = factory.create_water_oil(parse_gensatfuncline(conf_line_almost_pc))
     swof = wateroil.SWOF()
     # The factory will not recognize the normalized J-function
     # when costau is missing. Any error message would be the responsibility

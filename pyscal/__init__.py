@@ -85,4 +85,19 @@ from .gasoil import GasOil  # noqa
 from .gaswater import GasWater  # noqa
 from .scalrecommendation import SCALrecommendation  # noqa
 from .pyscallist import PyscalList  # noqa
-from .factory import *  # noqa
+from .factory import (
+    create_water_oil,
+    create_gas_oil,
+    create_water_oil_gas,
+    create_gas_water,
+    create_scal_recommendation,
+    load_relperm_df,
+    alias_sgrw,
+    remap_validate_cases,
+    create_scal_recommendation_list,
+    create_pyscal_list,
+    create_wateroilgas_list,
+    create_wateroil_list,
+    create_gasoil_list,
+    create_gaswater_list,
+)  # noqa
