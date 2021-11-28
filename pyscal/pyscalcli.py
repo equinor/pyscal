@@ -14,9 +14,6 @@ from pyscal import (
     WaterOilGas,
     __version__,
     getLogger_pyscal,
-)
-
-from .factory import (
     load_relperm_df,
     create_scal_recommendation_list,
     create_pyscal_list,

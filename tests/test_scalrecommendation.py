@@ -5,13 +5,16 @@ import pandas as pd
 import pytest
 from hypothesis import given, settings
 
-from pyscal import GasWater, SCALrecommendation, WaterOil, WaterOilGas
-from pyscal.factory import (
+from pyscal import (
+    GasWater,
+    SCALrecommendation,
+    WaterOil,
+    WaterOilGas,
+    slicedict,
     create_water_oil_gas,
     create_scal_recommendation,
     create_scal_recommendation_list,
     load_relperm_df,
-    slicedict,
 )
 from pyscal.utils.testing import check_table, sat_table_str_ok
 

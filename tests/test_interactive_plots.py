@@ -10,7 +10,7 @@ import numpy as np
 import pytest
 from matplotlib import pyplot
 
-from pyscal import GasOil, GasWater, factory, WaterOil, utils
+from pyscal import GasOil, GasWater, create_scal_recommendation, WaterOil, utils
 
 from .test_scalrecommendation import BASE_SAMPLE_LET, HIGH_SAMPLE_LET, LOW_SAMPLE_LET
 
@@ -313,7 +313,7 @@ def test_SCAL_interpolation():
     # pylint: disable=invalid-name
     matplotlib.style.use("ggplot")
 
-    rec = factory.create_scal_recommendation(
+    rec = create_scal_recommendation(
         {"low": LOW_SAMPLE_LET, "base": BASE_SAMPLE_LET, "high": HIGH_SAMPLE_LET},
         "FOO",
         h=0.001,
