@@ -209,7 +209,7 @@ def test_pyscal_client_static(tmp_path, caplog, default_loglevel, mocker):
             "pyscal",
             str(relperm_file),
             "--sheet_name",
-            u"NOTEXISTINGÆÅ",
+            "NOTEXISTINGÆÅ",
             "--output",
             "relperm-empty.inc",
         ],
