@@ -31,7 +31,7 @@ PASCAL = 1e-05  # One pascal in bar.
         (1, 2, 1, 1, 1, 1, 1, 2 * PASCAL),
         # Nonlinear in b:
         (1, 1, 2, 1, 1, 1, 1, PASCAL),
-        (0.5, 1, 2, 1, 1, 1, 1, 0.5 ** 2 * PASCAL),
+        (0.5, 1, 2, 1, 1, 1, 1, 0.5**2 * PASCAL),
         # Vector support in sw:
         (np.array([0, 1]), 1, 1, 1, 1, 1, 1, np.array([0, PASCAL])),
     ],
