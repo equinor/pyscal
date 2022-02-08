@@ -89,16 +89,19 @@ class PyscalList(object):
         will contain the strings 'pess', 'base' and 'opt' (independent of
         any alias name potentially used in an input xlsx/csv)
         """
-        # Names of dataframe columns in wateroil/gasoil.table:
+        # Names of dataframe columns in wateroil/gasoil.table, SOF3 and SLGOF:
         wateroil_pyscal_cols = {"SW", "KRW", "KROW", "PC"}
         gasoil_pyscal_cols = {"SG", "KRG", "KROG", "PC"}
+        sof3_cols = {"SO", "KROW", "KROG"}
+        slgof_cols = {"SL", "KRG", "KROG", "PC"}
 
         # Renamers applied to the returned dataframe:
         gasoil_col_renamer = {"SG": "SG", "KRG": "KRG", "KROG": "KROG", "PC": "PCOG"}
         wateroil_col_renamer = {"SW": "SW", "KRW": "KRW", "KROW": "KROW", "PC": "PCOW"}
+        slgof_col_renamer = {"SL": "SL", "KRG": "KRG", "KROG": "KROG", "PC": "PCOG"}
 
         # Sort order for rows in returned dataframe:
-        sort_candidates = ["SATNUM", "CASE", "KEYWORD", "SW", "SG", "SL"]
+        sort_candidates = ["SATNUM", "CASE", "KEYWORD", "SW", "SG", "SL", "SO"]
 
         df_list = []
         if self.pyscaltype == WaterOilGas:
@@ -122,55 +125,93 @@ class PyscalList(object):
                     .assign(SATNUM=satnum + 1)
                     .rename(wateroil_col_renamer, axis="columns")
                 )
+                df_list.append(
+                    wateroilgas.sof3_df()[sof3_cols].assign(SATNUM=satnum + 1)
+                )
+                df_list.append(
+                    wateroilgas.gasoil.slgof_df()[gasoil_cols]
+                    .assign(SATNUM=satnum + 1)
+                    .rename(gasoil_col_renamer, axis="columns")
+                )
         elif self.pyscaltype == SCALrecommendation:
             for (satnum, scalrec) in enumerate(self.pyscal_list):
                 assert isinstance(scalrec, SCALrecommendation)
                 assert scalrec.low is not None
                 assert scalrec.base is not None
                 assert scalrec.high is not None
-                assert scalrec.low.wateroil is not None
-                assert scalrec.low.gasoil is not None
-                assert scalrec.base.wateroil is not None
-                assert scalrec.base.gasoil is not None
-                assert scalrec.high.wateroil is not None
-                assert scalrec.high.gasoil is not None
-                gasoil_cols = set(scalrec.base.gasoil.table.columns).intersection(
-                    gasoil_pyscal_cols
-                )
-                wateroil_cols = set(scalrec.base.wateroil.table.columns).intersection(
-                    wateroil_pyscal_cols
-                )
-                df_list.append(
-                    scalrec.low.gasoil.table[gasoil_cols]
-                    .assign(SATNUM=satnum + 1, CASE="pess")
-                    .rename(gasoil_col_renamer, axis="columns")
-                )
-                df_list.append(
-                    scalrec.base.gasoil.table[gasoil_cols]
-                    .assign(SATNUM=satnum + 1, CASE="base")
-                    .rename(gasoil_col_renamer, axis="columns")
-                )
-                df_list.append(
-                    scalrec.high.gasoil.table[gasoil_cols]
-                    .assign(SATNUM=satnum + 1, CASE="opt")
-                    .rename(gasoil_col_renamer, axis="columns")
-                )
-
-                df_list.append(
-                    scalrec.low.wateroil.table[wateroil_cols]
-                    .assign(SATNUM=satnum + 1, CASE="pess")
-                    .rename(wateroil_col_renamer, axis="columns")
-                )
-                df_list.append(
-                    scalrec.base.wateroil.table[wateroil_cols]
-                    .assign(SATNUM=satnum + 1, CASE="base")
-                    .rename(wateroil_col_renamer, axis="columns")
-                )
-                df_list.append(
-                    scalrec.high.wateroil.table[wateroil_cols]
-                    .assign(SATNUM=satnum + 1, CASE="opt")
-                    .rename(wateroil_col_renamer, axis="columns")
-                )
+                if scalrec.type == WaterOilGas:
+                    assert scalrec.low.wateroil is not None
+                    assert scalrec.low.gasoil is not None
+                    assert scalrec.base.wateroil is not None
+                    assert scalrec.base.gasoil is not None
+                    assert scalrec.high.wateroil is not None
+                    assert scalrec.high.gasoil is not None
+                    gasoil_cols = set(scalrec.base.gasoil.table.columns).intersection(
+                        gasoil_pyscal_cols
+                    )
+                    wateroil_cols = set(
+                        scalrec.base.wateroil.table.columns
+                    ).intersection(wateroil_pyscal_cols)
+                    df_list.append(
+                        scalrec.low.gasoil.table[gasoil_cols]
+                        .assign(SATNUM=satnum + 1, CASE="pess")
+                        .rename(gasoil_col_renamer, axis="columns")
+                    )
+                    df_list.append(
+                        scalrec.base.gasoil.table[gasoil_cols]
+                        .assign(SATNUM=satnum + 1, CASE="base")
+                        .rename(gasoil_col_renamer, axis="columns")
+                    )
+                    df_list.append(
+                        scalrec.high.gasoil.table[gasoil_cols]
+                        .assign(SATNUM=satnum + 1, CASE="opt")
+                        .rename(gasoil_col_renamer, axis="columns")
+                    )
+                    df_list.append(
+                        scalrec.low.wateroil.table[wateroil_cols]
+                        .assign(SATNUM=satnum + 1, CASE="pess")
+                        .rename(wateroil_col_renamer, axis="columns")
+                    )
+                    df_list.append(
+                        scalrec.base.wateroil.table[wateroil_cols]
+                        .assign(SATNUM=satnum + 1, CASE="base")
+                        .rename(wateroil_col_renamer, axis="columns")
+                    )
+                    df_list.append(
+                        scalrec.high.wateroil.table[wateroil_cols]
+                        .assign(SATNUM=satnum + 1, CASE="opt")
+                        .rename(wateroil_col_renamer, axis="columns")
+                    )
+                    df_list.append(
+                        scalrec.low.sof3_df()[sof3_cols].assign(
+                            SATNUM=satnum + 1, CASE="pess"
+                        )
+                    )
+                    df_list.append(
+                        scalrec.base.sof3_df()[sof3_cols].assign(
+                            SATNUM=satnum + 1, CASE="base"
+                        )
+                    )
+                    df_list.append(
+                        scalrec.low.sof3_df()[sof3_cols].assign(
+                            SATNUM=satnum + 1, CASE="opt"
+                        )
+                    )
+                    df_list.append(
+                        scalrec.low.gasoil.slgof_df()[slgof_cols]
+                        .assign(SATNUM=satnum + 1, CASE="pess")
+                        .rename(slgof_col_renamer, axis="columns")
+                    )
+                    df_list.append(
+                        scalrec.base.gasoil.slgof_df()[slgof_cols]
+                        .assign(SATNUM=satnum + 1, CASE="base")
+                        .rename(slgof_col_renamer, axis="columns")
+                    )
+                    df_list.append(
+                        scalrec.high.gasoil.slgof_df()[slgof_cols]
+                        .assign(SATNUM=satnum + 1, CASE="opt")
+                        .rename(slgof_col_renamer, axis="columns")
+                    )
         elif self.pyscaltype == WaterOil:
             for (satnum, wateroil) in enumerate(self.pyscal_list):
                 assert isinstance(wateroil, WaterOil)

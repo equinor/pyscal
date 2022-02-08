@@ -12,7 +12,7 @@ logger = getLogger_pyscal(__name__)
 
 
 class SCALrecommendation(object):
-    """A SCAL recommendation consists of three OilWaterGas objects,
+    """A SCAL recommendation consists of three WaterOilGas objects,
     tagged low, base and high.
 
     This container exists in order to to interpolation from -1 (low),
