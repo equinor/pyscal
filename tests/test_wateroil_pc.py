@@ -84,7 +84,7 @@ def test_simple_j_petro():
         wateroil.add_simple_J_petro(a=1, b=2)
 
 
-@settings(deadline=500)
+@settings(deadline=2000)
 @given(
     st.floats(min_value=0.001, max_value=1000000),
     st.floats(min_value=-0.9 * MAX_EXPONENT, max_value=-0.001),
@@ -139,7 +139,7 @@ def test_normalized_j(caplog):
     assert "a parameter is very high" in caplog.text
 
 
-@settings(deadline=500)
+@settings(deadline=2000)
 @given(
     st.floats(min_value=0, max_value=0.1),  # swirr
     st.floats(min_value=0.01, max_value=0.1),  # swl - swirr

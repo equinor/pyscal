@@ -385,7 +385,7 @@ def test_interpolate_wo_pc(swl, dswcr, dswlhigh, sorw, a_l, a_h, b_l, b_h):
     # trigger a discontinuity in the interpolants, which we don't want.
 
 
-@settings(max_examples=40, deadline=1000)
+@settings(max_examples=40, deadline=2000)
 @given(
     st.floats(min_value=0, max_value=0.1),  # swl
     st.floats(min_value=0, max_value=0.1),  # sgcr

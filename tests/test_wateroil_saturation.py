@@ -8,6 +8,7 @@ from pyscal.constants import SWINTEGERS
 from pyscal.utils.testing import check_table, float_df_checker
 
 
+@settings(deadline=2000)
 @given(
     st.floats(),
     st.floats(),
@@ -26,6 +27,7 @@ def test_wateroil_random(swirr, swl, swcr, sorw, socr, h, tag):
         pass
 
 
+@settings(deadline=2000)
 @given(
     st.floats(min_value=0, max_value=0.1),
     st.floats(min_value=0, max_value=0.15),
@@ -102,7 +104,7 @@ def test_wateroil_socr(socr):
     check_table(wateroil.table)
 
 
-@settings(deadline=1000)
+@settings(deadline=2000)
 @given(st.floats(min_value=0, max_value=1), st.floats(min_value=0, max_value=1))
 def test_wateroil_dual(param1, param2):
     """Test combination of 2 floats as parameters"""

@@ -107,7 +107,7 @@ def test_plotting(mocker):
     gasoil.plotkrgkrog(logyscale=True, mpl_ax=None)
 
 
-@settings(deadline=300)
+@settings(deadline=2000)
 @given(st.text())
 def test_gasoil_tag(tag):
     """Test tagging of GasOil objects,
@@ -120,7 +120,7 @@ def test_gasoil_tag(tag):
     sat_table_str_ok(gasoil.SGFN())
 
 
-@settings(deadline=500)
+@settings(deadline=2000)
 @given(
     st.floats(min_value=0, max_value=0.15),  # swl
     st.floats(min_value=0, max_value=0.3),  # sgcr
@@ -159,7 +159,7 @@ def test_gasoil_normalization(swl, sgcr, sorg, h, tag):
     assert float_df_checker(gasoil.table, "SG", gasoil.sgcr, "SGN", 0)
 
 
-@settings(deadline=1000)
+@settings(deadline=2000)
 @given(
     st.floats(min_value=0, max_value=0.3),  # swl
     st.floats(min_value=0, max_value=0.3),  # sgcr
@@ -360,7 +360,7 @@ def test_kroend():
     assert gasoil.table["KROG"].max() == 0.5
 
 
-@settings(deadline=1500)
+@settings(deadline=2000)
 @given(st.floats(), st.floats())
 def test_gasoil_corey1(ng, nog):
     """Test the Corey formulation for gasoil"""
@@ -428,7 +428,7 @@ def test_comments():
     assert "PC" in sgof
 
 
-@settings(deadline=1500)
+@settings(deadline=2000)
 @given(st.floats(), st.floats(), st.floats(), st.floats(), st.floats())
 def test_gasoil_let1(l, e, t, krgend, krgmax):
     """Test the LET formulation, take 1"""

@@ -24,7 +24,7 @@ def check_table(dframe):
         assert dframe["PC"].is_monotonic_decreasing
 
 
-@settings(deadline=1000)
+@settings(deadline=2000)
 @given(
     st.floats(min_value=0.0, max_value=0.3),
     st.floats(min_value=0.0, max_value=0.3),
