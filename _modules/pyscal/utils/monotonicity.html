@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.utils.monotonicity &mdash; pyscal 0.9.1.dev7+gce03684 documentation</title>
+  <title>pyscal.utils.monotonicity &mdash; pyscal 0.9.1.dev8+g8459917 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -28,7 +28,7 @@
             <img src="../../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.9.1.dev7+gce03684
+                0.9.1.dev8+g8459917
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -178,7 +178,7 @@
 
     <span class="c1"># Modify data for monotonicity:</span>
     <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">monotonicity</span><span class="p">:</span>
-        <span class="n">accuracy</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="mf">10.0</span> <span class="o">**</span> <span class="n">digits</span> <span class="o">-</span> <span class="n">epsilon</span>
+        <span class="n">accuracy</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="mf">10.0</span><span class="o">**</span><span class="n">digits</span> <span class="o">-</span> <span class="n">epsilon</span>
 
         <span class="k">if</span> <span class="s2">&quot;allowzero&quot;</span> <span class="ow">in</span> <span class="n">monotonicity</span><span class="p">[</span><span class="n">col</span><span class="p">]:</span>
             <span class="c1"># Treat zero as an exception for strict monotonicity:</span>
@@ -197,7 +197,7 @@
             <span class="p">),</span> <span class="s2">&quot;Too many iterations for monotonicity fix&quot;</span>
 
             <span class="n">dframe</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">constants</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="n">dframe</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">constants</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span> <span class="o">+</span> <span class="n">sign</span> <span class="o">/</span> <span class="mf">10.0</span> <span class="o">**</span> <span class="n">digits</span> <span class="o">-</span> <span class="n">epsilon</span>
+                <span class="n">dframe</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">constants</span><span class="p">,</span> <span class="n">col</span><span class="p">]</span> <span class="o">+</span> <span class="n">sign</span> <span class="o">/</span> <span class="mf">10.0</span><span class="o">**</span><span class="n">digits</span> <span class="o">-</span> <span class="n">epsilon</span>
             <span class="p">)</span>
 
             <span class="c1"># Ensure nonstrict monotonicity and clips after each modification:</span>
@@ -218,7 +218,7 @@
             <span class="p">)</span>
 
         <span class="c1"># Assert that we have successfully managed to force monotonicity</span>
-        <span class="n">allowance</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="mf">10.0</span> <span class="o">**</span> <span class="n">digits</span>
+        <span class="n">allowance</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="mf">10.0</span><span class="o">**</span><span class="n">digits</span>
         <span class="k">if</span> <span class="n">sign</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">assert</span> <span class="ow">not</span> <span class="p">(</span>
                 <span class="n">dframe</span><span class="p">[</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">digits</span><span class="p">)</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">allowance</span>
@@ -307,7 +307,7 @@
         <span class="n">series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">series</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;float64&quot;</span><span class="p">)</span>
 
     <span class="c1"># minus epsilon is critical to avoid being greedy</span>
-    <span class="n">accuracy</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="mf">10.0</span> <span class="o">**</span> <span class="n">digits</span> <span class="o">-</span> <span class="n">epsilon</span>
+    <span class="n">accuracy</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="mf">10.0</span><span class="o">**</span><span class="n">digits</span> <span class="o">-</span> <span class="n">epsilon</span>
     <span class="k">if</span> <span class="n">monotonicity</span><span class="p">[</span><span class="s2">&quot;sign&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">constants</span> <span class="o">=</span> <span class="n">series</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">digits</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">accuracy</span>
     <span class="k">else</span><span class="p">:</span>
