@@ -98,7 +98,7 @@ def modify_dframe_monotonicity(
 
     # Modify data for monotonicity:
     for col in monotonicity:
-        accuracy = 1.0 / 10.0 ** digits - epsilon
+        accuracy = 1.0 / 10.0**digits - epsilon
 
         if "allowzero" in monotonicity[col]:
             # Treat zero as an exception for strict monotonicity:
@@ -117,7 +117,7 @@ def modify_dframe_monotonicity(
             ), "Too many iterations for monotonicity fix"
 
             dframe.loc[constants, col] = (
-                dframe.loc[constants, col] + sign / 10.0 ** digits - epsilon
+                dframe.loc[constants, col] + sign / 10.0**digits - epsilon
             )
 
             # Ensure nonstrict monotonicity and clips after each modification:
@@ -138,7 +138,7 @@ def modify_dframe_monotonicity(
             )
 
         # Assert that we have successfully managed to force monotonicity
-        allowance = 1.0 / 10.0 ** digits
+        allowance = 1.0 / 10.0**digits
         if sign > 0:
             assert not (
                 dframe[col].round(digits).diff() < -allowance
@@ -227,7 +227,7 @@ def rows_to_be_fixed(
         series = pd.Series(series, dtype="float64")
 
     # minus epsilon is critical to avoid being greedy
-    accuracy = 1.0 / 10.0 ** digits - epsilon
+    accuracy = 1.0 / 10.0**digits - epsilon
     if monotonicity["sign"] > 0:
         constants = series.round(digits + 1).diff() < accuracy
     else:
