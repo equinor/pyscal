@@ -589,7 +589,9 @@ class WaterOil(object):
 
         self.set_endpoints_linearpart_krow(kroend)
 
-        self.krowcomment = "-- LET krow, l={l:g}, e={e:g}, t={t:g}, kroend={kroend:g}\n"
+        self.krowcomment = (
+            f"-- LET krow, l={l:g}, e={e:g}, t={t:g}, kroend={kroend:g}\n"
+        )
 
     def add_corey_oil(self, now: float = 2.0, kroend: float = 1.0) -> None:
         """Add kro data through the Corey parametrization
