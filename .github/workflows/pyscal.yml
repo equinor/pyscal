@@ -79,12 +79,14 @@ jobs:
           python -c "import matplotlib.font_manager; matplotlib.font_manager._rebuild()"
 
       - name: Build documentation
+        if: matrix.os == 'ubuntu-latest'
         run: |
+          export SETUPTOOLS_SCM_PRETEND_VERSION=${GITHUB_REF//refs\/tags\//}
           python docs/make_plots.py
           python setup.py build_sphinx
 
       - name: Update GitHub pages
-        if: github.repository_owner == 'equinor' && github.ref == 'refs/heads/master' && matrix.python-version == '3.6'
+        if: github.event_name == 'release' && matrix.python-version == '3.6' && matrix.os == 'ubuntu-latest'
         run: |
             cp -R ./build/sphinx/html ../html
 
@@ -113,6 +115,7 @@ jobs:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.pyscal_pypi_token }}
         run: |
+          export SETUPTOOLS_SCM_PRETEND_VERSION=${GITHUB_REF//refs\/tags\//}
           python -m pip install --upgrade setuptools wheel twine
           python setup.py sdist bdist_wheel
           twine upload dist/*
