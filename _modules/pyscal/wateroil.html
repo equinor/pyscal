@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.wateroil &mdash; pyscal 0.9.1.dev9+gb7d1db5 documentation</title>
+  <title>pyscal.wateroil &mdash; pyscal 0.9.1.dev10+g35f6502 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -28,7 +28,7 @@
             <img src="../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.9.1.dev9+gb7d1db5
+                0.9.1.dev10+g35f6502
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -669,7 +669,9 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">set_endpoints_linearpart_krow</span><span class="p">(</span><span class="n">kroend</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">krowcomment</span> <span class="o">=</span> <span class="s2">&quot;-- LET krow, l=</span><span class="si">{l:g}</span><span class="s2">, e=</span><span class="si">{e:g}</span><span class="s2">, t=</span><span class="si">{t:g}</span><span class="s2">, kroend=</span><span class="si">{kroend:g}</span><span class="se">\n</span><span class="s2">&quot;</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">krowcomment</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;-- LET krow, l=</span><span class="si">{</span><span class="n">l</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">, e=</span><span class="si">{</span><span class="n">e</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">, t=</span><span class="si">{</span><span class="n">t</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">, kroend=</span><span class="si">{</span><span class="n">kroend</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="p">)</span></div>
 
 <div class="viewcode-block" id="WaterOil.add_corey_oil"><a class="viewcode-back" href="../../pyscal/pyscal.wateroil.html#pyscal.wateroil.WaterOil.add_corey_oil">[docs]</a>    <span class="k">def</span> <span class="nf">add_corey_oil</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">now</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">kroend</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Add kro data through the Corey parametrization</span>
