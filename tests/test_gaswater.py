@@ -148,7 +148,7 @@ def test_gaswater_let1(l, e, t, krwend, krwmax):
     st.floats(min_value=0.1, max_value=1),
     st.floats(min_value=0.1, max_value=1),
     st.floats(min_value=0.1, max_value=1),
-    st.floats(min_value=0.0001, max_value=1),
+    st.floats(min_value=0.001, max_value=1),
     st.booleans(),
 )
 def test_gaswater_krendmax(swl, swcr, sgrw, krgend, krwend, krwmax, h, fast):

@@ -4,7 +4,7 @@ import hypothesis.strategies as st
 from hypothesis import given, settings
 
 from pyscal import WaterOil
-from pyscal.constants import SWINTEGERS
+from pyscal.constants import EPSILON, SWINTEGERS
 from pyscal.utils.testing import check_table, float_df_checker
 
 
@@ -69,35 +69,35 @@ def test_wateroil_normalization(swirr, swl, swcr, sorw, socr_add, h, tag):
     assert float_df_checker(wateroil.table, "SW", 1.0, "SWNPC", 1)
 
 
-@given(st.floats(min_value=0, max_value=1))
+@given(st.floats(min_value=0, max_value=1 - EPSILON))
 def test_wateroil_swir(swirr):
     """Check that the saturation values are valid for all swirr"""
     wateroil = WaterOil(swirr=swirr)
     check_table(wateroil.table)
 
 
-@given(st.floats(min_value=0, max_value=1))
+@given(st.floats(min_value=0, max_value=1 - EPSILON))
 def test_wateroil_swl(swl):
     """Check that the saturation values are valid for all swl"""
     wateroil = WaterOil(swl=swl)
     check_table(wateroil.table)
 
 
-@given(st.floats(min_value=0, max_value=1))
+@given(st.floats(min_value=0, max_value=1 - EPSILON))
 def test_wateroil_swcr(swcr):
     """Check that the saturation values are valid for all swcr"""
     wateroil = WaterOil(swcr=swcr)
     check_table(wateroil.table)
 
 
-@given(st.floats(min_value=0, max_value=1))
+@given(st.floats(min_value=0, max_value=1 - EPSILON))
 def test_wateroil_sorw(sorw):
     """Check that the saturation values are valid for all sorw"""
     wateroil = WaterOil(sorw=sorw)
     check_table(wateroil.table)
 
 
-@given(st.floats(min_value=0, max_value=1))
+@given(st.floats(min_value=0, max_value=1 - EPSILON))
 def test_wateroil_socr(socr):
     """Check that the saturation values are valid for all socr"""
     wateroil = WaterOil(socr=socr)
