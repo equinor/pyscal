@@ -144,37 +144,7 @@ class WaterOilGas(object):
         ):
             logger.error("Both WaterOil and GasOil krow/krog is needed for SOF3")
             return ""
-        self.threephaseconsistency()
-
-        # Copy of the wateroil data:
-        table = pd.DataFrame(self.wateroil.table[["SW", "KROW"]])
-        table["SO"] = 1 - table["SW"]
-
-        # Copy of the gasoil data:
-        gastable = pd.DataFrame(self.gasoil.table[["SG", "KROG"]])
-        gastable["SO"] = 1 - gastable["SG"] - self.wateroil.swl
-
-        # Merge WaterOil and GasOil on oil saturation, interpolate for
-        # missing data (potentially different sg- and sw-grids)
-        sof3table = (
-            pd.concat([table, gastable], sort=True)
-            .set_index("SO")
-            .sort_index()
-            .interpolate(method="slinear")
-            .fillna(method="ffill")
-            .fillna(method="bfill")
-            .reset_index()
-        )
-        sof3table["soint"] = list(
-            map(int, list(map(round, sof3table["SO"] * SWINTEGERS)))
-        )
-        sof3table.drop_duplicates("soint", inplace=True)
-
-        # The 'so' column has been calculated from floating point numbers
-        # and the zero value easily becomes a negative zero, circumvent this:
-        zerorow = np.isclose(sof3table["SO"], 0.0)
-        sof3table.loc[zerorow, "SO"] = abs(sof3table.loc[zerorow, "SO"])
-
+        sof3table = self.sof3_df()
         string = ""
         if header:
             string += "SOF3\n"
@@ -298,3 +268,48 @@ class WaterOilGas(object):
         # swl=0.45, (1-swl) = 0.55
 
         return wog_is_ok
+
+    def sof3_df(self) -> pd.DataFrame:
+        """Return a SOF3 DataFrame, combining data from the wateroil and
+        gasoil objects.
+
+        So - the oil saturation ranges from 0 to 1-swl. The saturation points
+        from the WaterOil object is used to generate these
+        """
+        if (self.wateroil is None or self.gasoil is None) or (
+            "KROW" not in self.wateroil.table or "KROG" not in self.gasoil.table
+        ):
+            logger.error("Both WaterOil and GasOil krow/krog is needed for SOF3")
+            return pd.DataFrame()
+        self.threephaseconsistency()
+
+        # Copy of the wateroil data:
+        table = pd.DataFrame(self.wateroil.table[["SW", "KROW"]])
+        table["SO"] = 1 - table["SW"]
+
+        # Copy of the gasoil data:
+        gastable = pd.DataFrame(self.gasoil.table[["SG", "KROG"]])
+        gastable["SO"] = 1 - gastable["SG"] - self.wateroil.swl
+
+        # Merge WaterOil and GasOil on oil saturation, interpolate for
+        # missing data (potentially different sg- and sw-grids)
+        sof3table = (
+            pd.concat([table, gastable], sort=True)
+            .set_index("SO")
+            .sort_index()
+            .interpolate(method="slinear")
+            .fillna(method="ffill")
+            .fillna(method="bfill")
+            .reset_index()
+        )
+        sof3table["soint"] = list(
+            map(int, list(map(round, sof3table["SO"] * SWINTEGERS)))
+        )
+        sof3table.drop_duplicates("soint", inplace=True)
+
+        # The 'so' column has been calculated from floating point numbers
+        # and the zero value easily becomes a negative zero, circumvent this:
+        zerorow = np.isclose(sof3table["SO"], 0.0)
+        sof3table.loc[zerorow, "SO"] = abs(sof3table.loc[zerorow, "SO"])
+
+        return sof3table
