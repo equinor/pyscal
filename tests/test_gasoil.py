@@ -169,7 +169,7 @@ def test_gasoil_normalization(swl, sgcr, sorg, h, tag):
     st.floats(min_value=0.1, max_value=1),  # kromax
     st.floats(min_value=0.1, max_value=1),  # krgend
     st.floats(min_value=0.2, max_value=1),  # krgmax
-    st.floats(min_value=0.001, max_value=1),  # h
+    st.floats(min_value=0.001, max_value=0.5),  # h
     st.booleans(),  # fast mode
 )
 def test_gasoil_krendmax(
