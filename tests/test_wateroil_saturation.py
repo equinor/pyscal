@@ -69,6 +69,7 @@ def test_wateroil_normalization(swirr, swl, swcr, sorw, socr_add, h, tag):
     assert float_df_checker(wateroil.table, "SW", 1.0, "SWNPC", 1)
 
 
+@settings(deadline=2000)
 @given(st.floats(min_value=0, max_value=1 - EPSILON))
 def test_wateroil_swir(swirr):
     """Check that the saturation values are valid for all swirr"""
