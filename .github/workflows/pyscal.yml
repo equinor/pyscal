@@ -22,10 +22,6 @@ jobs:
       matrix:
         include:
           - os: 'ubuntu-latest'
-            python-version: '3.6'
-          - os: 'ubuntu-latest'
-            python-version: '3.7'
-          - os: 'ubuntu-latest'
             python-version: '3.8'
           - os: 'ubuntu-latest'
             python-version: '3.9'
@@ -73,10 +69,9 @@ jobs:
           rstcheck -r docs
 
       - name: Install font (xkcd) for documentation
-        if: matrix.python-version == '3.6'
+        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.8'
         run: |
           sudo apt-get install -y fonts-humor-sans
-          python -c "import matplotlib.font_manager; matplotlib.font_manager._rebuild()"
 
       - name: Build documentation
         if: matrix.os == 'ubuntu-latest'
@@ -86,7 +81,7 @@ jobs:
           python setup.py build_sphinx
 
       - name: Build python package and publish to pypi
-        if: github.event_name == 'release' && matrix.python-version == '3.6' && matrix.os == 'ubuntu-latest'
+        if: github.event_name == 'release' && matrix.python-version == '3.8' && matrix.os == 'ubuntu-latest'
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.pyscal_pypi_token }}
@@ -97,7 +92,7 @@ jobs:
           twine upload dist/*
 
       - name: Update GitHub pages
-        if: github.event_name == 'release' && matrix.python-version == '3.6' && matrix.os == 'ubuntu-latest'
+        if: github.event_name == 'release' && matrix.python-version == '3.8' && matrix.os == 'ubuntu-latest'
         run: |
             cp -R ./build/sphinx/html ../html
 
