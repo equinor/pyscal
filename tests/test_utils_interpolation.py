@@ -958,3 +958,68 @@ def test_gasoil_gascond_fails():
 
     check_table(interpolate_go(gasoil, gascond, parameter=1.0 - epsilon).table)
     check_table(interpolate_go(gasoil, gascond, parameter=1.0).table)
+
+
+def test_endpointpitfalls_in_interpolation_socr():
+    """Demonstration of behaviour and pitfalls around endpoints (socr in particular)
+    when initializing objects through discretization (add_fromtable()) and how it will
+    affect interpolation.
+    """
+    wo_low = WaterOil(swl=0.1, sorw=0.12)
+    wo_low.add_LET_water(l=2, e=2, t=1)
+    wo_low.add_LET_oil(l=5, e=5, t=1)
+
+    assert wo_low.socr == wo_low.sorw  # By initialization
+
+    # The KROW values approach zero faster than KRW approaches 1,
+    # which makes the tabulated values indicate socr > sorw.
+    # This is correct behaviour given finite floating point accuracy.
+    assert wo_low.estimate_socr() > wo_low.estimate_sorw()  # difference is around 0.01
+    assert np.isclose(wo_low.estimate_sorw(), 0.12)  # correct estimate
+
+    # A not-so-extreme curve-set
+    wo_high = WaterOil(swl=0.1, sorw=0.12)
+    wo_high.add_LET_water(l=1, e=2, t=1)
+    wo_high.add_LET_oil(l=1, e=2, t=1)
+    assert wo_low.socr == wo_low.sorw
+    # No surprises:
+    assert np.isclose(wo_high.estimate_socr(), wo_high.estimate_sorw())
+
+    # If the original wo_low object is then reinitialized through its own
+    # discretization (e.g. via a SWOF file on disk and then back again, or via
+    # its table property and then add_fromtable()), the original knowledge that
+    # socr was defaulted and thus equal to sorw is lost and the best pyscal can
+    # do is to use the estimators
+    wo_low_dataframe = wo_low.table.copy()
+    wo_low_fromtable = WaterOil(wo_low_dataframe["SW"].min())
+    wo_low_fromtable.add_fromtable(wo_low_dataframe)
+    # The properties of the WaterOil object are now the estimated values.
+    assert wo_low_fromtable.socr > wo_low_fromtable.sorw
+
+    # Interpolation from the original low object or the discretized low object
+    # will be slightly different:
+    wo_ip_original = interpolate_wo(wo_low, wo_high, 0.5)
+    wo_ip_throughdiscretization = interpolate_wo(wo_low_fromtable, wo_high, 0.5)
+    # The right end of the curves will have slightly lower values due to
+    # the interpreteded socr for wo_ip_throughdiscretization:
+    assert (
+        wo_ip_original.table["KROW"].tail(20).sum()
+        > wo_ip_throughdiscretization.table["KROW"].tail(20).sum()
+    )
+    # But it can be circumvented by explicitly stating the endpoints when
+    # using add_fromtable()
+    wo_low_fromtable_fixed = WaterOil(wo_low_dataframe["SW"].min())
+    wo_low_fromtable_fixed.add_fromtable(wo_low_dataframe, sorw=0.12, socr=0.12)
+    wo_ip_throughdiscretization_fixed = interpolate_wo(
+        wo_low_fromtable_fixed, wo_high, 0.5
+    )
+    assert np.isclose(
+        wo_ip_original.table["KROW"].tail(20).sum(),
+        wo_ip_throughdiscretization_fixed.table["KROW"].tail(20).sum(),
+    )
+
+    # Plotting the minor discrepancy (zoom in to see the differences)
+    # _, mpl_ax = pyplot.subplots()
+    # wo_ip_original.plotkrwkrow(mpl_ax, color="green", alpha=0.6)
+    # wo_ip_throughdiscretization.plotkrwkrow(mpl_ax, color="red", alpha=0.6)
+    # pyplot.show()
