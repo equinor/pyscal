@@ -7,10 +7,10 @@ import matplotlib.pyplot
 import numpy as np
 import pandas as pd
 import pytest
-from hypothesis import given, settings
+from hypothesis import given
 
 from pyscal import GasOil
-from pyscal.constants import SWINTEGERS
+from pyscal.constants import MAX_EXPONENT, SWINTEGERS
 from pyscal.utils.relperm import truncate_zeroness
 from pyscal.utils.testing import (
     check_linear_sections,
@@ -130,7 +130,6 @@ def test_plotting(mocker):
     gasoil.plotkrgkrog(logyscale=True, mpl_ax=None)
 
 
-@settings(deadline=2000)
 @given(st.text())
 def test_gasoil_tag(tag):
     """Test tagging of GasOil objects,
@@ -143,7 +142,6 @@ def test_gasoil_tag(tag):
     sat_table_str_ok(gasoil.SGFN())
 
 
-@settings(deadline=2000)
 @given(
     st.floats(min_value=0, max_value=0.15),  # swl
     st.floats(min_value=0, max_value=0.3),  # sgcr
@@ -182,7 +180,6 @@ def test_gasoil_normalization(swl, sgcr, sorg, h, tag):
     assert float_df_checker(gasoil.table, "SG", gasoil.sgcr, "SGN", 0)
 
 
-@settings(deadline=2000)
 @given(
     st.floats(min_value=0, max_value=0.3),  # swl
     st.floats(min_value=0, max_value=0.3),  # sgcr
@@ -401,8 +398,10 @@ def test_kroend():
     assert gasoil.table["KROG"].max() == 0.5
 
 
-@settings(deadline=2000)
-@given(st.floats(), st.floats())
+@given(
+    st.floats(min_value=1e-4, max_value=MAX_EXPONENT),  # ng
+    st.floats(min_value=1e-4, max_value=MAX_EXPONENT),  # nog
+)
 def test_gasoil_corey1(ng, nog):
     """Test the Corey formulation for gasoil"""
     gasoil = GasOil()
@@ -469,7 +468,6 @@ def test_comments():
     assert "PC" in sgof
 
 
-@settings(deadline=2000)
 @given(st.floats(), st.floats(), st.floats(), st.floats(), st.floats())
 def test_gasoil_let1(l, e, t, krgend, krgmax):
     """Test the LET formulation, take 1"""

@@ -3,7 +3,7 @@
 import hypothesis.strategies as st
 import numpy as np
 import pytest
-from hypothesis import given, settings
+from hypothesis import given
 
 from pyscal import GasOil, WaterOilGas
 from pyscal.constants import EPSILON, SWINTEGERS
@@ -24,7 +24,6 @@ def check_table(dframe):
         assert dframe["PC"].is_monotonic_decreasing
 
 
-@settings(deadline=2000)
 @given(
     st.floats(min_value=0.0, max_value=0.3),
     st.floats(min_value=0.0, max_value=0.3),
@@ -125,7 +124,6 @@ def test_numerical_problems(swl, sorg, sgcr):
     check_table(slgof)
 
 
-@settings(deadline=2000)  # This is slow for small h
 @given(
     st.floats(min_value=0.0, max_value=0.3),
     st.floats(min_value=0.0, max_value=0.3),
@@ -150,7 +148,6 @@ def test_slgof_hypo(swl, sorg, sgcr, h):
     sat_table_str_ok(slgof_str)
 
 
-@settings(deadline=2000)
 @given(
     st.floats(min_value=0.0, max_value=0.3),
     st.floats(min_value=0.0, max_value=0.3),

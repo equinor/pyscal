@@ -9,6 +9,8 @@ from pyscal import GasWater, PyscalFactory, SCALrecommendation, WaterOil, WaterO
 from pyscal.factory import slicedict
 from pyscal.utils.testing import check_table, sat_table_str_ok
 
+slow_profile = settings.get_profile("slow")
+
 # Example SCAL recommendation, low case
 LOW_SAMPLE_LET = {
     "swirr": 0.1,
@@ -206,7 +208,8 @@ def test_make_scalrecommendation_go():
         rec.interpolate(2)
 
 
-@settings(max_examples=10, deadline=2000)
+@pytest.mark.slow
+@settings(deadline=slow_profile.deadline)
 @given(
     st.floats(min_value=-1.1, max_value=1.1), st.floats(min_value=-1.1, max_value=1.1)
 )

@@ -4,7 +4,7 @@ import hypothesis.strategies as st
 import numpy as np
 import pandas as pd
 import pytest
-from hypothesis import given, settings
+from hypothesis import given
 
 from pyscal import GasOil, WaterOil, WaterOilGas
 from pyscal.utils.testing import check_table, float_df_checker
@@ -641,7 +641,6 @@ def test_fromtable_types():
         )
 
 
-@settings(deadline=2000)
 @given(st.floats(min_value=1e-5, max_value=1))
 def test_wo_fromtable_h(h):
     """Test making curves from tabular data with random stepsize h"""
