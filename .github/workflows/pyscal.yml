@@ -62,7 +62,7 @@ jobs:
       - name: Run tests
         run: |
           python -c "import pyscal"
-          pytest tests/
+          pytest --strict-markers --hypothesis-profile ci tests/
 
       - name: Syntax check documentation
         run: |

@@ -1,14 +1,13 @@
 """Test module for the saturation ranges in WaterOil objects"""
 
 import hypothesis.strategies as st
-from hypothesis import given, settings
+from hypothesis import given
 
 from pyscal import WaterOil
 from pyscal.constants import EPSILON, SWINTEGERS
 from pyscal.utils.testing import check_table, float_df_checker
 
 
-@settings(deadline=2000)
 @given(
     st.floats(),
     st.floats(),
@@ -27,7 +26,6 @@ def test_wateroil_random(swirr, swl, swcr, sorw, socr, h, tag):
         pass
 
 
-@settings(deadline=2000)
 @given(
     st.floats(min_value=0, max_value=0.1),
     st.floats(min_value=0, max_value=0.15),
@@ -69,7 +67,6 @@ def test_wateroil_normalization(swirr, swl, swcr, sorw, socr_add, h, tag):
     assert float_df_checker(wateroil.table, "SW", 1.0, "SWNPC", 1)
 
 
-@settings(deadline=2000)
 @given(st.floats(min_value=0, max_value=1 - EPSILON))
 def test_wateroil_swir(swirr):
     """Check that the saturation values are valid for all swirr"""
@@ -105,7 +102,6 @@ def test_wateroil_socr(socr):
     check_table(wateroil.table)
 
 
-@settings(deadline=2000)
 @given(st.floats(min_value=0, max_value=1), st.floats(min_value=0, max_value=1))
 def test_wateroil_dual(param1, param2):
     """Test combination of 2 floats as parameters"""

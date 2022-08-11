@@ -7,7 +7,7 @@ import matplotlib.pyplot
 import numpy as np
 import pandas as pd
 import pytest
-from hypothesis import given, settings
+from hypothesis import given
 
 from pyscal import WaterOil
 from pyscal.constants import SWINTEGERS
@@ -43,7 +43,6 @@ def check_endpoints(wateroil, krwend, krwmax, kroend):
         assert np.isclose(wateroil.table["KRW"].max(), krwend)
 
 
-@settings(deadline=2000)
 @given(st.text())
 def test_wateroil_tag(tag):
     """Test that we are unlikely to crash Eclipse
@@ -55,7 +54,6 @@ def test_wateroil_tag(tag):
     sat_table_str_ok(wateroil.SWFN())
 
 
-@settings(deadline=2000)
 @given(st.floats(), st.floats())
 def test_wateroil_corey1(nw, now):
     """Test random corey parameters"""
@@ -76,7 +74,6 @@ def test_wateroil_corey1(nw, now):
     assert len(swofstr) > 100
 
 
-@settings(deadline=2000)
 @given(st.floats(), st.floats(), st.floats(), st.floats(), st.floats())
 def test_wateroil_let1(l, e, t, krwend, krwmax):
     """Test random LET parameters"""
@@ -96,7 +93,6 @@ def test_wateroil_let1(l, e, t, krwend, krwmax):
     assert len(swofstr) > 100
 
 
-@settings(deadline=2000)
 @given(
     st.floats(min_value=0, max_value=0.4),
     st.floats(min_value=0, max_value=0.4),

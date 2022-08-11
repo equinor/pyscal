@@ -5,7 +5,7 @@ import matplotlib
 import matplotlib.pyplot
 import numpy as np
 import pytest
-from hypothesis import given, settings
+from hypothesis import given
 
 from pyscal import GasWater
 from pyscal.constants import SWINTEGERS
@@ -79,7 +79,6 @@ def test_fast():
     assert "krw = krg" not in sgfn  # Crosspoint should not be present
 
 
-@settings(deadline=2000)
 @given(st.text())
 def test_gaswater_tag(tag):
     """Test that we are unlikely to crash Eclipse
@@ -91,7 +90,6 @@ def test_gaswater_tag(tag):
     sat_table_str_ok(gaswater.SGFN())
 
 
-@settings(deadline=2000)
 @given(st.floats(), st.floats())
 def test_gaswater_corey1(nw, ng):
     """Test random corey parameters"""
@@ -116,7 +114,6 @@ def test_gaswater_corey1(nw, ng):
     assert len(sgfnstr) > 100
 
 
-@settings(deadline=2000)
 @given(st.floats(), st.floats(), st.floats(), st.floats(), st.floats())
 def test_gaswater_let1(l, e, t, krwend, krwmax):
     """Test random LET parameters"""
@@ -140,7 +137,6 @@ def test_gaswater_let1(l, e, t, krwend, krwmax):
     assert len(sgfnstr) > 100
 
 
-@settings(deadline=2000)
 @given(
     st.floats(min_value=0, max_value=0.3),
     st.floats(min_value=0, max_value=0.3),
