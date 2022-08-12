@@ -3,13 +3,11 @@
 import hypothesis.strategies as st
 import pandas as pd
 import pytest
-from hypothesis import given, settings
+from hypothesis import given
 
 from pyscal import GasWater, PyscalFactory, SCALrecommendation, WaterOil, WaterOilGas
 from pyscal.factory import slicedict
-from pyscal.utils.testing import check_table, sat_table_str_ok
-
-slow_profile = settings.get_profile("slow")
+from pyscal.utils.testing import check_table, sat_table_str_ok, slow_hypothesis
 
 # Example SCAL recommendation, low case
 LOW_SAMPLE_LET = {
@@ -208,8 +206,7 @@ def test_make_scalrecommendation_go():
         rec.interpolate(2)
 
 
-@pytest.mark.slow
-@settings(deadline=slow_profile.deadline)
+@slow_hypothesis
 @given(
     st.floats(min_value=-1.1, max_value=1.1), st.floats(min_value=-1.1, max_value=1.1)
 )
