@@ -5,8 +5,23 @@ from typing import Union
 
 import numpy as np
 import pandas as pd
+from hypothesis import settings
 
 from pyscal import GasOil, WaterOil
+
+
+def slow_hypothesis(slow_function):
+    """A decorator for tests that are always slow.
+
+    The default deadline for hypothesis is set through the hypothesis profile
+    being used, and is set to None for CI runs (through a command line argument
+    and code in conftest.py), meaning no deadline. On tests that are slow on
+    local iron as well, we must ensure that the deadline set for these do not
+    override the "no-deadline" in CI.
+    """
+    if settings().deadline is None:
+        return settings()(slow_function)
+    return settings(deadline=1000)(slow_function)
 
 
 def series_decreasing(series: pd.Series):

@@ -10,13 +10,6 @@ settings.register_profile(
     "ci", max_examples=250, deadline=None, suppress_health_check=[HealthCheck.too_slow]
 )
 
-if settings().deadline is None:
-    # Check if the 'ci' profile above has been activated, then we don't want to
-    # override:
-    settings.register_profile("slow")
-else:
-    settings.register_profile("slow", max_examples=50, deadline=1000)
-
 
 @pytest.fixture
 def default_loglevel():

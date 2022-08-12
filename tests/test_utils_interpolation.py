@@ -4,7 +4,7 @@ import hypothesis.strategies as st
 import numpy as np
 import pandas as pd
 import pytest
-from hypothesis import given, settings
+from hypothesis import given
 from matplotlib import pyplot as plt
 
 from pyscal import GasOil, WaterOil
@@ -16,13 +16,15 @@ from pyscal.utils.interpolation import (
     normalize_nonlinpart_wo,
     normalize_pc,
 )
-from pyscal.utils.testing import check_table, float_df_checker, sat_table_str_ok
+from pyscal.utils.testing import (
+    check_table,
+    float_df_checker,
+    sat_table_str_ok,
+    slow_hypothesis,
+)
 
-slow_profile = settings.get_profile("slow")
 
-
-@pytest.mark.slow
-@settings(deadline=slow_profile.deadline)
+@slow_hypothesis
 @given(
     st.floats(min_value=0, max_value=0.1),  # swl
     st.floats(min_value=0, max_value=0.0),  # dswcr
@@ -242,8 +244,7 @@ def test_tag_preservation():
     sat_table_str_ok(interpolant1.SGOF())
 
 
-@pytest.mark.slow
-@settings(max_examples=slow_profile.max_examples, deadline=slow_profile.deadline)
+@slow_hypothesis
 @given(
     st.floats(min_value=0.01, max_value=0.1),  # swl
     st.floats(min_value=0, max_value=0.0),  # dswcr
@@ -342,8 +343,7 @@ def test_interpolate_wo(
     # trigger a discontinuity in the interpolants, which we don't want.
 
 
-@pytest.mark.slow
-@settings(max_examples=slow_profile.max_examples, deadline=slow_profile.deadline)
+@slow_hypothesis
 @given(
     st.floats(min_value=0.01, max_value=0.1),  # swl
     st.floats(min_value=0, max_value=0.0),  # dswcr
@@ -414,8 +414,7 @@ def test_interpolate_wo_pc(swl, dswcr, dswlhigh, sorw, a_l, a_h, b_l, b_h):
     # trigger a discontinuity in the interpolants, which we don't want.
 
 
-@pytest.mark.slow
-@settings(deadline=slow_profile.deadline)
+@slow_hypothesis
 @given(
     st.floats(min_value=0, max_value=0.1),  # swl
     st.floats(min_value=0, max_value=0.1),  # sgcr
@@ -677,8 +676,7 @@ def test_ip_go_kroend():
     assert float_df_checker(go_ip.table, "SG", 1 - 0.01 - 0.15, "KROG", 0)
 
 
-@pytest.mark.slow
-@settings(max_examples=slow_profile.max_examples, deadline=slow_profile.deadline)
+@slow_hypothesis
 @given(
     st.floats(min_value=0, max_value=0.1),  # swl
     st.floats(min_value=0, max_value=0.1),  # sgcr
