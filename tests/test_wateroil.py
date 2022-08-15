@@ -1,5 +1,6 @@
 """Test module for the WaterOil object"""
 import io
+import sys
 
 import hypothesis.strategies as st
 import matplotlib
@@ -187,6 +188,7 @@ def test_linearsegments():
     check_linear_sections(wateroil)
 
 
+@pytest.mark.skipif(sys.platform == "win32", reason="Plotting not stable on windows")
 def test_plotting(mocker):
     """Test that plotting code pass through (nothing displayed)"""
     mocker.patch("matplotlib.pyplot.show", return_value=None)

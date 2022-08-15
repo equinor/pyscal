@@ -1,5 +1,6 @@
 """Test module for GasOil objects"""
 import io
+import sys
 
 import hypothesis.strategies as st
 import matplotlib
@@ -119,6 +120,7 @@ def test_errors():
         GasOil(swl=0.4, sorg=0.4, sgro=0.4)
 
 
+@pytest.mark.skipif(sys.platform == "win32", reason="Plotting not stable on windows")
 def test_plotting(mocker):
     """Test that plotting code pass through (nothing displayed)"""
     mocker.patch("matplotlib.pyplot.show", return_value=None)

@@ -1,5 +1,7 @@
 """Test module for the GasWater object"""
 
+import sys
+
 import hypothesis.strategies as st
 import matplotlib
 import matplotlib.pyplot
@@ -309,6 +311,7 @@ def test_gaswater_pc():
     assert "0.1000000 0.0000000 0.014715" in swfn  # first row
 
 
+@pytest.mark.skipif(sys.platform == "win32", reason="Plotting not stable on windows")
 def test_plotting(mocker):
     """Test that plotting code pass through (nothing displayed)"""
     mocker.patch("matplotlib.pyplot.show", return_value=None)
