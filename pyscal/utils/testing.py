@@ -5,7 +5,13 @@ from typing import Union
 
 import numpy as np
 import pandas as pd
-from hypothesis import settings
+
+try:
+    from hypothesis import settings
+except ModuleNotFoundError:
+    # This module is only needed for testing, but this testing module
+    # should be importable in other scenarios as well.
+    pass
 
 from pyscal import GasOil, WaterOil
 
