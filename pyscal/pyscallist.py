@@ -106,11 +106,15 @@ class PyscalList(object):
                 assert isinstance(wateroilgas, WaterOilGas)
                 assert wateroilgas.wateroil is not None
                 assert wateroilgas.gasoil is not None
-                wateroil_cols = set(wateroilgas.wateroil.table.columns).intersection(
-                    wateroil_pyscal_cols
+                wateroil_cols = list(
+                    set(wateroilgas.wateroil.table.columns).intersection(
+                        wateroil_pyscal_cols
+                    )
                 )
-                gasoil_cols = set(wateroilgas.gasoil.table.columns).intersection(
-                    gasoil_pyscal_cols
+                gasoil_cols = list(
+                    set(wateroilgas.gasoil.table.columns).intersection(
+                        gasoil_pyscal_cols
+                    )
                 )
                 df_list.append(
                     wateroilgas.gasoil.table[gasoil_cols]
@@ -134,11 +138,15 @@ class PyscalList(object):
                 assert scalrec.base.gasoil is not None
                 assert scalrec.high.wateroil is not None
                 assert scalrec.high.gasoil is not None
-                gasoil_cols = set(scalrec.base.gasoil.table.columns).intersection(
-                    gasoil_pyscal_cols
+                gasoil_cols = list(
+                    set(scalrec.base.gasoil.table.columns).intersection(
+                        gasoil_pyscal_cols
+                    )
                 )
-                wateroil_cols = set(scalrec.base.wateroil.table.columns).intersection(
-                    wateroil_pyscal_cols
+                wateroil_cols = list(
+                    set(scalrec.base.wateroil.table.columns).intersection(
+                        wateroil_pyscal_cols
+                    )
                 )
                 df_list.append(
                     scalrec.low.gasoil.table[gasoil_cols]
@@ -175,8 +183,8 @@ class PyscalList(object):
             for (satnum, wateroil) in enumerate(self.pyscal_list):
                 assert isinstance(wateroil, WaterOil)
                 assert wateroil is not None
-                wateroil_cols = set(wateroil.table.columns).intersection(
-                    wateroil_pyscal_cols
+                wateroil_cols = list(
+                    set(wateroil.table.columns).intersection(wateroil_pyscal_cols)
                 )
                 df_list.append(
                     wateroil.table[wateroil_cols]
@@ -187,7 +195,9 @@ class PyscalList(object):
             for (satnum, gasoil) in enumerate(self.pyscal_list):
                 assert isinstance(gasoil, GasOil)
                 assert gasoil is not None
-                gasoil_cols = set(gasoil.table.columns).intersection(gasoil_pyscal_cols)
+                gasoil_cols = list(
+                    set(gasoil.table.columns).intersection(gasoil_pyscal_cols)
+                )
                 df_list.append(
                     gasoil.table[gasoil_cols]
                     .assign(SATNUM=satnum + 1)
