@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Introduction to pyscal &mdash; pyscal 0.9.2 documentation</title>
+  <title>Introduction to pyscal &mdash; pyscal 0.9.3 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -14,6 +14,7 @@
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
@@ -31,7 +32,7 @@
             <img src="_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.9.2
+                0.9.3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -87,7 +88,7 @@
            <div itemprop="articleBody">
              
   <section id="introduction-to-pyscal">
-<h1>Introduction to pyscal<a class="headerlink" href="#introduction-to-pyscal" title="Permalink to this headline"></a></h1>
+<h1>Introduction to pyscal<a class="headerlink" href="#introduction-to-pyscal" title="Permalink to this heading"></a></h1>
 <a class="reference internal image-reference" href="_images/pyscal-logo.png"><img alt="_images/pyscal-logo.png" src="_images/pyscal-logo.png" style="width: 200px;" /></a>
 <p><em>pyscal</em> is a Python tool and module for creating <a class="reference external" href="http://en.wikipedia.org/wiki/Relative_permeability">relative permeability</a> input
 curves for Eclipse, Flow (OPM) and Nexus. Curves are parametrized
@@ -102,7 +103,7 @@ interpolation parameters in a SCAL recommendation is the recommended practice.</
 then used for interpolation.</p>
 <p>Capillary pressure is supported through a selected number of parametrizations.</p>
 <section id="command-line-tool">
-<h2>Command line tool<a class="headerlink" href="#command-line-tool" title="Permalink to this headline"></a></h2>
+<h2>Command line tool<a class="headerlink" href="#command-line-tool" title="Permalink to this heading"></a></h2>
 <p>The command line tool is installed as <code class="docutils literal notranslate"><span class="pre">pyscal</span></code> and takes a table in a CSV file
 or in an XLSX file as the main input. Each SATNUM is represented by one row of
 data in the table.</p>
@@ -141,7 +142,7 @@ from the pyscal command above will look like:</p>
 of the example. Leave it defaulted (0.01) for practical use.</p>
 </section>
 <section id="python-api">
-<h2>Python API<a class="headerlink" href="#python-api" title="Permalink to this headline"></a></h2>
+<h2>Python API<a class="headerlink" href="#python-api" title="Permalink to this heading"></a></h2>
 <p>The corresponding API can be used directly for more control and for custom-made
 solutions. An example recreating the the same table as above is given by:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">WaterOil</span>
@@ -155,7 +156,7 @@ solutions. An example recreating the the same table as above is given by:</p>
 <p>which will give the same output as the example above.</p>
 <p>See the full API for in-depth information.</p>
 <section id="classes">
-<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this headline"></a></h3>
+<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this heading"></a></h3>
 <dl class="simple">
 <dt>WaterOil</dt><dd><p>Represents the data for water-oil relative permeability and
 capillary pressure. Essentially the data for SWOF plus metadata.

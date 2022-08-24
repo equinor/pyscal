@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.wateroil &mdash; pyscal 0.9.2 documentation</title>
+  <title>pyscal.wateroil &mdash; pyscal 0.9.3 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -13,6 +13,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -28,7 +29,7 @@
             <img src="../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.9.2
+                0.9.3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -201,9 +202,14 @@
         <span class="k">if</span> <span class="n">socr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">socr</span> <span class="o">=</span> <span class="n">truncate_zeroness</span><span class="p">(</span><span class="n">socr</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;socr&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">socr</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span> <span class="o">-</span> <span class="n">epsilon</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;socr must be equal to or larger than sorw&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;socr must be equal to or larger than sorw, &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;socr=</span><span class="si">{</span><span class="n">socr</span><span class="si">}</span><span class="s2">, sorw=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sorw</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span> <span class="o">-</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">socr</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">SWINTEGERS</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;socr was close to sorw, reset to sorw&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">socr</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">socr</span><span class="p">:</span>
+                    <span class="c1"># Only warn if it seems the user actually tried to set socr</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;socr was close to sorw, reset to sorw&quot;</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">socr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">socr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span>
@@ -296,6 +302,7 @@
         <span class="n">krowcomment</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
         <span class="n">pccomment</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
         <span class="n">sorw</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">socr</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Interpolate relpermdata from a dataframe.</span>
 
@@ -327,7 +334,9 @@
 <span class="sd">            krowcomment: Inserted into comment</span>
 <span class="sd">            pccomment: Inserted into comment</span>
 <span class="sd">            sorw: Explicit sorw. If None, it will be estimated from</span>
-<span class="sd">                the numbers in krw (or krow)</span>
+<span class="sd">                the numbers in krw</span>
+<span class="sd">            socr: Explicit socr. If None, it will be estimated from</span>
+<span class="sd">                the numbers in krow</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Avoid having to deal with multi-indices:</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dframe</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
@@ -356,12 +365,14 @@
 
         <span class="k">if</span> <span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="n">swcolname</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;SW data not sorted&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sorw</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">krwcolname</span> <span class="ow">in</span> <span class="n">dframe</span><span class="p">:</span>
+            <span class="n">sorw</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="n">swcolname</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span> <span class="o">-</span> <span class="n">estimate_diffjumppoint</span><span class="p">(</span>
+                <span class="n">dframe</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="n">swcolname</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="n">krwcolname</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">&quot;right&quot;</span>
+            <span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Estimated sorw in tabular data to </span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">sorw</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sorw</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">if</span> <span class="n">krwcolname</span> <span class="ow">in</span> <span class="n">dframe</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">sorw</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">sorw</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="n">swcolname</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span> <span class="o">-</span> <span class="n">estimate_diffjumppoint</span><span class="p">(</span>
-                    <span class="n">dframe</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="n">swcolname</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="n">krwcolname</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">&quot;right&quot;</span>
-                <span class="p">)</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Estimated sorw in tabular data to </span><span class="si">%f</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">sorw</span><span class="p">)</span>
             <span class="k">assert</span> <span class="o">-</span><span class="n">epsilon</span> <span class="o">&lt;=</span> <span class="n">sorw</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">epsilon</span>
             <span class="k">if</span> <span class="n">dframe</span><span class="p">[</span><span class="n">krwcolname</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;KRW is above 1 in incoming table&quot;</span><span class="p">)</span>
@@ -386,10 +397,6 @@
             <span class="c1"># Verify that incoming data is increasing (or level):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="n">krwcolname</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span> <span class="o">&gt;</span> <span class="o">-</span><span class="n">epsilon</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Incoming KRW not increasing&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">dframe</span><span class="p">[</span><span class="n">krwcolname</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;KRW is above 1 in incoming table&quot;</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">dframe</span><span class="p">[</span><span class="n">krwcolname</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;KRW is below 0 in incoming table&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">nonlinearpart</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
                 <span class="n">pchip</span> <span class="o">=</span> <span class="n">PchipInterpolator</span><span class="p">(</span>
                     <span class="n">dframe</span><span class="p">[</span><span class="n">nonlinearpart</span><span class="p">][</span><span class="n">swcolname</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span>
@@ -414,22 +421,25 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">swcr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">estimate_swcr</span><span class="p">()</span>
 
         <span class="k">if</span> <span class="n">krowcolname</span> <span class="ow">in</span> <span class="n">dframe</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">sorw</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">sorw</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="n">swcolname</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span> <span class="o">-</span> <span class="n">estimate_diffjumppoint</span><span class="p">(</span>
+            <span class="k">if</span> <span class="n">socr</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">socr</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="n">swcolname</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span> <span class="o">-</span> <span class="n">estimate_diffjumppoint</span><span class="p">(</span>
                     <span class="n">dframe</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="n">swcolname</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="n">krowcolname</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">&quot;right&quot;</span>
                 <span class="p">)</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Estimated sorw in tabular data from krow to </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">sorw</span><span class="p">)</span>
-            <span class="k">assert</span> <span class="o">-</span><span class="n">epsilon</span> <span class="o">&lt;=</span> <span class="n">sorw</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">epsilon</span>
-            <span class="n">linearpart</span> <span class="o">=</span> <span class="n">dframe</span><span class="p">[</span><span class="n">swcolname</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span>
-            <span class="n">nonlinearpart</span> <span class="o">=</span> <span class="n">dframe</span><span class="p">[</span><span class="n">swcolname</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span>  <span class="c1"># (overlapping at sorw)</span>
+                <span class="k">if</span> <span class="n">socr</span> <span class="o">&gt;</span> <span class="n">sorw</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Estimated socr in tabular data from krow to </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">socr</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">socr</span> <span class="o">=</span> <span class="n">sorw</span>
+            <span class="k">assert</span> <span class="o">-</span><span class="n">epsilon</span> <span class="o">&lt;=</span> <span class="n">socr</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">epsilon</span>
+            <span class="n">linearpart</span> <span class="o">=</span> <span class="n">dframe</span><span class="p">[</span><span class="n">swcolname</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">socr</span>
+            <span class="n">nonlinearpart</span> <span class="o">=</span> <span class="n">dframe</span><span class="p">[</span><span class="n">swcolname</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">socr</span>  <span class="c1"># (overlapping at sorw)</span>
             <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">linearpart</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
                 <span class="n">linearpart</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="kc">False</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">linearpart</span><span class="p">))</span>
                 <span class="n">nonlinearpart</span> <span class="o">=</span> <span class="o">~</span><span class="n">linearpart</span>
-                <span class="n">sorw</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">socr</span> <span class="o">=</span> <span class="mi">0</span>
             <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">nonlinearpart</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
                 <span class="n">nonlinearpart</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">([</span><span class="kc">False</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">nonlinearpart</span><span class="p">))</span>
                 <span class="n">linearpart</span> <span class="o">=</span> <span class="o">~</span><span class="n">nonlinearpart</span>
-                <span class="n">sorw</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
+                <span class="n">socr</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="n">swcolname</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()):</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Incompatible swl&quot;</span><span class="p">)</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="n">krowcolname</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
@@ -443,8 +453,8 @@
                     <span class="n">dframe</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">nonlinearpart</span><span class="p">,</span> <span class="n">swcolname</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span>
                     <span class="n">dframe</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">nonlinearpart</span><span class="p">,</span> <span class="n">krowcolname</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span>
                 <span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span><span class="p">,</span> <span class="s2">&quot;KROW&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pchip</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span><span class="p">,</span> <span class="s2">&quot;SW&quot;</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">socr</span><span class="p">,</span> <span class="s2">&quot;KROW&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pchip</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">socr</span><span class="p">,</span> <span class="s2">&quot;SW&quot;</span><span class="p">]</span>
                 <span class="p">)</span>
             <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">linearpart</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">2</span><span class="p">:</span>
                 <span class="n">linearinterpolator</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span>
@@ -452,12 +462,12 @@
                     <span class="n">dframe</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">linearpart</span><span class="p">,</span> <span class="n">krowcolname</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span>
                 <span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span><span class="p">,</span> <span class="s2">&quot;KROW&quot;</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">socr</span><span class="p">,</span> <span class="s2">&quot;KROW&quot;</span>
                 <span class="p">]</span> <span class="o">=</span> <span class="n">linearinterpolator</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span><span class="p">,</span> <span class="s2">&quot;SW&quot;</span><span class="p">]</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">socr</span><span class="p">,</span> <span class="s2">&quot;SW&quot;</span><span class="p">]</span>
                 <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROW&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">lower</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">sorw</span> <span class="o">=</span> <span class="n">sorw</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">socr</span> <span class="o">=</span> <span class="n">socr</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">krowcomment</span> <span class="o">=</span> <span class="s2">&quot;-- krow from tabular input&quot;</span> <span class="o">+</span> <span class="n">krowcomment</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">if</span> <span class="n">pccolname</span> <span class="ow">in</span> <span class="n">dframe</span><span class="p">:</span>
             <span class="c1"># Incoming dataframe must cover the range:</span>
@@ -1120,9 +1130,9 @@
 
 <div class="viewcode-block" id="WaterOil.estimate_socr"><a class="viewcode-back" href="../../pyscal/pyscal.wateroil.html#pyscal.wateroil.WaterOil.estimate_socr">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_socr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Estimate socr from the current kro data.&quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KRO&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROW&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">estimate_diffjumppoint</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="s2">&quot;SW&quot;</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="s2">&quot;KRO&quot;</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">&quot;right&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="s2">&quot;SW&quot;</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="s2">&quot;KROW&quot;</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">&quot;right&quot;</span>
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="WaterOil.estimate_swcr"><a class="viewcode-back" href="../../pyscal/pyscal.wateroil.html#pyscal.wateroil.WaterOil.estimate_swcr">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_swcr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">curve</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;KRW&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>

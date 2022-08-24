@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.gasoil &mdash; pyscal 0.9.2 documentation</title>
+  <title>pyscal.gasoil &mdash; pyscal 0.9.3 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -13,6 +13,7 @@
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/jquery.js"></script>
         <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
@@ -28,7 +29,7 @@
             <img src="../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.9.2
+                0.9.3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -182,7 +183,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">sgcr</span> <span class="o">=</span> <span class="n">truncate_zeroness</span><span class="p">(</span><span class="n">sgcr</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;sgcr&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sgro</span> <span class="o">=</span> <span class="n">truncate_zeroness</span><span class="p">(</span><span class="n">sgro</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;sgro&quot;</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sgro</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sgro</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sgcr</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sgro</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sgro</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sgcr</span><span class="p">,</span> <span class="mi">0</span><span class="p">)):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;sgro must be zero or equal to sgcr, for compatibility with &quot;</span>
                 <span class="s2">&quot;Eclipse three-point scaling. &quot;</span>
@@ -208,18 +209,13 @@
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sorg</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">krgendanchor</span> <span class="o">==</span> <span class="s2">&quot;sorg&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">krgendanchor</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>  <span class="c1"># This is critical to avoid bugs due to numerics.</span>
 
-        <span class="k">if</span> <span class="n">krgendanchor</span> <span class="o">==</span> <span class="s2">&quot;sorg&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorg</span> <span class="o">-</span> <span class="n">swl</span> <span class="o">-</span> <span class="n">sgcr</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">krgendanchor</span> <span class="o">==</span> <span class="s2">&quot;sorg&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorg</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sgcr</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;No saturation range left for gas curve between endpoints, check input&quot;</span>
             <span class="p">)</span>
-        <span class="k">if</span> <span class="n">krgendanchor</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">swl</span> <span class="o">-</span> <span class="n">sgcr</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">krgendanchor</span> <span class="o">==</span> <span class="s2">&quot;&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sgcr</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;No saturation range left for gas curve between endpoints, check input&quot;</span>
-            <span class="p">)</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorg</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sgro</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;No saturation range left for oil curve between endpoints, check input&quot;</span>
             <span class="p">)</span>
 
         <span class="n">sg_list</span> <span class="o">=</span> <span class="p">(</span>
@@ -246,8 +242,11 @@
 
         <span class="n">sgcrindex</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SG&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sgcr</span><span class="p">))</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">sort_values</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">sgcrindex</span><span class="p">,</span> <span class="s2">&quot;SG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sgcr</span>
+
+        <span class="c1"># Need to conserve sg=0 and sgcr:</span>
         <span class="k">if</span> <span class="n">sgcrindex</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">sgcr</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
-            <span class="c1"># Need to conserve sg=0</span>
+            <span class="c1"># This code is a safeguard againts truncate_zeroness(), which normally</span>
+            <span class="c1"># prevents this from happening.</span>
             <span class="n">zero_row</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;SG&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span> <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">zero_row</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">],</span> <span class="n">sort</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span>
                 <span class="n">drop</span><span class="o">=</span><span class="kc">True</span>
@@ -523,15 +522,7 @@
         <span class="c1"># Floating point issues can cause a slight overshoot at sg=0:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROG&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">kromax</span><span class="p">,</span> <span class="s2">&quot;KROG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kromax</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;KROG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kromax</span>
-
-        <span class="c1"># Linear part [0, sgro] for gas-condensate:</span>
-        <span class="n">sgroindex</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SG&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sgro</span><span class="p">))</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">sort_values</span><span class="p">()</span><span class="o">.</span><span class="n">index</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">if</span> <span class="n">sgroindex</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">1</span> <span class="p">:</span> <span class="n">sgroindex</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;KROG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;SG&quot;</span><span class="p">)[</span><span class="s2">&quot;KROG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;index&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
-            <span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;KROG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kromax</span></div>
 
 <div class="viewcode-block" id="GasOil.add_corey_gas"><a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.add_corey_gas">[docs]</a>    <span class="k">def</span> <span class="nf">add_corey_gas</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">ng</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">krgend</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">krgmax</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -891,7 +882,7 @@
 <div class="viewcode-block" id="GasOil.slgof_df"><a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.slgof_df">[docs]</a>    <span class="k">def</span> <span class="nf">slgof_df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="sd">&quot;&quot;&quot;Slice out an SLGOF table.</span>
 
-<span class="sd">        This is a used by the SLGOF() function, it is</span>
+<span class="sd">        This is used by the SLGOF() function, it is</span>
 <span class="sd">        extracted as a single function to facilitate testing.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="s2">&quot;PC&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
             <span class="c1"># Only happens when the SLGOF function is skipped (test code)</span>
@@ -903,12 +894,6 @@
             <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;SL&quot;</span><span class="p">)[[</span><span class="s2">&quot;SL&quot;</span><span class="p">,</span> <span class="s2">&quot;KRG&quot;</span><span class="p">,</span> <span class="s2">&quot;KROG&quot;</span><span class="p">,</span> <span class="s2">&quot;PC&quot;</span><span class="p">]]</span>
             <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="p">)</span>
-        <span class="c1"># It is a strict requirement that the first sl value should be swl + sorg,</span>
-        <span class="n">slgof_sl_mismatch</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">slgof</span><span class="p">[</span><span class="s2">&quot;SL&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sorg</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span><span class="p">))</span>
-        <span class="k">if</span> <span class="n">slgof_sl_mismatch</span> <span class="o">&gt;</span> <span class="n">epsilon</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;Bug: slgof_sl_mismatch was </span><span class="si">{</span><span class="n">slgof_sl_mismatch</span><span class="si">}</span><span class="s2">, too large&quot;</span>
-            <span class="p">)</span>
         <span class="k">return</span> <span class="n">slgof</span></div>
 
 <div class="viewcode-block" id="GasOil.SLGOF"><a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.SLGOF">[docs]</a>    <span class="k">def</span> <span class="nf">SLGOF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>

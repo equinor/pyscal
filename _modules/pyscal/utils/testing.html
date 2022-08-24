@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.utils.testing &mdash; pyscal 0.9.2 documentation</title>
+  <title>pyscal.utils.testing &mdash; pyscal 0.9.3 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -13,6 +13,7 @@
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
         <script src="../../../_static/jquery.js"></script>
         <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -28,7 +29,7 @@
             <img src="../../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.9.2
+                0.9.3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -86,7 +87,28 @@
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
 
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">hypothesis</span> <span class="kn">import</span> <span class="n">settings</span>
+<span class="k">except</span> <span class="ne">ModuleNotFoundError</span><span class="p">:</span>
+    <span class="c1"># This module is only needed for testing, but this testing module</span>
+    <span class="c1"># should be importable in other scenarios as well.</span>
+    <span class="k">pass</span>
+
 <span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">GasOil</span><span class="p">,</span> <span class="n">WaterOil</span>
+
+
+<div class="viewcode-block" id="slow_hypothesis"><a class="viewcode-back" href="../../../pyscal/pyscal.utils.testing.html#pyscal.utils.testing.slow_hypothesis">[docs]</a><span class="k">def</span> <span class="nf">slow_hypothesis</span><span class="p">(</span><span class="n">slow_function</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;A decorator for tests that are always slow.</span>
+
+<span class="sd">    The default deadline for hypothesis is set through the hypothesis profile</span>
+<span class="sd">    being used, and is set to None for CI runs (through a command line argument</span>
+<span class="sd">    and code in conftest.py), meaning no deadline. On tests that are slow on</span>
+<span class="sd">    local iron as well, we must ensure that the deadline set for these do not</span>
+<span class="sd">    override the &quot;no-deadline&quot; in CI.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">settings</span><span class="p">()</span><span class="o">.</span><span class="n">deadline</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">settings</span><span class="p">()(</span><span class="n">slow_function</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">settings</span><span class="p">(</span><span class="n">deadline</span><span class="o">=</span><span class="mi">1000</span><span class="p">)(</span><span class="n">slow_function</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="series_decreasing"><a class="viewcode-back" href="../../../pyscal/pyscal.utils.testing.html#pyscal.utils.testing.series_decreasing">[docs]</a><span class="k">def</span> <span class="nf">series_decreasing</span><span class="p">(</span><span class="n">series</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>

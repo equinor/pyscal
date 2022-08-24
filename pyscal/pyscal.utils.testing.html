@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.utils.testing &mdash; pyscal 0.9.2 documentation</title>
+  <title>pyscal.utils.testing &mdash; pyscal 0.9.3 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -14,6 +14,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -31,7 +32,7 @@
             <img src="../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.9.2
+                0.9.3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -101,7 +102,7 @@
            <div itemprop="articleBody">
              
   <section id="module-pyscal.utils.testing">
-<span id="pyscal-utils-testing"></span><h1><code class="docutils literal notranslate"><span class="pre">pyscal.utils.testing</span></code><a class="headerlink" href="#module-pyscal.utils.testing" title="Permalink to this headline"></a></h1>
+<span id="pyscal-utils-testing"></span><h1><code class="docutils literal notranslate"><span class="pre">pyscal.utils.testing</span></code><a class="headerlink" href="#module-pyscal.utils.testing" title="Permalink to this heading"></a></h1>
 <p>Common functions and mock data for usage in pyscal testing</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="pyscal.utils.testing.check_linear_sections">
@@ -173,6 +174,17 @@ must be properly rounded before printed.</p>
 <dt class="sig sig-object py" id="pyscal.utils.testing.series_increasing">
 <span class="sig-prename descclassname"><span class="pre">pyscal.utils.testing.</span></span><span class="sig-name descname"><span class="pre">series_increasing</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">series</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/testing.html#series_increasing"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.testing.series_increasing" title="Permalink to this definition"></a></dt>
 <dd><p>Weaker than pd.Series.is_monotonic_increasing</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyscal.utils.testing.slow_hypothesis">
+<span class="sig-prename descclassname"><span class="pre">pyscal.utils.testing.</span></span><span class="sig-name descname"><span class="pre">slow_hypothesis</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">slow_function</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/testing.html#slow_hypothesis"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.testing.slow_hypothesis" title="Permalink to this definition"></a></dt>
+<dd><p>A decorator for tests that are always slow.</p>
+<p>The default deadline for hypothesis is set through the hypothesis profile
+being used, and is set to None for CI runs (through a command line argument
+and code in conftest.py), meaning no deadline. On tests that are slow on
+local iron as well, we must ensure that the deadline set for these do not
+override the “no-deadline” in CI.</p>
 </dd></dl>
 
 </section>

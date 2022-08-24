@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.utils.interpolation &mdash; pyscal 0.9.2 documentation</title>
+  <title>pyscal.utils.interpolation &mdash; pyscal 0.9.3 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -13,6 +13,7 @@
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
         <script src="../../../_static/jquery.js"></script>
         <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
@@ -28,7 +29,7 @@
             <img src="../../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.9.2
+                0.9.3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -104,7 +105,8 @@
 <span class="sd">    is from 1 - sorw (mapped to zero) to swl (mapped to 1).</span>
 
 <span class="sd">    These endpoints must be known the the WaterOil object coming in (the object</span>
-<span class="sd">    can determine them using functions &#39;estimate_sorw()&#39; and &#39;estimate_swcr()&#39;</span>
+<span class="sd">    can determine them using functions estimate_sorw(), estimate_swcr() and</span>
+<span class="sd">    estimate_socr()</span>
 
 <span class="sd">    If the entire curve is linear, it will not matter for this function, because</span>
 <span class="sd">    this function only deals with the presumably known endpoints.</span>
@@ -144,7 +146,7 @@
     <span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">so_fn</span><span class="p">(</span><span class="n">son</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">curve</span><span class="o">.</span><span class="n">sorw</span> <span class="o">+</span> <span class="n">son</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">curve</span><span class="o">.</span><span class="n">sorw</span> <span class="o">-</span> <span class="n">curve</span><span class="o">.</span><span class="n">swl</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">curve</span><span class="o">.</span><span class="n">socr</span> <span class="o">+</span> <span class="n">son</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">curve</span><span class="o">.</span><span class="n">socr</span> <span class="o">-</span> <span class="n">curve</span><span class="o">.</span><span class="n">swl</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">kro_fn</span><span class="p">(</span><span class="n">son</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">kro_interp</span><span class="p">(</span><span class="n">so_fn</span><span class="p">(</span><span class="n">son</span><span class="p">))</span>
@@ -352,6 +354,7 @@
     <span class="n">swl_new</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span><span class="n">wo_low</span><span class="o">.</span><span class="n">swl</span><span class="p">,</span> <span class="n">wo_high</span><span class="o">.</span><span class="n">swl</span><span class="p">)</span>
     <span class="n">swcr_new</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span><span class="n">wo_low</span><span class="o">.</span><span class="n">swcr</span><span class="p">,</span> <span class="n">wo_high</span><span class="o">.</span><span class="n">swcr</span><span class="p">)</span>
     <span class="n">sorw_new</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span><span class="n">wo_low</span><span class="o">.</span><span class="n">sorw</span><span class="p">,</span> <span class="n">wo_high</span><span class="o">.</span><span class="n">sorw</span><span class="p">)</span>
+    <span class="n">socr_new</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span><span class="n">wo_low</span><span class="o">.</span><span class="n">socr</span><span class="p">,</span> <span class="n">wo_high</span><span class="o">.</span><span class="n">socr</span><span class="p">)</span>
 
     <span class="c1"># Interpolate kr at saturation endpoints</span>
     <span class="n">krwmax_new</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span><span class="n">wo_low</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KRW&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="n">wo_high</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KRW&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
@@ -360,7 +363,9 @@
 
     <span class="c1"># Construct the new WaterOil object, with interpolated</span>
     <span class="c1"># endpoints:</span>
-    <span class="n">wo_new</span> <span class="o">=</span> <span class="n">WaterOil</span><span class="p">(</span><span class="n">swl</span><span class="o">=</span><span class="n">swl_new</span><span class="p">,</span> <span class="n">swcr</span><span class="o">=</span><span class="n">swcr_new</span><span class="p">,</span> <span class="n">sorw</span><span class="o">=</span><span class="n">sorw_new</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">)</span>
+    <span class="n">wo_new</span> <span class="o">=</span> <span class="n">WaterOil</span><span class="p">(</span>
+        <span class="n">swl</span><span class="o">=</span><span class="n">swl_new</span><span class="p">,</span> <span class="n">swcr</span><span class="o">=</span><span class="n">swcr_new</span><span class="p">,</span> <span class="n">sorw</span><span class="o">=</span><span class="n">sorw_new</span><span class="p">,</span> <span class="n">socr</span><span class="o">=</span><span class="n">socr_new</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span>
+    <span class="p">)</span>
 
     <span class="c1"># Add interpolated relperm data in nonlinear parts:</span>
     <span class="n">wo_new</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KRW&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">weighted_value</span><span class="p">(</span>

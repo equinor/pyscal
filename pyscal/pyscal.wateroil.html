@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.wateroil &mdash; pyscal 0.9.2 documentation</title>
+  <title>pyscal.wateroil &mdash; pyscal 0.9.3 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -14,6 +14,7 @@
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
         <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
@@ -32,7 +33,7 @@
             <img src="../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.9.2
+                0.9.3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -98,7 +99,7 @@
            <div itemprop="articleBody">
              
   <section id="module-pyscal.wateroil">
-<span id="pyscal-wateroil"></span><h1><code class="docutils literal notranslate"><span class="pre">pyscal.wateroil</span></code><a class="headerlink" href="#module-pyscal.wateroil" title="Permalink to this headline"></a></h1>
+<span id="pyscal-wateroil"></span><h1><code class="docutils literal notranslate"><span class="pre">pyscal.wateroil</span></code><a class="headerlink" href="#module-pyscal.wateroil" title="Permalink to this heading"></a></h1>
 <p>Wateroil module</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pyscal.wateroil.WaterOil">
@@ -329,7 +330,7 @@ water saturations, krw is linear between krwend and krwmax.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyscal.wateroil.WaterOil.add_fromtable">
-<span class="sig-name descname"><span class="pre">add_fromtable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dframe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swcolname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'SW'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">krwcolname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'KRW'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">krowcolname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'KROW'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pccolname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'PCOW'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">krwcomment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">krowcomment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pccomment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sorw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/wateroil.html#WaterOil.add_fromtable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.add_fromtable" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">add_fromtable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dframe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swcolname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'SW'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">krwcolname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'KRW'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">krowcolname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'KROW'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pccolname</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'PCOW'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">krwcomment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">krowcomment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pccomment</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sorw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">socr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/wateroil.html#WaterOil.add_fromtable"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.add_fromtable" title="Permalink to this definition"></a></dt>
 <dd><p>Interpolate relpermdata from a dataframe.</p>
 <p>The saturation range with endpoints must be set up beforehand,
 and must be compatible with the tabular input. The tabular
@@ -356,7 +357,9 @@ files to dataframes.</p>
 <li><p><strong>krowcomment</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Inserted into comment</p></li>
 <li><p><strong>pccomment</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Inserted into comment</p></li>
 <li><p><strong>sorw</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Explicit sorw. If None, it will be estimated from
-the numbers in krw (or krow)</p></li>
+the numbers in krw</p></li>
+<li><p><strong>socr</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Explicit socr. If None, it will be estimated from
+the numbers in krow</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -395,7 +398,7 @@ to the swirr parameter.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyscal.wateroil.WaterOil.add_simple_J">
-<span class="sig-name descname"><span class="pre">add_simple_J</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-</span> <span class="pre">1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poro_ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perm_ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drho</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9.81</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/wateroil.html#WaterOil.add_simple_J"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.add_simple_J" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">add_simple_J</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poro_ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perm_ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drho</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9.81</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/wateroil.html#WaterOil.add_simple_J"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.wateroil.WaterOil.add_simple_J" title="Permalink to this definition"></a></dt>
 <dd><p>Add capillary pressure function from a simplified J-function</p>
 <p>This is the RMS version of the coefficients <em>a</em> and <em>b</em>, the formula
 used is</p>
