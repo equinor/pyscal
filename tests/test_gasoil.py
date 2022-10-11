@@ -203,10 +203,12 @@ def test_gasoil_krendmax(
     else:
         sgro = 0
     try:
+        assert 1 - sorg - swl - sgcr > 1 / SWINTEGERS, "No saturation range left"
         gasoil = GasOil(
             swl=swl, sgcr=sgcr, sorg=sorg, sgro=sgro, h=h, tag="", fast=fast
         )
     except AssertionError:
+        # We end here when hypothesis sets up impossible/non-interesting scenarios
         return
     krgend = min(krgend, krgmax)
     kroend = min(kroend, kromax)
