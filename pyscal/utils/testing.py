@@ -196,12 +196,12 @@ def check_linear_sections(wo_or_go: Union[WaterOil, GasOil]) -> None:
     left_lin_seg = wo_or_go.table[
         (wo_or_go.table[sat_col] >= left_start) & (wo_or_go.table[sat_col] <= left_end)
     ]
-    if len(right_lin_seg) > 4:
+    if len(right_lin_seg) > 5:
         for col in right_lin_cols:
-            # We avoid the first and last row in right_lin_seg, because
+            # We avoid the first and two lasts row in right_lin_seg, because
             # this does not always match the constant saturation segment
             # assumption in this linearity test:
-            assert right_lin_seg.iloc[1:-1][col].diff().std() < 1e-9
+            assert right_lin_seg.iloc[1:-2][col].diff().std() < 1e-9
     if len(left_lin_seg) > 4:
         for col in left_lin_cols:
             assert left_lin_seg.iloc[1:-1][col].diff().std() < 1e-9
