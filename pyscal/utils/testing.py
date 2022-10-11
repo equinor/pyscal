@@ -129,16 +129,16 @@ def check_table(dframe: pd.DataFrame) -> None:
     if "SW" in dframe and "SG" not in dframe:
         # (avoiding GasWater tables, where sw is an auxiliary column)
         assert len(dframe["SW"].unique()) == len(dframe)
-        assert dframe["SW"].is_monotonic
+        assert dframe["SW"].is_monotonic_increasing
         assert (dframe["SW"] >= 0.0).all()
-        assert dframe["SWN"].is_monotonic
+        assert dframe["SWN"].is_monotonic_increasing
         assert dframe["SON"].is_monotonic_decreasing
-        assert dframe["SWNPC"].is_monotonic
+        assert dframe["SWNPC"].is_monotonic_increasing
     if "SG" in dframe:
         assert len(dframe["SG"].unique()) == len(dframe)
-        assert dframe["SG"].is_monotonic
+        assert dframe["SG"].is_monotonic_increasing
         assert (dframe["SG"] >= 0.0).all()
-        assert dframe["SGN"].is_monotonic
+        assert dframe["SGN"].is_monotonic_increasing
         assert dframe["SON"].is_monotonic_decreasing
     if "KROW" in dframe:
         assert series_decreasing(dframe["KROW"])

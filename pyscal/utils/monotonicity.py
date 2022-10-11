@@ -89,7 +89,7 @@ def modify_dframe_monotonicity(
     # Prepare and check columns:
     for col in monotonicity:
         if dframe[col].dtype != np.float64:
-            dframe.loc[:, col] = dframe[col].astype(float)
+            dframe[col] = dframe[col].astype(float)
 
         # Bail on clearly erroneous data:
         check_almost_monotone(dframe[col], digits, monotonicity[col]["sign"])
