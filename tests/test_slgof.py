@@ -14,7 +14,7 @@ def check_table(dframe):
     """Check sanity of important columns"""
     assert not dframe.empty
     assert not dframe.isnull().values.any()
-    assert dframe["SL"].is_monotonic
+    assert dframe["SL"].is_monotonic_increasing
     assert (dframe["SL"] >= 0.0).all()
     assert (dframe["SL"] <= 1.0).all()
     # Increasing, but not monotonically for slgof
