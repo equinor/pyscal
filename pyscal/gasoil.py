@@ -999,7 +999,7 @@ class GasOil(object):
 
     def plotkrgkrog(
         self,
-        mpl_ax = None,
+        mpl_ax=None,
         color: str = "blue",
         alpha: float = 1.0,
         linewidth: int = 1,

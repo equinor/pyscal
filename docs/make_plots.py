@@ -862,6 +862,7 @@ def make_wateroil_paleooil_idc1(show=True):
     if show:
         plt.show()
 
+
 def make_gaswater_paleogas_dci3(show=True):
     plt.xkcd()
     _, axes = plt.subplots()
