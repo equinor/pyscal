@@ -68,8 +68,8 @@ class WaterOil(object):
         h: Optional[float] = None,
         tag: str = "",
         fast: bool = False,
-        _sgcr: float = None,
-        _sgl: float = None,
+        _sgcr: Optional[float] = None,
+        _sgl: Optional[float] = None,
     ) -> None:
         """Sets up the saturation range. Swirr is only relevant
         for the capillary pressure, not for relperm data.
@@ -90,6 +90,8 @@ class WaterOil(object):
         assert swl < 1 - sorw
         assert swcr < 1 - sorw
         assert swirr < 1 - sorw
+
+        self.swcomment: str = ""
 
         h_min = 1.0 / float(SWINTEGERS)
         if h < h_min:

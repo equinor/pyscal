@@ -37,7 +37,7 @@ class PyscalList(object):
         pyscal_list (list): List of objects if already ready. Can be empty or None.
     """
 
-    def __init__(self, pyscal_list: List[PyscalObjects] = None):
+    def __init__(self, pyscal_list: Optional[List[PyscalObjects]] = None):
         self.pyscaltype: Optional[Type] = None
         self.pyscal_list: List[PyscalObjects] = []
         if isinstance(pyscal_list, list):

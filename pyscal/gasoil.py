@@ -68,7 +68,7 @@ class GasOil(object):
         tag: str = "",
         krgendanchor: str = "sorg",
         fast: bool = False,
-        _sgl: float = None,  # Only to be used by GasWater.
+        _sgl: Optional[float] = None,  # Only to be used by GasWater.
     ) -> None:
         if h is None:
             h = 0.01
@@ -190,6 +190,7 @@ class GasOil(object):
         self.table["SON"] = (self.table["SL"] - self.sorg - self.swl) / (
             1 - self.sorg - self.swl - self.sgro
         )
+        self.sgcomment: str = ""
         self.update_sgcomment_and_sorg()
         self.krgcomment = ""
         self.krogcomment = ""
