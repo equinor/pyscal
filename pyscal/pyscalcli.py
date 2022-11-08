@@ -178,7 +178,7 @@ def pyscal_main(
     delta_s: Optional[float] = None,
     int_param_wo: Optional[float] = None,
     int_param_go: Optional[float] = None,
-    sheet_name: str = None,
+    sheet_name: Optional[str] = None,
     slgof: bool = False,
     family2: bool = False,
 ) -> None:
