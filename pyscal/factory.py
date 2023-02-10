@@ -56,6 +56,19 @@ WO_SIMPLE_J_PETRO = [
     "perm_ref",
     "drho",
 ]  # "g" is optional
+WO_LET_PC_PD = ["lpow", "epow", "tpow", "ltow", "etow", "ttow", "pcowmax", "pcowt"]
+WO_LET_PC_IMB = [
+    "lsow",
+    "esow",
+    "tsow",
+    "lfow",
+    "efow",
+    "tfow",
+    "pcowmax",
+    "pcowmin",
+    "pcowt",
+]
+WO_SKJAEVELAND_PC = ["cw", "co", "aw", "ao"]
 
 GO_INIT = ["swirr", "sgcr", "sorg", "sgro", "swl", "krgendanchor", "h", "tag"]
 GO_COREY_GAS = ["ng"]
@@ -68,6 +81,18 @@ GO_OIL_ENDPOINTS = [
 
 GO_LET_GAS = ["lg", "eg", "tg"]
 GO_LET_OIL = ["log", "eog", "tog"]
+GO_LET_PC_PD = ["lpog", "epog", "tpog", "ltog", "etog", "ttog", "pcogmax", "pcogt"]
+GO_LET_PC_IMB = [
+    "lsog",
+    "esog",
+    "tsog",
+    "lfog",
+    "efog",
+    "tfog",
+    "pcogmax",
+    "pcogmin",
+    "pcogt",
+]
 
 GW_INIT = ["swirr", "swl", "sgl", "swcr", "sgrw", "sgcr", "h", "tag"]
 GW_COREY_WATER = ["nw"]
@@ -86,6 +111,18 @@ GW_SIMPLE_J_PETRO = [
     "perm_ref",
     "drho",
 ]  # "g" is optional
+GW_LET_PC_PD = ["lpgw", "epgw", "tpgw", "ltgw", "etgw", "ttgw", "pcgwmax", "pcgwt"]
+GW_LET_PC_IMB = [
+    "lsgw",
+    "esgw",
+    "tsgw",
+    "lfgw",
+    "efgw",
+    "tfgw",
+    "pcgwmax",
+    "pcgwmin",
+    "pcgwt",
+]
 
 WOG_INIT = ["swirr", "swl", "swcr", "sorw", "socr", "sorg", "sgcr", "h", "tag"]
 
@@ -263,6 +300,10 @@ class PyscalFactory(object):
         params_simple_j = slicedict(params, WO_SIMPLE_J + ["g"])
         params_norm_j = slicedict(params, WO_NORM_J)
         params_simple_j_petro = slicedict(params, WO_SIMPLE_J_PETRO + ["g"])
+        params_let_pc_pd = slicedict(params, WO_LET_PC_PD)
+        params_let_pc_imb = slicedict(params, WO_LET_PC_IMB)
+        params_skjaeveland_pc = slicedict(params, WO_SKJAEVELAND_PC)
+
         if set(WO_SIMPLE_J).issubset(set(params_simple_j)):
             wateroil.add_simple_J(**params_simple_j)
         elif set(WO_SIMPLE_J_PETRO).issubset(set(params_simple_j_petro)):
@@ -271,6 +312,29 @@ class PyscalFactory(object):
             wateroil.add_simple_J_petro(**params_simple_j_petro)
         elif set(WO_NORM_J).issubset(set(params_norm_j)):
             wateroil.add_normalized_J(**params_norm_j)
+        elif set(WO_LET_PC_PD).issubset(set(params_let_pc_pd)):
+            params_let_pc_pd["Lp"] = params_let_pc_pd.pop("lpow")
+            params_let_pc_pd["Ep"] = params_let_pc_pd.pop("epow")
+            params_let_pc_pd["Tp"] = params_let_pc_pd.pop("tpow")
+            params_let_pc_pd["Lt"] = params_let_pc_pd.pop("ltow")
+            params_let_pc_pd["Et"] = params_let_pc_pd.pop("etow")
+            params_let_pc_pd["Tt"] = params_let_pc_pd.pop("ttow")
+            params_let_pc_pd["Pcmax"] = params_let_pc_pd.pop("pcowmax")
+            params_let_pc_pd["Pct"] = params_let_pc_pd.pop("pcowt")
+            wateroil.add_LET_pc_pd(**params_let_pc_pd)
+        elif set(WO_LET_PC_IMB).issubset(set(params_let_pc_imb)):
+            params_let_pc_imb["Ls"] = params_let_pc_imb.pop("lsow")
+            params_let_pc_imb["Es"] = params_let_pc_imb.pop("esow")
+            params_let_pc_imb["Ts"] = params_let_pc_imb.pop("tsow")
+            params_let_pc_imb["Lf"] = params_let_pc_imb.pop("lfow")
+            params_let_pc_imb["Ef"] = params_let_pc_imb.pop("efow")
+            params_let_pc_imb["Tf"] = params_let_pc_imb.pop("tfow")
+            params_let_pc_imb["Pcmax"] = params_let_pc_imb.pop("pcowmax")
+            params_let_pc_imb["Pct"] = params_let_pc_imb.pop("pcowt")
+            params_let_pc_imb["Pcmin"] = params_let_pc_imb.pop("pcowmin")
+            wateroil.add_LET_pc_imb(**params_let_pc_imb)
+        elif set(WO_SKJAEVELAND_PC).issubset(set(params_skjaeveland_pc)):
+            wateroil.add_skjaeveland_pc(**params_skjaeveland_pc)
         else:
             logger.info(
                 (
@@ -712,15 +776,6 @@ class PyscalFactory(object):
                 "merged cells in XLSX, which is not supported."
             )
 
-        # Warn about any other columns with empty cells:
-        nan_columns = set(input_df.columns[input_df.isnull().any()])
-        allowed_nan_columns = set(["COMMENT"])
-        if nan_columns - allowed_nan_columns:
-            logger.warning(
-                "Found empty cells in these columns, this might create trouble: %s",
-                str(nan_columns - allowed_nan_columns),
-            )
-
         # Check that SATNUM's are consecutive and integers:
         try:
             input_df["SATNUM"] = input_df["SATNUM"].astype(int)
@@ -931,7 +986,7 @@ class PyscalFactory(object):
             PyscalList, consisting of WaterOilGas objects
         """
         wogl = PyscalList()
-        for (row_idx, params) in relperm_params_df.sort_values("SATNUM").iterrows():
+        for row_idx, params in relperm_params_df.sort_values("SATNUM").iterrows():
             if h is not None:
                 params["h"] = h
             try:
@@ -959,7 +1014,7 @@ class PyscalFactory(object):
             PyscalList, consisting of WaterOil objects
         """
         wol = PyscalList()
-        for (_, params) in relperm_params_df.iterrows():
+        for _, params in relperm_params_df.iterrows():
             if h is not None:
                 params["h"] = h
             try:
@@ -987,7 +1042,7 @@ class PyscalFactory(object):
             PyscalList, consisting of GasOil objects
         """
         gol = PyscalList()
-        for (_, params) in relperm_params_df.iterrows():
+        for _, params in relperm_params_df.iterrows():
             if h is not None:
                 params["h"] = h
             try:
@@ -1015,7 +1070,7 @@ class PyscalFactory(object):
             PyscalList, consisting of GasWater objects
         """
         gwl = PyscalList()
-        for (_, params) in relperm_params_df.iterrows():
+        for _, params in relperm_params_df.iterrows():
             if h is not None:
                 params["h"] = h
             try:
