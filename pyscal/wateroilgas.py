@@ -165,9 +165,7 @@ class WaterOilGas(object):
             .fillna(method="bfill")
             .reset_index()
         )
-        sof3table["soint"] = list(
-            map(int, list(map(round, sof3table["SO"] * SWINTEGERS)))
-        )
+        sof3table["soint"] = list(map(round, sof3table["SO"] * SWINTEGERS))
         sof3table.drop_duplicates("soint", inplace=True)
 
         # The 'so' column has been calculated from floating point numbers

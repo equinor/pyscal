@@ -55,7 +55,6 @@ class SCALrecommendation(object):
             and isinstance(base, WaterOilGas)
             and isinstance(high, WaterOilGas)
         ):
-
             self.low = low
             self.base = base
             self.high = high
@@ -65,7 +64,6 @@ class SCALrecommendation(object):
             and isinstance(base, GasWater)
             and isinstance(high, GasWater)
         ):
-
             self.low = low
             self.base = base
             self.high = high
