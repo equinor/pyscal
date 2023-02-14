@@ -931,7 +931,7 @@ class PyscalFactory(object):
             PyscalList, consisting of WaterOilGas objects
         """
         wogl = PyscalList()
-        for (row_idx, params) in relperm_params_df.sort_values("SATNUM").iterrows():
+        for row_idx, params in relperm_params_df.sort_values("SATNUM").iterrows():
             if h is not None:
                 params["h"] = h
             try:
@@ -959,7 +959,7 @@ class PyscalFactory(object):
             PyscalList, consisting of WaterOil objects
         """
         wol = PyscalList()
-        for (_, params) in relperm_params_df.iterrows():
+        for _, params in relperm_params_df.iterrows():
             if h is not None:
                 params["h"] = h
             try:
@@ -987,7 +987,7 @@ class PyscalFactory(object):
             PyscalList, consisting of GasOil objects
         """
         gol = PyscalList()
-        for (_, params) in relperm_params_df.iterrows():
+        for _, params in relperm_params_df.iterrows():
             if h is not None:
                 params["h"] = h
             try:
@@ -1015,7 +1015,7 @@ class PyscalFactory(object):
             PyscalList, consisting of GasWater objects
         """
         gwl = PyscalList()
-        for (_, params) in relperm_params_df.iterrows():
+        for _, params in relperm_params_df.iterrows():
             if h is not None:
                 params["h"] = h
             try:

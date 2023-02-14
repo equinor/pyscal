@@ -813,7 +813,7 @@ def test_xls_factory():
 
     scalinput = pd.read_excel(xlsxfile, engine="openpyxl").set_index(["SATNUM", "CASE"])
 
-    for ((satnum, _), params) in scalinput.iterrows():
+    for (satnum, _), params in scalinput.iterrows():
         assert satnum
         wog = PyscalFactory.create_water_oil_gas(params.to_dict())
         swof = wog.SWOF()
@@ -961,7 +961,6 @@ def test_scalrecommendation():
     with pytest.raises(
         ValueError, match="All values in parameter dict must be dictionaries"
     ):
-
         pyscal_factory.create_scal_recommendation(
             {"low": [1, 2], "base": {"swl": 0.1}, "high": {"swl": 0.1}}
         )
@@ -1069,7 +1068,7 @@ def parse_gensatfuncline(conf_line):
         raise ValueError("Too many items on gensatfunc confline")
 
     params = {}
-    for (idx, value) in enumerate(conf_line.split()):
+    for idx, value in enumerate(conf_line.split()):
         if idx > 0:  # Avoid the CMD
             params[line_syntax[idx]] = float(value)
 

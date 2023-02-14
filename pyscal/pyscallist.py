@@ -102,7 +102,7 @@ class PyscalList(object):
 
         df_list = []
         if self.pyscaltype == WaterOilGas:
-            for (satnum, wateroilgas) in enumerate(self.pyscal_list):
+            for satnum, wateroilgas in enumerate(self.pyscal_list):
                 assert isinstance(wateroilgas, WaterOilGas)
                 assert wateroilgas.wateroil is not None
                 assert wateroilgas.gasoil is not None
@@ -127,7 +127,7 @@ class PyscalList(object):
                     .rename(wateroil_col_renamer, axis="columns")
                 )
         elif self.pyscaltype == SCALrecommendation:
-            for (satnum, scalrec) in enumerate(self.pyscal_list):
+            for satnum, scalrec in enumerate(self.pyscal_list):
                 assert isinstance(scalrec, SCALrecommendation)
                 assert scalrec.low is not None
                 assert scalrec.base is not None
@@ -180,7 +180,7 @@ class PyscalList(object):
                     .rename(wateroil_col_renamer, axis="columns")
                 )
         elif self.pyscaltype == WaterOil:
-            for (satnum, wateroil) in enumerate(self.pyscal_list):
+            for satnum, wateroil in enumerate(self.pyscal_list):
                 assert isinstance(wateroil, WaterOil)
                 assert wateroil is not None
                 wateroil_cols = list(
@@ -192,7 +192,7 @@ class PyscalList(object):
                     .rename(wateroil_col_renamer, axis="columns")
                 )
         elif self.pyscaltype == GasOil:
-            for (satnum, gasoil) in enumerate(self.pyscal_list):
+            for satnum, gasoil in enumerate(self.pyscal_list):
                 assert isinstance(gasoil, GasOil)
                 assert gasoil is not None
                 gasoil_cols = list(
@@ -369,7 +369,7 @@ class PyscalList(object):
                 f"Too many interpolation parameters given for GasOil {int_params_go}"
             )
         wog_list: PyscalList = PyscalList()
-        for (satnum, scalrec) in enumerate(self.pyscal_list):
+        for satnum, scalrec in enumerate(self.pyscal_list):
             assert isinstance(scalrec, SCALrecommendation)
             wog_list.append(
                 scalrec.interpolate(int_params_wo[satnum], int_params_go[satnum], h=h)
