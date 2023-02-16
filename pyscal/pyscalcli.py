@@ -39,6 +39,13 @@ Simple J-function for capillary pressure ("RMS" version) is used if the columns
 is used. Check API for exact formulas. Normalized J-function is used if 'a',
 'b', 'poro', 'perm' and 'sigma_costau' is provided.
 
+Primary drainage and imbibition capillary pressure with LET parametrization are
+based on presence of the columnns 'Lp', 'Ep', 'Tp','Lt', 'Et', 'Tt', 'Pcmax', 'Pct' and
+'Ls', 'Es', 'Ts', 'Lf', 'Ef', 'Tf', 'Pcmax', 'Pct', 'Pcmin' respectively.
+
+Capillary pressure from the Skjæveland correlation is based on the on the presence
+of the columns 'cw', 'co', 'aw', 'ao'.
+
 For SCAL recommendations, there should be exactly three rows for each SATNUM,
 tagged with the strings 'low', 'base' and 'high' in the column 'CASE'
 

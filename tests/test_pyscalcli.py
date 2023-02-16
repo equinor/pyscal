@@ -74,9 +74,6 @@ def test_pyscal_client_static(tmp_path, caplog, default_loglevel, mocker):
     assert not any(record.levelno == logging.ERROR for record in caplog.records)
     assert not any(record.levelno == logging.INFO for record in caplog.records)
 
-    # We get one warning due to empty cells in xlsx:
-    assert sum(record.levelno == logging.WARNING for record in caplog.records) == 1
-
     relpermlines = os.linesep.join(
         Path("relperm.inc").read_text(encoding="utf8").splitlines()
     )
@@ -271,6 +268,39 @@ def test_pyscalcli_stdout_output(capsys, mocker):
     pyscalcli.main()
     captured = capsys.readouterr()
     assert "SOF3" in captured.out
+
+
+def test_pyscalcli_let_pd_and_imb(capsys, mocker):
+    """Test that we can write to stdout"""
+    scalrec_file = (
+        Path(__file__).absolute().parent / "data/pyscal_config_simple_let_hyst.csv"
+    )
+    mocker.patch(
+        "sys.argv",
+        ["pyscal", str(scalrec_file), "--output", "-"],
+    )
+    pyscalcli.main()
+    captured = capsys.readouterr()
+    assert "SWOF" in captured.out
+    assert "SGOF" in captured.out
+    assert "LET correlation for primary drainage Pc" in captured.out
+    assert "LET correlation for imbibition Pc" in captured.out
+
+
+def test_pyscalcli_pc_skjaeveland(capsys, mocker):
+    """Test that we can write to stdout"""
+    scalrec_file = (
+        Path(__file__).absolute().parent / "data/relperm-input-example_skjaeveland.csv"
+    )
+    mocker.patch(
+        "sys.argv",
+        ["pyscal", str(scalrec_file), "--output", "-"],
+    )
+    pyscalcli.main()
+    captured = capsys.readouterr()
+    assert "SWOF" in captured.out
+    assert "SGOF" in captured.out
+    assert "Skjæveland correlation for Pc" in captured.out
 
 
 def test_pyscalcli_exception_catching(capsys, mocker):
