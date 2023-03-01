@@ -3,18 +3,17 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.gaswater &mdash; pyscal 0.10.1 documentation</title>
+  <title>pyscal.gaswater &mdash; pyscal 0.10.3 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -25,15 +24,19 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> pyscal
-            <img src="../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            pyscal
+              <img src="../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.10.1
+                0.10.3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -66,10 +69,10 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-          <li><a href="../pyscal.html">pyscal</a> &raquo;</li>
-      <li>pyscal.gaswater</li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../pyscal.html">pyscal</a></li>
+      <li class="breadcrumb-item active">pyscal.gaswater</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -96,7 +99,7 @@
 
 
 <div class="viewcode-block" id="is_documented_by"><a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.is_documented_by">[docs]</a><span class="k">def</span> <span class="nf">is_documented_by</span><span class="p">(</span><span class="n">original</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Decorator to avoid duplicating function docstrings&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decorator to avoid duplicating function docstrings&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
         <span class="n">target</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">original</span><span class="o">.</span><span class="vm">__doc__</span>
@@ -106,7 +109,7 @@
 
 
 <div class="viewcode-block" id="GasWater"><a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.GasWater">[docs]</a><span class="k">class</span> <span class="nc">GasWater</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A representation of two-phase properties for gas-water</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A representation of two-phase properties for gas-water</span>
 
 <span class="sd">    Internally, this class handles gas-water by using one WaterOil</span>
 <span class="sd">    object and one GasOil object, with dummy parameters for oil.</span>
@@ -136,7 +139,7 @@
         <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
         <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Sets up the saturation range for a GasWater object,</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets up the saturation range for a GasWater object,</span>
 <span class="sd">        by initializing one WaterOil and one GasOil object, with</span>
 <span class="sd">        endpoints set to fit with the GasWater proxy object.&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">fast</span>
@@ -177,7 +180,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">add_corey_oil</span><span class="p">()</span>
 
 <div class="viewcode-block" id="GasWater.selfcheck"><a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.GasWater.selfcheck">[docs]</a>    <span class="k">def</span> <span class="nf">selfcheck</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Run selfcheck on the data.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run selfcheck on the data.</span>
 
 <span class="sd">        Performs tests if necessary data is ready in the object for</span>
 <span class="sd">        printing Eclipse include files, and checks some numerical</span>
@@ -191,7 +194,7 @@
 <div class="viewcode-block" id="GasWater.add_corey_water"><a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.GasWater.add_corey_water">[docs]</a>    <span class="k">def</span> <span class="nf">add_corey_water</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">nw</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">krwend</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">krwmax</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Add krw data through the Corey parametrization</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add krw data through the Corey parametrization</span>
 
 <span class="sd">        A column named &#39;krw&#39; will be added. If it exists, it will</span>
 <span class="sd">        be replaced.</span>
@@ -209,7 +212,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">add_corey_water</span><span class="p">(</span><span class="n">nw</span><span class="p">,</span> <span class="n">krwend</span><span class="p">,</span> <span class="n">krwmax</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="GasWater.add_corey_gas"><a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.GasWater.add_corey_gas">[docs]</a>    <span class="k">def</span> <span class="nf">add_corey_gas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ng</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">krgend</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Add krg data through the Corey parametrization</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add krg data through the Corey parametrization</span>
 
 <span class="sd">        A column named &#39;krg&#39; will be added. If it exists, it will</span>
 <span class="sd">        be replaced.</span>
@@ -228,7 +231,7 @@
         <span class="n">krwend</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
         <span class="n">krwmax</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Add krw data through LET parametrization</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add krw data through LET parametrization</span>
 
 <span class="sd">        The LET model applies for sw &lt; 1 - sgrw. For higher</span>
 <span class="sd">        water saturations, krw is linear between krwend and krwmax.</span>
@@ -247,7 +250,7 @@
 <div class="viewcode-block" id="GasWater.add_LET_gas"><a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.GasWater.add_LET_gas">[docs]</a>    <span class="k">def</span> <span class="nf">add_LET_gas</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">l</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">krgend</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Add krg data through the LET parametrization</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add krg data through the LET parametrization</span>
 
 <span class="sd">        A column named &#39;krg&#39; will be added. If it exists, it will</span>
 <span class="sd">        be replaced.</span>
@@ -270,7 +273,7 @@
         <span class="n">drho</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">300.0</span><span class="p">,</span>
         <span class="n">g</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">9.81</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Add a simple J-function, handed over to the WaterOil object&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a simple J-function, handed over to the WaterOil object&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">add_simple_J</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">poro_ref</span><span class="p">,</span> <span class="n">perm_ref</span><span class="p">,</span> <span class="n">drho</span><span class="p">,</span> <span class="n">g</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="GasWater.add_simple_J_petro"><a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.GasWater.add_simple_J_petro">[docs]</a>    <span class="nd">@is_documented_by</span><span class="p">(</span><span class="n">WaterOil</span><span class="o">.</span><span class="n">add_simple_J_petro</span><span class="p">)</span>
@@ -283,12 +286,12 @@
         <span class="n">drho</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">300.0</span><span class="p">,</span>
         <span class="n">g</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">9.81</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Add a simple petrophysical variant of the J-function, handed</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a simple petrophysical variant of the J-function, handed</span>
 <span class="sd">        over to the WaterOil object&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">add_simple_J_petro</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">poro_ref</span><span class="p">,</span> <span class="n">perm_ref</span><span class="p">,</span> <span class="n">drho</span><span class="p">,</span> <span class="n">g</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="GasWater.SWFN"><a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.GasWater.SWFN">[docs]</a>    <span class="k">def</span> <span class="nf">SWFN</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Produce SWFN input to Eclipse</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Produce SWFN input to Eclipse</span>
 
 <span class="sd">        The columns sw, krw and pc are outputted and formatted</span>
 <span class="sd">        accordingly.</span>
@@ -320,7 +323,7 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="GasWater.SGFN"><a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.GasWater.SGFN">[docs]</a>    <span class="k">def</span> <span class="nf">SGFN</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Produce SGFN input for Eclipse reservoir simulator.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Produce SGFN input for Eclipse reservoir simulator.</span>
 
 <span class="sd">        The columns sg and krg are outputted and formatted accordingly.</span>
 
@@ -350,7 +353,7 @@
         <span class="p">)</span></div>
 
 <div class="viewcode-block" id="GasWater.crosspoint"><a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.GasWater.crosspoint">[docs]</a>    <span class="k">def</span> <span class="nf">crosspoint</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Calculate the sw value where krg == krw.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the sw value where krg == krw.</span>
 
 <span class="sd">        Accuracy of this crosspoint depends on the resolution chosen</span>
 <span class="sd">        when initializing the saturation range (it uses linear</span>
@@ -396,7 +399,7 @@
         <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
         <span class="n">logyscale</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">):</span>
-        <span class="sd">&quot;&quot;&quot;Plot krw and krg</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot krw and krg</span>
 
 <span class="sd">        If the argument &#39;mpl_ax&#39; is not supplied, a new plot</span>
 <span class="sd">        window will be made. If supplied, it will draw on</span>
@@ -445,27 +448,27 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">swirr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get the swirr, irreducible water saturation used for pc-init&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the swirr, irreducible water saturation used for pc-init&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">swirr</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">swl</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get the swl&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the swl&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">swl</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">swcr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get the swcr&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the swcr&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">swcr</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">swcomment</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get a string representation of the endpoints used for water&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a string representation of the endpoints used for water&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">swcomment</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;sorw&quot;</span><span class="p">,</span> <span class="s2">&quot;sgrw&quot;</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">sgcomment</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get a string representation of the endpoints used for gas&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a string representation of the endpoints used for gas&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">sgcomment</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;sorg&quot;</span><span class="p">,</span> <span class="s2">&quot;sgrw&quot;</span><span class="p">)</span>
             <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;, krgendanchor=sgrw&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
@@ -474,17 +477,17 @@
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">krwcomment</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get a string representation describing krw&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a string representation describing krw&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">krwcomment</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">krgcomment</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get a string representation describing krg&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a string representation describing krg&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">krgcomment</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">tag</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get the user configured tag&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the user configured tag&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">tag</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">tag</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Internal tag-inconsistency in GasWater&quot;</span><span class="p">)</span></div>
@@ -497,7 +500,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Equinor 2019-2022.</p>
+    <p>&#169; Copyright Equinor 2019-2023.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

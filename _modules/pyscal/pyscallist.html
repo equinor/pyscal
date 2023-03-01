@@ -3,18 +3,17 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.pyscallist &mdash; pyscal 0.10.1 documentation</title>
+  <title>pyscal.pyscallist &mdash; pyscal 0.10.3 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -25,15 +24,19 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> pyscal
-            <img src="../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            pyscal
+              <img src="../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.10.1
+                0.10.3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -66,10 +69,10 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-          <li><a href="../pyscal.html">pyscal</a> &raquo;</li>
-      <li>pyscal.pyscallist</li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../pyscal.html">pyscal</a></li>
+      <li class="breadcrumb-item active">pyscal.pyscallist</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -106,7 +109,7 @@
 
 
 <div class="viewcode-block" id="PyscalList"><a class="viewcode-back" href="../../pyscal/pyscal.pyscallist.html#pyscal.pyscallist.PyscalList">[docs]</a><span class="k">class</span> <span class="nc">PyscalList</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Container class for a list of WaterOilGas objects.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Container class for a list of WaterOilGas objects.</span>
 
 <span class="sd">    Essentially this is a list of objects of equal type, and all</span>
 <span class="sd">    being pyscal objects WaterOil, GasOil, WaterOilGas or SCALrecommendation</span>
@@ -118,7 +121,7 @@
 <span class="sd">        pyscal_list (list): List of objects if already ready. Can be empty or None.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pyscal_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">PyscalObjects</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pyscal_list</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">PyscalObjects</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pyscaltype</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Type</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pyscal_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">PyscalObjects</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pyscal_list</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
@@ -129,7 +132,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pyscal_list</span><span class="p">[</span><span class="n">idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">])</span>
 
 <div class="viewcode-block" id="PyscalList.append"><a class="viewcode-back" href="../../pyscal/pyscal.pyscallist.html#pyscal.pyscallist.PyscalList.append">[docs]</a>    <span class="k">def</span> <span class="nf">append</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pyscal_obj</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">PyscalObjects</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Append a pyscal object to the list</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Append a pyscal object to the list</span>
 
 <span class="sd">        Args:</span>
 <span class="sd">            pyscal_obj</span>
@@ -161,7 +164,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">pyscal_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pyscal_obj</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PyscalList.df"><a class="viewcode-back" href="../../pyscal/pyscal.pyscallist.html#pyscal.pyscallist.PyscalList.df">[docs]</a>    <span class="k">def</span> <span class="nf">df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Dump dataframes of generated relperm data</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Dump dataframes of generated relperm data</span>
 
 <span class="sd">        Column names are compatible with ecl2df.satfunc. Always uppercase</span>
 <span class="sd">        and capillary pressure is PCOW or PCOG (wateroil vs gasoil)</span>
@@ -183,7 +186,7 @@
 
         <span class="n">df_list</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">==</span> <span class="n">WaterOilGas</span><span class="p">:</span>
-            <span class="k">for</span> <span class="p">(</span><span class="n">satnum</span><span class="p">,</span> <span class="n">wateroilgas</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyscal_list</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">satnum</span><span class="p">,</span> <span class="n">wateroilgas</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyscal_list</span><span class="p">):</span>
                 <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">wateroilgas</span><span class="p">,</span> <span class="n">WaterOilGas</span><span class="p">)</span>
                 <span class="k">assert</span> <span class="n">wateroilgas</span><span class="o">.</span><span class="n">wateroil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
                 <span class="k">assert</span> <span class="n">wateroilgas</span><span class="o">.</span><span class="n">gasoil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
@@ -208,7 +211,7 @@
                     <span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">wateroil_col_renamer</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;columns&quot;</span><span class="p">)</span>
                 <span class="p">)</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">==</span> <span class="n">SCALrecommendation</span><span class="p">:</span>
-            <span class="k">for</span> <span class="p">(</span><span class="n">satnum</span><span class="p">,</span> <span class="n">scalrec</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyscal_list</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">satnum</span><span class="p">,</span> <span class="n">scalrec</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyscal_list</span><span class="p">):</span>
                 <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scalrec</span><span class="p">,</span> <span class="n">SCALrecommendation</span><span class="p">)</span>
                 <span class="k">assert</span> <span class="n">scalrec</span><span class="o">.</span><span class="n">low</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
                 <span class="k">assert</span> <span class="n">scalrec</span><span class="o">.</span><span class="n">base</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
@@ -261,7 +264,7 @@
                     <span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">wateroil_col_renamer</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;columns&quot;</span><span class="p">)</span>
                 <span class="p">)</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">==</span> <span class="n">WaterOil</span><span class="p">:</span>
-            <span class="k">for</span> <span class="p">(</span><span class="n">satnum</span><span class="p">,</span> <span class="n">wateroil</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyscal_list</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">satnum</span><span class="p">,</span> <span class="n">wateroil</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyscal_list</span><span class="p">):</span>
                 <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">wateroil</span><span class="p">,</span> <span class="n">WaterOil</span><span class="p">)</span>
                 <span class="k">assert</span> <span class="n">wateroil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
                 <span class="n">wateroil_cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
@@ -273,7 +276,7 @@
                     <span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">wateroil_col_renamer</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="s2">&quot;columns&quot;</span><span class="p">)</span>
                 <span class="p">)</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">==</span> <span class="n">GasOil</span><span class="p">:</span>
-            <span class="k">for</span> <span class="p">(</span><span class="n">satnum</span><span class="p">,</span> <span class="n">gasoil</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyscal_list</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">satnum</span><span class="p">,</span> <span class="n">gasoil</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyscal_list</span><span class="p">):</span>
                 <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gasoil</span><span class="p">,</span> <span class="n">GasOil</span><span class="p">)</span>
                 <span class="k">assert</span> <span class="n">gasoil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
                 <span class="n">gasoil_cols</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
@@ -291,7 +294,7 @@
         <span class="k">return</span> <span class="n">dframe</span></div>
 
 <div class="viewcode-block" id="PyscalList.relevant_keywords"><a class="viewcode-back" href="../../pyscal/pyscal.pyscallist.html#pyscal.pyscallist.PyscalList.relevant_keywords">[docs]</a>    <span class="k">def</span> <span class="nf">relevant_keywords</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">family</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">slgof</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
-        <span class="sd">&quot;&quot;&quot;Construct a list of relevant Eclipse keywords for the data in this</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct a list of relevant Eclipse keywords for the data in this</span>
 <span class="sd">        Pyscallist object. This depends on the Pyscaltype, and which family is</span>
 <span class="sd">        requested&quot;&quot;&quot;</span>
 
@@ -329,7 +332,7 @@
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Family 1 output not possible for GasWater&quot;</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PyscalList.build_eclipse_data"><a class="viewcode-back" href="../../pyscal/pyscal.pyscallist.html#pyscal.pyscallist.PyscalList.build_eclipse_data">[docs]</a>    <span class="k">def</span> <span class="nf">build_eclipse_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">family</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="n">slgof</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Construct Eclipse keywords and data for relative permeability</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Construct Eclipse keywords and data for relative permeability</span>
 <span class="sd">        properties of family 1 or 2 type.</span>
 
 <span class="sd">        Args:</span>
@@ -356,7 +359,7 @@
         <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">keyword</span><span class="p">)()</span> <span class="k">for</span> <span class="n">keyword</span> <span class="ow">in</span> <span class="n">keywords</span><span class="p">])</span></div>
 
 <div class="viewcode-block" id="PyscalList.dump_family_1"><a class="viewcode-back" href="../../pyscal/pyscal.pyscallist.html#pyscal.pyscallist.PyscalList.dump_family_1">[docs]</a>    <span class="k">def</span> <span class="nf">dump_family_1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">slgof</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Dumps family 1 Eclipse saturation tables to one</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Dumps family 1 Eclipse saturation tables to one</span>
 <span class="sd">        filename. This means SWOF + SGOF (SGOF only if relevant)</span>
 
 <span class="sd">        This function is deprecated. Use build_eclipse_data() and write to</span>
@@ -379,7 +382,7 @@
         <span class="k">return</span> <span class="n">string</span></div>
 
 <div class="viewcode-block" id="PyscalList.dump_family_2"><a class="viewcode-back" href="../../pyscal/pyscal.pyscallist.html#pyscal.pyscallist.PyscalList.dump_family_2">[docs]</a>    <span class="k">def</span> <span class="nf">dump_family_2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Dumps family 2 Eclipse saturation tables to one</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Dumps family 2 Eclipse saturation tables to one</span>
 <span class="sd">        filename. This means SWFN + SGFN + SOF3 (SOF3 only for WaterOilGas)</span>
 
 <span class="sd">        Relevant for WaterOilGas and GasWater.</span>
@@ -405,7 +408,7 @@
         <span class="n">int_params_go</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">h</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;PyscalList&quot;</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;This function will interpolate each SCALrecommendation</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;This function will interpolate each SCALrecommendation</span>
 <span class="sd">        object to the chosen parameters</span>
 
 <span class="sd">        This only works on lists of SCALrecommendation objects</span>
@@ -450,7 +453,7 @@
                 <span class="sa">f</span><span class="s2">&quot;Too many interpolation parameters given for GasOil </span><span class="si">{</span><span class="n">int_params_go</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
         <span class="n">wog_list</span><span class="p">:</span> <span class="n">PyscalList</span> <span class="o">=</span> <span class="n">PyscalList</span><span class="p">()</span>
-        <span class="k">for</span> <span class="p">(</span><span class="n">satnum</span><span class="p">,</span> <span class="n">scalrec</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyscal_list</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">satnum</span><span class="p">,</span> <span class="n">scalrec</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyscal_list</span><span class="p">):</span>
             <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scalrec</span><span class="p">,</span> <span class="n">SCALrecommendation</span><span class="p">)</span>
             <span class="n">wog_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
                 <span class="n">scalrec</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">int_params_wo</span><span class="p">[</span><span class="n">satnum</span><span class="p">],</span> <span class="n">int_params_go</span><span class="p">[</span><span class="n">satnum</span><span class="p">],</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">)</span>
@@ -462,7 +465,7 @@
         <span class="n">keyword</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
         <span class="n">write_to_filename</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>  <span class="c1"># Deprecated</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Internal helper function for constructing Eclipse include file strings</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Internal helper function for constructing Eclipse include file strings</span>
 <span class="sd">        for individual keywords.</span>
 
 <span class="sd">        build_eclipse_data() will use this function.</span>
@@ -487,36 +490,36 @@
         <span class="k">return</span> <span class="n">string</span>
 
 <div class="viewcode-block" id="PyscalList.SWOF"><a class="viewcode-back" href="../../pyscal/pyscal.pyscallist.html#pyscal.pyscallist.PyscalList.SWOF">[docs]</a>    <span class="k">def</span> <span class="nf">SWOF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Build SWOF string&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build SWOF string&quot;&quot;&quot;</span>
         <span class="c1"># _make_ecl_output() will warn about non-None filename being deprecated</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_ecl_output</span><span class="p">(</span><span class="s2">&quot;SWOF&quot;</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PyscalList.SGOF"><a class="viewcode-back" href="../../pyscal/pyscal.pyscallist.html#pyscal.pyscallist.PyscalList.SGOF">[docs]</a>    <span class="k">def</span> <span class="nf">SGOF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Build SGOF string&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build SGOF string&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_ecl_output</span><span class="p">(</span><span class="s2">&quot;SGOF&quot;</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PyscalList.SLGOF"><a class="viewcode-back" href="../../pyscal/pyscal.pyscallist.html#pyscal.pyscallist.PyscalList.SLGOF">[docs]</a>    <span class="k">def</span> <span class="nf">SLGOF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Build SLGOF string&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build SLGOF string&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_ecl_output</span><span class="p">(</span><span class="s2">&quot;SLGOF&quot;</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PyscalList.SGFN"><a class="viewcode-back" href="../../pyscal/pyscal.pyscallist.html#pyscal.pyscallist.PyscalList.SGFN">[docs]</a>    <span class="k">def</span> <span class="nf">SGFN</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Build SGFN string&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build SGFN string&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_ecl_output</span><span class="p">(</span><span class="s2">&quot;SGFN&quot;</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PyscalList.SWFN"><a class="viewcode-back" href="../../pyscal/pyscal.pyscallist.html#pyscal.pyscallist.PyscalList.SWFN">[docs]</a>    <span class="k">def</span> <span class="nf">SWFN</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Build SWFN string&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build SWFN string&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_ecl_output</span><span class="p">(</span><span class="s2">&quot;SWFN&quot;</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="PyscalList.SOF3"><a class="viewcode-back" href="../../pyscal/pyscal.pyscallist.html#pyscal.pyscallist.PyscalList.SOF3">[docs]</a>    <span class="k">def</span> <span class="nf">SOF3</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Build SOF3 string&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build SOF3 string&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_make_ecl_output</span><span class="p">(</span><span class="s2">&quot;SOF3&quot;</span><span class="p">,</span> <span class="n">write_to_filename</span><span class="p">)</span></div>
 
     <span class="k">def</span> <span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Return the count of Pyscal objects in the list&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the count of Pyscal objects in the list&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pyscal_list</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">satnum_idx</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PyscalObjects</span><span class="p">:</span>
-        <span class="sd">&quot;&quot;&quot;Get a specific List member.</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a specific List member.</span>
 
 <span class="sd">        The indexing starts at 1, not zero, similar</span>
 <span class="sd">        to how SATNUMs are indexed.</span>
@@ -546,7 +549,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Equinor 2019-2022.</p>
+    <p>&#169; Copyright Equinor 2019-2023.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

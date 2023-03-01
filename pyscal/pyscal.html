@@ -1,21 +1,20 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal &mdash; pyscal 0.10.1 documentation</title>
+  <title>pyscal &mdash; pyscal 0.10.3 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -28,15 +27,19 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> pyscal
-            <img src="../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            pyscal
+              <img src="../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.10.1
+                0.10.3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -54,6 +57,7 @@
 <p class="caption" role="heading"><span class="caption-text">Python API</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">pyscal</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#pyscal.getLogger_pyscal"><code class="docutils literal notranslate"><span class="pre">getLogger_pyscal()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="pyscal.constants.html"><code class="docutils literal notranslate"><span class="pre">pyscal.constants</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pyscal.factory.html"><code class="docutils literal notranslate"><span class="pre">pyscal.factory</span></code></a></li>
@@ -85,8 +89,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-      <li><code class="docutils literal notranslate"><span class="pre">pyscal</span></code></li>
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active"><code class="docutils literal notranslate"><span class="pre">pyscal</span></code></li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/pyscal/pyscal.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -99,11 +103,11 @@
   <section id="module-pyscal">
 <span id="pyscal"></span><h1><code class="docutils literal notranslate"><span class="pre">pyscal</span></code><a class="headerlink" href="#module-pyscal" title="Permalink to this heading"></a></h1>
 <p>pyscal</p>
-<div class="contents local topic" id="contents">
+<nav class="contents local" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#submodules" id="id1">Submodules</a></p></li>
 </ul>
-</div>
+</nav>
 <dl class="py function">
 <dt class="sig sig-object py" id="pyscal.getLogger_pyscal">
 <span class="sig-prename descclassname"><span class="pre">pyscal.</span></span><span class="sig-name descname"><span class="pre">getLogger_pyscal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pyscal'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal.html#getLogger_pyscal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.getLogger_pyscal" title="Permalink to this definition"></a></dt>
@@ -117,38 +121,233 @@ ERROR) to stdout and stderr, each log occurs in only one of the streams.
 :param only keys “output”:
 :param “verbose” and “debug”.:</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></p>
 </dd>
 </dl>
 </dd></dl>
 
 <section id="submodules">
-<h2><a class="toc-backref" href="#id1">Submodules</a><a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Submodules</a><a class="headerlink" href="#submodules" title="Permalink to this heading"></a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="pyscal.constants.html"><code class="docutils literal notranslate"><span class="pre">pyscal.constants</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="pyscal.factory.html"><code class="docutils literal notranslate"><span class="pre">pyscal.factory</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="pyscal.gasoil.html"><code class="docutils literal notranslate"><span class="pre">pyscal.gasoil</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="pyscal.gaswater.html"><code class="docutils literal notranslate"><span class="pre">pyscal.gaswater</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="pyscal.pyscalcli.html"><code class="docutils literal notranslate"><span class="pre">pyscal.pyscalcli</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="pyscal.pyscallist.html"><code class="docutils literal notranslate"><span class="pre">pyscal.pyscallist</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="pyscal.scalrecommendation.html"><code class="docutils literal notranslate"><span class="pre">pyscal.scalrecommendation</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyscal.factory.html"><code class="docutils literal notranslate"><span class="pre">pyscal.factory</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyscal.factory.html#pyscal.factory.PyscalFactory"><code class="docutils literal notranslate"><span class="pre">PyscalFactory</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.factory.html#pyscal.factory.PyscalFactory.alias_sgrw"><code class="docutils literal notranslate"><span class="pre">PyscalFactory.alias_sgrw()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.factory.html#pyscal.factory.PyscalFactory.create_gas_oil"><code class="docutils literal notranslate"><span class="pre">PyscalFactory.create_gas_oil()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.factory.html#pyscal.factory.PyscalFactory.create_gas_water"><code class="docutils literal notranslate"><span class="pre">PyscalFactory.create_gas_water()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.factory.html#pyscal.factory.PyscalFactory.create_gasoil_list"><code class="docutils literal notranslate"><span class="pre">PyscalFactory.create_gasoil_list()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.factory.html#pyscal.factory.PyscalFactory.create_gaswater_list"><code class="docutils literal notranslate"><span class="pre">PyscalFactory.create_gaswater_list()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.factory.html#pyscal.factory.PyscalFactory.create_pyscal_list"><code class="docutils literal notranslate"><span class="pre">PyscalFactory.create_pyscal_list()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.factory.html#pyscal.factory.PyscalFactory.create_scal_recommendation"><code class="docutils literal notranslate"><span class="pre">PyscalFactory.create_scal_recommendation()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.factory.html#pyscal.factory.PyscalFactory.create_scal_recommendation_list"><code class="docutils literal notranslate"><span class="pre">PyscalFactory.create_scal_recommendation_list()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.factory.html#pyscal.factory.PyscalFactory.create_water_oil"><code class="docutils literal notranslate"><span class="pre">PyscalFactory.create_water_oil()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.factory.html#pyscal.factory.PyscalFactory.create_water_oil_gas"><code class="docutils literal notranslate"><span class="pre">PyscalFactory.create_water_oil_gas()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.factory.html#pyscal.factory.PyscalFactory.create_wateroil_list"><code class="docutils literal notranslate"><span class="pre">PyscalFactory.create_wateroil_list()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.factory.html#pyscal.factory.PyscalFactory.create_wateroilgas_list"><code class="docutils literal notranslate"><span class="pre">PyscalFactory.create_wateroilgas_list()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.factory.html#pyscal.factory.PyscalFactory.load_relperm_df"><code class="docutils literal notranslate"><span class="pre">PyscalFactory.load_relperm_df()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.factory.html#pyscal.factory.PyscalFactory.remap_validate_cases"><code class="docutils literal notranslate"><span class="pre">PyscalFactory.remap_validate_cases()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pyscal.factory.html#pyscal.factory.check_deprecated"><code class="docutils literal notranslate"><span class="pre">check_deprecated()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyscal.factory.html#pyscal.factory.filter_nan_from_dict"><code class="docutils literal notranslate"><span class="pre">filter_nan_from_dict()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyscal.factory.html#pyscal.factory.infer_tabular_file_format"><code class="docutils literal notranslate"><span class="pre">infer_tabular_file_format()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyscal.factory.html#pyscal.factory.slicedict"><code class="docutils literal notranslate"><span class="pre">slicedict()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyscal.factory.html#pyscal.factory.sufficient_gas_oil_params"><code class="docutils literal notranslate"><span class="pre">sufficient_gas_oil_params()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyscal.factory.html#pyscal.factory.sufficient_gas_water_params"><code class="docutils literal notranslate"><span class="pre">sufficient_gas_water_params()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyscal.factory.html#pyscal.factory.sufficient_water_oil_params"><code class="docutils literal notranslate"><span class="pre">sufficient_water_oil_params()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pyscal.gasoil.html"><code class="docutils literal notranslate"><span class="pre">pyscal.gasoil</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyscal.gasoil.html#pyscal.gasoil.GasOil"><code class="docutils literal notranslate"><span class="pre">GasOil</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gasoil.html#pyscal.gasoil.GasOil.GOTABLE"><code class="docutils literal notranslate"><span class="pre">GasOil.GOTABLE()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gasoil.html#pyscal.gasoil.GasOil.SGFN"><code class="docutils literal notranslate"><span class="pre">GasOil.SGFN()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gasoil.html#pyscal.gasoil.GasOil.SGOF"><code class="docutils literal notranslate"><span class="pre">GasOil.SGOF()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gasoil.html#pyscal.gasoil.GasOil.SLGOF"><code class="docutils literal notranslate"><span class="pre">GasOil.SLGOF()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gasoil.html#pyscal.gasoil.GasOil.add_LET_gas"><code class="docutils literal notranslate"><span class="pre">GasOil.add_LET_gas()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gasoil.html#pyscal.gasoil.GasOil.add_LET_oil"><code class="docutils literal notranslate"><span class="pre">GasOil.add_LET_oil()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gasoil.html#pyscal.gasoil.GasOil.add_corey_gas"><code class="docutils literal notranslate"><span class="pre">GasOil.add_corey_gas()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gasoil.html#pyscal.gasoil.GasOil.add_corey_oil"><code class="docutils literal notranslate"><span class="pre">GasOil.add_corey_oil()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gasoil.html#pyscal.gasoil.GasOil.add_fromtable"><code class="docutils literal notranslate"><span class="pre">GasOil.add_fromtable()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gasoil.html#pyscal.gasoil.GasOil.crosspoint"><code class="docutils literal notranslate"><span class="pre">GasOil.crosspoint()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gasoil.html#pyscal.gasoil.GasOil.estimate_sgcr"><code class="docutils literal notranslate"><span class="pre">GasOil.estimate_sgcr()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gasoil.html#pyscal.gasoil.GasOil.estimate_sgro"><code class="docutils literal notranslate"><span class="pre">GasOil.estimate_sgro()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gasoil.html#pyscal.gasoil.GasOil.estimate_sorg"><code class="docutils literal notranslate"><span class="pre">GasOil.estimate_sorg()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gasoil.html#pyscal.gasoil.GasOil.plotkrgkrog"><code class="docutils literal notranslate"><span class="pre">GasOil.plotkrgkrog()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gasoil.html#pyscal.gasoil.GasOil.selfcheck"><code class="docutils literal notranslate"><span class="pre">GasOil.selfcheck()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gasoil.html#pyscal.gasoil.GasOil.set_endpoints_linearpart_krg"><code class="docutils literal notranslate"><span class="pre">GasOil.set_endpoints_linearpart_krg()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gasoil.html#pyscal.gasoil.GasOil.set_endpoints_linearpart_krog"><code class="docutils literal notranslate"><span class="pre">GasOil.set_endpoints_linearpart_krog()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gasoil.html#pyscal.gasoil.GasOil.slgof_df"><code class="docutils literal notranslate"><span class="pre">GasOil.slgof_df()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gasoil.html#pyscal.gasoil.GasOil.update_sgcomment_and_sorg"><code class="docutils literal notranslate"><span class="pre">GasOil.update_sgcomment_and_sorg()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pyscal.gaswater.html"><code class="docutils literal notranslate"><span class="pre">pyscal.gaswater</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyscal.gaswater.html#pyscal.gaswater.GasWater"><code class="docutils literal notranslate"><span class="pre">GasWater</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gaswater.html#pyscal.gaswater.GasWater.SGFN"><code class="docutils literal notranslate"><span class="pre">GasWater.SGFN()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gaswater.html#pyscal.gaswater.GasWater.SWFN"><code class="docutils literal notranslate"><span class="pre">GasWater.SWFN()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gaswater.html#pyscal.gaswater.GasWater.add_LET_gas"><code class="docutils literal notranslate"><span class="pre">GasWater.add_LET_gas()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gaswater.html#pyscal.gaswater.GasWater.add_LET_water"><code class="docutils literal notranslate"><span class="pre">GasWater.add_LET_water()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gaswater.html#pyscal.gaswater.GasWater.add_corey_gas"><code class="docutils literal notranslate"><span class="pre">GasWater.add_corey_gas()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gaswater.html#pyscal.gaswater.GasWater.add_corey_water"><code class="docutils literal notranslate"><span class="pre">GasWater.add_corey_water()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gaswater.html#pyscal.gaswater.GasWater.add_simple_J"><code class="docutils literal notranslate"><span class="pre">GasWater.add_simple_J()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gaswater.html#pyscal.gaswater.GasWater.add_simple_J_petro"><code class="docutils literal notranslate"><span class="pre">GasWater.add_simple_J_petro()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gaswater.html#pyscal.gaswater.GasWater.crosspoint"><code class="docutils literal notranslate"><span class="pre">GasWater.crosspoint()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gaswater.html#pyscal.gaswater.GasWater.krgcomment"><code class="docutils literal notranslate"><span class="pre">GasWater.krgcomment</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gaswater.html#pyscal.gaswater.GasWater.krwcomment"><code class="docutils literal notranslate"><span class="pre">GasWater.krwcomment</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gaswater.html#pyscal.gaswater.GasWater.plotkrwkrg"><code class="docutils literal notranslate"><span class="pre">GasWater.plotkrwkrg()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gaswater.html#pyscal.gaswater.GasWater.selfcheck"><code class="docutils literal notranslate"><span class="pre">GasWater.selfcheck()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gaswater.html#pyscal.gaswater.GasWater.sgcomment"><code class="docutils literal notranslate"><span class="pre">GasWater.sgcomment</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gaswater.html#pyscal.gaswater.GasWater.swcomment"><code class="docutils literal notranslate"><span class="pre">GasWater.swcomment</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gaswater.html#pyscal.gaswater.GasWater.swcr"><code class="docutils literal notranslate"><span class="pre">GasWater.swcr</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gaswater.html#pyscal.gaswater.GasWater.swirr"><code class="docutils literal notranslate"><span class="pre">GasWater.swirr</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gaswater.html#pyscal.gaswater.GasWater.swl"><code class="docutils literal notranslate"><span class="pre">GasWater.swl</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gaswater.html#pyscal.gaswater.GasWater.tag"><code class="docutils literal notranslate"><span class="pre">GasWater.tag</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pyscal.gaswater.html#pyscal.gaswater.is_documented_by"><code class="docutils literal notranslate"><span class="pre">is_documented_by()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pyscal.pyscalcli.html"><code class="docutils literal notranslate"><span class="pre">pyscal.pyscalcli</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyscal.pyscalcli.html#pyscal.pyscalcli.get_parser"><code class="docutils literal notranslate"><span class="pre">get_parser()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyscal.pyscalcli.html#pyscal.pyscalcli.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyscal.pyscalcli.html#pyscal.pyscalcli.pyscal_main"><code class="docutils literal notranslate"><span class="pre">pyscal_main()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pyscal.pyscallist.html"><code class="docutils literal notranslate"><span class="pre">pyscal.pyscallist</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyscal.pyscallist.html#pyscal.pyscallist.PyscalList"><code class="docutils literal notranslate"><span class="pre">PyscalList</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.pyscallist.html#pyscal.pyscallist.PyscalList.SGFN"><code class="docutils literal notranslate"><span class="pre">PyscalList.SGFN()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.pyscallist.html#pyscal.pyscallist.PyscalList.SGOF"><code class="docutils literal notranslate"><span class="pre">PyscalList.SGOF()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.pyscallist.html#pyscal.pyscallist.PyscalList.SLGOF"><code class="docutils literal notranslate"><span class="pre">PyscalList.SLGOF()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.pyscallist.html#pyscal.pyscallist.PyscalList.SOF3"><code class="docutils literal notranslate"><span class="pre">PyscalList.SOF3()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.pyscallist.html#pyscal.pyscallist.PyscalList.SWFN"><code class="docutils literal notranslate"><span class="pre">PyscalList.SWFN()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.pyscallist.html#pyscal.pyscallist.PyscalList.SWOF"><code class="docutils literal notranslate"><span class="pre">PyscalList.SWOF()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.pyscallist.html#pyscal.pyscallist.PyscalList.append"><code class="docutils literal notranslate"><span class="pre">PyscalList.append()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.pyscallist.html#pyscal.pyscallist.PyscalList.build_eclipse_data"><code class="docutils literal notranslate"><span class="pre">PyscalList.build_eclipse_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.pyscallist.html#pyscal.pyscallist.PyscalList.df"><code class="docutils literal notranslate"><span class="pre">PyscalList.df()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.pyscallist.html#pyscal.pyscallist.PyscalList.dump_family_1"><code class="docutils literal notranslate"><span class="pre">PyscalList.dump_family_1()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.pyscallist.html#pyscal.pyscallist.PyscalList.dump_family_2"><code class="docutils literal notranslate"><span class="pre">PyscalList.dump_family_2()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.pyscallist.html#pyscal.pyscallist.PyscalList.interpolate"><code class="docutils literal notranslate"><span class="pre">PyscalList.interpolate()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.pyscallist.html#pyscal.pyscallist.PyscalList.relevant_keywords"><code class="docutils literal notranslate"><span class="pre">PyscalList.relevant_keywords()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pyscal.scalrecommendation.html"><code class="docutils literal notranslate"><span class="pre">pyscal.scalrecommendation</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyscal.scalrecommendation.html#pyscal.scalrecommendation.SCALrecommendation"><code class="docutils literal notranslate"><span class="pre">SCALrecommendation</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.scalrecommendation.html#pyscal.scalrecommendation.SCALrecommendation.add_simple_J"><code class="docutils literal notranslate"><span class="pre">SCALrecommendation.add_simple_J()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.scalrecommendation.html#pyscal.scalrecommendation.SCALrecommendation.interpolate"><code class="docutils literal notranslate"><span class="pre">SCALrecommendation.interpolate()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="pyscal.utils.html"><code class="docutils literal notranslate"><span class="pre">pyscal.utils</span></code></a><ul>
 <li class="toctree-l2"><a class="reference internal" href="pyscal.utils.html#submodules">Submodules</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="pyscal.utils.capillarypressure.html"><code class="docutils literal notranslate"><span class="pre">pyscal.utils.capillarypressure</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pyscal.utils.interpolation.html"><code class="docutils literal notranslate"><span class="pre">pyscal.utils.interpolation</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pyscal.utils.monotonicity.html"><code class="docutils literal notranslate"><span class="pre">pyscal.utils.monotonicity</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pyscal.utils.relperm.html"><code class="docutils literal notranslate"><span class="pre">pyscal.utils.relperm</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pyscal.utils.string.html"><code class="docutils literal notranslate"><span class="pre">pyscal.utils.string</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pyscal.utils.testing.html"><code class="docutils literal notranslate"><span class="pre">pyscal.utils.testing</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.utils.capillarypressure.html"><code class="docutils literal notranslate"><span class="pre">pyscal.utils.capillarypressure</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pyscal.utils.capillarypressure.html#pyscal.utils.capillarypressure.simple_J"><code class="docutils literal notranslate"><span class="pre">simple_J()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyscal.utils.capillarypressure.html#pyscal.utils.capillarypressure.swl_from_height_simpleJ"><code class="docutils literal notranslate"><span class="pre">swl_from_height_simpleJ()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.utils.interpolation.html"><code class="docutils literal notranslate"><span class="pre">pyscal.utils.interpolation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pyscal.utils.interpolation.html#pyscal.utils.interpolation.interpolate_go"><code class="docutils literal notranslate"><span class="pre">interpolate_go()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyscal.utils.interpolation.html#pyscal.utils.interpolation.interpolate_wo"><code class="docutils literal notranslate"><span class="pre">interpolate_wo()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyscal.utils.interpolation.html#pyscal.utils.interpolation.normalize_nonlinpart_go"><code class="docutils literal notranslate"><span class="pre">normalize_nonlinpart_go()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyscal.utils.interpolation.html#pyscal.utils.interpolation.normalize_nonlinpart_wo"><code class="docutils literal notranslate"><span class="pre">normalize_nonlinpart_wo()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyscal.utils.interpolation.html#pyscal.utils.interpolation.normalize_pc"><code class="docutils literal notranslate"><span class="pre">normalize_pc()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.utils.monotonicity.html"><code class="docutils literal notranslate"><span class="pre">pyscal.utils.monotonicity</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pyscal.utils.monotonicity.html#pyscal.utils.monotonicity.MonotonicitySpec"><code class="docutils literal notranslate"><span class="pre">MonotonicitySpec</span></code></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="pyscal.utils.monotonicity.html#pyscal.utils.monotonicity.MonotonicitySpec.allowzero"><code class="docutils literal notranslate"><span class="pre">MonotonicitySpec.allowzero</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="pyscal.utils.monotonicity.html#pyscal.utils.monotonicity.MonotonicitySpec.lower"><code class="docutils literal notranslate"><span class="pre">MonotonicitySpec.lower</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="pyscal.utils.monotonicity.html#pyscal.utils.monotonicity.MonotonicitySpec.sign"><code class="docutils literal notranslate"><span class="pre">MonotonicitySpec.sign</span></code></a></li>
+<li class="toctree-l5"><a class="reference internal" href="pyscal.utils.monotonicity.html#pyscal.utils.monotonicity.MonotonicitySpec.upper"><code class="docutils literal notranslate"><span class="pre">MonotonicitySpec.upper</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="pyscal.utils.monotonicity.html#pyscal.utils.monotonicity.check_almost_monotone"><code class="docutils literal notranslate"><span class="pre">check_almost_monotone()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyscal.utils.monotonicity.html#pyscal.utils.monotonicity.check_limits"><code class="docutils literal notranslate"><span class="pre">check_limits()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyscal.utils.monotonicity.html#pyscal.utils.monotonicity.clip_accumulate"><code class="docutils literal notranslate"><span class="pre">clip_accumulate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyscal.utils.monotonicity.html#pyscal.utils.monotonicity.modify_dframe_monotonicity"><code class="docutils literal notranslate"><span class="pre">modify_dframe_monotonicity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyscal.utils.monotonicity.html#pyscal.utils.monotonicity.rows_to_be_fixed"><code class="docutils literal notranslate"><span class="pre">rows_to_be_fixed()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyscal.utils.monotonicity.html#pyscal.utils.monotonicity.validate_monotonicity_arg"><code class="docutils literal notranslate"><span class="pre">validate_monotonicity_arg()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.utils.relperm.html"><code class="docutils literal notranslate"><span class="pre">pyscal.utils.relperm</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pyscal.utils.relperm.html#pyscal.utils.relperm.crosspoint"><code class="docutils literal notranslate"><span class="pre">crosspoint()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyscal.utils.relperm.html#pyscal.utils.relperm.estimate_diffjumppoint"><code class="docutils literal notranslate"><span class="pre">estimate_diffjumppoint()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyscal.utils.relperm.html#pyscal.utils.relperm.truncate_zeroness"><code class="docutils literal notranslate"><span class="pre">truncate_zeroness()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.utils.string.html"><code class="docutils literal notranslate"><span class="pre">pyscal.utils.string</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pyscal.utils.string.html#pyscal.utils.string.comment_formatter"><code class="docutils literal notranslate"><span class="pre">comment_formatter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyscal.utils.string.html#pyscal.utils.string.df2str"><code class="docutils literal notranslate"><span class="pre">df2str()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.utils.testing.html"><code class="docutils literal notranslate"><span class="pre">pyscal.utils.testing</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pyscal.utils.testing.html#pyscal.utils.testing.check_linear_sections"><code class="docutils literal notranslate"><span class="pre">check_linear_sections()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyscal.utils.testing.html#pyscal.utils.testing.check_table"><code class="docutils literal notranslate"><span class="pre">check_table()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyscal.utils.testing.html#pyscal.utils.testing.float_df_checker"><code class="docutils literal notranslate"><span class="pre">float_df_checker()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyscal.utils.testing.html#pyscal.utils.testing.sat_table_str_ok"><code class="docutils literal notranslate"><span class="pre">sat_table_str_ok()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyscal.utils.testing.html#pyscal.utils.testing.series_decreasing"><code class="docutils literal notranslate"><span class="pre">series_decreasing()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyscal.utils.testing.html#pyscal.utils.testing.series_increasing"><code class="docutils literal notranslate"><span class="pre">series_increasing()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyscal.utils.testing.html#pyscal.utils.testing.slow_hypothesis"><code class="docutils literal notranslate"><span class="pre">slow_hypothesis()</span></code></a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pyscal.version.html"><code class="docutils literal notranslate"><span class="pre">pyscal.version</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="pyscal.wateroil.html"><code class="docutils literal notranslate"><span class="pre">pyscal.wateroil</span></code></a></li>
-<li class="toctree-l1"><a class="reference internal" href="pyscal.wateroilgas.html"><code class="docutils literal notranslate"><span class="pre">pyscal.wateroilgas</span></code></a></li>
+<li class="toctree-l1"><a class="reference internal" href="pyscal.wateroil.html"><code class="docutils literal notranslate"><span class="pre">pyscal.wateroil</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil"><code class="docutils literal notranslate"><span class="pre">WaterOil</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil.SWFN"><code class="docutils literal notranslate"><span class="pre">WaterOil.SWFN()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil.SWOF"><code class="docutils literal notranslate"><span class="pre">WaterOil.SWOF()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil.WOTABLE"><code class="docutils literal notranslate"><span class="pre">WaterOil.WOTABLE()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil.add_LET_oil"><code class="docutils literal notranslate"><span class="pre">WaterOil.add_LET_oil()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil.add_LET_pc_imb"><code class="docutils literal notranslate"><span class="pre">WaterOil.add_LET_pc_imb()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil.add_LET_pc_pd"><code class="docutils literal notranslate"><span class="pre">WaterOil.add_LET_pc_pd()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil.add_LET_water"><code class="docutils literal notranslate"><span class="pre">WaterOil.add_LET_water()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil.add_corey_oil"><code class="docutils literal notranslate"><span class="pre">WaterOil.add_corey_oil()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil.add_corey_water"><code class="docutils literal notranslate"><span class="pre">WaterOil.add_corey_water()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil.add_fromtable"><code class="docutils literal notranslate"><span class="pre">WaterOil.add_fromtable()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil.add_normalized_J"><code class="docutils literal notranslate"><span class="pre">WaterOil.add_normalized_J()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil.add_simple_J"><code class="docutils literal notranslate"><span class="pre">WaterOil.add_simple_J()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil.add_simple_J_petro"><code class="docutils literal notranslate"><span class="pre">WaterOil.add_simple_J_petro()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil.add_skjaeveland_pc"><code class="docutils literal notranslate"><span class="pre">WaterOil.add_skjaeveland_pc()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil.crosspoint"><code class="docutils literal notranslate"><span class="pre">WaterOil.crosspoint()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil.estimate_socr"><code class="docutils literal notranslate"><span class="pre">WaterOil.estimate_socr()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil.estimate_sorw"><code class="docutils literal notranslate"><span class="pre">WaterOil.estimate_sorw()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil.estimate_swcr"><code class="docutils literal notranslate"><span class="pre">WaterOil.estimate_swcr()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil.plotkrwkrow"><code class="docutils literal notranslate"><span class="pre">WaterOil.plotkrwkrow()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil.plotpc"><code class="docutils literal notranslate"><span class="pre">WaterOil.plotpc()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil.selfcheck"><code class="docutils literal notranslate"><span class="pre">WaterOil.selfcheck()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil.set_endpoints_linearpart_krow"><code class="docutils literal notranslate"><span class="pre">WaterOil.set_endpoints_linearpart_krow()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil.set_endpoints_linearpart_krw"><code class="docutils literal notranslate"><span class="pre">WaterOil.set_endpoints_linearpart_krw()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pyscal.wateroilgas.html"><code class="docutils literal notranslate"><span class="pre">pyscal.wateroilgas</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyscal.wateroilgas.html#pyscal.wateroilgas.WaterOilGas"><code class="docutils literal notranslate"><span class="pre">WaterOilGas</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroilgas.html#pyscal.wateroilgas.WaterOilGas.SGFN"><code class="docutils literal notranslate"><span class="pre">WaterOilGas.SGFN()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroilgas.html#pyscal.wateroilgas.WaterOilGas.SGOF"><code class="docutils literal notranslate"><span class="pre">WaterOilGas.SGOF()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroilgas.html#pyscal.wateroilgas.WaterOilGas.SLGOF"><code class="docutils literal notranslate"><span class="pre">WaterOilGas.SLGOF()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroilgas.html#pyscal.wateroilgas.WaterOilGas.SOF3"><code class="docutils literal notranslate"><span class="pre">WaterOilGas.SOF3()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroilgas.html#pyscal.wateroilgas.WaterOilGas.SWFN"><code class="docutils literal notranslate"><span class="pre">WaterOilGas.SWFN()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroilgas.html#pyscal.wateroilgas.WaterOilGas.SWOF"><code class="docutils literal notranslate"><span class="pre">WaterOilGas.SWOF()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroilgas.html#pyscal.wateroilgas.WaterOilGas.selfcheck"><code class="docutils literal notranslate"><span class="pre">WaterOilGas.selfcheck()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroilgas.html#pyscal.wateroilgas.WaterOilGas.sorg"><code class="docutils literal notranslate"><span class="pre">WaterOilGas.sorg</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroilgas.html#pyscal.wateroilgas.WaterOilGas.sorw"><code class="docutils literal notranslate"><span class="pre">WaterOilGas.sorw</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroilgas.html#pyscal.wateroilgas.WaterOilGas.swirr"><code class="docutils literal notranslate"><span class="pre">WaterOilGas.swirr</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroilgas.html#pyscal.wateroilgas.WaterOilGas.swl"><code class="docutils literal notranslate"><span class="pre">WaterOilGas.swl</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroilgas.html#pyscal.wateroilgas.WaterOilGas.tag"><code class="docutils literal notranslate"><span class="pre">WaterOilGas.tag</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroilgas.html#pyscal.wateroilgas.WaterOilGas.threephaseconsistency"><code class="docutils literal notranslate"><span class="pre">WaterOilGas.threephaseconsistency()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
 </ul>
 </div>
 </section>
@@ -165,7 +364,7 @@ ERROR) to stdout and stderr, each log occurs in only one of the streams.
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Equinor 2019-2022.</p>
+    <p>&#169; Copyright Equinor 2019-2023.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

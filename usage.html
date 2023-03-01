@@ -1,21 +1,20 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Usage &mdash; pyscal 0.10.1 documentation</title>
+  <title>Usage &mdash; pyscal 0.10.3 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -28,15 +27,19 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> pyscal
-            <img src="_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pyscal
+              <img src="_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.10.1
+                0.10.3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -47,8 +50,8 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Usage</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#the-command-line-tool">The command line tool</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#Positional Arguments">Positional Arguments</a></li>
-<li class="toctree-l3"><a class="reference internal" href="#Named Arguments">Named Arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#positional-arguments">Positional Arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#named-arguments">Named Arguments</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#pyscal-endpoints">Pyscal endpoints</a><ul>
@@ -91,8 +94,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Usage</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Usage</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/usage.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -108,7 +111,7 @@
 line tool is a short wrapper utilizing the underlying pyscal functionality.</p>
 <section id="the-command-line-tool">
 <h2>The command line tool<a class="headerlink" href="#the-command-line-tool" title="Permalink to this heading"></a></h2>
-<p><p>pyscal (v0.10.1) is a tool to create Eclipse include files for relative permeability input from tabulated parameters.</p>
+<p><p>pyscal (v0.10.3) is a tool to create Eclipse include files for relative permeability input from tabulated parameters.</p>
 </p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">pyscal</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">debug</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">version</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">o</span> <span class="n">OUTPUT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">delta_s</span> <span class="n">DELTA_S</span><span class="p">]</span>
               <span class="p">[</span><span class="o">--</span><span class="n">int_param_wo</span> <span class="n">INT_PARAM_WO</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">int_param_go</span> <span class="n">INT_PARAM_GO</span><span class="p">]</span>
@@ -116,16 +119,16 @@ line tool is a short wrapper utilizing the underlying pyscal functionality.</p>
               <span class="n">parametertable</span>
 </pre></div>
 </div>
-<section id="Positional Arguments">
-<h3>Positional Arguments<a class="headerlink" href="#Positional Arguments" title="Permalink to this heading"></a></h3>
+<section id="positional-arguments">
+<h3>Positional Arguments<a class="headerlink" href="#positional-arguments" title="Permalink to this heading"></a></h3>
 <dl class="option-list">
 <dt><kbd>parametertable</kbd></dt>
 <dd><p>CSV or XLSX file with Corey or LET parameters for relperms. One SATNUM pr row.</p>
 </dd>
 </dl>
 </section>
-<section id="Named Arguments">
-<h3>Named Arguments<a class="headerlink" href="#Named Arguments" title="Permalink to this heading"></a></h3>
+<section id="named-arguments">
+<h3>Named Arguments<a class="headerlink" href="#named-arguments" title="Permalink to this heading"></a></h3>
 <dl class="option-list">
 <dt><kbd>-v, --verbose</kbd></dt>
 <dd><p>Print informational messages while processing input</p>
@@ -180,6 +183,11 @@ These columns are optional and are defaulted to 0 or 1.</p>
 ‘a_petro’, or ‘b_petro’, the petrophysical formulation of the simple J-function
 is used. Check API for exact formulas. Normalized J-function is used if ‘a’,
 ‘b’, ‘poro’, ‘perm’ and ‘sigma_costau’ is provided.</p>
+<p>Primary drainage and imbibition capillary pressure with LET parametrization are
+based on presence of the columnns ‘Lp’, ‘Ep’, ‘Tp’,’Lt’, ‘Et’, ‘Tt’, ‘Pcmax’, ‘Pct’ and
+‘Ls’, ‘Es’, ‘Ts’, ‘Lf’, ‘Ef’, ‘Tf’, ‘Pcmax’, ‘Pct’, ‘Pcmin’ respectively.</p>
+<p>Capillary pressure from the Skjæveland correlation is based on the on the presence
+of the columns ‘cw’, ‘co’, ‘aw’, ‘ao’.</p>
 <p>For SCAL recommendations, there should be exactly three rows for each SATNUM,
 tagged with the strings ‘low’, ‘base’ and ‘high’ in the column ‘CASE’</p>
 <p>When interpolating in a SCAL recommendation, ‘int_param_wo’ is the main parameter
@@ -190,35 +198,6 @@ if individual interpolation for each SATNUM is needed.</p>
 </p>
 <p>An example input table could look like:</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 5%" />
-<col style="width: 6%" />
-<col style="width: 4%" />
-<col style="width: 3%" />
-<col style="width: 5%" />
-<col style="width: 2%" />
-<col style="width: 2%" />
-<col style="width: 2%" />
-<col style="width: 3%" />
-<col style="width: 3%" />
-<col style="width: 3%" />
-<col style="width: 2%" />
-<col style="width: 2%" />
-<col style="width: 2%" />
-<col style="width: 3%" />
-<col style="width: 3%" />
-<col style="width: 3%" />
-<col style="width: 4%" />
-<col style="width: 4%" />
-<col style="width: 5%" />
-<col style="width: 5%" />
-<col style="width: 4%" />
-<col style="width: 3%" />
-<col style="width: 4%" />
-<col style="width: 6%" />
-<col style="width: 6%" />
-<col style="width: 4%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>SATNUM</p></th>
 <th class="head"><p>comment</p></th>
@@ -343,12 +322,6 @@ the strings ‘pessimistic’, ‘base’ and ‘optimistic’ (also possible is
 ‘low’, ‘high’, ‘opt’ and ‘pess’. ‘low’ is identical to ‘pessimistic’ always and
 vice versa. An example table could be</p>
 <table class="docutils align-default">
-<colgroup>
-<col style="width: 29%" />
-<col style="width: 21%" />
-<col style="width: 25%" />
-<col style="width: 25%" />
-</colgroup>
 <thead>
 <tr class="row-odd"><th class="head"><p>SATNUM</p></th>
 <th class="head"><p>CASE</p></th>
@@ -630,7 +603,7 @@ the SCAL recommendation holds three GasWater objects, but works similarly.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Equinor 2019-2022.</p>
+    <p>&#169; Copyright Equinor 2019-2023.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

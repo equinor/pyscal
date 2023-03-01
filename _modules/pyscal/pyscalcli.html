@@ -3,18 +3,17 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.pyscalcli &mdash; pyscal 0.10.1 documentation</title>
+  <title>pyscal.pyscalcli &mdash; pyscal 0.10.3 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/underscore.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -25,15 +24,19 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../index.html" class="icon icon-home"> pyscal
-            <img src="../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            pyscal
+              <img src="../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.10.1
+                0.10.3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -66,10 +69,10 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../index.html">Module code</a> &raquo;</li>
-          <li><a href="../pyscal.html">pyscal</a> &raquo;</li>
-      <li>pyscal.pyscalcli</li>
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../pyscal.html">pyscal</a></li>
+      <li class="breadcrumb-item active">pyscal.pyscalcli</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -120,6 +123,13 @@
 <span class="s2">is used. Check API for exact formulas. Normalized J-function is used if &#39;a&#39;,</span>
 <span class="s2">&#39;b&#39;, &#39;poro&#39;, &#39;perm&#39; and &#39;sigma_costau&#39; is provided.</span>
 
+<span class="s2">Primary drainage and imbibition capillary pressure with LET parametrization are</span>
+<span class="s2">based on presence of the columnns &#39;Lp&#39;, &#39;Ep&#39;, &#39;Tp&#39;,&#39;Lt&#39;, &#39;Et&#39;, &#39;Tt&#39;, &#39;Pcmax&#39;, &#39;Pct&#39; and</span>
+<span class="s2">&#39;Ls&#39;, &#39;Es&#39;, &#39;Ts&#39;, &#39;Lf&#39;, &#39;Ef&#39;, &#39;Tf&#39;, &#39;Pcmax&#39;, &#39;Pct&#39;, &#39;Pcmin&#39; respectively.</span>
+
+<span class="s2">Capillary pressure from the Skjæveland correlation is based on the on the presence</span>
+<span class="s2">of the columns &#39;cw&#39;, &#39;co&#39;, &#39;aw&#39;, &#39;ao&#39;.</span>
+
 <span class="s2">For SCAL recommendations, there should be exactly three rows for each SATNUM,</span>
 <span class="s2">tagged with the strings &#39;low&#39;, &#39;base&#39; and &#39;high&#39; in the column &#39;CASE&#39;</span>
 
@@ -132,7 +142,7 @@
 
 
 <div class="viewcode-block" id="get_parser"><a class="viewcode-back" href="../../pyscal/pyscal.pyscalcli.html#pyscal.pyscalcli.get_parser">[docs]</a><span class="k">def</span> <span class="nf">get_parser</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Construct the argparse parser for the command line script.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct the argparse parser for the command line script.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        argparse.Parser</span>
@@ -227,7 +237,7 @@
 
 
 <div class="viewcode-block" id="main"><a class="viewcode-back" href="../../pyscal/pyscal.pyscalcli.html#pyscal.pyscalcli.main">[docs]</a><span class="k">def</span> <span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Endpoint for pyscals command line utility.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Endpoint for pyscals command line utility.</span>
 
 <span class="sd">    Translates from argparse API to Pyscal&#39;s Python API&quot;&quot;&quot;</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">get_parser</span><span class="p">()</span>
@@ -259,11 +269,11 @@
     <span class="n">delta_s</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">int_param_wo</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">int_param_go</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">sheet_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">sheet_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">slgof</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">family2</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;A &quot;main()&quot; method not relying on argparse. This can be used</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A &quot;main()&quot; method not relying on argparse. This can be used</span>
 <span class="sd">    for testing, and also by an ERT forward model, e.g.</span>
 <span class="sd">    in semeio (github.com/equinor/semeio)</span>
 
@@ -357,7 +367,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Equinor 2019-2022.</p>
+    <p>&#169; Copyright Equinor 2019-2023.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

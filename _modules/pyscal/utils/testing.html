@@ -3,18 +3,17 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.utils.testing &mdash; pyscal 0.10.1 documentation</title>
+  <title>pyscal.utils.testing &mdash; pyscal 0.10.3 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
-        <script src="../../../_static/jquery.js"></script>
-        <script src="../../../_static/underscore.js"></script>
-        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" /> 
@@ -25,15 +24,19 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../../../index.html" class="icon icon-home"> pyscal
-            <img src="../../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            pyscal
+              <img src="../../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.10.1
+                0.10.3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -66,10 +69,10 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../../index.html">Module code</a> &raquo;</li>
-          <li><a href="../../pyscal.html">pyscal</a> &raquo;</li>
-      <li>pyscal.utils.testing</li>
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../../pyscal.html">pyscal</a></li>
+      <li class="breadcrumb-item active">pyscal.utils.testing</li>
       <li class="wy-breadcrumbs-aside">
       </li>
   </ul>
@@ -98,7 +101,7 @@
 
 
 <div class="viewcode-block" id="slow_hypothesis"><a class="viewcode-back" href="../../../pyscal/pyscal.utils.testing.html#pyscal.utils.testing.slow_hypothesis">[docs]</a><span class="k">def</span> <span class="nf">slow_hypothesis</span><span class="p">(</span><span class="n">slow_function</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;A decorator for tests that are always slow.</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A decorator for tests that are always slow.</span>
 
 <span class="sd">    The default deadline for hypothesis is set through the hypothesis profile</span>
 <span class="sd">    being used, and is set to None for CI runs (through a command line argument</span>
@@ -112,7 +115,7 @@
 
 
 <div class="viewcode-block" id="series_decreasing"><a class="viewcode-back" href="../../../pyscal/pyscal.utils.testing.html#pyscal.utils.testing.series_decreasing">[docs]</a><span class="k">def</span> <span class="nf">series_decreasing</span><span class="p">(</span><span class="n">series</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Weaker than pd.Series.is_monotonic_decreasing,</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Weaker than pd.Series.is_monotonic_decreasing,</span>
 <span class="sd">    allows constant parts.</span>
 
 <span class="sd">    We do not enforce less than zero here, because there will be</span>
@@ -124,12 +127,12 @@
 
 
 <div class="viewcode-block" id="series_increasing"><a class="viewcode-back" href="../../../pyscal/pyscal.utils.testing.html#pyscal.utils.testing.series_increasing">[docs]</a><span class="k">def</span> <span class="nf">series_increasing</span><span class="p">(</span><span class="n">series</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Weaker than pd.Series.is_monotonic_increasing&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Weaker than pd.Series.is_monotonic_increasing&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">series</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mf">1e-8</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span></div>
 
 
 <div class="viewcode-block" id="sat_table_str_ok"><a class="viewcode-back" href="../../../pyscal/pyscal.utils.testing.html#pyscal.utils.testing.sat_table_str_ok">[docs]</a><span class="k">def</span> <span class="nf">sat_table_str_ok</span><span class="p">(</span><span class="n">sat_table_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Test that a supplied string from SWOF()/SGOF() etc is</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Test that a supplied string from SWOF()/SGOF() etc is</span>
 <span class="sd">    probably ok for Eclipse.</span>
 
 <span class="sd">    Number of floats pr. line must be constant</span>
@@ -203,23 +206,23 @@
 
 
 <div class="viewcode-block" id="check_table"><a class="viewcode-back" href="../../../pyscal/pyscal.utils.testing.html#pyscal.utils.testing.check_table">[docs]</a><span class="k">def</span> <span class="nf">check_table</span><span class="p">(</span><span class="n">dframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Check that the numbers in a dataframe for WaterOil or GasOil</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check that the numbers in a dataframe for WaterOil or GasOil</span>
 <span class="sd">    has the properties that Eclipse enforces&quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="ow">not</span> <span class="n">dframe</span><span class="o">.</span><span class="n">empty</span>
     <span class="k">assert</span> <span class="ow">not</span> <span class="n">dframe</span><span class="o">.</span><span class="n">isnull</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
     <span class="k">if</span> <span class="s2">&quot;SW&quot;</span> <span class="ow">in</span> <span class="n">dframe</span> <span class="ow">and</span> <span class="s2">&quot;SG&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dframe</span><span class="p">:</span>
         <span class="c1"># (avoiding GasWater tables, where sw is an auxiliary column)</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">dframe</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">is_monotonic</span>
+        <span class="k">assert</span> <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">is_monotonic_increasing</span>
         <span class="k">assert</span> <span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SWN&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">is_monotonic</span>
+        <span class="k">assert</span> <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SWN&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">is_monotonic_increasing</span>
         <span class="k">assert</span> <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SON&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">is_monotonic_decreasing</span>
-        <span class="k">assert</span> <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SWNPC&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">is_monotonic</span>
+        <span class="k">assert</span> <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SWNPC&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">is_monotonic_increasing</span>
     <span class="k">if</span> <span class="s2">&quot;SG&quot;</span> <span class="ow">in</span> <span class="n">dframe</span><span class="p">:</span>
         <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">dframe</span><span class="p">)</span>
-        <span class="k">assert</span> <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">is_monotonic</span>
+        <span class="k">assert</span> <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">is_monotonic_increasing</span>
         <span class="k">assert</span> <span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SG&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
-        <span class="k">assert</span> <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SGN&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">is_monotonic</span>
+        <span class="k">assert</span> <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SGN&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">is_monotonic_increasing</span>
         <span class="k">assert</span> <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SON&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">is_monotonic_decreasing</span>
     <span class="k">if</span> <span class="s2">&quot;KROW&quot;</span> <span class="ow">in</span> <span class="n">dframe</span><span class="p">:</span>
         <span class="k">assert</span> <span class="n">series_decreasing</span><span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;KROW&quot;</span><span class="p">])</span>
@@ -246,7 +249,7 @@
 
 
 <div class="viewcode-block" id="check_linear_sections"><a class="viewcode-back" href="../../../pyscal/pyscal.utils.testing.html#pyscal.utils.testing.check_linear_sections">[docs]</a><span class="k">def</span> <span class="nf">check_linear_sections</span><span class="p">(</span><span class="n">wo_or_go</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">WaterOil</span><span class="p">,</span> <span class="n">GasOil</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-    <span class="sd">&quot;&quot;&quot;Check that the linear segments of a WaterOil or a GasOil</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check that the linear segments of a WaterOil or a GasOil</span>
 <span class="sd">    object are linear.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">wo_or_go</span><span class="p">,</span> <span class="n">WaterOil</span><span class="p">):</span>
         <span class="n">sat_col</span> <span class="o">=</span> <span class="s2">&quot;SW&quot;</span>
@@ -277,12 +280,12 @@
     <span class="n">left_lin_seg</span> <span class="o">=</span> <span class="n">wo_or_go</span><span class="o">.</span><span class="n">table</span><span class="p">[</span>
         <span class="p">(</span><span class="n">wo_or_go</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">sat_col</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="n">left_start</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">wo_or_go</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">sat_col</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">left_end</span><span class="p">)</span>
     <span class="p">]</span>
-    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">right_lin_seg</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">4</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">right_lin_seg</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">right_lin_cols</span><span class="p">:</span>
-            <span class="c1"># We avoid the first and last row in right_lin_seg, because</span>
+            <span class="c1"># We avoid the first and two lasts row in right_lin_seg, because</span>
             <span class="c1"># this does not always match the constant saturation segment</span>
             <span class="c1"># assumption in this linearity test:</span>
-            <span class="k">assert</span> <span class="n">right_lin_seg</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mf">1e-9</span>
+            <span class="k">assert</span> <span class="n">right_lin_seg</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">2</span><span class="p">][</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mf">1e-9</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">left_lin_seg</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">4</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">left_lin_cols</span><span class="p">:</span>
             <span class="k">assert</span> <span class="n">left_lin_seg</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">col</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">std</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mf">1e-9</span></div>
@@ -291,7 +294,7 @@
 <div class="viewcode-block" id="float_df_checker"><a class="viewcode-back" href="../../../pyscal/pyscal.utils.testing.html#pyscal.utils.testing.float_df_checker">[docs]</a><span class="k">def</span> <span class="nf">float_df_checker</span><span class="p">(</span>
     <span class="n">dframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">idxcol</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">compcol</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">answer</span><span class="p">:</span> <span class="nb">float</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
-    <span class="sd">&quot;&quot;&quot;Looks up in a dataframe, selects the row where idxcol=value</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Looks up in a dataframe, selects the row where idxcol=value</span>
 <span class="sd">    and compares the value in compcol with answer</span>
 
 <span class="sd">    Warning: This is slow code, but only the tests are slow</span>
@@ -319,7 +322,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Equinor 2019-2022.</p>
+    <p>&#169; Copyright Equinor 2019-2023.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

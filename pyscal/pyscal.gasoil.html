@@ -1,21 +1,20 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.gasoil &mdash; pyscal 0.10.1 documentation</title>
+  <title>pyscal.gasoil &mdash; pyscal 0.10.3 documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -28,15 +27,19 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="../index.html" class="icon icon-home"> pyscal
-            <img src="../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            pyscal
+              <img src="../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.10.1
+                0.10.3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -54,10 +57,14 @@
 <p class="caption" role="heading"><span class="caption-text">Python API</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="pyscal.html"><code class="docutils literal notranslate"><span class="pre">pyscal</span></code></a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="pyscal.html#pyscal.getLogger_pyscal"><code class="docutils literal notranslate"><span class="pre">getLogger_pyscal()</span></code></a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="pyscal.html#submodules">Submodules</a><ul class="current">
 <li class="toctree-l3"><a class="reference internal" href="pyscal.constants.html"><code class="docutils literal notranslate"><span class="pre">pyscal.constants</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pyscal.factory.html"><code class="docutils literal notranslate"><span class="pre">pyscal.factory</span></code></a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">pyscal.gasoil</span></code></a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">pyscal.gasoil</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyscal.gasoil.GasOil"><code class="docutils literal notranslate"><span class="pre">GasOil</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="pyscal.gaswater.html"><code class="docutils literal notranslate"><span class="pre">pyscal.gaswater</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pyscal.pyscalcli.html"><code class="docutils literal notranslate"><span class="pre">pyscal.pyscalcli</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pyscal.pyscallist.html"><code class="docutils literal notranslate"><span class="pre">pyscal.pyscallist</span></code></a></li>
@@ -85,9 +92,9 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="pyscal.html"><code class="docutils literal notranslate"><span class="pre">pyscal</span></code></a> &raquo;</li>
-      <li><code class="docutils literal notranslate"><span class="pre">pyscal.gasoil</span></code></li>
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="pyscal.html"><code class="docutils literal notranslate"><span class="pre">pyscal</span></code></a></li>
+      <li class="breadcrumb-item active"><code class="docutils literal notranslate"><span class="pre">pyscal.gasoil</span></code></li>
       <li class="wy-breadcrumbs-aside">
             <a href="../_sources/pyscal/pyscal.gasoil.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -118,7 +125,7 @@
 anchor to <cite>1-swl</cite> instead. If the krgendanchor argument is something
 else than the string <cite>sorg</cite>, it will be anchored to <cite>1-swl</cite>.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>swirr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Absolute minimal water saturation at infinite capillary
 pressure.  Not in use currently, except for in informational headers and
@@ -154,7 +161,7 @@ formatted accordingly.</p>
 <p>Meta-information for the tabulated data are printed
 as Eclipse comments.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>header</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – boolean for whether the SGOF string should be emitted.
 If you have multiple satnums, you should have True only
@@ -164,7 +171,7 @@ Defaults to True.</p></li>
 defaults to True.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
 </dd>
 </dl>
@@ -179,7 +186,7 @@ formatted accordingly.</p>
 <p>Meta-information for the tabulated data are printed
 as Eclipse comments.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>header</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – boolean for whether the SGFN string should be emitted.
 If you have multiple satnums, you should have True only
@@ -207,7 +214,7 @@ formatted accordingly.</p>
 <p>Meta-information for the tabulated data are printed
 as Eclipse comments.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>header</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Whether the SGOF string should be emitted.
 If you have multiple satnums, you should have True only
@@ -217,7 +224,7 @@ Defaults to True.</p></li>
 defaults to True.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
 </dd>
 </dl>
@@ -232,7 +239,7 @@ outputted and formatted accordingly.</p>
 <p>Meta-information for the tabulated data are printed
 as Eclipse comments.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>header</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – boolean for whether the SLGOF string should be emitted.
 If you have multiple satnums, you should have True only
@@ -242,7 +249,7 @@ Defaults to True.</p></li>
 defaults to True.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
 </dd>
 </dl>
@@ -257,7 +264,7 @@ defaults to True.</p></li>
 sg = 1 - swl - sorg, and then linear up to krgmax at
 sg = 1 - swl. If not, it ends at krgend at sg = 1 - swl.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>l</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – L parameter in LET</p></li>
 <li><p><strong>e</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – E parameter in LET</p></li>
@@ -266,7 +273,7 @@ sg = 1 - swl. If not, it ends at krgend at sg = 1 - swl.</p>
 <li><p><strong>krgmax</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Value of krg at gas saturation 1</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>None (modifies internal state)</p>
 </dd>
 </dl>
@@ -280,7 +287,7 @@ parametrization.</p>
 <p>A column named ‘krog’ will be added, replaced if it exists.</p>
 <p>All values where sg &gt; 1 - sorg - swl are set to zero.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>l</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – L parameter</p></li>
 <li><p><strong>e</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – E parameter</p></li>
@@ -312,14 +319,14 @@ sg = 1 - swl. If not, it ends at krgend at sg = 1 - swl.</p>
 replaced if it exists.</p>
 <p>All values above 1 - sorg - swl are set to zero.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>nog</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Corey exponent for oil</p></li>
 <li><p><strong>kroend</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Value for krog at normalized oil saturation 1</p></li>
 <li><p><strong>kromax</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Value for sg=0 if sgro &gt; 0.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>None (modifies internal class state)</p>
 </dd>
 </dl>
@@ -346,10 +353,10 @@ actually added to the table.</p>
 when initializing the saturation range (it uses linear
 interpolation to solve for the zero)</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The gas saturation where krg == krog, for relperm
 linearly interpolated in gas saturation.</p>
 </dd>
@@ -365,10 +372,10 @@ permeability is approximately zero, where approximately zero is
 roughly equivalent to how many digits are outputted
 by SGOF().</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The estimated sgcr.</p>
 </dd>
 </dl>
@@ -386,10 +393,10 @@ to sgcr. This function only estimates sgro, and will not guarantee
 that condition.</p>
 <p>If the curve is linear everywhere, sgro will be returned as 1 - swl + h</p>
 <dl class="field-list simple">
-<dt class="field-odd">Returns</dt>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The estimated sgro</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p>float</p>
 </dd>
 </dl>
@@ -408,10 +415,10 @@ to sg=1-swl must always be assumed linear.</p>
 krg cannot be used for this, and krog is used. sorg might be overestimated
 when krog is used if it very close to zero before reaching sorg.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
 </dd>
-<dt class="field-even">Returns</dt>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The estimated sorg.</p>
 </dd>
 </dl>
@@ -419,7 +426,7 @@ when krog is used if it very close to zero before reaching sorg.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyscal.gasoil.GasOil.plotkrgkrog">
-<span class="sig-name descname"><span class="pre">plotkrgkrog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mpl_ax</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'blue'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">linewidth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">linestyle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'-'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">marker</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logyscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/gasoil.html#GasOil.plotkrgkrog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.gasoil.GasOil.plotkrgkrog" title="Permalink to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">plotkrgkrog</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mpl_ax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'blue'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">linewidth</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">linestyle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'-'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">marker</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logyscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/gasoil.html#GasOil.plotkrgkrog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.gasoil.GasOil.plotkrgkrog" title="Permalink to this definition"></a></dt>
 <dd><p>Plot krg and krog</p>
 <p>If mpl_ax is not None, it will be used as a
 matplotlib axis to plot on, if None, a fresh plot
@@ -436,10 +443,10 @@ or at least causes Eclipse 100 to stop.</p>
 is found.</p>
 <p>If you call SGOF/SLGOF, this function must not return False.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>mode</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – If mode is “SGFN”, krog is not required.</p>
 </dd>
-<dt class="field-even">Return type</dt>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
 </dd>
 </dl>
@@ -461,7 +468,7 @@ is 1 at <cite>sg = 1 - swl - sorg</cite>. If not, it is 1 at <cite>sg = 1 - swl<
 <p>This function is used by add_corey/LET_gas(), and perhaps by other
 utility functions. It should not be necessary for end-users.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>krgend</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – krg at sg = 1 - swl - sorg.</p></li>
 <li><p><strong>krgmax</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – krg at Sg = 1 - swl. Default 1.</p></li>
@@ -481,7 +488,7 @@ is zero, kromax will be ignored.</p>
 <p>This function is used by add_corey/LET_oil(), and perhaps by other
 utility functions. It should not be necessary for end-users.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>kroend</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – krog at sg=sgro, also if sgro=0</p></li>
 <li><p><strong>kromax</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – krog at sg=0 for sgro &gt; 0</p></li>
@@ -497,7 +504,7 @@ utility functions. It should not be necessary for end-users.</p>
 <p>This is used by the SLGOF() function, it is
 extracted as a single function to facilitate testing.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></p>
 </dd>
 </dl>
@@ -524,7 +531,7 @@ extracted as a single function to facilitate testing.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Equinor 2019-2022.</p>
+    <p>&#169; Copyright Equinor 2019-2023.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

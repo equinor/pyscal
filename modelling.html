@@ -1,21 +1,20 @@
 <!DOCTYPE html>
 <html class="writer-html5" lang="en" >
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Modelling of flooding processes &mdash; pyscal 0.10.1 documentation</title>
+  <title>Modelling of flooding processes &mdash; pyscal 0.10.3 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -28,15 +27,19 @@
     <nav data-toggle="wy-nav-shift" class="wy-nav-side">
       <div class="wy-side-scroll">
         <div class="wy-side-nav-search" >
-            <a href="index.html" class="icon icon-home"> pyscal
-            <img src="_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pyscal
+              <img src="_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.10.1
+                0.10.3
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -79,8 +82,8 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
-      <li>Modelling of flooding processes</li>
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Modelling of flooding processes</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/modelling.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -104,7 +107,7 @@ initial state for the relevant flooding process, and the saturation direction.</
 <section id="water-injection-in-oil-field-idc2">
 <h2>Water injection in oil field (IDC2)<a class="headerlink" href="#water-injection-in-oil-field-idc2" title="Permalink to this heading"></a></h2>
 <a class="reference internal image-reference" href="_images/wateroil-idc2.png"><img alt="_images/wateroil-idc2.png" src="_images/wateroil-idc2.png" style="width: 600px;" /></a>
-<table class="colwidths-given docutils align-default">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 25%" />
 <col style="width: 25%" />
@@ -151,7 +154,7 @@ initial state for the relevant flooding process, and the saturation direction.</
 <section id="gas-injection-or-solution-gas-drive-cdi2">
 <h2>Gas injection or solution gas drive (CDI2)<a class="headerlink" href="#gas-injection-or-solution-gas-drive-cdi2" title="Permalink to this heading"></a></h2>
 <a class="reference internal image-reference" href="_images/gasoil-cdi2.png"><img alt="_images/gasoil-cdi2.png" src="_images/gasoil-cdi2.png" style="width: 600px;" /></a>
-<table class="colwidths-given docutils align-default">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 25%" />
 <col style="width: 25%" />
@@ -208,7 +211,7 @@ initial state for the relevant flooding process, and the saturation direction.</
 <p>This scenario is for a two-phase Eclipse simulation. If condendsate
 dropout can occur it should be modelled as a three-phase simulation.</p>
 <a class="reference internal image-reference" href="_images/gaswater-icd2.png"><img alt="_images/gaswater-icd2.png" src="_images/gaswater-icd2.png" style="width: 600px;" /></a>
-<table class="colwidths-given docutils align-default">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 25%" />
 <col style="width: 25%" />
@@ -260,7 +263,7 @@ higher than SWL.</p></td>
 <section id="wet-gas-condensate-field-oil-displacing-gas-cid2">
 <h2>Wet gas/condensate field, oil displacing gas (CID2)<a class="headerlink" href="#wet-gas-condensate-field-oil-displacing-gas-cid2" title="Permalink to this heading"></a></h2>
 <a class="reference internal image-reference" href="_images/gasoil-cid2.png"><img alt="_images/gasoil-cid2.png" src="_images/gasoil-cid2.png" style="width: 600px;" /></a>
-<table class="colwidths-given docutils align-default">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 25%" />
 <col style="width: 25%" />
@@ -307,7 +310,7 @@ higher than SWL.</p></td>
 <section id="co2-injection-gas-displacing-water-dci1">
 <h2>CO<sub>2</sub>-injection (gas displacing water, DCI1)<a class="headerlink" href="#co2-injection-gas-displacing-water-dci1" title="Permalink to this heading"></a></h2>
 <a class="reference internal image-reference" href="_images/gaswater-dci1.png"><img alt="_images/gaswater-dci1.png" src="_images/gaswater-dci1.png" style="width: 600px;" /></a>
-<table class="colwidths-given docutils align-default">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 25%" />
 <col style="width: 25%" />
@@ -351,7 +354,7 @@ higher than SWL.</p></td>
 <h2>CO<sub>2</sub> trapping (ICD2)<a class="headerlink" href="#co2-trapping-icd2" title="Permalink to this heading"></a></h2>
 <p>Process is analoguous to “Dry gas field”.</p>
 <a class="reference internal image-reference" href="_images/gaswater-co2-icd2.png"><img alt="_images/gaswater-co2-icd2.png" src="_images/gaswater-co2-icd2.png" style="width: 600px;" /></a>
-<table class="colwidths-given docutils align-default">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 25%" />
 <col style="width: 25%" />
@@ -397,7 +400,7 @@ higher than SWL.</p></td>
 saturation) must be larger than <cite>sorw</cite>. The <cite>swcr</cite> parameter is to be
 interpreted as residual water.</p>
 <a class="reference internal image-reference" href="_images/wateroil-paleooil-idc1.png"><img alt="_images/wateroil-paleooil-idc1.png" src="_images/wateroil-paleooil-idc1.png" style="width: 600px;" /></a>
-<table class="colwidths-given docutils align-default">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 25%" />
 <col style="width: 25%" />
@@ -440,7 +443,7 @@ interpreted as residual water.</p>
 <section id="gas-paleo-zone-dci3">
 <h2>Gas paleo zone - DCI3<a class="headerlink" href="#gas-paleo-zone-dci3" title="Permalink to this heading"></a></h2>
 <a class="reference internal image-reference" href="_images/gaswater-paleogas-dci3.png"><img alt="_images/gaswater-paleogas-dci3.png" src="_images/gaswater-paleogas-dci3.png" style="width: 600px;" /></a>
-<table class="colwidths-given docutils align-default">
+<table class="docutils align-default">
 <colgroup>
 <col style="width: 25%" />
 <col style="width: 25%" />
@@ -497,7 +500,7 @@ interpreted as residual water.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Equinor 2019-2022.</p>
+    <p>&#169; Copyright Equinor 2019-2023.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
