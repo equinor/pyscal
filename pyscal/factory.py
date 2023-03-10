@@ -1,5 +1,6 @@
 """Factory functions for creating the pyscal objects"""
 
+import csv
 import zipfile
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Set, Union
@@ -8,7 +9,6 @@ import numpy as np
 import openpyxl
 import pandas as pd
 import xlrd
-import csv
 
 from pyscal import getLogger_pyscal
 from pyscal.utils import capillarypressure
