@@ -8,6 +8,7 @@ import numpy as np
 import openpyxl
 import pandas as pd
 import xlrd
+import csv
 
 from pyscal import getLogger_pyscal
 from pyscal.utils import capillarypressure
@@ -723,9 +724,18 @@ class PyscalFactory(object):
                 )
                 logger.info("Parsed %s file %s", tabular_file_format.upper(), inputfile)
             else:
-                input_df = pd.read_csv(
-                    inputfile, skipinitialspace=True, encoding="utf-8"
-                )
+                # Sniff delimiter from csv file
+                with open(inputfile, "r") as csvfile:
+                    dialect = csv.Sniffer().sniff(csvfile.readline())
+                    decimal_separator = "." if dialect.delimiter == "," else ","
+                    csvfile.seek(0)
+                    input_df = pd.read_csv(
+                        csvfile,
+                        delimiter=dialect.delimiter,
+                        decimal=decimal_separator,
+                        skipinitialspace=True,
+                        encoding="utf-8",
+                    )
                 logger.info("Parsed CSV file %s", inputfile)
 
         elif isinstance(inputfile, pd.DataFrame):

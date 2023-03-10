@@ -270,6 +270,21 @@ def test_pyscalcli_stdout_output(capsys, mocker):
     assert "SOF3" in captured.out
 
 
+def test_pyscalcli_norwegian_csv(capsys, mocker):
+    """Test that pyscal can read CSV generated using Norwegian region setting"""
+    scalrec_file = (
+        Path(__file__).absolute().parent / "data/relperm-input-example-norwegian.csv"
+    )
+    mocker.patch(
+        "sys.argv",
+        ["pyscal", str(scalrec_file), "--output", "-"],
+    )
+    pyscalcli.main()
+    captured = capsys.readouterr()
+    assert "SWOF" in captured.out
+    assert "SGOF" in captured.out
+
+
 def test_pyscalcli_let_pd_and_imb(capsys, mocker):
     """Test that we can write to stdout"""
     scalrec_file = (
