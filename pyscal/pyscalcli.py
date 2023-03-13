@@ -52,8 +52,7 @@ tagged with the strings 'low', 'base' and 'high' in the column 'CASE'
 When interpolating in a SCAL recommendation, 'int_param_wo' is the main parameter
 that is used for water-oil, gas-oil and gas-water, and for all SATNUMs if nothing
 more is provided. Provide int_param_go in addition if separate interpolation
-for WaterOil and GasOil is needed, and specify multiple floats pr. parameter
-if individual interpolation for each SATNUM is needed.
+for WaterOil and GasOil is needed.
 """
 
 

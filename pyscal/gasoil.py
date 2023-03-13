@@ -502,6 +502,7 @@ class GasOil(object):
         self.krogcomment = f"-- Corey krog, nog={nog:g}, kroend={kroend:g}"
         if kromax is not None:
             self.krogcomment += f", kromax={kromax:g}"
+        self.krogcomment += "\n"
 
     def add_LET_gas(
         self,
@@ -599,6 +600,7 @@ class GasOil(object):
         self.krogcomment = f"-- LET krog, l={l:g}, e={e:g}, t={t:g}, kroend={kroend:g}"
         if kromax is not None:
             self.krogcomment += f", kromax={kromax:g}"
+        self.krogcomment += "\n"
 
     def estimate_sgro(self):
         """Estimate sgro of the current krog data

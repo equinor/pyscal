@@ -1,6 +1,4 @@
-[![Build Status](https://img.shields.io/github/workflow/status/equinor/pyscal/pyscal)](https://github.com/equinor/pyscal/actions?query=workflow%3Apyscal)
-[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/equinor/pyscal.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/equinor/pyscal/context:python)
-[![Total alerts](https://img.shields.io/lgtm/alerts/g/equinor/pyscal.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/equinor/pyscal/alerts/)
+[![Build Status](https://github.com/equinor/pyscal/actions/workflows/pyscal.yml/badge.svg)](https://github.com/equinor/pyscal/actions?query=workflow%3Apyscal)
 [![codecov](https://codecov.io/gh/equinor/pyscal/branch/master/graph/badge.svg)](https://codecov.io/gh/equinor/pyscal)
 [![Python 3.8-3.9](https://img.shields.io/badge/python-3.8%20|%203.9-blue.svg)](https://www.python.org)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://black.readthedocs.io/)
