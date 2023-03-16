@@ -731,8 +731,9 @@ class PyscalFactory(object):
                             .sniff(csvfile.read(), [",", ";", "\t"])
                             .delimiter
                         )
-                    except:
-                        # Sniffer cannot identify the delimiter, typically on single column csv
+                    except Exception:
+                        # Sniffer cannot identify the delimiter
+                        # typically on single column csv
                         delimiter = ","
                     if delimiter != ",":
                         raise TypeError(
