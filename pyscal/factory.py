@@ -728,7 +728,7 @@ class PyscalFactory(object):
                     try:
                         delimiter = (
                             csv.Sniffer()
-                            .sniff(csvfile.read(), [",", ";", "\t"])
+                            .sniff(csvfile.read(), [",", ";", "\t"])  # type: ignore
                             .delimiter
                         )
                     except Exception:
