@@ -470,12 +470,12 @@ class WaterOil(object):
         # (these lists are never empty)
 
         # Set krwend always (overrides krwmax if sorw=0)
-        self.table.iloc[linear_section_indices[0]]["KRW"] = krwend
+        self.table.loc[linear_section_indices[0], "KRW"] = krwend
 
         if len(linear_section_indices) > 1:
             if krwmax is None:
                 krwmax = 1
-            self.table.iloc[linear_section_indices[-1]]["KRW"] = krwmax
+            self.table.loc[linear_section_indices[-1], "KRW"] = krwmax
         else:
             if krwmax is not None:
                 logger.info("krwmax ignored when sorw is zero")
