@@ -1,6 +1,7 @@
 """Command line tool for pyscal"""
 
 import argparse
+import io
 import sys
 import traceback
 from pathlib import Path
@@ -158,6 +159,11 @@ def main() -> None:
     parser = get_parser()
     args = parser.parse_args()
 
+    if isinstance(sys.stdout, io.TextIOWrapper) and sys.version_info >= (3, 7):
+        sys.stdout.reconfigure(encoding="UTF-8")
+    if isinstance(sys.stdout, io.TextIOWrapper) and sys.version_info >= (3, 7):
+        sys.stdout.reconfigure(encoding="UTF-8")
+
     try:
         pyscal_main(
             parametertable=args.parametertable,
@@ -269,7 +275,6 @@ def pyscal_main(
                 "Please create the output directory prior to calling pyscal."
             )
             Path(output).parent.mkdir(exist_ok=True, parents=True)
-        Path(output).write_text(
-            wog_list.build_eclipse_data(family=family, slgof=slgof), encoding="utf-8"
-        )
+        with open(output, "w", newline="\n", encoding="utf-8") as fh:
+            fh.write(wog_list.build_eclipse_data(family=family, slgof=slgof))
         print("Written to " + output)

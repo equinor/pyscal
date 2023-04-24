@@ -20,7 +20,6 @@ def test_installed():
     assert subprocess.check_output(["pyscal", "-h"])
 
 
-@pytest.mark.skipif(sys.platform == "win32", reason="UTF-8 problems on Windows")
 @pytest.mark.skipif(sys.version_info < (3, 7), reason="Requires Python 3.7 or higher")
 @pytest.mark.parametrize("verbosity_flag", [None, "--verbose", "--debug"])
 def test_log_levels(tmp_path, verbosity_flag):
@@ -314,7 +313,6 @@ def test_pyscalcli_exception_catching(capsys, mocker):
     assert "raise" in outerr  # This is the traceback.
 
 
-@pytest.mark.skipif(sys.platform == "win32", reason="UTF-8 problems on Windows")
 def test_pyscalcli_oilwater(tmp_path, caplog, mocker):
     """Test the command line client in two-phase oil-water"""
     os.chdir(tmp_path)
@@ -323,7 +321,7 @@ def test_pyscalcli_oilwater(tmp_path, caplog, mocker):
         # "fooå" here causes problems on Windows
         columns=["SATNUM", "nw", "now", "tag"],
         data=[[1, 2, 3, "fooå"]],
-    ).to_csv(relperm_file, index=False)
+    ).to_csv(relperm_file, index=False, encoding="utf-8-sig")
     caplog.clear()
     mocker.patch(
         "sys.argv",
