@@ -159,9 +159,9 @@ def main() -> None:
     parser = get_parser()
     args = parser.parse_args()
 
-    if isinstance(sys.stdout, io.TextIOWrapper) and sys.version_info >= (3, 7):
+    if isinstance(sys.stdout, io.TextIOWrapper):
         sys.stdout.reconfigure(encoding="UTF-8")
-    if isinstance(sys.stdout, io.TextIOWrapper) and sys.version_info >= (3, 7):
+    if isinstance(sys.stdout, io.TextIOWrapper):
         sys.stdout.reconfigure(encoding="UTF-8")
 
     try:
