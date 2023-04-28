@@ -1,5 +1,6 @@
 """Factory functions for creating the pyscal objects"""
 
+import csv
 import zipfile
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Set, Union
@@ -723,9 +724,26 @@ class PyscalFactory(object):
                 )
                 logger.info("Parsed %s file %s", tabular_file_format.upper(), inputfile)
             else:
-                input_df = pd.read_csv(
-                    inputfile, skipinitialspace=True, encoding="utf-8"
-                )
+                with open(inputfile, "r") as csvfile:
+                    try:
+                        delimiter = (
+                            csv.Sniffer()
+                            .sniff(csvfile.read(), [",", ";", "\t"])  # type: ignore
+                            .delimiter
+                        )
+                    except Exception:
+                        # Sniffer cannot identify the delimiter
+                        # typically on single column csv
+                        delimiter = ","
+                    if delimiter != ",":
+                        raise TypeError(
+                            "Supplied file is not a valid CSV file. "
+                            f"Detected delimiter is '{delimiter}'"
+                        )
+                    csvfile.seek(0)
+                    input_df = pd.read_csv(
+                        csvfile, skipinitialspace=True, encoding="utf-8"
+                    )
                 logger.info("Parsed CSV file %s", inputfile)
 
         elif isinstance(inputfile, pd.DataFrame):

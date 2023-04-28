@@ -781,6 +781,11 @@ def test_load_relperm_df(tmp_path, caplog):
     with pytest.raises(ValueError, match="Found not-a-number"):
         PyscalFactory.load_relperm_df("mergedcellscase.csv")
 
+    # Not valid CSV file
+    Path("notvalidcsv.csv").write_text("SATNUM;nw;now\n1;1;1", encoding="utf-8")
+    with pytest.raises(TypeError, match="Supplied file is not a valid CSV file"):
+        PyscalFactory.load_relperm_df("notvalidcsv.csv")
+
 
 def test_many_nans():
     """Excel or oocalc sometimes saves a xlsx file that gives all NaN rows and
