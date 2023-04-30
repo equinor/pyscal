@@ -724,7 +724,7 @@ class PyscalFactory(object):
                 )
                 logger.info("Parsed %s file %s", tabular_file_format.upper(), inputfile)
             else:
-                with open(inputfile, "r") as csvfile:
+                with open(inputfile, "r", encoding="utf-8") as csvfile:
                     try:
                         delimiter = (
                             csv.Sniffer()
@@ -775,7 +775,7 @@ class PyscalFactory(object):
             input_df["TAG"] = (
                 "tag: " + input_df["TAG"] + "; comment: " + input_df["COMMENT"]
             )
-
+        print (input_df)
         # It is tempting to detect any NaN's at this point because that can
         # indicate merged cells, which is not supported, but that could
         # break optional comment columns which might only be defined on certain lines.
