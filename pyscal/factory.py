@@ -775,7 +775,6 @@ class PyscalFactory(object):
             input_df["TAG"] = (
                 "tag: " + input_df["TAG"] + "; comment: " + input_df["COMMENT"]
             )
-        print (input_df)
         # It is tempting to detect any NaN's at this point because that can
         # indicate merged cells, which is not supported, but that could
         # break optional comment columns which might only be defined on certain lines.
