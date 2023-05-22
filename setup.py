@@ -18,7 +18,7 @@ REQUIREMENTS = [
     "numpy",
     "openpyxl",
     "pandas",
-    "scipy<1.9.3",
+    "scipy",
     "xlrd",
 ]
 
