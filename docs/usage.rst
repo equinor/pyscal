@@ -268,7 +268,7 @@ Typical usage could be:
     wog.wateroil.add_corey_water()
     wog.wateroil.add_corey_oil()
     wog.gasoil.add_corey_gas()
-    wog.gasoil.add_corey_water()
+    wog.gasoil.add_corey_oil()
 
 As seen in the example, the object members ``wateroil`` and ``gasoil`` are
 ``WaterOil`` and ``GasOil`` objects having been initialized by the
