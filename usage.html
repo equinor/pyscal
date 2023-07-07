@@ -4,14 +4,15 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Usage &mdash; pyscal 0.10.3 documentation</title>
+  <title>Usage &mdash; pyscal 0.10.4 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
         <script src="_static/doctools.js"></script>
         <script src="_static/sphinx_highlight.js"></script>
@@ -35,7 +36,7 @@
               <img src="_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.10.3
+                0.10.4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -111,7 +112,7 @@
 line tool is a short wrapper utilizing the underlying pyscal functionality.</p>
 <section id="the-command-line-tool">
 <h2>The command line tool<a class="headerlink" href="#the-command-line-tool" title="Permalink to this heading"></a></h2>
-<p><p>pyscal (v0.10.3) is a tool to create Eclipse include files for relative permeability input from tabulated parameters.</p>
+<p><p>pyscal (0.10.4) is a tool to create Eclipse include files for relative permeability input from tabulated parameters.</p>
 </p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">pyscal</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">debug</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">version</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">o</span> <span class="n">OUTPUT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">delta_s</span> <span class="n">DELTA_S</span><span class="p">]</span>
               <span class="p">[</span><span class="o">--</span><span class="n">int_param_wo</span> <span class="n">INT_PARAM_WO</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">int_param_go</span> <span class="n">INT_PARAM_GO</span><span class="p">]</span>
@@ -193,8 +194,7 @@ tagged with the strings ‘low’, ‘base’ and ‘high’ in the column ‘CA
 <p>When interpolating in a SCAL recommendation, ‘int_param_wo’ is the main parameter
 that is used for water-oil, gas-oil and gas-water, and for all SATNUMs if nothing
 more is provided. Provide int_param_go in addition if separate interpolation
-for WaterOil and GasOil is needed, and specify multiple floats pr. parameter
-if individual interpolation for each SATNUM is needed.</p>
+for WaterOil and GasOil is needed.</p>
 </p>
 <p>An example input table could look like:</p>
 <table class="docutils align-default">
@@ -549,7 +549,7 @@ endpoints is only input once during initialization.</p>
 <span class="n">wog</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">add_corey_water</span><span class="p">()</span>
 <span class="n">wog</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">add_corey_oil</span><span class="p">()</span>
 <span class="n">wog</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">add_corey_gas</span><span class="p">()</span>
-<span class="n">wog</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">add_corey_water</span><span class="p">()</span>
+<span class="n">wog</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">add_corey_oil</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>As seen in the example, the object members <code class="docutils literal notranslate"><span class="pre">wateroil</span></code> and <code class="docutils literal notranslate"><span class="pre">gasoil</span></code> are

@@ -3,14 +3,15 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.factory &mdash; pyscal 0.10.3 documentation</title>
+  <title>pyscal.factory &mdash; pyscal 0.10.4 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
         <script src="../../_static/doctools.js"></script>
         <script src="../../_static/sphinx_highlight.js"></script>
@@ -32,7 +33,7 @@
               <img src="../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.10.3
+                0.10.4
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -84,6 +85,7 @@
   <h1>Source code for pyscal.factory</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Factory functions for creating the pyscal objects&quot;&quot;&quot;</span>
 
+<span class="kn">import</span> <span class="nn">csv</span>
 <span class="kn">import</span> <span class="nn">zipfile</span>
 <span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Union</span>
@@ -807,9 +809,26 @@
                 <span class="p">)</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Parsed </span><span class="si">%s</span><span class="s2"> file </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">tabular_file_format</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span> <span class="n">inputfile</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">input_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
-                    <span class="n">inputfile</span><span class="p">,</span> <span class="n">skipinitialspace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span>
-                <span class="p">)</span>
+                <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">inputfile</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">csvfile</span><span class="p">:</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">delimiter</span> <span class="o">=</span> <span class="p">(</span>
+                            <span class="n">csv</span><span class="o">.</span><span class="n">Sniffer</span><span class="p">()</span>
+                            <span class="o">.</span><span class="n">sniff</span><span class="p">(</span><span class="n">csvfile</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="p">[</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="s2">&quot;;&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span><span class="p">])</span>  <span class="c1"># type: ignore</span>
+                            <span class="o">.</span><span class="n">delimiter</span>
+                        <span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+                        <span class="c1"># Sniffer cannot identify the delimiter</span>
+                        <span class="c1"># typically on single column csv</span>
+                        <span class="n">delimiter</span> <span class="o">=</span> <span class="s2">&quot;,&quot;</span>
+                    <span class="k">if</span> <span class="n">delimiter</span> <span class="o">!=</span> <span class="s2">&quot;,&quot;</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                            <span class="s2">&quot;Supplied file is not a valid CSV file. &quot;</span>
+                            <span class="sa">f</span><span class="s2">&quot;Detected delimiter is &#39;</span><span class="si">{</span><span class="n">delimiter</span><span class="si">}</span><span class="s2">&#39;&quot;</span>
+                        <span class="p">)</span>
+                    <span class="n">csvfile</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                    <span class="n">input_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span>
+                        <span class="n">csvfile</span><span class="p">,</span> <span class="n">skipinitialspace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span>
+                    <span class="p">)</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Parsed CSV file </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">inputfile</span><span class="p">)</span>
 
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputfile</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
@@ -841,7 +860,6 @@
             <span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;TAG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
                 <span class="s2">&quot;tag: &quot;</span> <span class="o">+</span> <span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;TAG&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;; comment: &quot;</span> <span class="o">+</span> <span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;COMMENT&quot;</span><span class="p">]</span>
             <span class="p">)</span>
-
         <span class="c1"># It is tempting to detect any NaN&#39;s at this point because that can</span>
         <span class="c1"># indicate merged cells, which is not supported, but that could</span>
         <span class="c1"># break optional comment columns which might only be defined on certain lines.</span>
