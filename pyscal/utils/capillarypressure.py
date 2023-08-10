@@ -2,7 +2,7 @@
 
 import math
 
-from pyscal.constants import MAX_EXPONENT
+from pyscal.constants import MAX_EXPONENT_PC
 
 
 def simple_J(
@@ -49,8 +49,8 @@ def simple_J(
         capillary pressure, same type as swnpc input argument.
     """  # noqa
     assert g >= 0
-    assert b < MAX_EXPONENT
-    assert b > -MAX_EXPONENT
+    assert b < MAX_EXPONENT_PC
+    assert b > -MAX_EXPONENT_PC
     assert 0.0 <= poro_ref <= 1.0
     assert perm_ref > 0.0
 

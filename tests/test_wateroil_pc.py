@@ -6,7 +6,7 @@ import pytest
 from hypothesis import given
 
 from pyscal import WaterOil
-from pyscal.constants import MAX_EXPONENT
+from pyscal.constants import MAX_EXPONENT_PC
 from pyscal.utils.testing import check_table, float_df_checker, sat_table_str_ok
 
 
@@ -86,7 +86,7 @@ def test_simple_j_petro():
 
 @given(
     st.floats(min_value=0.001, max_value=1000000),
-    st.floats(min_value=-0.9 * MAX_EXPONENT, max_value=-0.001),
+    st.floats(min_value=-0.9 * MAX_EXPONENT_PC, max_value=-0.001),
     st.floats(min_value=0.01, max_value=0.5),
     st.floats(min_value=0.001, max_value=10),
     st.floats(min_value=0.01, max_value=1000000),
@@ -142,7 +142,7 @@ def test_normalized_j(caplog):
     st.floats(min_value=0, max_value=0.1),  # swirr
     st.floats(min_value=0.01, max_value=0.1),  # swl - swirr
     st.floats(min_value=0.01, max_value=5),  # a
-    st.floats(min_value=-0.9 * MAX_EXPONENT, max_value=-0.01),  # b
+    st.floats(min_value=-0.9 * MAX_EXPONENT_PC, max_value=-0.01),  # b
     st.floats(min_value=-1, max_value=1.5),  # poro
     st.floats(min_value=0.0001, max_value=1000000000),  # perm
     st.floats(min_value=0, max_value=100000),  # sigma_costau

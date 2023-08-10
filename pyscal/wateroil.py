@@ -9,7 +9,7 @@ from scipy.interpolate import PchipInterpolator, interp1d
 
 import pyscal
 from pyscal.constants import EPSILON as epsilon
-from pyscal.constants import MAX_EXPONENT, SWINTEGERS
+from pyscal.constants import MAX_EXPONENT_KR, MAX_EXPONENT_PC, SWINTEGERS
 from pyscal.utils.capillarypressure import simple_J
 from pyscal.utils.relperm import crosspoint, estimate_diffjumppoint, truncate_zeroness
 from pyscal.utils.string import comment_formatter, df2str
@@ -433,7 +433,7 @@ class WaterOil(object):
             krwend: value of krw at 1 - sorw.
             krwmax): maximal value at Sw=1. Default 1
         """
-        assert 10 * epsilon < nw < MAX_EXPONENT
+        assert 10 * epsilon < nw < MAX_EXPONENT_KR
         if krwmax:
             assert 0 < krwend <= krwmax <= 1.0
         else:
@@ -537,9 +537,9 @@ class WaterOil(object):
         # Similar code in gasoil.add_LET_gas, but readability is
         # better by having them separate.
         # pylint: disable=duplicate-code
-        assert epsilon < l < MAX_EXPONENT
-        assert epsilon < e < MAX_EXPONENT
-        assert epsilon < t < MAX_EXPONENT
+        assert epsilon < l < MAX_EXPONENT_KR
+        assert epsilon < e < MAX_EXPONENT_KR
+        assert epsilon < t < MAX_EXPONENT_KR
         if krwmax:
             assert 0 < krwend <= krwmax <= 1.0
         else:
@@ -581,9 +581,9 @@ class WaterOil(object):
         Returns:
             None (modifies object)
         """
-        assert epsilon < l < MAX_EXPONENT
-        assert epsilon < e < MAX_EXPONENT
-        assert epsilon < t < MAX_EXPONENT
+        assert epsilon < l < MAX_EXPONENT_KR
+        assert epsilon < e < MAX_EXPONENT_KR
+        assert epsilon < t < MAX_EXPONENT_KR
         assert 0 < kroend <= 1.0
 
         self.table["KROW"] = (
@@ -615,7 +615,7 @@ class WaterOil(object):
         Returns:
             None (modifies object)
         """
-        assert epsilon < now < MAX_EXPONENT
+        assert epsilon < now < MAX_EXPONENT_KR
         assert 0 < kroend <= 1.0
 
         self.table["KROW"] = kroend * self.table["SON"] ** now
@@ -670,8 +670,8 @@ class WaterOil(object):
             None. Modifies pc column in self.table, using bar as pressure unit.
         """  # noqa
         assert g >= 0
-        assert b < MAX_EXPONENT
-        assert b > -MAX_EXPONENT
+        assert b < MAX_EXPONENT_PC
+        assert b > -MAX_EXPONENT_PC
         assert 0.0 <= poro_ref <= 1.0
         assert perm_ref > 0.0
 
@@ -743,8 +743,8 @@ class WaterOil(object):
             None. Modifies pc column in self.table, using bar as pressure unit.
         """  # noqa
         assert g >= 0
-        assert b < MAX_EXPONENT
-        assert b > -MAX_EXPONENT
+        assert b < MAX_EXPONENT_PC
+        assert b > -MAX_EXPONENT_PC
         assert 0.0 <= poro_ref <= 1.0
         assert perm_ref > 0.0
 
@@ -798,8 +798,8 @@ class WaterOil(object):
         Returns:
             None. Modifies pc column in self.table, using bar as pressure unit.
         """  # noqa
-        assert epsilon < abs(a) < MAX_EXPONENT
-        assert epsilon < abs(b) < MAX_EXPONENT
+        assert epsilon < abs(a) < MAX_EXPONENT_PC
+        assert epsilon < abs(b) < MAX_EXPONENT_PC
         assert epsilon < poro <= 1.0
         assert epsilon < perm
         assert isinstance(sigma_costau, (int, float))
@@ -928,12 +928,12 @@ class WaterOil(object):
         Note that Pc where Sw > 1 - sorw will appear linear because
         there are no saturation points in that interval.
         """  # noqa
-        assert epsilon < Lp < MAX_EXPONENT
-        assert epsilon < Ep < MAX_EXPONENT
-        assert epsilon < Tp < MAX_EXPONENT
-        assert epsilon < Lt < MAX_EXPONENT
-        assert epsilon < Et < MAX_EXPONENT
-        assert epsilon < Tt < MAX_EXPONENT
+        assert epsilon < Lp < MAX_EXPONENT_PC
+        assert epsilon < Ep < MAX_EXPONENT_PC
+        assert epsilon < Tp < MAX_EXPONENT_PC
+        assert epsilon < Lt < MAX_EXPONENT_PC
+        assert epsilon < Et < MAX_EXPONENT_PC
+        assert epsilon < Tt < MAX_EXPONENT_PC
         assert Pct <= Pcmax
 
         # The "forced part"
@@ -977,12 +977,12 @@ class WaterOil(object):
 
         Docs: https://wiki.equinor.com/wiki/index.php/Res:The_LET_correlation_for_capillary_pressure
         """  # noqa
-        assert epsilon < Ls < MAX_EXPONENT
-        assert epsilon < Es < MAX_EXPONENT
-        assert epsilon < Ts < MAX_EXPONENT
-        assert epsilon < Lf < MAX_EXPONENT
-        assert epsilon < Ef < MAX_EXPONENT
-        assert epsilon < Tf < MAX_EXPONENT
+        assert epsilon < Ls < MAX_EXPONENT_PC
+        assert epsilon < Es < MAX_EXPONENT_PC
+        assert epsilon < Ts < MAX_EXPONENT_PC
+        assert epsilon < Lf < MAX_EXPONENT_PC
+        assert epsilon < Ef < MAX_EXPONENT_PC
+        assert epsilon < Tf < MAX_EXPONENT_PC
         assert Pcmin <= Pct <= Pcmax
 
         # Normalized water saturation including sorw

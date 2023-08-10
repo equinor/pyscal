@@ -8,7 +8,7 @@ from scipy.interpolate import PchipInterpolator
 
 import pyscal
 from pyscal.constants import EPSILON as epsilon
-from pyscal.constants import MAX_EXPONENT, SWINTEGERS
+from pyscal.constants import MAX_EXPONENT_KR, SWINTEGERS
 from pyscal.utils.relperm import crosspoint, estimate_diffjumppoint, truncate_zeroness
 from pyscal.utils.string import comment_formatter, df2str
 
@@ -456,7 +456,7 @@ class GasOil(object):
 
         krgmax is only relevant if krgendanchor is 'sorg'
         """
-        assert epsilon < ng < MAX_EXPONENT
+        assert epsilon < ng < MAX_EXPONENT_KR
         assert 0 < krgend <= 1.0
         if krgmax is not None:
             assert 0 < krgend <= krgmax <= 1.0
@@ -492,7 +492,7 @@ class GasOil(object):
         Returns:
             None (modifies internal class state)
         """
-        assert epsilon < nog < MAX_EXPONENT
+        assert epsilon < nog < MAX_EXPONENT_KR
         assert 0 < kroend <= 1.0
 
         self.table["KROG"] = kroend * self.table["SON"] ** nog
@@ -534,9 +534,9 @@ class GasOil(object):
         # Similar code in wateroil.add_LET_water, but readability
         # is better by having them separate
         # pylint: disable=duplicate-code
-        assert epsilon < l < MAX_EXPONENT
-        assert epsilon < e < MAX_EXPONENT
-        assert epsilon < t < MAX_EXPONENT
+        assert epsilon < l < MAX_EXPONENT_KR
+        assert epsilon < e < MAX_EXPONENT_KR
+        assert epsilon < t < MAX_EXPONENT_KR
         if krgmax:
             assert 0 < krgend <= krgmax <= 1.0
         else:
@@ -582,9 +582,9 @@ class GasOil(object):
             kromax: Value at sg=0 for sgro > 0
 
         """
-        assert epsilon < l < MAX_EXPONENT
-        assert epsilon < e < MAX_EXPONENT
-        assert epsilon < t < MAX_EXPONENT
+        assert epsilon < l < MAX_EXPONENT_KR
+        assert epsilon < e < MAX_EXPONENT_KR
+        assert epsilon < t < MAX_EXPONENT_KR
         assert 0 < kroend <= 1.0
 
         self.table["KROG"] = (
