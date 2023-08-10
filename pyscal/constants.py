@@ -8,13 +8,17 @@
    comparisons/errors pop up.  You cannot have the h parameter less
    than this when generating relperm tables
 
- * ``MAX_EXPONENT``: Maximal number for exponents in relperm parametrizations.
+ * ``MAX_EXPONENT_KR``: Maximal number for exponents in relperm parameterizations.
    Used to avoid numerical instabilities. It could probably be much
    higher than the chosen number in most circumstances, but such high
    numbers should not be relevant for relative permeability
+
+ * ``MAX_EXPONENT_PC``: Maximal number for exponents in cap pressure parameterizations.
 """
 SWINTEGERS: int = 10000
 
 EPSILON: float = 1e-08
 
-MAX_EXPONENT: float = 100
+MAX_EXPONENT_KR: float = 100
+
+MAX_EXPONENT_PC: float = 10000

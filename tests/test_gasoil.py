@@ -11,7 +11,7 @@ import pytest
 from hypothesis import given
 
 from pyscal import GasOil
-from pyscal.constants import MAX_EXPONENT, SWINTEGERS
+from pyscal.constants import MAX_EXPONENT_KR, SWINTEGERS
 from pyscal.utils.relperm import truncate_zeroness
 from pyscal.utils.testing import (
     check_linear_sections,
@@ -403,8 +403,8 @@ def test_kroend():
 
 
 @given(
-    st.floats(min_value=1e-4, max_value=MAX_EXPONENT),  # ng
-    st.floats(min_value=1e-4, max_value=MAX_EXPONENT),  # nog
+    st.floats(min_value=1e-4, max_value=MAX_EXPONENT_KR),  # ng
+    st.floats(min_value=1e-4, max_value=MAX_EXPONENT_KR),  # nog
 )
 def test_gasoil_corey1(ng, nog):
     """Test the Corey formulation for gasoil"""
