@@ -270,11 +270,7 @@ def pyscal_main(
         print(wog_list.build_eclipse_data(family=family, slgof=slgof))
     else:
         if not Path(output).parent.exists():
-            logger.warning(
-                "Implicit directory creation is deprecated.\n"
-                "Please create the output directory prior to calling pyscal."
-            )
-            Path(output).parent.mkdir(exist_ok=True, parents=True)
+            raise IOError(f"Output directory not found '{Path(output).parent}'")
         with open(output, "w", newline="\n", encoding="utf-8") as fh:
             fh.write(wog_list.build_eclipse_data(family=family, slgof=slgof))
         print("Written to " + output)

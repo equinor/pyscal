@@ -289,11 +289,7 @@ class PyscalList(object):
         string = self.build_eclipse_data(family=1, slgof=slgof)
         if filename is not None:
             if not Path(filename).parent.exists():
-                warnings.warn(
-                    "Please create the output directory prior to calling pyscal.",
-                    DeprecationWarning,
-                )
-                Path(filename).parent.mkdir(exist_ok=True, parents=True)
+                raise IOError(f"Output directory not found '{Path(filename).parent}'")
             Path(filename).write_text(string, encoding="utf-8")
         return string
 
@@ -310,11 +306,8 @@ class PyscalList(object):
         string = self.build_eclipse_data(family=2, slgof=False)
         if filename is not None:
             if not Path(filename).parent.exists():
-                warnings.warn(
-                    "Please create the output directory prior to calling pyscal.",
-                    DeprecationWarning,
-                )
-                Path(filename).parent.mkdir(exist_ok=True, parents=True)
+                raise IOError(f"Output directory not found '{Path(filename).parent}'")
+
             Path(filename).write_text(string, encoding="utf-8")
         return string
 

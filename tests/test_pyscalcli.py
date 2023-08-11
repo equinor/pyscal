@@ -142,17 +142,17 @@ def test_pyscal_client_static(tmp_path, caplog, default_loglevel, mocker):
             "eclipse/include/props/relperm-fam2.inc",
         ],
     )
-    pyscalcli.main()
-    assert Path("eclipse/include/props/relperm-fam2.inc").is_file()
-    assert not any(record.levelno == logging.ERROR for record in caplog.records)
+    with pytest.raises(SystemExit, match="Output directory not found"):
+        pyscalcli.main()
+    assert not Path("eclipse/include/props/relperm-fam2.inc").is_file()
 
     caplog.clear()
     mocker.patch(
         "sys.argv", ["pyscal", str(relperm_file), "-o", "include/props/relperm.inc"]
     )
-    pyscalcli.main()
-    assert Path("include/props/relperm.inc").is_file()
-    assert not any(record.levelno == logging.ERROR for record in caplog.records)
+    with pytest.raises(SystemExit, match="Output directory not found"):
+        pyscalcli.main()
+    assert not Path("include/props/relperm.inc").is_file()
 
     caplog.clear()
     # Check that we can read specific sheets

@@ -315,13 +315,15 @@ def test_deprecated_dump_to_file(tmpdir):
     assert PyscalList().build_eclipse_data(family=2) == ""
 
     tmpdir.chdir()
+    Path("outputdir").mkdir(exist_ok=True)
+
     with pytest.warns(DeprecationWarning):
         pyscal_list.dump_family_1(filename="outputdir/output-fam1.inc")
     assert "SWOF" in Path("outputdir/output-fam1.inc").read_text(encoding="utf8")
 
     with pytest.warns(DeprecationWarning):
-        pyscal_list.dump_family_2(filename="anotherdir/output-fam2.inc")
-    assert "SOF3" in Path("anotherdir/output-fam2.inc").read_text(encoding="utf8")
+        pyscal_list.dump_family_2(filename="outputdir/output-fam2.inc")
+    assert "SOF3" in Path("outputdir/output-fam2.inc").read_text(encoding="utf8")
 
     with pytest.warns(DeprecationWarning):
         pyscal_list.SWOF(write_to_filename="swof.inc")
