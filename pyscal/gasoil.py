@@ -73,10 +73,16 @@ class GasOil(object):
         if h is None:
             h = 0.01
 
-        assert -epsilon < swirr < 1.0 + epsilon, "0 <= swirr <= 1 is required"
+        assert -epsilon - 1 < swirr < 1.0 + epsilon, "-1 <= swirr <= 1 is required"
         assert -epsilon < sgcr < 1, "0 <= sgcr < 1 is required"
         assert -epsilon < swl < 1, "0 <= swl < 1 is required"
         assert -epsilon < sorg < 1, "0 <= sorg <  1 is required"
+
+        if swirr < 0:
+            logger.warning(
+                f"Negative swirr value, {swirr}, detected. Negative values are allowed,"
+                " but you should ensure that this is intentional."
+            )
 
         if krgendanchor is None:
             krgendanchor = ""

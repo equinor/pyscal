@@ -77,12 +77,18 @@ class WaterOil(object):
         _sgcr and _sgl are only to be used by the GasWater object.
         """
 
-        assert -epsilon < swirr < 1.0 + epsilon
-        assert -epsilon < swl < 1.0 + epsilon
-        assert -epsilon < swcr < 1.0 + epsilon
-        assert -epsilon < sorw < 1.0 + epsilon
+        assert (
+            -epsilon - 1 < swirr < 1.0 + epsilon
+        ), f"swirr = {swirr}, -1 <= swirr <= 1 is required"
+        assert -epsilon < swl < 1.0 + epsilon, f"swl = {swl}, 0 <= swl < 1 is required"
+        assert (
+            -epsilon < swcr < 1.0 + epsilon
+        ), f"swcr = {swcr}, 0 <= swcr < 1 is required"
+        assert (
+            -epsilon < sorw < 1.0 + epsilon
+        ), f"sorw = {sorw}, 0 <= sorw < 1 is required"
         if socr is not None:
-            assert -epsilon < socr < 1.0 + epsilon
+            assert -epsilon < socr < 1.0 + epsilon, "0 <= socr < 1 is required"
 
         if h is None:
             h = 0.01
@@ -90,6 +96,12 @@ class WaterOil(object):
         assert swl < 1 - sorw
         assert swcr < 1 - sorw
         assert swirr < 1 - sorw
+
+        if swirr < 0:
+            logger.warning(
+                f"Negative swirr value, {swirr}, detected. Negative values are allowed,"
+                " but you should ensure that this is intentional."
+            )
 
         self.swcomment: str = ""
 
