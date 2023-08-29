@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.utils.capillarypressure &mdash; pyscal 0.10.4 documentation</title>
+  <title>pyscal.utils.capillarypressure &mdash; pyscal 0.10.5 documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -33,7 +33,7 @@
               <img src="../../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.10.4
+                0.10.5
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
@@ -87,7 +87,7 @@
 
 <span class="kn">import</span> <span class="nn">math</span>
 
-<span class="kn">from</span> <span class="nn">pyscal.constants</span> <span class="kn">import</span> <span class="n">MAX_EXPONENT</span>
+<span class="kn">from</span> <span class="nn">pyscal.constants</span> <span class="kn">import</span> <span class="n">MAX_EXPONENT_PC</span>
 
 
 <div class="viewcode-block" id="simple_J"><a class="viewcode-back" href="../../../pyscal/pyscal.utils.capillarypressure.html#pyscal.utils.capillarypressure.simple_J">[docs]</a><span class="k">def</span> <span class="nf">simple_J</span><span class="p">(</span>
@@ -134,8 +134,8 @@
 <span class="sd">        capillary pressure, same type as swnpc input argument.</span>
 <span class="sd">    &quot;&quot;&quot;</span>  <span class="c1"># noqa</span>
     <span class="k">assert</span> <span class="n">g</span> <span class="o">&gt;=</span> <span class="mi">0</span>
-    <span class="k">assert</span> <span class="n">b</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
-    <span class="k">assert</span> <span class="n">b</span> <span class="o">&gt;</span> <span class="o">-</span><span class="n">MAX_EXPONENT</span>
+    <span class="k">assert</span> <span class="n">b</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT_PC</span>
+    <span class="k">assert</span> <span class="n">b</span> <span class="o">&gt;</span> <span class="o">-</span><span class="n">MAX_EXPONENT_PC</span>
     <span class="k">assert</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">poro_ref</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
     <span class="k">assert</span> <span class="n">perm_ref</span> <span class="o">&gt;</span> <span class="mf">0.0</span>
 

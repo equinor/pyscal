@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.wateroil &mdash; pyscal 0.10.4 documentation</title>
+  <title>pyscal.wateroil &mdash; pyscal 0.10.5 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -33,7 +33,7 @@
               <img src="../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.10.4
+                0.10.5
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -94,7 +94,7 @@
 
 <span class="kn">import</span> <span class="nn">pyscal</span>
 <span class="kn">from</span> <span class="nn">pyscal.constants</span> <span class="kn">import</span> <span class="n">EPSILON</span> <span class="k">as</span> <span class="n">epsilon</span>
-<span class="kn">from</span> <span class="nn">pyscal.constants</span> <span class="kn">import</span> <span class="n">MAX_EXPONENT</span><span class="p">,</span> <span class="n">SWINTEGERS</span>
+<span class="kn">from</span> <span class="nn">pyscal.constants</span> <span class="kn">import</span> <span class="n">MAX_EXPONENT_KR</span><span class="p">,</span> <span class="n">MAX_EXPONENT_PC</span><span class="p">,</span> <span class="n">SWINTEGERS</span>
 <span class="kn">from</span> <span class="nn">pyscal.utils.capillarypressure</span> <span class="kn">import</span> <span class="n">simple_J</span>
 <span class="kn">from</span> <span class="nn">pyscal.utils.relperm</span> <span class="kn">import</span> <span class="n">crosspoint</span><span class="p">,</span> <span class="n">estimate_diffjumppoint</span><span class="p">,</span> <span class="n">truncate_zeroness</span>
 <span class="kn">from</span> <span class="nn">pyscal.utils.string</span> <span class="kn">import</span> <span class="n">comment_formatter</span><span class="p">,</span> <span class="n">df2str</span>
@@ -162,12 +162,18 @@
 <span class="sd">        _sgcr and _sgl are only to be used by the GasWater object.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">assert</span> <span class="o">-</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">swirr</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">epsilon</span>
-        <span class="k">assert</span> <span class="o">-</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">swl</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">epsilon</span>
-        <span class="k">assert</span> <span class="o">-</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">swcr</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">epsilon</span>
-        <span class="k">assert</span> <span class="o">-</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">sorw</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">epsilon</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="o">-</span><span class="n">epsilon</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="n">swirr</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">epsilon</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;swirr = </span><span class="si">{</span><span class="n">swirr</span><span class="si">}</span><span class="s2">, -1 &lt;= swirr &lt;= 1 is required&quot;</span>
+        <span class="k">assert</span> <span class="o">-</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">swl</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;swl = </span><span class="si">{</span><span class="n">swl</span><span class="si">}</span><span class="s2">, 0 &lt;= swl &lt; 1 is required&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="o">-</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">swcr</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">epsilon</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;swcr = </span><span class="si">{</span><span class="n">swcr</span><span class="si">}</span><span class="s2">, 0 &lt;= swcr &lt; 1 is required&quot;</span>
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="o">-</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">sorw</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">epsilon</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;sorw = </span><span class="si">{</span><span class="n">sorw</span><span class="si">}</span><span class="s2">, 0 &lt;= sorw &lt; 1 is required&quot;</span>
         <span class="k">if</span> <span class="n">socr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="o">-</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">socr</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">epsilon</span>
+            <span class="k">assert</span> <span class="o">-</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">socr</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">,</span> <span class="s2">&quot;0 &lt;= socr &lt; 1 is required&quot;</span>
 
         <span class="k">if</span> <span class="n">h</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">h</span> <span class="o">=</span> <span class="mf">0.01</span>
@@ -175,6 +181,12 @@
         <span class="k">assert</span> <span class="n">swl</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span>
         <span class="k">assert</span> <span class="n">swcr</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span>
         <span class="k">assert</span> <span class="n">swirr</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">sorw</span>
+
+        <span class="k">if</span> <span class="n">swirr</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Negative swirr value, </span><span class="si">{</span><span class="n">swirr</span><span class="si">}</span><span class="s2">, detected. Negative values are allowed,&quot;</span>
+                <span class="s2">&quot; but you should ensure that this is intentional.&quot;</span>
+            <span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">swcomment</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
 
@@ -518,7 +530,7 @@
 <span class="sd">            krwend: value of krw at 1 - sorw.</span>
 <span class="sd">            krwmax): maximal value at Sw=1. Default 1</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">nw</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
+        <span class="k">assert</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">nw</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT_KR</span>
         <span class="k">if</span> <span class="n">krwmax</span><span class="p">:</span>
             <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">krwend</span> <span class="o">&lt;=</span> <span class="n">krwmax</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
         <span class="k">else</span><span class="p">:</span>
@@ -622,9 +634,9 @@
         <span class="c1"># Similar code in gasoil.add_LET_gas, but readability is</span>
         <span class="c1"># better by having them separate.</span>
         <span class="c1"># pylint: disable=duplicate-code</span>
-        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
-        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">e</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
-        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT_KR</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">e</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT_KR</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT_KR</span>
         <span class="k">if</span> <span class="n">krwmax</span><span class="p">:</span>
             <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">krwend</span> <span class="o">&lt;=</span> <span class="n">krwmax</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
         <span class="k">else</span><span class="p">:</span>
@@ -666,9 +678,9 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            None (modifies object)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
-        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">e</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
-        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT_KR</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">e</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT_KR</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT_KR</span>
         <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">kroend</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROW&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
@@ -700,7 +712,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            None (modifies object)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">now</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">now</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT_KR</span>
         <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">kroend</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROW&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kroend</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SON&quot;</span><span class="p">]</span> <span class="o">**</span> <span class="n">now</span>
@@ -755,8 +767,8 @@
 <span class="sd">            None. Modifies pc column in self.table, using bar as pressure unit.</span>
 <span class="sd">        &quot;&quot;&quot;</span>  <span class="c1"># noqa</span>
         <span class="k">assert</span> <span class="n">g</span> <span class="o">&gt;=</span> <span class="mi">0</span>
-        <span class="k">assert</span> <span class="n">b</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
-        <span class="k">assert</span> <span class="n">b</span> <span class="o">&gt;</span> <span class="o">-</span><span class="n">MAX_EXPONENT</span>
+        <span class="k">assert</span> <span class="n">b</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT_PC</span>
+        <span class="k">assert</span> <span class="n">b</span> <span class="o">&gt;</span> <span class="o">-</span><span class="n">MAX_EXPONENT_PC</span>
         <span class="k">assert</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">poro_ref</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
         <span class="k">assert</span> <span class="n">perm_ref</span> <span class="o">&gt;</span> <span class="mf">0.0</span>
 
@@ -828,8 +840,8 @@
 <span class="sd">            None. Modifies pc column in self.table, using bar as pressure unit.</span>
 <span class="sd">        &quot;&quot;&quot;</span>  <span class="c1"># noqa</span>
         <span class="k">assert</span> <span class="n">g</span> <span class="o">&gt;=</span> <span class="mi">0</span>
-        <span class="k">assert</span> <span class="n">b</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
-        <span class="k">assert</span> <span class="n">b</span> <span class="o">&gt;</span> <span class="o">-</span><span class="n">MAX_EXPONENT</span>
+        <span class="k">assert</span> <span class="n">b</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT_PC</span>
+        <span class="k">assert</span> <span class="n">b</span> <span class="o">&gt;</span> <span class="o">-</span><span class="n">MAX_EXPONENT_PC</span>
         <span class="k">assert</span> <span class="mf">0.0</span> <span class="o">&lt;=</span> <span class="n">poro_ref</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
         <span class="k">assert</span> <span class="n">perm_ref</span> <span class="o">&gt;</span> <span class="mf">0.0</span>
 
@@ -883,8 +895,8 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            None. Modifies pc column in self.table, using bar as pressure unit.</span>
 <span class="sd">        &quot;&quot;&quot;</span>  <span class="c1"># noqa</span>
-        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="nb">abs</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
-        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="nb">abs</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="nb">abs</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT_PC</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="nb">abs</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT_PC</span>
         <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">poro</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
         <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">perm</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sigma_costau</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span>
@@ -1013,12 +1025,12 @@
 <span class="sd">        Note that Pc where Sw &gt; 1 - sorw will appear linear because</span>
 <span class="sd">        there are no saturation points in that interval.</span>
 <span class="sd">        &quot;&quot;&quot;</span>  <span class="c1"># noqa</span>
-        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">Lp</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
-        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">Ep</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
-        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">Tp</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
-        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">Lt</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
-        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">Et</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
-        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">Tt</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">Lp</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT_PC</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">Ep</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT_PC</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">Tp</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT_PC</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">Lt</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT_PC</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">Et</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT_PC</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">Tt</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT_PC</span>
         <span class="k">assert</span> <span class="n">Pct</span> <span class="o">&lt;=</span> <span class="n">Pcmax</span>
 
         <span class="c1"># The &quot;forced part&quot;</span>
@@ -1062,12 +1074,12 @@
 
 <span class="sd">        Docs: https://wiki.equinor.com/wiki/index.php/Res:The_LET_correlation_for_capillary_pressure</span>
 <span class="sd">        &quot;&quot;&quot;</span>  <span class="c1"># noqa</span>
-        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">Ls</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
-        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">Es</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
-        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">Ts</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
-        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">Lf</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
-        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">Ef</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
-        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">Tf</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">Ls</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT_PC</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">Es</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT_PC</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">Ts</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT_PC</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">Lf</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT_PC</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">Ef</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT_PC</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">Tf</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT_PC</span>
         <span class="k">assert</span> <span class="n">Pcmin</span> <span class="o">&lt;=</span> <span class="n">Pct</span> <span class="o">&lt;=</span> <span class="n">Pcmax</span>
 
         <span class="c1"># Normalized water saturation including sorw</span>

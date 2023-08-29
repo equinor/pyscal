@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.gasoil &mdash; pyscal 0.10.4 documentation</title>
+  <title>pyscal.gasoil &mdash; pyscal 0.10.5 documentation</title>
       <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -33,7 +33,7 @@
               <img src="../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.10.4
+                0.10.5
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -93,7 +93,7 @@
 
 <span class="kn">import</span> <span class="nn">pyscal</span>
 <span class="kn">from</span> <span class="nn">pyscal.constants</span> <span class="kn">import</span> <span class="n">EPSILON</span> <span class="k">as</span> <span class="n">epsilon</span>
-<span class="kn">from</span> <span class="nn">pyscal.constants</span> <span class="kn">import</span> <span class="n">MAX_EXPONENT</span><span class="p">,</span> <span class="n">SWINTEGERS</span>
+<span class="kn">from</span> <span class="nn">pyscal.constants</span> <span class="kn">import</span> <span class="n">MAX_EXPONENT_KR</span><span class="p">,</span> <span class="n">SWINTEGERS</span>
 <span class="kn">from</span> <span class="nn">pyscal.utils.relperm</span> <span class="kn">import</span> <span class="n">crosspoint</span><span class="p">,</span> <span class="n">estimate_diffjumppoint</span><span class="p">,</span> <span class="n">truncate_zeroness</span>
 <span class="kn">from</span> <span class="nn">pyscal.utils.string</span> <span class="kn">import</span> <span class="n">comment_formatter</span><span class="p">,</span> <span class="n">df2str</span>
 
@@ -158,10 +158,16 @@
         <span class="k">if</span> <span class="n">h</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">h</span> <span class="o">=</span> <span class="mf">0.01</span>
 
-        <span class="k">assert</span> <span class="o">-</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">swirr</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">,</span> <span class="s2">&quot;0 &lt;= swirr &lt;= 1 is required&quot;</span>
+        <span class="k">assert</span> <span class="o">-</span><span class="n">epsilon</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">&lt;</span> <span class="n">swirr</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">,</span> <span class="s2">&quot;-1 &lt;= swirr &lt;= 1 is required&quot;</span>
         <span class="k">assert</span> <span class="o">-</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">sgcr</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;0 &lt;= sgcr &lt; 1 is required&quot;</span>
         <span class="k">assert</span> <span class="o">-</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">swl</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;0 &lt;= swl &lt; 1 is required&quot;</span>
         <span class="k">assert</span> <span class="o">-</span><span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">sorg</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;0 &lt;= sorg &lt;  1 is required&quot;</span>
+
+        <span class="k">if</span> <span class="n">swirr</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Negative swirr value, </span><span class="si">{</span><span class="n">swirr</span><span class="si">}</span><span class="s2">, detected. Negative values are allowed,&quot;</span>
+                <span class="s2">&quot; but you should ensure that this is intentional.&quot;</span>
+            <span class="p">)</span>
 
         <span class="k">if</span> <span class="n">krgendanchor</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">krgendanchor</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
@@ -541,7 +547,7 @@
 
 <span class="sd">        krgmax is only relevant if krgendanchor is &#39;sorg&#39;</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">ng</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">ng</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT_KR</span>
         <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">krgend</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
         <span class="k">if</span> <span class="n">krgmax</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">krgend</span> <span class="o">&lt;=</span> <span class="n">krgmax</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
@@ -577,7 +583,7 @@
 <span class="sd">        Returns:</span>
 <span class="sd">            None (modifies internal class state)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">nog</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">nog</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT_KR</span>
         <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">kroend</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kroend</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SON&quot;</span><span class="p">]</span> <span class="o">**</span> <span class="n">nog</span>
@@ -619,9 +625,9 @@
         <span class="c1"># Similar code in wateroil.add_LET_water, but readability</span>
         <span class="c1"># is better by having them separate</span>
         <span class="c1"># pylint: disable=duplicate-code</span>
-        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
-        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">e</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
-        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT_KR</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">e</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT_KR</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT_KR</span>
         <span class="k">if</span> <span class="n">krgmax</span><span class="p">:</span>
             <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">krgend</span> <span class="o">&lt;=</span> <span class="n">krgmax</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
         <span class="k">else</span><span class="p">:</span>
@@ -667,9 +673,9 @@
 <span class="sd">            kromax: Value at sg=0 for sgro &gt; 0</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
-        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">e</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
-        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT_KR</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">e</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT_KR</span>
+        <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT_KR</span>
         <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;</span> <span class="n">kroend</span> <span class="o">&lt;=</span> <span class="mf">1.0</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
