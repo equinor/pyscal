@@ -1,4 +1,5 @@
 """pyscal"""
+# isort: skip_file
 
 import logging
 import sys

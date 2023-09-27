@@ -41,18 +41,33 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install pyscal with dependencies
+        if: ${{ always() }}
         run: |
           pip install --upgrade pip
           pip install .[tests]
 
       - name: List all installed packages
+        if: ${{ always() }}
         run: pip freeze
 
-      - name: Check code style and typing
+      - name: Lint with black
+        if: ${{ always() }}
         run: |
           black --check --force-exclude="pyscal/version.py" pyscal/*py tests/test_*py setup.py docs/conf.py
+
+      - name: Lint with flake8
+        if: ${{ always() }}
+        run: |
           flake8 pyscal tests
+
+      - name: Lint with isort
+        if: ${{ always() }}
+        run: |
           isort --check-only --profile black pyscal tests
+
+      - name: Check typing with mypy
+        if: ${{ always() }}
+        run: |
           mypy pyscal
 
       - name: Run tests
