@@ -14,6 +14,10 @@ on:
     # Run CI every night and check that tests are working with latest dependencies
     - cron: "0 0 * * *"
 
+env:
+  # Default python version to be use to create docs
+  DEFAULT_PYTHON_VERSION: "3.10"
+
 jobs:
   pyscal:
     runs-on: ${{ matrix.os }}
@@ -24,10 +28,12 @@ jobs:
             python-version: "3.8"
           - os: "ubuntu-latest"
             python-version: "3.9"
+          - os: "ubuntu-latest"
+            python-version: "3.10"
           - os: "macos-latest"
-            python-version: "3.9"
+            python-version: "3.10"
           - os: "windows-latest"
-            python-version: "3.9"
+            python-version: "3.10"
 
     steps:
       - name: Checkout commit locally
@@ -80,19 +86,19 @@ jobs:
           rstcheck -r docs
 
       - name: Install font (xkcd) for documentation
-        if: matrix.os == 'ubuntu-latest' && matrix.python-version == '3.8'
+        if: ${{ matrix.os == 'ubuntu-latest' && matrix.python-version == env.DEFAULT_PYTHON_VERSION }}
         run: |
           sudo apt-get install -y fonts-humor-sans
 
       - name: Build documentation
-        if: matrix.os == 'ubuntu-latest'
+        if: ${{ matrix.os == 'ubuntu-latest' && matrix.python-version == env.DEFAULT_PYTHON_VERSION }}
         run: |
           export SETUPTOOLS_SCM_PRETEND_VERSION=${GITHUB_REF//refs\/tags\//}
           python docs/make_plots.py
           sphinx-build -b html docs ./build/sphinx/html
 
       - name: Build python package and publish to pypi
-        if: github.event_name == 'release' && matrix.python-version == '3.8' && matrix.os == 'ubuntu-latest'
+        if: ${{ github.event_name == 'release' && matrix.os == 'ubuntu-latest' && matrix.python-version == env.DEFAULT_PYTHON_VERSION }}
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.pyscal_pypi_token }}
@@ -103,7 +109,7 @@ jobs:
           twine upload dist/*
 
       - name: Update GitHub pages
-        if: github.event_name == 'release' && matrix.python-version == '3.8' && matrix.os == 'ubuntu-latest'
+        if: ${{ github.event_name == 'release' && matrix.os == 'ubuntu-latest' && matrix.python-version == env.DEFAULT_PYTHON_VERSION }}
         run: |
           cp -R ./build/sphinx/html ../html
 
