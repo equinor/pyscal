@@ -1,0 +1,117 @@
+[build-system]
+
+requires = [
+    "setuptools>=45.0",
+    "setuptools_scm[toml]>=6.2",
+    "wheel>=0.38.1",
+]
+
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["pyscal"]
+
+[tool.setuptools_scm]
+write_to = "pyscal/version.py"
+
+[project]
+name = "pyscal"
+description = "Generate relative permeability include files for Eclipse reservoir simulator"
+readme = "README.md"
+requires-python = ">=3.8"
+license = { file = "LICENSE" }
+authors = [
+    { name = "Håvard Berland", email = "havb@equinor.com" },
+]
+keywords = ["relative permeability", "capillary pressure", "reservoir simulation"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Science/Research/Developers",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Physics",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Utilities",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Natural Language :: English",
+    "License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)",
+]
+dynamic = ["version"]
+
+dependencies = [
+    "matplotlib",
+    "numpy<2",
+    "openpyxl",
+    "pandas",
+    "scipy",
+    "urllib3<2",
+    "xlrd",
+]
+
+[project.optional-dependencies]
+tests = [
+"autoapi",
+"black",
+"flake8",
+"hypothesis",
+"isort",
+"mypy",
+"pre-commit",
+"pytest",
+"pytest-cov",
+"pytest-mock",
+"rstcheck",
+"sphinx<7",
+"sphinx-argparse",
+"sphinx-autodoc-typehints",
+"sphinx_rtd_theme",
+]
+
+docs = [
+    "autoapi",
+    "sphinx<7",
+    "sphinx-argparse",
+    "sphinx-autodoc-typehints",
+    "sphinx_rtd_theme",
+]
+
+[project.urls]
+homepage = "https://github.com/equinor/pyscal"
+documentation = "https://equinor.github.io/pyscal/"
+repository = "https://github.com/equinor/pyscal"
+
+[project.scripts]
+pyscal = "pyscal.pyscalcli:main"
+
+[tool.black]
+line-length = 88
+
+[tool.isort]
+profile = "black"
+skip = "pyscal/__init__.py"
+
+[tool.mypy]
+ignore_missing_imports = true
+
+[tool.pylint]
+# Module docstrings are not required, there are other means of documenting at
+# that level in subscript
+disable = "missing-module-docstring"
+
+[tool.pytest.ini_options]
+norecursedirs = [
+    ".git",
+]
+xfail_strict = "True"
+
+addopts = "-ra --strict-markers --ignore=docs/conf.py --ignore=setup.py --ignore=.eggs"
+
+markers = [
+    "integration: marks a test as an integration test",
+    "plot: marks a test as interactive, plots will flash to the screen",
+    "slow: a test that is expected to take up to a second or so to execute",
+]
+
+[tool.rstcheck]
+ignore_directives = ["argparse", "automodule"]
