@@ -3,7 +3,6 @@
 requires = [
     "setuptools>=45.0",
     "setuptools_scm[toml]>=6.2",
-    "wheel>=0.38.1",
 ]
 
 build-backend = "setuptools.build_meta"
@@ -51,21 +50,16 @@ dependencies = [
 
 [project.optional-dependencies]
 tests = [
-"autoapi",
-"black",
-"flake8",
-"hypothesis",
-"isort",
-"mypy",
-"pre-commit",
-"pytest",
-"pytest-cov",
-"pytest-mock",
-"rstcheck",
-"sphinx<7",
-"sphinx-argparse",
-"sphinx-autodoc-typehints",
-"sphinx_rtd_theme",
+    "black",
+    "flake8",
+    "hypothesis",
+    "isort",
+    "mypy",
+    "pytest",
+    "pytest-cov",
+    "pytest-mock",
+    "pytest-xdist",
+    "rstcheck",
 ]
 
 docs = [
@@ -77,9 +71,9 @@ docs = [
 ]
 
 [project.urls]
-homepage = "https://github.com/equinor/pyscal"
-documentation = "https://equinor.github.io/pyscal/"
-repository = "https://github.com/equinor/pyscal"
+Homepage = "https://github.com/equinor/pyscal"
+Documentation = "https://equinor.github.io/pyscal/"
+Repository = "https://github.com/equinor/pyscal"
 
 [project.scripts]
 pyscal = "pyscal.pyscalcli:main"
@@ -91,7 +85,9 @@ line-length = 88
 profile = "black"
 skip = "pyscal/__init__.py"
 
-[tool.mypy]
+[[tool.mypy.overrides]]
+module = ["numpy.*", "pyscal.version", "pandas.*", "matplotlib.*", "scipy.*", "xlrd.*", "openpyxl.*"
+]
 ignore_missing_imports = true
 
 [tool.pylint]
@@ -105,7 +101,7 @@ norecursedirs = [
 ]
 xfail_strict = "True"
 
-addopts = "-ra --strict-markers --ignore=docs/conf.py --ignore=setup.py --ignore=.eggs"
+addopts = "-ra --strict-markers --ignore=docs/conf.py --ignore=.eggs"
 
 markers = [
     "integration: marks a test as an integration test",

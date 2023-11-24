@@ -48,10 +48,7 @@ def df2str(
         dframe = modify_dframe_monotonicity(dframe, monotonicity, digits)
 
     return dframe.round(roundlevel).to_csv(
-        sep=" ",
-        float_format=float_format,
-        header=header,
-        index=False
+        sep=" ", float_format=float_format, header=header, index=False
     )
 
 

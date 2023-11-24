@@ -59,7 +59,7 @@ jobs:
       - name: Lint with black
         if: ${{ always() }}
         run: |
-          black --check --force-exclude="pyscal/version.py" pyscal/*py tests/test_*py docs/conf.py
+          black --check --force-exclude="pyscal/version.py" pyscal tests docs
 
       - name: Lint with flake8
         if: ${{ always() }}
@@ -79,7 +79,7 @@ jobs:
       - name: Run tests
         run: |
           python -c "import pyscal"
-          pytest --strict-markers --hypothesis-profile ci tests/
+          pytest -n auto --strict-markers --hypothesis-profile ci tests/
 
       - name: Syntax check documentation
         run: |
