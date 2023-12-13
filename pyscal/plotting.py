@@ -14,12 +14,7 @@ Potential improvements:
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from pyscal.pyscallist import PyscalList
-from pyscal.wateroil import WaterOil
-from pyscal.gaswater import GasWater
-from pyscal.wateroilgas import WaterOilGas
-from pyscal.gasoil import GasOil
-
+from pyscal import PyscalList, WaterOil, GasWater, GasOil, WaterOilGas
 
 # Data for configuring plot based on pyscal model type
 PLOT_CONFIG_OPTIONS = {
@@ -113,7 +108,6 @@ def format_cap_pressure_plot(
     Returns:
         plt.Figure: Formatted capillary pressure figure
     """
-    print(kwargs)
 
     ax = fig.gca()
 
@@ -155,7 +149,7 @@ def plot_pc(table: pd.DataFrame, satnum: int, **kwargs) -> None:
 
     fig = format_cap_pressure_plot(fig, neg_pc, **kwargs)
 
-    fname = f"{pc_name}_SATNUM_{satnum}"
+    fname = f"{pc_name}_SATNUM_{satnum}".replace(" ", "")
 
     fig.savefig(
         fname,
@@ -221,7 +215,7 @@ def plot_individual_curves(
 
     fig = format_relperm_plot(fig, **kwargs, **plot_config)
 
-    fname = f"{curve_names}_SATNUM_{satnum}{suffix}"
+    fname = f"{curve_names}_SATNUM_{satnum}{suffix}".replace(" ", "")
 
     fig.savefig(
         fname,
@@ -274,10 +268,12 @@ def format_gaswater_table(model: GasWater) -> pd.DataFrame:
     gasoil.reset_index(inplace=True, drop=True)
     wateroil.reset_index(inplace=True, drop=True)
 
-    # Check if SW in the two models differs
+    # Check if SW in the two models differs using an epsilon of 1E-6 If any
+    # absolute differences are greater than this threshold, an assertion error
+    # will be raised.
     assert (
-        gasoil["SW"].round(2).tolist() == wateroil["SW"].round(2).tolist()
-    ), "SW for the GasOil model does not match SW for the WaterOil model"
+        abs(gasoil["SW"] - wateroil["SW"]) < 1e-6
+    ).all(), "SW for the GasOil model does not match SW for the WaterOil model"
 
     # Merge dataframes and format
     gaswater = gasoil.merge(wateroil, left_index=True, right_index=True)
@@ -285,6 +281,20 @@ def format_gaswater_table(model: GasWater) -> pd.DataFrame:
     gaswater.drop("SW_y", axis=1, inplace=True)
 
     return gaswater
+
+
+def get_satnum_from_tag(string: str) -> int:
+    """
+    Get SATNUM from the model tag. Used in the naming of figures.
+
+    Args:
+        string (str): String from the model .tag instance variable
+
+    Returns:
+        int: SATNUM number
+    """
+    satnum = int(string.split("SATNUM")[1].strip())
+    return satnum
 
 
 def plotter(
@@ -322,7 +332,7 @@ def plotter(
 
     for model in models.pyscal_list:
         # Get SATNUM number as an integer. Used in the naming of saved figures
-        satnum = model.tag.split("SATNUM")[1]
+        satnum = get_satnum_from_tag(model.tag)
 
         if isinstance(model, WaterOilGas):
             plot_individual_curves("WaterOil", model.wateroil.table, satnum, **kwargs)
@@ -340,8 +350,8 @@ def plotter(
             table = format_gaswater_table(model)
             plot_individual_curves("GasWater", table, satnum, **kwargs)
 
-        # else:
-        #     raise KeyError(
-        #         f"Model type received was {type(model)} but\
-        #  must be one of: {WaterOil, WaterOilGas, GasWater}"
-        #     )
+        else:
+            raise Exception(
+                f"Model type received was {type(model)} but\
+         must be one of: {WaterOil, WaterOilGas, GasOil, GasWater}"
+            )

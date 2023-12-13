@@ -158,11 +158,6 @@ def get_parser() -> argparse.ArgumentParser:
         default=False,
         help=("Make and save relative permeability figures."),
     )
-    # parser.add_argument(
-    #     "--plottype",
-    #     choices=["satnum", "all"],
-    #     help=("Plot curves by SATNUM or plot all curves together."),
-    # )
     parser.add_argument(
         "--pc",
         action="store_true",
@@ -174,7 +169,7 @@ def get_parser() -> argparse.ArgumentParser:
         action="store_true",
         default=False,
         help=(
-            "Plot relative permeability with log y-axis."
+            "Plot relative permeability figures with log y-axis."
             "Run both with and without this flag to plot"
             "both linear and semi-log relperm plots."
         ),
@@ -246,9 +241,9 @@ def pyscal_main(
         sheet_name: Which sheet in XLSX file
         slgof: Use SLGOF
         family2: Dump family 2 keywords
-        plot: Plot figures and save (relperm only by default)
+        plot: Plot relative permeability figures and save
         plot_pc: Plot capillary pressure curves in addition to relperm curves
-        plot_semilog: Plot with log y-axis
+        plot_semilog: Plot relative permeability figures with log y-axis
 
     """
 
