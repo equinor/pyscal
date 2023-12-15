@@ -72,7 +72,7 @@ def format_relperm_plot(fig: plt.Figure, **kwargs) -> plt.Figure:
     ax.set_ylabel(kwargs["ylabel"])
 
     # Set axis limits
-    ax.set_xlim([0, 1])
+    ax.set_xlim((0.0, 1.0))
 
     # Log y-axis fro semilog plot
     # Some cases may have kr > 1 depending on base/absolute
