@@ -13,9 +13,9 @@ from pyscal import (
     GasWater,
     SCALrecommendation,
     WaterOilGas,
-    plotting,
     __version__,
     getLogger_pyscal,
+    plotting,
 )
 
 from .factory import PyscalFactory

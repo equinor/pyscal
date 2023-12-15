@@ -14,7 +14,7 @@ Potential improvements:
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from pyscal import PyscalList, WaterOil, GasWater, GasOil, WaterOilGas
+from pyscal import GasOil, GasWater, PyscalList, WaterOil, WaterOilGas
 
 # Data for configuring plot based on pyscal model type
 PLOT_CONFIG_OPTIONS = {
@@ -79,9 +79,9 @@ def format_relperm_plot(fig: plt.Figure, **kwargs) -> plt.Figure:
     # permeability used to calculate kr
     if kwargs["semilog"]:
         ax.set_yscale("log")
-        ax.set_ylim([1e-6, 1])
+        ax.set_ylim((1e-6, 1.0))
     else:
-        ax.set_ylim([0, 1])
+        ax.set_ylim((0.0, 1.0))
 
     # Add legend
     plt.legend()
@@ -116,11 +116,11 @@ def format_cap_pressure_plot(
     ax.set_ylabel(kwargs["pc_name"].lower().capitalize())
 
     # Set axis limits
-    ax.set_xlim([0, 1])
+    ax.set_xlim((0.0, 1.0))
 
     # Set lower y-axis limit to 0 if Pc >= 0
     if not neg_pc:
-        ax.set_ylim(bottom=0)
+        ax.set_ylim(bottom=0.0)
 
     return fig
 
@@ -331,24 +331,41 @@ def plotter(
     kwargs = {"pc": pc, "semilog": semilog}
 
     for model in models.pyscal_list:
-        # Get SATNUM number as an integer. Used in the naming of saved figures
-        satnum = get_satnum_from_tag(model.tag)
-
         if isinstance(model, WaterOilGas):
-            plot_individual_curves("WaterOil", model.wateroil.table, satnum, **kwargs)
-            plot_individual_curves("GasOil", model.gasoil.table, satnum, **kwargs)
+            # the wateroil and gasoil instance variables are optional for the
+            # WaterOilGas class
+            if model.wateroil:
+                plot_individual_curves(
+                    "WaterOil",
+                    model.wateroil.table,
+                    get_satnum_from_tag(model.wateroil.tag),
+                    **kwargs,
+                )
+            if model.gasoil:
+                plot_individual_curves(
+                    "GasOil",
+                    model.gasoil.table,
+                    get_satnum_from_tag(model.gasoil.tag),
+                    **kwargs,
+                )
 
         elif isinstance(model, WaterOil):
-            plot_individual_curves("WaterOil", model.table, satnum, **kwargs)
+            plot_individual_curves(
+                "WaterOil", model.table, get_satnum_from_tag(model.tag), **kwargs
+            )
 
         elif isinstance(model, GasOil):
-            plot_individual_curves("WaterOil", model.table, satnum, **kwargs)
+            plot_individual_curves(
+                "WaterOil", model.table, get_satnum_from_tag(model.tag), **kwargs
+            )
 
         elif isinstance(model, GasWater):
             # The GasWater object has a different structure to the others, and
             # requires formatting
             table = format_gaswater_table(model)
-            plot_individual_curves("GasWater", table, satnum, **kwargs)
+            plot_individual_curves(
+                "GasWater", table, get_satnum_from_tag(model.wateroil.tag), **kwargs
+            )
 
         else:
             raise Exception(

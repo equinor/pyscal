@@ -1,6 +1,6 @@
 import pytest
 
-from pyscal import plotting, PyscalList, WaterOil, GasWater, GasOil, WaterOilGas
+from pyscal import GasOil, GasWater, PyscalList, WaterOil, WaterOilGas, plotting
 
 
 def test_get_satnum_from_tag():
