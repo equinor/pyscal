@@ -15,6 +15,7 @@ from pyscal import (
     WaterOilGas,
     __version__,
     getLogger_pyscal,
+    plotting,
 )
 
 from .factory import PyscalFactory
@@ -149,6 +150,36 @@ def get_parser() -> argparse.ArgumentParser:
             "Implicit for gas-water input."
         ),
     )
+
+    # Plotting arguments
+    parser.add_argument(
+        "--plot",
+        action="store_true",
+        default=False,
+        help=("Make and save relative permeability figures."),
+    )
+    parser.add_argument(
+        "--plot_pc",
+        action="store_true",
+        default=False,
+        help=("Make and save capillary pressure figures."),
+    )
+    parser.add_argument(
+        "--plot_semilog",
+        action="store_true",
+        default=False,
+        help=(
+            "Plot relative permeability figures with log y-axis."
+            "Run both with and without this flag to plot"
+            "both linear and semi-log relperm plots."
+        ),
+    )
+    parser.add_argument(
+        "--plot_outdir",
+        default="./",
+        help="Directory where the plot output figures will be saved.",
+    )
+
     return parser
 
 
@@ -176,6 +207,10 @@ def main() -> None:
             sheet_name=args.sheet_name,
             slgof=args.slgof,
             family2=args.family2,
+            plot=args.plot,
+            plot_pc=args.plot_pc,
+            plot_semilog=args.plot_semilog,
+            plot_outdir=args.plot_outdir,
         )
     except (OSError, ValueError) as err:
         print("".join(traceback.format_tb(err.__traceback__)))
@@ -193,6 +228,10 @@ def pyscal_main(
     sheet_name: Optional[str] = None,
     slgof: bool = False,
     family2: bool = False,
+    plot: bool = False,
+    plot_pc: bool = False,
+    plot_semilog: bool = False,
+    plot_outdir: str = "./",
 ) -> None:
     """A "main()" method not relying on argparse. This can be used
     for testing, and also by an ERT forward model, e.g.
@@ -209,6 +248,10 @@ def pyscal_main(
         sheet_name: Which sheet in XLSX file
         slgof: Use SLGOF
         family2: Dump family 2 keywords
+        plot: Plot relative permeability figures and save
+        plot_pc: Plot capillary pressure curves in addition to relperm curves
+        plot_semilog: Plot relative permeability figures with log y-axis
+
     """
 
     logger = getLogger_pyscal(
@@ -274,3 +317,6 @@ def pyscal_main(
         with open(output, "w", newline="\n", encoding="utf-8") as fh:
             fh.write(wog_list.build_eclipse_data(family=family, slgof=slgof))
         print("Written to " + output)
+
+    if plot:
+        plotting.plotter(wog_list, plot_pc, plot_semilog, plot_outdir)
