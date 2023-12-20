@@ -12,6 +12,7 @@ Potential improvements:
 """
 
 from pathlib import Path
+from typing import Optional
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -346,21 +347,21 @@ def wog_plotter(model: WaterOilGas, **kwargs) -> None:
     Args:
         model (WaterOilGas): _description_
     """
-    config_wo = get_plot_config_options("WaterOil", **kwargs)
-    satnum_wo = get_satnum_from_tag(model.wateroil.tag)
-
-    config_go = get_plot_config_options("GasOil", **kwargs)
-    satnum_go = get_satnum_from_tag(model.gasoil.tag)
 
     outdir = kwargs["outdir"]
 
     assert (
         satnum_wo == satnum_go
-    ), f"The SATNUM for the WaterOil model ({satnum_wo}) and the SATNUM for the GasOil ({satnum_go}) model should be the same."
+    ), f"The SATNUM for the WaterOil model ({satnum_wo})\
+        and the SATNUM for the GasOil ({satnum_go}) model\
+        should be the same."
 
     # the wateroil and gasoil instance variables are optional for the
     # WaterOilGas class. If statements used to check if they are provided
     if model.wateroil:
+        config_wo = get_plot_config_options("WaterOil", **kwargs)
+        satnum_wo = get_satnum_from_tag(model.wateroil.tag)
+
         fig_wo = plot_relperm(
             model.wateroil.table,
             satnum_wo,
@@ -370,7 +371,19 @@ def wog_plotter(model: WaterOilGas, **kwargs) -> None:
 
         save_figure(fig_wo, satnum_wo, config_wo, "relperm", outdir)
 
+        if kwargs["pc"]:
+            fig_pcwo = plot_pc(
+                model.wateroil.table,
+                get_satnum_from_tag(model.wateroil.tag),
+                **config_wo,
+            )
+
+            save_figure(fig_pcwo, satnum_wo, config_wo, "pc", outdir)
+
     if model.gasoil:
+        config_go = get_plot_config_options("GasOil", **kwargs)
+        satnum_go = get_satnum_from_tag(model.gasoil.tag)
+
         fig_go = plot_relperm(
             model.gasoil.table,
             satnum_go,
@@ -379,13 +392,6 @@ def wog_plotter(model: WaterOilGas, **kwargs) -> None:
         )
 
         save_figure(fig_go, satnum_go, config_go, "relperm", outdir)
-
-    if kwargs["pc"]:
-        fig_pcwo = plot_pc(
-            model.wateroil.table, get_satnum_from_tag(model.wateroil.tag), **config_wo
-        )
-
-        save_figure(fig_pcwo, satnum_wo, config_wo, "pc", outdir)
 
 
 def wo_plotter(model: WaterOil, **kwargs) -> None:

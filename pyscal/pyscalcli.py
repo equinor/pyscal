@@ -231,7 +231,7 @@ def pyscal_main(
     plot: bool = False,
     plot_pc: bool = False,
     plot_semilog: bool = False,
-    plot_outdir: Optional[str] = None,
+    plot_outdir: str = "./",
 ) -> None:
     """A "main()" method not relying on argparse. This can be used
     for testing, and also by an ERT forward model, e.g.
