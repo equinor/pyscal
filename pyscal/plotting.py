@@ -11,10 +11,14 @@ Potential improvements:
 
 """
 
+from pathlib import Path
+
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from pyscal import GasOil, GasWater, PyscalList, WaterOil, WaterOilGas
+from pyscal import GasOil, GasWater, PyscalList, WaterOil, WaterOilGas, getLogger_pyscal
+
+logger = getLogger_pyscal(__name__)
 
 # Data for configuring plot based on pyscal model type
 PLOT_CONFIG_OPTIONS = {
@@ -52,6 +56,97 @@ PLOT_CONFIG_OPTIONS = {
         "curves": "krg_krw",
     },
 }
+
+
+def format_gaswater_table(model: GasWater) -> pd.DataFrame:
+    """
+
+    Format the tables held by the GasWater object (through the GasOil and
+    WaterOil objects).
+
+    The GasWater object is a bit trickier to work with. Like WaterOilGas,
+    GasWater takes from both WaterOil and GasOil objects, but unlike
+    WaterOilGas, it is a two-phase model. It is based on one curve from GasOil,
+    krg, and one curve from WaterOil, krw. This is a different format to the
+    other models, where the relperm curves to be plotted in the same figure are
+    found in the same table and are accessed easily using the "table" instance
+    variable, e.g. WaterOil.table. To plot the correct curves for the GasWater
+    model, additional formatting is required. That is handled by this function.
+
+    Process: sort both the GasOil and WaterOil tables by increasing SW and then
+    merge on index. Can't join on "SW" due to potential floating-point number
+    errors.
+
+    Args:
+        model (GasWater): GasWater model
+
+    Returns:
+        pd.DataFrame: saturation table with Sw, Sg, krg from the GasOil
+        instance, and krw and Pc from the WaterOil instance
+    """
+
+    gasoil = model.gasoil.table[["SL", "KRG"]].copy()
+    gasoil.rename(columns={"SL": "SW"}, inplace=True)
+    gasoil["SG"] = 1 - gasoil["SW"]
+    wateroil = model.wateroil.table[["SW", "KRW", "PC"]].copy()
+
+    # Sort by SW to be able to join on index
+    gasoil.sort_values("SW", ascending=True, inplace=True)
+    wateroil.sort_values("SW", ascending=True, inplace=True)
+    gasoil.reset_index(inplace=True, drop=True)
+    wateroil.reset_index(inplace=True, drop=True)
+
+    # Check if SW in the two models differs using an epsilon of 1E-6 If any
+    # absolute differences are greater than this threshold, an assertion error
+    # will be raised.
+    assert (
+        abs(gasoil["SW"] - wateroil["SW"]) < 1e-6
+    ).all(), "SW for the GasOil model does not match SW for the WaterOil model"
+
+    # Merge dataframes and format
+    gaswater = gasoil.merge(wateroil, left_index=True, right_index=True)
+    gaswater.rename(columns={"SW_x": "SW"}, inplace=True)
+    gaswater.drop("SW_y", axis=1, inplace=True)
+
+    return gaswater
+
+
+def get_satnum_from_tag(string: str) -> int:
+    """
+    Get SATNUM from the model tag. Used in the naming of figures.
+
+    Args:
+        string (str): String from the model .tag instance variable
+
+    Returns:
+        int: SATNUM number
+    """
+    satnum = int(string.split("SATNUM")[1].strip())
+    return satnum
+
+
+def get_plot_config_options(curve_type: str, **kwargs) -> dict:
+    """
+    Get config data from plot config dictionary based on the curve type
+
+    Args:
+        curve_type (str): _description_
+
+    Returns:
+        dict: _description_
+    """
+
+    config = PLOT_CONFIG_OPTIONS[curve_type].copy()
+
+    # If semilog plot, add suffix to the name of the saved relperm figure
+    if kwargs["semilog"]:
+        suffix = "_semilog"
+    else:
+        suffix = ""
+
+    config["suffix"] = suffix
+
+    return config
 
 
 def format_relperm_plot(fig: plt.Figure, **kwargs) -> plt.Figure:
@@ -125,7 +220,7 @@ def format_cap_pressure_plot(
     return fig
 
 
-def plot_pc(table: pd.DataFrame, satnum: int, **kwargs) -> None:
+def plot_pc(table: pd.DataFrame, satnum: int, **kwargs) -> plt.Figure:
     """
     Plot capillary pressure curves.
 
@@ -134,34 +229,33 @@ def plot_pc(table: pd.DataFrame, satnum: int, **kwargs) -> None:
     Args:
         table (pd.DataFrame): Saturation table with Pc curves to be plotted
         satnum (int): SATNUM number
-    """
 
-    axis = kwargs["axis"]
-    pc_name = kwargs["pc_name"].lower()
+    Returns:
+        plt.Figure: Pc figure with a single Pc curve for a given model and
+        SATNUM
+    """
 
     fig = plt.figure(1, figsize=(5, 5), dpi=300)
     plt.title(f"SATNUM {satnum}")
-
-    plt.plot(table[axis], table["PC"])
+    plt.plot(table[kwargs["axis"]], table["PC"])
 
     # Flag for negative Pc
     neg_pc = table["PC"].min() < 0
-
     fig = format_cap_pressure_plot(fig, neg_pc, **kwargs)
 
-    fname = f"{pc_name}_SATNUM_{satnum}".replace(" ", "")
+    # Log warning if Pc plot is requested but is zero or practically zero.
+    # There is no checking of units of Pc in pyscal, but this should work as
+    # intended for Pc in bar, Pa, MPa, atm and psi, i.e. the most common units
+    # of pressure. In any case, the figures will still be made.
+    if not (abs(table["PC"]) > 1e-6).any():
+        logger.warning("Pc plots were requested, but Pc is zero.")
 
-    fig.savefig(
-        fname,
-        bbox_inches="tight",
-    )
-
-    fig.clear()
+    return fig
 
 
-def plot_individual_curves(
-    curve_type: str, table: pd.DataFrame, satnum: int, **kwargs
-) -> None:
+def plot_relperm(
+    table: pd.DataFrame, satnum: int, config: dict, **kwargs
+) -> plt.Figure:
     """
 
     Function for plotting one relperm curve set for each SATNUM.
@@ -170,27 +264,14 @@ def plot_individual_curves(
     pyscal CLI, and are passed on to the plot formatting functions.
 
     Args:
-        curve_type (str): Used to pick the correct plot config options
         table (pd.DataFrame): Saturation table with curves to be plotted
         satnum (int): SATNUM number
+        config (dict): Plot config
+
+    Returns:
+        plt.Figure: Relative permeability figure with two relative permeability
+        curves for a given model and SATNUM
     """
-
-    # Get data from plot config dictionary based on the curve type
-    # Should this dependency be injected?
-    # Have chosen to assign local variables here for code readability
-    plot_config = PLOT_CONFIG_OPTIONS[curve_type]
-    axis = plot_config["axis"]
-    kra_curve = plot_config["kra_name"]
-    krb_curve = plot_config["krb_name"]
-    curve_names = plot_config["curves"]
-    kra_colour = plot_config["kra_colour"]
-    krb_colour = plot_config["krb_colour"]
-
-    # If semilog plot, add suffix to the name of the saved relperm figure
-    if kwargs["semilog"]:
-        suffix = "_semilog"
-    else:
-        suffix = ""
 
     # Plotting relative permeability curves
     fig = plt.figure(1, figsize=(5, 5), dpi=300)
@@ -199,110 +280,206 @@ def plot_individual_curves(
 
     # Plot first relperm curve
     plt.plot(
-        table[axis],
-        table[kra_curve],
-        label=kra_curve.lower(),
-        color=kra_colour,
+        table[config["axis"]],
+        table[config["kra_name"]],
+        label=config["kra_name"].lower(),
+        color=config["kra_colour"],
     )
 
     # Plot second relperm curve
     plt.plot(
-        table[axis],
-        table[krb_curve],
-        label=krb_curve.lower(),
-        color=krb_colour,
+        table[config["axis"]],
+        table[config["krb_name"]],
+        label=config["krb_name"].lower(),
+        color=config["krb_colour"],
     )
 
-    fig = format_relperm_plot(fig, **kwargs, **plot_config)
+    fig = format_relperm_plot(fig, **kwargs, **config)
+
+    return fig
+
+
+def save_figure(
+    fig: plt.Figure,
+    satnum: int,
+    config: dict,
+    plot_type: str,
+    outdir: str,
+) -> None:
+    """_summary_
+
+    Args:
+        fig (plt.Figure): Figure to be saved
+        satnum (int): SATNUM number
+        config (dict): Plot config
+        plot_type (str): Figure type. Allowed types are 'relperm' and 'pc'
+    """
+
+    # Get curve name
+    if plot_type == "relperm":
+        curve_names = config["curves"]
+        suffix = config["suffix"]
+    elif plot_type == "pc":
+        curve_names = config["pc_name"].lower()
+        suffix = ""
+    else:
+        raise ValueError(f"'type' given ({plot_type}) must be one of 'relperm' or 'pc'")
 
     fname = f"{curve_names}_SATNUM_{satnum}{suffix}".replace(" ", "")
+    fout = Path(outdir).joinpath(fname)
 
     fig.savefig(
-        fname,
+        fout,
         bbox_inches="tight",
     )
 
     # Clear figure so that it is empty for the next SATNUM's plot
     fig.clear()
 
-    # If Pc plot has been requestd, plot Pc
-    if kwargs["pc"]:
-        plot_pc(table, satnum, **plot_config)
 
+def wog_plotter(model: WaterOilGas, **kwargs) -> None:
+    """_summary_
 
-def format_gaswater_table(model: GasWater) -> pd.DataFrame:
-    """
-
-    Format the tables held by the GasWater object (through the GasOil and
-    WaterOil objects).
-
-    The GasWater object is a bit trickier to work with. Like WaterOilGas,
-    GasWater takes from both WaterOil and GasOil objects, but unlike
-    WaterOilGas, it is a two-phase model. It is based on one curve from GasOil,
-    krg, and one curve from WaterOil, krw. This is a different format to the
-    other models, where the relperm curves to be plotted in the same figure are
-    found in the same table and are accessed easily using the "table" instance
-    variable, e.g. WaterOil.table. To plot the correct curves for the GasWater
-    model, additional formatting is required. That is handled by this function.
-
-    Process: sort both the GasOil and WaterOil tables by increasing SW and then
-    merge on index. Can't join on "SW" due to potential floating-point number
-    errors.
+    For a WaterOilGas instance, the WaterOil and GasOil instances can be
+    accessed, then the "table" instance variable.
 
     Args:
-        model (GasWater): GasWater model
-
-    Returns:
-        pd.DataFrame: saturation table with Sw, Sg, krg from the GasOil
-        instance, and krw and Pc from the WaterOil instance
+        model (WaterOilGas): _description_
     """
+    config_wo = get_plot_config_options("WaterOil", **kwargs)
+    satnum_wo = get_satnum_from_tag(model.wateroil.tag)
 
-    gasoil = model.gasoil.table[["SL", "KRG"]].copy()
-    gasoil.rename(columns={"SL": "SW"}, inplace=True)
-    gasoil["SG"] = 1 - gasoil["SW"]
-    wateroil = model.wateroil.table[["SW", "KRW", "PC"]].copy()
+    config_go = get_plot_config_options("GasOil", **kwargs)
+    satnum_go = get_satnum_from_tag(model.gasoil.tag)
 
-    # Sort by SW to be able to join on index
-    gasoil.sort_values("SW", ascending=True, inplace=True)
-    wateroil.sort_values("SW", ascending=True, inplace=True)
-    gasoil.reset_index(inplace=True, drop=True)
-    wateroil.reset_index(inplace=True, drop=True)
+    outdir = kwargs["outdir"]
 
-    # Check if SW in the two models differs using an epsilon of 1E-6 If any
-    # absolute differences are greater than this threshold, an assertion error
-    # will be raised.
     assert (
-        abs(gasoil["SW"] - wateroil["SW"]) < 1e-6
-    ).all(), "SW for the GasOil model does not match SW for the WaterOil model"
+        satnum_wo == satnum_go
+    ), f"The SATNUM for the WaterOil model ({satnum_wo}) and the SATNUM for the GasOil ({satnum_go}) model should be the same."
 
-    # Merge dataframes and format
-    gaswater = gasoil.merge(wateroil, left_index=True, right_index=True)
-    gaswater.rename(columns={"SW_x": "SW"}, inplace=True)
-    gaswater.drop("SW_y", axis=1, inplace=True)
+    # the wateroil and gasoil instance variables are optional for the
+    # WaterOilGas class. If statements used to check if they are provided
+    if model.wateroil:
+        fig_wo = plot_relperm(
+            model.wateroil.table,
+            satnum_wo,
+            config_wo,
+            **kwargs,
+        )
 
-    return gaswater
+        save_figure(fig_wo, satnum_wo, config_wo, "relperm", outdir)
+
+    if model.gasoil:
+        fig_go = plot_relperm(
+            model.gasoil.table,
+            satnum_go,
+            config_go,
+            **kwargs,
+        )
+
+        save_figure(fig_go, satnum_go, config_go, "relperm", outdir)
+
+    if kwargs["pc"]:
+        fig_pcwo = plot_pc(
+            model.wateroil.table, get_satnum_from_tag(model.wateroil.tag), **config_wo
+        )
+
+        save_figure(fig_pcwo, satnum_wo, config_wo, "pc", outdir)
 
 
-def get_satnum_from_tag(string: str) -> int:
+def wo_plotter(model: WaterOil, **kwargs) -> None:
     """
-    Get SATNUM from the model tag. Used in the naming of figures.
+
+    For a WaterOil instance, the saturation table can be accessed using the
+    "table" instance variable.
 
     Args:
-        string (str): String from the model .tag instance variable
-
-    Returns:
-        int: SATNUM number
+        model (WaterOil): _description_
     """
-    satnum = int(string.split("SATNUM")[1].strip())
-    return satnum
+    config = get_plot_config_options("WaterOil", **kwargs)
+    satnum = get_satnum_from_tag(model.tag)
+
+    outdir = kwargs["outdir"]
+
+    fig = plot_relperm(
+        model.table,
+        satnum,
+        config,
+        **kwargs,
+    )
+
+    save_figure(fig, satnum, config, "relperm", outdir)
+
+    if kwargs["pc"]:
+        fig_pc = plot_pc(model.table, get_satnum_from_tag(model.tag), **config)
+
+        save_figure(fig_pc, satnum, config, "pc", outdir)
+
+
+def go_plotter(model: GasOil, **kwargs) -> None:
+    """
+
+    For a GasOil instance, the saturation table can be accessed using the
+    "table" instance variable.
+
+    Args:
+        model (GasOil): _description_
+    """
+
+    config = get_plot_config_options("GasOil", **kwargs)
+    satnum = get_satnum_from_tag(model.tag)
+
+    outdir = kwargs["outdir"]
+
+    fig = plot_relperm(
+        model.table,
+        satnum,
+        config,
+        **kwargs,
+    )
+
+    save_figure(fig, satnum, config, "relperm", outdir)
+
+    # Note that there are no supporting functions for adding Pc to GasOil
+    # instances. This can only be done by modifying the "table" instance
+    # variable for a GasOil object
+    if kwargs["pc"]:
+        fig_pc = plot_pc(model.table, get_satnum_from_tag(model.tag), **config)
+
+        save_figure(fig_pc, satnum, config, "pc", outdir)
+
+
+def gw_plotter(model: GasWater, **kwargs) -> None:
+    # For GasWater, the format is different, and an additional formatting step is
+    # required. Use the formatted table as an argument to the plotter function,
+    # instead of the "table" instance variable
+    table = format_gaswater_table(model)
+    config = get_plot_config_options("GasWater", **kwargs)
+    satnum = get_satnum_from_tag(model.tag)
+    outdir = kwargs["outdir"]
+
+    fig = plot_relperm(
+        table,
+        satnum,
+        config,
+        **kwargs,
+    )
+
+    save_figure(fig, satnum, config, "relperm", outdir)
+
+    if kwargs["pc"]:
+        fig_pc = plot_pc(table, get_satnum_from_tag(model.tag), **config)
+
+        save_figure(fig_pc, satnum, config, "pc", outdir)
 
 
 def plotter(
-    models: PyscalList,
-    pc: bool = False,
-    semilog: bool = False,
+    models: PyscalList, pc: bool = False, semilog: bool = False, outdir: str = "./"
 ) -> None:
     """
+
+    Runner function for creating plots.
 
     Iterate over PyscalList and plot curves based on type of pyscal objects
     encountered.
@@ -325,48 +502,19 @@ def plotter(
         False.
 
     """
-    #
 
     # kwargs to be passed on to other functions
-    kwargs = {"pc": pc, "semilog": semilog}
+    kwargs = {"pc": pc, "semilog": semilog, "outdir": outdir}
 
     for model in models.pyscal_list:
         if isinstance(model, WaterOilGas):
-            # the wateroil and gasoil instance variables are optional for the
-            # WaterOilGas class
-            if model.wateroil:
-                plot_individual_curves(
-                    "WaterOil",
-                    model.wateroil.table,
-                    get_satnum_from_tag(model.wateroil.tag),
-                    **kwargs,
-                )
-            if model.gasoil:
-                plot_individual_curves(
-                    "GasOil",
-                    model.gasoil.table,
-                    get_satnum_from_tag(model.gasoil.tag),
-                    **kwargs,
-                )
-
+            wog_plotter(model, **kwargs)
         elif isinstance(model, WaterOil):
-            plot_individual_curves(
-                "WaterOil", model.table, get_satnum_from_tag(model.tag), **kwargs
-            )
-
+            wo_plotter(model, **kwargs)
         elif isinstance(model, GasOil):
-            plot_individual_curves(
-                "WaterOil", model.table, get_satnum_from_tag(model.tag), **kwargs
-            )
-
+            go_plotter(model, **kwargs)
         elif isinstance(model, GasWater):
-            # The GasWater object has a different structure to the others, and
-            # requires formatting
-            table = format_gaswater_table(model)
-            plot_individual_curves(
-                "GasWater", table, get_satnum_from_tag(model.wateroil.tag), **kwargs
-            )
-
+            gw_plotter(model, **kwargs)
         else:
             raise Exception(
                 f"Model type received was {type(model)} but\

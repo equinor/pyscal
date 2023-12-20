@@ -159,13 +159,13 @@ def get_parser() -> argparse.ArgumentParser:
         help=("Make and save relative permeability figures."),
     )
     parser.add_argument(
-        "--pc",
+        "--plot_pc",
         action="store_true",
         default=False,
         help=("Make and save capillary pressure figures."),
     )
     parser.add_argument(
-        "--semilog",
+        "--plot_semilog",
         action="store_true",
         default=False,
         help=(
@@ -173,6 +173,11 @@ def get_parser() -> argparse.ArgumentParser:
             "Run both with and without this flag to plot"
             "both linear and semi-log relperm plots."
         ),
+    )
+    parser.add_argument(
+        "--plot_outdir",
+        default="./",
+        help="Directory where the plot output figures will be saved.",
     )
 
     return parser
@@ -203,8 +208,9 @@ def main() -> None:
             slgof=args.slgof,
             family2=args.family2,
             plot=args.plot,
-            plot_pc=args.pc,
-            plot_semilog=args.semilog,
+            plot_pc=args.plot_pc,
+            plot_semilog=args.plot_semilog,
+            plot_outdir=args.plot_outdir,
         )
     except (OSError, ValueError) as err:
         print("".join(traceback.format_tb(err.__traceback__)))
@@ -225,6 +231,7 @@ def pyscal_main(
     plot: bool = False,
     plot_pc: bool = False,
     plot_semilog: bool = False,
+    plot_outdir: Optional[str] = None,
 ) -> None:
     """A "main()" method not relying on argparse. This can be used
     for testing, and also by an ERT forward model, e.g.
@@ -312,5 +319,5 @@ def pyscal_main(
         print("Written to " + output)
 
     if plot:
-        plotting.plotter(wog_list, plot_pc, plot_semilog)
-        print("Plots saved")
+        plotting.plotter(wog_list, plot_pc, plot_semilog, plot_outdir)
+        print(f"Plots saved in {plot_outdir}")
