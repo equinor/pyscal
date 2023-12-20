@@ -586,3 +586,44 @@ def test_pyscal_main():
 
     with pytest.raises(ValueError, match="Interpolation parameter provided"):
         pyscalcli.pyscal_main(relperm_file, int_param_wo=-1, output=os.devnull)
+
+
+def test_pyscalcli_plot(capsys, mocker, tmpdir):
+    """Test that plots are created through the CLI. This is done by testing to
+    see if the print statements in the save_figure function are present in stdout"""
+    scalrec_file = Path(__file__).absolute().parent / "data/scal-pc-input-example.xlsx"
+
+    mocker.patch(
+        "sys.argv",
+        [
+            "pyscal",
+            str(scalrec_file),
+            "--int_param_wo",
+            "0",
+            "--output",
+            "-",
+            "--plot",
+            "--plot_pc",
+            "--plot_outdir",
+            str(tmpdir),
+        ],
+    )
+
+    pyscalcli.main()
+
+    expected_plots = [
+        "krw_krow_SATNUM_1.png",
+        "krg_krog_SATNUM_1.png",
+        "krw_krow_SATNUM_2.png",
+        "krg_krog_SATNUM_2.png",
+        "krw_krow_SATNUM_3.png",
+        "krg_krog_SATNUM_3.png",
+        "pcow_SATNUM_1.png",
+        "pcow_SATNUM_2.png",
+        "pcow_SATNUM_3.png",
+    ]
+
+    captured = capsys.readouterr()
+
+    for plot in expected_plots:
+        assert plot in captured.out

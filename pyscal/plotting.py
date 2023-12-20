@@ -127,13 +127,14 @@ def get_satnum_from_tag(string: str) -> int:
 
 def get_plot_config_options(curve_type: str, **kwargs) -> dict:
     """
-    Get config data from plot config dictionary based on the curve type
+    Get config data from plot config dictionary based on the curve (model) type.
 
     Args:
-        curve_type (str): _description_
+        curve_type (str): Name of the curve type. Allowed types are given in
+        the PLOT_CONFIG_OPTIONS dictionary
 
     Returns:
-        dict: _description_
+        dict: Config parameters for the chosen model type
     """
 
     config = PLOT_CONFIG_OPTIONS[curve_type].copy()
@@ -306,13 +307,16 @@ def save_figure(
     plot_type: str,
     outdir: str,
 ) -> None:
-    """_summary_
+    """
+
+    Save the provided figure.
 
     Args:
         fig (plt.Figure): Figure to be saved
         satnum (int): SATNUM number
         config (dict): Plot config
         plot_type (str): Figure type. Allowed types are 'relperm' and 'pc'
+        outdir (str): Directory where the figure will be saved
     """
 
     # Get curve name
@@ -333,18 +337,23 @@ def save_figure(
         bbox_inches="tight",
     )
 
+    print(f"Figure saved to {fout}.png")
+
     # Clear figure so that it is empty for the next SATNUM's plot
     fig.clear()
 
 
 def wog_plotter(model: WaterOilGas, **kwargs) -> None:
-    """_summary_
+    """
+
+    Plot a WaterOilGas (WaterOil and GasOil) model.
+
 
     For a WaterOilGas instance, the WaterOil and GasOil instances can be
     accessed, then the "table" instance variable.
 
     Args:
-        model (WaterOilGas): _description_
+        model (WaterOilGas): WaterOilGas instance
     """
 
     outdir = kwargs["outdir"]
@@ -390,11 +399,13 @@ def wog_plotter(model: WaterOilGas, **kwargs) -> None:
 def wo_plotter(model: WaterOil, **kwargs) -> None:
     """
 
+    Plot a WaterOil model.
+
     For a WaterOil instance, the saturation table can be accessed using the
     "table" instance variable.
 
     Args:
-        model (WaterOil): _description_
+        model (WaterOil): WaterOil instance
     """
     config = get_plot_config_options("WaterOil", **kwargs)
     satnum = get_satnum_from_tag(model.tag)
@@ -419,11 +430,13 @@ def wo_plotter(model: WaterOil, **kwargs) -> None:
 def go_plotter(model: GasOil, **kwargs) -> None:
     """
 
+    Plot a GasOil model.
+
     For a GasOil instance, the saturation table can be accessed using the
     "table" instance variable.
 
     Args:
-        model (GasOil): _description_
+        model (GasOil): GasOil instance
     """
 
     config = get_plot_config_options("GasOil", **kwargs)
@@ -450,9 +463,16 @@ def go_plotter(model: GasOil, **kwargs) -> None:
 
 
 def gw_plotter(model: GasWater, **kwargs) -> None:
-    # For GasWater, the format is different, and an additional formatting step is
-    # required. Use the formatted table as an argument to the plotter function,
-    # instead of the "table" instance variable
+    """
+
+    For GasWater, the format is different, and an additional formatting step is
+    required. Use the formatted table as an argument to the plotter function,
+    instead of the "table" instance variable
+
+    Args:
+        model (GasWater): GasWater instance
+    """
+
     table = format_gaswater_table(model)
     config = get_plot_config_options("GasWater", **kwargs)
     satnum = get_satnum_from_tag(model.tag)

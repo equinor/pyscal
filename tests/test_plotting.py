@@ -1,3 +1,5 @@
+"""Test the plotting module"""
+
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -7,6 +9,7 @@ from pyscal import GasOil, GasWater, PyscalList, WaterOil, WaterOilGas, plotting
 
 
 def test_get_satnum_from_tag():
+    """Check that the SATNUM number can be retrieved from the model tag"""
     # Several PyscalLists of different model types to be checked
     pyscal_lists = [
         PyscalList(
@@ -48,19 +51,23 @@ def test_get_satnum_from_tag():
 
 
 def test_plotter():
-    # Check if Exception is raised if a model type is not included. This is done
-    # to check that all models have been implemented in the plotting module.
+    """Check if an Exception is raised if a model type is not included. This is done
+    to check that all models have been implemented in the plotting module."""
 
     class DummyPyscalList:
-        # Can't use the actual PyscalList, as this will raise its own exception
-        # (DummyModel is not a pyscal object), so a dummy PyscalList is used
+        """
+        Can't use the actual PyscalList, as this will raise its own exception
+        (DummyModel is not a pyscal object), so a dummy PyscalList is used
 
-        # If the PyscalList.pyscal_list instance variable name changes, this
-        # will still pass...
+        #If the PyscalList.pyscal_list instance variable name changes, this
+        will still pass..."""
+
         def __init__(self, models: list) -> None:
             self.pyscal_list = models
 
     class DummyModel:
+        """Dummy model"""
+
         def __init__(self, tag: str) -> None:
             self.tag = tag
 
@@ -77,8 +84,8 @@ def test_plotter():
 
 
 def test_pyscal_list_attr():
-    # Check that the PyscalList class has an pyscal_list instance variable.
-    # This is access by the plotting module to loop through models to plot.
+    """Check that the PyscalList class has an pyscal_list instance variable.
+    This is accessed by the plotting module to loop through models to plot."""
     assert (
         hasattr(PyscalList(), "pyscal_list") is True
     ), "The PyscalList object should have a pyscal_list instance variable.\
@@ -86,7 +93,7 @@ def test_pyscal_list_attr():
 
 
 def test_plot_relperm():
-    # Test that a matplotlib.pyplot Figure instance is returned
+    """Test that a matplotlib.pyplot Figure instance is returned"""
     wateroil = WaterOil(swl=0.1, h=0.1)
     wateroil.add_corey_water()
     wateroil.add_corey_oil()
@@ -101,7 +108,7 @@ def test_plot_relperm():
 
 
 def test_plot_pc():
-    # Test that a matplotlib.pyplot Figure instance is returned
+    """Test that a matplotlib.pyplot Figure instance is returned"""
     wateroil = WaterOil(swl=0.1, h=0.1)
     wateroil.add_corey_water()
     wateroil.add_corey_oil()
@@ -117,7 +124,7 @@ def test_plot_pc():
 
 
 def test_wog_plotter(tmpdir):
-    # Test if relative permeability figures are created by the plotter function
+    """Test that relative permeability figures are created by the plotter function"""
     wateroil = WaterOil(swl=0.1, h=0.1, tag="SATNUM 1")
     wateroil.add_corey_water()
     wateroil.add_corey_oil()
@@ -145,7 +152,7 @@ def test_wog_plotter(tmpdir):
 
 
 def test_wo_plotter(tmpdir):
-    # Test if relative permeability figures are created by the plotter function
+    """Test that relative permeability figures are created by the plotter function"""
     wateroil = WaterOil(swl=0.1, h=0.1, tag="SATNUM 1")
     wateroil.add_corey_water()
     wateroil.add_corey_oil()
@@ -163,7 +170,7 @@ def test_wo_plotter(tmpdir):
 
 
 def test_wo_plotter_relperm_only(tmpdir):
-    # Test if relative permeability figures are created by the plotter function
+    """Test that relative permeability figures are created by the plotter function"""
     wateroil = WaterOil(swl=0.1, h=0.1, tag="SATNUM 1")
     wateroil.add_corey_water()
     wateroil.add_corey_oil()
@@ -183,7 +190,7 @@ def test_wo_plotter_relperm_only(tmpdir):
 
 
 def test_go_plotter(tmpdir):
-    # Test if relative permeability figures are created by the plotter function
+    """Test that relative permeability figures are created by the plotter function"""
     gasoil = GasOil(swl=0.1, h=0.1, tag="SATNUM 1")
     gasoil.add_corey_gas()
     gasoil.add_corey_oil()
@@ -204,7 +211,7 @@ def test_go_plotter(tmpdir):
 
 
 def test_gw_plotter(tmpdir):
-    # Test if relative permeability figures are created by the plotter function
+    """Test that relative permeability figures are created by the plotter function"""
     gaswater = GasWater(swl=0.1, h=0.1, tag="SATNUM 1")
     gaswater.add_corey_water()
     gaswater.add_corey_gas()
@@ -222,7 +229,7 @@ def test_gw_plotter(tmpdir):
 
 
 def test_save_figure(tmpdir):
-    # Test that figure is saved
+    """Test that figure is saved"""
     fig = plt.Figure()
 
     config = {"curves": "dummy", "suffix": ""}

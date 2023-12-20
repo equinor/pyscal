@@ -320,4 +320,3 @@ def pyscal_main(
 
     if plot:
         plotting.plotter(wog_list, plot_pc, plot_semilog, plot_outdir)
-        print(f"Plots saved in {plot_outdir}")
