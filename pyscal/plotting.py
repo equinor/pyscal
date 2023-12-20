@@ -12,7 +12,6 @@ Potential improvements:
 """
 
 from pathlib import Path
-from typing import Optional
 
 import matplotlib.pyplot as plt
 import pandas as pd
