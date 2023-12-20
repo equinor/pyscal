@@ -350,12 +350,6 @@ def wog_plotter(model: WaterOilGas, **kwargs) -> None:
 
     outdir = kwargs["outdir"]
 
-    assert (
-        satnum_wo == satnum_go
-    ), f"The SATNUM for the WaterOil model ({satnum_wo})\
-        and the SATNUM for the GasOil ({satnum_go}) model\
-        should be the same."
-
     # the wateroil and gasoil instance variables are optional for the
     # WaterOilGas class. If statements used to check if they are provided
     if model.wateroil:
