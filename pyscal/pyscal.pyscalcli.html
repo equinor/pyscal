@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.pyscalcli &mdash; pyscal 0.10.5 documentation</title>
-      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <title>pyscal.pyscalcli &mdash; pyscal 0.11.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+
+  
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -20,7 +22,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="pyscal.pyscallist" href="pyscal.pyscallist.html" />
-    <link rel="prev" title="pyscal.gaswater" href="pyscal.gaswater.html" /> 
+    <link rel="prev" title="pyscal.plotting" href="pyscal.plotting.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -36,7 +38,7 @@
               <img src="../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.10.5
+                0.11.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -64,6 +66,7 @@
 <li class="toctree-l3"><a class="reference internal" href="pyscal.factory.html"><code class="docutils literal notranslate"><span class="pre">pyscal.factory</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pyscal.gasoil.html"><code class="docutils literal notranslate"><span class="pre">pyscal.gasoil</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pyscal.gaswater.html"><code class="docutils literal notranslate"><span class="pre">pyscal.gaswater</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.plotting.html"><code class="docutils literal notranslate"><span class="pre">pyscal.plotting</span></code></a></li>
 <li class="toctree-l3 current"><a class="current reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">pyscal.pyscalcli</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#pyscal.pyscalcli.get_parser"><code class="docutils literal notranslate"><span class="pre">get_parser()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pyscal.pyscalcli.main"><code class="docutils literal notranslate"><span class="pre">main()</span></code></a></li>
@@ -138,7 +141,7 @@
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyscal.pyscalcli.pyscal_main">
-<span class="sig-prename descclassname"><span class="pre">pyscal.pyscalcli.</span></span><span class="sig-name descname"><span class="pre">pyscal_main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parametertable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'relperm.inc'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">int_param_wo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">int_param_go</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sheet_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slgof</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">family2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/pyscalcli.html#pyscal_main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.pyscalcli.pyscal_main" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyscal.pyscalcli.</span></span><span class="sig-name descname"><span class="pre">pyscal_main</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">parametertable</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">debug</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'relperm.inc'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_s</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">int_param_wo</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">int_param_go</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sheet_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slgof</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">family2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_pc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_semilog</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_outdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/pyscalcli.html#pyscal_main"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.pyscalcli.pyscal_main" title="Permalink to this definition"></a></dt>
 <dd><p>A “main()” method not relying on argparse. This can be used
 for testing, and also by an ERT forward model, e.g.
 in semeio (github.com/equinor/semeio)</p>
@@ -155,6 +158,9 @@ in semeio (github.com/equinor/semeio)</p>
 <li><p><strong>sheet_name</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Which sheet in XLSX file</p></li>
 <li><p><strong>slgof</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Use SLGOF</p></li>
 <li><p><strong>family2</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Dump family 2 keywords</p></li>
+<li><p><strong>plot</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Plot relative permeability figures and save</p></li>
+<li><p><strong>plot_pc</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Plot capillary pressure curves in addition to relperm curves</p></li>
+<li><p><strong>plot_semilog</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – Plot relative permeability figures with log y-axis</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -169,14 +175,14 @@ in semeio (github.com/equinor/semeio)</p>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="pyscal.gaswater.html" class="btn btn-neutral float-left" title="pyscal.gaswater" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pyscal.plotting.html" class="btn btn-neutral float-left" title="pyscal.plotting" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="pyscal.pyscallist.html" class="btn btn-neutral float-right" title="pyscal.pyscallist" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Equinor 2019-2023.</p>
+    <p>&#169; Copyright Equinor 2019-2024.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

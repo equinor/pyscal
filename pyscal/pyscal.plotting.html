@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyscal.plotting &mdash; pyscal 0.11.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="pyscal.pyscalcli" href="pyscal.pyscalcli.html" />
+    <link rel="prev" title="pyscal.gaswater" href="pyscal.gaswater.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            pyscal
+              <img src="../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.11.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction.html">Introduction to pyscal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modelling.html">Modelling of flooding processes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html">History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../history.html#release-notes">Release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing.html">Contributing to pyscal</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Python API</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="pyscal.html"><code class="docutils literal notranslate"><span class="pre">pyscal</span></code></a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="pyscal.html#pyscal.getLogger_pyscal"><code class="docutils literal notranslate"><span class="pre">getLogger_pyscal()</span></code></a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="pyscal.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="pyscal.constants.html"><code class="docutils literal notranslate"><span class="pre">pyscal.constants</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.factory.html"><code class="docutils literal notranslate"><span class="pre">pyscal.factory</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gasoil.html"><code class="docutils literal notranslate"><span class="pre">pyscal.gasoil</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.gaswater.html"><code class="docutils literal notranslate"><span class="pre">pyscal.gaswater</span></code></a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">pyscal.plotting</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyscal.plotting.format_cap_pressure_plot"><code class="docutils literal notranslate"><span class="pre">format_cap_pressure_plot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyscal.plotting.format_gaswater_table"><code class="docutils literal notranslate"><span class="pre">format_gaswater_table()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyscal.plotting.format_relperm_plot"><code class="docutils literal notranslate"><span class="pre">format_relperm_plot()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyscal.plotting.get_plot_config_options"><code class="docutils literal notranslate"><span class="pre">get_plot_config_options()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyscal.plotting.get_satnum_from_tag"><code class="docutils literal notranslate"><span class="pre">get_satnum_from_tag()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyscal.plotting.go_plotter"><code class="docutils literal notranslate"><span class="pre">go_plotter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyscal.plotting.gw_plotter"><code class="docutils literal notranslate"><span class="pre">gw_plotter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyscal.plotting.plot_pc"><code class="docutils literal notranslate"><span class="pre">plot_pc()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyscal.plotting.plot_relperm"><code class="docutils literal notranslate"><span class="pre">plot_relperm()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyscal.plotting.plotter"><code class="docutils literal notranslate"><span class="pre">plotter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyscal.plotting.save_figure"><code class="docutils literal notranslate"><span class="pre">save_figure()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyscal.plotting.wo_plotter"><code class="docutils literal notranslate"><span class="pre">wo_plotter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyscal.plotting.wog_plotter"><code class="docutils literal notranslate"><span class="pre">wog_plotter()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.pyscalcli.html"><code class="docutils literal notranslate"><span class="pre">pyscal.pyscalcli</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.pyscallist.html"><code class="docutils literal notranslate"><span class="pre">pyscal.pyscallist</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.scalrecommendation.html"><code class="docutils literal notranslate"><span class="pre">pyscal.scalrecommendation</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.utils.html"><code class="docutils literal notranslate"><span class="pre">pyscal.utils</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.version.html"><code class="docutils literal notranslate"><span class="pre">pyscal.version</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroil.html"><code class="docutils literal notranslate"><span class="pre">pyscal.wateroil</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.wateroilgas.html"><code class="docutils literal notranslate"><span class="pre">pyscal.wateroilgas</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">pyscal</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="pyscal.html"><code class="docutils literal notranslate"><span class="pre">pyscal</span></code></a></li>
+      <li class="breadcrumb-item active"><code class="docutils literal notranslate"><span class="pre">pyscal.plotting</span></code></li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/pyscal/pyscal.plotting.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-pyscal.plotting">
+<span id="pyscal-plotting"></span><h1><code class="docutils literal notranslate"><span class="pre">pyscal.plotting</span></code><a class="headerlink" href="#module-pyscal.plotting" title="Permalink to this heading"></a></h1>
+<p>Module for plotting relative permeability and capillary pressure curves.</p>
+<dl>
+<dt>Potential improvements:</dt><dd><p>Plotting low/base/high curves before interpolation</p>
+<p>Plotting curve sets on the same plot, e.g. curves from different SATNUMs or
+low/base/high curves from a SCAL recommendation</p>
+<p>Option to plot GasWater curves with Sg axis (instead of Sw; the Sg column
+is already present in the dataframe)</p>
+</dd>
+</dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="pyscal.plotting.format_cap_pressure_plot">
+<span class="sig-prename descclassname"><span class="pre">pyscal.plotting.</span></span><span class="sig-name descname"><span class="pre">format_cap_pressure_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">neg_pc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/plotting.html#format_cap_pressure_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.plotting.format_cap_pressure_plot" title="Permalink to this definition"></a></dt>
+<dd><p>Formatting options for individual capillary pressure plots.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fig</strong> (<em>plt.Figure</em>) – Capillary pressure figure to be formatted</p></li>
+<li><p><strong>neg_pc</strong> (<em>bool</em><em>, </em><em>optional</em>) – Negative Pc flag. True if the Pc curve has a</p></li>
+<li><p><strong>False.</strong> (<em>negative part. Defaults to</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Formatted capillary pressure figure</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>plt.Figure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyscal.plotting.format_gaswater_table">
+<span class="sig-prename descclassname"><span class="pre">pyscal.plotting.</span></span><span class="sig-name descname"><span class="pre">format_gaswater_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/plotting.html#format_gaswater_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.plotting.format_gaswater_table" title="Permalink to this definition"></a></dt>
+<dd><p>Format the tables held by the GasWater object (through the GasOil and
+WaterOil objects).</p>
+<p>The GasWater object is a bit trickier to work with. Like WaterOilGas,
+GasWater takes from both WaterOil and GasOil objects, but unlike
+WaterOilGas, it is a two-phase model. It is based on one curve from GasOil,
+krg, and one curve from WaterOil, krw. This is a different format to the
+other models, where the relperm curves to be plotted in the same figure are
+found in the same table and are accessed easily using the “table” instance
+variable, e.g. WaterOil.table. To plot the correct curves for the GasWater
+model, additional formatting is required. That is handled by this function.</p>
+<p>Process: sort both the GasOil and WaterOil tables by increasing SW and then
+merge on index. Can’t join on “SW” due to potential floating-point number
+errors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model</strong> (<a class="reference internal" href="pyscal.gaswater.html#pyscal.gaswater.GasWater" title="pyscal.gaswater.GasWater"><em>GasWater</em></a>) – GasWater model</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>saturation table with Sw, Sg, krg from the GasOil
+instance, and krw and Pc from the WaterOil instance</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyscal.plotting.format_relperm_plot">
+<span class="sig-prename descclassname"><span class="pre">pyscal.plotting.</span></span><span class="sig-name descname"><span class="pre">format_relperm_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/plotting.html#format_relperm_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.plotting.format_relperm_plot" title="Permalink to this definition"></a></dt>
+<dd><p>Formatting options for individual relative permeability plots.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>fig</strong> (<em>plt.Figure</em>) – Relative permeability figure to be formatted</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Formatted relative permeability figure</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>plt.Figure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyscal.plotting.get_plot_config_options">
+<span class="sig-prename descclassname"><span class="pre">pyscal.plotting.</span></span><span class="sig-name descname"><span class="pre">get_plot_config_options</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">curve_type</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/plotting.html#get_plot_config_options"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.plotting.get_plot_config_options" title="Permalink to this definition"></a></dt>
+<dd><p>Get config data from plot config dictionary based on the curve (model) type.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>curve_type</strong> (<em>str</em>) – Name of the curve type. Allowed types are given in</p></li>
+<li><p><strong>dictionary</strong> (<em>the PLOT_CONFIG_OPTIONS</em>) – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Config parameters for the chosen model type</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyscal.plotting.get_satnum_from_tag">
+<span class="sig-prename descclassname"><span class="pre">pyscal.plotting.</span></span><span class="sig-name descname"><span class="pre">get_satnum_from_tag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/plotting.html#get_satnum_from_tag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.plotting.get_satnum_from_tag" title="Permalink to this definition"></a></dt>
+<dd><p>Get SATNUM from the model tag. Used in the naming of figures.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>string</strong> (<em>str</em>) – String from the model .tag instance variable</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>SATNUM number</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyscal.plotting.go_plotter">
+<span class="sig-prename descclassname"><span class="pre">pyscal.plotting.</span></span><span class="sig-name descname"><span class="pre">go_plotter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/plotting.html#go_plotter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.plotting.go_plotter" title="Permalink to this definition"></a></dt>
+<dd><p>Plot a GasOil model.</p>
+<p>For a GasOil instance, the saturation table can be accessed using the
+“table” instance variable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model</strong> (<a class="reference internal" href="pyscal.gasoil.html#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><em>GasOil</em></a>) – GasOil instance</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyscal.plotting.gw_plotter">
+<span class="sig-prename descclassname"><span class="pre">pyscal.plotting.</span></span><span class="sig-name descname"><span class="pre">gw_plotter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/plotting.html#gw_plotter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.plotting.gw_plotter" title="Permalink to this definition"></a></dt>
+<dd><p>For GasWater, the format is different, and an additional formatting step is
+required. Use the formatted table as an argument to the plotter function,
+instead of the “table” instance variable</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model</strong> (<a class="reference internal" href="pyscal.gaswater.html#pyscal.gaswater.GasWater" title="pyscal.gaswater.GasWater"><em>GasWater</em></a>) – GasWater instance</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyscal.plotting.plot_pc">
+<span class="sig-prename descclassname"><span class="pre">pyscal.plotting.</span></span><span class="sig-name descname"><span class="pre">plot_pc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">satnum</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/plotting.html#plot_pc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.plotting.plot_pc" title="Permalink to this definition"></a></dt>
+<dd><p>Plot capillary pressure curves.</p>
+<p>Called if the Pc plot is requested, regardless of if Pc is non-zero.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> (<em>pd.DataFrame</em>) – Saturation table with Pc curves to be plotted</p></li>
+<li><p><strong>satnum</strong> (<em>int</em>) – SATNUM number</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Pc figure with a single Pc curve for a given model and
+SATNUM</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>plt.Figure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyscal.plotting.plot_relperm">
+<span class="sig-prename descclassname"><span class="pre">pyscal.plotting.</span></span><span class="sig-name descname"><span class="pre">plot_relperm</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">satnum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/plotting.html#plot_relperm"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.plotting.plot_relperm" title="Permalink to this definition"></a></dt>
+<dd><p>Function for plotting one relperm curve set for each SATNUM.</p>
+<p>Takes kwargs from the plotter() function, which in turn come from the
+pyscal CLI, and are passed on to the plot formatting functions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>table</strong> (<em>pd.DataFrame</em>) – Saturation table with curves to be plotted</p></li>
+<li><p><strong>satnum</strong> (<em>int</em>) – SATNUM number</p></li>
+<li><p><strong>config</strong> (<em>dict</em>) – Plot config</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Relative permeability figure with two relative permeability
+curves for a given model and SATNUM</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>plt.Figure</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyscal.plotting.plotter">
+<span class="sig-prename descclassname"><span class="pre">pyscal.plotting.</span></span><span class="sig-name descname"><span class="pre">plotter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">models</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">semilog</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'./'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/plotting.html#plotter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.plotting.plotter" title="Permalink to this definition"></a></dt>
+<dd><p>Runner function for creating plots.</p>
+<p>Iterate over PyscalList and plot curves based on type of pyscal objects
+encountered.</p>
+<p>PyscalList is a list of WaterOilGas, WaterOil, GasOil or GasWater objects.</p>
+<p>For WaterOil and GasOil, the saturation table can be accessed using the
+“table” instance variable.</p>
+<p>For WaterOilGas, the WaterOil and GasOil instances can be accessed, then
+the “table” instance variable.</p>
+<p>For GasWater, the format is different, and an additional formatting step is
+required.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>models</strong> (<a class="reference internal" href="pyscal.pyscallist.html#pyscal.pyscallist.PyscalList" title="pyscal.pyscallist.PyscalList"><em>PyscalList</em></a>) – List of models</p></li>
+<li><p><strong>pc</strong> (<em>bool</em><em>, </em><em>optional</em>) – Plot Pc flag. Defaults to False.</p></li>
+<li><p><strong>semilog</strong> (<em>bool</em><em>, </em><em>optional</em>) – Plot relperm with log y-axis. Defaults to</p></li>
+<li><p><strong>False.</strong> – </p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyscal.plotting.save_figure">
+<span class="sig-prename descclassname"><span class="pre">pyscal.plotting.</span></span><span class="sig-name descname"><span class="pre">save_figure</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fig</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">satnum</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">plot_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">outdir</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/plotting.html#save_figure"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.plotting.save_figure" title="Permalink to this definition"></a></dt>
+<dd><p>Save the provided figure.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fig</strong> (<em>plt.Figure</em>) – Figure to be saved</p></li>
+<li><p><strong>satnum</strong> (<em>int</em>) – SATNUM number</p></li>
+<li><p><strong>config</strong> (<em>dict</em>) – Plot config</p></li>
+<li><p><strong>plot_type</strong> (<em>str</em>) – Figure type. Allowed types are ‘relperm’ and ‘pc’</p></li>
+<li><p><strong>outdir</strong> (<em>str</em>) – Directory where the figure will be saved</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyscal.plotting.wo_plotter">
+<span class="sig-prename descclassname"><span class="pre">pyscal.plotting.</span></span><span class="sig-name descname"><span class="pre">wo_plotter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/plotting.html#wo_plotter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.plotting.wo_plotter" title="Permalink to this definition"></a></dt>
+<dd><p>Plot a WaterOil model.</p>
+<p>For a WaterOil instance, the saturation table can be accessed using the
+“table” instance variable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model</strong> (<a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><em>WaterOil</em></a>) – WaterOil instance</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyscal.plotting.wog_plotter">
+<span class="sig-prename descclassname"><span class="pre">pyscal.plotting.</span></span><span class="sig-name descname"><span class="pre">wog_plotter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/plotting.html#wog_plotter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.plotting.wog_plotter" title="Permalink to this definition"></a></dt>
+<dd><p>Plot a WaterOilGas (WaterOil and GasOil) model.</p>
+<p>For a WaterOilGas instance, the WaterOil and GasOil instances can be
+accessed, then the “table” instance variable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>model</strong> (<a class="reference internal" href="pyscal.wateroilgas.html#pyscal.wateroilgas.WaterOilGas" title="pyscal.wateroilgas.WaterOilGas"><em>WaterOilGas</em></a>) – WaterOilGas instance</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="pyscal.gaswater.html" class="btn btn-neutral float-left" title="pyscal.gaswater" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pyscal.pyscalcli.html" class="btn btn-neutral float-right" title="pyscal.pyscalcli" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Equinor 2019-2024.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>  
+
+  <style>
+    /* Sidebar header (and topbar for mobile) */
+    .wy-side-nav-search, .wy-nav-top {
+      background: #ff1243;
+    }
+    /* Sidebar */
+    .wy-nav-side {
+      background: #474747;
+    }
+    .wy-side-nav-search > div.version {
+      color: white;
+    }
+  </style>
+
+
+</body>
+</html>

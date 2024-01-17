@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>pyscal.plotting &mdash; pyscal 0.11.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            pyscal
+              <img src="../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                0.11.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction.html">Introduction to pyscal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage.html">Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modelling.html">Modelling of flooding processes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html">History</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../history.html#release-notes">Release notes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing.html">Contributing to pyscal</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Python API</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../pyscal/pyscal.html"><code class="docutils literal notranslate"><span class="pre">pyscal</span></code></a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">pyscal</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+          <li class="breadcrumb-item"><a href="../pyscal.html">pyscal</a></li>
+      <li class="breadcrumb-item active">pyscal.plotting</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for pyscal.plotting</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Module for plotting relative permeability and capillary pressure curves.</span>
+
+<span class="sd">Potential improvements:</span>
+<span class="sd">    Plotting low/base/high curves before interpolation</span>
+
+<span class="sd">    Plotting curve sets on the same plot, e.g. curves from different SATNUMs or</span>
+<span class="sd">    low/base/high curves from a SCAL recommendation</span>
+
+<span class="sd">    Option to plot GasWater curves with Sg axis (instead of Sw; the Sg column</span>
+<span class="sd">    is already present in the dataframe)</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">GasOil</span><span class="p">,</span> <span class="n">GasWater</span><span class="p">,</span> <span class="n">PyscalList</span><span class="p">,</span> <span class="n">WaterOil</span><span class="p">,</span> <span class="n">WaterOilGas</span><span class="p">,</span> <span class="n">getLogger_pyscal</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">getLogger_pyscal</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+
+<span class="c1"># Data for configuring plot based on pyscal model type</span>
+<span class="n">PLOT_CONFIG_OPTIONS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;WaterOil&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;axis&quot;</span><span class="p">:</span> <span class="s2">&quot;SW&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;kra_name&quot;</span><span class="p">:</span> <span class="s2">&quot;KRW&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;krb_name&quot;</span><span class="p">:</span> <span class="s2">&quot;KROW&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;kra_colour&quot;</span><span class="p">:</span> <span class="s2">&quot;blue&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;krb_colour&quot;</span><span class="p">:</span> <span class="s2">&quot;green&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pc_name&quot;</span><span class="p">:</span> <span class="s2">&quot;PCOW&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;xlabel&quot;</span><span class="p">:</span> <span class="s2">&quot;Sw&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ylabel&quot;</span><span class="p">:</span> <span class="s2">&quot;krw, krow&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;curves&quot;</span><span class="p">:</span> <span class="s2">&quot;krw_krow&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;GasOil&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;axis&quot;</span><span class="p">:</span> <span class="s2">&quot;SG&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;kra_name&quot;</span><span class="p">:</span> <span class="s2">&quot;KRG&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;krb_name&quot;</span><span class="p">:</span> <span class="s2">&quot;KROG&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;kra_colour&quot;</span><span class="p">:</span> <span class="s2">&quot;red&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;krb_colour&quot;</span><span class="p">:</span> <span class="s2">&quot;green&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;xlabel&quot;</span><span class="p">:</span> <span class="s2">&quot;Sg&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ylabel&quot;</span><span class="p">:</span> <span class="s2">&quot;krg, krog&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pc_name&quot;</span><span class="p">:</span> <span class="s2">&quot;PCOG&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;curves&quot;</span><span class="p">:</span> <span class="s2">&quot;krg_krog&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;GasWater&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;axis&quot;</span><span class="p">:</span> <span class="s2">&quot;SW&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;kra_name&quot;</span><span class="p">:</span> <span class="s2">&quot;KRW&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;krb_name&quot;</span><span class="p">:</span> <span class="s2">&quot;KRG&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;kra_colour&quot;</span><span class="p">:</span> <span class="s2">&quot;blue&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;krb_colour&quot;</span><span class="p">:</span> <span class="s2">&quot;red&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;pc_name&quot;</span><span class="p">:</span> <span class="s2">&quot;PCGW&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;xlabel&quot;</span><span class="p">:</span> <span class="s2">&quot;Sw&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;ylabel&quot;</span><span class="p">:</span> <span class="s2">&quot;krg, krw&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;curves&quot;</span><span class="p">:</span> <span class="s2">&quot;krg_krw&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="format_gaswater_table"><a class="viewcode-back" href="../../pyscal/pyscal.plotting.html#pyscal.plotting.format_gaswater_table">[docs]</a><span class="k">def</span> <span class="nf">format_gaswater_table</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">GasWater</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Format the tables held by the GasWater object (through the GasOil and</span>
+<span class="sd">    WaterOil objects).</span>
+
+<span class="sd">    The GasWater object is a bit trickier to work with. Like WaterOilGas,</span>
+<span class="sd">    GasWater takes from both WaterOil and GasOil objects, but unlike</span>
+<span class="sd">    WaterOilGas, it is a two-phase model. It is based on one curve from GasOil,</span>
+<span class="sd">    krg, and one curve from WaterOil, krw. This is a different format to the</span>
+<span class="sd">    other models, where the relperm curves to be plotted in the same figure are</span>
+<span class="sd">    found in the same table and are accessed easily using the &quot;table&quot; instance</span>
+<span class="sd">    variable, e.g. WaterOil.table. To plot the correct curves for the GasWater</span>
+<span class="sd">    model, additional formatting is required. That is handled by this function.</span>
+
+<span class="sd">    Process: sort both the GasOil and WaterOil tables by increasing SW and then</span>
+<span class="sd">    merge on index. Can&#39;t join on &quot;SW&quot; due to potential floating-point number</span>
+<span class="sd">    errors.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (GasWater): GasWater model</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: saturation table with Sw, Sg, krg from the GasOil</span>
+<span class="sd">        instance, and krw and Pc from the WaterOil instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">gasoil</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;SL&quot;</span><span class="p">,</span> <span class="s2">&quot;KRG&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">gasoil</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;SL&quot;</span><span class="p">:</span> <span class="s2">&quot;SW&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">gasoil</span><span class="p">[</span><span class="s2">&quot;SG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">gasoil</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span>
+    <span class="n">wateroil</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;SW&quot;</span><span class="p">,</span> <span class="s2">&quot;KRW&quot;</span><span class="p">,</span> <span class="s2">&quot;PC&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="c1"># Sort by SW to be able to join on index</span>
+    <span class="n">gasoil</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;SW&quot;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">wateroil</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;SW&quot;</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">gasoil</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">wateroil</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># Check if SW in the two models differs using an epsilon of 1E-6 If any</span>
+    <span class="c1"># absolute differences are greater than this threshold, an assertion error</span>
+    <span class="c1"># will be raised.</span>
+    <span class="k">assert</span> <span class="p">(</span>
+        <span class="nb">abs</span><span class="p">(</span><span class="n">gasoil</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">wateroil</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">])</span> <span class="o">&lt;</span> <span class="mf">1e-6</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="s2">&quot;SW for the GasOil model does not match SW for the WaterOil model&quot;</span>
+
+    <span class="c1"># Merge dataframes and format</span>
+    <span class="n">gaswater</span> <span class="o">=</span> <span class="n">gasoil</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">wateroil</span><span class="p">,</span> <span class="n">left_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">right_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">gaswater</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;SW_x&quot;</span><span class="p">:</span> <span class="s2">&quot;SW&quot;</span><span class="p">},</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">gaswater</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="s2">&quot;SW_y&quot;</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">gaswater</span></div>
+
+
+<div class="viewcode-block" id="get_satnum_from_tag"><a class="viewcode-back" href="../../pyscal/pyscal.plotting.html#pyscal.plotting.get_satnum_from_tag">[docs]</a><span class="k">def</span> <span class="nf">get_satnum_from_tag</span><span class="p">(</span><span class="n">string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get SATNUM from the model tag. Used in the naming of figures.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        string (str): String from the model .tag instance variable</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        int: SATNUM number</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">satnum</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">string</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;SATNUM&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">satnum</span></div>
+
+
+<div class="viewcode-block" id="get_plot_config_options"><a class="viewcode-back" href="../../pyscal/pyscal.plotting.html#pyscal.plotting.get_plot_config_options">[docs]</a><span class="k">def</span> <span class="nf">get_plot_config_options</span><span class="p">(</span><span class="n">curve_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get config data from plot config dictionary based on the curve (model) type.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        curve_type (str): Name of the curve type. Allowed types are given in</span>
+<span class="sd">        the PLOT_CONFIG_OPTIONS dictionary</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: Config parameters for the chosen model type</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">config</span> <span class="o">=</span> <span class="n">PLOT_CONFIG_OPTIONS</span><span class="p">[</span><span class="n">curve_type</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="c1"># If semilog plot, add suffix to the name of the saved relperm figure</span>
+    <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;semilog&quot;</span><span class="p">]:</span>
+        <span class="n">suffix</span> <span class="o">=</span> <span class="s2">&quot;_semilog&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">suffix</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="n">config</span><span class="p">[</span><span class="s2">&quot;suffix&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">suffix</span>
+
+    <span class="k">return</span> <span class="n">config</span></div>
+
+
+<div class="viewcode-block" id="format_relperm_plot"><a class="viewcode-back" href="../../pyscal/pyscal.plotting.html#pyscal.plotting.format_relperm_plot">[docs]</a><span class="k">def</span> <span class="nf">format_relperm_plot</span><span class="p">(</span><span class="n">fig</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Formatting options for individual relative permeability plots.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        fig (plt.Figure): Relative permeability figure to be formatted</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        plt.Figure: Formatted relative permeability figure</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+
+    <span class="c1"># Set axis lables</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;xlabel&quot;</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;ylabel&quot;</span><span class="p">])</span>
+
+    <span class="c1"># Set axis limits</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+
+    <span class="c1"># Log y-axis fro semilog plot</span>
+    <span class="c1"># Some cases may have kr &gt; 1 depending on base/absolute</span>
+    <span class="c1"># permeability used to calculate kr</span>
+    <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;semilog&quot;</span><span class="p">]:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">((</span><span class="mf">1e-6</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+
+    <span class="c1"># Add legend</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span>
+        <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;upper center&quot;</span><span class="p">,</span>
+        <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.12</span><span class="p">),</span>
+        <span class="n">ncol</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+<div class="viewcode-block" id="format_cap_pressure_plot"><a class="viewcode-back" href="../../pyscal/pyscal.plotting.html#pyscal.plotting.format_cap_pressure_plot">[docs]</a><span class="k">def</span> <span class="nf">format_cap_pressure_plot</span><span class="p">(</span>
+    <span class="n">fig</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">,</span> <span class="n">neg_pc</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Formatting options for individual capillary pressure plots.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        fig (plt.Figure): Capillary pressure figure to be formatted</span>
+<span class="sd">        neg_pc (bool, optional): Negative Pc flag. True if the Pc curve has a</span>
+<span class="sd">        negative part. Defaults to False.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        plt.Figure: Formatted capillary pressure figure</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span>
+
+    <span class="c1"># Set axis lables</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;xlabel&quot;</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;pc_name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">capitalize</span><span class="p">())</span>
+
+    <span class="c1"># Set axis limits</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">((</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">))</span>
+
+    <span class="c1"># Set lower y-axis limit to 0 if Pc &gt;= 0</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">neg_pc</span><span class="p">:</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">bottom</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+<div class="viewcode-block" id="plot_pc"><a class="viewcode-back" href="../../pyscal/pyscal.plotting.html#pyscal.plotting.plot_pc">[docs]</a><span class="k">def</span> <span class="nf">plot_pc</span><span class="p">(</span><span class="n">table</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">satnum</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Plot capillary pressure curves.</span>
+
+<span class="sd">    Called if the Pc plot is requested, regardless of if Pc is non-zero.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        table (pd.DataFrame): Saturation table with Pc curves to be plotted</span>
+<span class="sd">        satnum (int): SATNUM number</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        plt.Figure: Pc figure with a single Pc curve for a given model and</span>
+<span class="sd">        SATNUM</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SATNUM </span><span class="si">{</span><span class="n">satnum</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;axis&quot;</span><span class="p">]],</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;PC&quot;</span><span class="p">])</span>
+
+    <span class="c1"># Flag for negative Pc</span>
+    <span class="n">neg_pc</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;PC&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">0</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">format_cap_pressure_plot</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">neg_pc</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="c1"># Log warning if Pc plot is requested but is zero or practically zero.</span>
+    <span class="c1"># There is no checking of units of Pc in pyscal, but this should work as</span>
+    <span class="c1"># intended for Pc in bar, Pa, MPa, atm and psi, i.e. the most common units</span>
+    <span class="c1"># of pressure. In any case, the figures will still be made.</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;PC&quot;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mf">1e-6</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Pc plots were requested, but Pc is zero.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+<div class="viewcode-block" id="plot_relperm"><a class="viewcode-back" href="../../pyscal/pyscal.plotting.html#pyscal.plotting.plot_relperm">[docs]</a><span class="k">def</span> <span class="nf">plot_relperm</span><span class="p">(</span>
+    <span class="n">table</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">satnum</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Function for plotting one relperm curve set for each SATNUM.</span>
+
+<span class="sd">    Takes kwargs from the plotter() function, which in turn come from the</span>
+<span class="sd">    pyscal CLI, and are passed on to the plot formatting functions.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        table (pd.DataFrame): Saturation table with curves to be plotted</span>
+<span class="sd">        satnum (int): SATNUM number</span>
+<span class="sd">        config (dict): Plot config</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        plt.Figure: Relative permeability figure with two relative permeability</span>
+<span class="sd">        curves for a given model and SATNUM</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Plotting relative permeability curves</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SATNUM </span><span class="si">{</span><span class="n">satnum</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Plot first relperm curve</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">table</span><span class="p">[</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;axis&quot;</span><span class="p">]],</span>
+        <span class="n">table</span><span class="p">[</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;kra_name&quot;</span><span class="p">]],</span>
+        <span class="n">label</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;kra_name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>
+        <span class="n">color</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;kra_colour&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Plot second relperm curve</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">table</span><span class="p">[</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;axis&quot;</span><span class="p">]],</span>
+        <span class="n">table</span><span class="p">[</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;krb_name&quot;</span><span class="p">]],</span>
+        <span class="n">label</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;krb_name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">(),</span>
+        <span class="n">color</span><span class="o">=</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;krb_colour&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">format_relperm_plot</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig</span></div>
+
+
+<div class="viewcode-block" id="save_figure"><a class="viewcode-back" href="../../pyscal/pyscal.plotting.html#pyscal.plotting.save_figure">[docs]</a><span class="k">def</span> <span class="nf">save_figure</span><span class="p">(</span>
+    <span class="n">fig</span><span class="p">:</span> <span class="n">plt</span><span class="o">.</span><span class="n">Figure</span><span class="p">,</span>
+    <span class="n">satnum</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">config</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+    <span class="n">plot_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">outdir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Save the provided figure.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        fig (plt.Figure): Figure to be saved</span>
+<span class="sd">        satnum (int): SATNUM number</span>
+<span class="sd">        config (dict): Plot config</span>
+<span class="sd">        plot_type (str): Figure type. Allowed types are &#39;relperm&#39; and &#39;pc&#39;</span>
+<span class="sd">        outdir (str): Directory where the figure will be saved</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Get curve name</span>
+    <span class="k">if</span> <span class="n">plot_type</span> <span class="o">==</span> <span class="s2">&quot;relperm&quot;</span><span class="p">:</span>
+        <span class="n">curve_names</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;curves&quot;</span><span class="p">]</span>
+        <span class="n">suffix</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;suffix&quot;</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">plot_type</span> <span class="o">==</span> <span class="s2">&quot;pc&quot;</span><span class="p">:</span>
+        <span class="n">curve_names</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s2">&quot;pc_name&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">suffix</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&#39;type&#39; given (</span><span class="si">{</span><span class="n">plot_type</span><span class="si">}</span><span class="s2">) must be one of &#39;relperm&#39; or &#39;pc&#39;&quot;</span><span class="p">)</span>
+
+    <span class="n">fname</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">curve_names</span><span class="si">}</span><span class="s2">_SATNUM_</span><span class="si">{</span><span class="n">satnum</span><span class="si">}{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">fout</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">outdir</span><span class="p">)</span><span class="o">.</span><span class="n">joinpath</span><span class="p">(</span><span class="n">fname</span><span class="p">)</span>
+
+    <span class="n">fig</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span>
+        <span class="n">fout</span><span class="p">,</span>
+        <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Figure saved to </span><span class="si">{</span><span class="n">fout</span><span class="si">}</span><span class="s2">.png&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Clear figure so that it is empty for the next SATNUM&#39;s plot</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="wog_plotter"><a class="viewcode-back" href="../../pyscal/pyscal.plotting.html#pyscal.plotting.wog_plotter">[docs]</a><span class="k">def</span> <span class="nf">wog_plotter</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">WaterOilGas</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Plot a WaterOilGas (WaterOil and GasOil) model.</span>
+
+
+<span class="sd">    For a WaterOilGas instance, the WaterOil and GasOil instances can be</span>
+<span class="sd">    accessed, then the &quot;table&quot; instance variable.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (WaterOilGas): WaterOilGas instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">outdir</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;outdir&quot;</span><span class="p">]</span>
+
+    <span class="c1"># the wateroil and gasoil instance variables are optional for the</span>
+    <span class="c1"># WaterOilGas class. If statements used to check if they are provided</span>
+    <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">wateroil</span><span class="p">:</span>
+        <span class="n">config_wo</span> <span class="o">=</span> <span class="n">get_plot_config_options</span><span class="p">(</span><span class="s2">&quot;WaterOil&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">satnum_wo</span> <span class="o">=</span> <span class="n">get_satnum_from_tag</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
+
+        <span class="n">fig_wo</span> <span class="o">=</span> <span class="n">plot_relperm</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="p">,</span>
+            <span class="n">satnum_wo</span><span class="p">,</span>
+            <span class="n">config_wo</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">save_figure</span><span class="p">(</span><span class="n">fig_wo</span><span class="p">,</span> <span class="n">satnum_wo</span><span class="p">,</span> <span class="n">config_wo</span><span class="p">,</span> <span class="s2">&quot;relperm&quot;</span><span class="p">,</span> <span class="n">outdir</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">]:</span>
+            <span class="n">fig_pcwo</span> <span class="o">=</span> <span class="n">plot_pc</span><span class="p">(</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="p">,</span>
+                <span class="n">get_satnum_from_tag</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">tag</span><span class="p">),</span>
+                <span class="o">**</span><span class="n">config_wo</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="n">save_figure</span><span class="p">(</span><span class="n">fig_pcwo</span><span class="p">,</span> <span class="n">satnum_wo</span><span class="p">,</span> <span class="n">config_wo</span><span class="p">,</span> <span class="s2">&quot;pc&quot;</span><span class="p">,</span> <span class="n">outdir</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">model</span><span class="o">.</span><span class="n">gasoil</span><span class="p">:</span>
+        <span class="n">config_go</span> <span class="o">=</span> <span class="n">get_plot_config_options</span><span class="p">(</span><span class="s2">&quot;GasOil&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">satnum_go</span> <span class="o">=</span> <span class="n">get_satnum_from_tag</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
+
+        <span class="n">fig_go</span> <span class="o">=</span> <span class="n">plot_relperm</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">,</span>
+            <span class="n">satnum_go</span><span class="p">,</span>
+            <span class="n">config_go</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">save_figure</span><span class="p">(</span><span class="n">fig_go</span><span class="p">,</span> <span class="n">satnum_go</span><span class="p">,</span> <span class="n">config_go</span><span class="p">,</span> <span class="s2">&quot;relperm&quot;</span><span class="p">,</span> <span class="n">outdir</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="wo_plotter"><a class="viewcode-back" href="../../pyscal/pyscal.plotting.html#pyscal.plotting.wo_plotter">[docs]</a><span class="k">def</span> <span class="nf">wo_plotter</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">WaterOil</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Plot a WaterOil model.</span>
+
+<span class="sd">    For a WaterOil instance, the saturation table can be accessed using the</span>
+<span class="sd">    &quot;table&quot; instance variable.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (WaterOil): WaterOil instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">get_plot_config_options</span><span class="p">(</span><span class="s2">&quot;WaterOil&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">satnum</span> <span class="o">=</span> <span class="n">get_satnum_from_tag</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
+
+    <span class="n">outdir</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;outdir&quot;</span><span class="p">]</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plot_relperm</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">table</span><span class="p">,</span>
+        <span class="n">satnum</span><span class="p">,</span>
+        <span class="n">config</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">save_figure</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">satnum</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="s2">&quot;relperm&quot;</span><span class="p">,</span> <span class="n">outdir</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">]:</span>
+        <span class="n">fig_pc</span> <span class="o">=</span> <span class="n">plot_pc</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="n">get_satnum_from_tag</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">tag</span><span class="p">),</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span>
+
+        <span class="n">save_figure</span><span class="p">(</span><span class="n">fig_pc</span><span class="p">,</span> <span class="n">satnum</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="s2">&quot;pc&quot;</span><span class="p">,</span> <span class="n">outdir</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="go_plotter"><a class="viewcode-back" href="../../pyscal/pyscal.plotting.html#pyscal.plotting.go_plotter">[docs]</a><span class="k">def</span> <span class="nf">go_plotter</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">GasOil</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Plot a GasOil model.</span>
+
+<span class="sd">    For a GasOil instance, the saturation table can be accessed using the</span>
+<span class="sd">    &quot;table&quot; instance variable.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (GasOil): GasOil instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">config</span> <span class="o">=</span> <span class="n">get_plot_config_options</span><span class="p">(</span><span class="s2">&quot;GasOil&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">satnum</span> <span class="o">=</span> <span class="n">get_satnum_from_tag</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
+
+    <span class="n">outdir</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;outdir&quot;</span><span class="p">]</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plot_relperm</span><span class="p">(</span>
+        <span class="n">model</span><span class="o">.</span><span class="n">table</span><span class="p">,</span>
+        <span class="n">satnum</span><span class="p">,</span>
+        <span class="n">config</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">save_figure</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">satnum</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="s2">&quot;relperm&quot;</span><span class="p">,</span> <span class="n">outdir</span><span class="p">)</span>
+
+    <span class="c1"># Note that there are no supporting functions for adding Pc to GasOil</span>
+    <span class="c1"># instances. This can only be done by modifying the &quot;table&quot; instance</span>
+    <span class="c1"># variable for a GasOil object</span>
+    <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">]:</span>
+        <span class="n">fig_pc</span> <span class="o">=</span> <span class="n">plot_pc</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="n">get_satnum_from_tag</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">tag</span><span class="p">),</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span>
+
+        <span class="n">save_figure</span><span class="p">(</span><span class="n">fig_pc</span><span class="p">,</span> <span class="n">satnum</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="s2">&quot;pc&quot;</span><span class="p">,</span> <span class="n">outdir</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="gw_plotter"><a class="viewcode-back" href="../../pyscal/pyscal.plotting.html#pyscal.plotting.gw_plotter">[docs]</a><span class="k">def</span> <span class="nf">gw_plotter</span><span class="p">(</span><span class="n">model</span><span class="p">:</span> <span class="n">GasWater</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    For GasWater, the format is different, and an additional formatting step is</span>
+<span class="sd">    required. Use the formatted table as an argument to the plotter function,</span>
+<span class="sd">    instead of the &quot;table&quot; instance variable</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        model (GasWater): GasWater instance</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">table</span> <span class="o">=</span> <span class="n">format_gaswater_table</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+    <span class="n">config</span> <span class="o">=</span> <span class="n">get_plot_config_options</span><span class="p">(</span><span class="s2">&quot;GasWater&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">satnum</span> <span class="o">=</span> <span class="n">get_satnum_from_tag</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
+    <span class="n">outdir</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;outdir&quot;</span><span class="p">]</span>
+
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plot_relperm</span><span class="p">(</span>
+        <span class="n">table</span><span class="p">,</span>
+        <span class="n">satnum</span><span class="p">,</span>
+        <span class="n">config</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">save_figure</span><span class="p">(</span><span class="n">fig</span><span class="p">,</span> <span class="n">satnum</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="s2">&quot;relperm&quot;</span><span class="p">,</span> <span class="n">outdir</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s2">&quot;pc&quot;</span><span class="p">]:</span>
+        <span class="n">fig_pc</span> <span class="o">=</span> <span class="n">plot_pc</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">get_satnum_from_tag</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">tag</span><span class="p">),</span> <span class="o">**</span><span class="n">config</span><span class="p">)</span>
+
+        <span class="n">save_figure</span><span class="p">(</span><span class="n">fig_pc</span><span class="p">,</span> <span class="n">satnum</span><span class="p">,</span> <span class="n">config</span><span class="p">,</span> <span class="s2">&quot;pc&quot;</span><span class="p">,</span> <span class="n">outdir</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plotter"><a class="viewcode-back" href="../../pyscal/pyscal.plotting.html#pyscal.plotting.plotter">[docs]</a><span class="k">def</span> <span class="nf">plotter</span><span class="p">(</span>
+    <span class="n">models</span><span class="p">:</span> <span class="n">PyscalList</span><span class="p">,</span> <span class="n">pc</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">semilog</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">outdir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;./&quot;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Runner function for creating plots.</span>
+
+<span class="sd">    Iterate over PyscalList and plot curves based on type of pyscal objects</span>
+<span class="sd">    encountered.</span>
+
+<span class="sd">    PyscalList is a list of WaterOilGas, WaterOil, GasOil or GasWater objects.</span>
+
+<span class="sd">    For WaterOil and GasOil, the saturation table can be accessed using the</span>
+<span class="sd">    &quot;table&quot; instance variable.</span>
+
+<span class="sd">    For WaterOilGas, the WaterOil and GasOil instances can be accessed, then</span>
+<span class="sd">    the &quot;table&quot; instance variable.</span>
+
+<span class="sd">    For GasWater, the format is different, and an additional formatting step is</span>
+<span class="sd">    required.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        models (PyscalList): List of models</span>
+<span class="sd">        pc (bool, optional): Plot Pc flag. Defaults to False.</span>
+<span class="sd">        semilog (bool, optional): Plot relperm with log y-axis. Defaults to</span>
+<span class="sd">        False.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># kwargs to be passed on to other functions</span>
+    <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;pc&quot;</span><span class="p">:</span> <span class="n">pc</span><span class="p">,</span> <span class="s2">&quot;semilog&quot;</span><span class="p">:</span> <span class="n">semilog</span><span class="p">,</span> <span class="s2">&quot;outdir&quot;</span><span class="p">:</span> <span class="n">outdir</span><span class="p">}</span>
+
+    <span class="k">for</span> <span class="n">model</span> <span class="ow">in</span> <span class="n">models</span><span class="o">.</span><span class="n">pyscal_list</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">WaterOilGas</span><span class="p">):</span>
+            <span class="n">wog_plotter</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">WaterOil</span><span class="p">):</span>
+            <span class="n">wo_plotter</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">GasOil</span><span class="p">):</span>
+            <span class="n">go_plotter</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">GasWater</span><span class="p">):</span>
+            <span class="n">gw_plotter</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Model type received was </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">model</span><span class="p">)</span><span class="si">}</span><span class="s2"> but</span><span class="se">\</span>
+<span class="s2">         must be one of: </span><span class="si">{</span><span class="n">WaterOil</span><span class="p">,</span><span class="w"> </span><span class="n">WaterOilGas</span><span class="p">,</span><span class="w"> </span><span class="n">GasOil</span><span class="p">,</span><span class="w"> </span><span class="n">GasWater</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Equinor 2019-2024.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>  
+
+  <style>
+    /* Sidebar header (and topbar for mobile) */
+    .wy-side-nav-search, .wy-nav-top {
+      background: #ff1243;
+    }
+    /* Sidebar */
+    .wy-nav-side {
+      background: #474747;
+    }
+    .wy-side-nav-search > div.version {
+      color: white;
+    }
+  </style>
+
+
+</body>
+</html>

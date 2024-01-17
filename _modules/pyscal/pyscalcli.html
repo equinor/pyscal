@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.pyscalcli &mdash; pyscal 0.10.5 documentation</title>
-      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <title>pyscal.pyscalcli &mdash; pyscal 0.11.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+
+  
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -33,7 +35,7 @@
               <img src="../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.10.5
+                0.11.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -100,6 +102,7 @@
     <span class="n">WaterOilGas</span><span class="p">,</span>
     <span class="n">__version__</span><span class="p">,</span>
     <span class="n">getLogger_pyscal</span><span class="p">,</span>
+    <span class="n">plotting</span><span class="p">,</span>
 <span class="p">)</span>
 
 <span class="kn">from</span> <span class="nn">.factory</span> <span class="kn">import</span> <span class="n">PyscalFactory</span>
@@ -234,6 +237,36 @@
             <span class="s2">&quot;Implicit for gas-water input.&quot;</span>
         <span class="p">),</span>
     <span class="p">)</span>
+
+    <span class="c1"># Plotting arguments</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--plot&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;Make and save relative permeability figures.&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--plot_pc&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;Make and save capillary pressure figures.&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--plot_semilog&quot;</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">&quot;Plot relative permeability figures with log y-axis.&quot;</span>
+            <span class="s2">&quot;Run both with and without this flag to plot&quot;</span>
+            <span class="s2">&quot;both linear and semi-log relperm plots.&quot;</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">&quot;--plot_outdir&quot;</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;./&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Directory where the plot output figures will be saved.&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
     <span class="k">return</span> <span class="n">parser</span></div>
 
 
@@ -261,6 +294,10 @@
             <span class="n">sheet_name</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">sheet_name</span><span class="p">,</span>
             <span class="n">slgof</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">slgof</span><span class="p">,</span>
             <span class="n">family2</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">family2</span><span class="p">,</span>
+            <span class="n">plot</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">plot</span><span class="p">,</span>
+            <span class="n">plot_pc</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">plot_pc</span><span class="p">,</span>
+            <span class="n">plot_semilog</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">plot_semilog</span><span class="p">,</span>
+            <span class="n">plot_outdir</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">plot_outdir</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">except</span> <span class="p">(</span><span class="ne">OSError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_tb</span><span class="p">(</span><span class="n">err</span><span class="o">.</span><span class="n">__traceback__</span><span class="p">)))</span>
@@ -278,6 +315,10 @@
     <span class="n">sheet_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">slgof</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">family2</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">plot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">plot_pc</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">plot_semilog</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">plot_outdir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;./&quot;</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A &quot;main()&quot; method not relying on argparse. This can be used</span>
 <span class="sd">    for testing, and also by an ERT forward model, e.g.</span>
@@ -294,6 +335,10 @@
 <span class="sd">        sheet_name: Which sheet in XLSX file</span>
 <span class="sd">        slgof: Use SLGOF</span>
 <span class="sd">        family2: Dump family 2 keywords</span>
+<span class="sd">        plot: Plot relative permeability figures and save</span>
+<span class="sd">        plot_pc: Plot capillary pressure curves in addition to relperm curves</span>
+<span class="sd">        plot_semilog: Plot relative permeability figures with log y-axis</span>
+
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">logger</span> <span class="o">=</span> <span class="n">getLogger_pyscal</span><span class="p">(</span>
@@ -358,7 +403,10 @@
             <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Output directory not found &#39;</span><span class="si">{</span><span class="n">Path</span><span class="p">(</span><span class="n">output</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
             <span class="n">fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">wog_list</span><span class="o">.</span><span class="n">build_eclipse_data</span><span class="p">(</span><span class="n">family</span><span class="o">=</span><span class="n">family</span><span class="p">,</span> <span class="n">slgof</span><span class="o">=</span><span class="n">slgof</span><span class="p">))</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Written to &quot;</span> <span class="o">+</span> <span class="n">output</span><span class="p">)</span></div>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Written to &quot;</span> <span class="o">+</span> <span class="n">output</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
+        <span class="n">plotting</span><span class="o">.</span><span class="n">plotter</span><span class="p">(</span><span class="n">wog_list</span><span class="p">,</span> <span class="n">plot_pc</span><span class="p">,</span> <span class="n">plot_semilog</span><span class="p">,</span> <span class="n">plot_outdir</span><span class="p">)</span></div>
 </pre></div>
 
            </div>
@@ -368,7 +416,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Equinor 2019-2023.</p>
+    <p>&#169; Copyright Equinor 2019-2024.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

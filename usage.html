@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
+<html class="writer-html5" lang="en">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Usage &mdash; pyscal 0.10.5 documentation</title>
-      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <title>Usage &mdash; pyscal 0.11.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+
+  
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -36,7 +38,7 @@
               <img src="_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.10.5
+                0.11.0
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -112,11 +114,12 @@
 line tool is a short wrapper utilizing the underlying pyscal functionality.</p>
 <section id="the-command-line-tool">
 <h2>The command line tool<a class="headerlink" href="#the-command-line-tool" title="Permalink to this heading"></a></h2>
-<p><p>pyscal (0.10.5) is a tool to create Eclipse include files for relative permeability input from tabulated parameters.</p>
+<p><p>pyscal (0.11.0) is a tool to create Eclipse include files for relative permeability input from tabulated parameters.</p>
 </p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">pyscal</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">debug</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">version</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">o</span> <span class="n">OUTPUT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">delta_s</span> <span class="n">DELTA_S</span><span class="p">]</span>
               <span class="p">[</span><span class="o">--</span><span class="n">int_param_wo</span> <span class="n">INT_PARAM_WO</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">int_param_go</span> <span class="n">INT_PARAM_GO</span><span class="p">]</span>
-              <span class="p">[</span><span class="o">--</span><span class="n">sheet_name</span> <span class="n">SHEET_NAME</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">slgof</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">family2</span><span class="p">]</span>
+              <span class="p">[</span><span class="o">--</span><span class="n">sheet_name</span> <span class="n">SHEET_NAME</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">slgof</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">family2</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">plot</span><span class="p">]</span>
+              <span class="p">[</span><span class="o">--</span><span class="n">plot_pc</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">plot_semilog</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">plot_outdir</span> <span class="n">PLOT_OUTDIR</span><span class="p">]</span>
               <span class="n">parametertable</span>
 </pre></div>
 </div>
@@ -165,6 +168,22 @@ line tool is a short wrapper utilizing the underlying pyscal functionality.</p>
 <dt><kbd>--family2</kbd></dt>
 <dd><p>Output family 2 keywords, SWFN, SGFN and SOF3/SOF2. Family 1 (SWOF + SGOF) is written if this is not set.  Implicit for gas-water input.</p>
 <p>Default: False</p>
+</dd>
+<dt><kbd>--plot</kbd></dt>
+<dd><p>Make and save relative permeability figures.</p>
+<p>Default: False</p>
+</dd>
+<dt><kbd>--plot_pc</kbd></dt>
+<dd><p>Make and save capillary pressure figures.</p>
+<p>Default: False</p>
+</dd>
+<dt><kbd>--plot_semilog</kbd></dt>
+<dd><p>Plot relative permeability figures with log y-axis.Run both with and without this flag to plotboth linear and semi-log relperm plots.</p>
+<p>Default: False</p>
+</dd>
+<dt><kbd>--plot_outdir</kbd></dt>
+<dd><p>Directory where the plot output figures will be saved.</p>
+<p>Default: “./”</p>
 </dd>
 </dl>
 </section>
@@ -603,7 +622,7 @@ the SCAL recommendation holds three GasWater objects, but works similarly.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Equinor 2019-2023.</p>
+    <p>&#169; Copyright Equinor 2019-2024.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
