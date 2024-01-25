@@ -13,7 +13,7 @@ jobs:
         os: [ubuntu-latest]
     env:
       OS: ${{ matrix.os }}
-      PYTHON: '3.8'
+      PYTHON: '3.11'
 
     steps:
     - uses: actions/checkout@main
@@ -21,7 +21,7 @@ jobs:
     - name: Setup Python
       uses: actions/setup-python@main
       with:
-        python-version: 3.8
+        python-version: 3.11
 
     - name: Install pyscal and test dependencies
       run: |
