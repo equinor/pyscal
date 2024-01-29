@@ -154,7 +154,7 @@ class GasOil(object):
         sg_list.sort()
         self.table = pd.DataFrame(sg_list, columns=["SG"])
         self.table["sgint"] = list(map(round, self.table["SG"] * SWINTEGERS))
-        self.table.drop_duplicates("sgint", inplace=True)
+        self.table = self.table.drop_duplicates("sgint")
 
         # Now sg=1-sorg-swl might be accidentally dropped, so make sure we
         # have it by replacing the closest value by 1 - sorg exactly
@@ -175,7 +175,7 @@ class GasOil(object):
                 drop=True
             )
 
-        self.table.reset_index(inplace=True)
+        self.table = self.table.reset_index()
         self.table = self.table[["SG"]]
         self.table["SL"] = 1 - self.table["SG"]
         if krgendanchor == "sorg":
@@ -293,9 +293,9 @@ class GasOil(object):
             )
             # Do not extrapolate this data. We will bfill and ffill afterwards
             self.table["KRG"] = pchip(self.table["SG"], extrapolate=False)
-            self.table["KRG"].fillna(method="ffill", inplace=True)
-            self.table["KRG"].fillna(method="bfill", inplace=True)
-            self.table["KRG"].clip(lower=0.0, upper=1.0, inplace=True)
+            self.table["KRG"] = self.table["KRG"].fillna(method="ffill")
+            self.table["KRG"] = self.table["KRG"].fillna(method="bfill")
+            self.table["KRG"] = self.table["KRG"].clip(lower=0.0, upper=1.0)
             self.krgcomment = "-- krg from tabular input" + krgcomment + "\n"
             self.sgcr = self.estimate_sgcr()
         if krogcolname in dframe:
@@ -309,9 +309,9 @@ class GasOil(object):
                 dframe[sgcolname].astype(float), dframe[krogcolname].astype(float)
             )
             self.table["KROG"] = pchip(self.table["SG"], extrapolate=False)
-            self.table["KROG"].fillna(method="ffill", inplace=True)
-            self.table["KROG"].fillna(method="bfill", inplace=True)
-            self.table["KROG"].clip(lower=0.0, upper=1.0, inplace=True)
+            self.table["KROG"] = self.table["KROG"].fillna(method="ffill")
+            self.table["KROG"] = self.table["KROG"].fillna(method="bfill")
+            self.table["KROG"] = self.table["KROG"].clip(lower=0.0, upper=1.0)
             self.krogcomment = "-- krog from tabular input" + krogcomment + "\n"
             self.sorg = self.estimate_sorg()
 
@@ -347,11 +347,13 @@ class GasOil(object):
                     )
                 )
             dframe = dframe.replace([np.inf, -np.inf], np.nan)
-            dframe.dropna(subset=[pccolname], how="all", inplace=True)
+            dframe = dframe.dropna(subset=[pccolname], how="all")
             # If nonzero, then it must be increasing:
-            if dframe[pccolname].abs().sum() > 0:
-                if not (dframe[pccolname].diff().dropna() > 0.0).all():
-                    raise ValueError("Incoming pc not increasing")
+            if (
+                dframe[pccolname].abs().sum() > 0
+                and not (dframe[pccolname].diff().dropna() > 0.0).all()
+            ):
+                raise ValueError("Incoming pc not increasing")
             pchip = PchipInterpolator(
                 dframe[sgcolname].astype(float), dframe[pccolname].astype(float)
             )
@@ -539,7 +541,6 @@ class GasOil(object):
         """
         # Similar code in wateroil.add_LET_water, but readability
         # is better by having them separate
-        # pylint: disable=duplicate-code
         assert epsilon < l < MAX_EXPONENT_KR
         assert epsilon < e < MAX_EXPONENT_KR
         assert epsilon < t < MAX_EXPONENT_KR
@@ -724,10 +725,13 @@ class GasOil(object):
         if "KRG" in self.table and not np.isclose(min(self.table["KRG"]), 0.0):
             logger.error("KRG must start at zero")
             error = True
-        if "PC" in self.table and self.table["PC"][0] > -epsilon:
-            if not (self.table["PC"].diff().dropna() < epsilon).all():
-                logger.error("PC data for gas-oil not strictly decreasing")
-                error = True
+        if (
+            "PC" in self.table
+            and self.table["PC"][0] > -epsilon
+            and not (self.table["PC"].diff().dropna() < epsilon).all()
+        ):
+            logger.error("PC data for gas-oil not strictly decreasing")
+            error = True
         if "PC" in self.table and np.isinf(self.table["PC"].max()):
             logger.error("PC goes to infinity for gas-oil. ")
             error = True
@@ -735,7 +739,7 @@ class GasOil(object):
             logger.error("pc data contains NaN")
             error = True
 
-        for col in list(set(["SG", "KRG", "KROG"]) & set(self.table.columns)):
+        for col in list({"SG", "KRG", "KROG"} & set(self.table.columns)):
             if not (
                 (min(self.table[col]) >= -epsilon)
                 and (max(self.table[col]) <= 1 + epsilon)
@@ -813,14 +817,13 @@ class GasOil(object):
         if "PC" not in self.table.columns:
             # Only happens when the SLGOF function is skipped (test code)
             self.table["PC"] = 0.0
-        slgof = (
+        return (
             self.table[
                 self.table["SG"] <= 1 - self.sorg - self.swl + 1.0 / float(SWINTEGERS)
             ]
             .sort_values("SL")[["SL", "KRG", "KROG", "PC"]]
             .reset_index(drop=True)
         )
-        return slgof
 
     def SLGOF(self, header: bool = True, dataincommentrow: bool = True) -> str:
         """Produce SLGOF input for Eclipse reservoir simulator.
@@ -1021,7 +1024,6 @@ class GasOil(object):
         matplotlib axis to plot on, if None, a fresh plot
         will be made.
         """
-        # pylint: disable=import-outside-toplevel
         # Lazy import of matplotlib for speed reasons
         import matplotlib
         import matplotlib.pyplot as plt

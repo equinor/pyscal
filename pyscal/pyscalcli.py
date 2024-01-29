@@ -304,10 +304,7 @@ def pyscal_main(
             parametertable, h=delta_s
         )  # can be both water-oil, water-oil-gas, or gas-water
 
-    if family2 or wog_list.pyscaltype == GasWater:
-        family = 2
-    else:
-        family = 1
+    family = 2 if family2 or wog_list.pyscaltype == GasWater else 1
 
     if output == "-":
         print(wog_list.build_eclipse_data(family=family, slgof=slgof))

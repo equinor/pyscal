@@ -176,14 +176,8 @@ def test_interpolate_go():
     kromax_h = random.uniform(0.5, 1)
     kroend_l = min(random.uniform(0.5, 1), kromax_l)
     kroend_h = min(random.uniform(0.5, 1), kromax_h)
-    if random.uniform(0, 1) > 0.5:
-        krgendanchor_l = "sorg"
-    else:
-        krgendanchor_l = ""
-    if random.uniform(0, 1) > 0.5:
-        krgendanchor_h = "sorg"
-    else:
-        krgendanchor_h = ""
+    krgendanchor_l = "sorg" if random.uniform(0, 1) > 0.5 else ""
+    krgendanchor_h = "sorg" if random.uniform(0, 1) > 0.5 else ""
     go_low = GasOil(
         swl=swl_l,
         sgcr=sgcr_l,
@@ -243,7 +237,6 @@ def test_interpolate_go():
 @pytest.mark.parametrize("", [(), (), ()])  # 3 repeated runs
 def test_interpolate_gw():
     """Discrete test scenarios for gaswater interpolation"""
-    # pylint: disable=too-many-locals
     swl_l = random.uniform(0, 0.1)
     swcr_l = swl_l + random.uniform(0, 0.1)
     sgrw_l = random.uniform(0, 0.2)
@@ -310,7 +303,6 @@ def test_interpolate_gw():
 @pytest.mark.plot
 def test_SCAL_interpolation():
     """Demonstration of interpolation between LET curves, 2x2 subplot"""
-    # pylint: disable=invalid-name
     matplotlib.style.use("ggplot")
 
     rec = PyscalFactory.create_scal_recommendation(

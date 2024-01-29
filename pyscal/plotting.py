@@ -86,15 +86,15 @@ def format_gaswater_table(model: GasWater) -> pd.DataFrame:
     """
 
     gasoil = model.gasoil.table[["SL", "KRG"]].copy()
-    gasoil.rename(columns={"SL": "SW"}, inplace=True)
+    gasoil = gasoil.rename(columns={"SL": "SW"})
     gasoil["SG"] = 1 - gasoil["SW"]
     wateroil = model.wateroil.table[["SW", "KRW", "PC"]].copy()
 
     # Sort by SW to be able to join on index
-    gasoil.sort_values("SW", ascending=True, inplace=True)
-    wateroil.sort_values("SW", ascending=True, inplace=True)
-    gasoil.reset_index(inplace=True, drop=True)
-    wateroil.reset_index(inplace=True, drop=True)
+    gasoil = gasoil.sort_values("SW", ascending=True)
+    wateroil = wateroil.sort_values("SW", ascending=True)
+    gasoil = gasoil.reset_index(drop=True)
+    wateroil = wateroil.reset_index(drop=True)
 
     # Check if SW in the two models differs using an epsilon of 1E-6 If any
     # absolute differences are greater than this threshold, an assertion error
@@ -105,10 +105,8 @@ def format_gaswater_table(model: GasWater) -> pd.DataFrame:
 
     # Merge dataframes and format
     gaswater = gasoil.merge(wateroil, left_index=True, right_index=True)
-    gaswater.rename(columns={"SW_x": "SW"}, inplace=True)
-    gaswater.drop("SW_y", axis=1, inplace=True)
-
-    return gaswater
+    gaswater = gaswater.rename(columns={"SW_x": "SW"})
+    return gaswater.drop("SW_y", axis=1)
 
 
 def get_satnum_from_tag(string: str) -> int:
@@ -121,8 +119,7 @@ def get_satnum_from_tag(string: str) -> int:
     Returns:
         int: SATNUM number
     """
-    satnum = int(string.split("SATNUM")[1].strip())
-    return satnum
+    return int(string.split("SATNUM")[1].strip())
 
 
 def get_plot_config_options(curve_type: str, **kwargs) -> dict:
@@ -140,10 +137,7 @@ def get_plot_config_options(curve_type: str, **kwargs) -> dict:
     config = PLOT_CONFIG_OPTIONS[curve_type].copy()
 
     # If semilog plot, add suffix to the name of the saved relperm figure
-    if kwargs["semilog"]:
-        suffix = "_semilog"
-    else:
-        suffix = ""
+    suffix = "_semilog" if kwargs["semilog"] else ""
 
     config["suffix"] = suffix
 
@@ -295,9 +289,7 @@ def plot_relperm(
         color=config["krb_colour"],
     )
 
-    fig = format_relperm_plot(fig, **kwargs, **config)
-
-    return fig
+    return format_relperm_plot(fig, **kwargs, **config)
 
 
 def save_figure(

@@ -58,7 +58,7 @@ def crosspoint(dframe: pd.DataFrame, satcol: str, kr1col: str, kr2col: str) -> f
     cross_dframe = cross_dframe[~cross_dframe.index.duplicated(keep="first")]
 
     if cross_dframe.shape[0] > 2:
-        cross_dframe.interpolate(method="slinear", inplace=True)
+        cross_dframe = cross_dframe.interpolate(method="slinear")
 
     if cross_dframe.isna().any().any():
         logger.error("Could not compute crosspoint)")

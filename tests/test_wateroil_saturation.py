@@ -1,5 +1,7 @@
 """Test module for the saturation ranges in WaterOil objects"""
 
+import contextlib
+
 import hypothesis.strategies as st
 from hypothesis import given
 
@@ -20,10 +22,8 @@ from pyscal.utils.testing import check_table, float_df_checker
 def test_wateroil_random(swirr, swl, swcr, sorw, socr, h, tag):
     """Shoot wildly with arguments, the code should throw ValueError
     or AssertionError when input is invalid, but we don't want other crashes"""
-    try:
+    with contextlib.suppress(ValueError, AssertionError):
         WaterOil(swirr=swirr, swl=swl, swcr=swcr, sorw=sorw, socr=socr, h=h, tag=tag)
-    except (ValueError, AssertionError):
-        pass
 
 
 @given(

@@ -77,7 +77,6 @@ def test_manipulated_attributes_none():
     """It is allowed to manipulate the WaterOilGas by setting the wateroil
     and/or the gasoil attributes to None, this is performed in
     SCALrecommendation.interpolate() for example. Test this behaviour."""
-    # pylint: disable=pointless-statement  # The pointless statements trigger errors
 
     wog_go = WaterOilGas(tag="gasoilonly")
     # Make it into a two-phase object:

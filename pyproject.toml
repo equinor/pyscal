@@ -51,11 +51,9 @@ dependencies = [
 
 [project.optional-dependencies]
 tests = [
-    "black",
-    "flake8",
-    "hypothesis",
-    "isort",
+    "ruff",
     "mypy",
+    "hypothesis",
     "pytest",
     "pytest-cov",
     "pytest-mock",
@@ -65,7 +63,7 @@ tests = [
 
 docs = [
     "autoapi",
-    "sphinx<7",
+    "sphinx",
     "sphinx-argparse",
     "sphinx-autodoc-typehints",
     "sphinx_rtd_theme",
@@ -79,22 +77,32 @@ Repository = "https://github.com/equinor/pyscal"
 [project.scripts]
 pyscal = "pyscal.pyscalcli:main"
 
-[tool.black]
+
+[tool.ruff]
+select=[
+    "E",
+    "F",
+    "I",
+    "PIE",
+    "Q",
+    "RET",
+    "RSE",
+    "SIM",
+    "W",
+    "NPY",
+    # "PD",
+    # "PL",
+]
+
 line-length = 88
 
-[tool.isort]
-profile = "black"
-skip = "pyscal/__init__.py"
+ignore = ["E741"]
 
 [[tool.mypy.overrides]]
 module = ["numpy.*", "pyscal.version", "pandas.*", "matplotlib.*", "scipy.*", "xlrd.*", "openpyxl.*"
 ]
 ignore_missing_imports = true
 
-[tool.pylint]
-# Module docstrings are not required, there are other means of documenting at
-# that level in subscript
-disable = "missing-module-docstring"
 
 [tool.pytest.ini_options]
 norecursedirs = [

@@ -292,8 +292,8 @@ class GasWater(object):
         # The  "SL" column in the GasOil object corresponds exactly to "SW" in WaterOil
         # but since they are floating point, we do not want to "merge" dataframes on it,
         # rather concatenate and let linear interpolation fill in values.
-        dframe["SW"].fillna(value=0, inplace=True)
-        dframe["SL"].fillna(value=0, inplace=True)
+        dframe["SW"] = dframe["SW"].fillna(value=0)
+        dframe["SL"] = dframe["SL"].fillna(value=0)
         dframe["sat"] = dframe["SL"] + dframe["SW"]
         dframe = (
             dframe.set_index("sat")
@@ -321,7 +321,6 @@ class GasWater(object):
         window will be made. If supplied, it will draw on
         the specified axis."""
 
-        # pylint: disable=import-outside-toplevel
         # Lazy import of matplotlib for speed reasons.
         import matplotlib
         import matplotlib.pyplot as plt

@@ -4,7 +4,6 @@ import logging
 import sys
 from typing import Dict, List, Union
 
-# pylint: disable=wrong-import-position
 if sys.version_info >= (3, 8):
     from typing import TypedDict
 else:
@@ -171,13 +170,11 @@ def clip_accumulate(
     else:
         series = np.minimum.accumulate(series)
     if "lower" in monotonicity and "upper" in monotonicity:
-        series.clip(
-            lower=monotonicity["lower"], upper=monotonicity["upper"], inplace=True
-        )
+        series = series.clip(lower=monotonicity["lower"], upper=monotonicity["upper"])
     elif "lower" in monotonicity:
-        series.clip(lower=monotonicity["lower"], inplace=True)
+        series = series.clip(lower=monotonicity["lower"])
     elif "upper" in monotonicity:
-        series.clip(upper=monotonicity["upper"], inplace=True)
+        series = series.clip(upper=monotonicity["upper"])
     return series
 
 
@@ -303,8 +300,8 @@ def validate_monotonicity_arg(
         if abs(signvalue) > 1:
             raise ValueError("Monotonocity sign must be -1 or +1, not larger/smaller")
 
-        if "allowzero" in monotonicity[col]:
-            if monotonicity[col]["allowzero"] not in {True, False}:
-                raise ValueError(
-                    "allowzero in monotonicity argument must be True/False"
-                )
+        if "allowzero" in monotonicity[col] and monotonicity[col]["allowzero"] not in {
+            True,
+            False,
+        }:
+            raise ValueError("allowzero in monotonicity argument must be True/False")

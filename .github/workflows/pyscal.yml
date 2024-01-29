@@ -58,25 +58,20 @@ jobs:
         if: ${{ always() }}
         run: pip freeze
 
-      - name: Lint with black
+      - name: Ruff check
         if: ${{ always() }}
         run: |
-          black --check --force-exclude="pyscal/version.py" pyscal tests docs
-
-      - name: Lint with flake8
+          ruff check . 
+      
+      - name: Ruff format
         if: ${{ always() }}
         run: |
-          flake8 pyscal tests
-
-      - name: Lint with isort
-        if: ${{ always() }}
-        run: |
-          isort --check-only --profile black pyscal tests
+          ruff format . --check
 
       - name: Check typing with mypy
         if: ${{ always() }}
         run: |
-          mypy pyscal
+          mypy ./pyscal
 
       - name: Run tests
         if: ${{ always() }}

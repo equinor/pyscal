@@ -54,7 +54,7 @@ def test_slgof(swl, sorg, sgcr):
     assert np.isclose(slgof["KROG"].values[0], 0)
 
     # If we ruin the object, SLGOF() will return an empty string:
-    wog.gasoil.table.drop("KRG", axis="columns", inplace=True)
+    wog.gasoil.table = wog.gasoil.table.drop("KRG", axis="columns")
     assert wog.gasoil.SLGOF() == ""
     assert wog.SLGOF() == ""
 

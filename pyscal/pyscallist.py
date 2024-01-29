@@ -206,7 +206,7 @@ class PyscalList(object):
         dframe = pd.concat(df_list, sort=False, ignore_index=True)
         sort_rows_on = [colname for colname in sort_candidates if colname in dframe]
         if sort_rows_on:
-            dframe.sort_values(sort_rows_on, inplace=True)
+            dframe = dframe.sort_values(sort_rows_on)
         return dframe
 
     def relevant_keywords(self, family: int = 1, slgof: bool = False) -> List[str]:
@@ -339,12 +339,13 @@ class PyscalList(object):
             )
         if isinstance(int_params_wo, (float, int)):
             int_params_wo = [int_params_wo] * self.__len__()
-        if isinstance(int_params_wo, list) and len(int_params_wo) == 1:
+        elif isinstance(int_params_wo, list) and len(int_params_wo) == 1:
             int_params_wo = int_params_wo * self.__len__()
         if int_params_go is None or isinstance(int_params_go, (float, int)):
             int_params_go = [int_params_go] * len(self)
-        if isinstance(int_params_go, list) and len(int_params_go) == 1:
+        elif isinstance(int_params_go, list) and len(int_params_go) == 1:
             int_params_go = int_params_go * self.__len__()
+
         if 1 < len(int_params_wo) < len(self):
             raise ValueError(
                 f"Too few interpolation parameters given for WaterOil {int_params_wo}"

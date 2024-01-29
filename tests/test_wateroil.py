@@ -296,7 +296,6 @@ def test_nexus():
         sep=r"\s+",
         header=None,
     )
-    # pylint: disable=no-member  # false positive on Pandas dataframe
     assert (df.values <= 1.0).all()
     assert (df.values >= 0.0).all()
 
@@ -327,5 +326,5 @@ def test_selfcheck(columnname, errorvalues):
     wateroil.table[columnname] = errorvalues
     assert not wateroil.selfcheck()
     assert wateroil.SWOF() == ""
-    if not columnname == "KROW":
+    if columnname != "KROW":
         assert wateroil.SWFN() == ""

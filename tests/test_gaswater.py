@@ -61,7 +61,6 @@ def test_constructor():
     gaswater.wateroil.tag = "Foo"
     gaswater.gasoil.tag = "Bar"
     with pytest.raises(ValueError, match="Internal tag-inconsistency in GasWater"):
-        # pylint: disable=pointless-statement
         gaswater.tag
 
     # Trigger self-check bug warning:
@@ -117,7 +116,7 @@ def test_gaswater_corey1(nw, ng):
 
 
 @given(st.floats(), st.floats(), st.floats(), st.floats(), st.floats())
-def test_gaswater_let1(l, e, t, krwend, krwmax):
+def test_gaswater_let1(l, e, t, krwend, krwmax):  # noqa: E741
     """Test random LET parameters"""
     gaswater = GasWater()
     try:

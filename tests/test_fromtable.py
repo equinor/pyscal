@@ -627,7 +627,7 @@ def test_fromtable_types():
     # But this should not make sense.
     df2 = pd.DataFrame(
         columns=["SW", "KRW", "KROW", "PC"],
-        data=[["0", dict(foo="bar"), "1", "2"], ["1", "1", "0", "0"]],
+        data=[["0", {"foo": "bar"}, "1", "2"], ["1", "1", "0", "0"]],
     )
     wateroil = WaterOil(h=0.1)
     with pytest.raises((ValueError, TypeError)):

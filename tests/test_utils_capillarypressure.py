@@ -11,8 +11,6 @@ from pyscal.utils import capillarypressure
 
 PASCAL = 1e-05  # One pascal in bar.
 
-# pylint: disable=protected-access  # Private functions should be tested too
-
 
 @pytest.mark.parametrize(
     "sw, a, b, poro_ref, perm_ref, drho, g, expected",
@@ -38,7 +36,6 @@ PASCAL = 1e-05  # One pascal in bar.
 )
 def test_simple_J(sw, a, b, poro_ref, perm_ref, drho, g, expected):
     """Test the simple J formula implementation"""
-    # pylint: disable=invalid-name,too-many-arguments
     result = capillarypressure.simple_J(sw, a, b, poro_ref, perm_ref, drho, g)
 
     if isinstance(result, (list, np.ndarray)):
@@ -56,7 +53,6 @@ def test_simple_J(sw, a, b, poro_ref, perm_ref, drho, g, expected):
 )
 def test_swl_from_height_simple_J(swlheight, swirr, a, b, poro_ref, perm_ref, expected):
     """Test the calculation of swlheight from input parameters"""
-    # pylint: disable=invalid-name,too-many-arguments
     result = capillarypressure.swl_from_height_simpleJ(
         swlheight, swirr, a, b, poro_ref, perm_ref
     )
@@ -76,7 +72,6 @@ def test_swl_from_height_simple_J(swlheight, swirr, a, b, poro_ref, perm_ref, ex
 def test_inverses_sw_simpleJ(j_value, a, b):
     """Ensure that the pair of functions going from sw to J and back
     are truly inverses of each other"""
-    # pylint: disable=invalid-name  # simpleJ
     sw = capillarypressure._simpleJ_to_sw(j_value, a, b)
     assert np.isclose(capillarypressure._sw_to_simpleJ(sw, a, b), j_value)
 
@@ -88,7 +83,6 @@ def test_inverses_sw_simpleJ(j_value, a, b):
 )
 def test_inverses_simpleJ_sw(sw_value, a, b):
     """Inverse of the test function above"""
-    # pylint: disable=invalid-name  # simpleJ
     result = capillarypressure._simpleJ_to_sw(
         capillarypressure._sw_to_simpleJ(sw_value, a, b), a, b
     )
@@ -102,7 +96,6 @@ def test_inverses_simpleJ_sw(sw_value, a, b):
 )
 def test_inverses_simpleJ_height(J, poro_ref, perm_ref):
     """Test round-trip calculation of J-value from height"""
-    # pylint: disable=invalid-name
     result = capillarypressure._height_to_simpleJ(
         capillarypressure._simpleJ_to_height(J, poro_ref, perm_ref), poro_ref, perm_ref
     )
@@ -116,7 +109,6 @@ def test_inverses_simpleJ_height(J, poro_ref, perm_ref):
 )
 def test_inverses_height_simpleJ(height, poro_ref, perm_ref):
     """Test round-trip calculation of height-value from J"""
-    # pylint: disable=invalid-name
     result = capillarypressure._simpleJ_to_height(
         capillarypressure._height_to_simpleJ(height, poro_ref, perm_ref),
         poro_ref,
