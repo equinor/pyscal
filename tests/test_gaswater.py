@@ -116,7 +116,7 @@ def test_gaswater_corey1(nw, ng):
 
 
 @given(st.floats(), st.floats(), st.floats(), st.floats(), st.floats())
-def test_gaswater_let1(l, e, t, krwend, krwmax):  # noqa: E741
+def test_gaswater_let1(l, e, t, krwend, krwmax):
     """Test random LET parameters"""
     gaswater = GasWater()
     try:

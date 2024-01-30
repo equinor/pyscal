@@ -19,10 +19,11 @@ def getLogger_pyscal(
     Logging output is by default split by logging levels (split between WARNING and
     ERROR) to stdout and stderr, each log occurs in only one of the streams.
     Args:
-        module_name: A suggested name for the logger, usually __name__ should be supplied
-        args_dict: Dictionary with contents from the argparse namespace object containing
-        only keys "output", "verbose" and "debug".
-    """  # noqa: E501
+        module_name: A suggested name for the logger, usually __name__ should be
+        supplied
+        args_dict: Dictionary with contents from the argparse namespace object
+        containing only keys "output", "verbose" and "debug".
+    """
     logger = logging.getLogger(module_name)
     if len(logger.handlers) != 0:
         return logger

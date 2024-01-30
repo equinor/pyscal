@@ -154,7 +154,7 @@ class PyscalFactory(object):
     @staticmethod
     def create_water_oil(
         params: Optional[Dict[str, float]] = None, fast: bool = False
-    ) -> WaterOil:  # noqa
+    ) -> WaterOil:
         """Create a WaterOil object from a dictionary of parameters.
 
         Parameterization (Corey/LET) is inferred from presence
@@ -1208,7 +1208,7 @@ def filter_nan_from_dict(params: dict) -> dict:
     """
     cleaned_params = {}
     for key, value in params.items():
-        if (isinstance(value, str)) or (not np.isnan(value)):
+        if isinstance(value, str) or not np.isnan(value):
             cleaned_params[key] = value
     return cleaned_params
 
