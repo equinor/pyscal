@@ -28,23 +28,22 @@ def test_factory_wateroil():
 
     with pytest.raises(TypeError):
         # (it must be a dictionary)
-        # pylint: disable=unexpected-keyword-arg
-        pyscal_factory.create_water_oil(swirr=0.01)  # noqa
+        pyscal_factory.create_water_oil(swirr=0.01)
 
     with pytest.raises(TypeError):
         pyscal_factory.create_water_oil(params="swirr 0.01")
 
     wateroil = pyscal_factory.create_water_oil(
-        dict(
-            swirr=0.01,
-            swl=0.1,
-            bogus="foobar",
-            tag="Good sand",
-            nw=3,
-            now=2,
-            krwend=0.2,
-            krwmax=0.5,
-        )
+        {
+            "swirr": 0.01,
+            "swl": 0.1,
+            "bogus": "foobar",
+            "tag": "Good sand",
+            "nw": 3,
+            "now": 2,
+            "krwend": 0.2,
+            "krwmax": 0.5,
+        }
     )
     assert isinstance(wateroil, WaterOil)
     assert wateroil.swirr == 0.01
@@ -58,7 +57,7 @@ def test_factory_wateroil():
     sat_table_str_ok(wateroil.SWFN())
 
     wateroil = pyscal_factory.create_water_oil(
-        dict(nw=3, now=2, sorw=0.1, krwend=0.2, krwmax=0.5)
+        {"nw": 3, "now": 2, "sorw": 0.1, "krwend": 0.2, "krwmax": 0.5}
     )
     assert isinstance(wateroil, WaterOil)
     assert "KRW" in wateroil.table
@@ -70,7 +69,9 @@ def test_factory_wateroil():
 
     # Ambiguous works, but we don't guarantee that this results
     # in LET or Corey.
-    wateroil = pyscal_factory.create_water_oil(dict(nw=3, Lw=2, Ew=2, Tw=2, now=3))
+    wateroil = pyscal_factory.create_water_oil(
+        {"nw": 3, "Lw": 2, "Ew": 2, "Tw": 2, "now": 3}
+    )
     assert "KRW" in wateroil.table
     assert "Corey" in wateroil.krwcomment or "LET" in wateroil.krwcomment
     check_table(wateroil.table)
@@ -78,7 +79,9 @@ def test_factory_wateroil():
     sat_table_str_ok(wateroil.SWFN())
 
     # Mixing Corey and LET
-    wateroil = pyscal_factory.create_water_oil(dict(Lw=2, Ew=2, Tw=2, krwend=1, now=4))
+    wateroil = pyscal_factory.create_water_oil(
+        {"Lw": 2, "Ew": 2, "Tw": 2, "krwend": 1, "now": 4}
+    )
     assert isinstance(wateroil, WaterOil)
     assert "KRW" in wateroil.table
     assert wateroil.table["KRW"].max() == 1.0
@@ -88,7 +91,7 @@ def test_factory_wateroil():
     sat_table_str_ok(wateroil.SWFN())
 
     wateroil = pyscal_factory.create_water_oil(
-        dict(Lw=2, Ew=2, Tw=2, Low=3, Eow=3, Tow=3, krwend=0.5)
+        {"Lw": 2, "Ew": 2, "Tw": 2, "Low": 3, "Eow": 3, "Tow": 3, "krwend": 0.5}
     )
     assert isinstance(wateroil, WaterOil)
     assert "KRW" in wateroil.table
@@ -103,7 +106,16 @@ def test_factory_wateroil():
 
     # Add capillary pressure
     wateroil = pyscal_factory.create_water_oil(
-        dict(swl=0.1, nw=1, now=1, a=2, b=-1, poro_ref=0.2, perm_ref=100, drho=200)
+        {
+            "swl": 0.1,
+            "nw": 1,
+            "now": 1,
+            "a": 2,
+            "b": -1,
+            "poro_ref": 0.2,
+            "perm_ref": 100,
+            "drho": 200,
+        }
     )
     assert "PC" in wateroil.table
     assert wateroil.table["PC"].max() > 0.0
@@ -114,7 +126,17 @@ def test_factory_wateroil():
 
     # Test that the optional gravity g is picked up:
     wateroil = pyscal_factory.create_water_oil(
-        dict(swl=0.1, nw=1, now=1, a=2, b=-1, poro_ref=0.2, perm_ref=100, drho=200, g=0)
+        {
+            "swl": 0.1,
+            "nw": 1,
+            "now": 1,
+            "a": 2,
+            "b": -1,
+            "poro_ref": 0.2,
+            "perm_ref": 100,
+            "drho": 200,
+            "g": 0,
+        }
     )
     assert "PC" in wateroil.table
     assert wateroil.table["PC"].max() == 0.0
@@ -124,16 +146,16 @@ def test_factory_wateroil():
 
     # Test petrophysical simple J:
     wateroil = pyscal_factory.create_water_oil(
-        dict(
-            swl=0.1,
-            nw=1,
-            now=1,
-            a_petro=2,
-            b_petro=-1,
-            poro_ref=0.2,
-            perm_ref=100,
-            drho=200,
-        )
+        {
+            "swl": 0.1,
+            "nw": 1,
+            "now": 1,
+            "a_petro": 2,
+            "b_petro": -1,
+            "poro_ref": 0.2,
+            "perm_ref": 100,
+            "drho": 200,
+        }
     )
     assert "PC" in wateroil.table
     assert wateroil.table["PC"].max() > 0.0
@@ -144,7 +166,16 @@ def test_factory_wateroil():
 
     # One pc param missing:
     wateroil = pyscal_factory.create_water_oil(
-        dict(swl=0.1, nw=1, now=1, a=2, b=-1, perm_ref=100, drho=200, g=0)
+        {
+            "swl": 0.1,
+            "nw": 1,
+            "now": 1,
+            "a": 2,
+            "b": -1,
+            "perm_ref": 100,
+            "drho": 200,
+            "g": 0,
+        }
     )
     assert "PC" not in wateroil.table
 
@@ -199,17 +230,17 @@ def test_init_with_swlheight():
     when initializing the WaterOil object"""
     pyscal_factory = PyscalFactory()
     wateroil = pyscal_factory.create_water_oil(
-        dict(
-            swlheight=200,
-            nw=1,
-            now=1,
-            swirr=0.01,
-            a=1,
-            b=-2,
-            poro_ref=0.2,
-            perm_ref=100,
-            drho=200,
-        )
+        {
+            "swlheight": 200,
+            "nw": 1,
+            "now": 1,
+            "swirr": 0.01,
+            "a": 1,
+            "b": -2,
+            "poro_ref": 0.2,
+            "perm_ref": 100,
+            "drho": 200,
+        }
     )
     assert np.isclose(wateroil.swl, 0.02480395)
     assert "swl=0.024" in wateroil.SWOF()
@@ -219,55 +250,55 @@ def test_init_with_swlheight():
         match="Can't initialize from SWLHEIGHT without sufficient simple-J parameters",
     ):
         # This should fail because capillary pressure parameters are not provided.
-        pyscal_factory.create_water_oil(dict(swlheight=200, nw=1, now=1))
+        pyscal_factory.create_water_oil({"swlheight": 200, "nw": 1, "now": 1})
 
     # swcr must be larger than swl:
     with pytest.raises(ValueError, match="lower than computed swl"):
         pyscal_factory.create_water_oil(
-            dict(
-                swlheight=200,
-                nw=1,
-                now=1,
-                swirr=0.01,
-                swcr=0.0101,
-                a=1,
-                b=-2,
-                poro_ref=0.2,
-                perm_ref=100,
-                drho=200,
-            )
+            {
+                "swlheight": 200,
+                "nw": 1,
+                "now": 1,
+                "swirr": 0.01,
+                "swcr": 0.0101,
+                "a": 1,
+                "b": -2,
+                "poro_ref": 0.2,
+                "perm_ref": 100,
+                "drho": 200,
+            }
         )
 
     # swlheight must be positive:
     with pytest.raises(ValueError, match="swlheight must be larger than zero"):
         pyscal_factory.create_water_oil(
-            dict(
-                swlheight=-200,
-                nw=1,
-                now=1,
-                swirr=0.01,
-                a=1,
-                b=-2,
-                poro_ref=0.2,
-                perm_ref=100,
-                drho=200,
-            )
+            {
+                "swlheight": -200,
+                "nw": 1,
+                "now": 1,
+                "swirr": 0.01,
+                "a": 1,
+                "b": -2,
+                "poro_ref": 0.2,
+                "perm_ref": 100,
+                "drho": 200,
+            }
         )
 
     # If swcr is large enough, it will pass:
     wateroil = pyscal_factory.create_water_oil(
-        dict(
-            swlheight=200,
-            nw=1,
-            now=1,
-            swirr=0.01,
-            swcr=0.3,
-            a=1,
-            b=-2,
-            poro_ref=0.2,
-            perm_ref=100,
-            drho=200,
-        )
+        {
+            "swlheight": 200,
+            "nw": 1,
+            "now": 1,
+            "swirr": 0.01,
+            "swcr": 0.3,
+            "a": 1,
+            "b": -2,
+            "poro_ref": 0.2,
+            "perm_ref": 100,
+            "drho": 200,
+        }
     )
     assert wateroil.swcr > wateroil.swl
     assert wateroil.swcr == 0.3
@@ -275,18 +306,18 @@ def test_init_with_swlheight():
 
     # Test that GasWater also can be initialized with swlheight:
     gaswater = pyscal_factory.create_gas_water(
-        dict(
-            swlheight=200,
-            nw=1,
-            ng=1,
-            swirr=0.01,
-            swcr=0.3,
-            a=1,
-            b=-2,
-            poro_ref=0.2,
-            perm_ref=100,
-            drho=200,
-        )
+        {
+            "swlheight": 200,
+            "nw": 1,
+            "ng": 1,
+            "swirr": 0.01,
+            "swcr": 0.3,
+            "a": 1,
+            "b": -2,
+            "poro_ref": 0.2,
+            "perm_ref": 100,
+            "drho": 200,
+        }
     )
     assert "swl=0.024" in gaswater.SWFN()
     assert gaswater.swcr > gaswater.swl
@@ -298,16 +329,16 @@ def test_init_with_swlheight():
         ValueError, match="Can't initialize from SWLHEIGHT without sufficient simple-J"
     ):
         pyscal_factory.create_water_oil(
-            dict(
-                swlheight=200,
-                nw=1,
-                now=1,
-                a=1,
-                b=-2,
-                poro_ref=0.2,
-                perm_ref=100,
-                drho=200,
-            )
+            {
+                "swlheight": 200,
+                "nw": 1,
+                "now": 1,
+                "a": 1,
+                "b": -2,
+                "poro_ref": 0.2,
+                "perm_ref": 100,
+                "drho": 200,
+            }
         )
 
 
@@ -318,47 +349,49 @@ def test_relative_swcr():
     pyscal_factory = PyscalFactory()
 
     with pytest.raises(ValueError, match="swl must be provided"):
-        pyscal_factory.create_water_oil(dict(swcr_add=0.1, nw=1, now=1, swirr=0.01))
+        pyscal_factory.create_water_oil(
+            {"swcr_add": 0.1, "nw": 1, "now": 1, "swirr": 0.01}
+        )
     with pytest.raises(ValueError, match="swcr and swcr_add at the same time"):
         pyscal_factory.create_water_oil(
-            dict(swcr_add=0.1, swcr=0.1, swl=0.1, nw=1, now=1, swirr=0.01)
+            {"swcr_add": 0.1, "swcr": 0.1, "swl": 0.1, "nw": 1, "now": 1, "swirr": 0.01}
         )
     wateroil = pyscal_factory.create_water_oil(
-        dict(swcr_add=0.1, swl=0.1, nw=1, now=1, swirr=0.01)
+        {"swcr_add": 0.1, "swl": 0.1, "nw": 1, "now": 1, "swirr": 0.01}
     )
     assert wateroil.swcr == 0.2
 
     # Test when relative to swlheight:
     wateroil = pyscal_factory.create_water_oil(
-        dict(
-            swlheight=200,
-            swcr_add=0.01,
-            nw=1,
-            now=1,
-            swirr=0.01,
-            a=1,
-            b=-2,
-            poro_ref=0.2,
-            perm_ref=100,
-            drho=200,
-        )
+        {
+            "swlheight": 200,
+            "swcr_add": 0.01,
+            "nw": 1,
+            "now": 1,
+            "swirr": 0.01,
+            "a": 1,
+            "b": -2,
+            "poro_ref": 0.2,
+            "perm_ref": 100,
+            "drho": 200,
+        }
     )
     assert np.isclose(wateroil.swl, 0.02480395)
     assert np.isclose(wateroil.swcr, 0.02480395 + 0.01)
 
     gaswater = pyscal_factory.create_gas_water(
-        dict(
-            swlheight=200,
-            nw=1,
-            ng=1,
-            swirr=0.01,
-            swcr_add=0.1,
-            a=1,
-            b=-2,
-            poro_ref=0.2,
-            perm_ref=100,
-            drho=200,
-        )
+        {
+            "swlheight": 200,
+            "nw": 1,
+            "ng": 1,
+            "swirr": 0.01,
+            "swcr_add": 0.1,
+            "a": 1,
+            "b": -2,
+            "poro_ref": 0.2,
+            "perm_ref": 100,
+            "drho": 200,
+        }
     )
     assert np.isclose(gaswater.swl, 0.02480395)
     assert np.isclose(gaswater.swcr, 0.02480395 + 0.1)
@@ -369,7 +402,7 @@ def test_ambiguity():
     parameters"""
     pyscal_factory = PyscalFactory()
     wateroil = pyscal_factory.create_water_oil(
-        dict(swl=0.1, nw=10, Lw=1, Ew=1, Tw=1, now=2, h=0.1, no=2)
+        {"swl": 0.1, "nw": 10, "Lw": 1, "Ew": 1, "Tw": 1, "now": 2, "h": 0.1, "no": 2}
     )
     # Corey is picked here.
     assert "Corey" in wateroil.krwcomment
@@ -386,14 +419,13 @@ def test_factory_gasoil():
 
     with pytest.raises(TypeError):
         # (this must be a dictionary)
-        # pylint: disable=unexpected-keyword-arg
-        pyscal_factory.create_gas_oil(swirr=0.01)  # noqa
+        pyscal_factory.create_gas_oil(swirr=0.01)
 
     with pytest.raises(TypeError):
         pyscal_factory.create_gas_oil(params="swirr 0.01")
 
     gasoil = pyscal_factory.create_gas_oil(
-        dict(swirr=0.01, swl=0.1, sgcr=0.05, tag="Good sand", ng=1, nog=2)
+        {"swirr": 0.01, "swl": 0.1, "sgcr": 0.05, "tag": "Good sand", "ng": 1, "nog": 2}
     )
     assert isinstance(gasoil, GasOil)
     assert gasoil.sgcr == 0.05
@@ -409,7 +441,7 @@ def test_factory_gasoil():
     assert "Zero capillary pressure" in sgof
 
     gasoil = pyscal_factory.create_gas_oil(
-        dict(ng=1.2, nog=2, krgend=0.8, krgmax=0.9, kroend=0.6)
+        {"ng": 1.2, "nog": 2, "krgend": 0.8, "krgmax": 0.9, "kroend": 0.6}
     )
     sgof = gasoil.SGOF()
     sat_table_str_ok(sgof)
@@ -417,14 +449,16 @@ def test_factory_gasoil():
     assert "krgend=0.8" in sgof
     check_table(gasoil.table)
 
-    gasoil = pyscal_factory.create_gas_oil(dict(ng=1.3, Log=2, Eog=2, Tog=2))
+    gasoil = pyscal_factory.create_gas_oil({"ng": 1.3, "Log": 2, "Eog": 2, "Tog": 2})
     sgof = gasoil.SGOF()
     check_table(gasoil.table)
     sat_table_str_ok(sgof)
     assert "Corey krg" in sgof
     assert "LET krog" in sgof
 
-    gasoil = pyscal_factory.create_gas_oil(dict(Lg=1, Eg=1, Tg=1, Log=2, Eog=2, Tog=2))
+    gasoil = pyscal_factory.create_gas_oil(
+        {"Lg": 1, "Eg": 1, "Tg": 1, "Log": 2, "Eog": 2, "Tog": 2}
+    )
     sgof = gasoil.SGOF()
     sat_table_str_ok(sgof)
     check_table(gasoil.table)
@@ -438,18 +472,18 @@ def test_factory_wog_gascondensate():
     in sgrw=sorw for the underlying WaterOil object, and also there
     are additional parameters sgro and kromax for GasOil."""
     wcg = PyscalFactory.create_water_oil_gas(
-        dict(
-            nw=2,
-            now=3,
-            ng=1,
-            nog=2,
-            sgrw=0.1,
-            swl=0.1,
-            sgcr=0.1,
-            sgro=0.1,
-            kroend=0.5,
-            kromax=0.9,
-        )
+        {
+            "nw": 2,
+            "now": 3,
+            "ng": 1,
+            "nog": 2,
+            "sgrw": 0.1,
+            "swl": 0.1,
+            "sgcr": 0.1,
+            "sgro": 0.1,
+            "kroend": 0.5,
+            "kromax": 0.9,
+        }
     )
     assert wcg.gasoil.sgro == 0.1
     assert wcg.wateroil.sorw == 0.1
@@ -470,29 +504,29 @@ def test_factory_wog_gascondensate():
     # Different sorw and sgrw is a hard error:
     with pytest.raises(ValueError, match="must equal"):
         PyscalFactory.create_water_oil_gas(
-            dict(nw=2, now=3, ng=1, nog=2, sorw=0.2, sgrw=0.1, swl=0.1)
+            {"nw": 2, "now": 3, "ng": 1, "nog": 2, "sorw": 0.2, "sgrw": 0.1, "swl": 0.1}
         )
 
     # But it will pass if they both are supplied but are equal:
     wcg_2 = PyscalFactory.create_water_oil_gas(
-        dict(nw=2, now=3, ng=1, nog=2, sorw=0.2, sgrw=0.2, swl=0.1)
+        {"nw": 2, "now": 3, "ng": 1, "nog": 2, "sorw": 0.2, "sgrw": 0.2, "swl": 0.1}
     )
     assert "sorw=0.2" in wcg_2.SWOF()
 
     # kroend higher than kromax is an error:
     with pytest.raises(AssertionError):
         PyscalFactory.create_water_oil_gas(
-            dict(
-                nw=2,
-                now=3,
-                ng=1,
-                nog=2,
-                sgcr=0.1,
-                sgro=0.1,
-                kromax=0.5,
-                kroend=0.8,
-                swl=0.1,
-            )
+            {
+                "nw": 2,
+                "now": 3,
+                "ng": 1,
+                "nog": 2,
+                "sgcr": 0.1,
+                "sgro": 0.1,
+                "kromax": 0.5,
+                "kroend": 0.8,
+                "swl": 0.1,
+            }
         )
 
 
@@ -500,7 +534,15 @@ def test_factory_go_gascondensate():
     """In gas condensate problems, the sgro and kromax parameters are relevant"""
     pyscal_factory = PyscalFactory()
     gasoil = pyscal_factory.create_gas_oil(
-        dict(sgro=0.1, sgcr=0.1, tag="Good sand", ng=1, nog=2, kroend=0.5, kromax=0.9)
+        {
+            "sgro": 0.1,
+            "sgcr": 0.1,
+            "tag": "Good sand",
+            "ng": 1,
+            "nog": 2,
+            "kroend": 0.5,
+            "kromax": 0.9,
+        }
     )
     assert isinstance(gasoil, GasOil)
     assert gasoil.sgro == 0.1
@@ -523,16 +565,22 @@ def test_factory_gaswater():
         pyscal_factory.create_gas_water()
 
     with pytest.raises(TypeError):
-        # pylint: disable=unexpected-keyword-arg
-        pyscal_factory.create_gas_water(swirr=0.01)  # noqa
+        pyscal_factory.create_gas_water(swirr=0.01)
 
     with pytest.raises(TypeError):
         # (it must be a dictionary)
-        # pylint: disable=unexpected-keyword-arg
         pyscal_factory.create_gas_water(params="swirr 0.01")
 
     gaswater = pyscal_factory.create_gas_water(
-        dict(swirr=0.01, swl=0.03, sgrw=0.1, sgcr=0.15, tag="gassy sand", ng=2, nw=2)
+        {
+            "swirr": 0.01,
+            "swl": 0.03,
+            "sgrw": 0.1,
+            "sgcr": 0.15,
+            "tag": "gassy sand",
+            "ng": 2,
+            "nw": 2,
+        }
     )
 
     assert isinstance(gaswater, GasWater)
@@ -559,7 +607,7 @@ def test_factory_gaswater():
     assert "ng=2" in sgfn
     assert "gassy sand" in sgfn
 
-    gaswater = pyscal_factory.create_gas_water(dict(lg=1, eg=1, tg=1, nw=3))
+    gaswater = pyscal_factory.create_gas_water({"lg": 1, "eg": 1, "tg": 1, "nw": 3})
 
     sgfn = gaswater.SGFN()
     swfn = gaswater.SWFN()
@@ -579,13 +627,12 @@ def test_factory_wateroilgas():
 
     with pytest.raises(TypeError):
         # (this must be a dictionary)
-        # pylint: disable=unexpected-keyword-arg
-        pyscal_factory.create_water_oil_gas(swirr=0.01)  # noqa
+        pyscal_factory.create_water_oil_gas(swirr=0.01)
 
     with pytest.raises(TypeError):
         pyscal_factory.create_water_oil_gas(params="swirr 0.01")
 
-    wog = pyscal_factory.create_water_oil_gas(dict(nw=2, now=3, ng=1, nog=2.5))
+    wog = pyscal_factory.create_water_oil_gas({"nw": 2, "now": 3, "ng": 1, "nog": 2.5})
     swof = wog.SWOF()
     sgof = wog.SGOF()
     sat_table_str_ok(swof)  # sgof code works for swof also currently
@@ -598,7 +645,7 @@ def test_factory_wateroilgas():
     check_table(wog.wateroil.table)
 
     # Some users will mess up lower vs upper case:
-    wog = pyscal_factory.create_water_oil_gas(dict(NW=2, NOW=3, NG=1, nog=2.5))
+    wog = pyscal_factory.create_water_oil_gas({"NW": 2, "NOW": 3, "NG": 1, "nog": 2.5})
     swof = wog.SWOF()
     sgof = wog.SGOF()
     sat_table_str_ok(swof)  # sgof code works for swof also currently
@@ -609,7 +656,7 @@ def test_factory_wateroilgas():
     assert "Corey krow" in swof
 
     # Mangling data
-    wateroil = pyscal_factory.create_water_oil_gas(dict(nw=2, now=3, ng=1))
+    wateroil = pyscal_factory.create_water_oil_gas({"nw": 2, "now": 3, "ng": 1})
     assert wateroil.gasoil is None
 
 
@@ -617,7 +664,7 @@ def test_factory_wateroilgas_deprecated_krowgend():
     """Using long-time deprecated krowend and krogend will fail"""
     with pytest.raises(ValueError):
         PyscalFactory.create_water_oil_gas(
-            dict(nw=2, now=3, ng=1, nog=2.5, krowend=0.6, krogend=0.7)
+            {"nw": 2, "now": 3, "ng": 1, "nog": 2.5, "krowend": 0.6, "krogend": 0.7}
         )
 
 
@@ -625,7 +672,7 @@ def test_factory_wateroilgas_wo():
     """Test making only wateroil through the wateroilgas factory"""
     pyscal_factory = PyscalFactory()
     wog = pyscal_factory.create_water_oil_gas(
-        dict(nw=2, now=3, kroend=0.5, sorw=0.04, swcr=0.1)
+        {"nw": 2, "now": 3, "kroend": 0.5, "sorw": 0.04, "swcr": 0.1}
     )
     swof = wog.SWOF()
     assert "Corey krw" in swof
@@ -642,7 +689,14 @@ def test_factory_wateroil_paleooil(caplog):
     pyscal_factory = PyscalFactory()
     sorw = 0.09
     wateroil = pyscal_factory.create_water_oil(
-        dict(nw=2, now=3, kroend=0.5, sorw=sorw, socr=sorw + 0.01, swcr=0.1)
+        {
+            "nw": 2,
+            "now": 3,
+            "kroend": 0.5,
+            "sorw": sorw,
+            "socr": sorw + 0.01,
+            "swcr": 0.1,
+        }
     )
     swof = wateroil.SWOF()
     assert "Corey krw" in swof
@@ -653,7 +707,7 @@ def test_factory_wateroil_paleooil(caplog):
     # If socr is close to sorw, socr is reset to sorw.
     for socr in [sorw - 1e-9, sorw, sorw + 1e-9]:
         wo_socrignored = pyscal_factory.create_water_oil(
-            dict(nw=2, now=3, kroend=0.5, sorw=0.09, socr=socr, swcr=0.1)
+            {"nw": 2, "now": 3, "kroend": 0.5, "sorw": 0.09, "socr": socr, "swcr": 0.1}
         )
         swof = wo_socrignored.SWOF()
         assert "socr" not in swof  # socr is effectively ignored when = sorw.
@@ -665,7 +719,15 @@ def test_factory_wateroil_paleooil(caplog):
 
     with pytest.raises(ValueError, match="socr must be equal to or larger than sorw"):
         pyscal_factory.create_water_oil(
-            dict(nw=2, now=3, kroend=0.5, sorw=0.09, socr=0.001, swcr=0.1, h=0.1)
+            {
+                "nw": 2,
+                "now": 3,
+                "kroend": 0.5,
+                "sorw": 0.09,
+                "socr": 0.001,
+                "swcr": 0.1,
+                "h": 0.1,
+            }
         )
 
 
@@ -700,7 +762,7 @@ def test_load_relperm_df(tmp_path, caplog):
     assert "Sheet name only relevant for XLSX files, ignoring foo" in caplog.text
 
     with pytest.raises(ValueError, match="Unsupported argument"):
-        PyscalFactory.load_relperm_df(dict(foo=1))
+        PyscalFactory.load_relperm_df({"foo": 1})
 
     # Perturb the dataframe, this should trigger errors
     with pytest.raises(ValueError):
@@ -1018,21 +1080,21 @@ def test_check_deprecated_krowgend():
     After pyscal 0.8 presence of krogend and krowend is a ValueError
     """
     with pytest.raises(ValueError):
-        PyscalFactory.create_water_oil(dict(swl=0.1, nw=2, now=2, krowend=0.4))
+        PyscalFactory.create_water_oil({"swl": 0.1, "nw": 2, "now": 2, "krowend": 0.4})
 
     with pytest.raises(ValueError):
-        PyscalFactory.create_gas_oil(dict(swl=0.1, ng=2, nog=2, krogend=0.4))
+        PyscalFactory.create_gas_oil({"swl": 0.1, "ng": 2, "nog": 2, "krogend": 0.4})
 
     # If krogend and kroend are both present, krogend is to be silently ignored
     # (random columns are in general accepted and ignored by pyscal)
 
     gasoil = PyscalFactory.create_gas_oil(
-        dict(swl=0.1, ng=2, nog=2, krogend=0.4, kroend=0.3)
+        {"swl": 0.1, "ng": 2, "nog": 2, "krogend": 0.4, "kroend": 0.3}
     )
     assert gasoil.table["KROG"].max() == 0.3
 
     wateroil = PyscalFactory.create_water_oil(
-        dict(swl=0.1, nw=2, now=2, krowend=0.4, kroend=0.3)
+        {"swl": 0.1, "nw": 2, "now": 2, "krowend": 0.4, "kroend": 0.3}
     )
     assert wateroil.table["KROW"].max() == 0.3
 
@@ -1159,19 +1221,21 @@ def test_sufficient_params_gaswater():
     for gas-water only"""
     assert factory.sufficient_gas_water_params({"nw": 0, "ng": 0})
     assert not factory.sufficient_gas_water_params({"nw": 0, "nog": 0})
-    assert factory.sufficient_gas_water_params(dict(lw=0, ew=0, tw=0, lg=0, eg=0, tg=0))
-    assert not factory.sufficient_gas_water_params(dict(lw=0))
-    assert not factory.sufficient_gas_water_params(dict(lw=0, lg=0))
-    assert not factory.sufficient_gas_water_params(dict(lw=0, lg=0))
+    assert factory.sufficient_gas_water_params(
+        {"lw": 0, "ew": 0, "tw": 0, "lg": 0, "eg": 0, "tg": 0}
+    )
+    assert not factory.sufficient_gas_water_params({"lw": 0})
+    assert not factory.sufficient_gas_water_params({"lw": 0, "lg": 0})
+    assert not factory.sufficient_gas_water_params({"lw": 0, "lg": 0})
 
     with pytest.raises(ValueError):
-        factory.sufficient_gas_water_params(dict(lw=0), failhard=True)
+        factory.sufficient_gas_water_params({"lw": 0}, failhard=True)
     with pytest.raises(ValueError):
         factory.sufficient_gas_water_params({"nw": 3}, failhard=True)
 
-    assert factory.sufficient_gas_water_params(dict(lw=0, ew=0, tw=0, ng=0))
-    assert factory.sufficient_gas_water_params(dict(lg=0, eg=0, tg=0, nw=0))
-    assert not factory.sufficient_gas_water_params(dict(lg=0, eg=0, tg=0, ng=0))
+    assert factory.sufficient_gas_water_params({"lw": 0, "ew": 0, "tw": 0, "ng": 0})
+    assert factory.sufficient_gas_water_params({"lg": 0, "eg": 0, "tg": 0, "nw": 0})
+    assert not factory.sufficient_gas_water_params({"lg": 0, "eg": 0, "tg": 0, "ng": 0})
 
 
 def test_case_aliasing():

@@ -14,12 +14,11 @@
 # import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
-import pkg_resources
 import datetime
 
-# -- Project information -----------------------------------------------------
+import pkg_resources
 
-import pyscal
+# -- Project information -----------------------------------------------------
 
 project = "pyscal"
 author = "Håvard Berland"

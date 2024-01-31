@@ -27,7 +27,7 @@ def slicedict(dct: dict, keys: Iterable):
     """Slice a dictionary for a set of keys.
     Keys not existing will be ignored.
     """
-    return dict((k, dct[k]) for k in keys if k in dct)
+    return {k: dct[k] for k in keys if k in dct}
 
 
 # Sets of dictionary keys, presence of these
@@ -615,13 +615,9 @@ class PyscalFactory(object):
             params["high"]["h"] = h
 
         # Check parameter availability, in order to determine phase configuration
-        gaswater = all(
-            sufficient_gas_water_params(params[case]) for case in params.keys()
-        )
-        gasoil = all(sufficient_gas_oil_params(params[case]) for case in params.keys())
-        wateroil = all(
-            sufficient_water_oil_params(params[case]) for case in params.keys()
-        )
+        gaswater = all(sufficient_gas_water_params(params[case]) for case in params)
+        gasoil = all(sufficient_gas_oil_params(params[case]) for case in params)
+        wateroil = all(sufficient_water_oil_params(params[case]) for case in params)
 
         wog_low: Union[WaterOilGas, GasWater]
         wog_base: Union[WaterOilGas, GasWater]
@@ -660,8 +656,7 @@ class PyscalFactory(object):
         if errored:
             raise ValueError("Incomplete SCAL recommendation")
 
-        scal = SCALrecommendation(wog_low, wog_base, wog_high, tag)
-        return scal
+        return SCALrecommendation(wog_low, wog_base, wog_high, tag)
 
     @staticmethod
     def load_relperm_df(
@@ -762,13 +757,11 @@ class PyscalFactory(object):
         ignorecasecolumns = ["satnum", "case", "tag", "comment"]
         for colname in input_df.columns:
             if colname.lower() in ignorecasecolumns:
-                input_df.rename(
-                    {colname: colname.upper()}, axis="columns", inplace=True
-                )
+                input_df = input_df.rename({colname: colname.upper()}, axis="columns")
 
         # Support both TAG and COLUMN (as TAG)
         if "COMMENT" in input_df and "TAG" not in input_df:
-            input_df.rename({"COMMENT": "TAG"}, axis="columns", inplace=True)
+            input_df = input_df.rename({"COMMENT": "TAG"}, axis="columns")
         if "COMMENT" in input_df and "TAG" in input_df:
             # It might never happen that a user puts both tag and comment in
             # the dataframe, but if so, merge them.
@@ -784,10 +777,10 @@ class PyscalFactory(object):
         # Delete columns and rows that are all NaNs (this has been observed
         # to occur from seemingly empty cells in Excel/LibreOffice and
         # has been seen to vary with Pandas/Openpyxl versions in use)
-        input_df.dropna(axis="columns", how="all", inplace=True)
-        input_df.dropna(axis="index", how="all", inplace=True)
+        input_df = input_df.dropna(axis="columns", how="all")
+        input_df = input_df.dropna(axis="index", how="all")
 
-        if input_df["SATNUM"].isnull().sum() > 0:
+        if input_df["SATNUM"].isna().sum() > 0:
             raise ValueError(
                 "Found not-a-number in the SATNUM column. This could be due to "
                 "merged cells in XLSX, which is not supported."
@@ -811,7 +804,7 @@ class PyscalFactory(object):
         # If we are in a SCAL recommendation setting
         if "CASE" in input_df:
             # Enforce lower case:
-            if input_df["CASE"].isnull().sum() > 0:
+            if input_df["CASE"].isna().sum() > 0:
                 raise ValueError(
                     "Found not-a-number in the CASE column. This could be due "
                     "merged cells in XLSX, which is not supported."
@@ -823,7 +816,7 @@ class PyscalFactory(object):
         # Add the SATNUM index to the TAG column
         if "TAG" not in input_df:
             input_df["TAG"] = ""
-        input_df["TAG"].fillna(value="", inplace=True)  # Empty cells to empty string.
+        input_df["TAG"] = input_df["TAG"].fillna(value="")
         input_df["TAG"] = (
             "SATNUM " + input_df["SATNUM"].astype(str) + " " + input_df["TAG"]
         )
@@ -1117,7 +1110,6 @@ def sufficient_water_oil_params(params: dict, failhard: bool = False) -> bool:
         True if a WaterOil object should be attempted constructed
         (but no guarantee for validity of numerical values)
     """
-    # pylint: disable=C1801
     # For case insensitiveness, all keys are converted to lower case:
     params = {key.lower(): value for (key, value) in params.items()}
 
@@ -1153,7 +1145,6 @@ def sufficient_gas_oil_params(params: dict, failhard: bool = False) -> bool:
         True if a GasOil object should be attempted constructed
         (but no guarantee for validity of numerical values)
     """
-    # pylint: disable=C1801
     # For case insensitiveness, all keys are converted to lower case:
     params = {key.lower(): value for (key, value) in params.items()}
 
@@ -1188,7 +1179,6 @@ def sufficient_gas_water_params(params: dict, failhard: bool = False) -> bool:
         True if a GasWater object should be attempted constructed
             (but no guarantee for validity of numerical values)
     """
-    # pylint: disable=C1801
     # For case insensitiveness, all keys are converted to lower case:
     params = {key.lower(): value for (key, value) in params.items()}
 
@@ -1218,11 +1208,8 @@ def filter_nan_from_dict(params: dict) -> dict:
     """
     cleaned_params = {}
     for key, value in params.items():
-        if isinstance(value, str):
+        if isinstance(value, str) or not np.isnan(value):
             cleaned_params[key] = value
-        else:
-            if not np.isnan(value):
-                cleaned_params[key] = value
     return cleaned_params
 
 

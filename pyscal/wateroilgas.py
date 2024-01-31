@@ -166,7 +166,7 @@ class WaterOilGas(object):
             .reset_index()
         )
         sof3table["soint"] = list(map(round, sof3table["SO"] * SWINTEGERS))
-        sof3table.drop_duplicates("soint", inplace=True)
+        sof3table = sof3table.drop_duplicates("soint")
 
         # The 'so' column has been calculated from floating point numbers
         # and the zero value easily becomes a negative zero, circumvent this:

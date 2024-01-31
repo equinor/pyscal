@@ -5,42 +5,79 @@ Contributing to pyscal
 * Submit bugs on github
 * Pull requests are welcome!
 
-Code style
-----------
 
-* Use the black formatter to format your code
+Create pull request
+-------------------
 
-  * ``pip install black``
-  * ``black <modulename.py>`` -- must be done prior to any pull request.
+1. Fork the pyscal repository from the Equinor repository to your GitHub
+   user account.
 
-* Use flake8 code checker
+2. Clone your fork locally:
+  
+  .. code-block:: bash
+  
+        git clone git@github.com:your_name_here/pyscal
+        cd pyscal
+        git remote add upstream git@github.com:equinor/pyscal
+        git remote -v
+        # origin	git@github.com:your_name_here/pyscal (fetch)
+        # origin	git@github.com:your_name_here/pyscal (push)
+        # upstream	git@github.com:equinor/pyscal (fetch)
+        # upstream	git@github.com:equinor/pyscal (push)
 
-  * ``pip install flake8``
-  * ``flake8 src tests`` must pass before any pull request is accepted
-  * Exceptions are listed in ``setup.cfg``
+4. Install your forked copy into a local venv:
 
-* Use pylint to improve coding
+  .. code-block:: bash
+  
+        python -m venv ~/venv/pyscal
+        source ~/venv/pyscal/bin/activate
+        pip install -U pip
+        pip install -e ".[tests,docs]"
+  
+5. Run the tests to ensure everything works:
 
-  * ``pip install pylint``
-  * Then run ``pylint pyscal``
-  * Deviations from default (strict) pylint are stored in ``.pylintrc`` at root level,
-    or as comments in the file e.g. ``# pylint: disable=broad-except``.
-  * Only use deviations when e.g. black and pylint are in conflict, or if conformity with
-    pylint would clearly make the code worse or not work at all. Do not use it to
-    increase pylint score.
+  .. code-block:: bash
+  
+        pytest -n auto
 
-* All code must be throroughly tested with ``pytest``.
+6. Create a branch for local development:
+
+  .. code-block:: bash
+  
+        git checkout -b name-of-your-bugfix-or-feature
+  
+Now you can make your changes locally.
+
+7. When you're done making changes, check that your changes pass ruff, mypy and the
+   tests:
+
+  .. code-block:: bash
+  
+        ruff check .
+        ruff format .
+        mypy ./pyscal
+        pytest -n auto
+  
+8. Commit your changes and push your branch to GitHub:
+
+  .. code-block:: bash
+  
+        git add file1.py file2.py
+        git commit -m "Add some feature"
+        git push origin name-of-your-bugfix-or-feature
+
+9. Submit a pull request through GitHub.
+
 
 Building documentation
 ----------------------
 
-Install the development requirements::
+To build the documentation for pyscal run the following command:
 
-  pip install .[tests]
+  .. code-block:: bash
 
-Then, to build the documentation for pyscal run the following command::
-
-  python setup.py build_sphinx
+        python docs/make_plots.py
+        sphinx-build -b html docs ./build/sphinx/html
 
 And now you can find the start page of the documentation in the
 build folder: ``build/sphinx/html/index.html``.

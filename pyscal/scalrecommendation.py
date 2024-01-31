@@ -140,10 +140,7 @@ class SCALrecommendation(object):
                 need to be the same as the tables interpolation is done from.
         """
 
-        if parameter2 is not None:
-            gasparameter = parameter2
-        else:
-            gasparameter = parameter
+        gasparameter = parameter2 if parameter2 is not None else parameter
 
         # Either wateroil or gasoil can be None in the low, base, high
         # If they are None, it is a two-phase problem and we
@@ -181,20 +178,18 @@ class SCALrecommendation(object):
             assert self.base.wateroil is not None
             assert self.high.wateroil is not None
             tags = tags.union(
-                set(
-                    [
-                        self.base.wateroil.tag,
-                        self.low.wateroil.tag,
-                        self.high.wateroil.tag,
-                    ]
-                )
+                {
+                    self.base.wateroil.tag,
+                    self.low.wateroil.tag,
+                    self.high.wateroil.tag,
+                }
             )
         if do_gasoil:
             assert self.low.gasoil is not None
             assert self.base.gasoil is not None
             assert self.high.gasoil is not None
             tags = tags.union(
-                set([self.base.gasoil.tag, self.low.gasoil.tag, self.high.gasoil.tag])
+                {self.base.gasoil.tag, self.low.gasoil.tag, self.high.gasoil.tag}
             )
         tagstring = "\n".join(tags)
         if do_gaswater:

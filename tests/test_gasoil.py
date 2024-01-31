@@ -198,10 +198,7 @@ def test_gasoil_krendmax(
     swl, sgcr, sorg, sgrononzero, kroend, kromax, krgend, krgmax, h, fast
 ):
     """Test that relperm curves are valid in all numerical corner cases."""
-    if sgrononzero:
-        sgro = sgcr
-    else:
-        sgro = 0
+    sgro = sgcr if sgrononzero else 0
     try:
         assert 1 - sorg - swl - sgcr > 1 / SWINTEGERS, "No saturation range left"
         gasoil = GasOil(
@@ -369,7 +366,6 @@ def test_nexus():
         sep=r"\s+",
         header=None,
     )
-    # pylint: disable=no-member  # false positive on Pandas dataframe
     assert (df.values <= 1.0).all()
     assert (df.values >= 0.0).all()
 
@@ -606,5 +602,5 @@ def test_selfcheck(columnname, errorvalues):
     gasoil.table[columnname] = errorvalues
     assert not gasoil.selfcheck()
     assert gasoil.SGOF() == ""
-    if not columnname == "KROG":
+    if columnname != "KROG":
         assert gasoil.SGFN() == ""

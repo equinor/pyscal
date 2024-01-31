@@ -55,7 +55,6 @@ def test_normalize_nonlinpart_wo_hypo(
     now2,
     kroend2,
 ):
-    # pylint: disable=too-many-arguments,too-many-locals
     """Test the normalization code in utils.
 
     In particular the fill_value argument to scipy has been tuned to
@@ -275,7 +274,6 @@ def test_interpolate_wo(
     kroend_l,
     kroend_h,
 ):
-    # pylint: disable=too-many-arguments,too-many-locals
     """
     Generate two random WaterOil curves, interpolate between them
     and check that the difference between each interpolant is small,
@@ -361,7 +359,6 @@ def test_interpolate_wo_pc(swl, dswcr, dswlhigh, sorw, a_l, a_h, b_l, b_h):
     this essentially checks that we can go continously between the
     two functions.
     """
-    # pylint: disable=too-many-locals
     wo_low = WaterOil(swl=swl, swcr=swl + dswcr, sorw=sorw)
     wo_high = WaterOil(
         swl=swl + dswlhigh, swcr=swl + dswlhigh + dswcr, sorw=max(sorw - 0.01, 0)
@@ -453,7 +450,6 @@ def test_normalize_nonlinpart_go_hypo(
     kroend2,
     kromax2,
 ):
-    # pylint: disable=too-many-arguments,too-many-locals
     """Test the normalization code in utils.
 
     In particular the fill_value argument to scipy has been tuned to
@@ -709,7 +705,6 @@ def test_interpolate_go(
     kroend_l,
     kroend_h,
 ):
-    # pylint: disable=too-many-arguments,too-many-locals
     """Test many possible combinations of interpolation between two
     Corey gasoil curves, looking for numerical corner cases"""
     h = 0.01

@@ -28,9 +28,7 @@ def test_log_levels(tmp_path, verbosity_flag):
 
     relperm_file = str(
         # A cell in this xlsx contains "Åre 1.5", does not work on Windows
-        Path(__file__).absolute().parent
-        / "data"
-        / "relperm-input-example.xlsx"
+        Path(__file__).absolute().parent / "data" / "relperm-input-example.xlsx"
     )
 
     commands = ["pyscal", relperm_file]
@@ -58,7 +56,6 @@ def test_log_levels(tmp_path, verbosity_flag):
 
 
 def test_pyscal_client_static(tmp_path, caplog, default_loglevel, mocker):
-    # pylint: disable=unused-argument
     # default_loglevel fixture is in conftest.py
     """Test pyscal client for static relperm input"""
     testdir = Path(__file__).absolute().parent
@@ -437,8 +434,6 @@ def test_pyscalcli_gaswater_scal(tmp_path, caplog, mocker):
 
 
 def test_pyscal_client_scal(tmp_path, caplog, default_loglevel, mocker):
-    # pylint: disable=unused-argument
-    # default_loglevel fixture is in conftest.py
     """Test the command line endpoint on SCAL recommendation"""
     scalrec_file = Path(__file__).absolute().parent / "data/scal-pc-input-example.xlsx"
 

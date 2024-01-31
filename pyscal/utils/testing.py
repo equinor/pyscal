@@ -1,17 +1,16 @@
 """Common functions and mock data for usage in pyscal testing"""
 
 import io
+from contextlib import suppress
 from typing import Union
 
 import numpy as np
 import pandas as pd
 
-try:
-    from hypothesis import settings
-except ModuleNotFoundError:
+with suppress(ModuleNotFoundError):
     # This module is only needed for testing, but this testing module
     # should be importable in other scenarios as well.
-    pass
+    from hypothesis import settings
 
 from pyscal import GasOil, WaterOil
 
@@ -60,13 +59,7 @@ def sat_table_str_ok(sat_table_str: str) -> None:
 
     for line in sat_table_str.splitlines():
         try:
-            if not (
-                not line
-                or line.startswith("S")
-                or line.startswith("--")
-                or line.startswith("/")
-                or int(line[0]) >= 0
-            ):
+            if not (not line or line.startswith(("S", "--", "/")) or int(line[0]) >= 0):
                 assert False
 
         except ValueError as e_msg:

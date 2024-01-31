@@ -45,10 +45,8 @@ def test_pyscallist_basic():
     assert len(p_list) == 1
     assert isinstance(p_list[1], WaterOil)
     with pytest.raises(IndexError):
-        # pylint: disable=W0104
         p_list[0]
     with pytest.raises(IndexError):
-        # pylint: disable=W0104
         p_list[2]
     with pytest.raises(ValueError):
         p_list.append(GasOil())
@@ -158,7 +156,7 @@ def test_df():
     assert "SATNUM" in dframe
     assert dframe["SATNUM"].min() == 1
     assert len(dframe["SATNUM"].unique()) == len(scalrec_list)
-    assert set(dframe["CASE"]) == set(["pess", "base", "opt"])
+    assert set(dframe["CASE"]) == {"pess", "base", "opt"}
     assert dframe["SATNUM"].max() == len(scalrec_list)
     if HAVE_ECL2DF:
         # Test using ecl2df to do the include file printing. First we need to
@@ -779,7 +777,7 @@ def test_error_messages_pr_satnum():
         ],
     )
     # Perturb all entries in the dataframe:
-    for rowidx in list(range(0, 6)):
+    for rowidx in list(range(6)):
         for colidx in list(range(2, 6)):
             dframe_perturbed = dframe.copy()
             dframe_perturbed.iloc[rowidx, colidx] = np.nan

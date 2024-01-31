@@ -162,7 +162,7 @@ class WaterOil(object):
         # Ensure that we do not have sw values that are too close
         # to each other, determined rougly by the distance 1/10000
         self.table["swint"] = list(map(round, self.table["SW"] * SWINTEGERS))
-        self.table.drop_duplicates("swint", inplace=True)
+        self.table = self.table.drop_duplicates("swint")
 
         # Now, sw=1-sorw might be accidentaly dropped, so make sure we
         # have it by replacing the closest value by 1-sorw exactly
@@ -181,9 +181,9 @@ class WaterOil(object):
         if not np.isclose(self.table["SW"].max(), 1.0 - self.sgl):
             # Add it as an extra row:
             self.table.loc[len(self.table) + 1, "SW"] = 1.0 - self.sgl
-            self.table.sort_values(by="SW", inplace=True)
+            self.table = self.table.sort_values(by="SW")
 
-        self.table.reset_index(inplace=True)
+        self.table = self.table.reset_index()
         self.table = self.table[["SW"]]  # Drop the swint column
 
         # Normalize for krw:
@@ -346,7 +346,7 @@ class WaterOil(object):
                 ] = linearinterpolator(
                     self.table.loc[self.table["SW"] >= 1 - sorw, "SW"]
                 )
-            self.table["KRW"].clip(lower=0.0, upper=1.0, inplace=True)
+            self.table["KRW"] = self.table["KRW"].clip(lower=0.0, upper=1.0)
             self.sorw = sorw
             self.krwcomment = "-- krw from tabular input" + krwcomment + "\n"
             self.swcr = self.estimate_swcr()
@@ -397,7 +397,7 @@ class WaterOil(object):
                 ] = linearinterpolator(
                     self.table.loc[self.table["SW"] >= 1 - socr, "SW"]
                 )
-            self.table["KROW"].clip(lower=0.0, upper=1.0, inplace=True)
+            self.table["KROW"] = self.table["KROW"].clip(lower=0.0, upper=1.0)
             self.socr = socr
             self.krowcomment = "-- krow from tabular input" + krowcomment + "\n"
         if pccolname in dframe:
@@ -414,11 +414,13 @@ class WaterOil(object):
                     )
                 )
             dframe = dframe.replace([np.inf, -np.inf], np.nan)
-            dframe.dropna(subset=[pccolname], how="all", inplace=True)
+            dframe = dframe.dropna(subset=[pccolname], how="all")
             # If nonzero, then it must be decreasing:
-            if dframe[pccolname].abs().sum() > 0:
-                if not (dframe[pccolname].diff().dropna() < 0.0).all():
-                    raise ValueError("Incoming pc not decreasing")
+            if (
+                dframe[pccolname].abs().sum() > 0
+                and not (dframe[pccolname].diff().dropna() < 0.0).all()
+            ):
+                raise ValueError("Incoming pc not decreasing")
             pchip = PchipInterpolator(
                 dframe[swcolname].astype(float), dframe[pccolname].astype(float)
             )
@@ -548,7 +550,6 @@ class WaterOil(object):
         """
         # Similar code in gasoil.add_LET_gas, but readability is
         # better by having them separate.
-        # pylint: disable=duplicate-code
         assert epsilon < l < MAX_EXPONENT_KR
         assert epsilon < e < MAX_EXPONENT_KR
         assert epsilon < t < MAX_EXPONENT_KR
@@ -646,7 +647,6 @@ class WaterOil(object):
         drho: float = 300,
         g: float = 9.81,
     ) -> None:
-        # pylint: disable=anomalous-backslash-in-string
         r"""Add capillary pressure function from a simplified J-function
 
         This is the RMS version of the coefficients *a* and *b*, the formula
@@ -680,7 +680,7 @@ class WaterOil(object):
 
         Returns:
             None. Modifies pc column in self.table, using bar as pressure unit.
-        """  # noqa
+        """
         assert g >= 0
         assert b < MAX_EXPONENT_PC
         assert b > -MAX_EXPONENT_PC
@@ -719,7 +719,6 @@ class WaterOil(object):
         drho: float = 300,
         g: float = 9.81,
     ) -> None:
-        # pylint: disable=anomalous-backslash-in-string
         r"""Add capillary pressure function from a simplified J-function
 
         This is the *petrophysical* version of the coefficients *a* and *b*, the formula
@@ -753,7 +752,7 @@ class WaterOil(object):
 
         Returns:
             None. Modifies pc column in self.table, using bar as pressure unit.
-        """  # noqa
+        """
         assert g >= 0
         assert b < MAX_EXPONENT_PC
         assert b > -MAX_EXPONENT_PC
@@ -788,7 +787,6 @@ class WaterOil(object):
     ) -> None:
         # Don't make this a raw string to avoid the \l warning,
         # it destroys the Latex-formatting in sphinx
-        # pylint: disable=anomalous-backslash-in-string
         r"""
         Add capillary pressure in bar through a normalized J-function.
 
@@ -809,7 +807,7 @@ class WaterOil(object):
 
         Returns:
             None. Modifies pc column in self.table, using bar as pressure unit.
-        """  # noqa
+        """
         assert epsilon < abs(a) < MAX_EXPONENT_PC
         assert epsilon < abs(b) < MAX_EXPONENT_PC
         assert epsilon < poro <= 1.0
@@ -859,7 +857,6 @@ class WaterOil(object):
         swr: Optional[float] = None,
         sor: Optional[float] = None,
     ):
-        # pylint: disable=line-too-long
         """Add capillary pressure from the Skjæveland correlation,
 
         Doc: https://wiki.equinor.com/wiki/index.php/Res:The_Skjaeveland_correlation_for_capillary_pressure
@@ -874,7 +871,7 @@ class WaterOil(object):
         Modifies or adds self.table["PC"] if succesful.
         Returns false if error occured.
 
-        """  # noqa
+        """
         if cw < 0:
             raise ValueError("cw must be larger or equal to zero")
         if co > 0:
@@ -919,7 +916,7 @@ class WaterOil(object):
 
         # From 1-sor, the pc is not defined. Extrapolate constantly, and let
         # the non-monotonicity be fixed in the output generators.
-        self.table["PC"].fillna(method="ffill", inplace=True)
+        self.table["PC"] = self.table["PC"].fillna(method="ffill")
 
     def add_LET_pc_pd(
         self,
@@ -932,14 +929,13 @@ class WaterOil(object):
         Pcmax: float,
         Pct: float,
     ) -> None:
-        # pylint: disable=line-too-long
         """Add a primary drainage LET capillary pressure curve.
 
         Docs: https://wiki.equinor.com/wiki/index.php/Res:The_LET_correlation_for_capillary_pressure
 
         Note that Pc where Sw > 1 - sorw will appear linear because
         there are no saturation points in that interval.
-        """  # noqa
+        """
         assert epsilon < Lp < MAX_EXPONENT_PC
         assert epsilon < Ep < MAX_EXPONENT_PC
         assert epsilon < Tp < MAX_EXPONENT_PC
@@ -984,11 +980,10 @@ class WaterOil(object):
         Pcmin: float,
         Pct: float,
     ) -> None:
-        # pylint: disable=line-too-long
         """Add an imbition LET capillary pressure curve.
 
         Docs: https://wiki.equinor.com/wiki/index.php/Res:The_LET_correlation_for_capillary_pressure
-        """  # noqa
+        """
         assert epsilon < Ls < MAX_EXPONENT_PC
         assert epsilon < Es < MAX_EXPONENT_PC
         assert epsilon < Ts < MAX_EXPONENT_PC
@@ -1139,17 +1134,20 @@ class WaterOil(object):
                 # be the users responsibility.
                 logger.error("KROW data not level or monotonically decreasing")
                 error = True
-        if "PC" in self.table.columns and self.table["PC"][0] > -epsilon:
-            if not (self.table["PC"].diff().dropna().round(10) < epsilon).all():
-                logger.error("PC data not strictly decreasing")
-                error = True
+        if (
+            "PC" in self.table.columns
+            and self.table["PC"][0] > -epsilon
+            and not (self.table["PC"].diff().dropna().round(10) < epsilon).all()
+        ):
+            logger.error("PC data not strictly decreasing")
+            error = True
         if "PC" in self.table.columns and np.isnan(self.table["PC"]).any():
             logger.error("pc data contains NaN")
             error = True
         if "PC" in self.table.columns and np.isinf(self.table["PC"].max()):
             logger.error("pc goes to infinity. Maybe swirr=swl?")
             error = True
-        for col in list(set(["SW", "KRW", "KROW"]) & set(self.table.columns)):
+        for col in list({"SW", "KRW", "KROW"} & set(self.table.columns)):
             if not (
                 (round(min(self.table[col]), 10) >= -epsilon)
                 and (round(max(self.table[col]), 10) <= 1 + epsilon)
@@ -1345,7 +1343,6 @@ class WaterOil(object):
         If mpl_ax is supplied, the curve will be drawn on
         that, if not, a new axis (plot) will be made
         """
-        # pylint: disable=import-outside-toplevel
         # Lazy import for speed reaons.
         import matplotlib
         import matplotlib.pyplot as plt
@@ -1388,7 +1385,6 @@ class WaterOil(object):
         If the argument 'mpl_ax' is not supplied, a new plot
         window will be made. If supplied, it will draw on
         the specified axis."""
-        # pylint: disable=import-outside-toplevel
         # Lazy import for speed reaons.
         import matplotlib
         import matplotlib.pyplot as plt
