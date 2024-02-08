@@ -7,11 +7,8 @@ requires = [
 
 build-backend = "setuptools.build_meta"
 
-[tool.setuptools]
-packages = ["pyscal"]
-
 [tool.setuptools_scm]
-write_to = "pyscal/version.py"
+write_to = "src/pyscal/version.py"
 
 [project]
 name = "pyscal"
@@ -79,7 +76,7 @@ pyscal = "pyscal.pyscalcli:main"
 
 
 [tool.ruff]
-select=[
+lint.select=[
     "E",
     "F",
     "I",
@@ -96,7 +93,7 @@ select=[
 
 line-length = 88
 
-ignore = ["E741"]
+lint.ignore = ["E741"]
 
 [[tool.mypy.overrides]]
 module = ["numpy.*", "pyscal.version", "pandas.*", "matplotlib.*", "scipy.*", "xlrd.*", "openpyxl.*"

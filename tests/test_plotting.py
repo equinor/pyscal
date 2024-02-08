@@ -4,7 +4,6 @@ from pathlib import Path
 
 import matplotlib.pyplot as plt
 import pytest
-
 from pyscal import GasOil, GasWater, PyscalList, WaterOil, WaterOilGas, plotting
 
 

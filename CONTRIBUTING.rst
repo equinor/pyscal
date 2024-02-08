@@ -55,7 +55,7 @@ Now you can make your changes locally.
   
         ruff check .
         ruff format .
-        mypy ./pyscal
+        mypy src/pyscal
         pytest -n auto
   
 8. Commit your changes and push your branch to GitHub:
