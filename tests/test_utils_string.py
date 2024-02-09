@@ -1,7 +1,6 @@
 """Test module for pyscal.utils"""
 
 import pandas as pd
-
 from pyscal.utils.string import comment_formatter, df2str
 
 

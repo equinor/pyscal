@@ -9,7 +9,6 @@ import numpy as np
 import pandas as pd
 import pytest
 from hypothesis import given
-
 from pyscal import WaterOil
 from pyscal.constants import SWINTEGERS
 from pyscal.utils.testing import (

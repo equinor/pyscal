@@ -5,7 +5,6 @@ import hypothesis.strategies as st
 import numpy as np
 import pytest
 from hypothesis import given
-
 from pyscal.constants import EPSILON
 from pyscal.utils import capillarypressure
 

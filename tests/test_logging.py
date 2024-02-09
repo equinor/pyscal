@@ -2,9 +2,8 @@ import subprocess
 import sys
 from pathlib import Path
 
-import pytest
-
 import pyscal
+import pytest
 from pyscal import pyscalcli
 
 
