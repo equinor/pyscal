@@ -4,15 +4,16 @@ import logging
 import sys
 from typing import Dict, List, Union
 
+import numpy as np
+import pandas as pd
+
+from pyscal.constants import EPSILON as epsilon
+
 if sys.version_info >= (3, 8):
     from typing import TypedDict
 else:
     from typing_extensions import TypedDict
 
-import numpy as np
-import pandas as pd
-
-from pyscal.constants import EPSILON as epsilon
 
 logger = logging.getLogger(__name__)
 

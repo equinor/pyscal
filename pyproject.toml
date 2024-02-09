@@ -56,6 +56,7 @@ tests = [
     "pytest-mock",
     "pytest-xdist",
     "rstcheck",
+    "pylint",
 ]
 
 docs = [
@@ -117,3 +118,7 @@ markers = [
 
 [tool.rstcheck]
 ignore_directives = ["argparse", "automodule"]
+
+[tool.pylint]
+disable = "missing-module-docstring"
+

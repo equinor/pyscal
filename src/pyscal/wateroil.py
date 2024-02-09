@@ -99,8 +99,9 @@ class WaterOil(object):
 
         if swirr < 0:
             logger.warning(
-                f"Negative swirr value, {swirr}, detected. Negative values are allowed,"
-                " but you should ensure that this is intentional."
+                "Negative swirr value, %f, detected. Negative values are allowed,"
+                " but you should ensure that this is intentional.",
+                swirr,
             )
 
         self.swcomment: str = ""

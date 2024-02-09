@@ -527,7 +527,7 @@ def plotter(
         elif isinstance(model, GasWater):
             gw_plotter(model, **kwargs)
         else:
-            raise Exception(
+            raise TypeError(
                 f"Model type received was {type(model)} but\
          must be one of: {WaterOil, WaterOilGas, GasOil, GasWater}"
             )

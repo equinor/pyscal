@@ -338,13 +338,13 @@ class PyscalList(object):
                 "Can only interpolate PyscalList of type SCALrecommendation"
             )
         if isinstance(int_params_wo, (float, int)):
-            int_params_wo = [int_params_wo] * self.__len__()
+            int_params_wo = [int_params_wo] * len(self)
         elif isinstance(int_params_wo, list) and len(int_params_wo) == 1:
-            int_params_wo = int_params_wo * self.__len__()
+            int_params_wo = int_params_wo * len(self)
         if int_params_go is None or isinstance(int_params_go, (float, int)):
             int_params_go = [int_params_go] * len(self)
         elif isinstance(int_params_go, list) and len(int_params_go) == 1:
-            int_params_go = int_params_go * self.__len__()
+            int_params_go = int_params_go * len(self)
 
         if 1 < len(int_params_wo) < len(self):
             raise ValueError(

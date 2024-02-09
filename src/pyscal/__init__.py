@@ -15,6 +15,7 @@ except ImportError:
 def getLogger_pyscal(
     module_name: str = "pyscal", args_dict: Optional[Dict[str, Union[str, bool]]] = None
 ) -> logging.Logger:
+    # pylint: disable=invalid-name
     """Provide a custom logger for pyscal
     Logging output is by default split by logging levels (split between WARNING and
     ERROR) to stdout and stderr, each log occurs in only one of the streams.
