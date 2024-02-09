@@ -24,7 +24,7 @@ def is_documented_by(original):
     return wrapper
 
 
-class GasWater(object):
+class GasWater:
     """A representation of two-phase properties for gas-water
 
     Internally, this class handles gas-water by using one WaterOil

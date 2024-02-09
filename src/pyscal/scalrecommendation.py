@@ -11,7 +11,7 @@ from pyscal.utils.interpolation import interpolate_go, interpolate_wo
 logger = getLogger_pyscal(__name__)
 
 
-class SCALrecommendation(object):
+class SCALrecommendation:
     """A SCAL recommendation consists of three OilWaterGas objects,
     tagged low, base and high.
 

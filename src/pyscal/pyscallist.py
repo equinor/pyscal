@@ -24,7 +24,7 @@ logger = getLogger_pyscal(__name__)
 warnings.filterwarnings("default", category=DeprecationWarning, module="pyscal")
 
 
-class PyscalList(object):
+class PyscalList:
     """Container class for a list of WaterOilGas objects.
 
     Essentially this is a list of objects of equal type, and all

@@ -15,7 +15,7 @@ from pyscal.utils.string import comment_formatter, df2str
 logger = pyscal.getLogger_pyscal(__name__)
 
 
-class GasOil(object):
+class GasOil:
     """Object to represent two-phase properties for gas and oil.
 
     Parametrizations available for relative permeability:
@@ -80,9 +80,8 @@ class GasOil(object):
 
         if swirr < 0:
             logger.warning(
-                "Negative swirr value, %f, detected. Negative values are allowed,"
-                " but you should ensure that this is intentional.",
-                swirr,
+                f"Negative swirr value, {swirr}, detected. Negative values are allowed,"
+                " but you should ensure that this is intentional."
             )
 
         if krgendanchor is None:

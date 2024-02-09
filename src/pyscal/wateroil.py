@@ -17,7 +17,7 @@ from pyscal.utils.string import comment_formatter, df2str
 logger = pyscal.getLogger_pyscal(__name__)
 
 
-class WaterOil(object):
+class WaterOil:
     """A representation of two-phase properties for oil-water.
 
     Can hold relative permeability data, and capillary pressure.

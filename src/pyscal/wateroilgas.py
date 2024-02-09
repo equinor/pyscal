@@ -15,7 +15,7 @@ from .wateroil import WaterOil
 logger = pyscal.getLogger_pyscal(__name__)
 
 
-class WaterOilGas(object):
+class WaterOilGas:
 
     """A representation of three-phase properties for oil-water-gas
 
