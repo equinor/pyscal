@@ -57,7 +57,20 @@ Now you can make your changes locally.
         ruff format .
         mypy src/pyscal
         pytest -n auto
+
+In addition, it is recommended to use pylint to improve code quality
+
+   .. code-block:: bash
+
+        pylint src
+
+Deviations from default (strict) pylint are stored in ``.pylintrc`` at root level,
+or as comments in the file e.g. ``# pylint: disable=broad-except``.
   
+Only use deviations when e.g. ruff and pylint are in conflict, or if conformity with
+pylint would clearly make the code worse or not work at all. Do not use it to
+increase pylint score.
+
 8. Commit your changes and push your branch to GitHub:
 
   .. code-block:: bash

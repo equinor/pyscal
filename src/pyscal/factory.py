@@ -128,7 +128,7 @@ GW_LET_PC_IMB = [
 WOG_INIT = ["swirr", "swl", "swcr", "sorw", "socr", "sorg", "sgcr", "h", "tag"]
 
 
-class PyscalFactory(object):
+class PyscalFactory:
     """Class for implementing the factory pattern for Pyscal objects
 
     The factory functions herein can take multiple parameter sets,
