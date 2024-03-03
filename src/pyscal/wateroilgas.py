@@ -16,7 +16,6 @@ logger = pyscal.getLogger_pyscal(__name__)
 
 
 class WaterOilGas:
-
     """A representation of three-phase properties for oil-water-gas
 
     Use one object for each satnum.

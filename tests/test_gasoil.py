@@ -1,4 +1,5 @@
 """Test module for GasOil objects"""
+
 import io
 import sys
 
