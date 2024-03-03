@@ -404,9 +404,9 @@ class GasOil:
                 self.table["SG"] >= (1 - (self.sorg + self.swl + epsilon)), "KRG"
             ] = tmp.loc[tmp["SG"] >= (1 - (self.sorg + self.swl + epsilon)), "KRG"]
         else:
-            self.table.loc[
-                self.table["SG"] > (1 - (self.swl + epsilon)), "KRG"
-            ] = krgend
+            self.table.loc[self.table["SG"] > (1 - (self.swl + epsilon)), "KRG"] = (
+                krgend
+            )
             if krgmax and krgmax < 1.0 and self.sorg > 0:
                 # Only warn if something else than default is in use
                 logger.warning("krgmax ignored when not anchoring to sorg")

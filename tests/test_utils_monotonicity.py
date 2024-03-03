@@ -1,4 +1,5 @@
 """Test module for monotonicity support functions in pyscal"""
+
 import os
 
 import numpy as np
