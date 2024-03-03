@@ -1,4 +1,5 @@
 """Example code for benchmarking of the "fast" feature"""
+
 import timeit
 
 from pyscal import WaterOilGas

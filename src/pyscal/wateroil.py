@@ -342,10 +342,10 @@ class WaterOil:
                     dframe[linearpart][swcolname].astype(float),
                     dframe[linearpart][krwcolname].astype(float),
                 )
-                self.table.loc[
-                    self.table["SW"] >= 1 - sorw, "KRW"
-                ] = linearinterpolator(
-                    self.table.loc[self.table["SW"] >= 1 - sorw, "SW"]
+                self.table.loc[self.table["SW"] >= 1 - sorw, "KRW"] = (
+                    linearinterpolator(
+                        self.table.loc[self.table["SW"] >= 1 - sorw, "SW"]
+                    )
                 )
             self.table["KRW"] = self.table["KRW"].clip(lower=0.0, upper=1.0)
             self.sorw = sorw
@@ -393,10 +393,10 @@ class WaterOil:
                     dframe.loc[linearpart, swcolname].astype(float),
                     dframe.loc[linearpart, krowcolname].astype(float),
                 )
-                self.table.loc[
-                    self.table["SW"] >= 1 - socr, "KROW"
-                ] = linearinterpolator(
-                    self.table.loc[self.table["SW"] >= 1 - socr, "SW"]
+                self.table.loc[self.table["SW"] >= 1 - socr, "KROW"] = (
+                    linearinterpolator(
+                        self.table.loc[self.table["SW"] >= 1 - socr, "SW"]
+                    )
                 )
             self.table["KROW"] = self.table["KROW"].clip(lower=0.0, upper=1.0)
             self.socr = socr

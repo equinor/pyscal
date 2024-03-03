@@ -1,4 +1,5 @@
 """Test the PyscalFactory module"""
+
 import os
 from pathlib import Path
 
