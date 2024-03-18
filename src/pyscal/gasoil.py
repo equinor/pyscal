@@ -293,8 +293,8 @@ class GasOil:
             )
             # Do not extrapolate this data. We will bfill and ffill afterwards
             self.table["KRG"] = pchip(self.table["SG"], extrapolate=False)
-            self.table["KRG"] = self.table["KRG"].fillna(method="ffill")
-            self.table["KRG"] = self.table["KRG"].fillna(method="bfill")
+            self.table["KRG"] = self.table["KRG"].ffill()
+            self.table["KRG"] = self.table["KRG"].bfill()
             self.table["KRG"] = self.table["KRG"].clip(lower=0.0, upper=1.0)
             self.krgcomment = "-- krg from tabular input" + krgcomment + "\n"
             self.sgcr = self.estimate_sgcr()
@@ -309,8 +309,8 @@ class GasOil:
                 dframe[sgcolname].astype(float), dframe[krogcolname].astype(float)
             )
             self.table["KROG"] = pchip(self.table["SG"], extrapolate=False)
-            self.table["KROG"] = self.table["KROG"].fillna(method="ffill")
-            self.table["KROG"] = self.table["KROG"].fillna(method="bfill")
+            self.table["KROG"] = self.table["KROG"].ffill()
+            self.table["KROG"] = self.table["KROG"].bfill()
             self.table["KROG"] = self.table["KROG"].clip(lower=0.0, upper=1.0)
             self.krogcomment = "-- krog from tabular input" + krogcomment + "\n"
             self.sorg = self.estimate_sorg()
