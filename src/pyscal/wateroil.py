@@ -917,7 +917,7 @@ class WaterOil:
 
         # From 1-sor, the pc is not defined. Extrapolate constantly, and let
         # the non-monotonicity be fixed in the output generators.
-        self.table["PC"] = self.table["PC"].fillna(method="ffill")
+        self.table["PC"] = self.table["PC"].ffill()
 
     def add_LET_pc_pd(
         self,
