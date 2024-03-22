@@ -962,7 +962,7 @@ class WaterOil:
         )
 
         # The gradual rise part:
-        self.table["Ftpcow"] = (1-Ftp)*Pct*self.table["SWNPC"] ** Lt / (
+        self.table["Ftpcow"] = (1-Ftp)*self.table["SWNPC"] ** Lt / (
             self.table["SWNPC"] ** Lt + Et * (1 - self.table["SWNPC"]) ** Tt
         )
         
