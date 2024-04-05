@@ -1,23 +1,23 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Contributing to pyscal &mdash; pyscal 0.11.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+  <title>Contributing to pyscal &mdash; pyscal 0.12 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
   
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/jquery.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=3f949d3d"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -38,7 +38,7 @@
               <img src="_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.11.0
+                0.12
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -56,7 +56,7 @@
 <li class="toctree-l1"><a class="reference internal" href="history.html">History</a></li>
 <li class="toctree-l1"><a class="reference internal" href="history.html#release-notes">Release notes</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Contributing to pyscal</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#code-style">Code style</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#create-pull-request">Create pull request</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#building-documentation">Building documentation</a></li>
 </ul>
 </li>
@@ -91,52 +91,105 @@
            <div itemprop="articleBody">
              
   <section id="contributing-to-pyscal">
-<h1>Contributing to pyscal<a class="headerlink" href="#contributing-to-pyscal" title="Permalink to this heading"></a></h1>
+<h1>Contributing to pyscal<a class="headerlink" href="#contributing-to-pyscal" title="Link to this heading"></a></h1>
 <ul class="simple">
 <li><p>The code is hosted on <a class="reference external" href="https://github.com/equinor/pyscal">https://github.com/equinor/pyscal</a></p></li>
 <li><p>Submit bugs on github</p></li>
 <li><p>Pull requests are welcome!</p></li>
 </ul>
-<section id="code-style">
-<h2>Code style<a class="headerlink" href="#code-style" title="Permalink to this heading"></a></h2>
-<ul class="simple">
-<li><p>Use the black formatter to format your code</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">black</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">black</span> <span class="pre">&lt;modulename.py&gt;</span></code> – must be done prior to any pull request.</p></li>
-</ul>
-</li>
-<li><p>Use flake8 code checker</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">flake8</span></code></p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">flake8</span> <span class="pre">src</span> <span class="pre">tests</span></code> must pass before any pull request is accepted</p></li>
-<li><p>Exceptions are listed in <code class="docutils literal notranslate"><span class="pre">setup.cfg</span></code></p></li>
-</ul>
-</li>
-<li><p>Use pylint to improve coding</p>
-<ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">pylint</span></code></p></li>
-<li><p>Then run <code class="docutils literal notranslate"><span class="pre">pylint</span> <span class="pre">pyscal</span></code></p></li>
-<li><p>Deviations from default (strict) pylint are stored in <code class="docutils literal notranslate"><span class="pre">.pylintrc</span></code> at root level,
-or as comments in the file e.g. <code class="docutils literal notranslate"><span class="pre">#</span> <span class="pre">pylint:</span> <span class="pre">disable=broad-except</span></code>.</p></li>
-<li><p>Only use deviations when e.g. black and pylint are in conflict, or if conformity with
+<section id="create-pull-request">
+<h2>Create pull request<a class="headerlink" href="#create-pull-request" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Fork the pyscal repository from the Equinor repository to your GitHub
+user account.</p></li>
+<li><p>Clone your fork locally:</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>git@github.com:your_name_here/pyscal
+<span class="nb">cd</span><span class="w"> </span>pyscal
+git<span class="w"> </span>remote<span class="w"> </span>add<span class="w"> </span>upstream<span class="w"> </span>git@github.com:equinor/pyscal
+git<span class="w"> </span>remote<span class="w"> </span>-v
+<span class="c1"># origin        git@github.com:your_name_here/pyscal (fetch)</span>
+<span class="c1"># origin        git@github.com:your_name_here/pyscal (push)</span>
+<span class="c1"># upstream      git@github.com:equinor/pyscal (fetch)</span>
+<span class="c1"># upstream      git@github.com:equinor/pyscal (push)</span>
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="4">
+<li><p>Install your forked copy into a local venv:</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>~/venv/pyscal
+<span class="nb">source</span><span class="w"> </span>~/venv/pyscal/bin/activate
+pip<span class="w"> </span>install<span class="w"> </span>-U<span class="w"> </span>pip
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[tests,docs]&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="5">
+<li><p>Run the tests to ensure everything works:</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytest<span class="w"> </span>-n<span class="w"> </span>auto
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="6">
+<li><p>Create a branch for local development:</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>checkout<span class="w"> </span>-b<span class="w"> </span>name-of-your-bugfix-or-feature
+</pre></div>
+</div>
+</div></blockquote>
+<p>Now you can make your changes locally.</p>
+<ol class="arabic simple" start="7">
+<li><p>When you’re done making changes, check that your changes pass ruff, mypy and the
+tests:</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ruff<span class="w"> </span>check<span class="w"> </span>.
+ruff<span class="w"> </span>format<span class="w"> </span>.
+mypy<span class="w"> </span>src/pyscal
+pytest<span class="w"> </span>-n<span class="w"> </span>auto
+</pre></div>
+</div>
+</div></blockquote>
+<p>In addition, it is recommended to use pylint to improve code quality</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pylint<span class="w"> </span>src
+</pre></div>
+</div>
+</div></blockquote>
+<p>Deviations from default (strict) pylint are stored in <code class="docutils literal notranslate"><span class="pre">.pylintrc</span></code> at root level,
+or as comments in the file e.g. <code class="docutils literal notranslate"><span class="pre">#</span> <span class="pre">pylint:</span> <span class="pre">disable=broad-except</span></code>.</p>
+<p>Only use deviations when e.g. ruff and pylint are in conflict, or if conformity with
 pylint would clearly make the code worse or not work at all. Do not use it to
-increase pylint score.</p></li>
-</ul>
-</li>
-<li><p>All code must be throroughly tested with <code class="docutils literal notranslate"><span class="pre">pytest</span></code>.</p></li>
-</ul>
+increase pylint score.</p>
+<ol class="arabic simple" start="8">
+<li><p>Commit your changes and push your branch to GitHub:</p></li>
+</ol>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>add<span class="w"> </span>file1.py<span class="w"> </span>file2.py
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Add some feature&quot;</span>
+git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>name-of-your-bugfix-or-feature
+</pre></div>
+</div>
+</div></blockquote>
+<ol class="arabic simple" start="9">
+<li><p>Submit a pull request through GitHub.</p></li>
+</ol>
 </section>
 <section id="building-documentation">
-<h2>Building documentation<a class="headerlink" href="#building-documentation" title="Permalink to this heading"></a></h2>
-<p>Install the development requirements:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">.</span><span class="p">[</span><span class="n">tests</span><span class="p">]</span>
+<h2>Building documentation<a class="headerlink" href="#building-documentation" title="Link to this heading"></a></h2>
+<p>To build the documentation for pyscal run the following command:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>docs/make_plots.py
+sphinx-build<span class="w"> </span>-b<span class="w"> </span>html<span class="w"> </span>docs<span class="w"> </span>./build/sphinx/html
 </pre></div>
 </div>
-<p>Then, to build the documentation for pyscal run the following command:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">build_sphinx</span>
-</pre></div>
-</div>
+</div></blockquote>
 <p>And now you can find the start page of the documentation in the
 build folder: <code class="docutils literal notranslate"><span class="pre">build/sphinx/html/index.html</span></code>.</p>
 </section>

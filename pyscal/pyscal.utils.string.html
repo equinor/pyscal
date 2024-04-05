@@ -1,23 +1,23 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.utils.string &mdash; pyscal 0.11.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+  <title>pyscal.utils.string &mdash; pyscal 0.12 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
 
   
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/doctools.js"></script>
-        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=3f949d3d"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -38,7 +38,7 @@
               <img src="../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.11.0
+                0.12
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -110,17 +110,17 @@
            <div itemprop="articleBody">
              
   <section id="module-pyscal.utils.string">
-<span id="pyscal-utils-string"></span><h1><code class="docutils literal notranslate"><span class="pre">pyscal.utils.string</span></code><a class="headerlink" href="#module-pyscal.utils.string" title="Permalink to this heading"></a></h1>
+<span id="pyscal-utils-string"></span><h1><code class="docutils literal notranslate"><span class="pre">pyscal.utils.string</span></code><a class="headerlink" href="#module-pyscal.utils.string" title="Link to this heading"></a></h1>
 <p>Utility functions for creating strings from pyscal</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="pyscal.utils.string.comment_formatter">
-<span class="sig-prename descclassname"><span class="pre">pyscal.utils.string.</span></span><span class="sig-name descname"><span class="pre">comment_formatter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">multiline</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'--</span> <span class="pre">'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/string.html#comment_formatter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.string.comment_formatter" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyscal.utils.string.</span></span><span class="sig-name descname"><span class="pre">comment_formatter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">multiline</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'--</span> <span class="pre">'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/string.html#comment_formatter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.string.comment_formatter" title="Link to this definition"></a></dt>
 <dd><p>Prepends comment characters to every line in input</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>multiline</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – String that can contain newlines</p></li>
-<li><p><strong>prefix</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Comment characters to prepend every line with
+<li><p><strong>multiline</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – String that can contain newlines</p></li>
+<li><p><strong>prefix</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Comment characters to prepend every line with
 Default is the Eclipse comment syntax ‘– ‘</p></li>
 </ul>
 </dd>
@@ -133,7 +133,7 @@ starts with the given prefix. Always ends with a newline.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyscal.utils.string.df2str">
-<span class="sig-prename descclassname"><span class="pre">pyscal.utils.string.</span></span><span class="sig-name descname"><span class="pre">df2str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dframe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">digits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roundlevel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monotonicity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/string.html#df2str"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.string.df2str" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyscal.utils.string.</span></span><span class="sig-name descname"><span class="pre">df2str</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dframe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">digits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">7</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">roundlevel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">header</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">monotonicity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/string.html#df2str"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.string.df2str" title="Link to this definition"></a></dt>
 <dd><p>Make a string representation of a dataframe with
 proper rounding.</p>
 <p>This is used to print the tables in the SWOF/SGOF include files,
@@ -145,21 +145,21 @@ ensured to be strictly monotone decreasing</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dframe</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code>) – A dataframe to print, all columns
+<li><p><strong>dframe</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></span>) – A dataframe to print, all columns
 are included</p></li>
-<li><p><strong>digits</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – Number of digits used in floating point format f.ex “.7f”
+<li><p><strong>digits</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – Number of digits used in floating point format f.ex “.7f”
 It is not recommended to deviate from the default 7 uncritically
 for pyscal output, other code have to be tuned to ensure
 numerical robustness to the deviation.</p></li>
-<li><p><strong>roundlevel</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – To how many digits should we round prior to print.
+<li><p><strong>roundlevel</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – To how many digits should we round prior to print.
 Recommended to be &gt; digits + 1, see test code.</p></li>
-<li><p><strong>header</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – If the dataframe column header should be included</p></li>
-<li><p><strong>monotonicity</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <a class="reference internal" href="pyscal.utils.monotonicity.html#pyscal.utils.monotonicity.MonotonicitySpec" title="pyscal.utils.monotonicity.MonotonicitySpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">MonotonicitySpec</span></code></a>]]) – Column names in dframe are the keys, pointing
+<li><p><strong>header</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If the dataframe column header should be included</p></li>
+<li><p><strong>monotonicity</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <a class="reference internal" href="pyscal.utils.monotonicity.html#pyscal.utils.monotonicity.MonotonicitySpec" title="pyscal.utils.monotonicity.MonotonicitySpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">MonotonicitySpec</span></code></a>]]</span>) – Column names in dframe are the keys, pointing
 to a specification for monotonicity to be enforced.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
 </dd>
 </dl>
 </dd></dl>

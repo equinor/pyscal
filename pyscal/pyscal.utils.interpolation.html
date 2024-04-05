@@ -1,23 +1,23 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.utils.interpolation &mdash; pyscal 0.11.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+  <title>pyscal.utils.interpolation &mdash; pyscal 0.12 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
 
   
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/doctools.js"></script>
-        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=3f949d3d"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -38,7 +38,7 @@
               <img src="../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.11.0
+                0.12
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -110,11 +110,11 @@
            <div itemprop="articleBody">
              
   <section id="module-pyscal.utils.interpolation">
-<span id="pyscal-utils-interpolation"></span><h1><code class="docutils literal notranslate"><span class="pre">pyscal.utils.interpolation</span></code><a class="headerlink" href="#module-pyscal.utils.interpolation" title="Permalink to this heading"></a></h1>
+<span id="pyscal-utils-interpolation"></span><h1><code class="docutils literal notranslate"><span class="pre">pyscal.utils.interpolation</span></code><a class="headerlink" href="#module-pyscal.utils.interpolation" title="Link to this heading"></a></h1>
 <p>Utility function for pyscal</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="pyscal.utils.interpolation.interpolate_go">
-<span class="sig-prename descclassname"><span class="pre">pyscal.utils.interpolation.</span></span><span class="sig-name descname"><span class="pre">interpolate_go</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">go_low</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">go_high</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/interpolation.html#interpolate_go"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.interpolation.interpolate_go" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyscal.utils.interpolation.</span></span><span class="sig-name descname"><span class="pre">interpolate_go</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">go_low</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">go_high</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/interpolation.html#interpolate_go"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.interpolation.interpolate_go" title="Link to this definition"></a></dt>
 <dd><p>Interpolates between two gas-oil curves.</p>
 <p>The saturation endpoints for the curves must be known
 by the objects. They can be estimated by estimate_sorg() etc.
@@ -125,25 +125,25 @@ interpolated individually.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>go_low</strong> (<a class="reference internal" href="pyscal.gasoil.html#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasOil</span></code></a>) – a “low” case</p></li>
-<li><p><strong>go_high</strong> (<a class="reference internal" href="pyscal.gasoil.html#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasOil</span></code></a>) – a “high” case</p></li>
-<li><p><strong>parameter</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Between 0 and 1. 0 will return the low case, 1 will return
+<li><p><strong>go_low</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="pyscal.gasoil.html#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasOil</span></code></a></span>) – a “low” case</p></li>
+<li><p><strong>go_high</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="pyscal.gasoil.html#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasOil</span></code></a></span>) – a “high” case</p></li>
+<li><p><strong>parameter</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Between 0 and 1. 0 will return the low case, 1 will return
 the high case. Any number in between will return an interpolated curve</p></li>
-<li><p><strong>h</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Saturation step-size in interpolant. If defaulted, a value
+<li><p><strong>h</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span>) – Saturation step-size in interpolant. If defaulted, a value
 smaller than in the input curves are used, to preserve information.</p></li>
-<li><p><strong>tag</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Tag to associate to the constructed object. If None
+<li><p><strong>tag</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – Tag to associate to the constructed object. If None
 it will be automatically filled. Set to empty string to ensure no tag.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="pyscal.gasoil.html#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasOil</span></code></a></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="pyscal.gasoil.html#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasOil</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyscal.utils.interpolation.interpolate_wo">
-<span class="sig-prename descclassname"><span class="pre">pyscal.utils.interpolation.</span></span><span class="sig-name descname"><span class="pre">interpolate_wo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wo_low</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wo_high</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/interpolation.html#interpolate_wo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.interpolation.interpolate_wo" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyscal.utils.interpolation.</span></span><span class="sig-name descname"><span class="pre">interpolate_wo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wo_low</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">wo_high</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parameter</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/interpolation.html#interpolate_wo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.interpolation.interpolate_wo" title="Link to this definition"></a></dt>
 <dd><p>Interpolates between two water-oil curves.</p>
 <p>The saturation endpoints for the curves must be known
 by the objects. They can be estimated by estimate_sorw() etc.
@@ -154,25 +154,25 @@ interpolated individually.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>wo_low</strong> (<a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">WaterOil</span></code></a>) – a “low” case</p></li>
-<li><p><strong>wo_high</strong> (<a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">WaterOil</span></code></a>) – a “high” case</p></li>
-<li><p><strong>parameter</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Between 0 and 1. 0 will return the low case, 1 will return
+<li><p><strong>wo_low</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">WaterOil</span></code></a></span>) – a “low” case</p></li>
+<li><p><strong>wo_high</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">WaterOil</span></code></a></span>) – a “high” case</p></li>
+<li><p><strong>parameter</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Between 0 and 1. 0 will return the low case, 1 will return
 the high case. Any number in between will return an interpolated curve</p></li>
-<li><p><strong>h</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Saturation step-size in interpolant. If defaulted, a value
+<li><p><strong>h</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span>) – Saturation step-size in interpolant. If defaulted, a value
 smaller than in the input curves are used, to preserve information.</p></li>
-<li><p><strong>tag</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Tag to associate to the constructed object. If None
+<li><p><strong>tag</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – Tag to associate to the constructed object. If None
 it will be automatically filled. Set to empty string to ensure no tag.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">WaterOil</span></code></a></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">WaterOil</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyscal.utils.interpolation.normalize_nonlinpart_go">
-<span class="sig-prename descclassname"><span class="pre">pyscal.utils.interpolation.</span></span><span class="sig-name descname"><span class="pre">normalize_nonlinpart_go</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">curve</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/interpolation.html#normalize_nonlinpart_go"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.interpolation.normalize_nonlinpart_go" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyscal.utils.interpolation.</span></span><span class="sig-name descname"><span class="pre">normalize_nonlinpart_go</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">curve</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/interpolation.html#normalize_nonlinpart_go"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.interpolation.normalize_nonlinpart_go" title="Link to this definition"></a></dt>
 <dd><p>Make krg and krog functions that evaluates only on the
 (potentially) nonlinear part of the relperm curves, and with
 a normalized argument (0,1) on that interval.</p>
@@ -188,10 +188,10 @@ can determine them using functions ‘estimate_sorg()’, ‘estimate_sgcr()’ 
 this function only deals with the presumably known endpoints.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>curve</strong> (<a class="reference internal" href="pyscal.gasoil.html#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasOil</span></code></a>) – incoming gasoil curve set (krg and krog)</p>
+<dd class="field-odd"><p><strong>curve</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="pyscal.gasoil.html#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasOil</span></code></a></span>) – incoming gasoil curve set (krg and krog)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>]</p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>]</span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>tuple of functions. The first will evaluate krg on
@@ -203,7 +203,7 @@ evaluate krog on the normalized So interval [0,1].</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyscal.utils.interpolation.normalize_nonlinpart_wo">
-<span class="sig-prename descclassname"><span class="pre">pyscal.utils.interpolation.</span></span><span class="sig-name descname"><span class="pre">normalize_nonlinpart_wo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">curve</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/interpolation.html#normalize_nonlinpart_wo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.interpolation.normalize_nonlinpart_wo" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyscal.utils.interpolation.</span></span><span class="sig-name descname"><span class="pre">normalize_nonlinpart_wo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">curve</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/interpolation.html#normalize_nonlinpart_wo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.interpolation.normalize_nonlinpart_wo" title="Link to this definition"></a></dt>
 <dd><p>Make krw and krow functions that evaluate only on the
 (potentially) nonlinear part of the relperm curves, and with
 a normalized argument (0,1) on that interval.</p>
@@ -219,10 +219,10 @@ estimate_socr()</p>
 this function only deals with the presumably known endpoints.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>curve</strong> (<a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">WaterOil</span></code></a>) – incoming oilwater curve set (krw and krow)</p>
+<dd class="field-odd"><p><strong>curve</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">WaterOil</span></code></a></span>) – incoming oilwater curve set (krw and krow)</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>]</p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>]</span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>tuple of lambda functions. The first will evaluate krw on
@@ -234,7 +234,7 @@ evaluate krow on the normalized So interval [0,1].</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyscal.utils.interpolation.normalize_pc">
-<span class="sig-prename descclassname"><span class="pre">pyscal.utils.interpolation.</span></span><span class="sig-name descname"><span class="pre">normalize_pc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">curve</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/interpolation.html#normalize_pc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.interpolation.normalize_pc" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyscal.utils.interpolation.</span></span><span class="sig-name descname"><span class="pre">normalize_pc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">curve</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/interpolation.html#normalize_pc"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.interpolation.normalize_pc" title="Link to this definition"></a></dt>
 <dd><p>Normalize the capillary pressure curve.</p>
 <p>This is only normalized with respect to the
 smallest and largest saturation present in the table,
@@ -244,10 +244,10 @@ to make assumptions on the equations used to generate
 the data in the table.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>curve</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">WaterOil</span></code></a>, <a class="reference internal" href="pyscal.gasoil.html#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasOil</span></code></a>]) – An object with a table with a pc column</p>
+<dd class="field-odd"><p><strong>curve</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">WaterOil</span></code></a>, <a class="reference internal" href="pyscal.gasoil.html#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasOil</span></code></a>]</span>) – An object with a table with a pc column</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code></span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>a lambda function that will evaluate pc on

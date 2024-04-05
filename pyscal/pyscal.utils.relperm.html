@@ -1,23 +1,23 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.utils.relperm &mdash; pyscal 0.11.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+  <title>pyscal.utils.relperm &mdash; pyscal 0.12 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
 
   
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/doctools.js"></script>
-        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=3f949d3d"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -38,7 +38,7 @@
               <img src="../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.11.0
+                0.12
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -110,23 +110,23 @@
            <div itemprop="articleBody">
              
   <section id="module-pyscal.utils.relperm">
-<span id="pyscal-utils-relperm"></span><h1><code class="docutils literal notranslate"><span class="pre">pyscal.utils.relperm</span></code><a class="headerlink" href="#module-pyscal.utils.relperm" title="Permalink to this heading"></a></h1>
+<span id="pyscal-utils-relperm"></span><h1><code class="docutils literal notranslate"><span class="pre">pyscal.utils.relperm</span></code><a class="headerlink" href="#module-pyscal.utils.relperm" title="Link to this heading"></a></h1>
 <p>Utility functions for computations on relative permeability curves</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="pyscal.utils.relperm.crosspoint">
-<span class="sig-prename descclassname"><span class="pre">pyscal.utils.relperm.</span></span><span class="sig-name descname"><span class="pre">crosspoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dframe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">satcol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kr1col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kr2col</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/relperm.html#crosspoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.relperm.crosspoint" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyscal.utils.relperm.</span></span><span class="sig-name descname"><span class="pre">crosspoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dframe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">satcol</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kr1col</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">kr2col</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/relperm.html#crosspoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.relperm.crosspoint" title="Link to this definition"></a></dt>
 <dd><p>Locate the saturation value (crosspoint) where kr1col == kr2col</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dframe</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code>) – Dataframe with at least three columns</p></li>
-<li><p><strong>satcol</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Column name for the saturation column</p></li>
-<li><p><strong>kr1col</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Column name for first relperm column</p></li>
-<li><p><strong>kr2col</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Column name for second column</p></li>
+<li><p><strong>dframe</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></span>) – Dataframe with at least three columns</p></li>
+<li><p><strong>satcol</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Column name for the saturation column</p></li>
+<li><p><strong>kr1col</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Column name for first relperm column</p></li>
+<li><p><strong>kr2col</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Column name for second column</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The saturation value (interpolated) where kr1col == kr2col, when krXcol
@@ -138,7 +138,7 @@ of errors, the function will return the value -1</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyscal.utils.relperm.estimate_diffjumppoint">
-<span class="sig-prename descclassname"><span class="pre">pyscal.utils.relperm.</span></span><span class="sig-name descname"><span class="pre">estimate_diffjumppoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xcol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ycol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">side</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'right'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/relperm.html#estimate_diffjumppoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.relperm.estimate_diffjumppoint" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyscal.utils.relperm.</span></span><span class="sig-name descname"><span class="pre">estimate_diffjumppoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xcol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ycol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">side</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'right'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/relperm.html#estimate_diffjumppoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.relperm.estimate_diffjumppoint" title="Link to this definition"></a></dt>
 <dd><p>Estimate the point where the y-data jumps from being linear
 in x to being nonlinear, or where it shift from one linear domain
 to another (for a piecewise linear function)</p>
@@ -148,18 +148,18 @@ give you swcr.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>table</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code>) – A Dataframe with x and y data</p></li>
-<li><p><strong>xcol</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – The name of the column in table containing x-data. If
+<li><p><strong>table</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></span>) – A Dataframe with x and y data</p></li>
+<li><p><strong>xcol</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – The name of the column in table containing x-data. If
 None (default) the first column in table will be used.</p></li>
-<li><p><strong>ycol</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – The name of the column in table containing y-data.
+<li><p><strong>ycol</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – The name of the column in table containing y-data.
 If None (default) the second column in the table will be used.</p></li>
-<li><p><strong>side</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – Must be ‘left’ or ‘right’. Decides whether to look from
+<li><p><strong>side</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Must be ‘left’ or ‘right’. Decides whether to look from
 the right side of the x-interval or from the left side for the
 linear domain.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The x value where the start-linear domain ends.</p>
@@ -169,12 +169,12 @@ linear domain.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyscal.utils.relperm.truncate_zeroness">
-<span class="sig-prename descclassname"><span class="pre">pyscal.utils.relperm.</span></span><span class="sig-name descname"><span class="pre">truncate_zeroness</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zeronesslimit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/relperm.html#truncate_zeroness"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.relperm.truncate_zeroness" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyscal.utils.relperm.</span></span><span class="sig-name descname"><span class="pre">truncate_zeroness</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zeronesslimit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">log</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/relperm.html#truncate_zeroness"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.relperm.truncate_zeroness" title="Link to this definition"></a></dt>
 <dd><p>Check a value for closeness to zero, and return as zero if below
 a given limit, if not return the value</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
 </dd>
 </dl>
 </dd></dl>

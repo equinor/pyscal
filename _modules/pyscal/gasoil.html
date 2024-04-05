@@ -1,22 +1,22 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.gasoil &mdash; pyscal 0.11.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+  <title>pyscal.gasoil &mdash; pyscal 0.12 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
 
   
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=3f949d3d"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -35,7 +35,7 @@
               <img src="../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.11.0
+                0.12
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -102,7 +102,9 @@
 <span class="n">logger</span> <span class="o">=</span> <span class="n">pyscal</span><span class="o">.</span><span class="n">getLogger_pyscal</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="GasOil"><a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil">[docs]</a><span class="k">class</span> <span class="nc">GasOil</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="GasOil">
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil">[docs]</a>
+<span class="k">class</span> <span class="nc">GasOil</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Object to represent two-phase properties for gas and oil.</span>
 
 <span class="sd">    Parametrizations available for relative permeability:</span>
@@ -241,7 +243,7 @@
         <span class="n">sg_list</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">sg_list</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;SG&quot;</span><span class="p">])</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;sgint&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">round</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SG&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">SWINTEGERS</span><span class="p">))</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="s2">&quot;sgint&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="s2">&quot;sgint&quot;</span><span class="p">)</span>
 
         <span class="c1"># Now sg=1-sorg-swl might be accidentally dropped, so make sure we</span>
         <span class="c1"># have it by replacing the closest value by 1 - sorg exactly</span>
@@ -262,7 +264,7 @@
                 <span class="n">drop</span><span class="o">=</span><span class="kc">True</span>
             <span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;SG&quot;</span><span class="p">]]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SL&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SG&quot;</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">krgendanchor</span> <span class="o">==</span> <span class="s2">&quot;sorg&quot;</span><span class="p">:</span>
@@ -291,7 +293,9 @@
             <span class="s2">&quot;Initialized GasOil with </span><span class="si">%s</span><span class="s2"> saturation points&quot;</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">))</span>
         <span class="p">)</span>
 
-<div class="viewcode-block" id="GasOil.update_sgcomment_and_sorg"><a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.update_sgcomment_and_sorg">[docs]</a>    <span class="k">def</span> <span class="nf">update_sgcomment_and_sorg</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="GasOil.update_sgcomment_and_sorg">
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.update_sgcomment_and_sorg">[docs]</a>
+    <span class="k">def</span> <span class="nf">update_sgcomment_and_sorg</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Recalculate sorg in case it has table data has been manipulated&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sgcomment</span> <span class="o">=</span> <span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;-- swirr=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">swirr</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">, sgcr=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sgcr</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">, swl=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">swl</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">, &quot;</span>
@@ -305,7 +309,10 @@
                 <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROG&quot;</span><span class="p">],</span> <span class="mf">0.0</span><span class="p">)]</span><span class="o">.</span><span class="n">min</span><span class="p">()[</span><span class="s2">&quot;SG&quot;</span><span class="p">]</span>
             <span class="p">)</span></div>
 
-<div class="viewcode-block" id="GasOil.add_fromtable"><a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.add_fromtable">[docs]</a>    <span class="k">def</span> <span class="nf">add_fromtable</span><span class="p">(</span>
+
+<div class="viewcode-block" id="GasOil.add_fromtable">
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.add_fromtable">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_fromtable</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">dframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
         <span class="n">sgcolname</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;SG&quot;</span><span class="p">,</span>
@@ -380,9 +387,9 @@
             <span class="p">)</span>
             <span class="c1"># Do not extrapolate this data. We will bfill and ffill afterwards</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KRG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pchip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SG&quot;</span><span class="p">],</span> <span class="n">extrapolate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KRG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;ffill&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KRG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;bfill&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KRG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">lower</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KRG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KRG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">ffill</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KRG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KRG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">bfill</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KRG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KRG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">lower</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">krgcomment</span> <span class="o">=</span> <span class="s2">&quot;-- krg from tabular input&quot;</span> <span class="o">+</span> <span class="n">krgcomment</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sgcr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">estimate_sgcr</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">krogcolname</span> <span class="ow">in</span> <span class="n">dframe</span><span class="p">:</span>
@@ -396,9 +403,9 @@
                 <span class="n">dframe</span><span class="p">[</span><span class="n">sgcolname</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span> <span class="n">dframe</span><span class="p">[</span><span class="n">krogcolname</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pchip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SG&quot;</span><span class="p">],</span> <span class="n">extrapolate</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;ffill&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;bfill&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">lower</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">ffill</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">bfill</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">lower</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">krogcomment</span> <span class="o">=</span> <span class="s2">&quot;-- krog from tabular input&quot;</span> <span class="o">+</span> <span class="n">krogcomment</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sorg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">estimate_sorg</span><span class="p">()</span>
 
@@ -434,11 +441,13 @@
                     <span class="p">)</span>
                 <span class="p">)</span>
             <span class="n">dframe</span> <span class="o">=</span> <span class="n">dframe</span><span class="o">.</span><span class="n">replace</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
-            <span class="n">dframe</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="n">pccolname</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">dframe</span> <span class="o">=</span> <span class="n">dframe</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="n">pccolname</span><span class="p">],</span> <span class="n">how</span><span class="o">=</span><span class="s2">&quot;all&quot;</span><span class="p">)</span>
             <span class="c1"># If nonzero, then it must be increasing:</span>
-            <span class="k">if</span> <span class="n">dframe</span><span class="p">[</span><span class="n">pccolname</span><span class="p">]</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="n">pccolname</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Incoming pc not increasing&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">dframe</span><span class="p">[</span><span class="n">pccolname</span><span class="p">]</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span>
+                <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="n">dframe</span><span class="p">[</span><span class="n">pccolname</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+            <span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Incoming pc not increasing&quot;</span><span class="p">)</span>
             <span class="n">pchip</span> <span class="o">=</span> <span class="n">PchipInterpolator</span><span class="p">(</span>
                 <span class="n">dframe</span><span class="p">[</span><span class="n">sgcolname</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span> <span class="n">dframe</span><span class="p">[</span><span class="n">pccolname</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
             <span class="p">)</span>
@@ -447,7 +456,10 @@
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;inf/nan in interpolated data, check input&quot;</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pccomment</span> <span class="o">=</span> <span class="s2">&quot;-- pc from tabular input&quot;</span> <span class="o">+</span> <span class="n">pccomment</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span></div>
 
-<div class="viewcode-block" id="GasOil.set_endpoints_linearpart_krg"><a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.set_endpoints_linearpart_krg">[docs]</a>    <span class="k">def</span> <span class="nf">set_endpoints_linearpart_krg</span><span class="p">(</span>
+
+<div class="viewcode-block" id="GasOil.set_endpoints_linearpart_krg">
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.set_endpoints_linearpart_krg">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_endpoints_linearpart_krg</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">krgend</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">krgmax</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Set linear parts of krg outside endpoints.</span>
@@ -489,14 +501,17 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SG&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sorg</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">)),</span> <span class="s2">&quot;KRG&quot;</span>
             <span class="p">]</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">tmp</span><span class="p">[</span><span class="s2">&quot;SG&quot;</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sorg</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">)),</span> <span class="s2">&quot;KRG&quot;</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SG&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">swl</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">)),</span> <span class="s2">&quot;KRG&quot;</span>
-            <span class="p">]</span> <span class="o">=</span> <span class="n">krgend</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SG&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">swl</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">)),</span> <span class="s2">&quot;KRG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">krgend</span>
+            <span class="p">)</span>
             <span class="k">if</span> <span class="n">krgmax</span> <span class="ow">and</span> <span class="n">krgmax</span> <span class="o">&lt;</span> <span class="mf">1.0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorg</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="c1"># Only warn if something else than default is in use</span>
                 <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;krgmax ignored when not anchoring to sorg&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="GasOil.set_endpoints_linearpart_krog"><a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.set_endpoints_linearpart_krog">[docs]</a>    <span class="k">def</span> <span class="nf">set_endpoints_linearpart_krog</span><span class="p">(</span>
+
+<div class="viewcode-block" id="GasOil.set_endpoints_linearpart_krog">
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.set_endpoints_linearpart_krog">[docs]</a>
+    <span class="k">def</span> <span class="nf">set_endpoints_linearpart_krog</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">kroend</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">kromax</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -535,7 +550,10 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;KROG&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">kromax</span></div>
 
-<div class="viewcode-block" id="GasOil.add_corey_gas"><a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.add_corey_gas">[docs]</a>    <span class="k">def</span> <span class="nf">add_corey_gas</span><span class="p">(</span>
+
+<div class="viewcode-block" id="GasOil.add_corey_gas">
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.add_corey_gas">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_corey_gas</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">ng</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">krgend</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">krgmax</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add krg data through the Corey parametrization</span>
@@ -563,7 +581,10 @@
             <span class="sa">f</span><span class="s2">&quot;-- Corey krg, ng=</span><span class="si">{</span><span class="n">ng</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">, krgend=</span><span class="si">{</span><span class="n">krgend</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">, krgmax=</span><span class="si">{</span><span class="n">krgmax</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="GasOil.add_corey_oil"><a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.add_corey_oil">[docs]</a>    <span class="k">def</span> <span class="nf">add_corey_oil</span><span class="p">(</span>
+
+<div class="viewcode-block" id="GasOil.add_corey_oil">
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.add_corey_oil">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_corey_oil</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nog</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
         <span class="n">kroend</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
@@ -597,7 +618,10 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">krogcomment</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;, kromax=</span><span class="si">{</span><span class="n">kromax</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">krogcomment</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span></div>
 
-<div class="viewcode-block" id="GasOil.add_LET_gas"><a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.add_LET_gas">[docs]</a>    <span class="k">def</span> <span class="nf">add_LET_gas</span><span class="p">(</span>
+
+<div class="viewcode-block" id="GasOil.add_LET_gas">
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.add_LET_gas">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_LET_gas</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">l</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
         <span class="n">e</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
@@ -626,7 +650,6 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># Similar code in wateroil.add_LET_water, but readability</span>
         <span class="c1"># is better by having them separate</span>
-        <span class="c1"># pylint: disable=duplicate-code</span>
         <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">l</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT_KR</span>
         <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">e</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT_KR</span>
         <span class="k">assert</span> <span class="n">epsilon</span> <span class="o">&lt;</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="n">MAX_EXPONENT_KR</span>
@@ -652,7 +675,10 @@
             <span class="sa">f</span><span class="s2">&quot;krgend=</span><span class="si">{</span><span class="n">krgend</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">, krgmax=</span><span class="si">{</span><span class="n">krgmax</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="GasOil.add_LET_oil"><a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.add_LET_oil">[docs]</a>    <span class="k">def</span> <span class="nf">add_LET_oil</span><span class="p">(</span>
+
+<div class="viewcode-block" id="GasOil.add_LET_oil">
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.add_LET_oil">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_LET_oil</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">l</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
         <span class="n">e</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
@@ -695,7 +721,10 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">krogcomment</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;, kromax=</span><span class="si">{</span><span class="n">kromax</span><span class="si">:</span><span class="s2">g</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">krogcomment</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span></div>
 
-<div class="viewcode-block" id="GasOil.estimate_sgro"><a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.estimate_sgro">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_sgro</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+<div class="viewcode-block" id="GasOil.estimate_sgro">
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.estimate_sgro">[docs]</a>
+    <span class="k">def</span> <span class="nf">estimate_sgro</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Estimate sgro of the current krog data</span>
 
 <span class="sd">        sgro is estimated by searching for a linear part in kro</span>
@@ -715,7 +744,10 @@
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span>
         <span class="k">return</span> <span class="n">estimate_diffjumppoint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="s2">&quot;SG&quot;</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="s2">&quot;KROG&quot;</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">&quot;left&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="GasOil.estimate_sorg"><a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.estimate_sorg">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_sorg</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+
+<div class="viewcode-block" id="GasOil.estimate_sorg">
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.estimate_sorg">[docs]</a>
+    <span class="k">def</span> <span class="nf">estimate_sorg</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Estimate sorg of the current krg or krog data.</span>
 
 <span class="sd">        sorg is estimated by searching for a linear part in krg downwards</span>
@@ -744,7 +776,10 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="n">xcol</span><span class="o">=</span><span class="s2">&quot;SG&quot;</span><span class="p">,</span> <span class="n">ycol</span><span class="o">=</span><span class="s2">&quot;KROG&quot;</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="s2">&quot;right&quot;</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="GasOil.estimate_sgcr"><a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.estimate_sgcr">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_sgcr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+
+<div class="viewcode-block" id="GasOil.estimate_sgcr">
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.estimate_sgcr">[docs]</a>
+    <span class="k">def</span> <span class="nf">estimate_sgcr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Estimate sgcr of the current krog data.</span>
 
 <span class="sd">        sgcr is the largest gas saturation for which the gas relative</span>
@@ -757,7 +792,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KRG&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">epsilon</span><span class="p">][</span><span class="s2">&quot;SG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span></div>
 
-<div class="viewcode-block" id="GasOil.crosspoint"><a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.crosspoint">[docs]</a>    <span class="k">def</span> <span class="nf">crosspoint</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+
+<div class="viewcode-block" id="GasOil.crosspoint">
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.crosspoint">[docs]</a>
+    <span class="k">def</span> <span class="nf">crosspoint</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Locate and return the saturation point where krg = krog</span>
 
 <span class="sd">        Accuracy of this crosspoint depends on the resolution chosen</span>
@@ -770,7 +808,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">crosspoint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">,</span> <span class="s2">&quot;SG&quot;</span><span class="p">,</span> <span class="s2">&quot;KRG&quot;</span><span class="p">,</span> <span class="s2">&quot;KROG&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="GasOil.selfcheck"><a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.selfcheck">[docs]</a>    <span class="k">def</span> <span class="nf">selfcheck</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;SGOF&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+
+<div class="viewcode-block" id="GasOil.selfcheck">
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.selfcheck">[docs]</a>
+    <span class="k">def</span> <span class="nf">selfcheck</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;SGOF&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Check validities of the data in the table.</span>
 
 <span class="sd">        This is to catch errors that are either physically wrong</span>
@@ -811,10 +852,13 @@
         <span class="k">if</span> <span class="s2">&quot;KRG&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KRG&quot;</span><span class="p">]),</span> <span class="mf">0.0</span><span class="p">):</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;KRG must start at zero&quot;</span><span class="p">)</span>
             <span class="n">error</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="k">if</span> <span class="s2">&quot;PC&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;PC&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="o">-</span><span class="n">epsilon</span><span class="p">:</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;PC&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;PC data for gas-oil not strictly decreasing&quot;</span><span class="p">)</span>
-                <span class="n">error</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="s2">&quot;PC&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;PC&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="o">-</span><span class="n">epsilon</span>
+            <span class="ow">and</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;PC&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="p">):</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;PC data for gas-oil not strictly decreasing&quot;</span><span class="p">)</span>
+            <span class="n">error</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="s2">&quot;PC&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;PC&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()):</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;PC goes to infinity for gas-oil. &quot;</span><span class="p">)</span>
             <span class="n">error</span> <span class="o">=</span> <span class="kc">True</span>
@@ -822,7 +866,7 @@
             <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;pc data contains NaN&quot;</span><span class="p">)</span>
             <span class="n">error</span> <span class="o">=</span> <span class="kc">True</span>
 
-        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="s2">&quot;SG&quot;</span><span class="p">,</span> <span class="s2">&quot;KRG&quot;</span><span class="p">,</span> <span class="s2">&quot;KROG&quot;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">({</span><span class="s2">&quot;SG&quot;</span><span class="p">,</span> <span class="s2">&quot;KRG&quot;</span><span class="p">,</span> <span class="s2">&quot;KROG&quot;</span><span class="p">}</span> <span class="o">&amp;</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">)):</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span>
                 <span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">col</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="o">-</span><span class="n">epsilon</span><span class="p">)</span>
                 <span class="ow">and</span> <span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">col</span><span class="p">])</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">epsilon</span><span class="p">)</span>
@@ -834,7 +878,10 @@
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;GasOil object is checked to be valid&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">True</span></div>
 
-<div class="viewcode-block" id="GasOil.SGOF"><a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.SGOF">[docs]</a>    <span class="k">def</span> <span class="nf">SGOF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+
+<div class="viewcode-block" id="GasOil.SGOF">
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.SGOF">[docs]</a>
+    <span class="k">def</span> <span class="nf">SGOF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Produce SGOF input for Eclipse reservoir simulator.</span>
 
@@ -892,7 +939,10 @@
         <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;/</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="n">string</span></div>
 
-<div class="viewcode-block" id="GasOil.slgof_df"><a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.slgof_df">[docs]</a>    <span class="k">def</span> <span class="nf">slgof_df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+
+<div class="viewcode-block" id="GasOil.slgof_df">
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.slgof_df">[docs]</a>
+    <span class="k">def</span> <span class="nf">slgof_df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Slice out an SLGOF table.</span>
 
 <span class="sd">        This is used by the SLGOF() function, it is</span>
@@ -900,16 +950,18 @@
         <span class="k">if</span> <span class="s2">&quot;PC&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
             <span class="c1"># Only happens when the SLGOF function is skipped (test code)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;PC&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
-        <span class="n">slgof</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="k">return</span> <span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SG&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sorg</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">swl</span> <span class="o">+</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">SWINTEGERS</span><span class="p">)</span>
             <span class="p">]</span>
             <span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s2">&quot;SL&quot;</span><span class="p">)[[</span><span class="s2">&quot;SL&quot;</span><span class="p">,</span> <span class="s2">&quot;KRG&quot;</span><span class="p">,</span> <span class="s2">&quot;KROG&quot;</span><span class="p">,</span> <span class="s2">&quot;PC&quot;</span><span class="p">]]</span>
             <span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="p">)</span>
-        <span class="k">return</span> <span class="n">slgof</span></div>
+        <span class="p">)</span></div>
 
-<div class="viewcode-block" id="GasOil.SLGOF"><a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.SLGOF">[docs]</a>    <span class="k">def</span> <span class="nf">SLGOF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+
+<div class="viewcode-block" id="GasOil.SLGOF">
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.SLGOF">[docs]</a>
+    <span class="k">def</span> <span class="nf">SLGOF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Produce SLGOF input for Eclipse reservoir simulator.</span>
 
 <span class="sd">        The columns sl (liquid saturation), krg, krog and pc are</span>
@@ -965,7 +1017,10 @@
         <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;/</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="n">string</span></div>
 
-<div class="viewcode-block" id="GasOil.SGFN"><a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.SGFN">[docs]</a>    <span class="k">def</span> <span class="nf">SGFN</span><span class="p">(</span>
+
+<div class="viewcode-block" id="GasOil.SGFN">
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.SGFN">[docs]</a>
+    <span class="k">def</span> <span class="nf">SGFN</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">dataincommentrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -1038,7 +1093,10 @@
         <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;/</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">return</span> <span class="n">string</span></div>
 
-<div class="viewcode-block" id="GasOil.GOTABLE"><a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.GOTABLE">[docs]</a>    <span class="k">def</span> <span class="nf">GOTABLE</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+
+<div class="viewcode-block" id="GasOil.GOTABLE">
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.GOTABLE">[docs]</a>
+    <span class="k">def</span> <span class="nf">GOTABLE</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Produce GOTABLE input for the Nexus reservoir simulator.</span>
 
@@ -1091,7 +1149,10 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">string</span></div>
 
-<div class="viewcode-block" id="GasOil.plotkrgkrog"><a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.plotkrgkrog">[docs]</a>    <span class="k">def</span> <span class="nf">plotkrgkrog</span><span class="p">(</span>
+
+<div class="viewcode-block" id="GasOil.plotkrgkrog">
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.plotkrgkrog">[docs]</a>
+    <span class="k">def</span> <span class="nf">plotkrgkrog</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">mpl_ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;blue&quot;</span><span class="p">,</span>
@@ -1108,7 +1169,6 @@
 <span class="sd">        matplotlib axis to plot on, if None, a fresh plot</span>
 <span class="sd">        will be made.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># pylint: disable=import-outside-toplevel</span>
         <span class="c1"># Lazy import of matplotlib for speed reasons</span>
         <span class="kn">import</span> <span class="nn">matplotlib</span>
         <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
@@ -1146,7 +1206,9 @@
             <span class="n">marker</span><span class="o">=</span><span class="n">marker</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="k">if</span> <span class="n">mpl_ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div></div>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+</div>
+
 </pre></div>
 
            </div>

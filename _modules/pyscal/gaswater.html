@@ -1,22 +1,22 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../../">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.gaswater &mdash; pyscal 0.11.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css" />
+  <title>pyscal.gaswater &mdash; pyscal 0.12 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=19f00094" />
 
   
   <!--[if lt IE 9]>
     <script src="../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../../_static/jquery.js"></script>
-        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-        <script src="../../_static/doctools.js"></script>
-        <script src="../../_static/sphinx_highlight.js"></script>
+        <script src="../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../_static/documentation_options.js?v=3f949d3d"></script>
+        <script src="../../_static/doctools.js?v=888ff710"></script>
+        <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" /> 
@@ -35,7 +35,7 @@
               <img src="../../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.11.0
+                0.12
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
@@ -101,7 +101,9 @@
 <span class="n">logger</span> <span class="o">=</span> <span class="n">getLogger_pyscal</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
-<div class="viewcode-block" id="is_documented_by"><a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.is_documented_by">[docs]</a><span class="k">def</span> <span class="nf">is_documented_by</span><span class="p">(</span><span class="n">original</span><span class="p">):</span>
+<div class="viewcode-block" id="is_documented_by">
+<a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.is_documented_by">[docs]</a>
+<span class="k">def</span> <span class="nf">is_documented_by</span><span class="p">(</span><span class="n">original</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Decorator to avoid duplicating function docstrings&quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">wrapper</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
@@ -111,7 +113,10 @@
     <span class="k">return</span> <span class="n">wrapper</span></div>
 
 
-<div class="viewcode-block" id="GasWater"><a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.GasWater">[docs]</a><span class="k">class</span> <span class="nc">GasWater</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<div class="viewcode-block" id="GasWater">
+<a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.GasWater">[docs]</a>
+<span class="k">class</span> <span class="nc">GasWater</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A representation of two-phase properties for gas-water</span>
 
 <span class="sd">    Internally, this class handles gas-water by using one WaterOil</span>
@@ -182,7 +187,9 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">add_corey_oil</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">add_corey_oil</span><span class="p">()</span>
 
-<div class="viewcode-block" id="GasWater.selfcheck"><a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.GasWater.selfcheck">[docs]</a>    <span class="k">def</span> <span class="nf">selfcheck</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<div class="viewcode-block" id="GasWater.selfcheck">
+<a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.GasWater.selfcheck">[docs]</a>
+    <span class="k">def</span> <span class="nf">selfcheck</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Run selfcheck on the data.</span>
 
 <span class="sd">        Performs tests if necessary data is ready in the object for</span>
@@ -194,7 +201,10 @@
         <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;None objects in GasWater (bug)&quot;</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">False</span></div>
 
-<div class="viewcode-block" id="GasWater.add_corey_water"><a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.GasWater.add_corey_water">[docs]</a>    <span class="k">def</span> <span class="nf">add_corey_water</span><span class="p">(</span>
+
+<div class="viewcode-block" id="GasWater.add_corey_water">
+<a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.GasWater.add_corey_water">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_corey_water</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">nw</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">krwend</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">krwmax</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add krw data through the Corey parametrization</span>
@@ -214,7 +224,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">add_corey_water</span><span class="p">(</span><span class="n">nw</span><span class="p">,</span> <span class="n">krwend</span><span class="p">,</span> <span class="n">krwmax</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="GasWater.add_corey_gas"><a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.GasWater.add_corey_gas">[docs]</a>    <span class="k">def</span> <span class="nf">add_corey_gas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ng</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">krgend</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+<div class="viewcode-block" id="GasWater.add_corey_gas">
+<a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.GasWater.add_corey_gas">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_corey_gas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ng</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">krgend</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add krg data through the Corey parametrization</span>
 
 <span class="sd">        A column named &#39;krg&#39; will be added. If it exists, it will</span>
@@ -226,7 +239,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">add_corey_gas</span><span class="p">(</span><span class="n">ng</span><span class="p">,</span> <span class="n">krgend</span><span class="p">,</span> <span class="n">krgmax</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="GasWater.add_LET_water"><a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.GasWater.add_LET_water">[docs]</a>    <span class="k">def</span> <span class="nf">add_LET_water</span><span class="p">(</span>
+
+<div class="viewcode-block" id="GasWater.add_LET_water">
+<a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.GasWater.add_LET_water">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_LET_water</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">l</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
         <span class="n">e</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
@@ -250,7 +266,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">add_LET_water</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">krwend</span><span class="p">,</span> <span class="n">krwmax</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="GasWater.add_LET_gas"><a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.GasWater.add_LET_gas">[docs]</a>    <span class="k">def</span> <span class="nf">add_LET_gas</span><span class="p">(</span>
+
+<div class="viewcode-block" id="GasWater.add_LET_gas">
+<a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.GasWater.add_LET_gas">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_LET_gas</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">l</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">krgend</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add krg data through the LET parametrization</span>
@@ -266,7 +285,10 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">add_LET_gas</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">krgend</span><span class="p">,</span> <span class="n">krgmax</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="GasWater.add_simple_J"><a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.GasWater.add_simple_J">[docs]</a>    <span class="nd">@is_documented_by</span><span class="p">(</span><span class="n">WaterOil</span><span class="o">.</span><span class="n">add_simple_J</span><span class="p">)</span>
+
+<div class="viewcode-block" id="GasWater.add_simple_J">
+<a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.GasWater.add_simple_J">[docs]</a>
+    <span class="nd">@is_documented_by</span><span class="p">(</span><span class="n">WaterOil</span><span class="o">.</span><span class="n">add_simple_J</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">add_simple_J</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">a</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">,</span>
@@ -279,7 +301,10 @@
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add a simple J-function, handed over to the WaterOil object&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">add_simple_J</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">poro_ref</span><span class="p">,</span> <span class="n">perm_ref</span><span class="p">,</span> <span class="n">drho</span><span class="p">,</span> <span class="n">g</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="GasWater.add_simple_J_petro"><a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.GasWater.add_simple_J_petro">[docs]</a>    <span class="nd">@is_documented_by</span><span class="p">(</span><span class="n">WaterOil</span><span class="o">.</span><span class="n">add_simple_J_petro</span><span class="p">)</span>
+
+<div class="viewcode-block" id="GasWater.add_simple_J_petro">
+<a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.GasWater.add_simple_J_petro">[docs]</a>
+    <span class="nd">@is_documented_by</span><span class="p">(</span><span class="n">WaterOil</span><span class="o">.</span><span class="n">add_simple_J_petro</span><span class="p">)</span>
     <span class="k">def</span> <span class="nf">add_simple_J_petro</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">a</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -293,7 +318,10 @@
 <span class="sd">        over to the WaterOil object&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">add_simple_J_petro</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">poro_ref</span><span class="p">,</span> <span class="n">perm_ref</span><span class="p">,</span> <span class="n">drho</span><span class="p">,</span> <span class="n">g</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="GasWater.SWFN"><a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.GasWater.SWFN">[docs]</a>    <span class="k">def</span> <span class="nf">SWFN</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+
+<div class="viewcode-block" id="GasWater.SWFN">
+<a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.GasWater.SWFN">[docs]</a>
+    <span class="k">def</span> <span class="nf">SWFN</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Produce SWFN input to Eclipse</span>
 
 <span class="sd">        The columns sw, krw and pc are outputted and formatted</span>
@@ -325,7 +353,10 @@
             <span class="n">crosspointcomment</span><span class="o">=</span><span class="n">crosspointcomment</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="GasWater.SGFN"><a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.GasWater.SGFN">[docs]</a>    <span class="k">def</span> <span class="nf">SGFN</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+
+<div class="viewcode-block" id="GasWater.SGFN">
+<a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.GasWater.SGFN">[docs]</a>
+    <span class="k">def</span> <span class="nf">SGFN</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Produce SGFN input for Eclipse reservoir simulator.</span>
 
 <span class="sd">        The columns sg and krg are outputted and formatted accordingly.</span>
@@ -355,7 +386,10 @@
             <span class="n">crosspointcomment</span><span class="o">=</span><span class="n">crosspointcomment</span><span class="p">,</span>
         <span class="p">)</span></div>
 
-<div class="viewcode-block" id="GasWater.crosspoint"><a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.GasWater.crosspoint">[docs]</a>    <span class="k">def</span> <span class="nf">crosspoint</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+
+<div class="viewcode-block" id="GasWater.crosspoint">
+<a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.GasWater.crosspoint">[docs]</a>
+    <span class="k">def</span> <span class="nf">crosspoint</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the sw value where krg == krw.</span>
 
 <span class="sd">        Accuracy of this crosspoint depends on the resolution chosen</span>
@@ -379,8 +413,8 @@
         <span class="c1"># The  &quot;SL&quot; column in the GasOil object corresponds exactly to &quot;SW&quot; in WaterOil</span>
         <span class="c1"># but since they are floating point, we do not want to &quot;merge&quot; dataframes on it,</span>
         <span class="c1"># rather concatenate and let linear interpolation fill in values.</span>
-        <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SL&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SL&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SL&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;sat&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SL&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">dframe</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span>
         <span class="n">dframe</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">dframe</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;sat&quot;</span><span class="p">)</span>
@@ -391,7 +425,10 @@
         <span class="p">)</span>
         <span class="k">return</span> <span class="n">crosspoint</span><span class="p">(</span><span class="n">dframe</span><span class="p">,</span> <span class="s2">&quot;sat&quot;</span><span class="p">,</span> <span class="s2">&quot;KRW&quot;</span><span class="p">,</span> <span class="s2">&quot;KRG&quot;</span><span class="p">)</span></div>
 
-<div class="viewcode-block" id="GasWater.plotkrwkrg"><a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.GasWater.plotkrwkrg">[docs]</a>    <span class="k">def</span> <span class="nf">plotkrwkrg</span><span class="p">(</span>
+
+<div class="viewcode-block" id="GasWater.plotkrwkrg">
+<a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.GasWater.plotkrwkrg">[docs]</a>
+    <span class="k">def</span> <span class="nf">plotkrwkrg</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">mpl_ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;blue&quot;</span><span class="p">,</span>
@@ -408,7 +445,6 @@
 <span class="sd">        window will be made. If supplied, it will draw on</span>
 <span class="sd">        the specified axis.&quot;&quot;&quot;</span>
 
-        <span class="c1"># pylint: disable=import-outside-toplevel</span>
         <span class="c1"># Lazy import of matplotlib for speed reasons.</span>
         <span class="kn">import</span> <span class="nn">matplotlib</span>
         <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
@@ -448,6 +484,7 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;SW&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">mpl_ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
 
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">swirr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
@@ -494,6 +531,7 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">tag</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">tag</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Internal tag-inconsistency in GasWater&quot;</span><span class="p">)</span></div>
+
 </pre></div>
 
            </div>

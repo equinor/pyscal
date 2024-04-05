@@ -1,23 +1,23 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.factory &mdash; pyscal 0.11.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+  <title>pyscal.factory &mdash; pyscal 0.12 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
 
   
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/doctools.js"></script>
-        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=3f949d3d"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -38,7 +38,7 @@
               <img src="../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.11.0
+                0.12
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -116,11 +116,11 @@
            <div itemprop="articleBody">
              
   <section id="module-pyscal.factory">
-<span id="pyscal-factory"></span><h1><code class="docutils literal notranslate"><span class="pre">pyscal.factory</span></code><a class="headerlink" href="#module-pyscal.factory" title="Permalink to this heading"></a></h1>
+<span id="pyscal-factory"></span><h1><code class="docutils literal notranslate"><span class="pre">pyscal.factory</span></code><a class="headerlink" href="#module-pyscal.factory" title="Link to this heading"></a></h1>
 <p>Factory functions for creating the pyscal objects</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pyscal.factory.PyscalFactory">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyscal.factory.</span></span><span class="sig-name descname"><span class="pre">PyscalFactory</span></span><a class="reference internal" href="../_modules/pyscal/factory.html#PyscalFactory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyscal.factory.</span></span><span class="sig-name descname"><span class="pre">PyscalFactory</span></span><a class="reference internal" href="../_modules/pyscal/factory.html#PyscalFactory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory" title="Link to this definition"></a></dt>
 <dd><p>Class for implementing the factory pattern for Pyscal objects</p>
 <p>The factory functions herein can take multiple parameter sets,
 determine what kind of parametrization to be used, and set up
@@ -141,7 +141,7 @@ users when input is written in a different context, like an Excel
 spreadsheet.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="pyscal.factory.PyscalFactory.alias_sgrw">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">alias_sgrw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#PyscalFactory.alias_sgrw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.alias_sgrw" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">alias_sgrw</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#PyscalFactory.alias_sgrw"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.alias_sgrw" title="Link to this definition"></a></dt>
 <dd><p>Allow sgrw as an alias for sorw by remapping a
 sgrw value to a sorw value in an incoming dict.</p>
 <p>Will error hard of sorw already exists and is not nan.</p>
@@ -150,17 +150,17 @@ as three-phase to allow for condensate forming, and mirrors
 GasWater.__init__() which performs the same aliasing.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>params</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]) – Keys must be lower case.</p>
+<dd class="field-odd"><p><strong>params</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</span>) – Keys must be lower case.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyscal.factory.PyscalFactory.create_gas_oil">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_gas_oil</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#PyscalFactory.create_gas_oil"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_gas_oil" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_gas_oil</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#PyscalFactory.create_gas_oil"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_gas_oil" title="Link to this definition"></a></dt>
 <dd><p>Create a GasOil object from a dictionary of parameters.</p>
 <p>Parameterization (Corey/LET) is inferred from presence
 of certain parameters in the dictionary.</p>
@@ -179,51 +179,51 @@ lg, eg, tg, log, eog, tog</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>params</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]) – Dictionary with parameters describing the GasOil object.</p></li>
-<li><p><strong>fast</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – If fast-mode should be set for constructed object.</p></li>
+<li><p><strong>params</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]</span>) – Dictionary with parameters describing the GasOil object.</p></li>
+<li><p><strong>fast</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If fast-mode should be set for constructed object.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="pyscal.gasoil.html#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasOil</span></code></a></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="pyscal.gasoil.html#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasOil</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyscal.factory.PyscalFactory.create_gas_water">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_gas_water</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#PyscalFactory.create_gas_water"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_gas_water" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_gas_water</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#PyscalFactory.create_gas_water"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_gas_water" title="Link to this definition"></a></dt>
 <dd><p>Create a GasWater object.</p>
 <p>Parameterization (Corey/LET) is inferred from presence
 of certain parameters in the dictionary.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>params</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]) – Dictionary with parameters for GasWater.</p></li>
-<li><p><strong>fast</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – If fast-mode should be set for constructed object.</p></li>
+<li><p><strong>params</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]</span>) – Dictionary with parameters for GasWater.</p></li>
+<li><p><strong>fast</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If fast-mode should be set for constructed object.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="pyscal.gaswater.html#pyscal.gaswater.GasWater" title="pyscal.gaswater.GasWater"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasWater</span></code></a></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="pyscal.gaswater.html#pyscal.gaswater.GasWater" title="pyscal.gaswater.GasWater"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasWater</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyscal.factory.PyscalFactory.create_gasoil_list">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_gasoil_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relperm_params_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#PyscalFactory.create_gasoil_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_gasoil_list" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_gasoil_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relperm_params_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#PyscalFactory.create_gasoil_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_gasoil_list" title="Link to this definition"></a></dt>
 <dd><p>Create a PyscalList with GasOil objects from
 a dataframe</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>relperm_params_df</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code>) – A valid dataframe with GasOil parameters,
+<li><p><strong>relperm_params_df</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></span>) – A valid dataframe with GasOil parameters,
 processed through load_relperm_df()</p></li>
-<li><p><strong>h</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Saturation steplength</p></li>
-<li><p><strong>fast</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – If fast-mode should be set for constructed object</p></li>
+<li><p><strong>h</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span>) – Saturation steplength</p></li>
+<li><p><strong>fast</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If fast-mode should be set for constructed object</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="pyscal.pyscallist.html#pyscal.pyscallist.PyscalList" title="pyscal.pyscallist.PyscalList"><code class="xref py py-class docutils literal notranslate"><span class="pre">PyscalList</span></code></a></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="pyscal.pyscallist.html#pyscal.pyscallist.PyscalList" title="pyscal.pyscallist.PyscalList"><code class="xref py py-class docutils literal notranslate"><span class="pre">PyscalList</span></code></a></span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>PyscalList, consisting of GasOil objects</p>
@@ -233,20 +233,20 @@ processed through load_relperm_df()</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyscal.factory.PyscalFactory.create_gaswater_list">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_gaswater_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relperm_params_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#PyscalFactory.create_gaswater_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_gaswater_list" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_gaswater_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relperm_params_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#PyscalFactory.create_gaswater_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_gaswater_list" title="Link to this definition"></a></dt>
 <dd><p>Create a PyscalList with WaterOilGas objects from
 a dataframe, to be used for GasWater</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>relperm_params_df</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code>) – A valid dataframe with GasWater
+<li><p><strong>relperm_params_df</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></span>) – A valid dataframe with GasWater
 parameters, processed through load_relperm_df()</p></li>
-<li><p><strong>h</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Saturation steplength</p></li>
-<li><p><strong>fast</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – If fast-mode should be set for constructed object</p></li>
+<li><p><strong>h</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span>) – Saturation steplength</p></li>
+<li><p><strong>fast</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If fast-mode should be set for constructed object</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="pyscal.pyscallist.html#pyscal.pyscallist.PyscalList" title="pyscal.pyscallist.PyscalList"><code class="xref py py-class docutils literal notranslate"><span class="pre">PyscalList</span></code></a></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="pyscal.pyscallist.html#pyscal.pyscallist.PyscalList" title="pyscal.pyscallist.PyscalList"><code class="xref py py-class docutils literal notranslate"><span class="pre">PyscalList</span></code></a></span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>PyscalList, consisting of GasWater objects</p>
@@ -256,16 +256,16 @@ parameters, processed through load_relperm_df()</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyscal.factory.PyscalFactory.create_pyscal_list">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_pyscal_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relperm_params_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#PyscalFactory.create_pyscal_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_pyscal_list" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_pyscal_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relperm_params_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#PyscalFactory.create_pyscal_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_pyscal_list" title="Link to this definition"></a></dt>
 <dd><p>Create WaterOilGas, WaterOil, GasOil or GasWater list
 based on what is available</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>relperm_params_df</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code>) – Input data, should have been processed
+<li><p><strong>relperm_params_df</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></span>) – Input data, should have been processed
 through load_relperm_df().</p></li>
-<li><p><strong>h</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Saturation step-value</p></li>
-<li><p><strong>fast</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – If fast-mode should be set for constructed object</p></li>
+<li><p><strong>h</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span>) – Saturation step-value</p></li>
+<li><p><strong>fast</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If fast-mode should be set for constructed object</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -276,7 +276,7 @@ through load_relperm_df().</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyscal.factory.PyscalFactory.create_scal_recommendation">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_scal_recommendation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#PyscalFactory.create_scal_recommendation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_scal_recommendation" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_scal_recommendation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#PyscalFactory.create_scal_recommendation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_scal_recommendation" title="Link to this definition"></a></dt>
 <dd><p>Set up a SCAL recommendation curve set from input as a
 dictionary of dictionary.</p>
 <p>The keys in in the dictionary <em>must</em> be “low”, “base” and “high”.</p>
@@ -292,37 +292,37 @@ and high.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>params</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]) – keys low, base and high.
+<li><p><strong>params</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]</span>) – keys low, base and high.
 The value for “low” must be a new dictionary with saturation
 endpoints and LET/Corey parameters, as you would feed it to
 the create_water_oil_gas() factory function, and then similarly
 for base and high.</p></li>
-<li><p><strong>tag</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – String to be used as the tag, will end up in comments.</p></li>
-<li><p><strong>h</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Saturation step length</p></li>
-<li><p><strong>fast</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – If fast-mode should be set for constructed object.</p></li>
+<li><p><strong>tag</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – String to be used as the tag, will end up in comments.</p></li>
+<li><p><strong>h</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span>) – Saturation step length</p></li>
+<li><p><strong>fast</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If fast-mode should be set for constructed object.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="pyscal.scalrecommendation.html#pyscal.scalrecommendation.SCALrecommendation" title="pyscal.scalrecommendation.SCALrecommendation"><code class="xref py py-class docutils literal notranslate"><span class="pre">SCALrecommendation</span></code></a></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="pyscal.scalrecommendation.html#pyscal.scalrecommendation.SCALrecommendation" title="pyscal.scalrecommendation.SCALrecommendation"><code class="xref py py-class docutils literal notranslate"><span class="pre">SCALrecommendation</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyscal.factory.PyscalFactory.create_scal_recommendation_list">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_scal_recommendation_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#PyscalFactory.create_scal_recommendation_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_scal_recommendation_list" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_scal_recommendation_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#PyscalFactory.create_scal_recommendation_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_scal_recommendation_list" title="Link to this definition"></a></dt>
 <dd><p>Requires SATNUM and CASE to be defined in the input data</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input_df</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code>) – Input data, should have been processed
+<li><p><strong>input_df</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></span>) – Input data, should have been processed
 through load_relperm_df().</p></li>
-<li><p><strong>h</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Saturation step-value</p></li>
-<li><p><strong>fast</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – If fast-mode should be set for constructed object</p></li>
+<li><p><strong>h</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span>) – Saturation step-value</p></li>
+<li><p><strong>fast</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If fast-mode should be set for constructed object</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="pyscal.pyscallist.html#pyscal.pyscallist.PyscalList" title="pyscal.pyscallist.PyscalList"><code class="xref py py-class docutils literal notranslate"><span class="pre">PyscalList</span></code></a></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="pyscal.pyscallist.html#pyscal.pyscallist.PyscalList" title="pyscal.pyscallist.PyscalList"><code class="xref py py-class docutils literal notranslate"><span class="pre">PyscalList</span></code></a></span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>PyscalList, consisting of SCALrecommendation objects</p>
@@ -332,7 +332,7 @@ through load_relperm_df().</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyscal.factory.PyscalFactory.create_water_oil">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_water_oil</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#PyscalFactory.create_water_oil"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_water_oil" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_water_oil</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#PyscalFactory.create_water_oil"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_water_oil" title="Link to this definition"></a></dt>
 <dd><p>Create a WaterOil object from a dictionary of parameters.</p>
 <p>Parameterization (Corey/LET) is inferred from presence
 of certain parameters in the dictionary.</p>
@@ -354,19 +354,19 @@ a, b, poro, perm, sigma_costau</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>params</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]) – Dictionary with parameters describing the WaterOil object.</p></li>
-<li><p><strong>fast</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – If fast-mode should be set for constructed object.</p></li>
+<li><p><strong>params</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]</span>) – Dictionary with parameters describing the WaterOil object.</p></li>
+<li><p><strong>fast</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If fast-mode should be set for constructed object.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">WaterOil</span></code></a></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">WaterOil</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyscal.factory.PyscalFactory.create_water_oil_gas">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_water_oil_gas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#PyscalFactory.create_water_oil_gas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_water_oil_gas" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_water_oil_gas</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#PyscalFactory.create_water_oil_gas"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_water_oil_gas" title="Link to this definition"></a></dt>
 <dd><p>Create a WaterOilGas object from a dictionary of parameters</p>
 <p>Parameterization (Corey/LET) is inferred from presence
 of certain parameters in the dictionary.</p>
@@ -374,7 +374,7 @@ of certain parameters in the dictionary.</p>
 of supported parameters (case insensitive)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="pyscal.wateroilgas.html#pyscal.wateroilgas.WaterOilGas" title="pyscal.wateroilgas.WaterOilGas"><code class="xref py py-class docutils literal notranslate"><span class="pre">WaterOilGas</span></code></a></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="pyscal.wateroilgas.html#pyscal.wateroilgas.WaterOilGas" title="pyscal.wateroilgas.WaterOilGas"><code class="xref py py-class docutils literal notranslate"><span class="pre">WaterOilGas</span></code></a></span></p>
 </dd>
 </dl>
 <dl class="simple">
@@ -386,20 +386,20 @@ fast: If fast-mode should be set for constructed object.</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyscal.factory.PyscalFactory.create_wateroil_list">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_wateroil_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relperm_params_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#PyscalFactory.create_wateroil_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_wateroil_list" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_wateroil_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relperm_params_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#PyscalFactory.create_wateroil_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_wateroil_list" title="Link to this definition"></a></dt>
 <dd><p>Create a PyscalList with WaterOil objects from
 a dataframe</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>relperm_params_df</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code>) – A valid dataframe with
+<li><p><strong>relperm_params_df</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></span>) – A valid dataframe with
 WaterOil parameters, processed through load_relperm_df()</p></li>
-<li><p><strong>h</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Saturation steplength</p></li>
-<li><p><strong>fast</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – If fast-mode should be set for constructed object</p></li>
+<li><p><strong>h</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span>) – Saturation steplength</p></li>
+<li><p><strong>fast</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If fast-mode should be set for constructed object</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="pyscal.pyscallist.html#pyscal.pyscallist.PyscalList" title="pyscal.pyscallist.PyscalList"><code class="xref py py-class docutils literal notranslate"><span class="pre">PyscalList</span></code></a></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="pyscal.pyscallist.html#pyscal.pyscallist.PyscalList" title="pyscal.pyscallist.PyscalList"><code class="xref py py-class docutils literal notranslate"><span class="pre">PyscalList</span></code></a></span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>PyscalList, consisting of WaterOil objects</p>
@@ -409,20 +409,20 @@ WaterOil parameters, processed through load_relperm_df()</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyscal.factory.PyscalFactory.create_wateroilgas_list">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_wateroilgas_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relperm_params_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#PyscalFactory.create_wateroilgas_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_wateroilgas_list" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">create_wateroilgas_list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">relperm_params_df</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fast</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#PyscalFactory.create_wateroilgas_list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.create_wateroilgas_list" title="Link to this definition"></a></dt>
 <dd><p>Create a PyscalList with WaterOilGas objects from
 a dataframe</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>relperm_params_df</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code>) – Input data, should have been processed
+<li><p><strong>relperm_params_df</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></span>) – Input data, should have been processed
 through load_relperm_df().</p></li>
-<li><p><strong>h</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]) – Saturation step-value</p></li>
-<li><p><strong>fast</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – If fast-mode should be set for constructed object</p></li>
+<li><p><strong>h</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span>) – Saturation step-value</p></li>
+<li><p><strong>fast</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If fast-mode should be set for constructed object</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="pyscal.pyscallist.html#pyscal.pyscallist.PyscalList" title="pyscal.pyscallist.PyscalList"><code class="xref py py-class docutils literal notranslate"><span class="pre">PyscalList</span></code></a></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="pyscal.pyscallist.html#pyscal.pyscallist.PyscalList" title="pyscal.pyscallist.PyscalList"><code class="xref py py-class docutils literal notranslate"><span class="pre">PyscalList</span></code></a></span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>PyscalList, consisting of WaterOilGas objects</p>
@@ -432,7 +432,7 @@ through load_relperm_df().</p></li>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyscal.factory.PyscalFactory.load_relperm_df">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">load_relperm_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputfile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sheet_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#PyscalFactory.load_relperm_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.load_relperm_df" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">load_relperm_df</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">inputfile</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sheet_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#PyscalFactory.load_relperm_df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.load_relperm_df" title="Link to this definition"></a></dt>
 <dd><p>Read CSV or XLSX from file and return scal/relperm data
 a dataframe.</p>
 <p>Checks validity in SATNUM and CASE columns.
@@ -445,13 +445,13 @@ aliasing in the CASE column so that “pessimistic” and “pess” map to
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>inputfile</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code>]) – Filename for XLSX or CSV file, or a
+<li><p><strong>inputfile</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code>]</span>) – Filename for XLSX or CSV file, or a
 pandas DataFrame.</p></li>
-<li><p><strong>sheet_name</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – Sheet-name, only used when loading xlsx files.</p></li>
+<li><p><strong>sheet_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – Sheet-name, only used when loading xlsx files.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataFrame</span></code></span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>To be handed over to pyscal list factory methods.
@@ -462,7 +462,7 @@ Empty dataframe in case of errors (messages will be logged).</p>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyscal.factory.PyscalFactory.remap_validate_cases">
-<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">remap_validate_cases</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">casevalues</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#PyscalFactory.remap_validate_cases"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.remap_validate_cases" title="Permalink to this definition"></a></dt>
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">remap_validate_cases</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">casevalues</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#PyscalFactory.remap_validate_cases"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.PyscalFactory.remap_validate_cases" title="Link to this definition"></a></dt>
 <dd><p>Remap values in the CASE column so that we can use aliases.</p>
 <p>All values are first made lower case, then
 “pessimistic” and “pess” are mapped to “low” and
@@ -471,10 +471,10 @@ Empty dataframe in case of errors (messages will be logged).</p>
 if we don’t have exactly three unique values.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>casevalues</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – values to remap.</p>
+<dd class="field-odd"><p><strong>casevalues</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – values to remap.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -483,21 +483,21 @@ if we don’t have exactly three unique values.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyscal.factory.check_deprecated">
-<span class="sig-prename descclassname"><span class="pre">pyscal.factory.</span></span><span class="sig-name descname"><span class="pre">check_deprecated</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#check_deprecated"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.check_deprecated" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyscal.factory.</span></span><span class="sig-name descname"><span class="pre">check_deprecated</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#check_deprecated"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.check_deprecated" title="Link to this definition"></a></dt>
 <dd><p>Check for deprecated parameter names</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>params</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]) – Dictionary of parameters for which only the keys are used here.</p>
+<dd class="field-odd"><p><strong>params</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</span>) – Dictionary of parameters for which only the keys are used here.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyscal.factory.filter_nan_from_dict">
-<span class="sig-prename descclassname"><span class="pre">pyscal.factory.</span></span><span class="sig-name descname"><span class="pre">filter_nan_from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#filter_nan_from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.filter_nan_from_dict" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyscal.factory.</span></span><span class="sig-name descname"><span class="pre">filter_nan_from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#filter_nan_from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.filter_nan_from_dict" title="Link to this definition"></a></dt>
 <dd><p>Clean out keys with NaN values in a dict.</p>
 <p>Key with string values are passed through (empty strings are allowed)</p>
 <dl class="field-list simple">
@@ -505,7 +505,7 @@ if we don’t have exactly three unique values.</p>
 <dd class="field-odd"><p><strong>params</strong> (<em>dict</em>) – Any dictionary</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></span></p>
 </dd>
 </dl>
 <dl class="simple">
@@ -516,15 +516,15 @@ if we don’t have exactly three unique values.</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyscal.factory.infer_tabular_file_format">
-<span class="sig-prename descclassname"><span class="pre">pyscal.factory.</span></span><span class="sig-name descname"><span class="pre">infer_tabular_file_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#infer_tabular_file_format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.infer_tabular_file_format" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyscal.factory.</span></span><span class="sig-name descname"><span class="pre">infer_tabular_file_format</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#infer_tabular_file_format"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.infer_tabular_file_format" title="Link to this definition"></a></dt>
 <dd><p>Determine the file format of a file containing tabular data,
 distinguishes between csv, xls and xlsx</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>filename</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]) – Path to file</p>
+<dd class="field-odd"><p><strong>filename</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>]</span>) – Path to file</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>One of “csv”, “xlsx” or “xls”. Empty string if nothing found out.</p>
@@ -534,14 +534,14 @@ distinguishes between csv, xls and xlsx</p>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyscal.factory.slicedict">
-<span class="sig-prename descclassname"><span class="pre">pyscal.factory.</span></span><span class="sig-name descname"><span class="pre">slicedict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#slicedict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.slicedict" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyscal.factory.</span></span><span class="sig-name descname"><span class="pre">slicedict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dct</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keys</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#slicedict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.slicedict" title="Link to this definition"></a></dt>
 <dd><p>Slice a dictionary for a set of keys.
 Keys not existing will be ignored.</p>
 </dd></dl>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyscal.factory.sufficient_gas_oil_params">
-<span class="sig-prename descclassname"><span class="pre">pyscal.factory.</span></span><span class="sig-name descname"><span class="pre">sufficient_gas_oil_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">failhard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#sufficient_gas_oil_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.sufficient_gas_oil_params" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyscal.factory.</span></span><span class="sig-name descname"><span class="pre">sufficient_gas_oil_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">failhard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#sufficient_gas_oil_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.sufficient_gas_oil_params" title="Link to this definition"></a></dt>
 <dd><p>Determine if the supplied parameters are sufficient for
 attempting at creating a GasOil object.</p>
 <p>In the factory context, relying on the defaults in the API
@@ -550,14 +550,14 @@ undefined (Corey or LET, and which pc?)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>params</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>) – Dictionary of parameters to a GasOil object.</p></li>
-<li><p><strong>failhard</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – If True, will raise ValueError when
+<li><p><strong>params</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></span>) – Dictionary of parameters to a GasOil object.</p></li>
+<li><p><strong>failhard</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If True, will raise ValueError when
 parameters are insufficient. If defaulted, no
 exception is raised.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>True if a GasOil object should be attempted constructed
@@ -568,7 +568,7 @@ exception is raised.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyscal.factory.sufficient_gas_water_params">
-<span class="sig-prename descclassname"><span class="pre">pyscal.factory.</span></span><span class="sig-name descname"><span class="pre">sufficient_gas_water_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">failhard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#sufficient_gas_water_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.sufficient_gas_water_params" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyscal.factory.</span></span><span class="sig-name descname"><span class="pre">sufficient_gas_water_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">failhard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#sufficient_gas_water_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.sufficient_gas_water_params" title="Link to this definition"></a></dt>
 <dd><p>Determine if the supplied parameters are sufficient for
 attempting creating a WaterOilGas object to be used for gas water.</p>
 <p>In the factory context, relying on the defaults in the API
@@ -577,14 +577,14 @@ for the factory undefined (Corey or LET, and which pc?)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>params</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>) – Dictionary of parameters to a GasWater object.</p></li>
-<li><p><strong>failhard</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – If True, will raise ValueError when
+<li><p><strong>params</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></span>) – Dictionary of parameters to a GasWater object.</p></li>
+<li><p><strong>failhard</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If True, will raise ValueError when
 parameters are insufficient. If defaulted, no
 exception is raised.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p><dl class="simple">
@@ -598,7 +598,7 @@ exception is raised.</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyscal.factory.sufficient_water_oil_params">
-<span class="sig-prename descclassname"><span class="pre">pyscal.factory.</span></span><span class="sig-name descname"><span class="pre">sufficient_water_oil_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">failhard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#sufficient_water_oil_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.sufficient_water_oil_params" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyscal.factory.</span></span><span class="sig-name descname"><span class="pre">sufficient_water_oil_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">failhard</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#sufficient_water_oil_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.sufficient_water_oil_params" title="Link to this definition"></a></dt>
 <dd><p>Determine if the supplied parameters are sufficient for
 attempting creating a WaterOil object.</p>
 <p>In the factory context, relying on the defaults in the API
@@ -607,14 +607,14 @@ undefined (Corey or LET, and which pc?)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>params</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>) – Dictionary of parameters to a WaterOil object.</p></li>
-<li><p><strong>failhard</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – If True, will raise ValueError when
+<li><p><strong>params</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></span>) – Dictionary of parameters to a WaterOil object.</p></li>
+<li><p><strong>failhard</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If True, will raise ValueError when
 parameters are insufficient. If defaulted, no
 exception is raised.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>True if a WaterOil object should be attempted constructed

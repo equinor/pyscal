@@ -1,23 +1,23 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="../">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.utils.capillarypressure &mdash; pyscal 0.11.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css" />
+  <title>pyscal.utils.capillarypressure &mdash; pyscal 0.12 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=19f00094" />
 
   
   <!--[if lt IE 9]>
     <script src="../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
-        <script src="../_static/doctools.js"></script>
-        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../_static/documentation_options.js?v=3f949d3d"></script>
+        <script src="../_static/doctools.js?v=888ff710"></script>
+        <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
         <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -39,7 +39,7 @@
               <img src="../_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.11.0
+                0.12
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
@@ -111,11 +111,11 @@
            <div itemprop="articleBody">
              
   <section id="module-pyscal.utils.capillarypressure">
-<span id="pyscal-utils-capillarypressure"></span><h1><code class="docutils literal notranslate"><span class="pre">pyscal.utils.capillarypressure</span></code><a class="headerlink" href="#module-pyscal.utils.capillarypressure" title="Permalink to this heading"></a></h1>
+<span id="pyscal-utils-capillarypressure"></span><h1><code class="docutils literal notranslate"><span class="pre">pyscal.utils.capillarypressure</span></code><a class="headerlink" href="#module-pyscal.utils.capillarypressure" title="Link to this heading"></a></h1>
 <p>Support functions for capillary pressure</p>
 <dl class="py function">
 <dt class="sig sig-object py" id="pyscal.utils.capillarypressure.simple_J">
-<span class="sig-prename descclassname"><span class="pre">pyscal.utils.capillarypressure.</span></span><span class="sig-name descname"><span class="pre">simple_J</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poro_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perm_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9.81</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/capillarypressure.html#simple_J"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.capillarypressure.simple_J" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyscal.utils.capillarypressure.</span></span><span class="sig-name descname"><span class="pre">simple_J</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poro_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perm_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9.81</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/capillarypressure.html#simple_J"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.capillarypressure.simple_J" title="Link to this definition"></a></dt>
 <dd><p>Calculate capillary pressure with bar as unit</p>
 <p>RMS version:</p>
 <div class="math notranslate nohighlight">
@@ -127,20 +127,20 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sw</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – float, water saturation value to be used.
+<li><p><strong>sw</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – float, water saturation value to be used.
 Normalize when needed.</p></li>
-<li><p><strong>a</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – a coefficient</p></li>
-<li><p><strong>b</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – b coefficient</p></li>
-<li><p><strong>poro_ref</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Reference porosity for scaling to Pc, between 0 and 1</p></li>
-<li><p><strong>perm_ref</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Reference permeability for scaling to Pc, in milliDarcy</p></li>
-<li><p><strong>drho</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Density difference between water and oil, in SI units kg/m³.
+<li><p><strong>a</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – a coefficient</p></li>
+<li><p><strong>b</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – b coefficient</p></li>
+<li><p><strong>poro_ref</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Reference porosity for scaling to Pc, between 0 and 1</p></li>
+<li><p><strong>perm_ref</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Reference permeability for scaling to Pc, in milliDarcy</p></li>
+<li><p><strong>drho</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Density difference between water and oil, in SI units kg/m³.
 Default value is 300</p></li>
-<li><p><strong>g</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Gravitational acceleration, in SI units m/s²,
+<li><p><strong>g</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Gravitational acceleration, in SI units m/s²,
 default value is 9.81</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>capillary pressure, same type as swnpc input argument.</p>
@@ -150,24 +150,24 @@ default value is 9.81</p></li>
 
 <dl class="py function">
 <dt class="sig sig-object py" id="pyscal.utils.capillarypressure.swl_from_height_simpleJ">
-<span class="sig-prename descclassname"><span class="pre">pyscal.utils.capillarypressure.</span></span><span class="sig-name descname"><span class="pre">swl_from_height_simpleJ</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">swlheight</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swirr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poro_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perm_ref</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/capillarypressure.html#swl_from_height_simpleJ"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.capillarypressure.swl_from_height_simpleJ" title="Permalink to this definition"></a></dt>
+<span class="sig-prename descclassname"><span class="pre">pyscal.utils.capillarypressure.</span></span><span class="sig-name descname"><span class="pre">swl_from_height_simpleJ</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">swlheight</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swirr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poro_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perm_ref</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/capillarypressure.html#swl_from_height_simpleJ"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.capillarypressure.swl_from_height_simpleJ" title="Link to this definition"></a></dt>
 <dd><p>Calculate a swl value based on a height parameter.</p>
 <p>The height parameter is typically meters above free water level (FWL)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>swlheight</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Height above free water level, in meters,
+<li><p><strong>swlheight</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Height above free water level, in meters,
 where we want swl to be.</p></li>
-<li><p><strong>swirr</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Asymptotic irreducible water saturation. This is
+<li><p><strong>swirr</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Asymptotic irreducible water saturation. This is
 used to normalized the outputted swl.</p></li>
-<li><p><strong>a</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – a coefficient in RMS simplified J function</p></li>
-<li><p><strong>b</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – b coefficient in RMS simplified J function</p></li>
-<li><p><strong>poro_ref</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Reference porosity for scaling to Pc, between 0 and 1</p></li>
-<li><p><strong>perm_ref</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Reference permeability for scaling to Pc, in milliDarcy</p></li>
+<li><p><strong>a</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – a coefficient in RMS simplified J function</p></li>
+<li><p><strong>b</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – b coefficient in RMS simplified J function</p></li>
+<li><p><strong>poro_ref</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Reference porosity for scaling to Pc, between 0 and 1</p></li>
+<li><p><strong>perm_ref</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Reference permeability for scaling to Pc, in milliDarcy</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>A value that can be used for swl.</p>

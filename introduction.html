@@ -1,23 +1,23 @@
 <!DOCTYPE html>
-<html class="writer-html5" lang="en">
+<html class="writer-html5" lang="en" data-content_root="./">
 <head>
-  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Introduction to pyscal &mdash; pyscal 0.11.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-      <link rel="stylesheet" type="text/css" href="_static/css/theme.css" />
+  <title>Introduction to pyscal &mdash; pyscal 0.12 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
   
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
-        <script src="_static/jquery.js"></script>
-        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=3f949d3d"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -38,7 +38,7 @@
               <img src="_static/equinor-logo2.jpg" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                0.11.0
+                0.12
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -94,7 +94,7 @@
            <div itemprop="articleBody">
              
   <section id="introduction-to-pyscal">
-<h1>Introduction to pyscal<a class="headerlink" href="#introduction-to-pyscal" title="Permalink to this heading"></a></h1>
+<h1>Introduction to pyscal<a class="headerlink" href="#introduction-to-pyscal" title="Link to this heading"></a></h1>
 <a class="reference internal image-reference" href="_images/pyscal-logo.png"><img alt="_images/pyscal-logo.png" src="_images/pyscal-logo.png" style="width: 200px;" /></a>
 <p><em>pyscal</em> is a Python tool and module for creating <a class="reference external" href="http://en.wikipedia.org/wiki/Relative_permeability">relative permeability</a> input
 curves for Eclipse, Flow (OPM) and Nexus. Curves are parametrized
@@ -109,7 +109,7 @@ interpolation parameters in a SCAL recommendation is the recommended practice.</
 then used for interpolation.</p>
 <p>Capillary pressure is supported through a selected number of parametrizations.</p>
 <section id="command-line-tool">
-<h2>Command line tool<a class="headerlink" href="#command-line-tool" title="Permalink to this heading"></a></h2>
+<h2>Command line tool<a class="headerlink" href="#command-line-tool" title="Link to this heading"></a></h2>
 <p>The command line tool is installed as <code class="docutils literal notranslate"><span class="pre">pyscal</span></code> and takes a table in a CSV file
 or in an XLSX file as the main input. Each SATNUM is represented by one row of
 data in the table.</p>
@@ -148,7 +148,7 @@ from the pyscal command above will look like:</p>
 of the example. Leave it defaulted (0.01) for practical use.</p>
 </section>
 <section id="python-api">
-<h2>Python API<a class="headerlink" href="#python-api" title="Permalink to this heading"></a></h2>
+<h2>Python API<a class="headerlink" href="#python-api" title="Link to this heading"></a></h2>
 <p>The corresponding API can be used directly for more control and for custom-made
 solutions. An example recreating the the same table as above is given by:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">WaterOil</span>
@@ -162,7 +162,7 @@ solutions. An example recreating the the same table as above is given by:</p>
 <p>which will give the same output as the example above.</p>
 <p>See the full API for in-depth information.</p>
 <section id="classes">
-<h3>Classes<a class="headerlink" href="#classes" title="Permalink to this heading"></a></h3>
+<h3>Classes<a class="headerlink" href="#classes" title="Link to this heading"></a></h3>
 <dl class="simple">
 <dt>WaterOil</dt><dd><p>Represents the data for water-oil relative permeability and
 capillary pressure. Essentially the data for SWOF plus metadata.
