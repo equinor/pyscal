@@ -332,7 +332,7 @@ class GasWater:
             useax = mpl_ax
         if logyscale:
             useax.set_yscale("log")
-            useax.set_ylim([1e-8, 1])
+            useax.set_ylim((1e-8, 1))
         self.wateroil.table.plot(
             ax=useax,
             x="SW",

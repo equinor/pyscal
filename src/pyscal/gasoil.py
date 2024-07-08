@@ -1035,7 +1035,7 @@ class GasOil:
             useax = mpl_ax
         if logyscale:
             useax.set_yscale("log")
-            useax.set_ylim([1e-8, 1])
+            useax.set_ylim((1e-8, 1))
         self.table.plot(
             ax=useax,
             x="SG",

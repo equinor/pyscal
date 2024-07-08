@@ -1355,7 +1355,7 @@ class WaterOil:
             useax = mpl_ax
         if logyscale:
             useax.set_yscale("log")
-            useax.set_ylim([1e-6, 100])
+            useax.set_ylim((1e-6, 100))
         self.table.plot(
             ax=useax,
             x="SW",
@@ -1397,7 +1397,7 @@ class WaterOil:
             useax = mpl_ax
         if logyscale:
             useax.set_yscale("log")
-            useax.set_ylim([1e-8, 1])
+            useax.set_ylim((1e-8, 1))
         self.table.plot(
             ax=useax,
             x="SW",
