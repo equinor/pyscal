@@ -14,16 +14,14 @@ from pyscal import (
     SCALrecommendation,
     WaterOil,
     WaterOilGas,
-    factory,
     create_water_oil,
+    factory,
 )
 from pyscal.utils.testing import check_table, sat_table_str_ok
 
 
 def test_factory_wateroil():
     """Test that we can create curves from dictionaries of parameters"""
-    pyscal_factory = PyscalFactory()
-
     # Factory refuses to create incomplete defaulted objects.
     with pytest.raises(ValueError):
         create_water_oil()
@@ -71,9 +69,7 @@ def test_factory_wateroil():
 
     # Ambiguous works, but we don't guarantee that this results
     # in LET or Corey.
-    wateroil = create_water_oil(
-        {"nw": 3, "Lw": 2, "Ew": 2, "Tw": 2, "now": 3}
-    )
+    wateroil = create_water_oil({"nw": 3, "Lw": 2, "Ew": 2, "Tw": 2, "now": 3})
     assert "KRW" in wateroil.table
     assert "Corey" in wateroil.krwcomment or "LET" in wateroil.krwcomment
     check_table(wateroil.table)
@@ -81,9 +77,7 @@ def test_factory_wateroil():
     sat_table_str_ok(wateroil.SWFN())
 
     # Mixing Corey and LET
-    wateroil = create_water_oil(
-        {"Lw": 2, "Ew": 2, "Tw": 2, "krwend": 1, "now": 4}
-    )
+    wateroil = create_water_oil({"Lw": 2, "Ew": 2, "Tw": 2, "krwend": 1, "now": 4})
     assert isinstance(wateroil, WaterOil)
     assert "KRW" in wateroil.table
     assert wateroil.table["KRW"].max() == 1.0
@@ -351,9 +345,7 @@ def test_relative_swcr():
     pyscal_factory = PyscalFactory()
 
     with pytest.raises(ValueError, match="swl must be provided"):
-        create_water_oil(
-            {"swcr_add": 0.1, "nw": 1, "now": 1, "swirr": 0.01}
-        )
+        create_water_oil({"swcr_add": 0.1, "nw": 1, "now": 1, "swirr": 0.01})
     with pytest.raises(ValueError, match="swcr and swcr_add at the same time"):
         create_water_oil(
             {"swcr_add": 0.1, "swcr": 0.1, "swl": 0.1, "nw": 1, "now": 1, "swirr": 0.01}
@@ -402,7 +394,6 @@ def test_relative_swcr():
 def test_ambiguity():
     """Test how the factory handles ambiguity between Corey and LET
     parameters"""
-    pyscal_factory = PyscalFactory()
     wateroil = create_water_oil(
         {"swl": 0.1, "nw": 10, "Lw": 1, "Ew": 1, "Tw": 1, "now": 2, "h": 0.1, "no": 2}
     )

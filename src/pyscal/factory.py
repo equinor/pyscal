@@ -1,6 +1,7 @@
 """Factory functions for creating the pyscal objects"""
 
 import csv
+import warnings
 import zipfile
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Optional, Set, Union
@@ -19,8 +20,6 @@ from .pyscallist import PyscalList
 from .scalrecommendation import SCALrecommendation
 from .wateroil import WaterOil
 from .wateroilgas import WaterOilGas
-
-import warnings
 
 logger = getLogger_pyscal(__name__)
 
@@ -179,9 +178,7 @@ def create_water_oil(
     # Check if we should initialize swl from a swlheight parameter:
     if set(WO_SWL_FROM_HEIGHT).issubset(params):
         if "swl" in params:
-            raise ValueError(
-                "Do not provide both swl and swlheight at the same time"
-            )
+            raise ValueError("Do not provide both swl and swlheight at the same time")
         if params["swlheight"] <= 0:
             raise ValueError("swlheight must be larger than zero")
         params_swl_from_height = slicedict(params, WO_SWL_FROM_HEIGHT)
@@ -212,9 +209,7 @@ def create_water_oil(
                 )
             )
         if "swcr" in params:
-            raise ValueError(
-                "Do not provide both swcr and swcr_add at the same time"
-            )
+            raise ValueError("Do not provide both swcr and swcr_add at the same time")
         params["swcr"] = params["swl"] + params[WO_SWCR_ADD[0]]
 
     # No requirements to the base objects, defaults are ok.
@@ -247,9 +242,7 @@ def create_water_oil(
 
     # Oil curve:
     params_corey_oil = slicedict(params, WO_COREY_OIL + WO_OIL_ENDPOINTS)
-    params_let_oil = slicedict(
-        params, WO_LET_OIL + WO_LET_OIL_ALT + WO_OIL_ENDPOINTS
-    )
+    params_let_oil = slicedict(params, WO_LET_OIL + WO_LET_OIL_ALT + WO_OIL_ENDPOINTS)
     if set(WO_COREY_OIL).issubset(set(params_corey_oil)):
         wateroil.add_corey_oil(**params_corey_oil)
         logger.debug(
@@ -328,7 +321,6 @@ def create_water_oil(
     return wateroil
 
 
-
 class PyscalFactory:
     """Class for implementing the factory pattern for Pyscal objects
 
@@ -356,9 +348,12 @@ class PyscalFactory:
     def create_water_oil(
         params: Optional[Dict[str, float]] = None, fast: bool = False
     ) -> WaterOil:
-        warnings.warn("PyscalFactory.create_water_oil is deprecated. Please use create_water_oil function instead.", DeprecationWarning)
+        warnings.warn(
+            "PyscalFactory.create_water_oil is deprecated. "
+            "Please use create_water_oil function instead.",
+            DeprecationWarning,
+        )
         return create_water_oil(params, fast)
-
 
     @staticmethod
     def create_gas_oil(
