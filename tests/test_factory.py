@@ -15,6 +15,7 @@ from pyscal import (
     WaterOil,
     WaterOilGas,
     factory,
+    create_water_oil,
 )
 from pyscal.utils.testing import check_table, sat_table_str_ok
 
@@ -25,16 +26,16 @@ def test_factory_wateroil():
 
     # Factory refuses to create incomplete defaulted objects.
     with pytest.raises(ValueError):
-        pyscal_factory.create_water_oil()
+        create_water_oil()
 
     with pytest.raises(TypeError):
         # (it must be a dictionary)
-        pyscal_factory.create_water_oil(swirr=0.01)
+        create_water_oil(swirr=0.01)
 
     with pytest.raises(TypeError):
-        pyscal_factory.create_water_oil(params="swirr 0.01")
+        create_water_oil(params="swirr 0.01")
 
-    wateroil = pyscal_factory.create_water_oil(
+    wateroil = create_water_oil(
         {
             "swirr": 0.01,
             "swl": 0.1,
@@ -57,7 +58,7 @@ def test_factory_wateroil():
     sat_table_str_ok(wateroil.SWOF())
     sat_table_str_ok(wateroil.SWFN())
 
-    wateroil = pyscal_factory.create_water_oil(
+    wateroil = create_water_oil(
         {"nw": 3, "now": 2, "sorw": 0.1, "krwend": 0.2, "krwmax": 0.5}
     )
     assert isinstance(wateroil, WaterOil)
@@ -70,7 +71,7 @@ def test_factory_wateroil():
 
     # Ambiguous works, but we don't guarantee that this results
     # in LET or Corey.
-    wateroil = pyscal_factory.create_water_oil(
+    wateroil = create_water_oil(
         {"nw": 3, "Lw": 2, "Ew": 2, "Tw": 2, "now": 3}
     )
     assert "KRW" in wateroil.table
@@ -80,7 +81,7 @@ def test_factory_wateroil():
     sat_table_str_ok(wateroil.SWFN())
 
     # Mixing Corey and LET
-    wateroil = pyscal_factory.create_water_oil(
+    wateroil = create_water_oil(
         {"Lw": 2, "Ew": 2, "Tw": 2, "krwend": 1, "now": 4}
     )
     assert isinstance(wateroil, WaterOil)
@@ -91,7 +92,7 @@ def test_factory_wateroil():
     sat_table_str_ok(wateroil.SWOF())
     sat_table_str_ok(wateroil.SWFN())
 
-    wateroil = pyscal_factory.create_water_oil(
+    wateroil = create_water_oil(
         {"Lw": 2, "Ew": 2, "Tw": 2, "Low": 3, "Eow": 3, "Tow": 3, "krwend": 0.5}
     )
     assert isinstance(wateroil, WaterOil)
@@ -106,7 +107,7 @@ def test_factory_wateroil():
     sat_table_str_ok(wateroil.SWFN())
 
     # Add capillary pressure
-    wateroil = pyscal_factory.create_water_oil(
+    wateroil = create_water_oil(
         {
             "swl": 0.1,
             "nw": 1,
@@ -126,7 +127,7 @@ def test_factory_wateroil():
     sat_table_str_ok(wateroil.SWFN())
 
     # Test that the optional gravity g is picked up:
-    wateroil = pyscal_factory.create_water_oil(
+    wateroil = create_water_oil(
         {
             "swl": 0.1,
             "nw": 1,
@@ -146,7 +147,7 @@ def test_factory_wateroil():
     sat_table_str_ok(wateroil.SWFN())
 
     # Test petrophysical simple J:
-    wateroil = pyscal_factory.create_water_oil(
+    wateroil = create_water_oil(
         {
             "swl": 0.1,
             "nw": 1,
@@ -166,7 +167,7 @@ def test_factory_wateroil():
     sat_table_str_ok(wateroil.SWFN())
 
     # One pc param missing:
-    wateroil = pyscal_factory.create_water_oil(
+    wateroil = create_water_oil(
         {
             "swl": 0.1,
             "nw": 1,
@@ -185,9 +186,9 @@ def test_fast_mode():
     """Test that the fast-flag is passed on to constructed objects
 
     Each object's own test code tests the actual effects of the fast flag"""
-    wateroil = PyscalFactory.create_water_oil({"nw": 2, "now": 2})
+    wateroil = create_water_oil({"nw": 2, "now": 2})
     assert not wateroil.fast
-    wateroil = PyscalFactory.create_water_oil({"nw": 2, "now": 2}, fast=True)
+    wateroil = create_water_oil({"nw": 2, "now": 2}, fast=True)
     assert wateroil.fast
 
     gasoil = PyscalFactory.create_gas_oil({"ng": 2, "nog": 2})
@@ -230,7 +231,7 @@ def test_init_with_swlheight():
     """With sufficient parameters, swl will be calculated on the fly
     when initializing the WaterOil object"""
     pyscal_factory = PyscalFactory()
-    wateroil = pyscal_factory.create_water_oil(
+    wateroil = create_water_oil(
         {
             "swlheight": 200,
             "nw": 1,
@@ -251,11 +252,11 @@ def test_init_with_swlheight():
         match="Can't initialize from SWLHEIGHT without sufficient simple-J parameters",
     ):
         # This should fail because capillary pressure parameters are not provided.
-        pyscal_factory.create_water_oil({"swlheight": 200, "nw": 1, "now": 1})
+        create_water_oil({"swlheight": 200, "nw": 1, "now": 1})
 
     # swcr must be larger than swl:
     with pytest.raises(ValueError, match="lower than computed swl"):
-        pyscal_factory.create_water_oil(
+        create_water_oil(
             {
                 "swlheight": 200,
                 "nw": 1,
@@ -272,7 +273,7 @@ def test_init_with_swlheight():
 
     # swlheight must be positive:
     with pytest.raises(ValueError, match="swlheight must be larger than zero"):
-        pyscal_factory.create_water_oil(
+        create_water_oil(
             {
                 "swlheight": -200,
                 "nw": 1,
@@ -287,7 +288,7 @@ def test_init_with_swlheight():
         )
 
     # If swcr is large enough, it will pass:
-    wateroil = pyscal_factory.create_water_oil(
+    wateroil = create_water_oil(
         {
             "swlheight": 200,
             "nw": 1,
@@ -329,7 +330,7 @@ def test_init_with_swlheight():
     with pytest.raises(
         ValueError, match="Can't initialize from SWLHEIGHT without sufficient simple-J"
     ):
-        pyscal_factory.create_water_oil(
+        create_water_oil(
             {
                 "swlheight": 200,
                 "nw": 1,
@@ -350,20 +351,20 @@ def test_relative_swcr():
     pyscal_factory = PyscalFactory()
 
     with pytest.raises(ValueError, match="swl must be provided"):
-        pyscal_factory.create_water_oil(
+        create_water_oil(
             {"swcr_add": 0.1, "nw": 1, "now": 1, "swirr": 0.01}
         )
     with pytest.raises(ValueError, match="swcr and swcr_add at the same time"):
-        pyscal_factory.create_water_oil(
+        create_water_oil(
             {"swcr_add": 0.1, "swcr": 0.1, "swl": 0.1, "nw": 1, "now": 1, "swirr": 0.01}
         )
-    wateroil = pyscal_factory.create_water_oil(
+    wateroil = create_water_oil(
         {"swcr_add": 0.1, "swl": 0.1, "nw": 1, "now": 1, "swirr": 0.01}
     )
     assert wateroil.swcr == 0.2
 
     # Test when relative to swlheight:
-    wateroil = pyscal_factory.create_water_oil(
+    wateroil = create_water_oil(
         {
             "swlheight": 200,
             "swcr_add": 0.01,
@@ -402,7 +403,7 @@ def test_ambiguity():
     """Test how the factory handles ambiguity between Corey and LET
     parameters"""
     pyscal_factory = PyscalFactory()
-    wateroil = pyscal_factory.create_water_oil(
+    wateroil = create_water_oil(
         {"swl": 0.1, "nw": 10, "Lw": 1, "Ew": 1, "Tw": 1, "now": 2, "h": 0.1, "no": 2}
     )
     # Corey is picked here.
@@ -1095,7 +1096,7 @@ def test_check_deprecated_krowgend():
     )
     assert gasoil.table["KROG"].max() == 0.3
 
-    wateroil = PyscalFactory.create_water_oil(
+    wateroil = create_water_oil(
         {"swl": 0.1, "nw": 2, "now": 2, "krowend": 0.4, "kroend": 0.3}
     )
     assert wateroil.table["KROW"].max() == 0.3

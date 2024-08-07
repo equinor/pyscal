@@ -9,6 +9,10 @@ from typing import Optional
 
 import pandas as pd
 
+import pyscal
+
+
+
 from pyscal import (
     GasWater,
     SCALrecommendation,

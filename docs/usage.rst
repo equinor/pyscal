@@ -188,10 +188,10 @@ equivalent to the code lines above (except for capillary pressure) is then:
 
 .. code-block:: python
 
-    from pyscal import PyscalFactory
+    from pyscal import create_water_oil
     params = dict(swl=0.05, sorw=0.03, h=0.1, nw=2.1, krwend=0.6,
                   now=2.5, kroend=0.9, tag="Foobarites")
-    wo = PyscalFactory.create_water_oil(params)
+    wo = create_water_oil(params)
     print(wo.SWOF())
 
 Note that parameter names to factory functions are case *insensitive*, while

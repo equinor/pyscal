@@ -20,6 +20,8 @@ from .scalrecommendation import SCALrecommendation
 from .wateroil import WaterOil
 from .wateroilgas import WaterOilGas
 
+import warnings
+
 logger = getLogger_pyscal(__name__)
 
 
@@ -128,6 +130,205 @@ GW_LET_PC_IMB = [
 WOG_INIT = ["swirr", "swl", "swcr", "sorw", "socr", "sorg", "sgcr", "h", "tag"]
 
 
+def create_water_oil(
+    params: Optional[Dict[str, float]] = None, fast: bool = False
+) -> WaterOil:
+    """Create a WaterOil object from a dictionary of parameters.
+
+    Parameterization (Corey/LET) is inferred from presence
+    of certain parameters in the dictionary.
+
+    Don't rely on behaviour of you supply both Corey and LET at
+    the same time.
+
+    Parameter names in the dictionary are case insensitive. You
+    can use Swirr, swirr, sWirR, swiRR etc.
+
+    NB: the add_LET_* methods have the names 'l', 'e' and 't'
+    in their signatures, which is not precise enough in this
+    context, so we require e.g. 'Lw' and 'Low' (which both will be
+    translated to 'l')
+
+    Recognized parameters:
+        swirr, swl, swcr, sorw, socr, sgrw, h, tag, nw, now, krwmax, krwend,
+        lw, ew, tw, low, eow, tow, lo, eo, to, kroend,
+        a, a_petro, b, b_petro, poro_ref, perm_ref, drho,
+        a, b, poro, perm, sigma_costau
+
+    Args:
+        params: Dictionary with parameters describing the WaterOil object.
+        fast: If fast-mode should be set for constructed object.
+    """
+    if not params:
+        params = {}
+    if not isinstance(params, dict):
+        raise TypeError("Parameter to create_water_oil must be a dictionary")
+
+    check_deprecated(params)
+
+    sufficient_water_oil_params(params, failhard=True)
+
+    # For case insensitiveness, all keys are converted to lower case:
+    params = {key.lower(): value for (key, value) in params.items()}
+
+    # Allowing sending in NaN values, delete those keys.
+    params = filter_nan_from_dict(params)
+
+    usedparams: Set[str] = set()
+
+    # Check if we should initialize swl from a swlheight parameter:
+    if set(WO_SWL_FROM_HEIGHT).issubset(params):
+        if "swl" in params:
+            raise ValueError(
+                "Do not provide both swl and swlheight at the same time"
+            )
+        if params["swlheight"] <= 0:
+            raise ValueError("swlheight must be larger than zero")
+        params_swl_from_height = slicedict(params, WO_SWL_FROM_HEIGHT)
+        params["swl"] = capillarypressure.swl_from_height_simpleJ(
+            **params_swl_from_height
+        )
+        logger.debug("Computed swl from swlwheight to %s", str(params["swl"]))
+        if "swcr" in params and params["swcr"] < params["swl"]:
+            raise ValueError(
+                f'Provided swcr={params["swcr"]} is lower than '
+                f'computed swl={params["swl"]}'
+            )
+    elif set(WO_SWLHEIGHT).issubset(params):
+        raise ValueError(
+            (
+                "Can't initialize from SWLHEIGHT without sufficient "
+                f"simple-J parameters, needs all of: {WO_SWL_FROM_HEIGHT}"
+            )
+        )
+
+    # Should we have a swcr relative to swl?
+    if set(WO_SWCR_ADD).issubset(params):
+        if "swl" not in params:
+            raise ValueError(
+                (
+                    "If swcr should be relative to swl, "
+                    "both swcr_add and swl must be provided"
+                )
+            )
+        if "swcr" in params:
+            raise ValueError(
+                "Do not provide both swcr and swcr_add at the same time"
+            )
+        params["swcr"] = params["swl"] + params[WO_SWCR_ADD[0]]
+
+    # No requirements to the base objects, defaults are ok.
+    wateroil = WaterOil(
+        **PyscalFactory.alias_sgrw(slicedict(params, WO_INIT)), fast=fast
+    )
+    usedparams = usedparams.union(set(slicedict(params, WO_INIT).keys()))
+    logger.debug(
+        "Initialized WaterOil object from parameters %s", str(list(usedparams))
+    )
+
+    # Water curve
+    params_corey_water = slicedict(params, WO_COREY_WATER + WO_WATER_ENDPOINTS)
+    params_let_water = slicedict(params, WO_LET_WATER + WO_WATER_ENDPOINTS)
+    if set(WO_COREY_WATER).issubset(set(params_corey_water)):
+        wateroil.add_corey_water(**params_corey_water)
+        logger.debug(
+            "Added Corey water to WaterOil object from parameters %s",
+            str(params_corey_water.keys()),
+        )
+    elif set(WO_LET_WATER).issubset(set(params_let_water)):
+        params_let_water["l"] = params_let_water.pop("lw")
+        params_let_water["e"] = params_let_water.pop("ew")
+        params_let_water["t"] = params_let_water.pop("tw")
+        wateroil.add_LET_water(**params_let_water)
+        logger.debug(
+            "Added LET water to WaterOil object from parameters %s",
+            str(params_let_water.keys()),
+        )
+
+    # Oil curve:
+    params_corey_oil = slicedict(params, WO_COREY_OIL + WO_OIL_ENDPOINTS)
+    params_let_oil = slicedict(
+        params, WO_LET_OIL + WO_LET_OIL_ALT + WO_OIL_ENDPOINTS
+    )
+    if set(WO_COREY_OIL).issubset(set(params_corey_oil)):
+        wateroil.add_corey_oil(**params_corey_oil)
+        logger.debug(
+            "Added Corey water to WaterOil object from parameters %s",
+            str(params_corey_oil.keys()),
+        )
+    elif set(WO_LET_OIL).issubset(set(params_let_oil)):
+        params_let_oil["l"] = params_let_oil.pop("low")
+        params_let_oil["e"] = params_let_oil.pop("eow")
+        params_let_oil["t"] = params_let_oil.pop("tow")
+        wateroil.add_LET_oil(**params_let_oil)
+        logger.debug(
+            "Added LET water to WaterOil object from parameters %s",
+            str(params_let_oil.keys()),
+        )
+    elif set(WO_LET_OIL_ALT).issubset(set(params_let_oil)):
+        params_let_oil["l"] = params_let_oil.pop("lo")
+        params_let_oil["e"] = params_let_oil.pop("eo")
+        params_let_oil["t"] = params_let_oil.pop("to")
+        wateroil.add_LET_oil(**params_let_oil)
+        logger.debug(
+            "Added LET water to WaterOil object from parameters %s",
+            str(params_let_oil.keys()),
+        )
+
+    # Capillary pressure:
+    params_simple_j = slicedict(params, WO_SIMPLE_J + ["g"])
+    params_norm_j = slicedict(params, WO_NORM_J)
+    params_simple_j_petro = slicedict(params, WO_SIMPLE_J_PETRO + ["g"])
+    params_let_pc_pd = slicedict(params, WO_LET_PC_PD)
+    params_let_pc_imb = slicedict(params, WO_LET_PC_IMB)
+    params_skjaeveland_pc = slicedict(params, WO_SKJAEVELAND_PC)
+
+    if set(WO_SIMPLE_J).issubset(set(params_simple_j)):
+        wateroil.add_simple_J(**params_simple_j)
+    elif set(WO_SIMPLE_J_PETRO).issubset(set(params_simple_j_petro)):
+        params_simple_j_petro["a"] = params_simple_j_petro.pop("a_petro")
+        params_simple_j_petro["b"] = params_simple_j_petro.pop("b_petro")
+        wateroil.add_simple_J_petro(**params_simple_j_petro)
+    elif set(WO_NORM_J).issubset(set(params_norm_j)):
+        wateroil.add_normalized_J(**params_norm_j)
+    elif set(WO_LET_PC_PD).issubset(set(params_let_pc_pd)):
+        params_let_pc_pd["Lp"] = params_let_pc_pd.pop("lpow")
+        params_let_pc_pd["Ep"] = params_let_pc_pd.pop("epow")
+        params_let_pc_pd["Tp"] = params_let_pc_pd.pop("tpow")
+        params_let_pc_pd["Lt"] = params_let_pc_pd.pop("ltow")
+        params_let_pc_pd["Et"] = params_let_pc_pd.pop("etow")
+        params_let_pc_pd["Tt"] = params_let_pc_pd.pop("ttow")
+        params_let_pc_pd["Pcmax"] = params_let_pc_pd.pop("pcowmax")
+        params_let_pc_pd["Pct"] = params_let_pc_pd.pop("pcowt")
+        wateroil.add_LET_pc_pd(**params_let_pc_pd)
+    elif set(WO_LET_PC_IMB).issubset(set(params_let_pc_imb)):
+        params_let_pc_imb["Ls"] = params_let_pc_imb.pop("lsow")
+        params_let_pc_imb["Es"] = params_let_pc_imb.pop("esow")
+        params_let_pc_imb["Ts"] = params_let_pc_imb.pop("tsow")
+        params_let_pc_imb["Lf"] = params_let_pc_imb.pop("lfow")
+        params_let_pc_imb["Ef"] = params_let_pc_imb.pop("efow")
+        params_let_pc_imb["Tf"] = params_let_pc_imb.pop("tfow")
+        params_let_pc_imb["Pcmax"] = params_let_pc_imb.pop("pcowmax")
+        params_let_pc_imb["Pct"] = params_let_pc_imb.pop("pcowt")
+        params_let_pc_imb["Pcmin"] = params_let_pc_imb.pop("pcowmin")
+        wateroil.add_LET_pc_imb(**params_let_pc_imb)
+    elif set(WO_SKJAEVELAND_PC).issubset(set(params_skjaeveland_pc)):
+        wateroil.add_skjaeveland_pc(**params_skjaeveland_pc)
+    else:
+        logger.info(
+            (
+                "Missing or ambiguous parameters for capillary pressure in "
+                "WaterOil object. Using zero."
+            )
+        )
+    if not wateroil.selfcheck():
+        raise ValueError(
+            ("Incomplete WaterOil object, some parameters missing to factory")
+        )
+    return wateroil
+
+
+
 class PyscalFactory:
     """Class for implementing the factory pattern for Pyscal objects
 
@@ -155,199 +356,9 @@ class PyscalFactory:
     def create_water_oil(
         params: Optional[Dict[str, float]] = None, fast: bool = False
     ) -> WaterOil:
-        """Create a WaterOil object from a dictionary of parameters.
+        warnings.warn("PyscalFactory.create_water_oil is deprecated. Please use create_water_oil function instead.", DeprecationWarning)
+        return create_water_oil(params, fast)
 
-        Parameterization (Corey/LET) is inferred from presence
-        of certain parameters in the dictionary.
-
-        Don't rely on behaviour of you supply both Corey and LET at
-        the same time.
-
-        Parameter names in the dictionary are case insensitive. You
-        can use Swirr, swirr, sWirR, swiRR etc.
-
-        NB: the add_LET_* methods have the names 'l', 'e' and 't'
-        in their signatures, which is not precise enough in this
-        context, so we require e.g. 'Lw' and 'Low' (which both will be
-        translated to 'l')
-
-        Recognized parameters:
-          swirr, swl, swcr, sorw, socr, sgrw, h, tag, nw, now, krwmax, krwend,
-          lw, ew, tw, low, eow, tow, lo, eo, to, kroend,
-          a, a_petro, b, b_petro, poro_ref, perm_ref, drho,
-          a, b, poro, perm, sigma_costau
-
-        Args:
-            params: Dictionary with parameters describing the WaterOil object.
-            fast: If fast-mode should be set for constructed object.
-        """
-        if not params:
-            params = {}
-        if not isinstance(params, dict):
-            raise TypeError("Parameter to create_water_oil must be a dictionary")
-
-        check_deprecated(params)
-
-        sufficient_water_oil_params(params, failhard=True)
-
-        # For case insensitiveness, all keys are converted to lower case:
-        params = {key.lower(): value for (key, value) in params.items()}
-
-        # Allowing sending in NaN values, delete those keys.
-        params = filter_nan_from_dict(params)
-
-        usedparams: Set[str] = set()
-
-        # Check if we should initialize swl from a swlheight parameter:
-        if set(WO_SWL_FROM_HEIGHT).issubset(params):
-            if "swl" in params:
-                raise ValueError(
-                    "Do not provide both swl and swlheight at the same time"
-                )
-            if params["swlheight"] <= 0:
-                raise ValueError("swlheight must be larger than zero")
-            params_swl_from_height = slicedict(params, WO_SWL_FROM_HEIGHT)
-            params["swl"] = capillarypressure.swl_from_height_simpleJ(
-                **params_swl_from_height
-            )
-            logger.debug("Computed swl from swlwheight to %s", str(params["swl"]))
-            if "swcr" in params and params["swcr"] < params["swl"]:
-                raise ValueError(
-                    f'Provided swcr={params["swcr"]} is lower than '
-                    f'computed swl={params["swl"]}'
-                )
-        elif set(WO_SWLHEIGHT).issubset(params):
-            raise ValueError(
-                (
-                    "Can't initialize from SWLHEIGHT without sufficient "
-                    f"simple-J parameters, needs all of: {WO_SWL_FROM_HEIGHT}"
-                )
-            )
-
-        # Should we have a swcr relative to swl?
-        if set(WO_SWCR_ADD).issubset(params):
-            if "swl" not in params:
-                raise ValueError(
-                    (
-                        "If swcr should be relative to swl, "
-                        "both swcr_add and swl must be provided"
-                    )
-                )
-            if "swcr" in params:
-                raise ValueError(
-                    "Do not provide both swcr and swcr_add at the same time"
-                )
-            params["swcr"] = params["swl"] + params[WO_SWCR_ADD[0]]
-
-        # No requirements to the base objects, defaults are ok.
-        wateroil = WaterOil(
-            **PyscalFactory.alias_sgrw(slicedict(params, WO_INIT)), fast=fast
-        )
-        usedparams = usedparams.union(set(slicedict(params, WO_INIT).keys()))
-        logger.debug(
-            "Initialized WaterOil object from parameters %s", str(list(usedparams))
-        )
-
-        # Water curve
-        params_corey_water = slicedict(params, WO_COREY_WATER + WO_WATER_ENDPOINTS)
-        params_let_water = slicedict(params, WO_LET_WATER + WO_WATER_ENDPOINTS)
-        if set(WO_COREY_WATER).issubset(set(params_corey_water)):
-            wateroil.add_corey_water(**params_corey_water)
-            logger.debug(
-                "Added Corey water to WaterOil object from parameters %s",
-                str(params_corey_water.keys()),
-            )
-        elif set(WO_LET_WATER).issubset(set(params_let_water)):
-            params_let_water["l"] = params_let_water.pop("lw")
-            params_let_water["e"] = params_let_water.pop("ew")
-            params_let_water["t"] = params_let_water.pop("tw")
-            wateroil.add_LET_water(**params_let_water)
-            logger.debug(
-                "Added LET water to WaterOil object from parameters %s",
-                str(params_let_water.keys()),
-            )
-
-        # Oil curve:
-        params_corey_oil = slicedict(params, WO_COREY_OIL + WO_OIL_ENDPOINTS)
-        params_let_oil = slicedict(
-            params, WO_LET_OIL + WO_LET_OIL_ALT + WO_OIL_ENDPOINTS
-        )
-        if set(WO_COREY_OIL).issubset(set(params_corey_oil)):
-            wateroil.add_corey_oil(**params_corey_oil)
-            logger.debug(
-                "Added Corey water to WaterOil object from parameters %s",
-                str(params_corey_oil.keys()),
-            )
-        elif set(WO_LET_OIL).issubset(set(params_let_oil)):
-            params_let_oil["l"] = params_let_oil.pop("low")
-            params_let_oil["e"] = params_let_oil.pop("eow")
-            params_let_oil["t"] = params_let_oil.pop("tow")
-            wateroil.add_LET_oil(**params_let_oil)
-            logger.debug(
-                "Added LET water to WaterOil object from parameters %s",
-                str(params_let_oil.keys()),
-            )
-        elif set(WO_LET_OIL_ALT).issubset(set(params_let_oil)):
-            params_let_oil["l"] = params_let_oil.pop("lo")
-            params_let_oil["e"] = params_let_oil.pop("eo")
-            params_let_oil["t"] = params_let_oil.pop("to")
-            wateroil.add_LET_oil(**params_let_oil)
-            logger.debug(
-                "Added LET water to WaterOil object from parameters %s",
-                str(params_let_oil.keys()),
-            )
-
-        # Capillary pressure:
-        params_simple_j = slicedict(params, WO_SIMPLE_J + ["g"])
-        params_norm_j = slicedict(params, WO_NORM_J)
-        params_simple_j_petro = slicedict(params, WO_SIMPLE_J_PETRO + ["g"])
-        params_let_pc_pd = slicedict(params, WO_LET_PC_PD)
-        params_let_pc_imb = slicedict(params, WO_LET_PC_IMB)
-        params_skjaeveland_pc = slicedict(params, WO_SKJAEVELAND_PC)
-
-        if set(WO_SIMPLE_J).issubset(set(params_simple_j)):
-            wateroil.add_simple_J(**params_simple_j)
-        elif set(WO_SIMPLE_J_PETRO).issubset(set(params_simple_j_petro)):
-            params_simple_j_petro["a"] = params_simple_j_petro.pop("a_petro")
-            params_simple_j_petro["b"] = params_simple_j_petro.pop("b_petro")
-            wateroil.add_simple_J_petro(**params_simple_j_petro)
-        elif set(WO_NORM_J).issubset(set(params_norm_j)):
-            wateroil.add_normalized_J(**params_norm_j)
-        elif set(WO_LET_PC_PD).issubset(set(params_let_pc_pd)):
-            params_let_pc_pd["Lp"] = params_let_pc_pd.pop("lpow")
-            params_let_pc_pd["Ep"] = params_let_pc_pd.pop("epow")
-            params_let_pc_pd["Tp"] = params_let_pc_pd.pop("tpow")
-            params_let_pc_pd["Lt"] = params_let_pc_pd.pop("ltow")
-            params_let_pc_pd["Et"] = params_let_pc_pd.pop("etow")
-            params_let_pc_pd["Tt"] = params_let_pc_pd.pop("ttow")
-            params_let_pc_pd["Pcmax"] = params_let_pc_pd.pop("pcowmax")
-            params_let_pc_pd["Pct"] = params_let_pc_pd.pop("pcowt")
-            wateroil.add_LET_pc_pd(**params_let_pc_pd)
-        elif set(WO_LET_PC_IMB).issubset(set(params_let_pc_imb)):
-            params_let_pc_imb["Ls"] = params_let_pc_imb.pop("lsow")
-            params_let_pc_imb["Es"] = params_let_pc_imb.pop("esow")
-            params_let_pc_imb["Ts"] = params_let_pc_imb.pop("tsow")
-            params_let_pc_imb["Lf"] = params_let_pc_imb.pop("lfow")
-            params_let_pc_imb["Ef"] = params_let_pc_imb.pop("efow")
-            params_let_pc_imb["Tf"] = params_let_pc_imb.pop("tfow")
-            params_let_pc_imb["Pcmax"] = params_let_pc_imb.pop("pcowmax")
-            params_let_pc_imb["Pct"] = params_let_pc_imb.pop("pcowt")
-            params_let_pc_imb["Pcmin"] = params_let_pc_imb.pop("pcowmin")
-            wateroil.add_LET_pc_imb(**params_let_pc_imb)
-        elif set(WO_SKJAEVELAND_PC).issubset(set(params_skjaeveland_pc)):
-            wateroil.add_skjaeveland_pc(**params_skjaeveland_pc)
-        else:
-            logger.info(
-                (
-                    "Missing or ambiguous parameters for capillary pressure in "
-                    "WaterOil object. Using zero."
-                )
-            )
-        if not wateroil.selfcheck():
-            raise ValueError(
-                ("Incomplete WaterOil object, some parameters missing to factory")
-            )
-        return wateroil
 
     @staticmethod
     def create_gas_oil(
@@ -478,7 +489,7 @@ class PyscalFactory:
 
         wateroil: Optional[WaterOil]
         if sufficient_water_oil_params(params, failhard=False):
-            wateroil = PyscalFactory.create_water_oil(params, fast=fast)
+            wateroil = create_water_oil(params, fast=fast)
         else:
             logger.info("No wateroil parameters. Assuming only gas-oil in wateroilgas")
             wateroil = None
@@ -1028,7 +1039,7 @@ class PyscalFactory:
             if h is not None:
                 params["h"] = h
             try:
-                wol.append(PyscalFactory.create_water_oil(params.to_dict(), fast=fast))
+                wol.append(create_water_oil(params.to_dict(), fast=fast))
             except (AssertionError, ValueError, TypeError) as err:
                 raise ValueError(
                     f"Error for SATNUM {params['SATNUM']}: {str(err)}"
