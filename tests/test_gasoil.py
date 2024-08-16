@@ -10,6 +10,7 @@ import numpy as np
 import pandas as pd
 import pytest
 from hypothesis import given
+
 from pyscal import GasOil
 from pyscal.constants import MAX_EXPONENT_KR, SWINTEGERS
 from pyscal.utils.relperm import truncate_zeroness

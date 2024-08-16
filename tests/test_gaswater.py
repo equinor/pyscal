@@ -8,6 +8,7 @@ import matplotlib.pyplot
 import numpy as np
 import pytest
 from hypothesis import given
+
 from pyscal import GasWater
 from pyscal.constants import SWINTEGERS
 from pyscal.utils.testing import (

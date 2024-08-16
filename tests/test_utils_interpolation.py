@@ -6,6 +6,7 @@ import pandas as pd
 import pytest
 from hypothesis import given
 from matplotlib import pyplot as plt
+
 from pyscal import GasOil, WaterOil
 from pyscal.constants import EPSILON as epsilon
 from pyscal.utils.interpolation import (

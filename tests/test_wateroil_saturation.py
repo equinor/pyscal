@@ -4,6 +4,7 @@ import contextlib
 
 import hypothesis.strategies as st
 from hypothesis import given
+
 from pyscal import WaterOil
 from pyscal.constants import EPSILON, SWINTEGERS
 from pyscal.utils.testing import check_table, float_df_checker

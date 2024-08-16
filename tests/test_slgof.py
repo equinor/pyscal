@@ -4,6 +4,7 @@ import hypothesis.strategies as st
 import numpy as np
 import pytest
 from hypothesis import given
+
 from pyscal import GasOil, WaterOilGas
 from pyscal.constants import EPSILON, SWINTEGERS
 from pyscal.utils.testing import sat_table_str_ok

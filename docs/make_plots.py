@@ -3,6 +3,7 @@
 from pathlib import Path
 
 import matplotlib.pyplot as plt
+
 from pyscal import GasOil, GasWater, WaterOil
 
 IMG_DIR = Path(__file__).absolute().parent / "images"
