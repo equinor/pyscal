@@ -5,6 +5,7 @@ import os
 import numpy as np
 import pandas as pd
 import pytest
+
 from pyscal.utils.monotonicity import (
     check_almost_monotone,
     check_limits,

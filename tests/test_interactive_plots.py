@@ -9,6 +9,7 @@ import matplotlib
 import numpy as np
 import pytest
 from matplotlib import pyplot
+
 from pyscal import GasOil, GasWater, PyscalFactory, WaterOil, utils
 
 from .test_scalrecommendation import BASE_SAMPLE_LET, HIGH_SAMPLE_LET, LOW_SAMPLE_LET

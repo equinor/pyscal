@@ -4,6 +4,7 @@ import hypothesis.strategies as st
 import pandas as pd
 import pytest
 from hypothesis import given
+
 from pyscal import GasWater, PyscalFactory, SCALrecommendation, WaterOil, WaterOilGas
 from pyscal.factory import slicedict
 from pyscal.utils.testing import check_table, sat_table_str_ok, slow_hypothesis

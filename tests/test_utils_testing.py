@@ -4,6 +4,7 @@ These functions also need to be correct in order to trust tests."""
 
 import pandas as pd
 import pytest
+
 from pyscal.utils.testing import float_df_checker, sat_table_str_ok
 
 

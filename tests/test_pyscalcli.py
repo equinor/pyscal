@@ -8,6 +8,7 @@ from pathlib import Path
 
 import pandas as pd
 import pytest
+
 from pyscal import pyscalcli
 from pyscal.utils.testing import sat_table_str_ok
 

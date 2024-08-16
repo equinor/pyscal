@@ -4,6 +4,7 @@ import hypothesis.strategies as st
 import numpy as np
 import pytest
 from hypothesis import given
+
 from pyscal import WaterOil
 from pyscal.constants import MAX_EXPONENT_PC
 from pyscal.utils.testing import check_table, float_df_checker, sat_table_str_ok

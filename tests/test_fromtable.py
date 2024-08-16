@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import pytest
 from hypothesis import given
+
 from pyscal import GasOil, WaterOil, WaterOilGas
 from pyscal.utils.testing import check_table, float_df_checker
 

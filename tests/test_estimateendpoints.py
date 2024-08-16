@@ -3,6 +3,7 @@
 import hypothesis.strategies as st
 import numpy as np
 from hypothesis import given
+
 from pyscal import GasOil, WaterOil
 from pyscal.constants import EPSILON as epsilon
 
