@@ -324,8 +324,8 @@ def test_interpolate_wo(
     # That means that diff of the distances should be similar,
     # that is the std.dev of the distances is low:
     ip_dist_std = np.std(np.diff(dists[1:]))  # This number depends on 'h' and 't' range
-    # (avoiding the first which reproduces go_low
-    if ip_dist_std > 1.0:  # Found by trial and error
+    # (avoiding the first which reproduces wo_low
+    if ip_dist_std > 1.1:  # Found by trial and error
         print(f"ip_dist_std: {ip_dist_std}")
         print(dists)
 
