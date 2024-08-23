@@ -822,7 +822,8 @@ def test_load_relperm_df(tmp_path, caplog):
     )
     tagandcomment_df = PyscalFactory.load_relperm_df("tagandcomment.csv")
     assert (
-        tagandcomment_df["TAG"].values[0] == "SATNUM 1 tag: a-tag; comment: a-comment"
+        tagandcomment_df["TAG"].to_numpy()[0]
+        == "SATNUM 1 tag: a-tag; comment: a-comment"
     )
 
     # Missing SATNUMs:
@@ -1057,7 +1058,7 @@ def test_xls_scalrecommendation():
 
     xlsxfile = testdir / "data/scal-pc-input-example.xlsx"
     scalinput = pd.read_excel(xlsxfile, engine="openpyxl").set_index(["SATNUM", "CASE"])
-    for satnum in scalinput.index.levels[0].values:
+    for satnum in scalinput.index.levels[0].to_numpy():
         dictofdict = scalinput.loc[satnum, :].to_dict(orient="index")
         scalrec = PyscalFactory.create_scal_recommendation(dictofdict)
         scalrec.interpolate(+0.5)

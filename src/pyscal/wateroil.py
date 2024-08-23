@@ -491,9 +491,8 @@ class WaterOil:
             if krwmax is None:
                 krwmax = 1
             self.table.loc[linear_section_indices[-1], "KRW"] = krwmax
-        else:
-            if krwmax is not None:
-                logger.info("krwmax ignored when sorw is zero")
+        elif krwmax is not None:
+            logger.info("krwmax ignored when sorw is zero")
 
         # If the linear section is longer than two rows, do linear
         # interpolation inside for krw:
@@ -504,7 +503,7 @@ class WaterOil:
                 .set_index("SW")
                 .interpolate(method="index")["KRW"]
             )
-            self.table.loc[:, "KRW"] = interp_krw.values
+            self.table.loc[:, "KRW"] = interp_krw.to_numpy()
 
         # Left linear section is all zero:
         self.table.loc[self.table["SW"] < self.swcr, "KRW"] = 0

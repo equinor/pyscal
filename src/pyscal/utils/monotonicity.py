@@ -255,9 +255,8 @@ def check_almost_monotone(series: pd.Series, digits: int, sign: int) -> None:
     if sign > 0:
         if series.diff().min() < -allowance:
             raise ValueError("Series is not almost monotone")
-    else:
-        if series.diff().max() > allowance:
-            raise ValueError("Series is not almost monotone")
+    elif series.diff().max() > allowance:
+        raise ValueError("Series is not almost monotone")
 
 
 def validate_monotonicity_arg(

@@ -13,7 +13,7 @@ from pyscal.utils.testing import sat_table_str_ok
 def check_table(dframe):
     """Check sanity of important columns"""
     assert not dframe.empty
-    assert not dframe.isnull().values.any()
+    assert not dframe.isna().to_numpy().any()
     assert dframe["SL"].is_monotonic_increasing
     assert (dframe["SL"] >= 0.0).all()
     assert (dframe["SL"] <= 1.0).all()
@@ -49,9 +49,9 @@ def test_slgof(swl, sorg, sgcr):
     sat_table_str_ok(wog.SLGOF())
 
     # Requirements from E100 manual:
-    assert np.isclose(slgof["SL"].values[0], wog.gasoil.swl + wog.gasoil.sorg)
-    assert np.isclose(slgof["KRG"].values[-1], 0)
-    assert np.isclose(slgof["KROG"].values[0], 0)
+    assert np.isclose(slgof["SL"].to_numpy()[0], wog.gasoil.swl + wog.gasoil.sorg)
+    assert np.isclose(slgof["KRG"].to_numpy()[-1], 0)
+    assert np.isclose(slgof["KROG"].to_numpy()[0], 0)
 
     # If we ruin the object, SLGOF() will return an empty string:
     wog.gasoil.table = wog.gasoil.table.drop("KRG", axis="columns")
@@ -72,7 +72,6 @@ def test_slgof(swl, sorg, sgcr):
         (1e-12, 0.0, 0.1),
         (1e-11, 0.0, 0.1),
         (1e-10, 0.0, 0.1),
-        #
         (0.1, 0.0, 0.1),
         (0.1, 1e-18, 0.1),
         (0.1, 1e-17, 0.1),
@@ -83,7 +82,6 @@ def test_slgof(swl, sorg, sgcr):
         (0.1, 1e-12, 0.1),
         (0.1, 1e-11, 0.1),
         (0.1, 1e-10, 0.1),
-        #
         (0.1, 0.0, 0.0),
         (0.1, 0.0, 1e-18),
         (0.1, 0.0, 1e-17),
@@ -94,7 +92,6 @@ def test_slgof(swl, sorg, sgcr):
         (0.1, 0.0, 1e-12),
         (0.1, 0.0, 1e-11),
         (0.1, 0.0, 1e-10),
-        #
         (0.1 - 0.0, 0.0, 0.1),
         (0.1 - 1e-18, 0.0, 0.1),
         (0.1 - 1e-17, 0.0, 0.1),
@@ -119,8 +116,8 @@ def test_numerical_problems(swl, sorg, sgcr):
     gasoil.add_corey_oil()
     assert gasoil.selfcheck()
     slgof = gasoil.slgof_df()
-    assert np.isclose(slgof["SL"].values[0], gasoil.swl + gasoil.sorg)
-    assert np.isclose(slgof["SL"].values[-1], 1.0)
+    assert np.isclose(slgof["SL"].to_numpy()[0], gasoil.swl + gasoil.sorg)
+    assert np.isclose(slgof["SL"].to_numpy()[-1], 1.0)
     check_table(slgof)
 
 
@@ -139,9 +136,9 @@ def test_slgof_hypo(swl, sorg, sgcr, h):
     slgof = gasoil.slgof_df()
     check_table(slgof)
     # Eclipse 100 requirement from manual:
-    assert np.isclose(slgof["SL"].values[0], gasoil.swl + gasoil.sorg)
+    assert np.isclose(slgof["SL"].to_numpy()[0], gasoil.swl + gasoil.sorg)
     # Eclipse 100 requirement from manual:
-    assert np.isclose(slgof["SL"].values[-1], 1.0)
+    assert np.isclose(slgof["SL"].to_numpy()[-1], 1.0)
     slgof_str = gasoil.SLGOF()
     assert isinstance(slgof_str, str)
     assert slgof_str
@@ -161,4 +158,6 @@ def test_slgof_sl_mismatch(swl, sorg, h):
 
     # It is a strict requirement that the first sl value should be swl + sorg,
     # but GasOil might have truncated the values.
-    assert np.isclose(gasoil.slgof_df()["SL"].values[0] - (gasoil.swl + gasoil.sorg), 0)
+    assert np.isclose(
+        gasoil.slgof_df()["SL"].to_numpy()[0] - (gasoil.swl + gasoil.sorg), 0
+    )

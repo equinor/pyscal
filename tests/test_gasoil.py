@@ -159,7 +159,7 @@ def test_gasoil_normalization(swl, sgcr, sorg, h, tag):
         swirr=0.0, swl=swl, sgcr=sgcr, sorg=sorg, h=h, krgendanchor="sorg", tag=tag
     )
     assert not gasoil.table.empty
-    assert not gasoil.table.isnull().values.any()
+    assert not gasoil.table.isna().to_numpy().any()
 
     # Check that son is 1 at sg=0
     assert float_df_checker(gasoil.table, "SG", 0, "SON", 1)
@@ -301,10 +301,12 @@ def test_gasoil_krgendanchor():
 
     # kg should be 1.0 at 1 - sorg due to krgendanchor == "sorg":
     assert (
-        gasoil.table[np.isclose(gasoil.table["SG"], 1 - gasoil.sorg)]["KRG"].values[0]
+        gasoil.table[np.isclose(gasoil.table["SG"], 1 - gasoil.sorg)]["KRG"].to_numpy()[
+            0
+        ]
         == 1.0
     )
-    assert gasoil.table[np.isclose(gasoil.table["SG"], 1.0)]["KRG"].values[0] == 1.0
+    assert gasoil.table[np.isclose(gasoil.table["SG"], 1.0)]["KRG"].to_numpy()[0] == 1.0
 
     gasoil = GasOil(krgendanchor="", sorg=0.2, h=0.1)
     assert gasoil.sorg
@@ -313,10 +315,12 @@ def test_gasoil_krgendanchor():
 
     # kg should be < 1 at 1 - sorg due to krgendanchor being ""
     assert (
-        gasoil.table[np.isclose(gasoil.table["SG"], 1 - gasoil.sorg)]["KRG"].values[0]
+        gasoil.table[np.isclose(gasoil.table["SG"], 1 - gasoil.sorg)]["KRG"].to_numpy()[
+            0
+        ]
         < 1.0
     )
-    assert gasoil.table[np.isclose(gasoil.table["SG"], 1.0)]["KRG"].values[0] == 1.0
+    assert gasoil.table[np.isclose(gasoil.table["SG"], 1.0)]["KRG"].to_numpy()[0] == 1.0
     assert gasoil.selfcheck()
     assert gasoil.crosspoint() > 0
 
@@ -330,10 +334,12 @@ def test_gasoil_krgendanchor():
 
     # kg should be 1.0 at 1 - sorg due to krgendanchor == "sorg":
     assert (
-        gasoil.table[np.isclose(gasoil.table["SG"], 1 - gasoil.sorg)]["KRG"].values[0]
+        gasoil.table[np.isclose(gasoil.table["SG"], 1 - gasoil.sorg)]["KRG"].to_numpy()[
+            0
+        ]
         == 1.0
     )
-    assert gasoil.table[np.isclose(gasoil.table["SG"], 1.0)]["KRG"].values[0] == 1.0
+    assert gasoil.table[np.isclose(gasoil.table["SG"], 1.0)]["KRG"].to_numpy()[0] == 1.0
 
     gasoil = GasOil(krgendanchor="", sorg=0.2, h=0.1)
     assert gasoil.sorg
@@ -344,10 +350,12 @@ def test_gasoil_krgendanchor():
 
     # kg should be < 1 at 1 - sorg due to krgendanchor being ""
     assert (
-        gasoil.table[np.isclose(gasoil.table["SG"], 1 - gasoil.sorg)]["KRG"].values[0]
+        gasoil.table[np.isclose(gasoil.table["SG"], 1 - gasoil.sorg)]["KRG"].to_numpy()[
+            0
+        ]
         < 1.0
     )
-    assert gasoil.table[np.isclose(gasoil.table["SG"], 1.0)]["KRG"].values[0] == 1.0
+    assert gasoil.table[np.isclose(gasoil.table["SG"], 1.0)]["KRG"].to_numpy()[0] == 1.0
 
 
 def test_nexus():
@@ -367,8 +375,8 @@ def test_nexus():
         sep=r"\s+",
         header=None,
     )
-    assert (df.values <= 1.0).all()
-    assert (df.values >= 0.0).all()
+    assert (df.to_numpy() <= 1.0).all()
+    assert (df.to_numpy() >= 0.0).all()
 
 
 def test_linearsegments():
