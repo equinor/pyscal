@@ -810,7 +810,7 @@ class PyscalFactory:
                     "merged cells in XLSX, which is not supported."
                 )
             input_df["CASE"] = PyscalFactory.remap_validate_cases(
-                input_df["CASE"].values
+                input_df["CASE"].to_numpy()
             )
 
         # Add the SATNUM index to the TAG column
@@ -839,12 +839,12 @@ class PyscalFactory:
             raise ValueError(
                 "Can't make neither WaterOil, GasOil or GasWater from "
                 "the given data. Check documentation for what you need to supply. "
-                f"You provided the columns {input_df.columns.values}"
+                f"You provided the columns {input_df.columns.to_numpy()}"
             )
         logger.info(
             "Loaded input data with %s SATNUMS, column %s",
             str(len(input_df["SATNUM"].unique())),
-            str(input_df.columns.values),
+            str(input_df.columns.to_numpy()),
         )
         return input_df.sort_values("SATNUM")
 
@@ -863,7 +863,7 @@ class PyscalFactory:
             params: Keys must be lower case.
         """
         if "sgrw" in params:
-            if "sorw" not in params or pd.isnull(params["sorw"]):
+            if "sorw" not in params or pd.isna(params["sorw"]):
                 params_copy = dict(params)
                 params_copy["sorw"] = params["sgrw"]
                 del params_copy["sgrw"]
@@ -930,7 +930,7 @@ class PyscalFactory:
 
         scalinput = input_df.set_index(["SATNUM", "CASE"])
 
-        for satnum in scalinput.index.levels[0].values:
+        for satnum in scalinput.index.levels[0].to_numpy():
             # load_relperm_df only validates the CASE column for all SATNUMs at
             # once, errors for particular SATNUMs are caught here.
             if len(scalinput.loc[satnum, :]) > 3:

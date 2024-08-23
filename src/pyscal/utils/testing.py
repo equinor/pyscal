@@ -118,7 +118,7 @@ def check_table(dframe: pd.DataFrame) -> None:
     """Check that the numbers in a dataframe for WaterOil or GasOil
     has the properties that Eclipse enforces"""
     assert not dframe.empty
-    assert not dframe.isnull().values.any()
+    assert not dframe.isna().to_numpy().any()
     if "SW" in dframe and "SG" not in dframe:
         # (avoiding GasWater tables, where sw is an auxiliary column)
         assert len(dframe["SW"].unique()) == len(dframe)

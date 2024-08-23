@@ -65,7 +65,7 @@ def crosspoint(dframe: pd.DataFrame, satcol: str, kr1col: str, kr2col: str) -> f
         logger.debug(str(cross_dframe))
         return -1
 
-    return cross_dframe[np.isclose(cross_dframe.index, 0.0)][satcol].values[0]
+    return cross_dframe[np.isclose(cross_dframe.index, 0.0)][satcol].to_numpy()[0]
 
 
 def estimate_diffjumppoint(
@@ -119,7 +119,7 @@ def estimate_diffjumppoint(
     table["_linear"] = (table[xcol] - table[xcol].iloc[iloc[side]]) * lin_a + table[
         ycol
     ].iloc[iloc[side]]
-    assert table["_linear"].values[iloc[side]] == table[ycol].values[iloc[side]]
+    assert table["_linear"].to_numpy()[iloc[side]] == table[ycol].to_numpy()[iloc[side]]
 
     # Compute how much krw deviates from the linear krw:
     table["_lindev"] = (table[ycol] - table["_linear"]).abs()

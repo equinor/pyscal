@@ -328,11 +328,9 @@ def test_check_limits(series, monotonicity, colname, error_str):
         ([], {"sign": 1}, 0, []),
         ([], {"sign": 1}, 2, []),
         ([0], {"sign": 1}, 2, [False]),
-        #
         ([0, 0.1], {"sign": 1}, 2, [False, False]),
         ([0, 0.1], {"sign": 1}, 1, [False, False]),
         ([0, 0.1], {"sign": 1}, 0, [False, True]),
-        #
         ([0.1, 0], {"sign": -1}, 2, [False, False]),
         ([0.1, 0], {"sign": -2}, 1, [False, False]),
         ([0.1, 0], {"sign": -1}, 0, [False, True]),

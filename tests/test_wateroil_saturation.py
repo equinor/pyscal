@@ -41,7 +41,7 @@ def test_wateroil_normalization(swirr, swl, swcr, sorw, socr_add, h, tag):
         swirr=swirr, swl=swl, swcr=swcr, sorw=sorw, socr=sorw + socr_add, h=h, tag=tag
     )
     assert not wateroil.table.empty
-    assert not wateroil.table.isnull().values.any()
+    assert not wateroil.table.isna().to_numpy().any()
 
     # Check that son is 1 at swl:
     assert float_df_checker(wateroil.table, "SW", wateroil.swl, "SON", 1)

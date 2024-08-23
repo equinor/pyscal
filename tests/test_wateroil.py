@@ -297,8 +297,8 @@ def test_nexus():
         sep=r"\s+",
         header=None,
     )
-    assert (df.values <= 1.0).all()
-    assert (df.values >= 0.0).all()
+    assert (df.to_numpy() <= 1.0).all()
+    assert (df.to_numpy() >= 0.0).all()
 
 
 @pytest.mark.parametrize(
