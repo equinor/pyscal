@@ -4,6 +4,7 @@ import hypothesis.strategies as st
 import pandas as pd
 import pytest
 from hypothesis import given
+
 from pyscal import (
     GasWater,
     SCALrecommendation,

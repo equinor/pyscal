@@ -9,6 +9,7 @@ import matplotlib
 import numpy as np
 import pytest
 from matplotlib import pyplot
+
 from pyscal import GasOil, GasWater, WaterOil, utils
 from pyscal.factory import create_scal_recommendation
 
