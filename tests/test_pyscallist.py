@@ -9,11 +9,15 @@ import pytest
 from pyscal import (
     GasOil,
     GasWater,
-    PyscalFactory,
     PyscalList,
     SCALrecommendation,
     WaterOil,
     WaterOilGas,
+)
+from pyscal.factory import (
+    create_pyscal_list,
+    create_scal_recommendation_list,
+    load_relperm_df,
 )
 from pyscal.utils.testing import sat_table_str_ok
 
@@ -72,17 +76,15 @@ def test_load_scalrec():
     """Load a SATNUM range from xlsx"""
     testdir = Path(__file__).absolute().parent
 
-    scalrec_data = PyscalFactory.load_relperm_df(
-        testdir / "data/scal-pc-input-example.xlsx"
-    )
+    scalrec_data = load_relperm_df(testdir / "data/scal-pc-input-example.xlsx")
 
     # Also check that we can read the old excel format
-    scalrec_data_legacy_xls = PyscalFactory.load_relperm_df(
+    scalrec_data_legacy_xls = load_relperm_df(
         testdir / "data/scal-pc-input-example.xls"
     )
     pd.testing.assert_frame_equal(scalrec_data, scalrec_data_legacy_xls)
 
-    scalrec_list = PyscalFactory.create_scal_recommendation_list(scalrec_data)
+    scalrec_list = create_scal_recommendation_list(scalrec_data)
     wog_list = scalrec_list.interpolate(-0.3)
 
     with pytest.raises((AssertionError, ValueError)):
@@ -127,8 +129,8 @@ def test_load_scalrec():
 
     # Test slicing the scalrec to base, this is relevant for API usage.
     base_data = scalrec_data[scalrec_data["CASE"] == "base"].drop("CASE", axis=1)
-    PyscalFactory.load_relperm_df(base_data)  # Ensure no errors.
-    pyscal_list = PyscalFactory.create_pyscal_list(base_data)
+    load_relperm_df(base_data)  # Ensure no errors.
+    pyscal_list = create_pyscal_list(base_data)
     assert "LET" in pyscal_list.build_eclipse_data(family=1)
 
 
@@ -136,10 +138,8 @@ def test_df():
     """Test dataframe dumps"""
     testdir = Path(__file__).absolute().parent
 
-    scalrec_data = PyscalFactory.load_relperm_df(
-        testdir / "data/scal-pc-input-example.xlsx"
-    )
-    scalrec_list = PyscalFactory.create_scal_recommendation_list(scalrec_data)
+    scalrec_data = load_relperm_df(testdir / "data/scal-pc-input-example.xlsx")
+    scalrec_list = create_scal_recommendation_list(scalrec_data)
     wog_list = scalrec_list.interpolate(-0.3)
 
     # Test dataframe dumps:
@@ -201,8 +201,8 @@ def test_df():
 
     # WaterOil list
     input_dframe = pd.DataFrame(columns=["SATNUM", "Nw", "Now"], data=[[1, 2, 2]])
-    relperm_data = PyscalFactory.load_relperm_df(input_dframe)
-    wo_list = PyscalFactory.create_pyscal_list(relperm_data, h=0.2)
+    relperm_data = load_relperm_df(input_dframe)
+    wo_list = create_pyscal_list(relperm_data, h=0.2)
     dframe = wo_list.df()
     assert "SW" in dframe
     assert "KRW" in dframe
@@ -214,8 +214,8 @@ def test_df():
 
     # GasOil list
     input_dframe = pd.DataFrame(columns=["SATNUM", "Ng", "Nog"], data=[[1, 2, 2]])
-    relperm_data = PyscalFactory.load_relperm_df(input_dframe)
-    go_list = PyscalFactory.create_pyscal_list(relperm_data, h=0.2)
+    relperm_data = load_relperm_df(input_dframe)
+    go_list = create_pyscal_list(relperm_data, h=0.2)
     dframe = go_list.df()
     assert "SG" in dframe
     assert "KRG" in dframe
@@ -236,10 +236,8 @@ def test_load_scalrec_tags():
     """Test tag handling for a SCAL recommendation with SATNUM range"""
     testdir = Path(__file__).absolute().parent
 
-    scalrec_data = PyscalFactory.load_relperm_df(
-        testdir / "data/scal-pc-input-example.xlsx"
-    )
-    scalrec_list = PyscalFactory.create_scal_recommendation_list(scalrec_data)
+    scalrec_data = load_relperm_df(testdir / "data/scal-pc-input-example.xlsx")
+    scalrec_list = create_scal_recommendation_list(scalrec_data)
 
     wog_list = scalrec_list.interpolate(-1)
 
@@ -285,7 +283,7 @@ def test_load_scalrec_tags():
         "SAT3 base case",
         "SAT3 optimistic",
     ]
-    scalrec_list2 = PyscalFactory.create_scal_recommendation_list(scalrec_data)
+    scalrec_list2 = create_scal_recommendation_list(scalrec_data)
     swof = scalrec_list2.interpolate(-0.5, h=0.2).SWOF()
     assert swof.count("SCAL recommendation") == 3
     for tag in scalrec_data["TAG"]:
@@ -297,10 +295,8 @@ def test_deprecated_dump_to_file(tmpdir):
     functionality is deprecated in pyscallist"""
     testdir = Path(__file__).absolute().parent
 
-    relperm_data = PyscalFactory.load_relperm_df(
-        testdir / "data/relperm-input-example.xlsx"
-    )
-    pyscal_list = PyscalFactory.create_pyscal_list(relperm_data)
+    relperm_data = load_relperm_df(testdir / "data/relperm-input-example.xlsx")
+    pyscal_list = create_pyscal_list(relperm_data)
 
     fam1 = pyscal_list.build_eclipse_data(family=1)
     sat_table_str_ok(fam1)
@@ -344,9 +340,7 @@ def test_capillary_pressure():
         ],
         data=[[1, 1, 1, 0.05, 3.6, -3.5, 0.25, 15, 150]],
     )
-    pyscal_list = PyscalFactory.create_pyscal_list(
-        PyscalFactory.load_relperm_df(dframe)
-    )
+    pyscal_list = create_pyscal_list(load_relperm_df(dframe))
     swof = pyscal_list.build_eclipse_data(family=1)
     assert "Simplified J-function" in swof
     assert "petrophysical" not in swof
@@ -365,9 +359,7 @@ def test_capillary_pressure():
         ],
         data=[[1, 1, 1, 0.05, 3.6, -3.5, 0.25, 15, 150]],
     )
-    pyscal_list = PyscalFactory.create_pyscal_list(
-        PyscalFactory.load_relperm_df(dframe)
-    )
+    pyscal_list = create_pyscal_list(load_relperm_df(dframe))
     swof = pyscal_list.build_eclipse_data(family=1)
     assert "Simplified J-function" in swof
     assert "petrophysical" in swof
@@ -386,9 +378,7 @@ def test_capillary_pressure():
         ],
         data=[[1, 1, 1, 0.05, 3.6, -3.5, 0.25, 15, 30]],
     )
-    pyscal_list = PyscalFactory.create_pyscal_list(
-        PyscalFactory.load_relperm_df(dframe)
-    )
+    pyscal_list = create_pyscal_list(load_relperm_df(dframe))
     swof = pyscal_list.build_eclipse_data(family=1)
     assert "normalized J-function" in swof
     assert "sigma_costau" in swof
@@ -414,9 +404,7 @@ def test_swl_from_height():
         columns=df_columns,
         data=[[1, 1, 1, np.nan, 300, 0.00, 3.6, -3.5, 0.25, 15, 150]],
     )
-    pyscal_list = PyscalFactory.create_pyscal_list(
-        PyscalFactory.load_relperm_df(dframe)
-    )
+    pyscal_list = create_pyscal_list(load_relperm_df(dframe))
 
     # Mix swlheight init and direct swl-init:
     assert np.isclose(pyscal_list[1].swl, 0.157461)
@@ -427,9 +415,7 @@ def test_swl_from_height():
             [2, 1, 1, 0.3, np.nan, 0.00, 3.6, -3.5, 0.25, 15, 150],
         ],
     )
-    pyscal_list = PyscalFactory.create_pyscal_list(
-        PyscalFactory.load_relperm_df(dframe)
-    )
+    pyscal_list = create_pyscal_list(load_relperm_df(dframe))
     assert np.isclose(pyscal_list[1].swl, 0.157461)
     assert np.isclose(pyscal_list[2].swl, 0.3)
 
@@ -439,7 +425,7 @@ def test_swl_from_height():
         data=[[1, 1, 1, 0.3, 300, 0.00, 3.6, -3.5, 0.25, 15, 150]],
     )
     with pytest.raises(ValueError):
-        PyscalFactory.create_pyscal_list(PyscalFactory.load_relperm_df(dframe))
+        create_pyscal_list(load_relperm_df(dframe))
 
     # WaterOilGas (gasoil is also dependant on the computed swl)
     df_wog_columns = [
@@ -460,9 +446,7 @@ def test_swl_from_height():
         columns=df_wog_columns,
         data=[[1, 1, 1, 2, 2, 300, 0.00, 3.6, -3.5, 0.25, 15, 150]],
     )
-    pyscal_list = PyscalFactory.create_pyscal_list(
-        PyscalFactory.load_relperm_df(dframe)
-    )
+    pyscal_list = create_pyscal_list(load_relperm_df(dframe))
     assert np.isclose(pyscal_list[1].wateroil.swl, 0.157461)
     assert np.isclose(pyscal_list[1].gasoil.swl, 0.157461)
 
@@ -483,9 +467,7 @@ def test_swl_from_height():
         columns=df_gw_columns,
         data=[[1, 2, 3, 300, 0.00, 3.6, -3.5, 0.25, 15, 150]],
     )
-    pyscal_list = PyscalFactory.create_pyscal_list(
-        PyscalFactory.load_relperm_df(dframe)
-    )
+    pyscal_list = create_pyscal_list(load_relperm_df(dframe))
     assert np.isclose(pyscal_list[1].wateroil.swl, 0.157461)
     assert np.isclose(pyscal_list[1].swl, 0.157461)
 
@@ -501,9 +483,7 @@ def test_twophase_scal_wateroil():
             [1, "opt", 3, 3, "thetag"],
         ],
     )
-    pyscal_list = PyscalFactory.create_scal_recommendation_list(
-        PyscalFactory.load_relperm_df(dframe)
-    )
+    pyscal_list = create_scal_recommendation_list(load_relperm_df(dframe))
     pyscal_list = pyscal_list.interpolate(-0.5)
 
     # This works, but provides an error message for Gas.
@@ -525,9 +505,7 @@ def test_twophase_scal_gasoil():
             [1, "opt", 3, 3, "thetag"],
         ],
     )
-    pyscal_list = PyscalFactory.create_scal_recommendation_list(
-        PyscalFactory.load_relperm_df(dframe)
-    )
+    pyscal_list = create_scal_recommendation_list(load_relperm_df(dframe))
     pyscal_list = pyscal_list.interpolate(-0.5)
 
     sgof = pyscal_list.build_eclipse_data(family=1)
@@ -542,9 +520,7 @@ def test_gaswater():
         columns=["SATNUM", "NW", "NG", "TAG"],
         data=[[1, 2, 2, "thetag"], [2, 3, 3, "othertag"]],
     )
-    pyscal_list = PyscalFactory.create_pyscal_list(
-        PyscalFactory.load_relperm_df(dframe), h=0.1
-    )
+    pyscal_list = create_pyscal_list(load_relperm_df(dframe), h=0.1)
     assert pyscal_list.pyscaltype == GasWater
     dump = pyscal_list.build_eclipse_data(family=2)
     assert "SATNUM 2" in dump
@@ -581,9 +557,7 @@ def test_gaswater_scal():
             [1, "opt", 4, 4, "thetag"],
         ],
     )
-    pyscal_list = PyscalFactory.create_scal_recommendation_list(
-        PyscalFactory.load_relperm_df(dframe), h=0.1
-    )
+    pyscal_list = create_scal_recommendation_list(load_relperm_df(dframe), h=0.1)
     assert pyscal_list.pyscaltype == SCALrecommendation
 
     dump = pyscal_list.interpolate(-1).build_eclipse_data(family=2)
@@ -597,56 +571,56 @@ def test_explicit_df():
     dframe = pd.DataFrame(columns=["satnum"], data=[[1], [2]])
     with pytest.raises(ValueError):
         # SATNUM column must be upper case, or should we allow lowercase??
-        relperm_data = PyscalFactory.load_relperm_df(dframe)
+        relperm_data = load_relperm_df(dframe)
 
     dframe = pd.DataFrame(columns=["SATNUM"], data=[[0], [1]])
     with pytest.raises(ValueError):
         # SATNUM must start at 1.
-        relperm_data = PyscalFactory.load_relperm_df(dframe)
+        relperm_data = load_relperm_df(dframe)
 
     dframe = pd.DataFrame(columns=["SATNUM"], data=[[1], ["foo"]])
     with pytest.raises(ValueError):
         # SATNUM must contain only integers
-        relperm_data = PyscalFactory.load_relperm_df(dframe)
+        relperm_data = load_relperm_df(dframe)
 
     dframe = pd.DataFrame(
         columns=["SATNUM", "nw", "now"], data=[[1.01, 1, 1], [2.01, 1, 1]]
     )
     # This one will pass, as these can be converted to ints
-    relperm_data = PyscalFactory.load_relperm_df(dframe)
+    relperm_data = load_relperm_df(dframe)
 
     dframe = pd.DataFrame(
         columns=["SATNUM", "nw", "now"], data=[[1.01, 1, 1], [1.3, 1, 1]]
     )
     with pytest.raises(ValueError):
         # complains about non-uniqueness in SATNUM
-        relperm_data = PyscalFactory.load_relperm_df(dframe)
+        relperm_data = load_relperm_df(dframe)
 
     dframe = pd.DataFrame(columns=["SATNUM"], data=[[1], [2]])
     with pytest.raises(ValueError):
         # Not enough data
-        relperm_data = PyscalFactory.load_relperm_df(dframe)
+        relperm_data = load_relperm_df(dframe)
 
     # Minimal amount of data:
     dframe = pd.DataFrame(columns=["SATNUM", "Nw", "Now"], data=[[1, 2, 2]])
-    relperm_data = PyscalFactory.load_relperm_df(dframe)
-    p_list = PyscalFactory.create_pyscal_list(relperm_data, h=0.2)
+    relperm_data = load_relperm_df(dframe)
+    p_list = create_pyscal_list(relperm_data, h=0.2)
     p_list.build_eclipse_data(family=1)
     with pytest.raises(ValueError):
         p_list.build_eclipse_data(family=2)
 
     # Case insensitive for parameters
     dframe = pd.DataFrame(columns=["SATNUM", "nw", "now"], data=[[1, 2, 2]])
-    relperm_data = PyscalFactory.load_relperm_df(dframe)
-    p_list = PyscalFactory.create_pyscal_list(relperm_data, h=0.2)
+    relperm_data = load_relperm_df(dframe)
+    p_list = create_pyscal_list(relperm_data, h=0.2)
     p_list.build_eclipse_data(family=1)
 
     # Minimal wateroilgas
     dframe = pd.DataFrame(
         columns=["SATNUM", "Nw", "Now", "ng", "nOG"], data=[[1, 2, 2, 2, 2]]
     )
-    relperm_data = PyscalFactory.load_relperm_df(dframe)
-    p_list = PyscalFactory.create_pyscal_list(relperm_data, h=0.2)
+    relperm_data = load_relperm_df(dframe)
+    p_list = create_pyscal_list(relperm_data, h=0.2)
     relperm_str = p_list.build_eclipse_data(family=1)
     assert "SWOF" in relperm_str
     assert "SGOF" in relperm_str
@@ -670,8 +644,8 @@ def test_explicit_df():
         ],
         data=[[1, 0.1, 2, 2, 2, 2, 1.5, -0.5, 0.1, 100, 300]],
     )
-    relperm_data = PyscalFactory.load_relperm_df(dframe)
-    p_list = PyscalFactory.create_pyscal_list(relperm_data, h=0.2)
+    relperm_data = load_relperm_df(dframe)
+    p_list = create_pyscal_list(relperm_data, h=0.2)
     relperm_str = p_list.build_eclipse_data(family=1)
     assert "SWOF" in relperm_str
     assert "Simplified" in relperm_str  # Bad practice, testing for stuff in comments
@@ -684,8 +658,8 @@ def test_comments_df():
         columns=["SATNUM", "tag", "Nw", "Now", "ng", "nOG"],
         data=[[1, "thisisacomment", 2, 2, 2, 2]],
     )
-    relperm_data = PyscalFactory.load_relperm_df(dframe)
-    p_list = PyscalFactory.create_pyscal_list(relperm_data, h=0.2)
+    relperm_data = load_relperm_df(dframe)
+    p_list = create_pyscal_list(relperm_data, h=0.2)
     relperm_str = p_list.build_eclipse_data(family=1)
     assert "thisisacomment" in relperm_str
 
@@ -694,8 +668,8 @@ def test_comments_df():
         columns=["SATNUM", "comment", "Nw", "Now", "ng", "nOG"],
         data=[[1, "thisisacomment", 2, 2, 2, 2]],
     )
-    relperm_data = PyscalFactory.load_relperm_df(dframe)
-    p_list = PyscalFactory.create_pyscal_list(relperm_data, h=0.2)
+    relperm_data = load_relperm_df(dframe)
+    p_list = create_pyscal_list(relperm_data, h=0.2)
     relperm_str = p_list.build_eclipse_data(family=1)
     assert relperm_str.count("thisisacomment") == 2
 
@@ -704,8 +678,8 @@ def test_comments_df():
         columns=["SAtnUM", "coMMent", "Nw", "Now", "ng", "nOG"],
         data=[[1, "thisisacomment", 2, 2, 2, 2]],
     )
-    relperm_data = PyscalFactory.load_relperm_df(dframe)
-    p_list = PyscalFactory.create_pyscal_list(relperm_data, h=0.2)
+    relperm_data = load_relperm_df(dframe)
+    p_list = create_pyscal_list(relperm_data, h=0.2)
     assert p_list.build_eclipse_data(family=1).count("thisisacomment") == 2
 
     # UTF-8 stuff:
@@ -713,8 +687,8 @@ def test_comments_df():
         columns=["SATNUM", "TAG", "Nw", "Now", "Ng", "Nog"],
         data=[[1, "æøå", 2, 2, 2, 2]],
     )
-    relperm_data = PyscalFactory.load_relperm_df(dframe)
-    p_list = PyscalFactory.create_pyscal_list(relperm_data, h=0.2)
+    relperm_data = load_relperm_df(dframe)
+    p_list = create_pyscal_list(relperm_data, h=0.2)
     assert p_list.build_eclipse_data(family=1).count("æøå") == 2
 
 
@@ -727,34 +701,34 @@ def test_error_messages_pr_satnum():
         columns=["SATNUM", "nw", "now"], data=[[1, 1, 1], [2, "foo", 1]]
     )
     with pytest.raises(ValueError, match="SATNUM 2"):
-        PyscalFactory.create_pyscal_list(dframe, h=0.2)
+        create_pyscal_list(dframe, h=0.2)
 
     dframe = pd.DataFrame(
         columns=["SATNUM", "nw", "now"], data=[[1, 1, 1], [2, np.nan, 1]]
     )
     with pytest.raises(ValueError, match="SATNUM 2"):
-        PyscalFactory.create_pyscal_list(dframe, h=0.2)
+        create_pyscal_list(dframe, h=0.2)
 
     # Mixed up order:
     dframe = pd.DataFrame(
         columns=["SATNUM", "nw", "now"], data=[[2, np.nan, 1], [1, 1, 1]]
     )
     with pytest.raises(ValueError, match="SATNUM 2"):
-        PyscalFactory.create_pyscal_list(dframe, h=0.2)
+        create_pyscal_list(dframe, h=0.2)
 
     # Gasoil list
     dframe = pd.DataFrame(
         columns=["SATNUM", "ng", "nog"], data=[[1, 1, 1], [2, np.nan, 1]]
     )
     with pytest.raises(ValueError, match="SATNUM 2"):
-        PyscalFactory.create_pyscal_list(dframe, h=0.2)
+        create_pyscal_list(dframe, h=0.2)
 
     # Gaswater list:
     dframe = pd.DataFrame(
         columns=["SATNUM", "ng", "nw"], data=[[1, 1, 1], [2, np.nan, 1]]
     )
     with pytest.raises(ValueError, match="SATNUM 2"):
-        PyscalFactory.create_pyscal_list(dframe, h=0.2)
+        create_pyscal_list(dframe, h=0.2)
 
     # Wateroilgas list:
     dframe = pd.DataFrame(
@@ -762,7 +736,7 @@ def test_error_messages_pr_satnum():
         data=[[1, 1, 1, 1, 1], [2, np.nan, 1, 2, 3]],
     )
     with pytest.raises(ValueError, match="SATNUM 2"):
-        PyscalFactory.create_pyscal_list(dframe, h=0.2)
+        create_pyscal_list(dframe, h=0.2)
 
     # SCAL rec list:
     dframe = pd.DataFrame(
@@ -785,21 +759,17 @@ def test_error_messages_pr_satnum():
             case = dframe.iloc[rowidx, 1]
             # The error should hint both to SATNUM and to low/base/high
             with pytest.raises(ValueError, match=f"SATNUM {satnum}"):
-                PyscalFactory.create_scal_recommendation_list(dframe_perturbed, h=0.2)
+                create_scal_recommendation_list(dframe_perturbed, h=0.2)
             with pytest.raises(ValueError, match=f"Problem with {case}"):
-                PyscalFactory.create_scal_recommendation_list(dframe_perturbed, h=0.2)
+                create_scal_recommendation_list(dframe_perturbed, h=0.2)
 
 
 def test_fast():
     """Test fast mode for SCALrecmmendation"""
     testdir = Path(__file__).absolute().parent
 
-    scalrec_data = PyscalFactory.load_relperm_df(
-        testdir / "data/scal-pc-input-example.xlsx"
-    )
-    scalrec_list_fast = PyscalFactory.create_scal_recommendation_list(
-        scalrec_data, fast=True
-    )
+    scalrec_data = load_relperm_df(testdir / "data/scal-pc-input-example.xlsx")
+    scalrec_list_fast = create_scal_recommendation_list(scalrec_data, fast=True)
 
     for item in scalrec_list_fast:
         assert item.fast
@@ -820,29 +790,29 @@ def test_fast():
             [3, 2, 2, 2, 2],
         ],
     )
-    relperm_data = PyscalFactory.load_relperm_df(dframe)
-    p_list_fast = PyscalFactory.create_pyscal_list(relperm_data, h=0.2, fast=True)
+    relperm_data = load_relperm_df(dframe)
+    p_list_fast = create_pyscal_list(relperm_data, h=0.2, fast=True)
     for item in p_list_fast:
         assert item.fast
 
     # GasOil list
     input_dframe = dframe[["SATNUM", "ng", "nog"]].copy()
-    relperm_data = PyscalFactory.load_relperm_df(input_dframe)
-    p_list_fast = PyscalFactory.create_pyscal_list(relperm_data, h=0.2, fast=True)
+    relperm_data = load_relperm_df(input_dframe)
+    p_list_fast = create_pyscal_list(relperm_data, h=0.2, fast=True)
     for item in p_list_fast:
         assert item.fast
 
     # WaterOil list
     input_dframe = dframe[["SATNUM", "nw", "now"]].copy()
-    relperm_data = PyscalFactory.load_relperm_df(input_dframe)
-    p_list_fast = PyscalFactory.create_pyscal_list(relperm_data, h=0.2, fast=True)
+    relperm_data = load_relperm_df(input_dframe)
+    p_list_fast = create_pyscal_list(relperm_data, h=0.2, fast=True)
     for item in p_list_fast:
         assert item.fast
 
     # GasWater list
     input_dframe = dframe[["SATNUM", "nw", "ng"]].copy()
-    relperm_data = PyscalFactory.load_relperm_df(input_dframe)
-    p_list_fast = PyscalFactory.create_pyscal_list(relperm_data, h=0.2, fast=True)
+    relperm_data = load_relperm_df(input_dframe)
+    p_list_fast = create_pyscal_list(relperm_data, h=0.2, fast=True)
     for item in p_list_fast:
         assert item.fast
 
@@ -859,8 +829,8 @@ def test_fast():
             [3, 2, 2, 2, 2, True],
         ],
     )
-    relperm_data = PyscalFactory.load_relperm_df(dframe)
+    relperm_data = load_relperm_df(dframe)
     assert "fast" in relperm_data
-    p_list = PyscalFactory.create_pyscal_list(relperm_data, h=0.2)
+    p_list = create_pyscal_list(relperm_data, h=0.2)
     for item in p_list:
         assert not item.fast

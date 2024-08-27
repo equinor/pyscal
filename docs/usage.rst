@@ -230,7 +230,7 @@ some of the saturation endpoints, as there are compatibility constraints.  For
 this reason, it is recommended to initialize both the ``WaterOil`` and
 ``GasOil`` objects trough a ``WaterOilGas`` object.
 
-There is a corresponding ``PyscalFactory.create_gas_oil()`` support function with
+There is a corresponding ``create_gas_oil()`` support function with
 dictionary as argument.
 
 For plotting, ``GasOil`` object has a function ``.plotkrgkrog()``.
@@ -305,9 +305,9 @@ the SCAL recommendation holds three GasWater objects, but works similarly.
 
     from pyscal import SCALrecommendation, PyscalFactory
 
-    low = PyscalFactory.create_water_oil_gas(dict(nw=1, now=1, ng=1, nog=1, tag='low'))
-    base = PyscalFactory.create_water_oil_gas(dict(nw=2, now=2, ng=2, nog=3, tag='base'))
-    high = PyscalFactory.create_water_oil_gas(dict(nw=3, now=3, ng=3, nog=3, tag='high'))
+    low = create_water_oil_gas(dict(nw=1, now=1, ng=1, nog=1, tag='low'))
+    base = create_water_oil_gas(dict(nw=2, now=2, ng=2, nog=3, tag='base'))
+    high = create_water_oil_gas(dict(nw=3, now=3, ng=3, nog=3, tag='high'))
     rec = SCALrecommendation(low, base, high)
 
     interpolant = rec.interpolate(-0.4)

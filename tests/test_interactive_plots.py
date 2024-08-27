@@ -9,8 +9,8 @@ import matplotlib
 import numpy as np
 import pytest
 from matplotlib import pyplot
-
-from pyscal import GasOil, GasWater, PyscalFactory, WaterOil, utils
+from pyscal import GasOil, GasWater, WaterOil, utils
+from pyscal.factory import create_scal_recommendation
 
 from .test_scalrecommendation import BASE_SAMPLE_LET, HIGH_SAMPLE_LET, LOW_SAMPLE_LET
 
@@ -305,7 +305,7 @@ def test_SCAL_interpolation():
     """Demonstration of interpolation between LET curves, 2x2 subplot"""
     matplotlib.style.use("ggplot")
 
-    rec = PyscalFactory.create_scal_recommendation(
+    rec = create_scal_recommendation(
         {"low": LOW_SAMPLE_LET, "base": BASE_SAMPLE_LET, "high": HIGH_SAMPLE_LET},
         "FOO",
         h=0.001,

@@ -213,9 +213,7 @@ def create_water_oil(
         params["swcr"] = params["swl"] + params[WO_SWCR_ADD[0]]
 
     # No requirements to the base objects, defaults are ok.
-    wateroil = WaterOil(
-        **PyscalFactory.alias_sgrw(slicedict(params, WO_INIT)), fast=fast
-    )
+    wateroil = WaterOil(**alias_sgrw(slicedict(params, WO_INIT)), fast=fast)
     usedparams = usedparams.union(set(slicedict(params, WO_INIT).keys()))
     logger.debug(
         "Initialized WaterOil object from parameters %s", str(list(usedparams))
@@ -321,6 +319,732 @@ def create_water_oil(
     return wateroil
 
 
+def create_gas_oil(
+    params: Optional[Dict[str, float]] = None, fast: bool = False
+) -> GasOil:
+    """Create a GasOil object from a dictionary of parameters.
+
+    Parameterization (Corey/LET) is inferred from presence
+    of certain parameters in the dictionary.
+
+    Don't rely on behaviour of you supply both Corey and LET at
+    the same time.
+
+    NB: the add_LET_* methods have the names 'l', 'e' and 't'
+    in their signatures, which is not precise enough in this
+    context, so we require e.g. 'Lg' and 'Log' (which both will be
+    translated to 'l').
+
+    Recognized parameters:
+        swirr, sgcr, sorg, swl, krgendanchor, h, tag,
+        ng, krgend, krgmax, nog, kroend, kromax
+        lg, eg, tg, log, eog, tog
+
+    Args:
+        params: Dictionary with parameters describing the GasOil object.
+        fast: If fast-mode should be set for constructed object.
+    """
+    if not params:
+        params = {}
+    if not isinstance(params, dict):
+        raise TypeError("Parameter to create_gas_oil must be a dictionary")
+
+    check_deprecated(params)
+
+    sufficient_gas_oil_params(params, failhard=True)
+
+    # For case insensitiveness, all keys are converted to lower case:
+    params = {key.lower(): value for (key, value) in params.items()}
+
+    # Allowing sending in NaN values, delete those keys.
+    params = filter_nan_from_dict(params)
+
+    usedparams: Set[str] = set()
+    # No requirements to the base objects, defaults are ok.
+    gasoil = GasOil(**slicedict(params, GO_INIT), fast=fast)
+    usedparams = usedparams.union(set(slicedict(params, GO_INIT).keys()))
+    logger.debug("Initialized GasOil object from parameters %s", str(list(usedparams)))
+
+    # Gas curve
+    params_corey_gas = slicedict(params, GO_COREY_GAS + GO_GAS_ENDPOINTS)
+    params_let_gas = slicedict(params, GO_LET_GAS + GO_GAS_ENDPOINTS)
+    if set(GO_COREY_GAS).issubset(set(params_corey_gas)):
+        gasoil.add_corey_gas(**params_corey_gas)
+        logger.debug(
+            "Added Corey gas to GasOil object from parameters %s",
+            str(params_corey_gas.keys()),
+        )
+    elif set(GO_LET_GAS).issubset(set(params_let_gas)):
+        params_let_gas["l"] = params_let_gas.pop("lg")
+        params_let_gas["e"] = params_let_gas.pop("eg")
+        params_let_gas["t"] = params_let_gas.pop("tg")
+        gasoil.add_LET_gas(**params_let_gas)
+        logger.debug(
+            "Added LET gas to GasOil object from parameters %s",
+            str(params_let_gas.keys()),
+        )
+    else:
+        logger.warning("Missing or ambiguous parameters for gas curve in GasOil object")
+
+    # Oil curve:
+    params_corey_oil = slicedict(params, GO_COREY_OIL + GO_OIL_ENDPOINTS)
+    params_let_oil = slicedict(params, GO_LET_OIL + GO_OIL_ENDPOINTS)
+    if set(GO_COREY_OIL).issubset(set(params_corey_oil)):
+        gasoil.add_corey_oil(**params_corey_oil)
+        logger.debug(
+            "Added Corey gas to GasOil object from parameters %s",
+            str(params_corey_oil.keys()),
+        )
+    elif set(GO_LET_OIL).issubset(set(params_let_oil)):
+        params_let_oil["l"] = params_let_oil.pop("log")
+        params_let_oil["e"] = params_let_oil.pop("eog")
+        params_let_oil["t"] = params_let_oil.pop("tog")
+        gasoil.add_LET_oil(**params_let_oil)
+        logger.debug(
+            "Added LET gas to GasOil object from parameters %s",
+            str(params_let_oil.keys()),
+        )
+    else:
+        logger.warning("Missing or ambiguous parameters for oil curve in GasOil object")
+    if not gasoil.selfcheck():
+        raise ValueError(
+            ("Incomplete GasOil object, some parameters missing to factory")
+        )
+
+    return gasoil
+
+
+def create_water_oil_gas(
+    params: Optional[Dict[str, float]] = None, fast: bool = False
+) -> WaterOilGas:
+    """Create a WaterOilGas object from a dictionary of parameters
+
+    Parameterization (Corey/LET) is inferred from presence
+    of certain parameters in the dictionary.
+
+    Check create_water_oil() and create_gas_oil() for lists
+    of supported parameters (case insensitive)
+
+    Params:
+        params: Dictionary with parameters describing the WaterOilGas object.
+        fast: If fast-mode should be set for constructed object.
+    """
+    if not params:
+        params = {}
+    if not isinstance(params, dict):
+        raise TypeError("Parameter to create_water_oil_gas must be a dictionary")
+
+    check_deprecated(params)
+
+    # For case insensitiveness, all keys are converted to lower case:
+    params = {key.lower(): value for (key, value) in params.items()}
+
+    wateroil: Optional[WaterOil]
+    if sufficient_water_oil_params(params, failhard=False):
+        wateroil = create_water_oil(params, fast=fast)
+    else:
+        logger.info("No wateroil parameters. Assuming only gas-oil in wateroilgas")
+        wateroil = None
+
+    # If the swl in WaterOil was initialized with swlheight,
+    # ensure that result is passed on to the GasOil object:
+    if "swl" not in params and "swlheight" in params and wateroil is not None:
+        params["swl"] = wateroil.swl
+
+    gasoil: Optional[GasOil]
+    if sufficient_gas_oil_params(params, failhard=False):
+        gasoil = create_gas_oil(params, fast=fast)
+    else:
+        logger.info("No gasoil parameters, assuming two-phase oilwatergas")
+        gasoil = None
+
+    wog_init_params = slicedict(params, WOG_INIT)
+    wateroilgas = WaterOilGas(**wog_init_params, fast=fast)
+    # The wateroilgas __init__ has already created WaterOil and GasOil objects
+    # but we overwrite the references with newly created ones, this factory function
+    # must then guarantee that they are compatible.
+    wateroilgas.wateroil = wateroil  # This might be None
+    wateroilgas.gasoil = gasoil  # This might be None
+    if not wateroilgas.selfcheck():
+        raise ValueError(f"Inconsistent WaterOilGas object. Bug? Input was {params}")
+    return wateroilgas
+
+
+def create_gas_water(
+    params: Optional[Dict[str, float]] = None, fast: bool = False
+) -> GasWater:
+    """Create a GasWater object.
+
+    Parameterization (Corey/LET) is inferred from presence
+    of certain parameters in the dictionary.
+
+    Args:
+        params: Dictionary with parameters for GasWater.
+        fast: If fast-mode should be set for constructed object.
+    """
+    if not params:
+        params = {}
+    if not isinstance(params, dict):
+        raise TypeError("Parameter to create_gas_water must be a dictionary")
+
+    # For case insensitiveness, all keys are converted to lower case:
+    params = {key.lower(): value for (key, value) in params.items()}
+
+    sufficient_gas_water_params(params, failhard=True)
+
+    gw_init_params = slicedict(params, GW_INIT)
+    gaswater = GasWater(**gw_init_params, fast=fast)
+
+    # We are using the create_water_oil_gas factory function
+    # to avoid replicating code. It works because GasWater and
+    # WaterOilGas internally are very similar.
+    wog_params = params.copy()
+    if "sgrw" in params:
+        wog_params["sorw"] = params["sgrw"]
+    # Set some dummy parameters for oil:
+    wog_params["nog"] = 1
+    wog_params["now"] = 1
+    wog = create_water_oil_gas(wog_params, fast=fast)
+    assert wog.wateroil is not None
+    assert wog.gasoil is not None
+    gaswater.wateroil = wog.wateroil
+    gaswater.gasoil = wog.gasoil
+    return gaswater
+
+
+def create_scal_recommendation(
+    params: Dict[str, Dict[str, float]],
+    tag: str = "",
+    h: Optional[float] = None,
+    fast: bool = False,
+) -> SCALrecommendation:
+    """
+    Set up a SCAL recommendation curve set from input as a
+    dictionary of dictionary.
+
+    The keys in in the dictionary *must* be "low", "base" and "high".
+
+    The value for "low" must be a new dictionary with saturation
+    endpoints and LET/Corey parameters, as you would feed it to
+    the create_water_oil_gas() factory function, and then similarly
+    for base and high.
+
+    For oil-water only, you may omit the parameters for gas-oil.
+    A WaterOilGas object for each case is created, but only the
+    WaterOil part of it will be used.
+
+    For gas-water, a GasWater object is created for each pess, base
+    and high.
+
+    Args:
+        params: keys low, base and high.
+            The value for "low" must be a new dictionary with saturation
+            endpoints and LET/Corey parameters, as you would feed it to
+            the create_water_oil_gas() factory function, and then similarly
+            for base and high.
+        tag: String to be used as the tag, will end up in comments.
+        h: Saturation step length
+        fast: If fast-mode should be set for constructed object.
+    """
+    if not isinstance(params, dict):
+        raise ValueError("Input must be a dictionary (of dictionaries)")
+
+    # For case insensitiveness, all keys are converted to lower case:
+    params = {key.lower(): value for (key, value) in params.items()}
+
+    if "low" not in params:
+        raise ValueError('"low" case not supplied')
+    if "base" not in params:
+        raise ValueError('"base" case not supplied')
+    if "high" not in params:
+        raise ValueError('"high" case not supplied')
+    if not (
+        isinstance(params["low"], dict)
+        and isinstance(params["base"], dict)
+        and isinstance(params["high"], dict)
+    ):
+        raise ValueError("All values in parameter dict must be dictionaries")
+
+    check_deprecated(params["low"])
+    check_deprecated(params["base"])
+    check_deprecated(params["high"])
+
+    errored = False
+    if h is not None:
+        params["low"]["h"] = h
+        params["base"]["h"] = h
+        params["high"]["h"] = h
+
+    # Check parameter availability, in order to determine phase configuration
+    gaswater = all(sufficient_gas_water_params(params[case]) for case in params)
+    gasoil = all(sufficient_gas_oil_params(params[case]) for case in params)
+    wateroil = all(sufficient_water_oil_params(params[case]) for case in params)
+
+    wog_low: Union[WaterOilGas, GasWater]
+    wog_base: Union[WaterOilGas, GasWater]
+    wog_high: Union[WaterOilGas, GasWater]
+
+    if wateroil or gasoil:
+        try:
+            wog_low = create_water_oil_gas(params["low"], fast=fast)
+        except ValueError as err:
+            raise ValueError(f"Problem with low/pess case: {err}") from err
+        try:
+            wog_base = create_water_oil_gas(params["base"], fast=fast)
+        except ValueError as err:
+            raise ValueError(f"Problem with base case: {err}") from err
+        try:
+            wog_high = create_water_oil_gas(params["high"], fast=fast)
+        except ValueError as err:
+            raise ValueError(f"Problem with high/opt case: {err}") from err
+    elif gaswater:
+        # Note that gaswater will be True in three-phase configs.
+        try:
+            wog_low = create_gas_water(params["low"], fast=fast)
+        except ValueError as err:
+            raise ValueError(f"Problem with low/pess case: {err}") from err
+        try:
+            wog_base = create_gas_water(params["base"], fast=fast)
+        except ValueError as err:
+            raise ValueError(f"Problem with base case: {err}") from err
+        try:
+            wog_high = create_gas_water(params["high"], fast=fast)
+        except ValueError as err:
+            raise ValueError(f"Problem with high/opt case: {err}") from err
+
+    errored = all(not wog.selfcheck() for wog in [wog_low, wog_base, wog_high])
+
+    if errored:
+        raise ValueError("Incomplete SCAL recommendation")
+
+    return SCALrecommendation(wog_low, wog_base, wog_high, tag)
+
+
+def load_relperm_df(
+    inputfile: Union[str, pd.DataFrame], sheet_name: Optional[str] = None
+) -> pd.DataFrame:
+    """Read CSV or XLSX from file and return scal/relperm data
+    a dataframe.
+
+    Checks validity in SATNUM and CASE columns.
+    Ensures case-insensitiveness SATNUM, CASE, TAG and COMMENT
+
+    Merges COMMENT into TAG column, as only TAG is picked up downstream.
+    Adds a prefix "SATNUM <number>" to all tags.
+
+    All strings in CASE column are converted to lowercase. Applies
+    aliasing in the CASE column so that "pessimistic" and "pess" map to
+    "low", and "optimistic" and "opt" map to "high".
+
+    Args:
+        inputfile: Filename for XLSX or CSV file, or a
+            pandas DataFrame.
+        sheet_name: Sheet-name, only used when loading xlsx files.
+
+    Returns:
+        To be handed over to pyscal list factory methods.
+        Empty dataframe in case of errors (messages will be logged).
+    """
+    if isinstance(inputfile, (str, Path)) and Path(inputfile).is_file():
+        tabular_file_format = infer_tabular_file_format(inputfile)
+        if not tabular_file_format:
+            raise ValueError(
+                f"Impossible to infer file format for {inputfile}, not CSV/XLS/XLSX"
+            )
+
+        if tabular_file_format == "csv" and sheet_name is not None:
+            logger.warning(
+                "Sheet name only relevant for XLSX files, ignoring %s", sheet_name
+            )
+        excel_engines = {"xls": "xlrd", "xlsx": "openpyxl"}
+        if tabular_file_format != "csv" and sheet_name:
+            try:
+                input_df = pd.read_excel(
+                    inputfile,
+                    sheet_name=sheet_name,
+                    engine=excel_engines[tabular_file_format],
+                )
+                logger.info(
+                    "Parsed %s file %s, sheet %s",
+                    tabular_file_format.upper(),
+                    inputfile,
+                    sheet_name,
+                )
+            except (KeyError, ValueError) as err:
+                raise ValueError(
+                    f"Non-existing sheet-name {sheet_name} provided."
+                ) from err
+        elif tabular_file_format.startswith("xls"):
+            input_df = pd.read_excel(
+                inputfile, engine=excel_engines[tabular_file_format]
+            )
+            logger.info("Parsed %s file %s", tabular_file_format.upper(), inputfile)
+        else:
+            with open(inputfile, "r", encoding="utf-8") as csvfile:
+                try:
+                    delimiter = (
+                        csv.Sniffer()
+                        .sniff(csvfile.read(), [",", ";", "\t"])  # type: ignore
+                        .delimiter
+                    )
+                except Exception:
+                    # Sniffer cannot identify the delimiter
+                    # typically on single column csv
+                    delimiter = ","
+                if delimiter != ",":
+                    raise TypeError(
+                        "Supplied file is not a valid CSV file. "
+                        f"Detected delimiter is '{delimiter}'"
+                    )
+                csvfile.seek(0)
+                input_df = pd.read_csv(csvfile, skipinitialspace=True, encoding="utf-8")
+            logger.info("Parsed CSV file %s", inputfile)
+
+    elif isinstance(inputfile, pd.DataFrame):
+        input_df = inputfile
+    else:
+        if isinstance(inputfile, str) and not Path(inputfile).is_file():
+            raise IOError("File not found " + str(inputfile))
+        raise ValueError("Unsupported argument " + str(inputfile))
+    assert isinstance(input_df, pd.DataFrame)
+
+    if input_df.empty:
+        logger.error("Relperm input dataframe is empty!")
+
+    # We will ignore case on the column names, solved by converting column
+    # name to uppercase
+    ignorecasecolumns = ["satnum", "case", "tag", "comment"]
+    for colname in input_df.columns:
+        if colname.lower() in ignorecasecolumns:
+            input_df = input_df.rename({colname: colname.upper()}, axis="columns")
+
+    # Support both TAG and COLUMN (as TAG)
+    if "COMMENT" in input_df and "TAG" not in input_df:
+        input_df = input_df.rename({"COMMENT": "TAG"}, axis="columns")
+    if "COMMENT" in input_df and "TAG" in input_df:
+        # It might never happen that a user puts both tag and comment in
+        # the dataframe, but if so, merge them.
+        input_df["TAG"] = (
+            "tag: " + input_df["TAG"] + "; comment: " + input_df["COMMENT"]
+        )
+    # It is tempting to detect any NaN's at this point because that can
+    # indicate merged cells, which is not supported, but that could
+    # break optional comment columns which might only be defined on certain lines.
+    if "SATNUM" not in input_df:
+        raise ValueError("SATNUM must be present in CSV/XLSX file/dataframe")
+
+    # Delete columns and rows that are all NaNs (this has been observed
+    # to occur from seemingly empty cells in Excel/LibreOffice and
+    # has been seen to vary with Pandas/Openpyxl versions in use)
+    input_df = input_df.dropna(axis="columns", how="all")
+    input_df = input_df.dropna(axis="index", how="all")
+
+    if input_df["SATNUM"].isna().sum() > 0:
+        raise ValueError(
+            "Found not-a-number in the SATNUM column. This could be due to "
+            "merged cells in XLSX, which is not supported."
+        )
+
+    # Check that SATNUM's are consecutive and integers:
+    try:
+        input_df["SATNUM"] = input_df["SATNUM"].astype(int)
+    except ValueError as err:
+        raise ValueError("SATNUM must contain only integers") from err
+
+    if min(input_df["SATNUM"]) != 1:
+        raise ValueError("SATNUM must start at 1")
+
+    if max(input_df["SATNUM"]) != len(input_df["SATNUM"].unique()):
+        raise ValueError(
+            "Missing SATNUMs? Max SATNUM is not equal to number of unique SATNUMS"
+        )
+    if "CASE" not in input_df and len(input_df["SATNUM"].unique()) != len(input_df):
+        raise ValueError("Non-unique SATNUMs?")
+    # If we are in a SCAL recommendation setting
+    if "CASE" in input_df:
+        # Enforce lower case:
+        if input_df["CASE"].isna().sum() > 0:
+            raise ValueError(
+                "Found not-a-number in the CASE column. This could be due "
+                "merged cells in XLSX, which is not supported."
+            )
+        input_df["CASE"] = remap_validate_cases(input_df["CASE"].to_numpy())
+
+    # Add the SATNUM index to the TAG column
+    if "TAG" not in input_df:
+        input_df["TAG"] = ""
+    input_df["TAG"] = input_df["TAG"].fillna(value="")
+    input_df["TAG"] = "SATNUM " + input_df["SATNUM"].astype(str) + " " + input_df["TAG"]
+
+    # Check if fast is defined as a column
+    if "fast" in input_df:
+        logger.warning("Fast mode is not an option for individual SATNUMs")
+        logger.warning("it is implemented as a global option.")
+        logger.warning("The fast column in the dataframe will be ignored.")
+        logger.warning("Use fast=True in the function call instead.")
+        logger.warning("Fast mode is only available through the Python API")
+
+    # Check that we are able to make something out of the first row:
+    firstrow = input_df.iloc[0, :]
+    error: bool = False
+    wo_ok = sufficient_water_oil_params(firstrow)
+    go_ok = sufficient_gas_oil_params(firstrow)
+    gw_ok = sufficient_gas_water_params(firstrow)
+    if error or not wo_ok and not go_ok and not gw_ok:
+        raise ValueError(
+            "Can't make neither WaterOil, GasOil or GasWater from "
+            "the given data. Check documentation for what you need to supply. "
+            f"You provided the columns {input_df.columns.to_numpy()}"
+        )
+    logger.info(
+        "Loaded input data with %s SATNUMS, column %s",
+        str(len(input_df["SATNUM"].unique())),
+        str(input_df.columns.to_numpy()),
+    )
+    return input_df.sort_values("SATNUM")
+
+
+def alias_sgrw(params: Dict[str, Any]) -> Dict[str, Any]:
+    """Allow sgrw as an alias for sorw by remapping a
+    sgrw value to a sorw value in an incoming dict.
+
+    Will error hard of sorw already exists and is not nan.
+
+    This aliasing is relevant when GasWater is modelled
+    as three-phase to allow for condensate forming, and mirrors
+    GasWater.__init__() which performs the same aliasing.
+
+    Args:
+        params: Keys must be lower case.
+    """
+    if "sgrw" in params:
+        if "sorw" not in params or pd.isna(params["sorw"]):
+            params_copy = dict(params)
+            params_copy["sorw"] = params["sgrw"]
+            del params_copy["sgrw"]
+            return params_copy
+        if np.isclose(params["sgrw"], params["sorw"]):
+            params_copy = dict(params)
+            del params_copy["sgrw"]
+            return params_copy
+        raise ValueError(
+            f"sgrw ({params['sgrw']}) must equal sorw ({params['sorw']}) "
+            "when both are supplied to WaterOil."
+        )
+    return params
+
+
+def remap_validate_cases(casevalues: List[str]) -> List[str]:
+    """Remap values in the CASE column so that we can use aliases.
+
+    All values are first made lower case, then
+    "pessimistic" and "pess" are mapped to "low" and
+    "optimistic" and "opt" are mapped to "high".
+
+    Will raise ValueError if some values are not understood, and
+    if we don't have exactly three unique values.
+
+    Args:
+        casevalues: values to remap.
+    """
+    accepted = ["low", "base", "high"]
+    aliases = {
+        "pessimistic": "low",
+        "pess": "low",
+        "optimistic": "high",
+        "opt": "high",
+    }
+    lowered = [value.lower() for value in casevalues]
+    remapped = [aliases.get(value, value) for value in lowered]
+    not_understood = set(remapped) - set(accepted)
+    if not_understood:
+        raise ValueError(f"Invalid case values: {not_understood}")
+    if len(set(remapped)) != len(accepted):
+        raise ValueError(
+            f"You must supply low, base AND high, got only {set(remapped)}"
+        )
+    return remapped
+
+
+def create_scal_recommendation_list(
+    input_df: pd.DataFrame, h: Optional[float] = None, fast: bool = False
+) -> PyscalList:
+    """Requires SATNUM and CASE to be defined in the input data
+
+    Args:
+        input_df: Input data, should have been processed
+            through load_relperm_df().
+        h: Saturation step-value
+        fast: If fast-mode should be set for constructed object
+
+    Returns:
+        PyscalList, consisting of SCALrecommendation objects
+    """
+    scal_l = PyscalList()
+    assert isinstance(input_df, pd.DataFrame)
+
+    scalinput = input_df.set_index(["SATNUM", "CASE"])
+
+    for satnum in scalinput.index.levels[0].to_numpy():
+        # load_relperm_df only validates the CASE column for all SATNUMs at
+        # once, errors for particular SATNUMs are caught here.
+        if len(scalinput.loc[satnum, :]) > 3:
+            raise ValueError(f"Too many cases supplied for SATNUM {satnum}")
+        if len(scalinput.loc[satnum, :]) < 3:
+            raise ValueError(f"Too few cases supplied for SATNUM {satnum}")
+        try:
+            scal_l.append(
+                create_scal_recommendation(
+                    scalinput.loc[satnum, :].to_dict(orient="index"), h=h, fast=fast
+                )
+            )
+        except ValueError as err:
+            raise ValueError(f"Error for SATNUM {satnum}: {str(err)}") from err
+
+    return scal_l
+
+
+def create_pyscal_list(
+    relperm_params_df: pd.DataFrame, h: Optional[float] = None, fast: bool = False
+):
+    """Create WaterOilGas, WaterOil, GasOil or GasWater list
+    based on what is available
+
+    Args:
+        relperm_params_df: Input data, should have been processed
+            through load_relperm_df().
+        h: Saturation step-value
+        fast: If fast-mode should be set for constructed object
+
+    Returns:
+        PyscalList, consisting of either WaterOil, GasOil or WaterOilGas objects
+    """
+    params = relperm_params_df.iloc[0, :]  # first row
+    water_oil = sufficient_water_oil_params(params)
+    gas_oil = sufficient_gas_oil_params(params)
+    gas_water = sufficient_gas_water_params(params)
+
+    if water_oil and gas_oil:
+        return create_wateroilgas_list(relperm_params_df, h, fast)
+    if water_oil:
+        return create_wateroil_list(relperm_params_df, h, fast)
+    if gas_oil:
+        return create_gasoil_list(relperm_params_df, h, fast)
+    if gas_water:
+        return create_gaswater_list(relperm_params_df, h, fast)
+    raise ValueError("Could not determine two or three phase from parameters")
+
+
+def create_wateroilgas_list(
+    relperm_params_df: pd.DataFrame, h: Optional[float] = None, fast: bool = False
+) -> PyscalList:
+    """Create a PyscalList with WaterOilGas objects from
+    a dataframe
+
+    Args:
+        relperm_params_df: Input data, should have been processed
+            through load_relperm_df().
+        h: Saturation step-value
+        fast: If fast-mode should be set for constructed object
+
+    Returns:
+        PyscalList, consisting of WaterOilGas objects
+    """
+    wogl = PyscalList()
+    for row_idx, params in relperm_params_df.sort_values("SATNUM").iterrows():
+        if h is not None:
+            params["h"] = h
+        try:
+            wogl.append(create_water_oil_gas(params.to_dict(), fast=fast))
+        except (AssertionError, ValueError, TypeError) as err:
+            raise ValueError(f"Error for SATNUM {row_idx + 1}: {str(err)}") from err
+    return wogl
+
+
+def create_wateroil_list(
+    relperm_params_df: pd.DataFrame, h: Optional[float] = None, fast: bool = False
+) -> PyscalList:
+    """Create a PyscalList with WaterOil objects from
+    a dataframe
+
+    Args:
+        relperm_params_df: A valid dataframe with
+            WaterOil parameters, processed through load_relperm_df()
+        h: Saturation steplength
+        fast: If fast-mode should be set for constructed object
+
+    Returns:
+        PyscalList, consisting of WaterOil objects
+    """
+    wol = PyscalList()
+    for _, params in relperm_params_df.iterrows():
+        if h is not None:
+            params["h"] = h
+        try:
+            wol.append(create_water_oil(params.to_dict(), fast=fast))
+        except (AssertionError, ValueError, TypeError) as err:
+            raise ValueError(
+                f"Error for SATNUM {params['SATNUM']}: {str(err)}"
+            ) from err
+    return wol
+
+
+def create_gasoil_list(
+    relperm_params_df: pd.DataFrame, h: Optional[float] = None, fast: bool = False
+) -> PyscalList:
+    """Create a PyscalList with GasOil objects from
+    a dataframe
+
+    Args:
+        relperm_params_df: A valid dataframe with GasOil parameters,
+            processed through load_relperm_df()
+        h: Saturation steplength
+        fast: If fast-mode should be set for constructed object
+
+    Returns:
+        PyscalList, consisting of GasOil objects
+    """
+    gol = PyscalList()
+    for _, params in relperm_params_df.iterrows():
+        if h is not None:
+            params["h"] = h
+        try:
+            gol.append(create_gas_oil(params.to_dict(), fast=fast))
+        except (AssertionError, ValueError, TypeError) as err:
+            raise ValueError(
+                f"Error for SATNUM {params['SATNUM']}: {str(err)}"
+            ) from err
+    return gol
+
+
+def create_gaswater_list(
+    relperm_params_df: pd.DataFrame, h: Optional[float] = None, fast: bool = False
+) -> PyscalList:
+    """Create a PyscalList with WaterOilGas objects from
+    a dataframe, to be used for GasWater
+
+    Args:
+        relperm_params_df: A valid dataframe with GasWater
+            parameters, processed through load_relperm_df()
+        h: Saturation steplength
+        fast: If fast-mode should be set for constructed object
+
+    Returns:
+        PyscalList, consisting of GasWater objects
+    """
+    gwl = PyscalList()
+    for _, params in relperm_params_df.iterrows():
+        if h is not None:
+            params["h"] = h
+        try:
+            gwl.append(create_gas_water(params.to_dict(), fast=fast))
+        except (AssertionError, ValueError, TypeError) as err:
+            raise ValueError(
+                f"Error for SATNUM {params['SATNUM']}: {str(err)}"
+            ) from err
+    return gwl
+
+
 class PyscalFactory:
     """Class for implementing the factory pattern for Pyscal objects
 
@@ -359,202 +1083,34 @@ class PyscalFactory:
     def create_gas_oil(
         params: Optional[Dict[str, float]] = None, fast: bool = False
     ) -> GasOil:
-        """Create a GasOil object from a dictionary of parameters.
-
-        Parameterization (Corey/LET) is inferred from presence
-        of certain parameters in the dictionary.
-
-        Don't rely on behaviour of you supply both Corey and LET at
-        the same time.
-
-        NB: the add_LET_* methods have the names 'l', 'e' and 't'
-        in their signatures, which is not precise enough in this
-        context, so we require e.g. 'Lg' and 'Log' (which both will be
-        translated to 'l').
-
-        Recognized parameters:
-          swirr, sgcr, sorg, swl, krgendanchor, h, tag,
-          ng, krgend, krgmax, nog, kroend, kromax
-          lg, eg, tg, log, eog, tog
-
-        Args:
-            params: Dictionary with parameters describing the GasOil object.
-            fast: If fast-mode should be set for constructed object.
-        """
-        if not params:
-            params = {}
-        if not isinstance(params, dict):
-            raise TypeError("Parameter to create_gas_oil must be a dictionary")
-
-        check_deprecated(params)
-
-        sufficient_gas_oil_params(params, failhard=True)
-
-        # For case insensitiveness, all keys are converted to lower case:
-        params = {key.lower(): value for (key, value) in params.items()}
-
-        # Allowing sending in NaN values, delete those keys.
-        params = filter_nan_from_dict(params)
-
-        usedparams: Set[str] = set()
-        # No requirements to the base objects, defaults are ok.
-        gasoil = GasOil(**slicedict(params, GO_INIT), fast=fast)
-        usedparams = usedparams.union(set(slicedict(params, GO_INIT).keys()))
-        logger.debug(
-            "Initialized GasOil object from parameters %s", str(list(usedparams))
+        warnings.warn(
+            "PyscalFactory.create_gas_oil is deprecated. "
+            "Please use create_gas_oil function instead.",
+            DeprecationWarning,
         )
-
-        # Gas curve
-        params_corey_gas = slicedict(params, GO_COREY_GAS + GO_GAS_ENDPOINTS)
-        params_let_gas = slicedict(params, GO_LET_GAS + GO_GAS_ENDPOINTS)
-        if set(GO_COREY_GAS).issubset(set(params_corey_gas)):
-            gasoil.add_corey_gas(**params_corey_gas)
-            logger.debug(
-                "Added Corey gas to GasOil object from parameters %s",
-                str(params_corey_gas.keys()),
-            )
-        elif set(GO_LET_GAS).issubset(set(params_let_gas)):
-            params_let_gas["l"] = params_let_gas.pop("lg")
-            params_let_gas["e"] = params_let_gas.pop("eg")
-            params_let_gas["t"] = params_let_gas.pop("tg")
-            gasoil.add_LET_gas(**params_let_gas)
-            logger.debug(
-                "Added LET gas to GasOil object from parameters %s",
-                str(params_let_gas.keys()),
-            )
-        else:
-            logger.warning(
-                "Missing or ambiguous parameters for gas curve in GasOil object"
-            )
-
-        # Oil curve:
-        params_corey_oil = slicedict(params, GO_COREY_OIL + GO_OIL_ENDPOINTS)
-        params_let_oil = slicedict(params, GO_LET_OIL + GO_OIL_ENDPOINTS)
-        if set(GO_COREY_OIL).issubset(set(params_corey_oil)):
-            gasoil.add_corey_oil(**params_corey_oil)
-            logger.debug(
-                "Added Corey gas to GasOil object from parameters %s",
-                str(params_corey_oil.keys()),
-            )
-        elif set(GO_LET_OIL).issubset(set(params_let_oil)):
-            params_let_oil["l"] = params_let_oil.pop("log")
-            params_let_oil["e"] = params_let_oil.pop("eog")
-            params_let_oil["t"] = params_let_oil.pop("tog")
-            gasoil.add_LET_oil(**params_let_oil)
-            logger.debug(
-                "Added LET gas to GasOil object from parameters %s",
-                str(params_let_oil.keys()),
-            )
-        else:
-            logger.warning(
-                "Missing or ambiguous parameters for oil curve in GasOil object"
-            )
-        if not gasoil.selfcheck():
-            raise ValueError(
-                ("Incomplete GasOil object, some parameters missing to factory")
-            )
-
-        return gasoil
+        return create_gas_oil(params, fast)
 
     @staticmethod
     def create_water_oil_gas(
         params: Optional[Dict[str, float]] = None, fast: bool = False
     ) -> WaterOilGas:
-        """Create a WaterOilGas object from a dictionary of parameters
-
-        Parameterization (Corey/LET) is inferred from presence
-        of certain parameters in the dictionary.
-
-        Check create_water_oil() and create_gas_oil() for lists
-        of supported parameters (case insensitive)
-
-        Params:
-            params: Dictionary with parameters describing the WaterOilGas object.
-            fast: If fast-mode should be set for constructed object.
-        """
-        if not params:
-            params = {}
-        if not isinstance(params, dict):
-            raise TypeError("Parameter to create_water_oil_gas must be a dictionary")
-
-        check_deprecated(params)
-
-        # For case insensitiveness, all keys are converted to lower case:
-        params = {key.lower(): value for (key, value) in params.items()}
-
-        wateroil: Optional[WaterOil]
-        if sufficient_water_oil_params(params, failhard=False):
-            wateroil = create_water_oil(params, fast=fast)
-        else:
-            logger.info("No wateroil parameters. Assuming only gas-oil in wateroilgas")
-            wateroil = None
-
-        # If the swl in WaterOil was initialized with swlheight,
-        # ensure that result is passed on to the GasOil object:
-        if "swl" not in params and "swlheight" in params and wateroil is not None:
-            params["swl"] = wateroil.swl
-
-        gasoil: Optional[GasOil]
-        if sufficient_gas_oil_params(params, failhard=False):
-            gasoil = PyscalFactory.create_gas_oil(params, fast=fast)
-        else:
-            logger.info("No gasoil parameters, assuming two-phase oilwatergas")
-            gasoil = None
-
-        wog_init_params = slicedict(params, WOG_INIT)
-        wateroilgas = WaterOilGas(**wog_init_params, fast=fast)
-        # The wateroilgas __init__ has already created WaterOil and GasOil objects
-        # but we overwrite the references with newly created ones, this factory function
-        # must then guarantee that they are compatible.
-        wateroilgas.wateroil = wateroil  # This might be None
-        wateroilgas.gasoil = gasoil  # This might be None
-        if not wateroilgas.selfcheck():
-            raise ValueError(
-                f"Inconsistent WaterOilGas object. Bug? Input was {params}"
-            )
-        return wateroilgas
+        warnings.warn(
+            "PyscalFactory.create_water_oil_gas is deprecated. "
+            "Please use create_water_oil_gas function instead.",
+            DeprecationWarning,
+        )
+        return create_water_oil_gas(params, fast)
 
     @staticmethod
     def create_gas_water(
         params: Optional[Dict[str, float]] = None, fast: bool = False
     ) -> GasWater:
-        """Create a GasWater object.
-
-        Parameterization (Corey/LET) is inferred from presence
-        of certain parameters in the dictionary.
-
-        Args:
-            params: Dictionary with parameters for GasWater.
-            fast: If fast-mode should be set for constructed object.
-        """
-        if not params:
-            params = {}
-        if not isinstance(params, dict):
-            raise TypeError("Parameter to create_gas_water must be a dictionary")
-
-        # For case insensitiveness, all keys are converted to lower case:
-        params = {key.lower(): value for (key, value) in params.items()}
-
-        sufficient_gas_water_params(params, failhard=True)
-
-        gw_init_params = slicedict(params, GW_INIT)
-        gaswater = GasWater(**gw_init_params, fast=fast)
-
-        # We are using the create_water_oil_gas factory function
-        # to avoid replicating code. It works because GasWater and
-        # WaterOilGas internally are very similar.
-        wog_params = params.copy()
-        if "sgrw" in params:
-            wog_params["sorw"] = params["sgrw"]
-        # Set some dummy parameters for oil:
-        wog_params["nog"] = 1
-        wog_params["now"] = 1
-        wog = PyscalFactory.create_water_oil_gas(wog_params, fast=fast)
-        assert wog.wateroil is not None
-        assert wog.gasoil is not None
-        gaswater.wateroil = wog.wateroil
-        gaswater.gasoil = wog.gasoil
-        return gaswater
+        warnings.warn(
+            "PyscalFactory.create_gas_water is deprecated. "
+            "Please use create_gas_water function instead.",
+            DeprecationWarning,
+        )
+        return create_gas_water(params, fast)
 
     @staticmethod
     def create_scal_recommendation(
@@ -563,539 +1119,106 @@ class PyscalFactory:
         h: Optional[float] = None,
         fast: bool = False,
     ) -> SCALrecommendation:
-        """
-        Set up a SCAL recommendation curve set from input as a
-        dictionary of dictionary.
-
-        The keys in in the dictionary *must* be "low", "base" and "high".
-
-        The value for "low" must be a new dictionary with saturation
-        endpoints and LET/Corey parameters, as you would feed it to
-        the create_water_oil_gas() factory function, and then similarly
-        for base and high.
-
-        For oil-water only, you may omit the parameters for gas-oil.
-        A WaterOilGas object for each case is created, but only the
-        WaterOil part of it will be used.
-
-        For gas-water, a GasWater object is created for each pess, base
-        and high.
-
-        Args:
-            params: keys low, base and high.
-                The value for "low" must be a new dictionary with saturation
-                endpoints and LET/Corey parameters, as you would feed it to
-                the create_water_oil_gas() factory function, and then similarly
-                for base and high.
-            tag: String to be used as the tag, will end up in comments.
-            h: Saturation step length
-            fast: If fast-mode should be set for constructed object.
-        """
-        if not isinstance(params, dict):
-            raise ValueError("Input must be a dictionary (of dictionaries)")
-
-        # For case insensitiveness, all keys are converted to lower case:
-        params = {key.lower(): value for (key, value) in params.items()}
-
-        if "low" not in params:
-            raise ValueError('"low" case not supplied')
-        if "base" not in params:
-            raise ValueError('"base" case not supplied')
-        if "high" not in params:
-            raise ValueError('"high" case not supplied')
-        if not (
-            isinstance(params["low"], dict)
-            and isinstance(params["base"], dict)
-            and isinstance(params["high"], dict)
-        ):
-            raise ValueError("All values in parameter dict must be dictionaries")
-
-        check_deprecated(params["low"])
-        check_deprecated(params["base"])
-        check_deprecated(params["high"])
-
-        errored = False
-        if h is not None:
-            params["low"]["h"] = h
-            params["base"]["h"] = h
-            params["high"]["h"] = h
-
-        # Check parameter availability, in order to determine phase configuration
-        gaswater = all(sufficient_gas_water_params(params[case]) for case in params)
-        gasoil = all(sufficient_gas_oil_params(params[case]) for case in params)
-        wateroil = all(sufficient_water_oil_params(params[case]) for case in params)
-
-        wog_low: Union[WaterOilGas, GasWater]
-        wog_base: Union[WaterOilGas, GasWater]
-        wog_high: Union[WaterOilGas, GasWater]
-
-        if wateroil or gasoil:
-            try:
-                wog_low = PyscalFactory.create_water_oil_gas(params["low"], fast=fast)
-            except ValueError as err:
-                raise ValueError(f"Problem with low/pess case: {err}") from err
-            try:
-                wog_base = PyscalFactory.create_water_oil_gas(params["base"], fast=fast)
-            except ValueError as err:
-                raise ValueError(f"Problem with base case: {err}") from err
-            try:
-                wog_high = PyscalFactory.create_water_oil_gas(params["high"], fast=fast)
-            except ValueError as err:
-                raise ValueError(f"Problem with high/opt case: {err}") from err
-        elif gaswater:
-            # Note that gaswater will be True in three-phase configs.
-            try:
-                wog_low = PyscalFactory.create_gas_water(params["low"], fast=fast)
-            except ValueError as err:
-                raise ValueError(f"Problem with low/pess case: {err}") from err
-            try:
-                wog_base = PyscalFactory.create_gas_water(params["base"], fast=fast)
-            except ValueError as err:
-                raise ValueError(f"Problem with base case: {err}") from err
-            try:
-                wog_high = PyscalFactory.create_gas_water(params["high"], fast=fast)
-            except ValueError as err:
-                raise ValueError(f"Problem with high/opt case: {err}") from err
-
-        errored = all(not wog.selfcheck() for wog in [wog_low, wog_base, wog_high])
-
-        if errored:
-            raise ValueError("Incomplete SCAL recommendation")
-
-        return SCALrecommendation(wog_low, wog_base, wog_high, tag)
+        warnings.warn(
+            "PyscalFactory.create_scal_recommendation is deprecated. "
+            "Please use create_scal_recommendation instead.",
+            DeprecationWarning,
+        )
+        return create_scal_recommendation(params, tag, h, fast)
 
     @staticmethod
     def load_relperm_df(
         inputfile: Union[str, pd.DataFrame], sheet_name: Optional[str] = None
     ) -> pd.DataFrame:
-        """Read CSV or XLSX from file and return scal/relperm data
-        a dataframe.
-
-        Checks validity in SATNUM and CASE columns.
-        Ensures case-insensitiveness SATNUM, CASE, TAG and COMMENT
-
-        Merges COMMENT into TAG column, as only TAG is picked up downstream.
-        Adds a prefix "SATNUM <number>" to all tags.
-
-        All strings in CASE column are converted to lowercase. Applies
-        aliasing in the CASE column so that "pessimistic" and "pess" map to
-        "low", and "optimistic" and "opt" map to "high".
-
-        Args:
-            inputfile: Filename for XLSX or CSV file, or a
-                pandas DataFrame.
-            sheet_name: Sheet-name, only used when loading xlsx files.
-
-        Returns:
-            To be handed over to pyscal list factory methods.
-            Empty dataframe in case of errors (messages will be logged).
-        """
-        if isinstance(inputfile, (str, Path)) and Path(inputfile).is_file():
-            tabular_file_format = infer_tabular_file_format(inputfile)
-            if not tabular_file_format:
-                raise ValueError(
-                    f"Impossible to infer file format for {inputfile}, not CSV/XLS/XLSX"
-                )
-
-            if tabular_file_format == "csv" and sheet_name is not None:
-                logger.warning(
-                    "Sheet name only relevant for XLSX files, ignoring %s", sheet_name
-                )
-            excel_engines = {"xls": "xlrd", "xlsx": "openpyxl"}
-            if tabular_file_format != "csv" and sheet_name:
-                try:
-                    input_df = pd.read_excel(
-                        inputfile,
-                        sheet_name=sheet_name,
-                        engine=excel_engines[tabular_file_format],
-                    )
-                    logger.info(
-                        "Parsed %s file %s, sheet %s",
-                        tabular_file_format.upper(),
-                        inputfile,
-                        sheet_name,
-                    )
-                except (KeyError, ValueError) as err:
-                    raise ValueError(
-                        f"Non-existing sheet-name {sheet_name} provided."
-                    ) from err
-            elif tabular_file_format.startswith("xls"):
-                input_df = pd.read_excel(
-                    inputfile, engine=excel_engines[tabular_file_format]
-                )
-                logger.info("Parsed %s file %s", tabular_file_format.upper(), inputfile)
-            else:
-                with open(inputfile, "r", encoding="utf-8") as csvfile:
-                    try:
-                        delimiter = (
-                            csv.Sniffer()
-                            .sniff(csvfile.read(), [",", ";", "\t"])  # type: ignore
-                            .delimiter
-                        )
-                    except Exception:
-                        # Sniffer cannot identify the delimiter
-                        # typically on single column csv
-                        delimiter = ","
-                    if delimiter != ",":
-                        raise TypeError(
-                            "Supplied file is not a valid CSV file. "
-                            f"Detected delimiter is '{delimiter}'"
-                        )
-                    csvfile.seek(0)
-                    input_df = pd.read_csv(
-                        csvfile, skipinitialspace=True, encoding="utf-8"
-                    )
-                logger.info("Parsed CSV file %s", inputfile)
-
-        elif isinstance(inputfile, pd.DataFrame):
-            input_df = inputfile
-        else:
-            if isinstance(inputfile, str) and not Path(inputfile).is_file():
-                raise IOError("File not found " + str(inputfile))
-            raise ValueError("Unsupported argument " + str(inputfile))
-        assert isinstance(input_df, pd.DataFrame)
-
-        if input_df.empty:
-            logger.error("Relperm input dataframe is empty!")
-
-        # We will ignore case on the column names, solved by converting column
-        # name to uppercase
-        ignorecasecolumns = ["satnum", "case", "tag", "comment"]
-        for colname in input_df.columns:
-            if colname.lower() in ignorecasecolumns:
-                input_df = input_df.rename({colname: colname.upper()}, axis="columns")
-
-        # Support both TAG and COLUMN (as TAG)
-        if "COMMENT" in input_df and "TAG" not in input_df:
-            input_df = input_df.rename({"COMMENT": "TAG"}, axis="columns")
-        if "COMMENT" in input_df and "TAG" in input_df:
-            # It might never happen that a user puts both tag and comment in
-            # the dataframe, but if so, merge them.
-            input_df["TAG"] = (
-                "tag: " + input_df["TAG"] + "; comment: " + input_df["COMMENT"]
-            )
-        # It is tempting to detect any NaN's at this point because that can
-        # indicate merged cells, which is not supported, but that could
-        # break optional comment columns which might only be defined on certain lines.
-        if "SATNUM" not in input_df:
-            raise ValueError("SATNUM must be present in CSV/XLSX file/dataframe")
-
-        # Delete columns and rows that are all NaNs (this has been observed
-        # to occur from seemingly empty cells in Excel/LibreOffice and
-        # has been seen to vary with Pandas/Openpyxl versions in use)
-        input_df = input_df.dropna(axis="columns", how="all")
-        input_df = input_df.dropna(axis="index", how="all")
-
-        if input_df["SATNUM"].isna().sum() > 0:
-            raise ValueError(
-                "Found not-a-number in the SATNUM column. This could be due to "
-                "merged cells in XLSX, which is not supported."
-            )
-
-        # Check that SATNUM's are consecutive and integers:
-        try:
-            input_df["SATNUM"] = input_df["SATNUM"].astype(int)
-        except ValueError as err:
-            raise ValueError("SATNUM must contain only integers") from err
-
-        if min(input_df["SATNUM"]) != 1:
-            raise ValueError("SATNUM must start at 1")
-
-        if max(input_df["SATNUM"]) != len(input_df["SATNUM"].unique()):
-            raise ValueError(
-                "Missing SATNUMs? Max SATNUM is not equal to number of unique SATNUMS"
-            )
-        if "CASE" not in input_df and len(input_df["SATNUM"].unique()) != len(input_df):
-            raise ValueError("Non-unique SATNUMs?")
-        # If we are in a SCAL recommendation setting
-        if "CASE" in input_df:
-            # Enforce lower case:
-            if input_df["CASE"].isna().sum() > 0:
-                raise ValueError(
-                    "Found not-a-number in the CASE column. This could be due "
-                    "merged cells in XLSX, which is not supported."
-                )
-            input_df["CASE"] = PyscalFactory.remap_validate_cases(
-                input_df["CASE"].to_numpy()
-            )
-
-        # Add the SATNUM index to the TAG column
-        if "TAG" not in input_df:
-            input_df["TAG"] = ""
-        input_df["TAG"] = input_df["TAG"].fillna(value="")
-        input_df["TAG"] = (
-            "SATNUM " + input_df["SATNUM"].astype(str) + " " + input_df["TAG"]
+        warnings.warn(
+            "PyscalFactory.load_relperm_df is deprecated. "
+            "Please use load_relperm_df instead.",
+            DeprecationWarning,
         )
-
-        # Check if fast is defined as a column
-        if "fast" in input_df:
-            logger.warning("Fast mode is not an option for individual SATNUMs")
-            logger.warning("it is implemented as a global option.")
-            logger.warning("The fast column in the dataframe will be ignored.")
-            logger.warning("Use fast=True in the function call instead.")
-            logger.warning("Fast mode is only available through the Python API")
-
-        # Check that we are able to make something out of the first row:
-        firstrow = input_df.iloc[0, :]
-        error: bool = False
-        wo_ok = sufficient_water_oil_params(firstrow)
-        go_ok = sufficient_gas_oil_params(firstrow)
-        gw_ok = sufficient_gas_water_params(firstrow)
-        if error or not wo_ok and not go_ok and not gw_ok:
-            raise ValueError(
-                "Can't make neither WaterOil, GasOil or GasWater from "
-                "the given data. Check documentation for what you need to supply. "
-                f"You provided the columns {input_df.columns.to_numpy()}"
-            )
-        logger.info(
-            "Loaded input data with %s SATNUMS, column %s",
-            str(len(input_df["SATNUM"].unique())),
-            str(input_df.columns.to_numpy()),
-        )
-        return input_df.sort_values("SATNUM")
+        return load_relperm_df(inputfile, sheet_name)
 
     @staticmethod
     def alias_sgrw(params: Dict[str, Any]) -> Dict[str, Any]:
-        """Allow sgrw as an alias for sorw by remapping a
-        sgrw value to a sorw value in an incoming dict.
-
-        Will error hard of sorw already exists and is not nan.
-
-        This aliasing is relevant when GasWater is modelled
-        as three-phase to allow for condensate forming, and mirrors
-        GasWater.__init__() which performs the same aliasing.
-
-        Args:
-            params: Keys must be lower case.
-        """
-        if "sgrw" in params:
-            if "sorw" not in params or pd.isna(params["sorw"]):
-                params_copy = dict(params)
-                params_copy["sorw"] = params["sgrw"]
-                del params_copy["sgrw"]
-                return params_copy
-            if np.isclose(params["sgrw"], params["sorw"]):
-                params_copy = dict(params)
-                del params_copy["sgrw"]
-                return params_copy
-            raise ValueError(
-                f"sgrw ({params['sgrw']}) must equal sorw ({params['sorw']}) "
-                "when both are supplied to WaterOil."
-            )
-        return params
+        warnings.warn(
+            "PyscalFactory.alias_sgrw is deprecated. " "Please use alias_sgrw instead.",
+            DeprecationWarning,
+        )
+        return alias_sgrw(params)
 
     @staticmethod
     def remap_validate_cases(casevalues: List[str]) -> List[str]:
-        """Remap values in the CASE column so that we can use aliases.
-
-        All values are first made lower case, then
-        "pessimistic" and "pess" are mapped to "low" and
-        "optimistic" and "opt" are mapped to "high".
-
-        Will raise ValueError if some values are not understood, and
-        if we don't have exactly three unique values.
-
-        Args:
-            casevalues: values to remap.
-        """
-        accepted = ["low", "base", "high"]
-        aliases = {
-            "pessimistic": "low",
-            "pess": "low",
-            "optimistic": "high",
-            "opt": "high",
-        }
-        lowered = [value.lower() for value in casevalues]
-        remapped = [aliases.get(value, value) for value in lowered]
-        not_understood = set(remapped) - set(accepted)
-        if not_understood:
-            raise ValueError(f"Invalid case values: {not_understood}")
-        if len(set(remapped)) != len(accepted):
-            raise ValueError(
-                f"You must supply low, base AND high, got only {set(remapped)}"
-            )
-        return remapped
+        warnings.warn(
+            "PyscalFactory.remap_validate_cases is deprecated. "
+            "Please use remap_validate_cases instead.",
+            DeprecationWarning,
+        )
+        return remap_validate_cases(casevalues)
 
     @staticmethod
     def create_scal_recommendation_list(
         input_df: pd.DataFrame, h: Optional[float] = None, fast: bool = False
     ) -> PyscalList:
-        """Requires SATNUM and CASE to be defined in the input data
-
-        Args:
-            input_df: Input data, should have been processed
-                through load_relperm_df().
-            h: Saturation step-value
-            fast: If fast-mode should be set for constructed object
-
-        Returns:
-            PyscalList, consisting of SCALrecommendation objects
-        """
-        scal_l = PyscalList()
-        assert isinstance(input_df, pd.DataFrame)
-
-        scalinput = input_df.set_index(["SATNUM", "CASE"])
-
-        for satnum in scalinput.index.levels[0].to_numpy():
-            # load_relperm_df only validates the CASE column for all SATNUMs at
-            # once, errors for particular SATNUMs are caught here.
-            if len(scalinput.loc[satnum, :]) > 3:
-                raise ValueError(f"Too many cases supplied for SATNUM {satnum}")
-            if len(scalinput.loc[satnum, :]) < 3:
-                raise ValueError(f"Too few cases supplied for SATNUM {satnum}")
-            try:
-                scal_l.append(
-                    PyscalFactory.create_scal_recommendation(
-                        scalinput.loc[satnum, :].to_dict(orient="index"), h=h, fast=fast
-                    )
-                )
-            except ValueError as err:
-                raise ValueError(f"Error for SATNUM {satnum}: {str(err)}") from err
-
-        return scal_l
+        warnings.warn(
+            "PyscalFactory.create_scal_recommendation_list is deprecated. "
+            "Please use create_scal_recommendation_list instead.",
+            DeprecationWarning,
+        )
+        return create_scal_recommendation_list(input_df, h, fast)
 
     @staticmethod
     def create_pyscal_list(
         relperm_params_df: pd.DataFrame, h: Optional[float] = None, fast: bool = False
     ):
-        """Create WaterOilGas, WaterOil, GasOil or GasWater list
-        based on what is available
-
-        Args:
-            relperm_params_df: Input data, should have been processed
-                through load_relperm_df().
-            h: Saturation step-value
-            fast: If fast-mode should be set for constructed object
-
-        Returns:
-            PyscalList, consisting of either WaterOil, GasOil or WaterOilGas objects
-        """
-        params = relperm_params_df.iloc[0, :]  # first row
-        water_oil = sufficient_water_oil_params(params)
-        gas_oil = sufficient_gas_oil_params(params)
-        gas_water = sufficient_gas_water_params(params)
-
-        if water_oil and gas_oil:
-            return PyscalFactory.create_wateroilgas_list(relperm_params_df, h, fast)
-        if water_oil:
-            return PyscalFactory.create_wateroil_list(relperm_params_df, h, fast)
-        if gas_oil:
-            return PyscalFactory.create_gasoil_list(relperm_params_df, h, fast)
-        if gas_water:
-            return PyscalFactory.create_gaswater_list(relperm_params_df, h, fast)
-        raise ValueError("Could not determine two or three phase from parameters")
+        warnings.warn(
+            "PyscalFactory.create_pyscal_list is deprecated. "
+            "Please use create_pyscal_list instead.",
+            DeprecationWarning,
+        )
+        return create_pyscal_list(relperm_params_df, h, fast)
 
     @staticmethod
     def create_wateroilgas_list(
         relperm_params_df: pd.DataFrame, h: Optional[float] = None, fast: bool = False
     ) -> PyscalList:
-        """Create a PyscalList with WaterOilGas objects from
-        a dataframe
-
-        Args:
-            relperm_params_df: Input data, should have been processed
-                through load_relperm_df().
-            h: Saturation step-value
-            fast: If fast-mode should be set for constructed object
-
-        Returns:
-            PyscalList, consisting of WaterOilGas objects
-        """
-        wogl = PyscalList()
-        for row_idx, params in relperm_params_df.sort_values("SATNUM").iterrows():
-            if h is not None:
-                params["h"] = h
-            try:
-                wogl.append(
-                    PyscalFactory.create_water_oil_gas(params.to_dict(), fast=fast)
-                )
-            except (AssertionError, ValueError, TypeError) as err:
-                raise ValueError(f"Error for SATNUM {row_idx+1}: {str(err)}") from err
-        return wogl
+        warnings.warn(
+            "PyscalFactory.create_wateroilgas_list is deprecated. "
+            "Please use create_wateroilgas_list instead.",
+            DeprecationWarning,
+        )
+        return create_wateroilgas_list(relperm_params_df, h, fast)
 
     @staticmethod
     def create_wateroil_list(
         relperm_params_df: pd.DataFrame, h: Optional[float] = None, fast: bool = False
     ) -> PyscalList:
-        """Create a PyscalList with WaterOil objects from
-        a dataframe
-
-        Args:
-            relperm_params_df: A valid dataframe with
-                WaterOil parameters, processed through load_relperm_df()
-            h: Saturation steplength
-            fast: If fast-mode should be set for constructed object
-
-        Returns:
-            PyscalList, consisting of WaterOil objects
-        """
-        wol = PyscalList()
-        for _, params in relperm_params_df.iterrows():
-            if h is not None:
-                params["h"] = h
-            try:
-                wol.append(create_water_oil(params.to_dict(), fast=fast))
-            except (AssertionError, ValueError, TypeError) as err:
-                raise ValueError(
-                    f"Error for SATNUM {params['SATNUM']}: {str(err)}"
-                ) from err
-        return wol
+        warnings.warn(
+            "PyscalFactory.create_wateroil_list is deprecated. "
+            "Please use create_wateroil_list instead.",
+            DeprecationWarning,
+        )
+        return create_wateroil_list(relperm_params_df, h, fast)
 
     @staticmethod
     def create_gasoil_list(
         relperm_params_df: pd.DataFrame, h: Optional[float] = None, fast: bool = False
     ) -> PyscalList:
-        """Create a PyscalList with GasOil objects from
-        a dataframe
-
-        Args:
-            relperm_params_df: A valid dataframe with GasOil parameters,
-                processed through load_relperm_df()
-            h: Saturation steplength
-            fast: If fast-mode should be set for constructed object
-
-        Returns:
-            PyscalList, consisting of GasOil objects
-        """
-        gol = PyscalList()
-        for _, params in relperm_params_df.iterrows():
-            if h is not None:
-                params["h"] = h
-            try:
-                gol.append(PyscalFactory.create_gas_oil(params.to_dict(), fast=fast))
-            except (AssertionError, ValueError, TypeError) as err:
-                raise ValueError(
-                    f"Error for SATNUM {params['SATNUM']}: {str(err)}"
-                ) from err
-        return gol
+        warnings.warn(
+            "PyscalFactory.create_gasoil_list is deprecated. "
+            "Please use create_gasoil_list instead.",
+            DeprecationWarning,
+        )
+        return create_gasoil_list(relperm_params_df, h, fast)
 
     @staticmethod
     def create_gaswater_list(
         relperm_params_df: pd.DataFrame, h: Optional[float] = None, fast: bool = False
     ) -> PyscalList:
-        """Create a PyscalList with WaterOilGas objects from
-        a dataframe, to be used for GasWater
-
-        Args:
-            relperm_params_df: A valid dataframe with GasWater
-                parameters, processed through load_relperm_df()
-            h: Saturation steplength
-            fast: If fast-mode should be set for constructed object
-
-        Returns:
-            PyscalList, consisting of GasWater objects
-        """
-        gwl = PyscalList()
-        for _, params in relperm_params_df.iterrows():
-            if h is not None:
-                params["h"] = h
-            try:
-                gwl.append(PyscalFactory.create_gas_water(params.to_dict(), fast=fast))
-            except (AssertionError, ValueError, TypeError) as err:
-                raise ValueError(
-                    f"Error for SATNUM {params['SATNUM']}: {str(err)}"
-                ) from err
-        return gwl
+        warnings.warn(
+            "PyscalFactory.create_gaswater_list is deprecated. "
+            "Please use create_gaswater_list instead.",
+            DeprecationWarning,
+        )
+        return create_gaswater_list(relperm_params_df, h, fast)
 
 
 def sufficient_water_oil_params(params: dict, failhard: bool = False) -> bool:
