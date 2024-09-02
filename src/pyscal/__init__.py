@@ -86,3 +86,4 @@ from .gasoil import GasOil  # noqa
 from .gaswater import GasWater  # noqa
 from .scalrecommendation import SCALrecommendation  # noqa
 from .pyscallist import PyscalList  # noqa
+from .factory import PyscalFactory  # noqa

@@ -10,6 +10,7 @@ import pytest
 from pyscal import (
     GasOil,
     GasWater,
+    PyscalFactory,  # PyscalFactory static functions are deprecated
     SCALrecommendation,
     WaterOil,
     WaterOilGas,
@@ -1407,3 +1408,66 @@ def test_infer_tabular_file_format(tmp_path, caplog):
 def test_slicedict(orig_dict, keylist, expected_dict):
     """Test that dictionaries can be sliced for subsets"""
     assert slicedict(orig_dict, keylist) == expected_dict
+
+
+def test_deprecated_functions():
+    """Test the deprecated functions"""
+
+    # Load file used for testing
+    testdir = Path(__file__).absolute().parent
+    scalfile_xls = testdir / "data/scal-pc-input-example.xlsx"
+
+    with pytest.warns(DeprecationWarning):
+        PyscalFactory.create_water_oil({"nw": 2, "now": 2})
+
+    with pytest.warns(DeprecationWarning):
+        PyscalFactory.create_gas_oil({"ng": 2, "nog": 2})
+
+    with pytest.warns(DeprecationWarning):
+        PyscalFactory.create_water_oil_gas(
+            {
+                "nw": 2,
+                "now": 2,
+                "ng": 2,
+                "nog": 2,
+            }
+        )
+
+    with pytest.warns(DeprecationWarning):
+        PyscalFactory.create_gas_water({"nw": 2, "ng": 2})
+
+    with pytest.warns(DeprecationWarning):
+        PyscalFactory.create_scal_recommendation(
+            {
+                "low": {"nw": 2, "now": 2, "ng": 2, "nog": 2},
+                "base": {"nw": 2, "now": 2, "ng": 2, "nog": 2},
+                "high": {"nw": 2, "now": 2, "ng": 2, "nog": 2},
+            }
+        )
+
+    with pytest.warns(DeprecationWarning):
+        scaldata = PyscalFactory.load_relperm_df(scalfile_xls)
+
+    with pytest.warns(DeprecationWarning):
+        PyscalFactory.create_scal_recommendation_list(scaldata)
+
+    with pytest.warns(DeprecationWarning):
+        PyscalFactory.create_pyscal_list(scaldata)
+
+    with pytest.warns(DeprecationWarning):
+        PyscalFactory.remap_validate_cases(scaldata["CASE"].to_numpy())
+
+    with pytest.warns(DeprecationWarning):
+        PyscalFactory.create_wateroilgas_list(scaldata)
+
+    with pytest.warns(DeprecationWarning):
+        PyscalFactory.create_wateroil_list(scaldata)
+
+    with pytest.warns(DeprecationWarning):
+        PyscalFactory.create_gasoil_list(scaldata)
+
+    with pytest.warns(DeprecationWarning):
+        PyscalFactory.create_gaswater_list(scaldata)
+
+    with pytest.warns(DeprecationWarning):
+        PyscalFactory.alias_sgrw({"sgrw": 0.1})
