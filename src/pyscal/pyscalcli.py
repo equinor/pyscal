@@ -17,8 +17,11 @@ from pyscal import (
     getLogger_pyscal,
     plotting,
 )
-
-from .factory import PyscalFactory
+from pyscal.factory import (
+    create_pyscal_list,
+    create_scal_recommendation_list,
+    load_relperm_df,
+)
 
 EPILOG = """
 The parameter file should contain a table with at least the column
@@ -258,9 +261,7 @@ def pyscal_main(
         __name__, {"debug": debug, "verbose": verbose, "output": output}
     )
 
-    parametertable = PyscalFactory.load_relperm_df(
-        parametertable, sheet_name=sheet_name
-    )
+    parametertable = load_relperm_df(parametertable, sheet_name=sheet_name)
 
     assert isinstance(parametertable, pd.DataFrame)
     logger.debug("Input data:\n%s", parametertable.to_string(index=False))
@@ -282,9 +283,7 @@ def pyscal_main(
         # Then we should do interpolation
         if int_param_wo is None:
             raise ValueError("No interpolation parameters provided")
-        scalrec_list = PyscalFactory.create_scal_recommendation_list(
-            parametertable, h=delta_s
-        )
+        scalrec_list = create_scal_recommendation_list(parametertable, h=delta_s)
         assert isinstance(scalrec_list[1], SCALrecommendation)
         if scalrec_list[1].type == WaterOilGas:
             logger.info(
@@ -300,7 +299,7 @@ def pyscal_main(
             )
             wog_list = scalrec_list.interpolate(int_param_wo, None, h=delta_s)
     else:
-        wog_list = PyscalFactory.create_pyscal_list(
+        wog_list = create_pyscal_list(
             parametertable, h=delta_s
         )  # can be both water-oil, water-oil-gas, or gas-water
 

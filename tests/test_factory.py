@@ -10,31 +10,43 @@ import pytest
 from pyscal import (
     GasOil,
     GasWater,
-    PyscalFactory,
+    PyscalFactory,  # PyscalFactory static functions are deprecated
     SCALrecommendation,
     WaterOil,
     WaterOilGas,
-    factory,
+)
+from pyscal.factory import (
+    create_gas_oil,
+    create_gas_water,
+    create_pyscal_list,
+    create_scal_recommendation,
+    create_scal_recommendation_list,
+    create_water_oil,
+    create_water_oil_gas,
+    infer_tabular_file_format,
+    load_relperm_df,
+    slicedict,
+    sufficient_gas_oil_params,
+    sufficient_gas_water_params,
+    sufficient_water_oil_params,
 )
 from pyscal.utils.testing import check_table, sat_table_str_ok
 
 
 def test_factory_wateroil():
     """Test that we can create curves from dictionaries of parameters"""
-    pyscal_factory = PyscalFactory()
-
     # Factory refuses to create incomplete defaulted objects.
     with pytest.raises(ValueError):
-        pyscal_factory.create_water_oil()
+        create_water_oil()
 
     with pytest.raises(TypeError):
         # (it must be a dictionary)
-        pyscal_factory.create_water_oil(swirr=0.01)
+        create_water_oil(swirr=0.01)
 
     with pytest.raises(TypeError):
-        pyscal_factory.create_water_oil(params="swirr 0.01")
+        create_water_oil(params="swirr 0.01")
 
-    wateroil = pyscal_factory.create_water_oil(
+    wateroil = create_water_oil(
         {
             "swirr": 0.01,
             "swl": 0.1,
@@ -57,7 +69,7 @@ def test_factory_wateroil():
     sat_table_str_ok(wateroil.SWOF())
     sat_table_str_ok(wateroil.SWFN())
 
-    wateroil = pyscal_factory.create_water_oil(
+    wateroil = create_water_oil(
         {"nw": 3, "now": 2, "sorw": 0.1, "krwend": 0.2, "krwmax": 0.5}
     )
     assert isinstance(wateroil, WaterOil)
@@ -70,9 +82,7 @@ def test_factory_wateroil():
 
     # Ambiguous works, but we don't guarantee that this results
     # in LET or Corey.
-    wateroil = pyscal_factory.create_water_oil(
-        {"nw": 3, "Lw": 2, "Ew": 2, "Tw": 2, "now": 3}
-    )
+    wateroil = create_water_oil({"nw": 3, "Lw": 2, "Ew": 2, "Tw": 2, "now": 3})
     assert "KRW" in wateroil.table
     assert "Corey" in wateroil.krwcomment or "LET" in wateroil.krwcomment
     check_table(wateroil.table)
@@ -80,9 +90,7 @@ def test_factory_wateroil():
     sat_table_str_ok(wateroil.SWFN())
 
     # Mixing Corey and LET
-    wateroil = pyscal_factory.create_water_oil(
-        {"Lw": 2, "Ew": 2, "Tw": 2, "krwend": 1, "now": 4}
-    )
+    wateroil = create_water_oil({"Lw": 2, "Ew": 2, "Tw": 2, "krwend": 1, "now": 4})
     assert isinstance(wateroil, WaterOil)
     assert "KRW" in wateroil.table
     assert wateroil.table["KRW"].max() == 1.0
@@ -91,7 +99,7 @@ def test_factory_wateroil():
     sat_table_str_ok(wateroil.SWOF())
     sat_table_str_ok(wateroil.SWFN())
 
-    wateroil = pyscal_factory.create_water_oil(
+    wateroil = create_water_oil(
         {"Lw": 2, "Ew": 2, "Tw": 2, "Low": 3, "Eow": 3, "Tow": 3, "krwend": 0.5}
     )
     assert isinstance(wateroil, WaterOil)
@@ -106,7 +114,7 @@ def test_factory_wateroil():
     sat_table_str_ok(wateroil.SWFN())
 
     # Add capillary pressure
-    wateroil = pyscal_factory.create_water_oil(
+    wateroil = create_water_oil(
         {
             "swl": 0.1,
             "nw": 1,
@@ -126,7 +134,7 @@ def test_factory_wateroil():
     sat_table_str_ok(wateroil.SWFN())
 
     # Test that the optional gravity g is picked up:
-    wateroil = pyscal_factory.create_water_oil(
+    wateroil = create_water_oil(
         {
             "swl": 0.1,
             "nw": 1,
@@ -146,7 +154,7 @@ def test_factory_wateroil():
     sat_table_str_ok(wateroil.SWFN())
 
     # Test petrophysical simple J:
-    wateroil = pyscal_factory.create_water_oil(
+    wateroil = create_water_oil(
         {
             "swl": 0.1,
             "nw": 1,
@@ -166,7 +174,7 @@ def test_factory_wateroil():
     sat_table_str_ok(wateroil.SWFN())
 
     # One pc param missing:
-    wateroil = pyscal_factory.create_water_oil(
+    wateroil = create_water_oil(
         {
             "swl": 0.1,
             "nw": 1,
@@ -185,32 +193,32 @@ def test_fast_mode():
     """Test that the fast-flag is passed on to constructed objects
 
     Each object's own test code tests the actual effects of the fast flag"""
-    wateroil = PyscalFactory.create_water_oil({"nw": 2, "now": 2})
+    wateroil = create_water_oil({"nw": 2, "now": 2})
     assert not wateroil.fast
-    wateroil = PyscalFactory.create_water_oil({"nw": 2, "now": 2}, fast=True)
+    wateroil = create_water_oil({"nw": 2, "now": 2}, fast=True)
     assert wateroil.fast
 
-    gasoil = PyscalFactory.create_gas_oil({"ng": 2, "nog": 2})
+    gasoil = create_gas_oil({"ng": 2, "nog": 2})
     assert not gasoil.fast
-    gasoil = PyscalFactory.create_gas_oil({"ng": 2, "nog": 2}, fast=True)
+    gasoil = create_gas_oil({"ng": 2, "nog": 2}, fast=True)
     assert gasoil.fast
 
-    gaswater = PyscalFactory.create_gas_water({"nw": 2, "ng": 2})
+    gaswater = create_gas_water({"nw": 2, "ng": 2})
     assert not gaswater.gasoil.fast
     assert not gaswater.wateroil.fast
-    gaswater = PyscalFactory.create_gas_water({"nw": 2, "ng": 2}, fast=True)
+    gaswater = create_gas_water({"nw": 2, "ng": 2}, fast=True)
     assert gaswater.gasoil.fast
     assert gaswater.wateroil.fast
     assert gaswater.fast
 
-    wateroilgas = PyscalFactory.create_water_oil_gas(
+    wateroilgas = create_water_oil_gas(
         {"nw": 2, "now": 2, "ng": 2, "nog": 2}, fast=True
     )
     assert wateroilgas.fast
     assert wateroilgas.wateroil.fast
     assert wateroilgas.gasoil.fast
 
-    scalrec = PyscalFactory.create_scal_recommendation(
+    scalrec = create_scal_recommendation(
         {
             "low": {"nw": 2, "now": 2, "ng": 2, "nog": 2},
             "base": {"nw": 2, "now": 2, "ng": 2, "nog": 2},
@@ -229,8 +237,7 @@ def test_fast_mode():
 def test_init_with_swlheight():
     """With sufficient parameters, swl will be calculated on the fly
     when initializing the WaterOil object"""
-    pyscal_factory = PyscalFactory()
-    wateroil = pyscal_factory.create_water_oil(
+    wateroil = create_water_oil(
         {
             "swlheight": 200,
             "nw": 1,
@@ -251,11 +258,11 @@ def test_init_with_swlheight():
         match="Can't initialize from SWLHEIGHT without sufficient simple-J parameters",
     ):
         # This should fail because capillary pressure parameters are not provided.
-        pyscal_factory.create_water_oil({"swlheight": 200, "nw": 1, "now": 1})
+        create_water_oil({"swlheight": 200, "nw": 1, "now": 1})
 
     # swcr must be larger than swl:
     with pytest.raises(ValueError, match="lower than computed swl"):
-        pyscal_factory.create_water_oil(
+        create_water_oil(
             {
                 "swlheight": 200,
                 "nw": 1,
@@ -272,7 +279,7 @@ def test_init_with_swlheight():
 
     # swlheight must be positive:
     with pytest.raises(ValueError, match="swlheight must be larger than zero"):
-        pyscal_factory.create_water_oil(
+        create_water_oil(
             {
                 "swlheight": -200,
                 "nw": 1,
@@ -287,7 +294,7 @@ def test_init_with_swlheight():
         )
 
     # If swcr is large enough, it will pass:
-    wateroil = pyscal_factory.create_water_oil(
+    wateroil = create_water_oil(
         {
             "swlheight": 200,
             "nw": 1,
@@ -306,7 +313,7 @@ def test_init_with_swlheight():
     assert "swcr=0.3" in wateroil.SWOF()
 
     # Test that GasWater also can be initialized with swlheight:
-    gaswater = pyscal_factory.create_gas_water(
+    gaswater = create_gas_water(
         {
             "swlheight": 200,
             "nw": 1,
@@ -329,7 +336,7 @@ def test_init_with_swlheight():
     with pytest.raises(
         ValueError, match="Can't initialize from SWLHEIGHT without sufficient simple-J"
     ):
-        pyscal_factory.create_water_oil(
+        create_water_oil(
             {
                 "swlheight": 200,
                 "nw": 1,
@@ -347,23 +354,20 @@ def test_relative_swcr():
     """swcr can be initialized relative to swl
 
     Relevant when swl is initialized from swlheight."""
-    pyscal_factory = PyscalFactory()
 
     with pytest.raises(ValueError, match="swl must be provided"):
-        pyscal_factory.create_water_oil(
-            {"swcr_add": 0.1, "nw": 1, "now": 1, "swirr": 0.01}
-        )
+        create_water_oil({"swcr_add": 0.1, "nw": 1, "now": 1, "swirr": 0.01})
     with pytest.raises(ValueError, match="swcr and swcr_add at the same time"):
-        pyscal_factory.create_water_oil(
+        create_water_oil(
             {"swcr_add": 0.1, "swcr": 0.1, "swl": 0.1, "nw": 1, "now": 1, "swirr": 0.01}
         )
-    wateroil = pyscal_factory.create_water_oil(
+    wateroil = create_water_oil(
         {"swcr_add": 0.1, "swl": 0.1, "nw": 1, "now": 1, "swirr": 0.01}
     )
     assert wateroil.swcr == 0.2
 
     # Test when relative to swlheight:
-    wateroil = pyscal_factory.create_water_oil(
+    wateroil = create_water_oil(
         {
             "swlheight": 200,
             "swcr_add": 0.01,
@@ -380,7 +384,7 @@ def test_relative_swcr():
     assert np.isclose(wateroil.swl, 0.02480395)
     assert np.isclose(wateroil.swcr, 0.02480395 + 0.01)
 
-    gaswater = pyscal_factory.create_gas_water(
+    gaswater = create_gas_water(
         {
             "swlheight": 200,
             "nw": 1,
@@ -401,8 +405,7 @@ def test_relative_swcr():
 def test_ambiguity():
     """Test how the factory handles ambiguity between Corey and LET
     parameters"""
-    pyscal_factory = PyscalFactory()
-    wateroil = pyscal_factory.create_water_oil(
+    wateroil = create_water_oil(
         {"swl": 0.1, "nw": 10, "Lw": 1, "Ew": 1, "Tw": 1, "now": 2, "h": 0.1, "no": 2}
     )
     # Corey is picked here.
@@ -412,20 +415,19 @@ def test_ambiguity():
 
 def test_factory_gasoil():
     """Test that we can create curves from dictionaries of parameters"""
-    pyscal_factory = PyscalFactory()
 
     # Factory refuses to create incomplete defaulted objects.
     with pytest.raises(ValueError):
-        pyscal_factory.create_gas_oil()
+        create_gas_oil()
 
     with pytest.raises(TypeError):
         # (this must be a dictionary)
-        pyscal_factory.create_gas_oil(swirr=0.01)
+        create_gas_oil(swirr=0.01)
 
     with pytest.raises(TypeError):
-        pyscal_factory.create_gas_oil(params="swirr 0.01")
+        create_gas_oil(params="swirr 0.01")
 
-    gasoil = pyscal_factory.create_gas_oil(
+    gasoil = create_gas_oil(
         {"swirr": 0.01, "swl": 0.1, "sgcr": 0.05, "tag": "Good sand", "ng": 1, "nog": 2}
     )
     assert isinstance(gasoil, GasOil)
@@ -441,7 +443,7 @@ def test_factory_gasoil():
     assert "Corey krog" in sgof
     assert "Zero capillary pressure" in sgof
 
-    gasoil = pyscal_factory.create_gas_oil(
+    gasoil = create_gas_oil(
         {"ng": 1.2, "nog": 2, "krgend": 0.8, "krgmax": 0.9, "kroend": 0.6}
     )
     sgof = gasoil.SGOF()
@@ -450,16 +452,14 @@ def test_factory_gasoil():
     assert "krgend=0.8" in sgof
     check_table(gasoil.table)
 
-    gasoil = pyscal_factory.create_gas_oil({"ng": 1.3, "Log": 2, "Eog": 2, "Tog": 2})
+    gasoil = create_gas_oil({"ng": 1.3, "Log": 2, "Eog": 2, "Tog": 2})
     sgof = gasoil.SGOF()
     check_table(gasoil.table)
     sat_table_str_ok(sgof)
     assert "Corey krg" in sgof
     assert "LET krog" in sgof
 
-    gasoil = pyscal_factory.create_gas_oil(
-        {"Lg": 1, "Eg": 1, "Tg": 1, "Log": 2, "Eog": 2, "Tog": 2}
-    )
+    gasoil = create_gas_oil({"Lg": 1, "Eg": 1, "Tg": 1, "Log": 2, "Eog": 2, "Tog": 2})
     sgof = gasoil.SGOF()
     sat_table_str_ok(sgof)
     check_table(gasoil.table)
@@ -472,7 +472,7 @@ def test_factory_wog_gascondensate():
     is the same as wateroilgas, except that we allow for aliasing
     in sgrw=sorw for the underlying WaterOil object, and also there
     are additional parameters sgro and kromax for GasOil."""
-    wcg = PyscalFactory.create_water_oil_gas(
+    wcg = create_water_oil_gas(
         {
             "nw": 2,
             "now": 3,
@@ -504,19 +504,19 @@ def test_factory_wog_gascondensate():
 
     # Different sorw and sgrw is a hard error:
     with pytest.raises(ValueError, match="must equal"):
-        PyscalFactory.create_water_oil_gas(
+        create_water_oil_gas(
             {"nw": 2, "now": 3, "ng": 1, "nog": 2, "sorw": 0.2, "sgrw": 0.1, "swl": 0.1}
         )
 
     # But it will pass if they both are supplied but are equal:
-    wcg_2 = PyscalFactory.create_water_oil_gas(
+    wcg_2 = create_water_oil_gas(
         {"nw": 2, "now": 3, "ng": 1, "nog": 2, "sorw": 0.2, "sgrw": 0.2, "swl": 0.1}
     )
     assert "sorw=0.2" in wcg_2.SWOF()
 
     # kroend higher than kromax is an error:
     with pytest.raises(AssertionError):
-        PyscalFactory.create_water_oil_gas(
+        create_water_oil_gas(
             {
                 "nw": 2,
                 "now": 3,
@@ -533,8 +533,7 @@ def test_factory_wog_gascondensate():
 
 def test_factory_go_gascondensate():
     """In gas condensate problems, the sgro and kromax parameters are relevant"""
-    pyscal_factory = PyscalFactory()
-    gasoil = pyscal_factory.create_gas_oil(
+    gasoil = create_gas_oil(
         {
             "sgro": 0.1,
             "sgcr": 0.1,
@@ -559,20 +558,19 @@ def test_factory_go_gascondensate():
 
 def test_factory_gaswater():
     """Test that we can create gas-water curves from dictionaries of parameters"""
-    pyscal_factory = PyscalFactory()
 
     # Factory refuses to create incomplete defaulted objects.
     with pytest.raises(ValueError):
-        pyscal_factory.create_gas_water()
+        create_gas_water()
 
     with pytest.raises(TypeError):
-        pyscal_factory.create_gas_water(swirr=0.01)
+        create_gas_water(swirr=0.01)
 
     with pytest.raises(TypeError):
         # (it must be a dictionary)
-        pyscal_factory.create_gas_water(params="swirr 0.01")
+        create_gas_water(params="swirr 0.01")
 
-    gaswater = pyscal_factory.create_gas_water(
+    gaswater = create_gas_water(
         {
             "swirr": 0.01,
             "swl": 0.03,
@@ -608,7 +606,7 @@ def test_factory_gaswater():
     assert "ng=2" in sgfn
     assert "gassy sand" in sgfn
 
-    gaswater = pyscal_factory.create_gas_water({"lg": 1, "eg": 1, "tg": 1, "nw": 3})
+    gaswater = create_gas_water({"lg": 1, "eg": 1, "tg": 1, "nw": 3})
 
     sgfn = gaswater.SGFN()
     swfn = gaswater.SWFN()
@@ -620,20 +618,19 @@ def test_factory_gaswater():
 
 def test_factory_wateroilgas():
     """Test creating discrete cases of WaterOilGas from factory"""
-    pyscal_factory = PyscalFactory()
 
     # Factory refuses to create incomplete defaulted objects.
     with pytest.raises(ValueError):
-        pyscal_factory.create_water_oil_gas()
+        create_water_oil_gas()
 
     with pytest.raises(TypeError):
         # (this must be a dictionary)
-        pyscal_factory.create_water_oil_gas(swirr=0.01)
+        create_water_oil_gas(swirr=0.01)
 
     with pytest.raises(TypeError):
-        pyscal_factory.create_water_oil_gas(params="swirr 0.01")
+        create_water_oil_gas(params="swirr 0.01")
 
-    wog = pyscal_factory.create_water_oil_gas({"nw": 2, "now": 3, "ng": 1, "nog": 2.5})
+    wog = create_water_oil_gas({"nw": 2, "now": 3, "ng": 1, "nog": 2.5})
     swof = wog.SWOF()
     sgof = wog.SGOF()
     sat_table_str_ok(swof)  # sgof code works for swof also currently
@@ -646,7 +643,7 @@ def test_factory_wateroilgas():
     check_table(wog.wateroil.table)
 
     # Some users will mess up lower vs upper case:
-    wog = pyscal_factory.create_water_oil_gas({"NW": 2, "NOW": 3, "NG": 1, "nog": 2.5})
+    wog = create_water_oil_gas({"NW": 2, "NOW": 3, "NG": 1, "nog": 2.5})
     swof = wog.SWOF()
     sgof = wog.SGOF()
     sat_table_str_ok(swof)  # sgof code works for swof also currently
@@ -657,22 +654,21 @@ def test_factory_wateroilgas():
     assert "Corey krow" in swof
 
     # Mangling data
-    wateroil = pyscal_factory.create_water_oil_gas({"nw": 2, "now": 3, "ng": 1})
+    wateroil = create_water_oil_gas({"nw": 2, "now": 3, "ng": 1})
     assert wateroil.gasoil is None
 
 
 def test_factory_wateroilgas_deprecated_krowgend():
     """Using long-time deprecated krowend and krogend will fail"""
     with pytest.raises(ValueError):
-        PyscalFactory.create_water_oil_gas(
+        create_water_oil_gas(
             {"nw": 2, "now": 3, "ng": 1, "nog": 2.5, "krowend": 0.6, "krogend": 0.7}
         )
 
 
 def test_factory_wateroilgas_wo():
     """Test making only wateroil through the wateroilgas factory"""
-    pyscal_factory = PyscalFactory()
-    wog = pyscal_factory.create_water_oil_gas(
+    wog = create_water_oil_gas(
         {"nw": 2, "now": 3, "kroend": 0.5, "sorw": 0.04, "swcr": 0.1}
     )
     swof = wog.SWOF()
@@ -687,9 +683,8 @@ def test_factory_wateroilgas_wo():
 
 def test_factory_wateroil_paleooil(caplog):
     """Test making a WaterOil object with socr different from sorw."""
-    pyscal_factory = PyscalFactory()
     sorw = 0.09
-    wateroil = pyscal_factory.create_water_oil(
+    wateroil = create_water_oil(
         {
             "nw": 2,
             "now": 3,
@@ -707,7 +702,7 @@ def test_factory_wateroil_paleooil(caplog):
 
     # If socr is close to sorw, socr is reset to sorw.
     for socr in [sorw - 1e-9, sorw, sorw + 1e-9]:
-        wo_socrignored = pyscal_factory.create_water_oil(
+        wo_socrignored = create_water_oil(
             {"nw": 2, "now": 3, "kroend": 0.5, "sorw": 0.09, "socr": socr, "swcr": 0.1}
         )
         swof = wo_socrignored.SWOF()
@@ -719,7 +714,7 @@ def test_factory_wateroil_paleooil(caplog):
             assert "socr was close to sorw, reset to sorw" in caplog.text
 
     with pytest.raises(ValueError, match="socr must be equal to or larger than sorw"):
-        pyscal_factory.create_water_oil(
+        create_water_oil(
             {
                 "nw": 2,
                 "now": 3,
@@ -738,12 +733,12 @@ def test_load_relperm_df(tmp_path, caplog):
 
     scalfile_xls = testdir / "data/scal-pc-input-example.xlsx"
 
-    scaldata = PyscalFactory.load_relperm_df(scalfile_xls)
+    scaldata = load_relperm_df(scalfile_xls)
     with pytest.raises(IOError):
-        PyscalFactory.load_relperm_df("not-existing-file")
+        load_relperm_df("not-existing-file")
 
     with pytest.raises(ValueError, match="Non-existing sheet-name"):
-        PyscalFactory.load_relperm_df(scalfile_xls, sheet_name="foo")
+        load_relperm_df(scalfile_xls, sheet_name="foo")
 
     assert "SATNUM" in scaldata
     assert "CASE" in scaldata
@@ -751,53 +746,53 @@ def test_load_relperm_df(tmp_path, caplog):
 
     os.chdir(tmp_path)
     scaldata.to_csv("scal-input.csv")
-    scaldata_fromcsv = PyscalFactory.load_relperm_df("scal-input.csv")
+    scaldata_fromcsv = load_relperm_df("scal-input.csv")
     assert "CASE" in scaldata_fromcsv
     assert not scaldata_fromcsv.empty
-    scaldata_fromdf = PyscalFactory.load_relperm_df(scaldata_fromcsv)
+    scaldata_fromdf = load_relperm_df(scaldata_fromcsv)
     assert "CASE" in scaldata_fromdf
     assert "SATNUM" in scaldata_fromdf
     assert len(scaldata_fromdf) == len(scaldata_fromcsv) == len(scaldata)
 
-    scaldata_fromcsv = PyscalFactory.load_relperm_df("scal-input.csv", sheet_name="foo")
+    scaldata_fromcsv = load_relperm_df("scal-input.csv", sheet_name="foo")
     assert "Sheet name only relevant for XLSX files, ignoring foo" in caplog.text
 
     with pytest.raises(ValueError, match="Unsupported argument"):
-        PyscalFactory.load_relperm_df({"foo": 1})
+        load_relperm_df({"foo": 1})
 
     # Perturb the dataframe, this should trigger errors
     with pytest.raises(ValueError):
-        PyscalFactory.load_relperm_df(scaldata.drop("SATNUM", axis="columns"))
+        load_relperm_df(scaldata.drop("SATNUM", axis="columns"))
     wrongsatnums = scaldata.copy()
     wrongsatnums["SATNUM"] = wrongsatnums["SATNUM"] * 2
     with pytest.raises(ValueError):
-        PyscalFactory.load_relperm_df(wrongsatnums)
+        load_relperm_df(wrongsatnums)
     wrongsatnums = scaldata.copy()
     wrongsatnums["SATNUM"] = wrongsatnums["SATNUM"].astype(int)
     wrongsatnums = wrongsatnums[wrongsatnums["SATNUM"] > 2]
     with pytest.raises(ValueError):
-        PyscalFactory.load_relperm_df(wrongsatnums)
+        load_relperm_df(wrongsatnums)
     wrongcases = scaldata.copy()
     wrongcases["CASE"] = wrongcases["CASE"] + "ffooo"
     with pytest.raises(ValueError):
-        PyscalFactory.load_relperm_df(wrongcases)
+        load_relperm_df(wrongcases)
 
     with pytest.raises(ValueError):
-        PyscalFactory.load_relperm_df(scaldata.drop(["Lw", "Lg"], axis="columns"))
+        load_relperm_df(scaldata.drop(["Lw", "Lg"], axis="columns"))
 
     # Insert a NaN, this replicates what happens if cells are merged
     mergedcase = scaldata.copy()
     mergedcase.loc[3, "SATNUM"] = np.nan
     with pytest.raises(ValueError):
-        PyscalFactory.load_relperm_df(mergedcase)
+        load_relperm_df(mergedcase)
 
     relpermfile_xls = testdir / "data/relperm-input-example.xlsx"
-    relpermdata = PyscalFactory.load_relperm_df(relpermfile_xls)
+    relpermdata = load_relperm_df(relpermfile_xls)
     assert "TAG" in relpermdata
     assert "SATNUM" in relpermdata
     assert "satnum" not in relpermdata  # always converted to upper-case
     assert len(relpermdata) == 3
-    swof_str = PyscalFactory.create_pyscal_list(relpermdata, h=0.2).SWOF()
+    swof_str = create_pyscal_list(relpermdata, h=0.2).SWOF()
     assert "Åre 1.8" in swof_str
     assert "SATNUM 2" in swof_str  # Autogenerated in SWOF, generated by factory
     assert "SATNUM 3" in swof_str
@@ -806,21 +801,21 @@ def test_load_relperm_df(tmp_path, caplog):
     # Make a dummy text file
     Path("dummy.txt").write_text("foo\nbar, com", encoding="utf8")
     with pytest.raises(ValueError):
-        PyscalFactory.load_relperm_df("dummy.txt")
+        load_relperm_df("dummy.txt")
 
     # Make an empty csv file
     Path("empty.csv").write_text("", encoding="utf8")
     with pytest.raises(ValueError, match="Impossible to infer file format"):
-        PyscalFactory.load_relperm_df("empty.csv")
+        load_relperm_df("empty.csv")
 
     with pytest.raises(ValueError, match="SATNUM must be present"):
-        PyscalFactory.load_relperm_df(pd.DataFrame())
+        load_relperm_df(pd.DataFrame())
 
     # Merge tags and comments if both are supplied
     Path("tagandcomment.csv").write_text(
         "SATNUM,nw,now,tag,comment\n1,1,1,a-tag,a-comment", encoding="utf8"
     )
-    tagandcomment_df = PyscalFactory.load_relperm_df("tagandcomment.csv")
+    tagandcomment_df = load_relperm_df("tagandcomment.csv")
     assert (
         tagandcomment_df["TAG"].to_numpy()[0]
         == "SATNUM 1 tag: a-tag; comment: a-comment"
@@ -829,26 +824,26 @@ def test_load_relperm_df(tmp_path, caplog):
     # Missing SATNUMs:
     Path("wrongsatnum.csv").write_text("SATNUM,nw,now\n1,1,1\n3,1,1", encoding="utf8")
     with pytest.raises(ValueError, match="Missing SATNUMs?"):
-        PyscalFactory.load_relperm_df("wrongsatnum.csv")
+        load_relperm_df("wrongsatnum.csv")
 
     # Missing SATNUMs, like merged cells:
     Path("mergedcells.csv").write_text(
         "CASE,SATNUM,nw,now\nlow,,1,1\nlow,1,2,2\nlow,,3,32", encoding="utf8"
     )
     with pytest.raises(ValueError, match="Found not-a-number"):
-        PyscalFactory.load_relperm_df("mergedcells.csv")
+        load_relperm_df("mergedcells.csv")
 
     # Missing SATNUMs, like merged cells:
     Path("mergedcellscase.csv").write_text(
         "CASE,SATNUM,nw,now\n,1,1,1\nlow,1,2,2\n,1,3,32", encoding="utf8"
     )
     with pytest.raises(ValueError, match="Found not-a-number"):
-        PyscalFactory.load_relperm_df("mergedcellscase.csv")
+        load_relperm_df("mergedcellscase.csv")
 
     # Not valid CSV file
     Path("notvalidcsv.csv").write_text("SATNUM;nw;now\n1;1;1", encoding="utf-8")
     with pytest.raises(TypeError, match="Supplied file is not a valid CSV file"):
-        PyscalFactory.load_relperm_df("notvalidcsv.csv")
+        load_relperm_df("notvalidcsv.csv")
 
 
 def test_many_nans():
@@ -863,9 +858,7 @@ def test_many_nans():
             {"SATNUM": np.nan, "nw": np.nan, "now": np.nan, "Unnamed: 15": np.nan},
         ]
     )
-    wateroil_list = PyscalFactory.create_pyscal_list(
-        PyscalFactory.load_relperm_df(nanframe)
-    )
+    wateroil_list = create_pyscal_list(load_relperm_df(nanframe))
     assert len(wateroil_list) == 1
     sat_table_str_ok(wateroil_list.SWOF())
 
@@ -884,7 +877,7 @@ def test_xls_factory():
 
     for (satnum, _), params in scalinput.iterrows():
         assert satnum
-        wog = PyscalFactory.create_water_oil_gas(params.to_dict())
+        wog = create_water_oil_gas(params.to_dict())
         swof = wog.SWOF()
         assert "LET krw" in swof
         assert "LET krow" in swof
@@ -899,15 +892,15 @@ def test_create_scal_recommendation_list():
     """Test the factory methods for making scalrecommendation lists"""
     testdir = Path(__file__).absolute().parent
     scalfile_xls = testdir / "data/scal-pc-input-example.xlsx"
-    scaldata = PyscalFactory.load_relperm_df(scalfile_xls)
+    scaldata = load_relperm_df(scalfile_xls)
 
-    scalrec_list = PyscalFactory.create_scal_recommendation_list(scaldata)
+    scalrec_list = create_scal_recommendation_list(scaldata)
     assert len(scalrec_list) == 3
     assert scalrec_list.pyscaltype == SCALrecommendation
 
     # Erroneous input:
     with pytest.raises(ValueError, match="Too many cases supplied for SATNUM 2"):
-        PyscalFactory.create_scal_recommendation_list(
+        create_scal_recommendation_list(
             pd.DataFrame(
                 columns=["SATNUM", "CASE", "NW", "NOW"],
                 data=[
@@ -922,7 +915,7 @@ def test_create_scal_recommendation_list():
             )
         )
     with pytest.raises(ValueError, match="Too few cases supplied for SATNUM 2"):
-        PyscalFactory.create_scal_recommendation_list(
+        create_scal_recommendation_list(
             pd.DataFrame(
                 columns=["SATNUM", "CASE", "NW", "NOW"],
                 data=[
@@ -940,27 +933,27 @@ def test_create_pyscal_list():
     """Test the factory methods for making pyscal lists"""
     testdir = Path(__file__).absolute().parent
     scalfile_xls = testdir / "data/scal-pc-input-example.xlsx"
-    scaldata = PyscalFactory.load_relperm_df(scalfile_xls)
+    scaldata = load_relperm_df(scalfile_xls)
     basecasedata = scaldata[scaldata["CASE"] == "base"].reset_index()
-    relpermlist = PyscalFactory.create_pyscal_list(basecasedata)
+    relpermlist = create_pyscal_list(basecasedata)
     assert len(relpermlist) == 3
     assert relpermlist.pyscaltype == WaterOilGas
 
-    wo_list = PyscalFactory.create_pyscal_list(
+    wo_list = create_pyscal_list(
         basecasedata.drop(["Lg", "Eg", "Tg", "Log", "Eog", "Tog"], axis="columns")
     )
 
     assert len(wo_list) == 3
     assert wo_list.pyscaltype == WaterOil
 
-    go_list = PyscalFactory.create_pyscal_list(
+    go_list = create_pyscal_list(
         basecasedata.drop(["Lw", "Ew", "Tw", "Low", "Eow", "Tow"], axis="columns")
     )
 
     assert len(go_list) == 3
     assert go_list.pyscaltype == GasOil
 
-    gw_list = PyscalFactory.create_pyscal_list(
+    gw_list = create_pyscal_list(
         basecasedata.drop(["Low", "Eow", "Tow", "Log", "Eog", "Tog"], axis="columns")
     )
 
@@ -970,24 +963,21 @@ def test_create_pyscal_list():
     with pytest.raises(
         ValueError, match="Could not determine two or three phase from parameters"
     ):
-        PyscalFactory.create_pyscal_list(
-            basecasedata.drop(["Ew", "Eg"], axis="columns")
-        )
+        create_pyscal_list(basecasedata.drop(["Ew", "Eg"], axis="columns"))
 
 
 def test_scalrecommendation():
     """Testing making SCAL rec from dict of dict."""
-    pyscal_factory = PyscalFactory()
 
     scal_input = {
         "low": {"nw": 2, "now": 4, "ng": 1, "nog": 2},
         "BASE": {"nw": 3, "NOW": 3, "ng": 1, "nog": 2},
         "high": {"nw": 4, "now": 2, "ng": 1, "nog": 3},
     }
-    scal = pyscal_factory.create_scal_recommendation(scal_input)
+    scal = create_scal_recommendation(scal_input)
 
     with pytest.raises(ValueError, match="Input must be a dict"):
-        pyscal_factory.create_scal_recommendation("low")
+        create_scal_recommendation("low")
 
     # (not supported yet to make WaterOil only..)
     interp = scal.interpolate(-0.5)
@@ -1003,12 +993,12 @@ def test_scalrecommendation():
         copy1 = scal_input.copy()
         del copy1[case]
         with pytest.raises(ValueError):
-            pyscal_factory.create_scal_recommendation(copy1)
+            create_scal_recommendation(copy1)
 
     go_only = scal_input.copy()
     del go_only["low"]["now"]
     del go_only["low"]["nw"]
-    gasoil = pyscal_factory.create_scal_recommendation(go_only)
+    gasoil = create_scal_recommendation(go_only)
     assert gasoil.low.wateroil is None
     assert gasoil.base.wateroil is not None
     assert gasoil.high.wateroil is not None
@@ -1020,31 +1010,30 @@ def test_scalrecommendation():
     basehigh = scal_input.copy()
     del basehigh["low"]
     with pytest.raises(ValueError, match='"low" case not supplied'):
-        pyscal_factory.create_scal_recommendation(basehigh)
+        create_scal_recommendation(basehigh)
 
     baselow = scal_input.copy()
     del baselow["high"]
     with pytest.raises(ValueError, match='"high" case not supplied'):
-        pyscal_factory.create_scal_recommendation(baselow)
+        create_scal_recommendation(baselow)
 
     with pytest.raises(
         ValueError, match="All values in parameter dict must be dictionaries"
     ):
-        pyscal_factory.create_scal_recommendation(
+        create_scal_recommendation(
             {"low": [1, 2], "base": {"swl": 0.1}, "high": {"swl": 0.1}}
         )
 
 
 def test_scalrecommendation_gaswater():
     """Testing making SCAL rec from dict of dict for gaswater input"""
-    pyscal_factory = PyscalFactory()
 
     scal_input = {
         "low": {"nw": 2, "ng": 1},
         "BASE": {"nw": 3, "ng": 1},
         "high": {"nw": 4, "ng": 1},
     }
-    scal = pyscal_factory.create_scal_recommendation(scal_input, h=0.2)
+    scal = create_scal_recommendation(scal_input, h=0.2)
     interp = scal.interpolate(-0.5, h=0.2)
     sat_table_str_ok(interp.SWFN())
     sat_table_str_ok(interp.SGFN())
@@ -1060,7 +1049,7 @@ def test_xls_scalrecommendation():
     scalinput = pd.read_excel(xlsxfile, engine="openpyxl").set_index(["SATNUM", "CASE"])
     for satnum in scalinput.index.levels[0].to_numpy():
         dictofdict = scalinput.loc[satnum, :].to_dict(orient="index")
-        scalrec = PyscalFactory.create_scal_recommendation(dictofdict)
+        scalrec = create_scal_recommendation(dictofdict)
         scalrec.interpolate(+0.5)
 
 
@@ -1072,7 +1061,7 @@ def test_no_gasoil():
     Make sure we fail in that case."""
     dframe = pd.DataFrame(columns=["SATNUM", "NOW", "NG"], data=[[1, 2, 2]])
     with pytest.raises(ValueError):
-        PyscalFactory.load_relperm_df(dframe)
+        load_relperm_df(dframe)
 
 
 def test_check_deprecated_krowgend():
@@ -1082,20 +1071,20 @@ def test_check_deprecated_krowgend():
     After pyscal 0.8 presence of krogend and krowend is a ValueError
     """
     with pytest.raises(ValueError):
-        PyscalFactory.create_water_oil({"swl": 0.1, "nw": 2, "now": 2, "krowend": 0.4})
+        create_water_oil({"swl": 0.1, "nw": 2, "now": 2, "krowend": 0.4})
 
     with pytest.raises(ValueError):
-        PyscalFactory.create_gas_oil({"swl": 0.1, "ng": 2, "nog": 2, "krogend": 0.4})
+        create_gas_oil({"swl": 0.1, "ng": 2, "nog": 2, "krogend": 0.4})
 
     # If krogend and kroend are both present, krogend is to be silently ignored
     # (random columns are in general accepted and ignored by pyscal)
 
-    gasoil = PyscalFactory.create_gas_oil(
+    gasoil = create_gas_oil(
         {"swl": 0.1, "ng": 2, "nog": 2, "krogend": 0.4, "kroend": 0.3}
     )
     assert gasoil.table["KROG"].max() == 0.3
 
-    wateroil = PyscalFactory.create_water_oil(
+    wateroil = create_water_oil(
         {"swl": 0.1, "nw": 2, "now": 2, "krowend": 0.4, "kroend": 0.3}
     )
     assert wateroil.table["KROW"].max() == 0.3
@@ -1155,12 +1144,10 @@ def test_gensatfunc():
     """Test how the external tool gen_satfunc could use
     the factory functionality"""
 
-    pyscal_factory = PyscalFactory()
-
     # Example config line for gen_satfunc:
     conf_line_pc = "RELPERM 4 2 1 3 2 1 0.15 0.10 0.5 20 100 0.2 0.22 -0.5 30"
 
-    wateroil = pyscal_factory.create_water_oil(parse_gensatfuncline(conf_line_pc))
+    wateroil = create_water_oil(parse_gensatfuncline(conf_line_pc))
     swof = wateroil.SWOF()
     assert "0.17580" in swof  # krw at sw=0.65
     assert "0.0127" in swof  # krow at sw=0.65
@@ -1168,7 +1155,7 @@ def test_gensatfunc():
     assert "2.0669" in swof  # pc at swl
 
     conf_line_min = "RELPERM 1 2 3 1 2 3 0.1 0.15 0.5 20"
-    wateroil = pyscal_factory.create_water_oil(parse_gensatfuncline(conf_line_min))
+    wateroil = create_water_oil(parse_gensatfuncline(conf_line_min))
     swof = wateroil.SWOF()
     assert "Zero capillary pressure" in swof
 
@@ -1178,9 +1165,7 @@ def test_gensatfunc():
 
     # sigma_costau is missing here:
     conf_line_almost_pc = "RELPERM 4 2 1 3 2 1 0.15 0.10 0.5 20 100 0.2 0.22 -0.5"
-    wateroil = pyscal_factory.create_water_oil(
-        parse_gensatfuncline(conf_line_almost_pc)
-    )
+    wateroil = create_water_oil(parse_gensatfuncline(conf_line_almost_pc))
     swof = wateroil.SWOF()
     # The factory will not recognize the normalized J-function
     # when costau is missing. Any error message would be the responsibility
@@ -1192,28 +1177,28 @@ def test_sufficient_params():
     """Test the utility functions to determine whether
     WaterOil and GasOil object have sufficient parameters"""
 
-    assert factory.sufficient_gas_oil_params({"ng": 0, "nog": 0})
+    assert sufficient_gas_oil_params({"ng": 0, "nog": 0})
     # If it looks like the user meant to create GasOil, but only provided
     # data for krg, then might error hard. If the user did not provide
     # any data for GasOil, then the code returns False
     with pytest.raises(ValueError):
-        factory.sufficient_gas_oil_params({"ng": 0}, failhard=True)
-    assert not factory.sufficient_gas_oil_params({"ng": 0}, failhard=False)
-    assert not factory.sufficient_gas_oil_params({})
+        sufficient_gas_oil_params({"ng": 0}, failhard=True)
+    assert not sufficient_gas_oil_params({"ng": 0}, failhard=False)
+    assert not sufficient_gas_oil_params({})
     with pytest.raises(ValueError):
-        factory.sufficient_gas_oil_params({"lg": 0}, failhard=True)
-    assert not factory.sufficient_gas_oil_params({"lg": 0}, failhard=False)
-    assert factory.sufficient_gas_oil_params(
+        sufficient_gas_oil_params({"lg": 0}, failhard=True)
+    assert not sufficient_gas_oil_params({"lg": 0}, failhard=False)
+    assert sufficient_gas_oil_params(
         {"lg": 0, "eg": 0, "Tg": 0, "log": 0, "eog": 0, "tog": 0}
     )
 
-    assert factory.sufficient_water_oil_params({"nw": 0, "now": 0})
+    assert sufficient_water_oil_params({"nw": 0, "now": 0})
     with pytest.raises(ValueError):
-        factory.sufficient_water_oil_params({"nw": 0}, failhard=True)
-    assert not factory.sufficient_water_oil_params({})
+        sufficient_water_oil_params({"nw": 0}, failhard=True)
+    assert not sufficient_water_oil_params({})
     with pytest.raises(ValueError):
-        factory.sufficient_water_oil_params({"lw": 0}, failhard=True)
-    assert factory.sufficient_water_oil_params(
+        sufficient_water_oil_params({"lw": 0}, failhard=True)
+    assert sufficient_water_oil_params(
         {"lw": 0, "ew": 0, "Tw": 0, "low": 0, "eow": 0, "tow": 0}
     )
 
@@ -1221,23 +1206,23 @@ def test_sufficient_params():
 def test_sufficient_params_gaswater():
     """Test that we can detect sufficient parameters
     for gas-water only"""
-    assert factory.sufficient_gas_water_params({"nw": 0, "ng": 0})
-    assert not factory.sufficient_gas_water_params({"nw": 0, "nog": 0})
-    assert factory.sufficient_gas_water_params(
+    assert sufficient_gas_water_params({"nw": 0, "ng": 0})
+    assert not sufficient_gas_water_params({"nw": 0, "nog": 0})
+    assert sufficient_gas_water_params(
         {"lw": 0, "ew": 0, "tw": 0, "lg": 0, "eg": 0, "tg": 0}
     )
-    assert not factory.sufficient_gas_water_params({"lw": 0})
-    assert not factory.sufficient_gas_water_params({"lw": 0, "lg": 0})
-    assert not factory.sufficient_gas_water_params({"lw": 0, "lg": 0})
+    assert not sufficient_gas_water_params({"lw": 0})
+    assert not sufficient_gas_water_params({"lw": 0, "lg": 0})
+    assert not sufficient_gas_water_params({"lw": 0, "lg": 0})
 
     with pytest.raises(ValueError):
-        factory.sufficient_gas_water_params({"lw": 0}, failhard=True)
+        sufficient_gas_water_params({"lw": 0}, failhard=True)
     with pytest.raises(ValueError):
-        factory.sufficient_gas_water_params({"nw": 3}, failhard=True)
+        sufficient_gas_water_params({"nw": 3}, failhard=True)
 
-    assert factory.sufficient_gas_water_params({"lw": 0, "ew": 0, "tw": 0, "ng": 0})
-    assert factory.sufficient_gas_water_params({"lg": 0, "eg": 0, "tg": 0, "nw": 0})
-    assert not factory.sufficient_gas_water_params({"lg": 0, "eg": 0, "tg": 0, "ng": 0})
+    assert sufficient_gas_water_params({"lw": 0, "ew": 0, "tw": 0, "ng": 0})
+    assert sufficient_gas_water_params({"lg": 0, "eg": 0, "tg": 0, "nw": 0})
+    assert not sufficient_gas_water_params({"lg": 0, "eg": 0, "tg": 0, "ng": 0})
 
 
 def test_case_aliasing():
@@ -1251,8 +1236,8 @@ def test_case_aliasing():
             [1, "opt", 3, 1, 1, 1],
         ],
     )
-    relperm_data = PyscalFactory.load_relperm_df(dframe)
-    PyscalFactory.create_scal_recommendation_list(relperm_data, h=0.2).interpolate(-0.4)
+    relperm_data = load_relperm_df(dframe)
+    create_scal_recommendation_list(relperm_data, h=0.2).interpolate(-0.4)
     dframe = pd.DataFrame(
         columns=["SATNUM", "CASE", "Nw", "Now", "Ng", "Nog"],
         data=[
@@ -1261,11 +1246,11 @@ def test_case_aliasing():
             [1, "optiMISTIc", 3, 1, 1, 1],
         ],
     )
-    relperm_data = PyscalFactory.load_relperm_df(dframe)
-    PyscalFactory.create_scal_recommendation_list(relperm_data, h=0.2).interpolate(-0.4)
+    relperm_data = load_relperm_df(dframe)
+    create_scal_recommendation_list(relperm_data, h=0.2).interpolate(-0.4)
 
     with pytest.raises(ValueError):
-        PyscalFactory.load_relperm_df(
+        load_relperm_df(
             pd.DataFrame(
                 columns=["SATNUM", "CASE", "Nw", "Now", "Ng", "Nog"],
                 data=[
@@ -1278,7 +1263,7 @@ def test_case_aliasing():
 
     # Ambigous data:
     with pytest.raises(ValueError):
-        amb = PyscalFactory.load_relperm_df(
+        amb = load_relperm_df(
             pd.DataFrame(
                 columns=["SATNUM", "CASE", "Nw", "Now", "Ng", "Nog"],
                 data=[
@@ -1289,11 +1274,11 @@ def test_case_aliasing():
                 ],
             )
         )
-        PyscalFactory.create_scal_recommendation_list(amb)
+        create_scal_recommendation_list(amb)
 
     # Missing a case
     with pytest.raises(ValueError):
-        PyscalFactory.load_relperm_df(
+        load_relperm_df(
             pd.DataFrame(
                 columns=["SATNUM", "CASE", "Nw", "Now", "Ng", "Nog"],
                 data=[[1, "base", 3, 1, 1, 1], [1, "optIMIstiC", 3, 1, 1, 1]],
@@ -1301,7 +1286,7 @@ def test_case_aliasing():
         )
     # Missing a case
     with pytest.raises(ValueError):
-        PyscalFactory.load_relperm_df(
+        load_relperm_df(
             pd.DataFrame(
                 columns=["SATNUM", "CASE", "Nw", "Now", "Ng", "Nog"],
                 data=[[1, "base", 3, 1, 1, 1]],
@@ -1311,8 +1296,8 @@ def test_case_aliasing():
 
 def test_socr_via_dframe():
     """Test that the "socr" parameter is picked up from a dataframe/xlsx input"""
-    p_list = PyscalFactory.create_pyscal_list(
-        PyscalFactory.load_relperm_df(
+    p_list = create_pyscal_list(
+        load_relperm_df(
             pd.DataFrame(
                 columns=["SATNUM", "Nw", "Now", "socr"],
                 data=[[1, 2, 2, 0.5]],
@@ -1343,15 +1328,15 @@ def test_swirr_partially_missing(tmp_path):
             [2, 3, 3, 0.1, np.nan, np.nan, np.nan, np.nan, np.nan],
         ],
     )
-    relperm_data = PyscalFactory.load_relperm_df(dframe)
-    p_list = PyscalFactory.create_pyscal_list(relperm_data, h=0.2)
+    relperm_data = load_relperm_df(dframe)
+    p_list = create_pyscal_list(relperm_data, h=0.2)
     assert "a=2, b=-2" in p_list[1].pccomment
     assert p_list[2].pccomment == ""
 
     os.chdir(tmp_path)
     dframe.to_excel("partial_pc.xlsx")
-    relperm_data_via_xlsx = PyscalFactory.load_relperm_df("partial_pc.xlsx")
-    p_list = PyscalFactory.create_pyscal_list(relperm_data_via_xlsx, h=0.2)
+    relperm_data_via_xlsx = load_relperm_df("partial_pc.xlsx")
+    p_list = create_pyscal_list(relperm_data_via_xlsx, h=0.2)
     assert "a=2, b=-2" in p_list[1].pccomment
     assert p_list[2].pccomment == ""
 
@@ -1363,8 +1348,8 @@ def test_corey_let_mix():
         columns=["SATNUM", "Nw", "Now", "Lw", "Ew", "Tw", "Ng", "Nog"],
         data=[[1, 2, 2, np.nan, np.nan, np.nan, 1, 1], [2, np.nan, 3, 1, 1, 1, 2, 2]],
     )
-    relperm_data = PyscalFactory.load_relperm_df(dframe)
-    p_list = PyscalFactory.create_pyscal_list(relperm_data, h=0.2)
+    relperm_data = load_relperm_df(dframe)
+    p_list = create_pyscal_list(relperm_data, h=0.2)
     swof1 = p_list.pyscal_list[0].SWOF()
     swof2 = p_list.pyscal_list[1].SWOF()
     assert "Corey krw" in swof1
@@ -1377,41 +1362,37 @@ def test_infer_tabular_file_format(tmp_path, caplog):
     """Test code that infers the fileformat of files with tabular data"""
     testdir = Path(__file__).absolute().parent
     assert (
-        factory.infer_tabular_file_format(testdir / "data/scal-pc-input-example.xlsx")
+        infer_tabular_file_format(testdir / "data/scal-pc-input-example.xlsx") == "xlsx"
+    )
+    assert (
+        infer_tabular_file_format(str(testdir / "data/scal-pc-input-example.xlsx"))
         == "xlsx"
     )
     assert (
-        factory.infer_tabular_file_format(
-            str(testdir / "data/scal-pc-input-example.xlsx")
-        )
-        == "xlsx"
-    )
-    assert (
-        factory.infer_tabular_file_format(testdir / "data/scal-pc-input-example.xls")
-        == "xls"
+        infer_tabular_file_format(testdir / "data/scal-pc-input-example.xls") == "xls"
     )
     os.chdir(tmp_path)
     pd.DataFrame([{"SATNUM": 1, "NW": 2}]).to_csv("some.csv", index=False)
-    assert factory.infer_tabular_file_format("some.csv") == "csv"
+    assert infer_tabular_file_format("some.csv") == "csv"
 
     Path("empty.csv").write_text("", encoding="utf8")
-    assert factory.infer_tabular_file_format("empty.csv") == ""
+    assert infer_tabular_file_format("empty.csv") == ""
     # Ensure Pandas's error message got through:
     assert "No columns to parse from file" in caplog.text
 
     # We don't want ISO-8859 files, ensure we fail
     norw_chars = "Dette,er,en,CSV,fil\nmed,iso-8859:,æ,ø,å"
     Path("iso8859.csv").write_bytes(norw_chars.encode("iso-8859-1"))
-    assert factory.infer_tabular_file_format("iso8859.csv") == ""
+    assert infer_tabular_file_format("iso8859.csv") == ""
     # Providing an error that this error was due to ISO-8859 and
     # nothing else is deemed too hard.
     Path("utf8.csv").write_bytes(norw_chars.encode("utf-8"))
-    assert factory.infer_tabular_file_format("utf8.csv") == "csv"
+    assert infer_tabular_file_format("utf8.csv") == "csv"
 
     # Write some random bytes to a file, this should with very
     # little probability give a valid xlsx/xls/csv file.
     Path("wrong.csv").write_bytes(os.urandom(100))
-    assert factory.infer_tabular_file_format("wrong.csv") == ""
+    assert infer_tabular_file_format("wrong.csv") == ""
 
 
 @pytest.mark.parametrize(
@@ -1426,4 +1407,67 @@ def test_infer_tabular_file_format(tmp_path, caplog):
 )
 def test_slicedict(orig_dict, keylist, expected_dict):
     """Test that dictionaries can be sliced for subsets"""
-    assert factory.slicedict(orig_dict, keylist) == expected_dict
+    assert slicedict(orig_dict, keylist) == expected_dict
+
+
+def test_deprecated_functions():
+    """Test the deprecated functions"""
+
+    # Load file used for testing
+    testdir = Path(__file__).absolute().parent
+    scalfile_xls = testdir / "data/scal-pc-input-example.xlsx"
+
+    with pytest.warns(DeprecationWarning):
+        PyscalFactory.create_water_oil({"nw": 2, "now": 2})
+
+    with pytest.warns(DeprecationWarning):
+        PyscalFactory.create_gas_oil({"ng": 2, "nog": 2})
+
+    with pytest.warns(DeprecationWarning):
+        PyscalFactory.create_water_oil_gas(
+            {
+                "nw": 2,
+                "now": 2,
+                "ng": 2,
+                "nog": 2,
+            }
+        )
+
+    with pytest.warns(DeprecationWarning):
+        PyscalFactory.create_gas_water({"nw": 2, "ng": 2})
+
+    with pytest.warns(DeprecationWarning):
+        PyscalFactory.create_scal_recommendation(
+            {
+                "low": {"nw": 2, "now": 2, "ng": 2, "nog": 2},
+                "base": {"nw": 2, "now": 2, "ng": 2, "nog": 2},
+                "high": {"nw": 2, "now": 2, "ng": 2, "nog": 2},
+            }
+        )
+
+    with pytest.warns(DeprecationWarning):
+        scaldata = PyscalFactory.load_relperm_df(scalfile_xls)
+
+    with pytest.warns(DeprecationWarning):
+        PyscalFactory.create_scal_recommendation_list(scaldata)
+
+    with pytest.warns(DeprecationWarning):
+        PyscalFactory.create_pyscal_list(scaldata)
+
+    with pytest.warns(DeprecationWarning):
+        PyscalFactory.remap_validate_cases(scaldata["CASE"].to_numpy())
+
+    with pytest.warns(DeprecationWarning):
+        PyscalFactory.create_wateroilgas_list(scaldata)
+
+    with pytest.warns(DeprecationWarning):
+        PyscalFactory.create_wateroil_list(scaldata)
+
+    with pytest.warns(DeprecationWarning):
+        PyscalFactory.create_gasoil_list(scaldata)
+
+    with pytest.warns(DeprecationWarning):
+        PyscalFactory.create_gaswater_list(scaldata)
+
+    with pytest.warns(DeprecationWarning):
+        PyscalFactory.alias_sgrw({"sgrw": 0.1})
