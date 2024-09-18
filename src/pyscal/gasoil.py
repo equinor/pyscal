@@ -153,7 +153,7 @@ class GasOil:
         )
         sg_list.sort()
         self.table = pd.DataFrame(sg_list, columns=["SG"])
-        self.table["sgint"] = list(map(round, self.table["SG"] * SWINTEGERS))
+        self.table["sgint"] = list(map(round, self.table["SG"] * SWINTEGERS * 10))
         self.table = self.table.drop_duplicates("sgint")
 
         # Now sg=1-sorg-swl might be accidentally dropped, so make sure we

@@ -162,7 +162,7 @@ class WaterOil:
 
         # Ensure that we do not have sw values that are too close
         # to each other, determined rougly by the distance 1/10000
-        self.table["swint"] = list(map(round, self.table["SW"] * SWINTEGERS))
+        self.table["swint"] = list(map(round, self.table["SW"] * SWINTEGERS * 10))
         self.table = self.table.drop_duplicates("swint")
 
         # Now, sw=1-sorw might be accidentaly dropped, so make sure we
