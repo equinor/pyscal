@@ -75,7 +75,7 @@ def test_gasoil_init():
 
 def test_conserve_sgcr(mocker):
     """sgcr in the table can be hard to conserve"""
-    low_sgcrvalue = 0.00001  # 1/10 of 1/SWINTEGERS
+    low_sgcrvalue = 1 / SWINTEGERS / 10
     # Verify the default behaviour of truncation:
     assert truncate_zeroness(low_sgcrvalue) == 0
     mocker.patch(

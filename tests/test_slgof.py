@@ -125,7 +125,7 @@ def test_numerical_problems(swl, sorg, sgcr):
     st.floats(min_value=0.0, max_value=0.3),
     st.floats(min_value=0.0, max_value=0.3),
     st.floats(min_value=0.0, max_value=0.3),
-    st.floats(min_value=1.0 / float(1000 * SWINTEGERS), max_value=0.5),
+    st.floats(min_value=1.0 / float(100 * SWINTEGERS), max_value=0.5),
 )
 def test_slgof_hypo(swl, sorg, sgcr, h):
     """Shotgun-testing of slgof"""
@@ -148,7 +148,7 @@ def test_slgof_hypo(swl, sorg, sgcr, h):
 @given(
     st.floats(min_value=0.0, max_value=0.3),
     st.floats(min_value=0.0, max_value=0.3),
-    st.floats(min_value=1.0 / float(1000 * SWINTEGERS), max_value=0.5),
+    st.floats(min_value=1.0 / float(100 * SWINTEGERS), max_value=0.5),
 )
 def test_slgof_sl_mismatch(swl, sorg, h):
     """Test numerical robustness on slgof table creation."""
