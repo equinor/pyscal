@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 
 def truncate_zeroness(
-    value: float, zeronesslimit: float = 1 / SWINTEGERS, name: str = "", log=True
+    value: float, zeronesslimit: float = 10 / SWINTEGERS, name: str = "", log=True
 ) -> float:
     """Check a value for closeness to zero, and return as zero if below
     a given limit, if not return the value"""

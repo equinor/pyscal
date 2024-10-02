@@ -22,7 +22,7 @@ from pyscal.utils.testing import (
 def check_endpoints(gaswater, krwend, krwmax, krgend):
     """Check that the code produces correct endpoints for
     parametrizations, on discrete cases"""
-    swtol = 1 / SWINTEGERS
+    swtol = 10 / SWINTEGERS
 
     # Check endpoints for gas curve:
     # krg at swl should be krgend:

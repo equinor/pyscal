@@ -16,7 +16,7 @@
 * ``MAX_EXPONENT_PC``: Maximal number for exponents in cap pressure parameterizations.
 """
 
-SWINTEGERS: int = 10000
+SWINTEGERS: int = 100000
 
 EPSILON: float = 1e-08
 
