@@ -80,9 +80,9 @@ def sat_table_str_ok(sat_table_str: str) -> None:
     # This must be a constant:
     assert len(floats_pr_line) == 1
     # And not more than 4:
-    if not list(floats_pr_line)[0] <= 4:
+    if not next(iter(floats_pr_line)) <= 4:
         print(sat_table_str)
-    assert list(floats_pr_line)[0] <= 4
+    assert next(iter(floats_pr_line)) <= 4
 
     float_characters = {len(flt) for flt in " ".join(number_lines).split()}
     digits = 7  # This is the default value in utils.df2str()
@@ -92,7 +92,7 @@ def sat_table_str_ok(sat_table_str: str) -> None:
         # or above digits + 1, otherwise it is a sign of some error.
 
     # And pyscal only emits three or four floats pr. line for all keywords:
-    assert list(set(floats_pr_line))[0] in [3, 4]
+    assert next(iter(set(floats_pr_line))) in [3, 4]
 
     # So we should be able to parse this to a dataframe:
     dframe = pd.read_csv(io.StringIO("\n".join(number_lines)), sep=" ", header=None)

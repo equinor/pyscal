@@ -48,7 +48,7 @@ WO_OIL_ENDPOINTS = ["kroend"]
 WO_SIMPLE_J = ["a", "b", "poro_ref", "perm_ref", "drho"]  # "g" is optional
 WO_SWLHEIGHT = ["swlheight"]
 WO_SWCR_ADD = ["swcr_add"]  # Relevant when swlheight is in use.
-WO_SWL_FROM_HEIGHT = WO_SWLHEIGHT + ["swirr", "a", "b", "poro_ref", "perm_ref"]
+WO_SWL_FROM_HEIGHT = [*WO_SWLHEIGHT, "swirr", "a", "b", "poro_ref", "perm_ref"]
 WO_NORM_J = ["a", "b", "poro", "perm", "sigma_costau"]
 # 'a' in WO_NORM_J is the same as a_petro, but should possibly kept as is.
 WO_SIMPLE_J_PETRO = [
@@ -267,9 +267,9 @@ def create_water_oil(
         )
 
     # Capillary pressure:
-    params_simple_j = slicedict(params, WO_SIMPLE_J + ["g"])
+    params_simple_j = slicedict(params, [*WO_SIMPLE_J, "g"])
     params_norm_j = slicedict(params, WO_NORM_J)
-    params_simple_j_petro = slicedict(params, WO_SIMPLE_J_PETRO + ["g"])
+    params_simple_j_petro = slicedict(params, [*WO_SIMPLE_J_PETRO, "g"])
     params_let_pc_pd = slicedict(params, WO_LET_PC_PD)
     params_let_pc_imb = slicedict(params, WO_LET_PC_IMB)
     params_skjaeveland_pc = slicedict(params, WO_SKJAEVELAND_PC)
@@ -899,7 +899,7 @@ def create_scal_recommendation_list(
                 )
             )
         except ValueError as err:
-            raise ValueError(f"Error for SATNUM {satnum}: {str(err)}") from err
+            raise ValueError(f"Error for SATNUM {satnum}: {err}") from err
 
     return scal_l
 
@@ -957,7 +957,7 @@ def create_wateroilgas_list(
         try:
             wogl.append(create_water_oil_gas(params.to_dict(), fast=fast))
         except (AssertionError, ValueError, TypeError) as err:
-            raise ValueError(f"Error for SATNUM {row_idx + 1}: {str(err)}") from err
+            raise ValueError(f"Error for SATNUM {row_idx + 1}: {err}") from err
     return wogl
 
 
@@ -983,9 +983,7 @@ def create_wateroil_list(
         try:
             wol.append(create_water_oil(params.to_dict(), fast=fast))
         except (AssertionError, ValueError, TypeError) as err:
-            raise ValueError(
-                f"Error for SATNUM {params['SATNUM']}: {str(err)}"
-            ) from err
+            raise ValueError(f"Error for SATNUM {params['SATNUM']}: {err}") from err
     return wol
 
 
@@ -1011,9 +1009,7 @@ def create_gasoil_list(
         try:
             gol.append(create_gas_oil(params.to_dict(), fast=fast))
         except (AssertionError, ValueError, TypeError) as err:
-            raise ValueError(
-                f"Error for SATNUM {params['SATNUM']}: {str(err)}"
-            ) from err
+            raise ValueError(f"Error for SATNUM {params['SATNUM']}: {err}") from err
     return gol
 
 
@@ -1039,9 +1035,7 @@ def create_gaswater_list(
         try:
             gwl.append(create_gas_water(params.to_dict(), fast=fast))
         except (AssertionError, ValueError, TypeError) as err:
-            raise ValueError(
-                f"Error for SATNUM {params['SATNUM']}: {str(err)}"
-            ) from err
+            raise ValueError(f"Error for SATNUM {params['SATNUM']}: {err}") from err
     return gwl
 
 

@@ -143,14 +143,14 @@ class GasOil:
                 "No saturation range left for gas curve between endpoints, check input"
             )
 
-        sg_list = (
-            [0.0]
-            + [self.sgl]
-            + [self.sgcr]
-            + list(np.arange(self.sgcr + self.h, 1 - self.sorg - self.swl, self.h))
-            + [1 - self.sorg - self.swl]
-            + [1 - self.swl]
-        )
+        sg_list = [
+            0.0,
+            self.sgl,
+            self.sgcr,
+            *list(np.arange(self.sgcr + self.h, 1 - self.sorg - self.swl, self.h)),
+            1 - self.sorg - self.swl,
+            1 - self.swl,
+        ]
         sg_list.sort()
         self.table = pd.DataFrame(sg_list, columns=["SG"])
         self.table["sgint"] = list(map(round, self.table["SG"] * SWINTEGERS))
