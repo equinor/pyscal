@@ -150,13 +150,13 @@ class WaterOil:
 
         self.tag = tag
         self.fast = fast
-        sw_list = (
-            list(np.arange(self.swl, 1 - self.sgl, self.h))
-            + [self.swcr]
-            + [1 - self.sorw]
-            + [1 - self.socr]
-            + [1 - self.sgl]
-        )
+        sw_list = [
+            *list(np.arange(self.swl, 1 - self.sgl, self.h)),
+            self.swcr,
+            1 - self.sorw,
+            1 - self.socr,
+            1 - self.sgl,
+        ]
         sw_list.sort()  # Using default timsort on nearly sorted data.
         self.table = pd.DataFrame(sw_list, columns=["SW"])
 
