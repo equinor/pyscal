@@ -31,9 +31,15 @@ jobs:
 
     - name: Generate coverage report
       run: |
-        pytest --hypothesis-profile ci tests --disable-warnings --cov=pyscal --cov-report=xml
+        pytest --hypothesis-profile ci tests --disable-warnings --cov=pyscal --cov-report=xml --junitxml=junit.xml -o junit_family=legacy
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v4
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
+
+    - name: Upload test report to Codecov
+      if: ${{ !cancelled() }}
+￼        uses: codecov/test-results-action@v1
+￼        with:
+￼          token: ${{ secrets.CODECOV_TOKEN }}
