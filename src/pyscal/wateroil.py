@@ -106,7 +106,7 @@ class WaterOil:
 
         self.swcomment: str = ""
 
-        h_min = 1.0 / float(SWINTEGERS)
+        h_min = 10.0 / float(SWINTEGERS)
         if h < h_min:
             logger.warning(
                 "Requested saturation step length (%g) too small, reset to %g", h, h_min

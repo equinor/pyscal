@@ -89,7 +89,7 @@ class GasOil:
 
         assert isinstance(krgendanchor, str), "krgendanchor must be a string"
 
-        h_min = 1.0 / float(SWINTEGERS)
+        h_min = 10.0 / float(SWINTEGERS)
         if h < h_min:
             logger.warning(
                 "Requested saturation step length (%g) too small, reset to %g", h, h_min
