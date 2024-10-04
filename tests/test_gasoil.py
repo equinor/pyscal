@@ -70,7 +70,7 @@ def test_gasoil_init():
     # Test too small h:
     gasoil = GasOil(swl=0.1, h=0.00000000000000000001)
     # (a warning is printed that h is truncated)
-    assert gasoil.h == 1 / SWINTEGERS
+    assert gasoil.h == 10 / SWINTEGERS
 
 
 def test_conserve_sgcr(mocker):
