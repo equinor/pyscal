@@ -433,31 +433,34 @@ def create_water_oil_gas(
     if not isinstance(params, dict):
         raise TypeError("Parameter to create_water_oil_gas must be a dictionary")
 
-    check_deprecated(params)
-
     # For case insensitiveness, all keys are converted to lower case:
     params = {key.lower(): value for (key, value) in params.items()}
 
+    # create separate params for wo and go systems,
+    # and represent krowend and krogend as kroend
+    params_wo = kro_endpoint_wo(params)
+    params_go = kro_endpoint_go(params)
+
     wateroil: WaterOil | None
-    if sufficient_water_oil_params(params, failhard=False):
-        wateroil = create_water_oil(params, fast=fast)
+    if sufficient_water_oil_params(params_wo, failhard=False):
+        wateroil = create_water_oil(params_wo, fast=fast)
     else:
         logger.info("No wateroil parameters. Assuming only gas-oil in wateroilgas")
         wateroil = None
 
     # If the swl in WaterOil was initialized with swlheight,
     # ensure that result is passed on to the GasOil object:
-    if "swl" not in params and "swlheight" in params and wateroil is not None:
-        params["swl"] = wateroil.swl
+    if "swl" not in params_go and "swlheight" in params_go and wateroil is not None:
+        params_go["swl"] = wateroil.swl
 
     gasoil: GasOil | None
-    if sufficient_gas_oil_params(params, failhard=False):
-        gasoil = create_gas_oil(params, fast=fast)
+    if sufficient_gas_oil_params(params_go, failhard=False):
+        gasoil = create_gas_oil(params_go, fast=fast)
     else:
         logger.info("No gasoil parameters, assuming two-phase oilwatergas")
         gasoil = None
 
-    wog_init_params = slicedict(params, WOG_INIT)
+    wog_init_params = slicedict(params_wo, WOG_INIT)
     wateroilgas = WaterOilGas(**wog_init_params, fast=fast)
     # The wateroilgas __init__ has already created WaterOil and GasOil objects
     # but we overwrite the references with newly created ones, this factory function
@@ -1407,6 +1410,78 @@ def check_deprecated(params: dict[str, Any]) -> None:
     # Block long deprecated parameters with an exception.
     # Remove this block in pyscal 1.x
     if "krowend" in params and "kroend" not in params:
-        raise ValueError("krowend is not supported by pyscal. Use kroend")
+        raise ValueError(
+            "krowend is not supported by pyscal for WaterOil and GasOil objects. "
+            "Use kroend"
+        )
     if "krogend" in params and "kroend" not in params:
-        raise ValueError("krogend is not supported by pyscal. Use kroend")
+        raise ValueError(
+            "krogend is not supported by pyscal for WaterOil and GasOil objects. "
+            "Use kroend"
+        )
+
+
+def kro_endpoint_wo(params: dict[str, Any]) -> dict[str, Any]:
+    """
+    Normalize parameters to be used for creating a WaterOil object:
+    - If 'krowend' is present, rename it to 'kroend'.
+    - If both 'krowend' and 'kroend' are provided, use the 'krowend' value
+      and log a warning.
+    - Always remove 'krogend' if present (not relevant for WaterOil).
+
+    Args:
+        params: Dictionary of parameters.
+
+    Returns:
+        params: Dictionary of parameters.
+    """
+    params_copy = params.copy()
+
+    if "krowend" in params_copy:
+        if "kroend" in params_copy:
+            logger.warning(
+                "Both 'krowend'=%r and 'kroend'=%r were provided; using the "
+                "'krowend' value for WaterOil construction.",
+                params_copy["krowend"],
+                params_copy["kroend"],
+            )
+        # Overwrite any existing 'kroend' with the 'krowend' value, then drop 'krowend'
+        params_copy["kroend"] = params_copy.pop("krowend")
+
+    # Remove GasOil key if it sneaks in
+    params_copy.pop("krogend", None)
+
+    return params_copy
+
+
+def kro_endpoint_go(params: dict[str, Any]) -> dict[str, Any]:
+    """
+    Normalize parameters to be used for creating a GasOil object:
+    - If 'krogend' is present, rename it to 'kroend'.
+    - If both 'krogend' and 'kroend' are provided, use the 'krogend' value
+      and log a warning.
+    - Always remove 'krowend' if present (not relevant for GasOil).
+
+    Args:
+        params: Dictionary of parameters.
+
+    Returns:
+        params: Dictionary of parameters.
+    """
+    params_copy = params.copy()
+
+    if "krogend" in params_copy:
+        if "kroend" in params_copy:
+            logger.warning(
+                "Both 'krogend'=%r and 'kroend'=%r were provided; using the "
+                "'krogend' value for GasOil construction.",
+                params_copy["krogend"],
+                params_copy["kroend"],
+            )
+        # Overwrite any existing 'kroend' with the 'krowend' value, then drop 'krowend'
+        params_copy["kroend"] = params_copy.pop("krogend")
+
+    # Remove WaterOil key if it sneaks in
+    params_copy.pop("krowend", None)
+
+    return params_copy
