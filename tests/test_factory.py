@@ -1,5 +1,6 @@
 """Test the PyscalFactory module"""
 
+import logging
 import os
 from pathlib import Path
 
@@ -658,12 +659,71 @@ def test_factory_wateroilgas():
     assert wateroil.gasoil is None
 
 
-def test_factory_wateroilgas_deprecated_krowgend():
-    """Using long-time deprecated krowend and krogend will fail"""
-    with pytest.raises(ValueError):
+def test_factory_wateroilgas_krowgend():
+    """
+    Test normalize krowend and krogend to kroend and put into
+    create_water_oil and create_oil_gas, respectively
+    Normalize WaterOil parameters to be used for creating a
+    WaterOil(look into swof) object:
+    - If 'krowend' is present, rename it to 'kroend'.
+    - If both 'krowend' and 'kroend' are provided, use the 'krowend' value
+      and log a warning.
+    - Always remove 'krogend' if present (not relevant for WaterOil).
+    """
+
+    wog = create_water_oil_gas(
+        {
+            "nw": 2,
+            "now": 3,
+            "ng": 1,
+            "nog": 2.5,
+            "krowend": 0.6,
+            "krogend": 0.7,
+            "kroend": 0.5,
+        }
+    )
+    swof = wog.SWOF()
+    sgof = wog.SGOF()
+    sat_table_str_ok(swof)
+    sat_table_str_ok(sgof)
+    assert "Corey krg" in sgof
+    assert "Corey krog" in sgof
+    assert "kroend=0.7" in sgof
+    assert "Corey krw" in swof
+    assert "Corey krow" in swof
+    assert "kroend=0.6" in swof
+    assert "krogend" not in swof
+    assert "krowend" not in sgof
+
+    check_table(wog.gasoil.table)
+    check_table(wog.wateroil.table)
+
+
+def test_factory_wateroilgas_warning(caplog):
+    """
+    Test for expected WARNINGS in logs
+    """
+    with caplog.at_level(logging.WARNING):
         create_water_oil_gas(
-            {"nw": 2, "now": 3, "ng": 1, "nog": 2.5, "krowend": 0.6, "krogend": 0.7}
+            {
+                "nw": 2,
+                "now": 3,
+                "ng": 1,
+                "nog": 2.5,
+                "krowend": 0.6,
+                "krogend": 0.7,
+                "kroend": 0.5,
+            }
         )
+        assert (
+            "Both 'krowend'=0.6 and 'kroend'=0.5 were provided; "
+            "using the 'krowend' value for WaterOil construction."
+        ) in caplog.text
+
+        assert (
+            "Both 'krogend'=0.7 and 'kroend'=0.5 were provided; "
+            "using the 'krogend' value for GasOil construction."
+        ) in caplog.text
 
 
 def test_factory_wateroilgas_wo():
@@ -1068,7 +1128,10 @@ def test_check_deprecated_krowgend():
     """Up until pyscal 0.5.x, krogend and krowend were parameters
     to the oil curve parametrization for WaterOil and GasOil. From
     pyscal 0.6.0, krogend and krowend are merged to kroend.
-    After pyscal 0.8 presence of krogend and krowend is a ValueError
+    After pyscal 0.8 presence of krogend and krowend is a ValueError.
+    After pyscal 0.16 presence krogend and krowend is accepted as
+    parameters for create_wateroilgas, but is still ValueError for
+    create_water_oil and create_gas_oil.
     """
     with pytest.raises(ValueError):
         create_water_oil({"swl": 0.1, "nw": 2, "now": 2, "krowend": 0.4})
