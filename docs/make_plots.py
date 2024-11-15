@@ -5,6 +5,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 
 from pyscal import GasOil, GasWater, WaterOil
+from pyscal.factory import create_water_oil_gas
 
 IMG_DIR = Path(__file__).absolute().parent / "images"
 
@@ -24,6 +25,9 @@ def main():
         "gaswater-icd2",
         "gasoil-cid2",
         "gaswater-dci1",
+        "gasoil-condensate-cid2",
+        "wateroil-condensate-idc2",
+        "gaswater-condensate-icd2",
         "gaswater-co2-icd2",
         "gaswater-paleogas-dci3",
         "wateroil-paleooil-idc1",
@@ -429,6 +433,326 @@ def make_gasoil_cdi2(show=True):
         0.03,
         0.1,
         0.001,
+        head_width=0.025,
+        fill=True,
+        facecolor="darkorange",
+    )
+    if show:
+        plt.show()
+
+
+def make_gasoil_condensate_cid2(show=True):
+    plt.xkcd()
+    _, axes = plt.subplots()
+    swl = 0.1
+    sgcr = 0.15
+    sgro = 0.15
+    sorg = 0.15
+    krgend = 1
+    krgmax = 1
+    krowend = 0.8
+    krogend = 0.8
+    kromax = 1
+    krgendanchor = ""
+    nw = 2
+    now = 3
+    ng = 3
+    nog = 3
+    wog = create_water_oil_gas(
+        {
+            "nw": nw,
+            "now": now,
+            "ng": ng,
+            "nog": nog,
+            "krowend": krowend,
+            "krogend": krogend,
+            "kromax": kromax,
+            "krgend": krgend,
+            "krgmax": krgmax,
+            "krgendanchor": krgendanchor,
+            "swl": swl,
+            "sgcr": sgcr,
+            "sgro": sgro,
+            "sorg": sorg,
+        }
+    )
+    wog.gasoil.table.plot(
+        ax=axes, x="SG", y="KRG", c="red", alpha=1, label="KRG", linewidth=2
+    )
+    wog.gasoil.table.plot(
+        ax=axes, x="SG", y="KROG", c="green", alpha=1, label="KROG", linewidth=2
+    )
+    plt.ylim([-0.02, 1])
+    plt.xlim([-0.01, 1])
+    plt.xticks([0, 1])
+    plt.yticks([0, 1])
+    axes.annotate(
+        "KROGEND",
+        xy=(sgro, krogend),
+        arrowprops={"arrowstyle": "->"},
+        xytext=(sgro + 0.1, krogend - 0.05),
+    )
+    axes.annotate(
+        "KROMAX",
+        xy=(0, kromax),
+        arrowprops={"arrowstyle": "->"},
+        xytext=(0.1, kromax - 0.1),
+    )
+    axes.annotate(
+        "KRGEND",
+        xy=(1 - swl, krgend - 0.01),
+        arrowprops={"arrowstyle": "->"},
+        xytext=(1 - 0.35, krgend - 0.05),
+    )
+    axes.text(0.03, 0.04, "SGRO")
+    axes.annotate(
+        "", xy=(0, 0.02), xytext=(sgro, 0.02), arrowprops={"arrowstyle": "<->"}
+    )
+    axes.text(0.03, 0.14, "SGCR")
+    axes.annotate(
+        "", xy=(0, 0.12), xytext=(sgcr, 0.12), arrowprops={"arrowstyle": "<->"}
+    )
+    plt.xlabel("SG", labelpad=-10)
+    axes.annotate(
+        "",
+        xy=(1 - sorg - swl, 0.08),
+        xytext=(1 - swl, 0.08),
+        arrowprops={"arrowstyle": "<->"},
+    )
+    axes.text(1 - sorg - swl + 0.02, 0.1, "SORG")
+    axes.annotate(
+        "", xy=(1 - swl, 0.02), xytext=(1, 0.02), arrowprops={"arrowstyle": "<->"}
+    )
+    axes.text(1 - swl + 0.02, 0.04, "SWL")
+    axes.legend(loc="upper center")
+
+    # Krog endpoint and critical saturations:
+    plt.vlines(sgro, ymin=0, ymax=krogend, colors="black", linestyles="dashed")
+
+    # Initial state and saturation direction:
+    plt.vlines(1 - swl, ymin=0, ymax=1, colors="darkorange", linestyles="dashed")
+    axes.arrow(
+        1 - swl - 0.03,
+        krgend - 0.03,
+        -0.08,
+        -0.2,
+        head_width=0.025,
+        fill=True,
+        facecolor="darkorange",
+    )
+    axes.arrow(
+        1 - swl - 0.03,
+        0.03,
+        -0.13,
+        0.001,
+        head_width=0.025,
+        fill=True,
+        facecolor="darkorange",
+    )
+    if show:
+        plt.show()
+
+    # check_table(wog.gasoil.table)
+    # check_table(wog.wateroil.table)
+
+
+def make_wateroil_condensate_idc2(show=True):
+    plt.xkcd()
+    _, axes = plt.subplots()
+    swl = 0.1
+    swcr = 0.1
+    sorw = 0.2
+    krwend = 0.8
+    krwmax = 1
+    krowend = 0.85
+    kromax = 1
+    nw = 4
+    now = 1.8
+    ng = 3
+    nog = 3
+    wog = create_water_oil_gas(
+        {
+            "nw": nw,
+            "now": now,
+            "ng": ng,
+            "nog": nog,
+            "krowend": krowend,
+            "kromax": kromax,
+            "krwend": krwend,
+            "swl": swl,
+            "sorw": sorw,
+            "swcr": swcr,
+        }
+    )
+    wog.wateroil.table.plot(
+        ax=axes, x="SW", y="KRW", c="blue", alpha=1, label="KRW", linewidth=2
+    )
+    wog.wateroil.table.plot(
+        ax=axes, x="SW", y="KROW", c="green", alpha=1, label="KROW", linewidth=2
+    )
+    plt.ylim([-0.02, 1.02])
+    plt.xlim([-0.02, 1.02])
+    plt.xticks([0, 1])
+    plt.yticks([0, 1])
+    axes.annotate(
+        "KROWEND",
+        xy=(swl, krowend),
+        arrowprops={"arrowstyle": "->"},
+        xytext=(swl, krowend + 0.1),
+    )
+    axes.annotate(
+        "KRWEND",
+        xy=(1 - sorw, krwend),
+        arrowprops={"arrowstyle": "->"},
+        xytext=(1 - 0.15, krwend - 0.02),
+    )
+    axes.annotate(
+        "KRWMAX",
+        xy=(1, krwmax),
+        arrowprops={"arrowstyle": "->"},
+        xytext=(1 - 0.3, krwmax - 0.04),
+    )
+    axes.annotate(
+        "SWL≈SWCR",
+        xy=(swl, 0),
+        arrowprops={"arrowstyle": "->"},
+        xytext=(swl - 0.055, 0 + 0.14),
+    )
+    plt.xlabel("SW", labelpad=-10)
+    axes.legend(loc="upper center")
+    axes.annotate(
+        "", xy=(1 - sorw, 0.02), xytext=(1, 0.02), arrowprops={"arrowstyle": "<->"}
+    )
+    axes.text(1 - sorw + 0.04, 0.04, "SORW")
+
+    # Krw endpoint and critical saturations:
+    plt.vlines(1 - sorw, ymin=0, ymax=krwend, colors="black", linestyles="dashed")
+
+    # Initial state and saturation direction:
+    plt.vlines(swl, ymin=0, ymax=1, colors="darkorange", linestyles="dashed")
+    axes.arrow(
+        swl + 0.03,
+        krowend - 0.01,
+        0.05,
+        -0.09,
+        head_width=0.025,
+        fill=True,
+        facecolor="darkorange",
+    )
+    axes.arrow(
+        swl + 0.03,
+        0.03,
+        0.05,
+        0.01,
+        head_width=0.025,
+        fill=True,
+        facecolor="darkorange",
+    )
+    if show:
+        plt.show()
+
+
+def make_gaswater_condensate_icd2(show=True):
+    plt.xkcd()
+    _, axes = plt.subplots()
+    swl = 0.1
+    swcr = 0.1
+    sgcr = 0.15
+    sgrw = 0.15
+    krgend = 1
+    krgmax = 1
+    krwend = 0.8
+    krwmax = 1
+    nw = 4
+    now = 3
+    ng = 3
+    nog = 3
+    wog = create_water_oil_gas(
+        {
+            "nw": nw,
+            "now": now,
+            "ng": ng,
+            "nog": nog,
+            "krwend": krwend,
+            "krwmax": krwmax,
+            "krgend": krgend,
+            "krgmax": krgmax,
+            "swl": swl,
+            "swcr": swcr,
+            "sgcr": sgcr,
+            "sgrw": sgrw,
+        }
+    )
+    wog.wateroil.table.plot(
+        ax=axes, x="SW", y="KRW", c="blue", alpha=1, label="KRW", linewidth=2
+    )
+    wog.gasoil.table.plot(
+        ax=axes, x="SL", y="KRG", c="red", alpha=1, label="KRG", linewidth=2
+    )
+    plt.xlim([-0.02, 1.01])
+    plt.ylim([-0.02, 1])
+    plt.xticks([0, 1])
+    plt.yticks([0, 1])
+    axes.annotate(
+        "KRGEND",
+        xy=(swl, krgend),
+        arrowprops={"arrowstyle": "->"},
+        xytext=(swl + 0.1, krgend - 0.1),
+    )
+    # axes.annotate(
+    #     "KRWEND",
+    #     xy=(1 - sgrw, krwend),
+    #     arrowprops={"arrowstyle": "->"},
+    #     xytext=(1 - sgrw - 0.13, krwmax - 0.15),
+    # )
+    axes.annotate(
+        "KRWEND",
+        xy=(1 - sgrw, krwend),
+        arrowprops={"arrowstyle": "->"},
+        xytext=(1 - 0.13, krwend - 0.15),
+    )
+    axes.annotate(
+        "KRWMAX",
+        xy=(1 - 0.01, krwmax),
+        arrowprops={"arrowstyle": "->"},
+        xytext=(1 - 0.23, krwmax - 0.05),
+    )
+    axes.annotate(
+        "SWL≈SWCR",
+        xy=(swl, 0),
+        arrowprops={"arrowstyle": "->"},
+        xytext=(swl - 0.055, 0 + 0.14),
+    )
+    plt.xlabel("SW", labelpad=-10)
+    axes.legend(loc="upper center")
+    axes.text(1 - sgrw + 0.03, 0.04, "SGRW")
+    axes.annotate(
+        "", xy=(1 - sgrw, 0.02), xytext=(1, 0.02), arrowprops={"arrowstyle": "<->"}
+    )
+    axes.text(1 - sgcr + 0.03, 0.14, "SGCR")
+    axes.annotate(
+        "", xy=(1 - sgcr, 0.12), xytext=(1, 0.12), arrowprops={"arrowstyle": "<->"}
+    )
+
+    # Krw endpoint and critical saturations:
+    plt.vlines(1 - sgcr, ymin=0, ymax=krwend, colors="black", linestyles="dashed")
+
+    # Initial state and saturation direction:
+    plt.vlines(swl, ymin=0, ymax=1, colors="darkorange", linestyles="dashed")
+    axes.arrow(
+        swl + 0.03,
+        krgend - 0.03,
+        0.08,
+        -0.2,
+        head_width=0.025,
+        fill=True,
+        facecolor="darkorange",
+    )
+    axes.arrow(
+        swl + 0.03,
+        0.03,
+        0.1,
+        0.005,
         head_width=0.025,
         fill=True,
         facecolor="darkorange",
