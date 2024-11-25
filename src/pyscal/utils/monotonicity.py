@@ -87,28 +87,28 @@ def modify_dframe_monotonicity(
     dframe = dframe.round(digits + 1)
 
     # Prepare and check columns:
-    for col in monotonicity:
+    for col, spec in monotonicity.items():
         if dframe[col].dtype != np.float64:
             dframe[col] = dframe[col].astype(float)
 
         # Bail on clearly erroneous data:
-        check_almost_monotone(dframe[col], digits, monotonicity[col]["sign"])
+        check_almost_monotone(dframe[col], digits, spec["sign"])
 
-        check_limits(dframe[col], monotonicity[col])
+        check_limits(dframe[col], spec)
 
     # Modify data for monotonicity:
-    for col in monotonicity:
+    for col, spec in monotonicity.items():
         accuracy = 1.0 / 10.0**digits - epsilon
 
-        if "allowzero" in monotonicity[col]:
+        if "allowzero" in spec:
             # Treat zero as an exception for strict monotonicity:
             max_value = dframe[col].abs().max()
-            if max_value < accuracy and monotonicity[col]["allowzero"]:
+            if max_value < accuracy and spec["allowzero"]:
                 continue
 
-        constants = rows_to_be_fixed(dframe[col], monotonicity[col], digits)
+        constants = rows_to_be_fixed(dframe[col], spec, digits)
         iterations = 0
-        sign = monotonicity[col]["sign"]
+        sign = spec["sign"]
         while constants.any():
             iterations += 1
 
@@ -121,10 +121,10 @@ def modify_dframe_monotonicity(
             )
 
             # Ensure nonstrict monotonicity and clips after each modification:
-            dframe[col] = clip_accumulate(dframe[col], monotonicity[col])
+            dframe[col] = clip_accumulate(dframe[col], spec)
 
             # Evaluate what is left to fix:
-            constants = rows_to_be_fixed(dframe[col], monotonicity[col], digits)
+            constants = rows_to_be_fixed(dframe[col], spec, digits)
 
         # Warn if more iterations than 5% of the rows
         # (number of iterations do not necessarily correspond with
@@ -278,29 +278,27 @@ def validate_monotonicity_arg(
         return
     if not isinstance(monotonicity, dict):
         raise ValueError("monotonicity argument must be a dict")
-    for col in monotonicity:
-        if not isinstance(monotonicity[col], dict):
+    for col, spec in monotonicity.items():
+        if not isinstance(spec, dict):
             raise ValueError("monotonicity argument must be a dict of dicts")
-        if not set(monotonicity[col].keys()).issubset(valid_keys):
-            raise ValueError(f"Unknown keys in monotonicity {monotonicity[col].keys()}")
+        if not set(spec.keys()).issubset(valid_keys):
+            raise ValueError(f"Unknown keys in monotonicity {spec.keys()}")
         if col not in dframe_colnames:
             raise ValueError(f"Column {col} does not exist in dataframe")
-        if "sign" not in monotonicity[col]:
+        if "sign" not in spec:
             raise ValueError(f"Monotonocity sign not specified for {col}")
         try:
-            signvalue = float(monotonicity[col]["sign"])
+            signvalue = float(spec["sign"])
         except ValueError as err:
-            raise ValueError(
-                f"Monotonocity sign {monotonicity[col]['sign']} not valid"
-            ) from err
-        if "upper" in monotonicity[col]:
-            float(monotonicity[col]["upper"])
-        if "lower" in monotonicity[col]:
-            float(monotonicity[col]["lower"])
+            raise ValueError(f"Monotonocity sign {spec['sign']} not valid") from err
+        if "upper" in spec:
+            float(spec["upper"])
+        if "lower" in spec:
+            float(spec["lower"])
         if abs(signvalue) > 1:
             raise ValueError("Monotonocity sign must be -1 or +1, not larger/smaller")
 
-        if "allowzero" in monotonicity[col] and monotonicity[col]["allowzero"] not in {
+        if "allowzero" in spec and spec["allowzero"] not in {
             True,
             False,
         }:

@@ -790,7 +790,7 @@ def load_relperm_df(
     wo_ok = sufficient_water_oil_params(firstrow)
     go_ok = sufficient_gas_oil_params(firstrow)
     gw_ok = sufficient_gas_water_params(firstrow)
-    if error or not wo_ok and not go_ok and not gw_ok:
+    if error or (not wo_ok and not go_ok and not gw_ok):
         raise ValueError(
             "Can't make neither WaterOil, GasOil or GasWater from "
             "the given data. Check documentation for what you need to supply. "
