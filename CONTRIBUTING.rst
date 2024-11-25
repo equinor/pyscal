@@ -25,7 +25,7 @@ Create pull request
         # upstream	git@github.com:equinor/pyscal (fetch)
         # upstream	git@github.com:equinor/pyscal (push)
 
-4. Install your forked copy into a local venv:
+3. Install your forked copy into a local venv:
 
   .. code-block:: bash
   
@@ -34,13 +34,13 @@ Create pull request
         pip install -U pip
         pip install -e ".[tests,docs]"
   
-5. Run the tests to ensure everything works:
+4. Run the tests to ensure everything works:
 
   .. code-block:: bash
   
         pytest -n auto
 
-6. Create a branch for local development:
+5. Create a branch for local development:
 
   .. code-block:: bash
   
@@ -48,7 +48,7 @@ Create pull request
   
 Now you can make your changes locally.
 
-7. When you're done making changes, check that your changes pass ruff, mypy and the
+6. When you're done making changes, check that your changes pass ruff, mypy and the
    tests:
 
   .. code-block:: bash
@@ -71,7 +71,7 @@ Only use deviations when e.g. ruff and pylint are in conflict, or if conformity 
 pylint would clearly make the code worse or not work at all. Do not use it to
 increase pylint score.
 
-8. Commit your changes and push your branch to GitHub:
+7. Commit your changes and push your branch to GitHub:
 
   .. code-block:: bash
   
@@ -79,7 +79,7 @@ increase pylint score.
         git commit -m "Add some feature"
         git push origin name-of-your-bugfix-or-feature
 
-9. Submit a pull request through GitHub.
+8. Submit a pull request through GitHub.
 
 
 Building documentation
