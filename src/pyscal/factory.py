@@ -188,8 +188,8 @@ def create_water_oil(
         logger.debug("Computed swl from swlwheight to %s", str(params["swl"]))
         if "swcr" in params and params["swcr"] < params["swl"]:
             raise ValueError(
-                f'Provided swcr={params["swcr"]} is lower than '
-                f'computed swl={params["swl"]}'
+                f"Provided swcr={params['swcr']} is lower than "
+                f"computed swl={params['swl']}"
             )
     elif set(WO_SWLHEIGHT).issubset(params):
         raise ValueError(
@@ -1134,7 +1134,7 @@ class PyscalFactory:
     @staticmethod
     def alias_sgrw(params: Dict[str, Any]) -> Dict[str, Any]:
         warnings.warn(
-            "PyscalFactory.alias_sgrw is deprecated. " "Please use alias_sgrw instead.",
+            "PyscalFactory.alias_sgrw is deprecated. Please use alias_sgrw instead.",
             DeprecationWarning,
         )
         return alias_sgrw(params)

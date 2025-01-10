@@ -99,9 +99,9 @@ def format_gaswater_table(model: GasWater) -> pd.DataFrame:
     # Check if SW in the two models differs using an epsilon of 1E-6 If any
     # absolute differences are greater than this threshold, an assertion error
     # will be raised.
-    assert (
-        abs(gasoil["SW"] - wateroil["SW"]) < 1e-6
-    ).all(), "SW for the GasOil model does not match SW for the WaterOil model"
+    assert (abs(gasoil["SW"] - wateroil["SW"]) < 1e-6).all(), (
+        "SW for the GasOil model does not match SW for the WaterOil model"
+    )
 
     # Merge dataframes and format
     gaswater = gasoil.merge(wateroil, left_index=True, right_index=True)

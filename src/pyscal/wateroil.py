@@ -77,16 +77,16 @@ class WaterOil:
         _sgcr and _sgl are only to be used by the GasWater object.
         """
 
-        assert (
-            -epsilon - 1 < swirr < 1.0 + epsilon
-        ), f"swirr = {swirr}, -1 <= swirr <= 1 is required"
+        assert -epsilon - 1 < swirr < 1.0 + epsilon, (
+            f"swirr = {swirr}, -1 <= swirr <= 1 is required"
+        )
         assert -epsilon < swl < 1.0 + epsilon, f"swl = {swl}, 0 <= swl < 1 is required"
-        assert (
-            -epsilon < swcr < 1.0 + epsilon
-        ), f"swcr = {swcr}, 0 <= swcr < 1 is required"
-        assert (
-            -epsilon < sorw < 1.0 + epsilon
-        ), f"sorw = {sorw}, 0 <= sorw < 1 is required"
+        assert -epsilon < swcr < 1.0 + epsilon, (
+            f"swcr = {swcr}, 0 <= swcr < 1 is required"
+        )
+        assert -epsilon < sorw < 1.0 + epsilon, (
+            f"sorw = {sorw}, 0 <= sorw < 1 is required"
+        )
         if socr is not None:
             assert -epsilon < socr < 1.0 + epsilon, "0 <= socr < 1 is required"
 
