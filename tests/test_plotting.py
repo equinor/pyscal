@@ -86,10 +86,10 @@ def test_plotter():
 def test_pyscal_list_attr():
     """Check that the PyscalList class has an pyscal_list instance variable.
     This is accessed by the plotting module to loop through models to plot."""
-    assert (
-        hasattr(PyscalList(), "pyscal_list") is True
-    ), "The PyscalList object should have a pyscal_list instance variable.\
+    assert hasattr(PyscalList(), "pyscal_list") is True, (
+        "The PyscalList object should have a pyscal_list instance variable.\
         This is accessed by the plotting module."
+    )
 
 
 def test_plot_relperm():
@@ -102,9 +102,9 @@ def test_plot_relperm():
     config = plotting.get_plot_config_options("WaterOil", **kwargs)
     fig = plotting.plot_relperm(wateroil.table, 1, config, **kwargs)
 
-    assert isinstance(
-        fig, plt.Figure
-    ), "Type of returned object is not a matplotlib.pyplot Figure"
+    assert isinstance(fig, plt.Figure), (
+        "Type of returned object is not a matplotlib.pyplot Figure"
+    )
 
 
 def test_plot_pc():
@@ -118,9 +118,9 @@ def test_plot_pc():
     config = plotting.get_plot_config_options("WaterOil", **kwargs)
     fig = plotting.plot_pc(wateroil.table, 1, **config)
 
-    assert isinstance(
-        fig, plt.Figure
-    ), "Type of returned object is not a matplotlib.pyplot Figure"
+    assert isinstance(fig, plt.Figure), (
+        "Type of returned object is not a matplotlib.pyplot Figure"
+    )
 
 
 def test_wog_plotter(tmpdir):
@@ -184,9 +184,9 @@ def test_wo_plotter_relperm_only(tmpdir):
     plotting.wo_plotter(wateroil, **kwargs)
 
     assert Path.exists(Path(tmpdir).joinpath(kr_plot_name)), "Plot not created"
-    assert not Path.exists(
-        Path(tmpdir).joinpath(pc_plot_name)
-    ), "Plot created when it shouldn't have been"
+    assert not Path.exists(Path(tmpdir).joinpath(pc_plot_name)), (
+        "Plot created when it shouldn't have been"
+    )
 
 
 def test_go_plotter(tmpdir):
