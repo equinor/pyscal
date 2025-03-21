@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Usage &mdash; pyscal 0.14.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+  <title>Usage &mdash; pyscal 0.15.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=9e420a66"></script>
+      <script src="_static/documentation_options.js?v=ef97403f"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -109,7 +109,7 @@
 line tool is a short wrapper utilizing the underlying pyscal functionality.</p>
 <section id="the-command-line-tool">
 <h2>The command line tool<a class="headerlink" href="#the-command-line-tool" title="Link to this heading"></a></h2>
-<p><p>pyscal (0.14.0) is a tool to create Eclipse include files for relative permeability input from tabulated parameters.</p>
+<p><p>pyscal (0.15.0) is a tool to create Eclipse include files for relative permeability input from tabulated parameters.</p>
 </p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">usage</span><span class="p">:</span> <span class="n">pyscal</span> <span class="p">[</span><span class="o">-</span><span class="n">h</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">v</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">debug</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">version</span><span class="p">]</span> <span class="p">[</span><span class="o">-</span><span class="n">o</span> <span class="n">OUTPUT</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">delta_s</span> <span class="n">DELTA_S</span><span class="p">]</span>
               <span class="p">[</span><span class="o">--</span><span class="n">int_param_wo</span> <span class="n">INT_PARAM_WO</span><span class="p">]</span> <span class="p">[</span><span class="o">--</span><span class="n">int_param_go</span> <span class="n">INT_PARAM_GO</span><span class="p">]</span>
@@ -455,7 +455,7 @@ dataframe property and it will be included in the output.</p>
 <p>To generate SWOF input for Eclipse or flow (OPM) with certain
 saturation endpoints and certain relative permeability endpoints, you
 may run the following code:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">WaterOil</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyscal</span><span class="w"> </span><span class="kn">import</span> <span class="n">WaterOil</span>
 <span class="n">wo</span> <span class="o">=</span> <span class="n">WaterOil</span><span class="p">(</span><span class="n">swl</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">sorw</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;Foobarites&quot;</span><span class="p">)</span>
 <span class="n">wo</span><span class="o">.</span><span class="n">add_corey_water</span><span class="p">(</span><span class="n">nw</span><span class="o">=</span><span class="mf">2.1</span><span class="p">,</span> <span class="n">krwend</span><span class="o">=</span><span class="mf">0.6</span><span class="p">)</span>
 <span class="n">wo</span><span class="o">.</span><span class="n">add_corey_oil</span><span class="p">(</span><span class="n">now</span><span class="o">=</span><span class="mf">2.5</span><span class="p">,</span> <span class="n">kroend</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
@@ -501,7 +501,7 @@ simulator, you can use the function <code class="docutils literal notranslate"><
 <p>Alternatively, it is possible to send all parameters for a SWOF curve
 as a dictionary, through use of the <code class="docutils literal notranslate"><span class="pre">PyscalFactory</span></code> class. The
 equivalent to the code lines above (except for capillary pressure) is then:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">create_water_oil</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyscal</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_water_oil</span>
 <span class="n">params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">swl</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">sorw</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">nw</span><span class="o">=</span><span class="mf">2.1</span><span class="p">,</span> <span class="n">krwend</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
               <span class="n">now</span><span class="o">=</span><span class="mf">2.5</span><span class="p">,</span> <span class="n">kroend</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s2">&quot;Foobarites&quot;</span><span class="p">)</span>
 <span class="n">wo</span> <span class="o">=</span> <span class="n">create_water_oil</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
@@ -526,7 +526,7 @@ make a simple plot of the relative permeability curves using matplotlib.</p>
 <section id="gas-oil-curve">
 <h3>Gas-oil curve<a class="headerlink" href="#gas-oil-curve" title="Link to this heading"></a></h3>
 <p>For a corresponding gas-oil curve, the API is analogous,</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">GasOil</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyscal</span><span class="w"> </span><span class="kn">import</span> <span class="n">GasOil</span>
 <span class="n">go</span> <span class="o">=</span> <span class="n">GasOil</span><span class="p">(</span><span class="n">swl</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">sorg</span><span class="o">=</span><span class="mf">0.04</span><span class="p">)</span>
 <span class="n">go</span><span class="o">.</span><span class="n">add_corey_gas</span><span class="p">(</span><span class="n">ng</span><span class="o">=</span><span class="mf">1.2</span><span class="p">)</span>
 <span class="n">go</span><span class="o">.</span><span class="n">add_corey_oil</span><span class="p">(</span><span class="n">nog</span><span class="o">=</span><span class="mf">1.9</span><span class="p">)</span>
@@ -544,7 +544,7 @@ dictionary as argument.</p>
 <section id="gas-water-curve">
 <h3>Gas-Water curve<a class="headerlink" href="#gas-water-curve" title="Link to this heading"></a></h3>
 <p>Two-phase gas-water is similar, with typical usage:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">GasWater</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyscal</span><span class="w"> </span><span class="kn">import</span> <span class="n">GasWater</span>
 
 <span class="n">gw</span> <span class="o">=</span> <span class="n">GasWater</span><span class="p">(</span><span class="n">swl</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">sgrw</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">sgcr</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
 <span class="n">gw</span><span class="o">.</span><span class="n">add_corey_water</span><span class="p">()</span>
@@ -560,7 +560,7 @@ simulation.  The <code class="docutils literal notranslate"><span class="pre">Wa
 <code class="docutils literal notranslate"><span class="pre">WaterOil</span></code> object and a <code class="docutils literal notranslate"><span class="pre">GasOil</span></code> object to aid in consistency. Saturation
 endpoints is only input once during initialization.</p>
 <p>Typical usage could be:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">WaterOilGas</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyscal</span><span class="w"> </span><span class="kn">import</span> <span class="n">WaterOilGas</span>
 
 <span class="n">wog</span> <span class="o">=</span> <span class="n">WaterOilGas</span><span class="p">(</span><span class="n">swl</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">sorg</span><span class="o">=</span><span class="mf">0.04</span><span class="p">,</span> <span class="n">sorw</span><span class="o">=</span><span class="mf">0.03</span><span class="p">)</span>
 <span class="n">wog</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">add_corey_water</span><span class="p">()</span>
@@ -593,7 +593,7 @@ the corresponding factory method.</p>
 <p>For two-phase water-oil setups, WaterOilGas objects are still used
 in the SCAL recommendation object with an empty GasOil reference. For gas-water,
 the SCAL recommendation holds three GasWater objects, but works similarly.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">SCALrecommendation</span><span class="p">,</span> <span class="n">PyscalFactory</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">pyscal</span><span class="w"> </span><span class="kn">import</span> <span class="n">SCALrecommendation</span><span class="p">,</span> <span class="n">PyscalFactory</span>
 
 <span class="n">low</span> <span class="o">=</span> <span class="n">create_water_oil_gas</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">nw</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">now</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ng</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">nog</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s1">&#39;low&#39;</span><span class="p">))</span>
 <span class="n">base</span> <span class="o">=</span> <span class="n">create_water_oil_gas</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">nw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">now</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ng</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">nog</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="s1">&#39;base&#39;</span><span class="p">))</span>
@@ -620,7 +620,7 @@ the SCAL recommendation holds three GasWater objects, but works similarly.</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Equinor 2019-2024.</p>
+    <p>&#169; Copyright Equinor 2019-2025.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

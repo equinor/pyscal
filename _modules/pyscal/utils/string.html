@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.utils.string &mdash; pyscal 0.14.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+  <title>pyscal.utils.string &mdash; pyscal 0.15.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=9e420a66"></script>
+      <script src="../../../_static/documentation_options.js?v=ef97403f"></script>
       <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -82,19 +82,19 @@
   <h1>Source code for pyscal.utils.string</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Utility functions for creating strings from pyscal&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">logging</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Optional</span>
 
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
-<span class="kn">from</span> <span class="nn">.monotonicity</span> <span class="kn">import</span> <span class="n">MonotonicitySpec</span><span class="p">,</span> <span class="n">modify_dframe_monotonicity</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.monotonicity</span><span class="w"> </span><span class="kn">import</span> <span class="n">MonotonicitySpec</span><span class="p">,</span> <span class="n">modify_dframe_monotonicity</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="df2str">
 <a class="viewcode-back" href="../../../pyscal/pyscal.utils.string.html#pyscal.utils.string.df2str">[docs]</a>
-<span class="k">def</span> <span class="nf">df2str</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">df2str</span><span class="p">(</span>
     <span class="n">dframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
     <span class="n">digits</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">7</span><span class="p">,</span>
     <span class="n">roundlevel</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">9</span><span class="p">,</span>
@@ -139,7 +139,7 @@
 
 <div class="viewcode-block" id="comment_formatter">
 <a class="viewcode-back" href="../../../pyscal/pyscal.utils.string.html#pyscal.utils.string.comment_formatter">[docs]</a>
-<span class="k">def</span> <span class="nf">comment_formatter</span><span class="p">(</span><span class="n">multiline</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;-- &quot;</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">comment_formatter</span><span class="p">(</span><span class="n">multiline</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">prefix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;-- &quot;</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Prepends comment characters to every line in input</span>
 
 <span class="sd">    Args:</span>
@@ -168,7 +168,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Equinor 2019-2024.</p>
+    <p>&#169; Copyright Equinor 2019-2025.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

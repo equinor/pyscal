@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.utils.testing &mdash; pyscal 0.14.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+  <title>pyscal.utils.testing &mdash; pyscal 0.15.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=9e420a66"></script>
+      <script src="../../../_static/documentation_options.js?v=ef97403f"></script>
       <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -82,24 +82,24 @@
   <h1>Source code for pyscal.utils.testing</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Common functions and mock data for usage in pyscal testing&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">io</span>
-<span class="kn">from</span> <span class="nn">contextlib</span> <span class="kn">import</span> <span class="n">suppress</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">contextlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">suppress</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
 <span class="k">with</span> <span class="n">suppress</span><span class="p">(</span><span class="ne">ModuleNotFoundError</span><span class="p">):</span>
     <span class="c1"># This module is only needed for testing, but this testing module</span>
     <span class="c1"># should be importable in other scenarios as well.</span>
-    <span class="kn">from</span> <span class="nn">hypothesis</span> <span class="kn">import</span> <span class="n">settings</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">hypothesis</span><span class="w"> </span><span class="kn">import</span> <span class="n">settings</span>
 
-<span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">GasOil</span><span class="p">,</span> <span class="n">WaterOil</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyscal</span><span class="w"> </span><span class="kn">import</span> <span class="n">GasOil</span><span class="p">,</span> <span class="n">WaterOil</span>
 
 
 <div class="viewcode-block" id="slow_hypothesis">
 <a class="viewcode-back" href="../../../pyscal/pyscal.utils.testing.html#pyscal.utils.testing.slow_hypothesis">[docs]</a>
-<span class="k">def</span> <span class="nf">slow_hypothesis</span><span class="p">(</span><span class="n">slow_function</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">slow_hypothesis</span><span class="p">(</span><span class="n">slow_function</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A decorator for tests that are always slow.</span>
 
 <span class="sd">    The default deadline for hypothesis is set through the hypothesis profile</span>
@@ -116,7 +116,7 @@
 
 <div class="viewcode-block" id="series_decreasing">
 <a class="viewcode-back" href="../../../pyscal/pyscal.utils.testing.html#pyscal.utils.testing.series_decreasing">[docs]</a>
-<span class="k">def</span> <span class="nf">series_decreasing</span><span class="p">(</span><span class="n">series</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">series_decreasing</span><span class="p">(</span><span class="n">series</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Weaker than pd.Series.is_monotonic_decreasing,</span>
 <span class="sd">    allows constant parts.</span>
 
@@ -131,7 +131,7 @@
 
 <div class="viewcode-block" id="series_increasing">
 <a class="viewcode-back" href="../../../pyscal/pyscal.utils.testing.html#pyscal.utils.testing.series_increasing">[docs]</a>
-<span class="k">def</span> <span class="nf">series_increasing</span><span class="p">(</span><span class="n">series</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">series_increasing</span><span class="p">(</span><span class="n">series</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Weaker than pd.Series.is_monotonic_increasing&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">series</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mf">1e-8</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span></div>
 
@@ -139,7 +139,7 @@
 
 <div class="viewcode-block" id="sat_table_str_ok">
 <a class="viewcode-back" href="../../../pyscal/pyscal.utils.testing.html#pyscal.utils.testing.sat_table_str_ok">[docs]</a>
-<span class="k">def</span> <span class="nf">sat_table_str_ok</span><span class="p">(</span><span class="n">sat_table_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">sat_table_str_ok</span><span class="p">(</span><span class="n">sat_table_str</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Test that a supplied string from SWOF()/SGOF() etc is</span>
 <span class="sd">    probably ok for Eclipse.</span>
 
@@ -210,7 +210,7 @@
 
 <div class="viewcode-block" id="check_table">
 <a class="viewcode-back" href="../../../pyscal/pyscal.utils.testing.html#pyscal.utils.testing.check_table">[docs]</a>
-<span class="k">def</span> <span class="nf">check_table</span><span class="p">(</span><span class="n">dframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_table</span><span class="p">(</span><span class="n">dframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check that the numbers in a dataframe for WaterOil or GasOil</span>
 <span class="sd">    has the properties that Eclipse enforces&quot;&quot;&quot;</span>
     <span class="k">assert</span> <span class="ow">not</span> <span class="n">dframe</span><span class="o">.</span><span class="n">empty</span>
@@ -256,7 +256,7 @@
 
 <div class="viewcode-block" id="check_linear_sections">
 <a class="viewcode-back" href="../../../pyscal/pyscal.utils.testing.html#pyscal.utils.testing.check_linear_sections">[docs]</a>
-<span class="k">def</span> <span class="nf">check_linear_sections</span><span class="p">(</span><span class="n">wo_or_go</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">WaterOil</span><span class="p">,</span> <span class="n">GasOil</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_linear_sections</span><span class="p">(</span><span class="n">wo_or_go</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">WaterOil</span><span class="p">,</span> <span class="n">GasOil</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check that the linear segments of a WaterOil or a GasOil</span>
 <span class="sd">    object are linear.&quot;&quot;&quot;</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">wo_or_go</span><span class="p">,</span> <span class="n">WaterOil</span><span class="p">):</span>
@@ -302,7 +302,7 @@
 
 <div class="viewcode-block" id="float_df_checker">
 <a class="viewcode-back" href="../../../pyscal/pyscal.utils.testing.html#pyscal.utils.testing.float_df_checker">[docs]</a>
-<span class="k">def</span> <span class="nf">float_df_checker</span><span class="p">(</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">float_df_checker</span><span class="p">(</span>
     <span class="n">dframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">idxcol</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">compcol</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">answer</span><span class="p">:</span> <span class="nb">float</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">bool_</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Looks up in a dataframe, selects the row where idxcol=value</span>
@@ -334,7 +334,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Equinor 2019-2024.</p>
+    <p>&#169; Copyright Equinor 2019-2025.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

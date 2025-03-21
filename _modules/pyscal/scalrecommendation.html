@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.scalrecommendation &mdash; pyscal 0.14.0 documentation</title>
-      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=80d5e7a1" />
+  <title>pyscal.scalrecommendation &mdash; pyscal 0.15.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=9e420a66"></script>
+      <script src="../../_static/documentation_options.js?v=ef97403f"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -82,20 +82,20 @@
   <h1>Source code for pyscal.scalrecommendation</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;SCALrecommendation, container for low, base and high WaterOilGas objects&quot;&quot;&quot;</span>
 
-<span class="kn">import</span> <span class="nn">copy</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Type</span><span class="p">,</span> <span class="n">Union</span>
 
-<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span> <span class="nn">pyscal</span> <span class="kn">import</span> <span class="n">GasWater</span><span class="p">,</span> <span class="n">WaterOilGas</span><span class="p">,</span> <span class="n">getLogger_pyscal</span>
-<span class="kn">from</span> <span class="nn">pyscal.utils.interpolation</span> <span class="kn">import</span> <span class="n">interpolate_go</span><span class="p">,</span> <span class="n">interpolate_wo</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyscal</span><span class="w"> </span><span class="kn">import</span> <span class="n">GasWater</span><span class="p">,</span> <span class="n">WaterOilGas</span><span class="p">,</span> <span class="n">getLogger_pyscal</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyscal.utils.interpolation</span><span class="w"> </span><span class="kn">import</span> <span class="n">interpolate_go</span><span class="p">,</span> <span class="n">interpolate_wo</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">getLogger_pyscal</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="SCALrecommendation">
 <a class="viewcode-back" href="../../pyscal/pyscal.scalrecommendation.html#pyscal.scalrecommendation.SCALrecommendation">[docs]</a>
-<span class="k">class</span> <span class="nc">SCALrecommendation</span><span class="p">:</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SCALrecommendation</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A SCAL recommendation consists of three OilWaterGas objects,</span>
 <span class="sd">    tagged low, base and high.</span>
 
@@ -109,7 +109,7 @@
 <span class="sd">        tag: A string that describes the recommendation. Optional.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">low</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">WaterOilGas</span><span class="p">,</span> <span class="n">GasWater</span><span class="p">],</span>
         <span class="n">base</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">WaterOilGas</span><span class="p">,</span> <span class="n">GasWater</span><span class="p">],</span>
@@ -173,7 +173,7 @@
     <span class="c1"># same to all curves:</span>
 <div class="viewcode-block" id="SCALrecommendation.add_simple_J">
 <a class="viewcode-back" href="../../pyscal/pyscal.scalrecommendation.html#pyscal.scalrecommendation.SCALrecommendation.add_simple_J">[docs]</a>
-    <span class="k">def</span> <span class="nf">add_simple_J</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">add_simple_J</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">a</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">,</span>
         <span class="n">b</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.5</span><span class="p">,</span>
@@ -200,7 +200,7 @@
 
 <div class="viewcode-block" id="SCALrecommendation.interpolate">
 <a class="viewcode-back" href="../../pyscal/pyscal.scalrecommendation.html#pyscal.scalrecommendation.SCALrecommendation.interpolate">[docs]</a>
-    <span class="k">def</span> <span class="nf">interpolate</span><span class="p">(</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">interpolate</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">parameter</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
         <span class="n">parameter2</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -375,7 +375,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright Equinor 2019-2024.</p>
+    <p>&#169; Copyright Equinor 2019-2025.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
