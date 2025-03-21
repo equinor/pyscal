@@ -16,15 +16,20 @@
 # sys.path.insert(0, os.path.abspath('.'))
 import datetime
 
-import pkg_resources
+import pyscal
 
 # -- Project information -----------------------------------------------------
 
 project = "pyscal"
 author = "Håvard Berland"
 copyright = f"Equinor 2019-{datetime.date.today().year}"
+try:
+    release = pyscal.__version__
+except AttributeError:
+    import subprocess
 
-release = pkg_resources.get_distribution("pyscal").version
+    release = str(subprocess.check_output(["git", "describe", "--always"]))
+
 version = release
 
 
