@@ -164,18 +164,17 @@ def clip_accumulate(
     Returns:
         np.array, copy of original.
     """
-    if isinstance(series, (list, np.ndarray)):
-        series = pd.Series(series, dtype="float64")
+    series = np.array(series)
     if monotonicity["sign"] > 0:
         series = np.maximum.accumulate(series)
     else:
         series = np.minimum.accumulate(series)
     if "lower" in monotonicity and "upper" in monotonicity:
-        series = series.clip(lower=monotonicity["lower"], upper=monotonicity["upper"])
+        series = series.clip(min=monotonicity["lower"], max=monotonicity["upper"])
     elif "lower" in monotonicity:
-        series = series.clip(lower=monotonicity["lower"])
+        series = series.clip(min=monotonicity["lower"])
     elif "upper" in monotonicity:
-        series = series.clip(upper=monotonicity["upper"])
+        series = series.clip(max=monotonicity["upper"])
     return series
 
 
