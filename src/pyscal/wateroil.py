@@ -1343,9 +1343,9 @@ class WaterOil:
         If mpl_ax is supplied, the curve will be drawn on
         that, if not, a new axis (plot) will be made
         """
-        # Lazy import for speed reaons.
-        import matplotlib
-        import matplotlib.pyplot as plt
+        # Lazy import for speed reasons.
+        import matplotlib  # noqa: PLC0415
+        import matplotlib.pyplot as plt  # noqa: PLC0415
 
         if mpl_ax is None:
             matplotlib.style.use("ggplot")
@@ -1386,8 +1386,8 @@ class WaterOil:
         window will be made. If supplied, it will draw on
         the specified axis."""
         # Lazy import for speed reaons.
-        import matplotlib
-        import matplotlib.pyplot as plt
+        import matplotlib  # noqa: PLC0415
+        import matplotlib.pyplot as plt  # noqa: PLC0415
 
         if mpl_ax is None:
             matplotlib.style.use("ggplot")
