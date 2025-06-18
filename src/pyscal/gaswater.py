@@ -322,8 +322,8 @@ class GasWater:
         the specified axis."""
 
         # Lazy import of matplotlib for speed reasons.
-        import matplotlib
-        import matplotlib.pyplot as plt
+        import matplotlib  # noqa: PLC0415
+        import matplotlib.pyplot as plt  # noqa: PLC0415
 
         if mpl_ax is None:
             matplotlib.style.use("ggplot")
