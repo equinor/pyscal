@@ -33,7 +33,7 @@ def getLogger_pyscal(
         args_dict = {}
     formatter = logging.Formatter("%(levelname)s:%(name)s:%(message)s")
 
-    if args_dict.get("output", None) == "-":
+    if args_dict.get("output") == "-":
         # If main output is to stdout, we must send all logs to stderr:
         default_handler = logging.StreamHandler(sys.stderr)
         default_handler.setFormatter(formatter)
