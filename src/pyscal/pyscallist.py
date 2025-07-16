@@ -15,8 +15,6 @@ from pyscal import (
     getLogger_pyscal,
 )
 
-PYSCAL_OBJECTS = [WaterOil, GasOil, GasWater, WaterOilGas, SCALrecommendation]
-
 PyscalObjects = Union[WaterOil, GasOil, GasWater, WaterOilGas, SCALrecommendation]
 
 logger = getLogger_pyscal(__name__)
@@ -65,7 +63,10 @@ class PyscalList:
             for pyscal_obj_sub in pyscal_obj:
                 self.append(pyscal_obj_sub)
             return
-        if not isinstance(pyscal_obj, tuple(PYSCAL_OBJECTS)):
+        if not isinstance(
+            pyscal_obj,
+            (WaterOil, GasOil, GasWater, WaterOilGas, SCALrecommendation),
+        ):
             raise ValueError("Not a pyscal object: " + str(pyscal_obj))
         if not self.pyscaltype:
             self.pyscaltype = type(pyscal_obj)
