@@ -133,10 +133,83 @@ dropout can occur it should be modelled as a three-phase simulation.
       - KRW
       -
 
-Wet gas/condensate field, oil displacing gas (CID2)
+Wet gas/condensate field (ICD2, CID2, IDC2)
 ---------------------------------------------------
 
-.. image:: images/gasoil-cid2.png
+This field scenario is for a three-phase Eclipse simulation allowing for condendsate dropout (oil displacing gas) in addition to water displacing both gas and oil. 
+The figure below illustrates different regions and processes in a wet gas/condensate field.
+
+.. image:: images/wet-condensate_field_illustration.png
+    :width: 600
+
+Following processes are associated with the regions depicted in the figure above:
+
+.. list-table::
+    :widths: 25 25
+    :header-rows: 1
+
+    * - Region
+      - Process
+    * - 1
+      - ICD2
+    * - 2
+      - ICD2 & CID2
+    * - 3
+      - CID2 & IDC2
+
+Three-Phase Consistency Requirements:
+
+- **SWL**: The same input must be used for all three flow scenarios.
+- The following relationships must hold: **SGRW** = **SGCR** = **SGRO** = **SORW** 
+
+
+**The processes are described in the following figures:**
+
+Water displacing gas (ICD2)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+This is the main process for a gas/condensate field.
+
+.. image:: images/gaswater-condensate-icd2.png
+    :width: 600
+
+.. list-table::
+    :widths: 25 25 50
+    :header-rows: 1
+
+    * - Pyscal
+      - Eclipse
+      - Comment
+    * - SWL
+      - SWL
+      - Initial state
+    * - SWCR
+      - SWCR
+      - Critical water, when water becomes mobile. Usually set epsilon
+        higher than SWL.
+    * - SGRW
+      - SGCR
+      - Trapped gas/residual gas. SGCR must be set equal to SGRW
+    * - SGL
+      - SGL
+      - Set to zero
+    * - KRGEND
+      - KRG
+      - Usually 1
+    * -
+      - KRGR
+      - Not to be used.
+    * - KRWEND
+      - KRWR
+      -
+    * - KRWMAX
+      - KRW
+      - Usually 1
+
+Oil displacing gas (CID2)
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+This is the process for condendsate dropout.
+
+.. image:: images/gasoil-condensate-cid2.png
     :width: 600
 
 .. list-table::
@@ -161,12 +234,49 @@ Wet gas/condensate field, oil displacing gas (CID2)
     * - KRGMAX
       -
       - Not used. Leave defaulted at 1
-    * - KROEND
+    * - KROGEND
       - KROR
-      - Kro at trapped gas
+      - Kro at trapped gas in a three-phase system
     * - KROMAX
       - KRO
+      - Usually set to 1
+
+
+Water displacing oil (IDC2)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. image:: images/wateroil-condensate-idc2.png
+    :width: 600
+
+.. list-table::
+    :widths: 25 25 50
+    :header-rows: 1
+
+    * - Pyscal
+      - Eclipse
+      - Comment
+    * - SWL
+      - SWL
       -
+    * - SWCR
+      - SWCR
+      - Critical water. Equal to SWL or SWL + 0.01 if this improves simulation performance
+    * - SORW
+      - SOWCR
+      - Residual oil
+    * - KROWEND
+      - KRO
+      - kro @ SWL in in a three-phase system
+    * -
+      - KRORW
+      - Not used in Pyscal (kro @ SWCR)
+    * - KRWEND
+      - KRWR
+      - krw @ SORW
+    * - KRWMAX
+      - KRW
+      - Usually set to 1
+
 
 .. |CO2| replace:: CO\ :sub:`2`\
 
@@ -236,7 +346,7 @@ Process is analoguous to "Dry gas field".
       - KRWR
       - Usually set to 1
 
-Oil paleo zone - IDC1
+Oil paleo zone (IDC1)
 ---------------------
 
 In an oil paleo zone, the saturation starts at `sorw`. `socr` (critical oil
@@ -272,7 +382,7 @@ interpreted as residual water.
       - KRW
       - Usually set to 1
 
-Gas paleo zone - DCI3
+Gas paleo zone (DCI3)
 ---------------------
 
 .. image:: images/gaswater-paleogas-dci3.png
