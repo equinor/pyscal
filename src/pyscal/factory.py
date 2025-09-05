@@ -434,31 +434,34 @@ def create_water_oil_gas(
     if not isinstance(params, dict):
         raise TypeError("Parameter to create_water_oil_gas must be a dictionary")
 
-    check_deprecated(params)
-
     # For case insensitiveness, all keys are converted to lower case:
     params = {key.lower(): value for (key, value) in params.items()}
 
+    # create separate params for wo and go systems,
+    # and represent krowend and krogend as kroend
+    params_wo = kro_endpoint_wo(params)
+    params_go = kro_endpoint_go(params)
+
     wateroil: Optional[WaterOil]
-    if sufficient_water_oil_params(params, failhard=False):
-        wateroil = create_water_oil(params, fast=fast)
+    if sufficient_water_oil_params(params_wo, failhard=False):
+        wateroil = create_water_oil(params_wo, fast=fast)
     else:
         logger.info("No wateroil parameters. Assuming only gas-oil in wateroilgas")
         wateroil = None
 
     # If the swl in WaterOil was initialized with swlheight,
     # ensure that result is passed on to the GasOil object:
-    if "swl" not in params and "swlheight" in params and wateroil is not None:
-        params["swl"] = wateroil.swl
+    if "swl" not in params_go and "swlheight" in params_go and wateroil is not None:
+        params_go["swl"] = wateroil.swl
 
     gasoil: Optional[GasOil]
-    if sufficient_gas_oil_params(params, failhard=False):
-        gasoil = create_gas_oil(params, fast=fast)
+    if sufficient_gas_oil_params(params_go, failhard=False):
+        gasoil = create_gas_oil(params_go, fast=fast)
     else:
         logger.info("No gasoil parameters, assuming two-phase oilwatergas")
         gasoil = None
 
-    wog_init_params = slicedict(params, WOG_INIT)
+    wog_init_params = slicedict(params_wo, WOG_INIT)
     wateroilgas = WaterOilGas(**wog_init_params, fast=fast)
     # The wateroilgas __init__ has already created WaterOil and GasOil objects
     # but we overwrite the references with newly created ones, this factory function
@@ -1392,6 +1395,56 @@ def check_deprecated(params: Dict[str, Any]) -> None:
     # Block long deprecated parameters with an exception.
     # Remove this block in pyscal 1.x
     if "krowend" in params and "kroend" not in params:
-        raise ValueError("krowend is not supported by pyscal. Use kroend")
+        raise ValueError(
+            "krowend is not supported by pyscal for WaterOil and GasOil objects."
+            "Use kroend"
+        )
     if "krogend" in params and "kroend" not in params:
-        raise ValueError("krogend is not supported by pyscal. Use kroend")
+        raise ValueError(
+            "krogend is not supported by pyscal for WaterOil and GasOil objects."
+            "Use kroend"
+        )
+
+
+def kro_endpoint_wo(params: Dict[str, Any]) -> Dict[str, Any]:
+    """make a new dictionary to be used for creating wateroil. krowend parameter
+    is changed to kroend. If both kroend and krowend excists, kroend is to be
+    silently ignored.
+
+    Args:
+        params: Dictionary of parameters.
+
+    Returns:
+        params: Dictionary of parameters.
+    """
+
+    if "krowend" in params:
+        params_copy = params.copy()
+        params_copy["kroend"] = params_copy.pop("krowend")
+        params_copy.pop("krogend", None)
+        return params_copy
+    params_copy = params.copy()
+    params_copy.pop("krogend", None)
+    return params_copy
+
+
+def kro_endpoint_go(params: Dict[str, Any]) -> Dict[str, Any]:
+    """make a new dictionary to be used for creating gasoil. krogend parameter
+    is changed to kroend. If both kroend and krogend excists, kroend is to be
+    silently ignored.
+
+    Args:
+        params: Dictionary of parameters.
+
+    Returns:
+        params: Dictionary of parameters.
+    """
+
+    if "krogend" in params:
+        params_copy = params.copy()
+        params_copy["kroend"] = params_copy.pop("krogend")
+        params_copy.pop("krowend", None)
+        return params_copy
+    params_copy = params.copy()
+    params_copy.pop("krowend", None)
+    return params_copy
