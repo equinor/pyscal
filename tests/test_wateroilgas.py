@@ -134,7 +134,9 @@ def test_not_threephase_consistency():
     assert not wog.threephaseconsistency()
 
 
-@pytest.mark.skipif(not HAVE_OPM, reason="ecl2df not installed")
+@pytest.mark.skipif(
+    not HAVE_OPM, reason="Opm not installed. See https://pypi.org/project/opm/"
+)
 def test_parse_with_opm(tmp_path):
     """Test that the SWOF+SGOF output from pyscal can be
     injected into a valid Eclipse deck"""
