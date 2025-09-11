@@ -16,10 +16,10 @@ jobs:
       PYTHON: '3.12'
 
     steps:
-    - uses: actions/checkout@main
+    - uses: actions/checkout@v5
 
     - name: Setup Python
-      uses: actions/setup-python@v5
+      uses: actions/setup-python@v6
       with:
         python-version: 3.12
 
@@ -34,7 +34,7 @@ jobs:
         pytest --hypothesis-profile ci tests --disable-warnings --cov=pyscal --cov-report=xml --junitxml=junit.xml -o junit_family=legacy
 
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v4
+      uses: codecov/codecov-action@v5
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
 
