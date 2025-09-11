@@ -823,7 +823,7 @@ def test_load_relperm_df(tmp_path, caplog):
 
     # Missing SATNUMs:
     Path("wrongsatnum.csv").write_text("SATNUM,nw,now\n1,1,1\n3,1,1", encoding="utf8")
-    with pytest.raises(ValueError, match="Missing SATNUMs?"):
+    with pytest.raises(ValueError, match="Missing SATNUMs\\?"):
         load_relperm_df("wrongsatnum.csv")
 
     # Missing SATNUMs, like merged cells:
