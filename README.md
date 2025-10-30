@@ -1,6 +1,6 @@
 [![Build Status](https://github.com/equinor/pyscal/actions/workflows/pyscal.yml/badge.svg)](https://github.com/equinor/pyscal/actions?query=workflow%3Apyscal)
 [![codecov](https://codecov.io/gh/equinor/pyscal/branch/master/graph/badge.svg)](https://codecov.io/gh/equinor/pyscal)
-[![Python 3.9-3.12](https://img.shields.io/badge/python-3.9%20%7C%203.10%20%7C%203.11%20%7C%203.12%20-blue.svg)](https://www.python.org)
+[![Python 3.11-3.13](https://img.shields.io/badge/python-3.11%20%7C%203.12%20%7C%203.13%20-blue.svg)](https://www.python.org)
 [![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
 [![PyPI version](https://badge.fury.io/py/pyscal.svg)](https://badge.fury.io/py/pyscal)
 [![Downloads](https://pepy.tech/badge/pyscal)](https://pepy.tech/project/pyscal)
