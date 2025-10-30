@@ -10,7 +10,7 @@ import pandas as pd
 import pytest
 
 from pyscal import pyscalcli
-from pyscal.utils.testing import sat_table_str_ok
+from tests.utils import sat_table_str_ok
 
 
 @pytest.mark.integration

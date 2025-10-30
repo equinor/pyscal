@@ -18,7 +18,7 @@ from pyscal.factory import (
     load_relperm_df,
     slicedict,
 )
-from pyscal.utils.testing import check_table, sat_table_str_ok, slow_hypothesis
+from tests.utils import check_table, sat_table_str_ok, slow_hypothesis
 
 # Example SCAL recommendation, low case
 LOW_SAMPLE_LET = {

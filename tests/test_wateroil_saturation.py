@@ -7,7 +7,7 @@ from hypothesis import given
 
 from pyscal import WaterOil
 from pyscal.constants import EPSILON, SWINTEGERS
-from pyscal.utils.testing import check_table, float_df_checker
+from tests.utils import check_table, float_df_checker
 
 
 @given(

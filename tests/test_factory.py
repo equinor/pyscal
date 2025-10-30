@@ -30,7 +30,7 @@ from pyscal.factory import (
     sufficient_gas_water_params,
     sufficient_water_oil_params,
 )
-from pyscal.utils.testing import check_table, sat_table_str_ok
+from tests.utils import check_table, sat_table_str_ok
 
 
 def test_factory_wateroil():

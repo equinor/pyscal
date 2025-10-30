@@ -7,7 +7,7 @@ import pytest
 from hypothesis import given
 
 from pyscal import GasOil, WaterOil, WaterOilGas
-from pyscal.utils.testing import check_table, float_df_checker
+from tests.utils import check_table, float_df_checker
 
 
 def test_wo_fromtable_simple():
