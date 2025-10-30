@@ -17,6 +17,11 @@ on:
 env:
   # Default python version to be use to create docs
   DEFAULT_PYTHON_VERSION: "3.12"
+  UV_SYSTEM_PYTHON: 1
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 jobs:
   pyscal:
@@ -42,15 +47,26 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+          python-version: ${{ matrix.python-version }}
+
       - name: Install pyscal with dependencies
         if: ${{ always() }}
         run: |
-          pip install --upgrade pip
-          pip install ".[tests, docs]"
+          uv pip install ".[tests, docs]"
+
+      - name: Install opm and res2df
+        if: matrix.python-version == '3.13' && matrix.os == 'ubuntu-latest'
+        run: |
+          # for extra tests
+          uv pip install opm res2df
 
       - name: List all installed packages
         if: ${{ always() }}
-        run: pip freeze
+        run: uv pip freeze
 
       - name: Ruff check
         if: ${{ always() }}
