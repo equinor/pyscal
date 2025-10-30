@@ -62,7 +62,7 @@ def test_go_fromtable_simple():
 def test_wo_fromtable_multiindex():
     """Test that we accept multiindex dataframes,
     (but a warning will be issued)"""
-    # Test an example dataframe that easily gets sent in from ecl2df.satfunc:
+    # Test an example dataframe that easily gets sent in from res2df.satfunc:
     dframe = pd.DataFrame(
         columns=["KEYWORD", "SATNUM", "SW", "KRW", "KROW", "PC"],
         data=[
@@ -88,7 +88,7 @@ def test_wo_fromtable_multiindex():
 def test_go_fromtable_multiindex():
     """Test that we accept multiindex dataframes,
     (but a warning will be issued)"""
-    # Test an example dataframe that easily gets sent in from ecl2df.satfunc:
+    # Test an example dataframe that easily gets sent in from res2df.satfunc:
     dframe = pd.DataFrame(
         columns=["KEYWORD", "SATNUM", "SG", "KRG", "KROG", "PC"],
         data=[
