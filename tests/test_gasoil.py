@@ -14,7 +14,7 @@ from hypothesis import given
 from pyscal import GasOil
 from pyscal.constants import MAX_EXPONENT_KR, SWINTEGERS
 from pyscal.utils.relperm import truncate_zeroness
-from pyscal.utils.testing import (
+from tests.utils import (
     check_linear_sections,
     check_table,
     float_df_checker,
