@@ -4,7 +4,7 @@ import csv
 import warnings
 import zipfile
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Optional, Set, Union
+from typing import Any, Dict, Iterable, List, Literal, Optional, Set, Union, cast
 
 import numpy as np
 import openpyxl
@@ -24,7 +24,7 @@ from .wateroilgas import WaterOilGas
 logger = getLogger_pyscal(__name__)
 
 
-def slicedict(dct: dict, keys: Iterable):
+def slicedict(dct: dict, keys: Iterable) -> dict:
     """Slice a dictionary for a set of keys.
     Keys not existing will be ignored.
     """
@@ -127,6 +127,9 @@ GW_LET_PC_IMB = [
 ]
 
 WOG_INIT = ["swirr", "swl", "swcr", "sorw", "socr", "sorg", "sgcr", "h", "tag"]
+
+
+EngineType = Literal["xlrd", "openpyxl"]
 
 
 def create_water_oil(
@@ -656,7 +659,7 @@ def load_relperm_df(
             logger.warning(
                 "Sheet name only relevant for XLSX files, ignoring %s", sheet_name
             )
-        excel_engines = {"xls": "xlrd", "xlsx": "openpyxl"}
+        excel_engines: dict[str, EngineType] = {"xls": "xlrd", "xlsx": "openpyxl"}
         if tabular_file_format != "csv" and sheet_name:
             try:
                 input_df = pd.read_excel(
@@ -768,7 +771,7 @@ def load_relperm_df(
                 "Found not-a-number in the CASE column. This could be due "
                 "merged cells in XLSX, which is not supported."
             )
-        input_df["CASE"] = remap_validate_cases(input_df["CASE"].to_numpy())
+        input_df["CASE"] = remap_validate_cases(input_df["CASE"].to_list())
 
     # Add the SATNUM index to the TAG column
     if "TAG" not in input_df:
@@ -785,7 +788,7 @@ def load_relperm_df(
         logger.warning("Fast mode is only available through the Python API")
 
     # Check that we are able to make something out of the first row:
-    firstrow = input_df.iloc[0, :]
+    firstrow = input_df.iloc[0, :].to_dict()
     error: bool = False
     wo_ok = sufficient_water_oil_params(firstrow)
     go_ok = sufficient_gas_oil_params(firstrow)
@@ -817,21 +820,20 @@ def alias_sgrw(params: Dict[str, Any]) -> Dict[str, Any]:
     Args:
         params: Keys must be lower case.
     """
+    params_copy = dict(params)
     if "sgrw" in params:
         if "sorw" not in params or pd.isna(params["sorw"]):
-            params_copy = dict(params)
             params_copy["sorw"] = params["sgrw"]
             del params_copy["sgrw"]
             return params_copy
         if np.isclose(params["sgrw"], params["sorw"]):
-            params_copy = dict(params)
             del params_copy["sgrw"]
             return params_copy
         raise ValueError(
             f"sgrw ({params['sgrw']}) must equal sorw ({params['sorw']}) "
             "when both are supplied to WaterOil."
         )
-    return params
+    return params_copy
 
 
 def remap_validate_cases(casevalues: List[str]) -> List[str]:
@@ -884,7 +886,7 @@ def create_scal_recommendation_list(
     assert isinstance(input_df, pd.DataFrame)
 
     scalinput = input_df.set_index(["SATNUM", "CASE"])
-
+    assert isinstance(scalinput.index, pd.MultiIndex)
     for satnum in scalinput.index.levels[0].to_numpy():
         # load_relperm_df only validates the CASE column for all SATNUMs at
         # once, errors for particular SATNUMs are caught here.
@@ -906,7 +908,7 @@ def create_scal_recommendation_list(
 
 def create_pyscal_list(
     relperm_params_df: pd.DataFrame, h: Optional[float] = None, fast: bool = False
-):
+) -> PyscalList:
     """Create WaterOilGas, WaterOil, GasOil or GasWater list
     based on what is available
 
@@ -919,7 +921,7 @@ def create_pyscal_list(
     Returns:
         PyscalList, consisting of either WaterOil, GasOil or WaterOilGas objects
     """
-    params = relperm_params_df.iloc[0, :]  # first row
+    params = relperm_params_df.iloc[0, :].to_dict()  # first row
     water_oil = sufficient_water_oil_params(params)
     gas_oil = sufficient_gas_oil_params(params)
     gas_water = sufficient_gas_water_params(params)
@@ -957,7 +959,8 @@ def create_wateroilgas_list(
         try:
             wogl.append(create_water_oil_gas(params.to_dict(), fast=fast))
         except (AssertionError, ValueError, TypeError) as err:
-            raise ValueError(f"Error for SATNUM {row_idx + 1}: {err}") from err
+            idx = cast(int, row_idx)
+            raise ValueError(f"Error for SATNUM {idx + 1}: {err}") from err
     return wogl
 
 
@@ -1162,7 +1165,7 @@ class PyscalFactory:
     @staticmethod
     def create_pyscal_list(
         relperm_params_df: pd.DataFrame, h: Optional[float] = None, fast: bool = False
-    ):
+    ) -> PyscalList:
         warnings.warn(
             "PyscalFactory.create_pyscal_list is deprecated. "
             "Please use create_pyscal_list instead.",

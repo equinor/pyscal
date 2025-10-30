@@ -1,8 +1,10 @@
 """Object to represent GasWater, implemented as a Container
 object for one WaterOil and one GasOil object"""
 
-from typing import Optional
+from typing import Callable, Optional
 
+import matplotlib
+import matplotlib.pyplot as plt
 import pandas as pd
 
 from pyscal import getLogger_pyscal
@@ -14,10 +16,10 @@ from .wateroil import WaterOil
 logger = getLogger_pyscal(__name__)
 
 
-def is_documented_by(original):
+def is_documented_by(original: Callable) -> Callable:
     """Decorator to avoid duplicating function docstrings"""
 
-    def wrapper(target):
+    def wrapper(target: Callable) -> Callable:
         target.__doc__ = original.__doc__
         return target
 
@@ -206,7 +208,7 @@ class GasWater:
         over to the WaterOil object"""
         self.wateroil.add_simple_J_petro(a, b, poro_ref, perm_ref, drho, g)
 
-    def SWFN(self, header: bool = True, dataincommentrow: bool = True):
+    def SWFN(self, header: bool = True, dataincommentrow: bool = True) -> str:
         """Produce SWFN input to Eclipse
 
         The columns sw, krw and pc are outputted and formatted
@@ -238,7 +240,7 @@ class GasWater:
             crosspointcomment=crosspointcomment,
         )
 
-    def SGFN(self, header: bool = True, dataincommentrow: bool = True):
+    def SGFN(self, header: bool = True, dataincommentrow: bool = True) -> str:
         """Produce SGFN input for Eclipse reservoir simulator.
 
         The columns sg and krg are outputted and formatted accordingly.
@@ -306,7 +308,7 @@ class GasWater:
 
     def plotkrwkrg(
         self,
-        mpl_ax=None,
+        mpl_ax: Optional[matplotlib.axes.Axes] = None,
         color: str = "blue",
         alpha: float = 1,
         linewidth: int = 1,
@@ -314,16 +316,12 @@ class GasWater:
         marker: Optional[str] = None,
         label: str = "",
         logyscale: bool = False,
-    ):
+    ) -> None:
         """Plot krw and krg
 
         If the argument 'mpl_ax' is not supplied, a new plot
         window will be made. If supplied, it will draw on
         the specified axis."""
-
-        # Lazy import of matplotlib for speed reasons.
-        import matplotlib  # noqa: PLC0415
-        import matplotlib.pyplot as plt  # noqa: PLC0415
 
         if mpl_ax is None:
             matplotlib.style.use("ggplot")
@@ -339,7 +337,7 @@ class GasWater:
             y="KRW",
             c=color,
             alpha=alpha,
-            legend=None,
+            legend=False,
             label=label,
             linewidth=linewidth,
             linestyle=linestyle,
@@ -352,7 +350,7 @@ class GasWater:
             c=color,
             alpha=alpha,
             label=None,
-            legend=None,
+            legend=False,
             linewidth=linewidth,
             linestyle=linestyle,
             marker=marker,

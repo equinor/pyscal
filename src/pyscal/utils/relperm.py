@@ -13,7 +13,10 @@ logger = logging.getLogger(__name__)
 
 
 def truncate_zeroness(
-    value: float, zeronesslimit: float = 10 / SWINTEGERS, name: str = "", log=True
+    value: float,
+    zeronesslimit: float = 10 / SWINTEGERS,
+    name: str = "",
+    log: bool = True,
 ) -> float:
     """Check a value for closeness to zero, and return as zero if below
     a given limit, if not return the value"""
@@ -107,7 +110,7 @@ def estimate_diffjumppoint(
     assert side in ["left", "right"]
 
     # Compute the derivative:
-    table["_deriv"] = table[ycol].diff() / table[xcol].diff()
+    table["_deriv"] = table[ycol].diff() / table[xcol].diff()  # type: ignore[operator]
     # The first becomes NaN, extrapolate from the second row:
     table.loc[0, "_deriv"] = table["_deriv"].iloc[1]
 

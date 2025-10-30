@@ -75,7 +75,7 @@ def modify_dframe_monotonicity(
         monotonicity: Keys are column names
         digits: Number of digits to ensure monotonicity for.
     """
-    validate_monotonicity_arg(monotonicity, dframe.columns)
+    validate_monotonicity_arg(monotonicity, dframe.columns.to_list())
 
     # Wateroil.SWOF() (and similar) supply a column view
     # of the internal wateroil.table dataframe. When asked
@@ -140,11 +140,11 @@ def modify_dframe_monotonicity(
         # Assert that we have successfully managed to force monotonicity
         allowance = 1.0 / 10.0**digits
         if sign > 0:
-            assert not (dframe[col].round(digits).diff() < -allowance).any(), (
+            assert not (dframe[col].round(digits).diff() < -allowance).any(), (  # type: ignore[operator]
                 "Not possible to make column monotonically increasing"
             )
         else:
-            assert not (dframe[col].round(digits).diff() > allowance).any(), (
+            assert not (dframe[col].round(digits).diff() > allowance).any(), (  # type: ignore[operator]
                 "Not possible to make column monotonically decreasing"
             )
     return dframe
@@ -226,9 +226,9 @@ def rows_to_be_fixed(
     # minus epsilon is critical to avoid being greedy
     accuracy = 1.0 / 10.0**digits - epsilon
     if monotonicity["sign"] > 0:
-        constants = series.round(digits + 1).diff() < accuracy
+        constants = series.round(digits + 1).diff() < accuracy  # type: ignore[operator]
     else:
-        constants = series.round(digits + 1).diff() > -accuracy
+        constants = series.round(digits + 1).diff() > -accuracy  # type: ignore[operator]
 
     # Allow constants at the lower and upper limits.
     if "upper" in monotonicity:
@@ -252,9 +252,9 @@ def check_almost_monotone(series: pd.Series, digits: int, sign: int) -> None:
 
     allowance = 1.0 / 10.0 ** (digits - 1)
     if sign > 0:
-        if series.diff().min() < -allowance:
+        if series.diff().min() < -allowance:  # type: ignore[operator]
             raise ValueError("Series is not almost monotone")
-    elif series.diff().max() > allowance:
+    elif series.diff().max() > allowance:  # type: ignore[operator]
         raise ValueError("Series is not almost monotone")
 
 

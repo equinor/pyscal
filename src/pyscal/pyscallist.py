@@ -35,7 +35,7 @@ class PyscalList:
         pyscal_list (list): List of objects if already ready. Can be empty or None.
     """
 
-    def __init__(self, pyscal_list: Optional[List[PyscalObjects]] = None):
+    def __init__(self, pyscal_list: Optional[List[PyscalObjects]] = None) -> None:
         self.pyscaltype: Optional[Type] = None
         self.pyscal_list: List[PyscalObjects] = []
         if isinstance(pyscal_list, list):
@@ -429,7 +429,7 @@ class PyscalList:
         """Return the count of Pyscal objects in the list"""
         return len(self.pyscal_list)
 
-    def __getitem__(self, satnum_idx) -> PyscalObjects:
+    def __getitem__(self, satnum_idx: int) -> PyscalObjects:
         """Get a specific List member.
 
         The indexing starts at 1, not zero, similar
