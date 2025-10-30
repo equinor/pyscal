@@ -9,7 +9,7 @@ from pyscal import GasOil, GasWater, WaterOil
 IMG_DIR = Path(__file__).absolute().parent / "images"
 
 
-def main():
+def main() -> None:
     """Run this to produce the PNG images for the RST docs"""
 
     for plotname in [
@@ -34,7 +34,7 @@ def main():
         plt.savefig(IMG_DIR / (plotname + ".png"), dpi=200)
 
 
-def make_gasoil_endpoints(show=True, krgendanchor="sorg"):
+def make_gasoil_endpoints(show: bool = True, krgendanchor: str = "sorg") -> None:
     """Make a plot explaining the inputs to a GasOil object"""
     plt.xkcd()
     _, axes = plt.subplots()
@@ -124,7 +124,7 @@ def make_gasoil_endpoints(show=True, krgendanchor="sorg"):
         plt.show()
 
 
-def make_wateroil_endpoints(show=True):
+def make_wateroil_endpoints(show: bool = True) -> None:
     """Make a plot explaining the inputs to a WaterOil object"""
     plt.xkcd()
     _, axes = plt.subplots()
@@ -192,7 +192,7 @@ def make_wateroil_endpoints(show=True):
         plt.show()
 
 
-def make_gaswater_endpoints(show=True):
+def make_gaswater_endpoints(show: bool = True) -> None:
     """Make a plot explaining the inputs to a WaterOil object"""
     plt.xkcd()
     _, axes = plt.subplots()
@@ -268,7 +268,7 @@ def make_gaswater_endpoints(show=True):
         plt.show()
 
 
-def make_wateroil_idc2(show=True):
+def make_wateroil_idc2(show: bool = True) -> None:
     plt.xkcd()
     _, axes = plt.subplots()
     swirr = 0.05
@@ -353,7 +353,7 @@ def make_wateroil_idc2(show=True):
         plt.show()
 
 
-def make_gasoil_cdi2(show=True):
+def make_gasoil_cdi2(show: bool = True) -> None:
     plt.xkcd()
     _, axes = plt.subplots()
     swl = 0.1
@@ -437,7 +437,7 @@ def make_gasoil_cdi2(show=True):
         plt.show()
 
 
-def make_gasoil_cid2(show=True):
+def make_gasoil_cid2(show: bool = True) -> None:
     plt.xkcd()
     _, axes = plt.subplots()
     swl = 0.1
@@ -523,7 +523,7 @@ def make_gasoil_cid2(show=True):
         plt.show()
 
 
-def make_gaswater_icd2(show=True):
+def make_gaswater_icd2(show: bool = True) -> None:
     plt.xkcd()
     _, axes = plt.subplots()
     swl = 0.1
@@ -612,7 +612,7 @@ def make_gaswater_icd2(show=True):
         plt.show()
 
 
-def make_gaswater_dci1(show=True):
+def make_gaswater_dci1(show: bool = True) -> None:
     # CO2 storage
     plt.xkcd()
     _, axes = plt.subplots()
@@ -691,7 +691,7 @@ def make_gaswater_dci1(show=True):
         plt.show()
 
 
-def make_gaswater_co2_icd2(show=True):
+def make_gaswater_co2_icd2(show: bool = True) -> None:
     # CO2 trapping
     plt.xkcd()
     _, axes = plt.subplots()
@@ -773,7 +773,7 @@ def make_gaswater_co2_icd2(show=True):
         plt.show()
 
 
-def make_wateroil_paleooil_idc1(show=True):
+def make_wateroil_paleooil_idc1(show: bool = True) -> None:
     plt.xkcd()
     _, axes = plt.subplots()
     swl = 0.1
@@ -864,7 +864,7 @@ def make_wateroil_paleooil_idc1(show=True):
         plt.show()
 
 
-def make_gaswater_paleogas_dci3(show=True):
+def make_gaswater_paleogas_dci3(show: bool = True) -> None:
     plt.xkcd()
     _, axes = plt.subplots()
     swl = 0.1

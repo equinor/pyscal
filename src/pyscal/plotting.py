@@ -11,7 +11,10 @@ Potential improvements:
 
 """
 
+from __future__ import annotations
+
 from pathlib import Path
+from typing import TypedDict, Unpack, cast
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -19,6 +22,30 @@ import pandas as pd
 from pyscal import GasOil, GasWater, PyscalList, WaterOil, WaterOilGas, getLogger_pyscal
 
 logger = getLogger_pyscal(__name__)
+
+
+class PlotKwargs(TypedDict, total=False):
+    pc: bool
+    semilog: bool
+    outdir: str
+
+
+class PlotConfig(TypedDict, total=False):
+    axis: str
+    kra_name: str
+    krb_name: str
+    kra_colour: str
+    krb_colour: str
+    pc_name: str
+    xlabel: str
+    ylabel: str
+    curves: str
+    suffix: str
+
+
+class FormattingKwargs(PlotKwargs, PlotConfig):
+    """Combined kwargs from both user options and plot config"""
+
 
 # Data for configuring plot based on pyscal model type
 PLOT_CONFIG_OPTIONS = {
@@ -122,7 +149,9 @@ def get_satnum_from_tag(string: str) -> int:
     return int(string.split("SATNUM")[1].strip())
 
 
-def get_plot_config_options(curve_type: str, **kwargs) -> dict:
+def get_plot_config_options(
+    curve_type: str, **kwargs: Unpack[PlotKwargs]
+) -> PlotConfig:
     """
     Get config data from plot config dictionary based on the curve (model) type.
 
@@ -134,7 +163,7 @@ def get_plot_config_options(curve_type: str, **kwargs) -> dict:
         dict: Config parameters for the chosen model type
     """
 
-    config = PLOT_CONFIG_OPTIONS[curve_type].copy()
+    config: PlotConfig = cast(PlotConfig, PLOT_CONFIG_OPTIONS[curve_type].copy())
 
     # If semilog plot, add suffix to the name of the saved relperm figure
     suffix = "_semilog" if kwargs["semilog"] else ""
@@ -144,7 +173,9 @@ def get_plot_config_options(curve_type: str, **kwargs) -> dict:
     return config
 
 
-def format_relperm_plot(fig: plt.Figure, **kwargs) -> plt.Figure:
+def format_relperm_plot(
+    fig: plt.Figure, **kwargs: Unpack[FormattingKwargs]
+) -> plt.Figure:
     """
     Formatting options for individual relative permeability plots.
 
@@ -185,7 +216,9 @@ def format_relperm_plot(fig: plt.Figure, **kwargs) -> plt.Figure:
 
 
 def format_cap_pressure_plot(
-    fig: plt.Figure, neg_pc: bool = False, **kwargs
+    fig: plt.Figure,
+    neg_pc: bool = False,
+    **kwargs: Unpack[FormattingKwargs],
 ) -> plt.Figure:
     """
     Formatting options for individual capillary pressure plots.
@@ -215,7 +248,9 @@ def format_cap_pressure_plot(
     return fig
 
 
-def plot_pc(table: pd.DataFrame, satnum: int, **kwargs) -> plt.Figure:
+def plot_pc(
+    table: pd.DataFrame, satnum: int, **kwargs: Unpack[FormattingKwargs]
+) -> plt.Figure:
     """
     Plot capillary pressure curves.
 
@@ -249,7 +284,7 @@ def plot_pc(table: pd.DataFrame, satnum: int, **kwargs) -> plt.Figure:
 
 
 def plot_relperm(
-    table: pd.DataFrame, satnum: int, config: dict, **kwargs
+    table: pd.DataFrame, satnum: int, config: PlotConfig, **kwargs: Unpack[PlotKwargs]
 ) -> plt.Figure:
     """
 
@@ -288,14 +323,14 @@ def plot_relperm(
         label=config["krb_name"].lower(),
         color=config["krb_colour"],
     )
-
-    return format_relperm_plot(fig, **kwargs, **config)
+    combined_kwargs: FormattingKwargs = {**kwargs, **config}
+    return format_relperm_plot(fig, **combined_kwargs)
 
 
 def save_figure(
     fig: plt.Figure,
     satnum: int,
-    config: dict,
+    config: PlotConfig,
     plot_type: str,
     outdir: str,
 ) -> None:
@@ -335,7 +370,7 @@ def save_figure(
     fig.clear()
 
 
-def wog_plotter(model: WaterOilGas, **kwargs) -> None:
+def wog_plotter(model: WaterOilGas, **kwargs: Unpack[PlotKwargs]) -> None:
     """
 
     Plot a WaterOilGas (WaterOil and GasOil) model.
@@ -388,7 +423,7 @@ def wog_plotter(model: WaterOilGas, **kwargs) -> None:
         save_figure(fig_go, satnum_go, config_go, "relperm", outdir)
 
 
-def wo_plotter(model: WaterOil, **kwargs) -> None:
+def wo_plotter(model: WaterOil, **kwargs: Unpack[PlotKwargs]) -> None:
     """
 
     Plot a WaterOil model.
@@ -419,7 +454,7 @@ def wo_plotter(model: WaterOil, **kwargs) -> None:
         save_figure(fig_pc, satnum, config, "pc", outdir)
 
 
-def go_plotter(model: GasOil, **kwargs) -> None:
+def go_plotter(model: GasOil, **kwargs: Unpack[PlotKwargs]) -> None:
     """
 
     Plot a GasOil model.
@@ -454,7 +489,7 @@ def go_plotter(model: GasOil, **kwargs) -> None:
         save_figure(fig_pc, satnum, config, "pc", outdir)
 
 
-def gw_plotter(model: GasWater, **kwargs) -> None:
+def gw_plotter(model: GasWater, **kwargs: Unpack[PlotKwargs]) -> None:
     """
 
     For GasWater, the format is different, and an additional formatting step is
@@ -515,7 +550,7 @@ def plotter(
     """
 
     # kwargs to be passed on to other functions
-    kwargs = {"pc": pc, "semilog": semilog, "outdir": outdir}
+    kwargs: PlotKwargs = {"pc": pc, "semilog": semilog, "outdir": outdir}
 
     for model in models.pyscal_list:
         if isinstance(model, WaterOilGas):

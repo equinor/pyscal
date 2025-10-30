@@ -52,7 +52,7 @@ def df2str(
     )
 
 
-def comment_formatter(multiline: str, prefix: str = "-- "):
+def comment_formatter(multiline: str, prefix: str = "-- ") -> str:
     """Prepends comment characters to every line in input
 
     Args:
