@@ -83,7 +83,7 @@ class PyscalList:
     def df(self) -> pd.DataFrame:
         """Dump dataframes of generated relperm data
 
-        Column names are compatible with ecl2df.satfunc. Always uppercase
+        Column names are compatible with res2df.satfunc. Always uppercase
         and capillary pressure is PCOW or PCOG (wateroil vs gasoil)
 
         If the PyscalList contains SCALrecommendations, the CASE column

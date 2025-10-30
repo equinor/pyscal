@@ -22,11 +22,11 @@ from pyscal.factory import (
 from pyscal.utils.testing import sat_table_str_ok
 
 try:
-    import ecl2df
+    import res2df
 
-    HAVE_ECL2DF = True
+    HAVE_RES2DF = True
 except ImportError:
-    HAVE_ECL2DF = False
+    HAVE_RES2DF = False
 
 
 def test_pyscallist_basic():
@@ -158,9 +158,9 @@ def test_df():
     assert len(dframe["SATNUM"].unique()) == len(scalrec_list)
     assert set(dframe["CASE"]) == {"pess", "base", "opt"}
     assert dframe["SATNUM"].max() == len(scalrec_list)
-    if HAVE_ECL2DF:
-        # Test using ecl2df to do the include file printing. First we need to
-        # massage the dataframe into what ecl2df can handle:
+    if HAVE_RES2DF:
+        # Test using res2df to do the include file printing. First we need to
+        # massage the dataframe into what res2df can handle:
         base_df_swof = (
             dframe.set_index("CASE")
             .loc["base"][["SW", "KRW", "KROW", "PCOW", "SATNUM"]]
@@ -168,8 +168,8 @@ def test_df():
             .dropna()
             .reset_index(drop=True)
         )
-        ecl_inc = ecl2df.satfunc.df2ecl(base_df_swof)
-        dframe_from_inc = ecl2df.satfunc.df(ecl_inc)
+        ecl_inc = res2df.satfunc.df2ecl(base_df_swof)
+        dframe_from_inc = res2df.satfunc.df(ecl_inc)
         pd.testing.assert_frame_equal(base_df_swof, dframe_from_inc)
 
         # Test also SGOF
@@ -180,8 +180,8 @@ def test_df():
             .dropna()
             .reset_index(drop=True)
         )
-        ecl_inc = ecl2df.satfunc.df2ecl(base_df_sgof)
-        dframe_from_inc = ecl2df.satfunc.df(ecl_inc)
+        ecl_inc = res2df.satfunc.df2ecl(base_df_sgof)
+        dframe_from_inc = res2df.satfunc.df(ecl_inc)
         pd.testing.assert_frame_equal(base_df_sgof, dframe_from_inc, check_like=True)
 
     # WaterOilGasList:

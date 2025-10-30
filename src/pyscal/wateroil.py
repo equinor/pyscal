@@ -253,7 +253,7 @@ class WaterOil:
         pressure data will be interpolated monotone cubicly over the
         entire saturation interval
 
-        The python package ecl2df has a tool for converting Eclipse input
+        The python package res2df has a tool for converting Eclipse input
         files to dataframes.
 
         Args:
