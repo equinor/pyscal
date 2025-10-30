@@ -16,7 +16,7 @@ from pyscal.utils.interpolation import (
     normalize_nonlinpart_wo,
     normalize_pc,
 )
-from pyscal.utils.testing import (
+from tests.utils import (
     check_table,
     float_df_checker,
     sat_table_str_ok,

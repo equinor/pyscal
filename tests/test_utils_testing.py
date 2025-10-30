@@ -7,7 +7,7 @@ from contextlib import contextmanager
 import pandas as pd
 import pytest
 
-from pyscal.utils.testing import float_df_checker, sat_table_str_ok
+from tests.utils import float_df_checker, sat_table_str_ok
 
 
 @contextmanager
