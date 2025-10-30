@@ -2,6 +2,8 @@
 
 from typing import Optional
 
+import matplotlib
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy.interpolate import PchipInterpolator
@@ -204,7 +206,7 @@ class GasOil:
             "Initialized GasOil with %s saturation points", str(len(self.table))
         )
 
-    def update_sgcomment_and_sorg(self):
+    def update_sgcomment_and_sorg(self) -> None:
         """Recalculate sorg in case it has table data has been manipulated"""
         self.sgcomment = (
             f"-- swirr={self.swirr:g}, sgcr={self.sgcr:g}, swl={self.swl:g}, "
@@ -228,7 +230,7 @@ class GasOil:
         krgcomment: str = "",
         krogcomment: str = "",
         pccomment: str = "",
-    ):
+    ) -> None:
         """Interpolate relpermdata from a dataframe.
 
         The saturation range with endpoints must be set up beforehand,
@@ -282,7 +284,7 @@ class GasOil:
             dframe.loc[dframe[sgcolname].idxmax(), sgcolname] += swlfrominput - self.swl
 
         if krgcolname in dframe:
-            if not (dframe[krgcolname].diff().dropna() > -epsilon).all():
+            if not (dframe[krgcolname].diff().dropna() > -epsilon).all():  # type: ignore[operator]
                 raise ValueError("Incoming krg not increasing")
             if dframe[krgcolname].max() > 1.0:
                 raise ValueError("krg is above 1 in incoming table")
@@ -299,7 +301,7 @@ class GasOil:
             self.krgcomment = "-- krg from tabular input" + krgcomment + "\n"
             self.sgcr = self.estimate_sgcr()
         if krogcolname in dframe:
-            if not (dframe[krogcolname].diff().dropna() < epsilon).all():
+            if not (dframe[krogcolname].diff().dropna() < epsilon).all():  # type: ignore[operator]
                 raise ValueError("Incoming krog not decreasing")
             if dframe[krogcolname].max() > 1.0:
                 raise ValueError("krog is above 1 in incoming table")
@@ -351,7 +353,7 @@ class GasOil:
             # If nonzero, then it must be increasing:
             if (
                 dframe[pccolname].abs().sum() > 0
-                and not (dframe[pccolname].diff().dropna() > 0.0).all()
+                and not (dframe[pccolname].diff().dropna() > 0.0).all()  # type: ignore[operator]
             ):
                 raise ValueError("Incoming pc not increasing")
             pchip = PchipInterpolator(
@@ -364,7 +366,7 @@ class GasOil:
 
     def set_endpoints_linearpart_krg(
         self, krgend: float, krgmax: Optional[float] = None
-    ):
+    ) -> None:
         """Set linear parts of krg outside endpoints.
 
         Curve is set to zero in [0, sgcr].
@@ -415,7 +417,7 @@ class GasOil:
         self,
         kroend: float,
         kromax: Optional[float] = None,
-    ):
+    ) -> None:
         """Set linear parts of krog outside endpoints.
 
         Linear for sg in [0, sgro], from kromax to kroend, but nonzero
@@ -452,7 +454,7 @@ class GasOil:
 
     def add_corey_gas(
         self, ng: float = 2.0, krgend: float = 1.0, krgmax: Optional[float] = None
-    ):
+    ) -> None:
         """Add krg data through the Corey parametrization
 
         A column called 'krg' will be added. If it exists, it will
@@ -483,7 +485,7 @@ class GasOil:
         nog: float = 2,
         kroend: float = 1,
         kromax: Optional[float] = None,
-    ):
+    ) -> None:
         """
         Add kro data through the Corey parametrization
 
@@ -519,7 +521,7 @@ class GasOil:
         t: float = 2.0,
         krgend: float = 1.0,
         krgmax: Optional[float] = None,
-    ):
+    ) -> None:
         """
         Add gas relative permability data through the LET parametrization
 
@@ -573,7 +575,7 @@ class GasOil:
         t: float = 2.0,
         kroend: float = 1.0,
         kromax: Optional[float] = None,
-    ):
+    ) -> None:
         """Add oil (vs gas) relative permeability data through the Corey
         parametrization.
 
@@ -609,7 +611,7 @@ class GasOil:
             self.krogcomment += f", kromax={kromax:g}"
         self.krogcomment += "\n"
 
-    def estimate_sgro(self):
+    def estimate_sgro(self) -> float:
         """Estimate sgro of the current krog data
 
         sgro is estimated by searching for a linear part in kro
@@ -702,12 +704,12 @@ class GasOil:
         if "KRG" not in self.table:
             logger.error("KRG data missing")
             error = True
-        if not (self.table["SG"].diff().dropna() > -epsilon).all():
+        if not (self.table["SG"].diff().dropna() > -epsilon).all():  # type: ignore[operator]
             logger.error("SG data not strictly increasing")
             error = True
         if (
             "KRG" in self.table
-            and not (self.table["KRG"].diff().dropna() >= -epsilon).all()
+            and not (self.table["KRG"].diff().dropna() >= -epsilon).all()  # type: ignore[operator]
         ):
             logger.error("KRG data not monotonically decreasing")
             error = True
@@ -718,7 +720,9 @@ class GasOil:
                 error = True
             if (
                 "KROG" in self.table
-                and not (self.table["KROG"].diff().dropna() <= epsilon).all()
+                and not (
+                    self.table["KROG"].diff().dropna() <= epsilon  # type: ignore[operator]
+                ).all()
             ):
                 logger.error("KROG data not monotonically increasing")
                 error = True
@@ -728,7 +732,7 @@ class GasOil:
         if (
             "PC" in self.table
             and self.table["PC"][0] > -epsilon
-            and not (self.table["PC"].diff().dropna() < epsilon).all()
+            and not (self.table["PC"].diff().dropna() < epsilon).all()  # type: ignore[operator]
         ):
             logger.error("PC data for gas-oil not strictly decreasing")
             error = True
@@ -887,7 +891,7 @@ class GasOil:
         dataincommentrow: bool = True,
         sgcomment: Optional[str] = None,
         crosspointcomment: Optional[str] = None,
-    ):
+    ) -> str:
         """
         Produce SGFN input for Eclipse reservoir simulator.
 
@@ -1009,7 +1013,7 @@ class GasOil:
 
     def plotkrgkrog(
         self,
-        mpl_ax=None,
+        mpl_ax: Optional[matplotlib.axes.Axes] = None,
         color: str = "blue",
         alpha: float = 1.0,
         linewidth: int = 1,
@@ -1017,20 +1021,17 @@ class GasOil:
         marker: Optional[str] = None,
         label: Optional[str] = None,
         logyscale: bool = False,
-    ):
+    ) -> None:
         """Plot krg and krog
 
         If mpl_ax is not None, it will be used as a
         matplotlib axis to plot on, if None, a fresh plot
         will be made.
         """
-        # Lazy import of matplotlib for speed reasons
-        import matplotlib  # noqa: PLC0415
-        import matplotlib.pyplot as plt  # noqa: PLC0415
 
         if mpl_ax is None:
             matplotlib.style.use("ggplot")
-            _, useax = matplotlib.pyplot.subplots()
+            _, useax = plt.subplots()
         else:
             useax = mpl_ax
         if logyscale:
@@ -1042,7 +1043,7 @@ class GasOil:
             y="KRG",
             c=color,
             alpha=alpha,
-            legend=None,
+            legend=False,
             label=label,
             linewidth=linewidth,
             linestyle=linestyle,
@@ -1054,7 +1055,7 @@ class GasOil:
             y="KROG",
             c=color,
             alpha=alpha,
-            legend=None,
+            legend=False,
             label=None,
             linewidth=linewidth,
             linestyle=linestyle,

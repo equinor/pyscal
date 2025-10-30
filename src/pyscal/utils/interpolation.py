@@ -1,17 +1,35 @@
 """Utility function for pyscal"""
 
+from __future__ import annotations
+
 import logging
-from typing import Callable, Optional, Tuple, Union
+from typing import Callable, Optional, TypeAlias, TypeVar, Union
 
 import numpy as np
+import numpy.typing as npt
+import pandas as pd
 from scipy.interpolate import interp1d
 
 from pyscal import GasOil, WaterOil
 
 logger = logging.getLogger(__name__)
 
+NumericType: TypeAlias = float | pd.Series | npt.NDArray[np.float64]
 
-def normalize_nonlinpart_wo(curve: WaterOil) -> Tuple[Callable, Callable]:
+T = TypeVar("T", float, npt.NDArray[np.float64])
+
+
+def weighted_value(a: T, b: T, parameter: float) -> T:
+    """Linear interpolation between a and b."""
+    return a * (1.0 - parameter) + b * parameter
+
+
+def normalize_nonlinpart_wo(
+    curve: WaterOil,
+) -> tuple[
+    Callable[[NumericType], npt.NDArray[np.float64]],
+    Callable[[NumericType], npt.NDArray[np.float64]],
+]:
     """Make krw and krow functions that evaluate only on the
     (potentially) nonlinear part of the relperm curves, and with
     a normalized argument (0,1) on that interval.
@@ -50,11 +68,11 @@ def normalize_nonlinpart_wo(curve: WaterOil) -> Tuple[Callable, Callable]:
     # saturation values, but we do not want to assume they
     # are there or even correct, therefore we effectively
     # recalculate them
-    def sw_fn(swn):
+    def sw_fn(swn: NumericType) -> NumericType:
         return curve.swcr + swn * (1.0 - curve.swcr - curve.sorw)
 
-    def krw_fn(swn):
-        return krw_interp(sw_fn(swn))
+    def krw_fn(swn: NumericType) -> npt.NDArray[np.float64]:
+        return np.asarray(krw_interp(sw_fn(swn)), dtype=np.float64)
 
     kro_interp = interp1d(
         1.0 - curve.table["SW"],
@@ -64,16 +82,21 @@ def normalize_nonlinpart_wo(curve: WaterOil) -> Tuple[Callable, Callable]:
         fill_value=(0.0, curve.table["KROW"].max()),
     )
 
-    def so_fn(son):
+    def so_fn(son: NumericType) -> NumericType:
         return curve.socr + son * (1.0 - curve.socr - curve.swl)
 
-    def kro_fn(son):
-        return kro_interp(so_fn(son))
+    def kro_fn(son: NumericType) -> npt.NDArray[np.float64]:
+        return np.asarray(kro_interp(so_fn(son)), dtype=np.float64)
 
     return (krw_fn, kro_fn)
 
 
-def normalize_nonlinpart_go(curve: GasOil) -> Tuple[Callable, Callable]:
+def normalize_nonlinpart_go(
+    curve: GasOil,
+) -> tuple[
+    Callable[[NumericType], npt.NDArray[np.float64]],
+    Callable[[NumericType], npt.NDArray[np.float64]],
+]:
     """Make krg and krog functions that evaluates only on the
     (potentially) nonlinear part of the relperm curves, and with
     a normalized argument (0,1) on that interval.
@@ -112,11 +135,11 @@ def normalize_nonlinpart_go(curve: GasOil) -> Tuple[Callable, Callable]:
     # saturation values, but we do not want to assume they
     # are there or even correct, therefore we effectively
     # recalculate them
-    def sg_fn(sgn):
+    def sg_fn(sgn: NumericType) -> NumericType:
         return curve.sgcr + sgn * (1.0 - curve.swl - curve.sgcr - curve.sorg)
 
-    def krg_fn(sgn):
-        return krg_interp(sg_fn(sgn))
+    def krg_fn(sgn: NumericType) -> npt.NDArray[np.float64]:
+        return np.asarray(krg_interp(sg_fn(sgn)), dtype=np.float64)
 
     kro_interp = interp1d(
         1.0 - curve.table["SG"],
@@ -126,13 +149,13 @@ def normalize_nonlinpart_go(curve: GasOil) -> Tuple[Callable, Callable]:
         fill_value=(0.0, curve.table["KROG"].max()),
     )
 
-    def so_fn(son):
+    def so_fn(son: NumericType) -> NumericType:
         return (
             curve.swl + curve.sorg + son * (1.0 - curve.swl - curve.sorg - curve.sgro)
         )
 
-    def kro_fn(son):
-        return kro_interp(so_fn(son))
+    def kro_fn(son: NumericType) -> npt.NDArray[np.float64]:
+        return np.asarray(kro_interp(so_fn(son)), dtype=np.float64)
 
     return (krg_fn, kro_fn)
 
@@ -179,11 +202,11 @@ def normalize_pc(curve: Union[WaterOil, GasOil]) -> Callable:
     )
 
     # Map from normalized value to real saturation domain:
-    def sx_fn(sxn):
+    def sx_fn(sxn: NumericType) -> NumericType:
         return curve.table[sat_col].min() + sxn * (max_sx - min_sx)
 
-    def pc_fn(sxn):
-        return pc_interp(sx_fn(sxn))
+    def pc_fn(sxn: NumericType) -> npt.NDArray[np.float64]:
+        return np.asarray(pc_interp(sx_fn(sxn)), dtype=np.float64)
 
     return pc_fn
 
@@ -193,7 +216,7 @@ def _interpolate_tags(
     high: Union[WaterOil, GasOil],
     parameter: float,
     tag: Optional[str],
-):
+) -> str:
     """Preserve tag/comment. Depending on context, the
     interpolation parameter may or may not make sense. In a SCALrecommendation
     interpolation, the new tag should be constructed in the caller of this function.
@@ -264,21 +287,18 @@ def interpolate_wo(
     pc1 = normalize_pc(wo_low)
     pc2 = normalize_pc(wo_high)
 
-    # Construct a function that can be applied to both relperm values
-    # and endpoints
-    def weighted_value(a, b):
-        return a * (1.0 - parameter) + b * parameter
-
     # Interpolate saturation endpoints
-    swl_new = weighted_value(wo_low.swl, wo_high.swl)
-    swcr_new = weighted_value(wo_low.swcr, wo_high.swcr)
-    sorw_new = weighted_value(wo_low.sorw, wo_high.sorw)
-    socr_new = weighted_value(wo_low.socr, wo_high.socr)
+    swl_new = weighted_value(wo_low.swl, wo_high.swl, parameter)
+    swcr_new = weighted_value(wo_low.swcr, wo_high.swcr, parameter)
+    sorw_new = weighted_value(wo_low.sorw, wo_high.sorw, parameter)
+    socr_new = weighted_value(wo_low.socr, wo_high.socr, parameter)
 
     # Interpolate kr at saturation endpoints
-    krwmax_new = weighted_value(wo_low.table["KRW"].max(), wo_high.table["KRW"].max())
-    krwend_new = weighted_value(krw1(1), krw2(1))
-    kroend_new = weighted_value(kro1(1), kro2(1))
+    krwmax_new = weighted_value(
+        wo_low.table["KRW"].max(), wo_high.table["KRW"].max(), parameter
+    )
+    krwend_new = weighted_value(float(krw1(1)), float(krw2(1)), parameter)
+    kroend_new = weighted_value(float(kro1(1)), float(kro2(1)), parameter)
 
     # Construct the new WaterOil object, with interpolated
     # endpoints:
@@ -288,10 +308,10 @@ def interpolate_wo(
 
     # Add interpolated relperm data in nonlinear parts:
     wo_new.table["KRW"] = weighted_value(
-        krw1(wo_new.table["SWN"]), krw2(wo_new.table["SWN"])
+        krw1(wo_new.table["SWN"]), krw2(wo_new.table["SWN"]), parameter
     )
     wo_new.table["KROW"] = weighted_value(
-        kro1(wo_new.table["SON"]), kro2(wo_new.table["SON"])
+        kro1(wo_new.table["SON"]), kro2(wo_new.table["SON"]), parameter
     )
 
     wo_new.set_endpoints_linearpart_krw(krwend=krwend_new, krwmax=krwmax_new)
@@ -303,7 +323,7 @@ def interpolate_wo(
         wo_new.table["SW"].max() - wo_new.table["SW"].min()
     )
     wo_new.table["PC"] = weighted_value(
-        pc1(wo_new.table["swn_pc_intp"]), pc2(wo_new.table["swn_pc_intp"])
+        pc1(wo_new.table["swn_pc_intp"]), pc2(wo_new.table["swn_pc_intp"]), parameter
     )
 
     wo_new.tag = _interpolate_tags(wo_low, wo_high, parameter, tag)
@@ -355,16 +375,11 @@ def interpolate_go(
     pc1 = normalize_pc(go_low)
     pc2 = normalize_pc(go_high)
 
-    # Construct a lambda function that can be applied to both relperm values
-    # and endpoints
-    def weighted_value(a, b):
-        return a * (1.0 - parameter) + b * parameter
-
     # Interpolate saturation endpoints
-    swl_new = weighted_value(go_low.swl, go_high.swl)
-    sgcr_new = weighted_value(go_low.sgcr, go_high.sgcr)
-    sorg_new = weighted_value(go_low.sorg, go_high.sorg)
-    sgro_new = weighted_value(go_low.sgro, go_high.sgro)
+    swl_new = weighted_value(go_low.swl, go_high.swl, parameter)
+    sgcr_new = weighted_value(go_low.sgcr, go_high.sgcr, parameter)
+    sorg_new = weighted_value(go_low.sorg, go_high.sorg, parameter)
+    sgro_new = weighted_value(go_low.sgro, go_high.sgro, parameter)
 
     if not (np.isclose(sgro_new, sgcr_new) or np.isclose(sgro_new, 0.0)):
         raise ValueError(
@@ -373,10 +388,14 @@ def interpolate_go(
         )
 
     # Interpolate kr at saturation endpoints
-    krgmax_new = weighted_value(go_low.table["KRG"].max(), go_high.table["KRG"].max())
-    krgend_new = weighted_value(krg1(1), krg2(1))
-    kromax_new = weighted_value(go_low.table["KROG"].max(), go_high.table["KROG"].max())
-    kroend_new = weighted_value(kro1(1), kro2(1))
+    krgmax_new = weighted_value(
+        go_low.table["KRG"].max(), go_high.table["KRG"].max(), parameter
+    )
+    krgend_new = weighted_value(float(krg1(1)), float(krg2(1)), parameter)
+    kromax_new = weighted_value(
+        go_low.table["KROG"].max(), go_high.table["KROG"].max(), parameter
+    )
+    kroend_new = weighted_value(float(kro1(1)), float(kro2(1)), parameter)
 
     # Construct the new GasOil object, with interpolated
     # endpoints:
@@ -386,13 +405,13 @@ def interpolate_go(
 
     # Add interpolated relperm data in nonlinear parts:
     go_new.table["KRG"] = weighted_value(
-        krg1(go_new.table["SGN"]), krg2(go_new.table["SGN"])
+        krg1(go_new.table["SGN"]), krg2(go_new.table["SGN"]), parameter
     )
     go_new.table["KROG"] = weighted_value(
-        kro1(go_new.table["SON"]), kro2(go_new.table["SON"])
+        kro1(go_new.table["SON"]), kro2(go_new.table["SON"]), parameter
     )
     go_new.table["PC"] = weighted_value(
-        pc1(go_new.table["SGN"]), pc2(go_new.table["SGN"])
+        pc1(go_new.table["SGN"]), pc2(go_new.table["SGN"]), parameter
     )
 
     # We need a new fit-for-purpose normalized sgnpc
@@ -400,7 +419,7 @@ def interpolate_go(
         go_new.table["SG"].max() - go_new.table["SG"].min()
     )
     go_new.table["PC"] = weighted_value(
-        pc1(go_new.table["sgn_pc_intp"]), pc2(go_new.table["sgn_pc_intp"])
+        pc1(go_new.table["sgn_pc_intp"]), pc2(go_new.table["sgn_pc_intp"]), parameter
     )
 
     go_new.set_endpoints_linearpart_krog(kroend=kroend_new, kromax=kromax_new)

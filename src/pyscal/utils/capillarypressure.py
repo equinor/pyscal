@@ -1,20 +1,23 @@
 """Support functions for capillary pressure"""
 
+from __future__ import annotations
+
 import math
+
+import pandas as pd
 
 from pyscal.constants import MAX_EXPONENT_PC
 
 
 def simple_J(
-    # sw: Union[float, Iterable[float]],
-    sw: float,
+    sw: float | pd.Series[float],
     a: float,
     b: float,
     poro_ref: float,
     perm_ref: float,
     drho: float,
     g: float = 9.81,
-) -> float:  # Union[float, Iterable[float]]:
+) -> float | pd.Series[float]:
     r"""Calculate capillary pressure with bar as unit
 
     RMS version:
@@ -58,7 +61,9 @@ def simple_J(
     return _height_to_pc(height, drho, g)
 
 
-def _height_to_pc(height: float, drho: float, g: float) -> float:
+def _height_to_pc(
+    height: float | pd.Series[float], drho: float, g: float
+) -> float | pd.Series[float]:
     """From height above free water level, multiplication
     with density difference and gravity gives capillary pressure.
 
@@ -73,7 +78,9 @@ def _height_to_pc(height: float, drho: float, g: float) -> float:
     return height * drho / 1000 * g / 100.0
 
 
-def _sw_to_simpleJ(sw: float, a: float, b: float) -> float:
+def _sw_to_simpleJ(
+    sw: float | pd.Series[float], a: float, b: float
+) -> float | pd.Series[float]:
     """Convert a water saturation value to the associated J-value,
     using RMS simple-J"""
     return float(a) * sw ** float(b)
@@ -85,7 +92,9 @@ def _simpleJ_to_sw(J: float, a: float, b: float) -> float:
     return math.pow(J / float(a), 1.0 / float(b))
 
 
-def _simpleJ_to_height(J: float, poro_ref: float, perm_ref: float) -> float:
+def _simpleJ_to_height(
+    J: float | pd.Series[float], poro_ref: float, perm_ref: float
+) -> float | pd.Series[float]:
     """Convert a J-function value to a height-value in meters
 
     This scales the J-value with the inverse of characteristic
@@ -101,7 +110,7 @@ def _simpleJ_to_height(J: float, poro_ref: float, perm_ref: float) -> float:
     return J * math.sqrt(float(poro_ref) / float(perm_ref))
 
 
-def _height_to_simpleJ(H: float, poro_ref: float, perm_ref: float):
+def _height_to_simpleJ(H: float, poro_ref: float, perm_ref: float) -> float:
     """Convert a height value (in meters) to a corresponding J-function
 
     This scales the J-value with the characteristic

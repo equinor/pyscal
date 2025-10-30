@@ -261,10 +261,10 @@ def pyscal_main(
         __name__, {"debug": debug, "verbose": verbose, "output": output}
     )
 
-    parametertable = load_relperm_df(parametertable, sheet_name=sheet_name)
+    parametertable_df = load_relperm_df(parametertable, sheet_name=sheet_name)
 
-    assert isinstance(parametertable, pd.DataFrame)
-    logger.debug("Input data:\n%s", parametertable.to_string(index=False))
+    assert isinstance(parametertable_df, pd.DataFrame)
+    logger.debug("Input data:\n%s", parametertable_df.to_string(index=False))
 
     if int_param_go is not None and int_param_wo is None:
         raise ValueError("Don't use int_param_go alone, only int_param_wo")
@@ -272,18 +272,18 @@ def pyscal_main(
         raise TypeError(
             "SATNUM specific interpolation parameters are not supported in pyscalcli"
         )
-    if int_param_wo is not None and "CASE" not in parametertable:
+    if int_param_wo is not None and "CASE" not in parametertable_df:
         raise ValueError(
             "Interpolation parameter provided but no CASE column in input data"
         )
-    if "SATNUM" not in parametertable:
+    if "SATNUM" not in parametertable_df:
         raise ValueError("There is no column called SATNUM in the input data")
 
-    if "CASE" in parametertable:
+    if "CASE" in parametertable_df:
         # Then we should do interpolation
         if int_param_wo is None:
             raise ValueError("No interpolation parameters provided")
-        scalrec_list = create_scal_recommendation_list(parametertable, h=delta_s)
+        scalrec_list = create_scal_recommendation_list(parametertable_df, h=delta_s)
         assert isinstance(scalrec_list[1], SCALrecommendation)
         if scalrec_list[1].type == WaterOilGas:
             logger.info(
@@ -300,7 +300,7 @@ def pyscal_main(
             wog_list = scalrec_list.interpolate(int_param_wo, None, h=delta_s)
     else:
         wog_list = create_pyscal_list(
-            parametertable, h=delta_s
+            parametertable_df, h=delta_s
         )  # can be both water-oil, water-oil-gas, or gas-water
 
     family = 2 if family2 or wog_list.pyscaltype == GasWater else 1
