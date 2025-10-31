@@ -168,7 +168,7 @@ def test_df():
             .dropna()
             .reset_index(drop=True)
         )
-        ecl_inc = res2df.satfunc.df2ecl(base_df_swof)
+        ecl_inc = res2df.satfunc.df2res(base_df_swof)
         dframe_from_inc = res2df.satfunc.df(ecl_inc)
         pd.testing.assert_frame_equal(base_df_swof, dframe_from_inc)
 
@@ -180,7 +180,7 @@ def test_df():
             .dropna()
             .reset_index(drop=True)
         )
-        ecl_inc = res2df.satfunc.df2ecl(base_df_sgof)
+        ecl_inc = res2df.satfunc.df2res(base_df_sgof)
         dframe_from_inc = res2df.satfunc.df(ecl_inc)
         pd.testing.assert_frame_equal(base_df_sgof, dframe_from_inc, check_like=True)
 
