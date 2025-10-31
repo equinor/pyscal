@@ -1,8 +1,12 @@
 """Wateroil module"""
 
+from __future__ import annotations
+
 import math
 from typing import Optional
 
+import matplotlib
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy.interpolate import PchipInterpolator, interp1d
@@ -295,7 +299,7 @@ class WaterOil:
                         f"Failed to parse column {col} as numbers for add_fromtable()"
                     ) from err
 
-        if (dframe[swcolname].diff() < 0).any():
+        if (dframe[swcolname].diff() < 0).any():  # type: ignore[operator]
             raise ValueError("SW data not sorted")
         if sorw is None and krwcolname in dframe:
             sorw = float(dframe[swcolname].max()) - estimate_diffjumppoint(
@@ -327,7 +331,7 @@ class WaterOil:
             if not np.isclose(dframe[swcolname].min(), self.table["SW"].min()):
                 raise ValueError("Incompatible swl")
             # Verify that incoming data is increasing (or level):
-            if not (dframe[krwcolname].diff().dropna() > -epsilon).all():
+            if not (dframe[krwcolname].diff().dropna() > -epsilon).all():  # type: ignore[operator]
                 raise ValueError("Incoming KRW not increasing")
             if sum(nonlinearpart) >= 2:
                 pchip = PchipInterpolator(
@@ -374,7 +378,7 @@ class WaterOil:
                 socr = 1 - float(self.table["SW"].min())
             if not np.isclose(dframe[swcolname].min(), self.table["SW"].min()):
                 raise ValueError("Incompatible swl")
-            if not (dframe[krowcolname].diff().dropna() < epsilon).all():
+            if not (dframe[krowcolname].diff().dropna() < epsilon).all():  # type: ignore[operator]
                 raise ValueError("Incoming KROW Not decreasing")
             if dframe[krowcolname].max() > 1.0:
                 raise ValueError("KROW is above 1 in incoming table")
@@ -419,7 +423,7 @@ class WaterOil:
             # If nonzero, then it must be decreasing:
             if (
                 dframe[pccolname].abs().sum() > 0
-                and not (dframe[pccolname].diff().dropna() < 0.0).all()
+                and not (dframe[pccolname].diff().dropna() < 0.0).all()  # type: ignore[operator]
             ):
                 raise ValueError("Incoming pc not decreasing")
             pchip = PchipInterpolator(
@@ -700,7 +704,6 @@ class WaterOil:
         # swnpc is a normalized saturation, but normalized with
         # respect to swirr, not to swl (the swirr here is sometimes
         # called 'swirra' - asymptotic swirr)
-
         self.table["PC"] = simple_J(
             self.table["SWNPC"], a, b, poro_ref, perm_ref, drho, g
         )
@@ -856,7 +859,7 @@ class WaterOil:
         ao: float,
         swr: Optional[float] = None,
         sor: Optional[float] = None,
-    ):
+    ) -> None:
         """Add capillary pressure from the Skjæveland correlation,
 
         Doc: https://wiki.equinor.com/wiki/index.php/Res:The_Skjaeveland_correlation_for_capillary_pressure
@@ -1111,12 +1114,16 @@ class WaterOil:
         if "KRW" not in self.table:
             logger.error("krw data not found")
             error = True
-        if not (self.table["SW"].diff().dropna().round(10) > -epsilon).all():
+        if not (
+            self.table["SW"].diff().dropna().round(10) > -epsilon  # type: ignore[operator]
+        ).all():
             logger.error("SW data not strictly increasing")
             error = True
         if (
             "KRW" in self.table
-            and not (self.table["KRW"].diff().dropna().round(10) >= -epsilon).all()
+            and not (
+                self.table["KRW"].diff().dropna().round(10) >= -epsilon  # type: ignore[operator]
+            ).all()
         ):
             logger.error("KRW data not monotonically increasing")
             error = True
@@ -1127,7 +1134,9 @@ class WaterOil:
 
             if (
                 "KROW" in self.table.columns
-                and not (self.table["KROW"].diff().dropna().round(10) <= epsilon).all()
+                and not (
+                    self.table["KROW"].diff().dropna().round(10) <= epsilon  # type: ignore[operator]
+                ).all()
             ):
                 # In normal Eclipse runs, krow needs to be level or decreasing.
                 # In hysteresis runs, it needs to be strictly decreasing, that must
@@ -1137,7 +1146,9 @@ class WaterOil:
         if (
             "PC" in self.table.columns
             and self.table["PC"][0] > -epsilon
-            and not (self.table["PC"].diff().dropna().round(10) < epsilon).all()
+            and not (
+                self.table["PC"].diff().dropna().round(10) < epsilon  # type: ignore[operator]
+            ).all()
         ):
             logger.error("PC data not strictly decreasing")
             error = True
@@ -1330,7 +1341,7 @@ class WaterOil:
 
     def plotpc(
         self,
-        mpl_ax=None,
+        mpl_ax: Optional[matplotlib.axes.Axes] = None,
         color: str = "blue",
         alpha: float = 1,
         linewidth: int = 1,
@@ -1343,9 +1354,6 @@ class WaterOil:
         If mpl_ax is supplied, the curve will be drawn on
         that, if not, a new axis (plot) will be made
         """
-        # Lazy import for speed reasons.
-        import matplotlib  # noqa: PLC0415
-        import matplotlib.pyplot as plt  # noqa: PLC0415
 
         if mpl_ax is None:
             matplotlib.style.use("ggplot")
@@ -1362,7 +1370,7 @@ class WaterOil:
             c=color,
             alpha=alpha,
             label=label,
-            legend=None,
+            legend=False,
             linewidth=linewidth,
             linestyle=linestyle,
         )
@@ -1371,7 +1379,7 @@ class WaterOil:
 
     def plotkrwkrow(
         self,
-        mpl_ax=None,
+        mpl_ax: Optional[matplotlib.axes.Axes] = None,
         color: str = "blue",
         alpha: float = 1,
         linewidth: float = 1,
@@ -1385,9 +1393,6 @@ class WaterOil:
         If the argument 'mpl_ax' is not supplied, a new plot
         window will be made. If supplied, it will draw on
         the specified axis."""
-        # Lazy import for speed reaons.
-        import matplotlib  # noqa: PLC0415
-        import matplotlib.pyplot as plt  # noqa: PLC0415
 
         if mpl_ax is None:
             matplotlib.style.use("ggplot")
@@ -1403,7 +1408,7 @@ class WaterOil:
             y="KRW",
             c=color,
             alpha=alpha,
-            legend=None,
+            legend=False,
             label=label,
             linewidth=linewidth,
             linestyle=linestyle,
@@ -1416,7 +1421,7 @@ class WaterOil:
             c=color,
             alpha=alpha,
             label=None,
-            legend=None,
+            legend=False,
             linewidth=linewidth,
             linestyle=linestyle,
             marker=marker,

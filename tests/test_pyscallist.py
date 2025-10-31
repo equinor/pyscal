@@ -19,7 +19,7 @@ from pyscal.factory import (
     create_scal_recommendation_list,
     load_relperm_df,
 )
-from pyscal.utils.testing import sat_table_str_ok
+from tests.utils import sat_table_str_ok
 
 try:
     import res2df

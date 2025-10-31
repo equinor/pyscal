@@ -13,7 +13,7 @@ from hypothesis import given
 
 from pyscal import WaterOil
 from pyscal.constants import SWINTEGERS
-from pyscal.utils.testing import (
+from tests.utils import (
     check_linear_sections,
     check_table,
     float_df_checker,

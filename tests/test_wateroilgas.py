@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 
 from pyscal import GasOil, WaterOil, WaterOilGas
-from pyscal.utils.testing import sat_table_str_ok
+from tests.utils import sat_table_str_ok
 
 try:
     import opm.io

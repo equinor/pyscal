@@ -4,6 +4,8 @@ import logging
 from typing import Callable, Optional, Tuple, Union
 
 import numpy as np
+import numpy.typing as npt
+import pandas as pd
 from scipy.interpolate import interp1d
 
 from pyscal import GasOil, WaterOil
@@ -50,10 +52,10 @@ def normalize_nonlinpart_wo(curve: WaterOil) -> Tuple[Callable, Callable]:
     # saturation values, but we do not want to assume they
     # are there or even correct, therefore we effectively
     # recalculate them
-    def sw_fn(swn):
+    def sw_fn(swn: pd.Series) -> pd.Series:
         return curve.swcr + swn * (1.0 - curve.swcr - curve.sorw)
 
-    def krw_fn(swn):
+    def krw_fn(swn: pd.Series) -> npt.NDArray:
         return krw_interp(sw_fn(swn))
 
     kro_interp = interp1d(
@@ -64,10 +66,10 @@ def normalize_nonlinpart_wo(curve: WaterOil) -> Tuple[Callable, Callable]:
         fill_value=(0.0, curve.table["KROW"].max()),
     )
 
-    def so_fn(son):
+    def so_fn(son: pd.Series) -> pd.Series:
         return curve.socr + son * (1.0 - curve.socr - curve.swl)
 
-    def kro_fn(son):
+    def kro_fn(son: pd.Series) -> npt.NDArray:
         return kro_interp(so_fn(son))
 
     return (krw_fn, kro_fn)
@@ -112,10 +114,10 @@ def normalize_nonlinpart_go(curve: GasOil) -> Tuple[Callable, Callable]:
     # saturation values, but we do not want to assume they
     # are there or even correct, therefore we effectively
     # recalculate them
-    def sg_fn(sgn):
+    def sg_fn(sgn: pd.Series) -> pd.Series:
         return curve.sgcr + sgn * (1.0 - curve.swl - curve.sgcr - curve.sorg)
 
-    def krg_fn(sgn):
+    def krg_fn(sgn: pd.Series) -> npt.NDArray:
         return krg_interp(sg_fn(sgn))
 
     kro_interp = interp1d(
@@ -126,12 +128,12 @@ def normalize_nonlinpart_go(curve: GasOil) -> Tuple[Callable, Callable]:
         fill_value=(0.0, curve.table["KROG"].max()),
     )
 
-    def so_fn(son):
+    def so_fn(son: pd.Series) -> pd.Series:
         return (
             curve.swl + curve.sorg + son * (1.0 - curve.swl - curve.sorg - curve.sgro)
         )
 
-    def kro_fn(son):
+    def kro_fn(son: pd.Series) -> npt.NDArray:
         return kro_interp(so_fn(son))
 
     return (krg_fn, kro_fn)
@@ -179,10 +181,10 @@ def normalize_pc(curve: Union[WaterOil, GasOil]) -> Callable:
     )
 
     # Map from normalized value to real saturation domain:
-    def sx_fn(sxn):
+    def sx_fn(sxn: pd.Series) -> pd.Series:
         return curve.table[sat_col].min() + sxn * (max_sx - min_sx)
 
-    def pc_fn(sxn):
+    def pc_fn(sxn: pd.Series) -> npt.NDArray:
         return pc_interp(sx_fn(sxn))
 
     return pc_fn
@@ -193,7 +195,7 @@ def _interpolate_tags(
     high: Union[WaterOil, GasOil],
     parameter: float,
     tag: Optional[str],
-):
+) -> str:
     """Preserve tag/comment. Depending on context, the
     interpolation parameter may or may not make sense. In a SCALrecommendation
     interpolation, the new tag should be constructed in the caller of this function.
@@ -266,7 +268,7 @@ def interpolate_wo(
 
     # Construct a function that can be applied to both relperm values
     # and endpoints
-    def weighted_value(a, b):
+    def weighted_value(a: float, b: float) -> float:
         return a * (1.0 - parameter) + b * parameter
 
     # Interpolate saturation endpoints
@@ -357,7 +359,7 @@ def interpolate_go(
 
     # Construct a lambda function that can be applied to both relperm values
     # and endpoints
-    def weighted_value(a, b):
+    def weighted_value(a: float, b: float) -> float:
         return a * (1.0 - parameter) + b * parameter
 
     # Interpolate saturation endpoints
