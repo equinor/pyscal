@@ -1,8 +1,10 @@
 """Container class for list of Pyscal objects"""
 
+from __future__ import annotations
+
 import warnings
 from pathlib import Path
-from typing import List, Optional, Type, Union
+from typing import TypeAlias
 
 import pandas as pd
 
@@ -15,7 +17,16 @@ from pyscal import (
     getLogger_pyscal,
 )
 
-PyscalObjects = Union[WaterOil, GasOil, GasWater, WaterOilGas, SCALrecommendation]
+PyscalObjects: TypeAlias = (
+    WaterOil | GasOil | GasWater | WaterOilGas | SCALrecommendation
+)
+AllowedPyscalTypes: TypeAlias = (
+    type[WaterOil]
+    | type[GasOil]
+    | type[GasWater]
+    | type[WaterOilGas]
+    | type[SCALrecommendation]
+)
 
 logger = getLogger_pyscal(__name__)
 
@@ -35,9 +46,11 @@ class PyscalList:
         pyscal_list (list): List of objects if already ready. Can be empty or None.
     """
 
-    def __init__(self, pyscal_list: Optional[List[PyscalObjects]] = None) -> None:
-        self.pyscaltype: Optional[Type] = None
-        self.pyscal_list: List[PyscalObjects] = []
+    def __init__(
+        self, pyscal_list: list[PyscalObjects] | PyscalList | None = None
+    ) -> None:
+        self.pyscaltype: AllowedPyscalTypes | None = None
+        self.pyscal_list: list[PyscalObjects] = []
         if isinstance(pyscal_list, list):
             for pyscal_obj in pyscal_list:
                 self.append(pyscal_obj)
@@ -45,7 +58,7 @@ class PyscalList:
             for idx in range(len(pyscal_list)):
                 self.append(pyscal_list[idx + 1])
 
-    def append(self, pyscal_obj: Optional[PyscalObjects]) -> None:
+    def append(self, pyscal_obj: list[PyscalObjects] | PyscalObjects | None) -> None:
         """Append a pyscal object to the list
 
         Args:
@@ -68,7 +81,7 @@ class PyscalList:
             (WaterOil, GasOil, GasWater, WaterOilGas, SCALrecommendation),
         ):
             raise ValueError("Not a pyscal object: " + str(pyscal_obj))
-        if not self.pyscaltype:
+        if self.pyscaltype is None:
             self.pyscaltype = type(pyscal_obj)
             # Beware, this list can be of type WaterOilGas, with
             # WaterOilGas objects where gasoil is None, effectively
@@ -210,7 +223,7 @@ class PyscalList:
             dframe = dframe.sort_values(sort_rows_on)
         return dframe
 
-    def relevant_keywords(self, family: int = 1, slgof: bool = False) -> List[str]:
+    def relevant_keywords(self, family: int = 1, slgof: bool = False) -> list[str]:
         """Construct a list of relevant Eclipse keywords for the data in this
         Pyscallist object. This depends on the Pyscaltype, and which family is
         requested"""
@@ -275,7 +288,7 @@ class PyscalList:
         )
         return "\n".join([getattr(self, keyword)() for keyword in keywords])
 
-    def dump_family_1(self, filename: Optional[str] = None, slgof: bool = False) -> str:
+    def dump_family_1(self, filename: str | None = None, slgof: bool = False) -> str:
         """Dumps family 1 Eclipse saturation tables to one
         filename. This means SWOF + SGOF (SGOF only if relevant)
 
@@ -290,11 +303,11 @@ class PyscalList:
         string = self.build_eclipse_data(family=1, slgof=slgof)
         if filename is not None:
             if not Path(filename).parent.exists():
-                raise IOError(f"Output directory not found '{Path(filename).parent}'")
+                raise OSError(f"Output directory not found '{Path(filename).parent}'")
             Path(filename).write_text(string, encoding="utf-8")
         return string
 
-    def dump_family_2(self, filename: Optional[str] = None) -> str:
+    def dump_family_2(self, filename: str | None = None) -> str:
         """Dumps family 2 Eclipse saturation tables to one
         filename. This means SWFN + SGFN + SOF3 (SOF3 only for WaterOilGas)
 
@@ -307,17 +320,17 @@ class PyscalList:
         string = self.build_eclipse_data(family=2, slgof=False)
         if filename is not None:
             if not Path(filename).parent.exists():
-                raise IOError(f"Output directory not found '{Path(filename).parent}'")
+                raise OSError(f"Output directory not found '{Path(filename).parent}'")
 
             Path(filename).write_text(string, encoding="utf-8")
         return string
 
     def interpolate(
         self,
-        int_params_wo: Union[float, int, List[float]],
-        int_params_go: Optional[Union[float, int, List[Optional[float]]]] = None,
-        h: Optional[float] = None,
-    ) -> "PyscalList":
+        int_params_wo: float | int | list[float],
+        int_params_go: float | int | list[float | None] | None = None,
+        h: float | None = None,
+    ) -> PyscalList:
         """This function will interpolate each SCALrecommendation
         object to the chosen parameters
 
@@ -374,7 +387,7 @@ class PyscalList:
     def _make_ecl_output(
         self,
         keyword: str,
-        write_to_filename: Optional[str] = None,  # Deprecated
+        write_to_filename: str | None = None,  # Deprecated
     ) -> str:
         """Internal helper function for constructing Eclipse include file strings
         for individual keywords.
@@ -400,28 +413,28 @@ class PyscalList:
             Path(write_to_filename).write_text(string, encoding="utf-8")
         return string
 
-    def SWOF(self, write_to_filename: Optional[str] = None) -> str:
+    def SWOF(self, write_to_filename: str | None = None) -> str:
         """Build SWOF string"""
         # _make_ecl_output() will warn about non-None filename being deprecated
         return self._make_ecl_output("SWOF", write_to_filename)
 
-    def SGOF(self, write_to_filename: Optional[str] = None) -> str:
+    def SGOF(self, write_to_filename: str | None = None) -> str:
         """Build SGOF string"""
         return self._make_ecl_output("SGOF", write_to_filename)
 
-    def SLGOF(self, write_to_filename: Optional[str] = None) -> str:
+    def SLGOF(self, write_to_filename: str | None = None) -> str:
         """Build SLGOF string"""
         return self._make_ecl_output("SLGOF", write_to_filename)
 
-    def SGFN(self, write_to_filename: Optional[str] = None) -> str:
+    def SGFN(self, write_to_filename: str | None = None) -> str:
         """Build SGFN string"""
         return self._make_ecl_output("SGFN", write_to_filename)
 
-    def SWFN(self, write_to_filename: Optional[str] = None) -> str:
+    def SWFN(self, write_to_filename: str | None = None) -> str:
         """Build SWFN string"""
         return self._make_ecl_output("SWFN", write_to_filename)
 
-    def SOF3(self, write_to_filename: Optional[str] = None) -> str:
+    def SOF3(self, write_to_filename: str | None = None) -> str:
         """Build SOF3 string"""
         return self._make_ecl_output("SOF3", write_to_filename)
 

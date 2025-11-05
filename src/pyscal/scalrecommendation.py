@@ -1,7 +1,6 @@
 """SCALrecommendation, container for low, base and high WaterOilGas objects"""
 
 import copy
-from typing import Optional, Set, Type, Union
 
 import numpy as np
 
@@ -27,10 +26,10 @@ class SCALrecommendation:
 
     def __init__(
         self,
-        low: Union[WaterOilGas, GasWater],
-        base: Union[WaterOilGas, GasWater],
-        high: Union[WaterOilGas, GasWater],
-        tag: Optional[str] = None,
+        low: WaterOilGas | GasWater,
+        base: WaterOilGas | GasWater,
+        high: WaterOilGas | GasWater,
+        tag: str | None = None,
         h: float = 0.01,
     ) -> None:
         """Set up a SCAL recommendation curve set from WaterOilGas objects
@@ -44,11 +43,11 @@ class SCALrecommendation:
         """
 
         self.h: float = h
-        self.tag: Optional[str] = tag
-        self.low: Union[WaterOilGas, GasWater]
-        self.base: Union[WaterOilGas, GasWater]
-        self.high: Union[WaterOilGas, GasWater]
-        self.type: Type
+        self.tag: str | None = tag
+        self.low: WaterOilGas | GasWater
+        self.base: WaterOilGas | GasWater
+        self.high: WaterOilGas | GasWater
+        self.type: type
 
         if (
             isinstance(low, WaterOilGas)
@@ -77,11 +76,9 @@ class SCALrecommendation:
         elif any([self.low.fast, self.base.fast, self.high.fast]):
             self.fast = self.low.fast = self.base.fast = self.high.fast = False
             logger.warning(
-                (
-                    "One or more of the low/base/high objects are set to be run in "
-                    "fast mode, but not all. Fast mode set to false in all objects. "
-                    "Code is run in normal mode."
-                )
+                "One or more of the low/base/high objects are set to be run in "
+                "fast mode, but not all. Fast mode set to false in all objects. "
+                "Code is run in normal mode."
             )
 
     # User should add capillary pressure explicitly by calling add**
@@ -114,9 +111,9 @@ class SCALrecommendation:
     def interpolate(
         self,
         parameter: float,
-        parameter2: Optional[float] = None,
-        h: Optional[float] = None,
-    ) -> Union[WaterOilGas, GasWater]:
+        parameter2: float | None = None,
+        h: float | None = None,
+    ) -> WaterOilGas | GasWater:
         """Interpolate between low, base and high
 
         Endpoints are located for input curves, and interpolated
@@ -171,8 +168,8 @@ class SCALrecommendation:
 
         # Initialize wateroil and gasoil curves to be filled with
         # interpolated curves:
-        interpolant: Union[WaterOilGas, GasWater]
-        tags: Set[str] = set()
+        interpolant: WaterOilGas | GasWater
+        tags: set[str] = set()
         if do_wateroil or do_gaswater:
             assert self.low.wateroil is not None
             assert self.base.wateroil is not None

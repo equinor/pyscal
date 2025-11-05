@@ -1,7 +1,5 @@
 """Container object for one WaterOil and one GasOil object"""
 
-from typing import Optional
-
 import numpy as np
 import pandas as pd
 
@@ -51,16 +49,16 @@ class WaterOilGas:
         sorw: float = 0.0,
         sorg: float = 0.0,
         sgcr: float = 0.0,
-        h: Optional[float] = None,
+        h: float | None = None,
         tag: str = "",
         fast: bool = False,
     ) -> None:
         """Sets up the saturation range for three phases"""
         self.fast: bool = fast
-        self.wateroil: Optional[WaterOil] = WaterOil(
+        self.wateroil: WaterOil | None = WaterOil(
             swirr=swirr, swl=swl, swcr=swcr, sorw=sorw, h=h, tag=tag, fast=fast
         )
-        self.gasoil: Optional[GasOil] = GasOil(
+        self.gasoil: GasOil | None = GasOil(
             swirr=swirr, sgcr=sgcr, sorg=sorg, swl=swl, h=h, tag=tag, fast=fast
         )
 

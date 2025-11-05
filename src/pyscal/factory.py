@@ -3,8 +3,9 @@
 import csv
 import warnings
 import zipfile
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Any, Dict, Iterable, List, Literal, Optional, Set, Union, cast
+from typing import Any, Literal, cast
 
 import numpy as np
 import openpyxl
@@ -133,7 +134,7 @@ EngineType = Literal["xlrd", "openpyxl"]
 
 
 def create_water_oil(
-    params: Optional[Dict[str, float]] = None, fast: bool = False
+    params: dict[str, float] | None = None, fast: bool = False
 ) -> WaterOil:
     """Create a WaterOil object from a dictionary of parameters.
 
@@ -176,7 +177,7 @@ def create_water_oil(
     # Allowing sending in NaN values, delete those keys.
     params = filter_nan_from_dict(params)
 
-    usedparams: Set[str] = set()
+    usedparams: set[str] = set()
 
     # Check if we should initialize swl from a swlheight parameter:
     if set(WO_SWL_FROM_HEIGHT).issubset(params):
@@ -196,20 +197,16 @@ def create_water_oil(
             )
     elif set(WO_SWLHEIGHT).issubset(params):
         raise ValueError(
-            (
-                "Can't initialize from SWLHEIGHT without sufficient "
-                f"simple-J parameters, needs all of: {WO_SWL_FROM_HEIGHT}"
-            )
+            "Can't initialize from SWLHEIGHT without sufficient "
+            f"simple-J parameters, needs all of: {WO_SWL_FROM_HEIGHT}"
         )
 
     # Should we have a swcr relative to swl?
     if set(WO_SWCR_ADD).issubset(params):
         if "swl" not in params:
             raise ValueError(
-                (
-                    "If swcr should be relative to swl, "
-                    "both swcr_add and swl must be provided"
-                )
+                "If swcr should be relative to swl, "
+                "both swcr_add and swl must be provided"
             )
         if "swcr" in params:
             raise ValueError("Do not provide both swcr and swcr_add at the same time")
@@ -310,20 +307,18 @@ def create_water_oil(
         wateroil.add_skjaeveland_pc(**params_skjaeveland_pc)
     else:
         logger.info(
-            (
-                "Missing or ambiguous parameters for capillary pressure in "
-                "WaterOil object. Using zero."
-            )
+            "Missing or ambiguous parameters for capillary pressure in "
+            "WaterOil object. Using zero."
         )
     if not wateroil.selfcheck():
         raise ValueError(
-            ("Incomplete WaterOil object, some parameters missing to factory")
+            "Incomplete WaterOil object, some parameters missing to factory"
         )
     return wateroil
 
 
 def create_gas_oil(
-    params: Optional[Dict[str, float]] = None, fast: bool = False
+    params: dict[str, float] | None = None, fast: bool = False
 ) -> GasOil:
     """Create a GasOil object from a dictionary of parameters.
 
@@ -362,7 +357,7 @@ def create_gas_oil(
     # Allowing sending in NaN values, delete those keys.
     params = filter_nan_from_dict(params)
 
-    usedparams: Set[str] = set()
+    usedparams: set[str] = set()
     # No requirements to the base objects, defaults are ok.
     gasoil = GasOil(**slicedict(params, GO_INIT), fast=fast)
     usedparams = usedparams.union(set(slicedict(params, GO_INIT).keys()))
@@ -410,15 +405,13 @@ def create_gas_oil(
     else:
         logger.warning("Missing or ambiguous parameters for oil curve in GasOil object")
     if not gasoil.selfcheck():
-        raise ValueError(
-            ("Incomplete GasOil object, some parameters missing to factory")
-        )
+        raise ValueError("Incomplete GasOil object, some parameters missing to factory")
 
     return gasoil
 
 
 def create_water_oil_gas(
-    params: Optional[Dict[str, float]] = None, fast: bool = False
+    params: dict[str, float] | None = None, fast: bool = False
 ) -> WaterOilGas:
     """Create a WaterOilGas object from a dictionary of parameters
 
@@ -442,7 +435,7 @@ def create_water_oil_gas(
     # For case insensitiveness, all keys are converted to lower case:
     params = {key.lower(): value for (key, value) in params.items()}
 
-    wateroil: Optional[WaterOil]
+    wateroil: WaterOil | None
     if sufficient_water_oil_params(params, failhard=False):
         wateroil = create_water_oil(params, fast=fast)
     else:
@@ -454,7 +447,7 @@ def create_water_oil_gas(
     if "swl" not in params and "swlheight" in params and wateroil is not None:
         params["swl"] = wateroil.swl
 
-    gasoil: Optional[GasOil]
+    gasoil: GasOil | None
     if sufficient_gas_oil_params(params, failhard=False):
         gasoil = create_gas_oil(params, fast=fast)
     else:
@@ -474,7 +467,7 @@ def create_water_oil_gas(
 
 
 def create_gas_water(
-    params: Optional[Dict[str, float]] = None, fast: bool = False
+    params: dict[str, float] | None = None, fast: bool = False
 ) -> GasWater:
     """Create a GasWater object.
 
@@ -516,9 +509,9 @@ def create_gas_water(
 
 
 def create_scal_recommendation(
-    params: Dict[str, Dict[str, float]],
+    params: dict[str, dict[str, float]],
     tag: str = "",
-    h: Optional[float] = None,
+    h: float | None = None,
     fast: bool = False,
 ) -> SCALrecommendation:
     """
@@ -583,9 +576,9 @@ def create_scal_recommendation(
     gasoil = all(sufficient_gas_oil_params(params[case]) for case in params)
     wateroil = all(sufficient_water_oil_params(params[case]) for case in params)
 
-    wog_low: Union[WaterOilGas, GasWater]
-    wog_base: Union[WaterOilGas, GasWater]
-    wog_high: Union[WaterOilGas, GasWater]
+    wog_low: WaterOilGas | GasWater
+    wog_base: WaterOilGas | GasWater
+    wog_high: WaterOilGas | GasWater
 
     if wateroil or gasoil:
         try:
@@ -624,7 +617,7 @@ def create_scal_recommendation(
 
 
 def load_relperm_df(
-    inputfile: Union[str, pd.DataFrame], sheet_name: Optional[str] = None
+    inputfile: str | pd.DataFrame, sheet_name: str | None = None
 ) -> pd.DataFrame:
     """Read CSV or XLSX from file and return scal/relperm data
     a dataframe.
@@ -683,7 +676,7 @@ def load_relperm_df(
             )
             logger.info("Parsed %s file %s", tabular_file_format.upper(), inputfile)
         else:
-            with open(inputfile, "r", encoding="utf-8") as csvfile:
+            with open(inputfile, encoding="utf-8") as csvfile:
                 try:
                     delimiter = (
                         csv.Sniffer()
@@ -707,7 +700,7 @@ def load_relperm_df(
         input_df = inputfile
     else:
         if isinstance(inputfile, str) and not Path(inputfile).is_file():
-            raise IOError("File not found " + str(inputfile))
+            raise OSError("File not found " + str(inputfile))
         raise ValueError("Unsupported argument " + str(inputfile))
     assert isinstance(input_df, pd.DataFrame)
 
@@ -807,7 +800,7 @@ def load_relperm_df(
     return input_df.sort_values("SATNUM")
 
 
-def alias_sgrw(params: Dict[str, Any]) -> Dict[str, Any]:
+def alias_sgrw(params: dict[str, Any]) -> dict[str, Any]:
     """Allow sgrw as an alias for sorw by remapping a
     sgrw value to a sorw value in an incoming dict.
 
@@ -836,7 +829,7 @@ def alias_sgrw(params: Dict[str, Any]) -> Dict[str, Any]:
     return params_copy
 
 
-def remap_validate_cases(casevalues: List[str]) -> List[str]:
+def remap_validate_cases(casevalues: list[str]) -> list[str]:
     """Remap values in the CASE column so that we can use aliases.
 
     All values are first made lower case, then
@@ -869,7 +862,7 @@ def remap_validate_cases(casevalues: List[str]) -> List[str]:
 
 
 def create_scal_recommendation_list(
-    input_df: pd.DataFrame, h: Optional[float] = None, fast: bool = False
+    input_df: pd.DataFrame, h: float | None = None, fast: bool = False
 ) -> PyscalList:
     """Requires SATNUM and CASE to be defined in the input data
 
@@ -907,7 +900,7 @@ def create_scal_recommendation_list(
 
 
 def create_pyscal_list(
-    relperm_params_df: pd.DataFrame, h: Optional[float] = None, fast: bool = False
+    relperm_params_df: pd.DataFrame, h: float | None = None, fast: bool = False
 ) -> PyscalList:
     """Create WaterOilGas, WaterOil, GasOil or GasWater list
     based on what is available
@@ -938,7 +931,7 @@ def create_pyscal_list(
 
 
 def create_wateroilgas_list(
-    relperm_params_df: pd.DataFrame, h: Optional[float] = None, fast: bool = False
+    relperm_params_df: pd.DataFrame, h: float | None = None, fast: bool = False
 ) -> PyscalList:
     """Create a PyscalList with WaterOilGas objects from
     a dataframe
@@ -965,7 +958,7 @@ def create_wateroilgas_list(
 
 
 def create_wateroil_list(
-    relperm_params_df: pd.DataFrame, h: Optional[float] = None, fast: bool = False
+    relperm_params_df: pd.DataFrame, h: float | None = None, fast: bool = False
 ) -> PyscalList:
     """Create a PyscalList with WaterOil objects from
     a dataframe
@@ -991,7 +984,7 @@ def create_wateroil_list(
 
 
 def create_gasoil_list(
-    relperm_params_df: pd.DataFrame, h: Optional[float] = None, fast: bool = False
+    relperm_params_df: pd.DataFrame, h: float | None = None, fast: bool = False
 ) -> PyscalList:
     """Create a PyscalList with GasOil objects from
     a dataframe
@@ -1017,7 +1010,7 @@ def create_gasoil_list(
 
 
 def create_gaswater_list(
-    relperm_params_df: pd.DataFrame, h: Optional[float] = None, fast: bool = False
+    relperm_params_df: pd.DataFrame, h: float | None = None, fast: bool = False
 ) -> PyscalList:
     """Create a PyscalList with WaterOilGas objects from
     a dataframe, to be used for GasWater
@@ -1067,7 +1060,7 @@ class PyscalFactory:
 
     @staticmethod
     def create_water_oil(
-        params: Optional[Dict[str, float]] = None, fast: bool = False
+        params: dict[str, float] | None = None, fast: bool = False
     ) -> WaterOil:
         warnings.warn(
             "PyscalFactory.create_water_oil is deprecated. "
@@ -1078,7 +1071,7 @@ class PyscalFactory:
 
     @staticmethod
     def create_gas_oil(
-        params: Optional[Dict[str, float]] = None, fast: bool = False
+        params: dict[str, float] | None = None, fast: bool = False
     ) -> GasOil:
         warnings.warn(
             "PyscalFactory.create_gas_oil is deprecated. "
@@ -1089,7 +1082,7 @@ class PyscalFactory:
 
     @staticmethod
     def create_water_oil_gas(
-        params: Optional[Dict[str, float]] = None, fast: bool = False
+        params: dict[str, float] | None = None, fast: bool = False
     ) -> WaterOilGas:
         warnings.warn(
             "PyscalFactory.create_water_oil_gas is deprecated. "
@@ -1100,7 +1093,7 @@ class PyscalFactory:
 
     @staticmethod
     def create_gas_water(
-        params: Optional[Dict[str, float]] = None, fast: bool = False
+        params: dict[str, float] | None = None, fast: bool = False
     ) -> GasWater:
         warnings.warn(
             "PyscalFactory.create_gas_water is deprecated. "
@@ -1111,9 +1104,9 @@ class PyscalFactory:
 
     @staticmethod
     def create_scal_recommendation(
-        params: Dict[str, Dict[str, float]],
+        params: dict[str, dict[str, float]],
         tag: str = "",
-        h: Optional[float] = None,
+        h: float | None = None,
         fast: bool = False,
     ) -> SCALrecommendation:
         warnings.warn(
@@ -1125,7 +1118,7 @@ class PyscalFactory:
 
     @staticmethod
     def load_relperm_df(
-        inputfile: Union[str, pd.DataFrame], sheet_name: Optional[str] = None
+        inputfile: str | pd.DataFrame, sheet_name: str | None = None
     ) -> pd.DataFrame:
         warnings.warn(
             "PyscalFactory.load_relperm_df is deprecated. "
@@ -1135,7 +1128,7 @@ class PyscalFactory:
         return load_relperm_df(inputfile, sheet_name)
 
     @staticmethod
-    def alias_sgrw(params: Dict[str, Any]) -> Dict[str, Any]:
+    def alias_sgrw(params: dict[str, Any]) -> dict[str, Any]:
         warnings.warn(
             "PyscalFactory.alias_sgrw is deprecated. Please use alias_sgrw instead.",
             DeprecationWarning,
@@ -1143,7 +1136,7 @@ class PyscalFactory:
         return alias_sgrw(params)
 
     @staticmethod
-    def remap_validate_cases(casevalues: List[str]) -> List[str]:
+    def remap_validate_cases(casevalues: list[str]) -> list[str]:
         warnings.warn(
             "PyscalFactory.remap_validate_cases is deprecated. "
             "Please use remap_validate_cases instead.",
@@ -1153,7 +1146,7 @@ class PyscalFactory:
 
     @staticmethod
     def create_scal_recommendation_list(
-        input_df: pd.DataFrame, h: Optional[float] = None, fast: bool = False
+        input_df: pd.DataFrame, h: float | None = None, fast: bool = False
     ) -> PyscalList:
         warnings.warn(
             "PyscalFactory.create_scal_recommendation_list is deprecated. "
@@ -1164,7 +1157,7 @@ class PyscalFactory:
 
     @staticmethod
     def create_pyscal_list(
-        relperm_params_df: pd.DataFrame, h: Optional[float] = None, fast: bool = False
+        relperm_params_df: pd.DataFrame, h: float | None = None, fast: bool = False
     ) -> PyscalList:
         warnings.warn(
             "PyscalFactory.create_pyscal_list is deprecated. "
@@ -1175,7 +1168,7 @@ class PyscalFactory:
 
     @staticmethod
     def create_wateroilgas_list(
-        relperm_params_df: pd.DataFrame, h: Optional[float] = None, fast: bool = False
+        relperm_params_df: pd.DataFrame, h: float | None = None, fast: bool = False
     ) -> PyscalList:
         warnings.warn(
             "PyscalFactory.create_wateroilgas_list is deprecated. "
@@ -1186,7 +1179,7 @@ class PyscalFactory:
 
     @staticmethod
     def create_wateroil_list(
-        relperm_params_df: pd.DataFrame, h: Optional[float] = None, fast: bool = False
+        relperm_params_df: pd.DataFrame, h: float | None = None, fast: bool = False
     ) -> PyscalList:
         warnings.warn(
             "PyscalFactory.create_wateroil_list is deprecated. "
@@ -1197,7 +1190,7 @@ class PyscalFactory:
 
     @staticmethod
     def create_gasoil_list(
-        relperm_params_df: pd.DataFrame, h: Optional[float] = None, fast: bool = False
+        relperm_params_df: pd.DataFrame, h: float | None = None, fast: bool = False
     ) -> PyscalList:
         warnings.warn(
             "PyscalFactory.create_gasoil_list is deprecated. "
@@ -1208,7 +1201,7 @@ class PyscalFactory:
 
     @staticmethod
     def create_gaswater_list(
-        relperm_params_df: pd.DataFrame, h: Optional[float] = None, fast: bool = False
+        relperm_params_df: pd.DataFrame, h: float | None = None, fast: bool = False
     ) -> PyscalList:
         warnings.warn(
             "PyscalFactory.create_gaswater_list is deprecated. "
@@ -1339,7 +1332,7 @@ def filter_nan_from_dict(params: dict) -> dict:
     return cleaned_params
 
 
-def infer_tabular_file_format(filename: Union[str, Path]) -> str:
+def infer_tabular_file_format(filename: str | Path) -> str:
     """Determine the file format of a file containing tabular data,
     distinguishes between csv, xls and xlsx
 
@@ -1386,7 +1379,7 @@ def infer_tabular_file_format(filename: Union[str, Path]) -> str:
     return ""
 
 
-def check_deprecated(params: Dict[str, Any]) -> None:
+def check_deprecated(params: dict[str, Any]) -> None:
     """Check for deprecated parameter names
 
     Args:

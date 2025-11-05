@@ -1,7 +1,7 @@
 """Object to represent GasWater, implemented as a Container
 object for one WaterOil and one GasOil object"""
 
-from typing import Callable, Optional
+from collections.abc import Callable
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -53,7 +53,7 @@ class GasWater:
         swcr: float = 0.0,
         sgrw: float = 0.0,
         sgcr: float = 0.0,
-        h: Optional[float] = None,
+        h: float | None = None,
         tag: str = "",
         fast: bool = False,
     ) -> None:
@@ -110,7 +110,7 @@ class GasWater:
         return False
 
     def add_corey_water(
-        self, nw: float = 2.0, krwend: float = 1.0, krwmax: Optional[float] = None
+        self, nw: float = 2.0, krwend: float = 1.0, krwmax: float | None = None
     ) -> None:
         """Add krw data through the Corey parametrization
 
@@ -147,7 +147,7 @@ class GasWater:
         e: float = 2.0,
         t: float = 2.0,
         krwend: float = 1.0,
-        krwmax: Optional[float] = None,
+        krwmax: float | None = None,
     ) -> None:
         """Add krw data through LET parametrization
 
@@ -270,7 +270,7 @@ class GasWater:
             crosspointcomment=crosspointcomment,
         )
 
-    def crosspoint(self) -> Optional[float]:
+    def crosspoint(self) -> float | None:
         """Calculate the sw value where krg == krw.
 
         Accuracy of this crosspoint depends on the resolution chosen
@@ -308,12 +308,12 @@ class GasWater:
 
     def plotkrwkrg(
         self,
-        mpl_ax: Optional[matplotlib.axes.Axes] = None,
+        mpl_ax: matplotlib.axes.Axes | None = None,
         color: str = "blue",
         alpha: float = 1,
         linewidth: int = 1,
         linestyle: str = "-",
-        marker: Optional[str] = None,
+        marker: str | None = None,
         label: str = "",
         logyscale: bool = False,
     ) -> None:
