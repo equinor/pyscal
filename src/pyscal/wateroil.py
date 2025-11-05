@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import math
-from typing import Optional
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -68,12 +67,12 @@ class WaterOil:
         swl: float = 0.0,
         swcr: float = 0.0,
         sorw: float = 0.0,
-        socr: Optional[float] = None,
-        h: Optional[float] = None,
+        socr: float | None = None,
+        h: float | None = None,
         tag: str = "",
         fast: bool = False,
-        _sgcr: Optional[float] = None,
-        _sgl: Optional[float] = None,
+        _sgcr: float | None = None,
+        _sgl: float | None = None,
     ) -> None:
         """Sets up the saturation range. Swirr is only relevant
         for the capillary pressure, not for relperm data.
@@ -237,8 +236,8 @@ class WaterOil:
         krwcomment: str = "",
         krowcomment: str = "",
         pccomment: str = "",
-        sorw: Optional[float] = None,
-        socr: Optional[float] = None,
+        sorw: float | None = None,
+        socr: float | None = None,
     ) -> None:
         """Interpolate relpermdata from a dataframe.
 
@@ -413,10 +412,8 @@ class WaterOil:
                 raise ValueError("max(sw) of incoming data not large enough")
             if np.isinf(dframe[pccolname]).any():
                 logger.warning(
-                    (
-                        "Infinity pc values detected. Will be dropped. "
-                        "Risk of extrapolation"
-                    )
+                    "Infinity pc values detected. Will be dropped. "
+                    "Risk of extrapolation"
                 )
             dframe = dframe.replace([np.inf, -np.inf], np.nan)
             dframe = dframe.dropna(subset=[pccolname], how="all")
@@ -435,7 +432,7 @@ class WaterOil:
             self.pccomment = "-- pc from tabular input" + pccomment + "\n"
 
     def add_corey_water(
-        self, nw: float = 2.0, krwend: float = 1.0, krwmax: Optional[float] = None
+        self, nw: float = 2.0, krwend: float = 1.0, krwmax: float | None = None
     ) -> None:
         """Add krw data through the Corey parametrization
 
@@ -469,7 +466,7 @@ class WaterOil:
         )
 
     def set_endpoints_linearpart_krw(
-        self, krwend: float, krwmax: Optional[float] = None
+        self, krwend: float, krwmax: float | None = None
     ) -> None:
         """Set linear parts of krw outside endpoints.
 
@@ -536,7 +533,7 @@ class WaterOil:
         e: float = 2.0,
         t: float = 2.0,
         krwend: float = 1.0,
-        krwmax: Optional[float] = None,
+        krwmax: float | None = None,
     ) -> None:
         """Add krw data through LET parametrization
 
@@ -857,8 +854,8 @@ class WaterOil:
         co: float,
         aw: float,
         ao: float,
-        swr: Optional[float] = None,
-        sor: Optional[float] = None,
+        swr: float | None = None,
+        sor: float | None = None,
     ) -> None:
         """Add capillary pressure from the Skjæveland correlation,
 
@@ -1233,8 +1230,8 @@ class WaterOil:
         self,
         header: bool = True,
         dataincommentrow: bool = True,
-        swcomment: Optional[str] = None,
-        crosspointcomment: Optional[str] = None,
+        swcomment: str | None = None,
+        crosspointcomment: str | None = None,
     ) -> str:
         """Return a SWFN keyword with data to Eclipse
 
@@ -1341,7 +1338,7 @@ class WaterOil:
 
     def plotpc(
         self,
-        mpl_ax: Optional[matplotlib.axes.Axes] = None,
+        mpl_ax: matplotlib.axes.Axes | None = None,
         color: str = "blue",
         alpha: float = 1,
         linewidth: int = 1,
@@ -1379,12 +1376,12 @@ class WaterOil:
 
     def plotkrwkrow(
         self,
-        mpl_ax: Optional[matplotlib.axes.Axes] = None,
+        mpl_ax: matplotlib.axes.Axes | None = None,
         color: str = "blue",
         alpha: float = 1,
         linewidth: float = 1,
         linestyle: str = "-",
-        marker: Optional[str] = None,
+        marker: str | None = None,
         label: str = "",
         logyscale: bool = False,
     ) -> None:

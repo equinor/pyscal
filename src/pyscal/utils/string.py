@@ -1,7 +1,6 @@
 """Utility functions for creating strings from pyscal"""
 
 import logging
-from typing import Dict, Optional
 
 import pandas as pd
 
@@ -15,7 +14,7 @@ def df2str(
     digits: int = 7,
     roundlevel: int = 9,
     header: bool = False,
-    monotonicity: Optional[Dict[str, MonotonicitySpec]] = None,
+    monotonicity: dict[str, MonotonicitySpec] | None = None,
 ) -> str:
     """
     Make a string representation of a dataframe with

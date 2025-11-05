@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 import logging
-from typing import Callable, Optional, TypeAlias, TypeVar, Union
+from collections.abc import Callable
+from typing import TypeAlias, TypeVar
 
 import numpy as np
 import numpy.typing as npt
@@ -160,7 +161,7 @@ def normalize_nonlinpart_go(
     return (krg_fn, kro_fn)
 
 
-def normalize_pc(curve: Union[WaterOil, GasOil]) -> Callable:
+def normalize_pc(curve: WaterOil | GasOil) -> Callable:
     """Normalize the capillary pressure curve.
 
     This is only normalized with respect to the
@@ -212,10 +213,10 @@ def normalize_pc(curve: Union[WaterOil, GasOil]) -> Callable:
 
 
 def _interpolate_tags(
-    low: Union[WaterOil, GasOil],
-    high: Union[WaterOil, GasOil],
+    low: WaterOil | GasOil,
+    high: WaterOil | GasOil,
     parameter: float,
-    tag: Optional[str],
+    tag: str | None,
 ) -> str:
     """Preserve tag/comment. Depending on context, the
     interpolation parameter may or may not make sense. In a SCALrecommendation
@@ -247,8 +248,8 @@ def interpolate_wo(
     wo_low: WaterOil,
     wo_high: WaterOil,
     parameter: float,
-    h: Optional[float] = None,
-    tag: Optional[str] = None,
+    h: float | None = None,
+    tag: str | None = None,
 ) -> WaterOil:
     """Interpolates between two water-oil curves.
 
@@ -335,8 +336,8 @@ def interpolate_go(
     go_low: GasOil,
     go_high: GasOil,
     parameter: float,
-    h: Optional[float] = None,
-    tag: Optional[str] = None,
+    h: float | None = None,
+    tag: str | None = None,
 ) -> GasOil:
     """Interpolates between two gas-oil curves.
 

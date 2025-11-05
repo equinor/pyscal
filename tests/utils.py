@@ -2,7 +2,6 @@
 
 import io
 from contextlib import suppress
-from typing import Union
 
 import numpy as np
 import pandas as pd
@@ -157,7 +156,7 @@ def check_table(dframe: pd.DataFrame) -> None:
         assert (dframe["KRG"] <= 1.0).all()
 
 
-def check_linear_sections(wo_or_go: Union[WaterOil, GasOil]) -> None:
+def check_linear_sections(wo_or_go: WaterOil | GasOil) -> None:
     """Check that the linear segments of a WaterOil or a GasOil
     object are linear."""
     if isinstance(wo_or_go, WaterOil):
@@ -202,7 +201,7 @@ def check_linear_sections(wo_or_go: Union[WaterOil, GasOil]) -> None:
 
 def float_df_checker(
     dframe: pd.DataFrame, idxcol: str, value: float, compcol: str, answer: float
-) -> Union[np.bool_, np.ndarray]:
+) -> np.bool_ | np.ndarray:
     """Looks up in a dataframe, selects the row where idxcol=value
     and compares the value in compcol with answer
 

@@ -1,7 +1,6 @@
 """Utility functions for computations on relative permeability curves"""
 
 import logging
-from typing import Optional
 
 import numpy as np
 import pandas as pd
@@ -73,8 +72,8 @@ def crosspoint(dframe: pd.DataFrame, satcol: str, kr1col: str, kr2col: str) -> f
 
 def estimate_diffjumppoint(
     table: pd.DataFrame,
-    xcol: Optional[str] = None,
-    ycol: Optional[str] = None,
+    xcol: str | None = None,
+    ycol: str | None = None,
     side: str = "right",
 ) -> float:
     """Estimate the point where the y-data jumps from being linear

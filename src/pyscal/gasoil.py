@@ -1,7 +1,5 @@
 """Representing a GasOil object"""
 
-from typing import Optional
-
 import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
@@ -63,14 +61,14 @@ class GasOil:
         self,
         swirr: float = 0.0,
         sgcr: float = 0.0,
-        h: Optional[float] = None,
+        h: float | None = None,
         swl: float = 0.0,
         sorg: float = 0.0,
         sgro: float = 0.0,
         tag: str = "",
         krgendanchor: str = "sorg",
         fast: bool = False,
-        _sgl: Optional[float] = None,  # Only to be used by GasWater.
+        _sgl: float | None = None,  # Only to be used by GasWater.
     ) -> None:
         if h is None:
             h = 0.01
@@ -343,10 +341,8 @@ class GasOil:
                 )
             if np.isinf(dframe[pccolname]).any():
                 logger.warning(
-                    (
-                        "Infinity pc values detected. Will be dropped, "
-                        "risk of extrapolation"
-                    )
+                    "Infinity pc values detected. Will be dropped, "
+                    "risk of extrapolation"
                 )
             dframe = dframe.replace([np.inf, -np.inf], np.nan)
             dframe = dframe.dropna(subset=[pccolname], how="all")
@@ -365,7 +361,7 @@ class GasOil:
             self.pccomment = "-- pc from tabular input" + pccomment + "\n"
 
     def set_endpoints_linearpart_krg(
-        self, krgend: float, krgmax: Optional[float] = None
+        self, krgend: float, krgmax: float | None = None
     ) -> None:
         """Set linear parts of krg outside endpoints.
 
@@ -416,7 +412,7 @@ class GasOil:
     def set_endpoints_linearpart_krog(
         self,
         kroend: float,
-        kromax: Optional[float] = None,
+        kromax: float | None = None,
     ) -> None:
         """Set linear parts of krog outside endpoints.
 
@@ -453,7 +449,7 @@ class GasOil:
         self.table.loc[0, "KROG"] = kromax
 
     def add_corey_gas(
-        self, ng: float = 2.0, krgend: float = 1.0, krgmax: Optional[float] = None
+        self, ng: float = 2.0, krgend: float = 1.0, krgmax: float | None = None
     ) -> None:
         """Add krg data through the Corey parametrization
 
@@ -484,7 +480,7 @@ class GasOil:
         self,
         nog: float = 2,
         kroend: float = 1,
-        kromax: Optional[float] = None,
+        kromax: float | None = None,
     ) -> None:
         """
         Add kro data through the Corey parametrization
@@ -520,7 +516,7 @@ class GasOil:
         e: float = 2.0,
         t: float = 2.0,
         krgend: float = 1.0,
-        krgmax: Optional[float] = None,
+        krgmax: float | None = None,
     ) -> None:
         """
         Add gas relative permability data through the LET parametrization
@@ -574,7 +570,7 @@ class GasOil:
         e: float = 2.0,
         t: float = 2.0,
         kroend: float = 1.0,
-        kromax: Optional[float] = None,
+        kromax: float | None = None,
     ) -> None:
         """Add oil (vs gas) relative permeability data through the Corey
         parametrization.
@@ -889,8 +885,8 @@ class GasOil:
         self,
         header: bool = True,
         dataincommentrow: bool = True,
-        sgcomment: Optional[str] = None,
-        crosspointcomment: Optional[str] = None,
+        sgcomment: str | None = None,
+        crosspointcomment: str | None = None,
     ) -> str:
         """
         Produce SGFN input for Eclipse reservoir simulator.
@@ -1013,13 +1009,13 @@ class GasOil:
 
     def plotkrgkrog(
         self,
-        mpl_ax: Optional[matplotlib.axes.Axes] = None,
+        mpl_ax: matplotlib.axes.Axes | None = None,
         color: str = "blue",
         alpha: float = 1.0,
         linewidth: int = 1,
         linestyle: str = "-",
-        marker: Optional[str] = None,
-        label: Optional[str] = None,
+        marker: str | None = None,
+        label: str | None = None,
         logyscale: bool = False,
     ) -> None:
         """Plot krg and krog

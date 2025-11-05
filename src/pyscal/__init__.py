@@ -2,7 +2,6 @@
 
 import logging
 import sys
-from typing import Dict, Optional, Union
 
 try:
     from .version import version
@@ -13,7 +12,7 @@ except ImportError:
 
 
 def getLogger_pyscal(
-    module_name: str = "pyscal", args_dict: Optional[Dict[str, Union[str, bool]]] = None
+    module_name: str = "pyscal", args_dict: dict[str, str | bool] | None = None
 ) -> logging.Logger:
     # pylint: disable=invalid-name
     """Provide a custom logger for pyscal

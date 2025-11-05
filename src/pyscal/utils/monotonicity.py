@@ -1,20 +1,13 @@
 """Monotonocity support functions for pyscal"""
 
 import logging
-import sys
-from typing import Dict, List, Union
+from typing import TypedDict
 
 import numpy as np
 import numpy.typing as npt
 import pandas as pd
 
 from pyscal.constants import EPSILON as epsilon
-
-if sys.version_info >= (3, 8):
-    from typing import TypedDict
-else:
-    from typing_extensions import TypedDict
-
 
 logger = logging.getLogger(__name__)
 
@@ -40,7 +33,7 @@ class MonotonicitySpec(TypedDict, total=False):
 
 
 def modify_dframe_monotonicity(
-    dframe: pd.DataFrame, monotonicity: Dict[str, MonotonicitySpec], digits: int
+    dframe: pd.DataFrame, monotonicity: dict[str, MonotonicitySpec], digits: int
 ) -> pd.DataFrame:
     """Modify a dataframe for monotonicity.
 
@@ -152,7 +145,7 @@ def modify_dframe_monotonicity(
 
 
 def clip_accumulate(
-    series: Union[List[float], pd.Series, npt.NDArray[np.floating]],
+    series: list[float] | pd.Series | npt.NDArray[np.floating],
     monotonicity: MonotonicitySpec,
 ) -> npt.NDArray[np.floating]:
     """
@@ -181,7 +174,7 @@ def clip_accumulate(
 
 
 def check_limits(
-    series: Union[List[float], pd.Series, npt.NDArray[np.floating]],
+    series: list[float] | pd.Series | npt.NDArray[np.floating],
     monotonicity: MonotonicitySpec,
     colname: str = "",
 ) -> None:
@@ -261,7 +254,7 @@ def check_almost_monotone(series: pd.Series, digits: int, sign: int) -> None:
 
 
 def validate_monotonicity_arg(
-    monotonicity: Dict[str, MonotonicitySpec], dframe_colnames: List[str]
+    monotonicity: dict[str, MonotonicitySpec], dframe_colnames: list[str]
 ) -> None:
     """
     Validate a dictionary with monotonicity arguments that

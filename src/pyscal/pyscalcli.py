@@ -5,7 +5,6 @@ import io
 import sys
 import traceback
 from pathlib import Path
-from typing import Optional
 
 import pandas as pd
 
@@ -225,10 +224,10 @@ def pyscal_main(
     verbose: bool = False,
     debug: bool = False,
     output: str = "relperm.inc",
-    delta_s: Optional[float] = None,
-    int_param_wo: Optional[float] = None,
-    int_param_go: Optional[float] = None,
-    sheet_name: Optional[str] = None,
+    delta_s: float | None = None,
+    int_param_wo: float | None = None,
+    int_param_go: float | None = None,
+    sheet_name: str | None = None,
     slgof: bool = False,
     family2: bool = False,
     plot: bool = False,
@@ -309,7 +308,7 @@ def pyscal_main(
         print(wog_list.build_eclipse_data(family=family, slgof=slgof))
     else:
         if not Path(output).parent.exists():
-            raise IOError(f"Output directory not found '{Path(output).parent}'")
+            raise OSError(f"Output directory not found '{Path(output).parent}'")
         with open(output, "w", newline="\n", encoding="utf-8") as fh:
             fh.write(wog_list.build_eclipse_data(family=family, slgof=slgof))
         print("Written to " + output)
