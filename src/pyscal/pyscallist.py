@@ -327,8 +327,8 @@ class PyscalList:
 
     def interpolate(
         self,
-        int_params_wo: float | int | list[float],
-        int_params_go: float | int | list[float | None] | None = None,
+        int_params_wo: float | list[float],
+        int_params_go: float | list[float | None] | None = None,
         h: float | None = None,
     ) -> PyscalList:
         """This function will interpolate each SCALrecommendation
