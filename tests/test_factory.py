@@ -658,12 +658,34 @@ def test_factory_wateroilgas():
     assert wateroil.gasoil is None
 
 
-def test_factory_wateroilgas_deprecated_krowgend():
-    """Using long-time deprecated krowend and krogend will fail"""
-    with pytest.raises(ValueError):
-        create_water_oil_gas(
-            {"nw": 2, "now": 3, "ng": 1, "nog": 2.5, "krowend": 0.6, "krogend": 0.7}
-        )
+def test_factory_wateroilgas_krowgend():
+    """Test convert krowend and krogend to kroend and put into
+    create_water_oil and create_oil_gas, respectively"""
+
+    wog = create_water_oil_gas(
+        {
+            "nw": 2,
+            "now": 3,
+            "ng": 1,
+            "nog": 2.5,
+            "krowend": 0.6,
+            "krogend": 0.7,
+            "kroend": 0.5,
+        }
+    )
+    swof = wog.SWOF()
+    sgof = wog.SGOF()
+    sat_table_str_ok(swof)  # sgof code works for swof also currently
+    sat_table_str_ok(sgof)
+    assert "Corey krg" in sgof
+    assert "Corey krog" in sgof
+    assert "kroend=0.7" in sgof
+    assert "Corey krw" in swof
+    assert "Corey krow" in swof
+    assert "kroend=0.6" in swof
+
+    check_table(wog.gasoil.table)
+    check_table(wog.wateroil.table)
 
 
 def test_factory_wateroilgas_wo():
@@ -1069,6 +1091,9 @@ def test_check_deprecated_krowgend():
     to the oil curve parametrization for WaterOil and GasOil. From
     pyscal 0.6.0, krogend and krowend are merged to kroend.
     After pyscal 0.8 presence of krogend and krowend is a ValueError
+    After pyscal 0.14 presence krogend and krowend is accepted as
+    parameters for create_wateroilgas, but is still ValueError for
+    create_water_oil and create_gas_oil is a
     """
     with pytest.raises(ValueError):
         create_water_oil({"swl": 0.1, "nw": 2, "now": 2, "krowend": 0.4})
