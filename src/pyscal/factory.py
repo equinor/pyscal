@@ -617,7 +617,7 @@ def create_scal_recommendation(
 
 
 def load_relperm_df(
-    inputfile: str | pd.DataFrame, sheet_name: str | None = None
+    inputfile: str | Path | pd.DataFrame, sheet_name: str | None = None
 ) -> pd.DataFrame:
     """Read CSV or XLSX from file and return scal/relperm data
     a dataframe.
