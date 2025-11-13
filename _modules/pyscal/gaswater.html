@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.gaswater &mdash; pyscal 0.15.1 documentation</title>
+  <title>pyscal.gaswater &mdash; pyscal 0.15.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=4befc426"></script>
+      <script src="../../_static/documentation_options.js?v=7c174e4c"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -83,8 +83,10 @@
 <span></span><span class="sd">&quot;&quot;&quot;Object to represent GasWater, implemented as a Container</span>
 <span class="sd">object for one WaterOil and one GasOil object&quot;&quot;&quot;</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyscal</span><span class="w"> </span><span class="kn">import</span> <span class="n">getLogger_pyscal</span>
@@ -98,10 +100,10 @@
 
 <div class="viewcode-block" id="is_documented_by">
 <a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.is_documented_by">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">is_documented_by</span><span class="p">(</span><span class="n">original</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_documented_by</span><span class="p">(</span><span class="n">original</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Decorator to avoid duplicating function docstrings&quot;&quot;&quot;</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="n">target</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="n">target</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
         <span class="n">target</span><span class="o">.</span><span class="vm">__doc__</span> <span class="o">=</span> <span class="n">original</span><span class="o">.</span><span class="vm">__doc__</span>
         <span class="k">return</span> <span class="n">target</span>
 
@@ -138,7 +140,7 @@
         <span class="n">swcr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
         <span class="n">sgrw</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
         <span class="n">sgcr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
-        <span class="n">h</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">h</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
         <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -200,7 +202,7 @@
 <div class="viewcode-block" id="GasWater.add_corey_water">
 <a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.GasWater.add_corey_water">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_corey_water</span><span class="p">(</span>
-        <span class="bp">self</span><span class="p">,</span> <span class="n">nw</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">krwend</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">krwmax</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">nw</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">krwend</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">krwmax</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add krw data through the Corey parametrization</span>
 
@@ -243,7 +245,7 @@
         <span class="n">e</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
         <span class="n">t</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
         <span class="n">krwend</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
-        <span class="n">krwmax</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">krwmax</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Add krw data through LET parametrization</span>
 
@@ -316,7 +318,7 @@
 
 <div class="viewcode-block" id="GasWater.SWFN">
 <a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.GasWater.SWFN">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">SWFN</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SWFN</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Produce SWFN input to Eclipse</span>
 
 <span class="sd">        The columns sw, krw and pc are outputted and formatted</span>
@@ -351,7 +353,7 @@
 
 <div class="viewcode-block" id="GasWater.SGFN">
 <a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.GasWater.SGFN">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">SGFN</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SGFN</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Produce SGFN input for Eclipse reservoir simulator.</span>
 
 <span class="sd">        The columns sg and krg are outputted and formatted accordingly.</span>
@@ -384,7 +386,7 @@
 
 <div class="viewcode-block" id="GasWater.crosspoint">
 <a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.GasWater.crosspoint">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">crosspoint</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">crosspoint</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the sw value where krg == krw.</span>
 
 <span class="sd">        Accuracy of this crosspoint depends on the resolution chosen</span>
@@ -425,24 +427,20 @@
 <a class="viewcode-back" href="../../pyscal/pyscal.gaswater.html#pyscal.gaswater.GasWater.plotkrwkrg">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">plotkrwkrg</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
-        <span class="n">mpl_ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">mpl_ax</span><span class="p">:</span> <span class="n">matplotlib</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">Axes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">color</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;blue&quot;</span><span class="p">,</span>
         <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">linewidth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">linestyle</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span>
-        <span class="n">marker</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">marker</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">label</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
         <span class="n">logyscale</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="p">):</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot krw and krg</span>
 
 <span class="sd">        If the argument &#39;mpl_ax&#39; is not supplied, a new plot</span>
 <span class="sd">        window will be made. If supplied, it will draw on</span>
 <span class="sd">        the specified axis.&quot;&quot;&quot;</span>
-
-        <span class="c1"># Lazy import of matplotlib for speed reasons.</span>
-        <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span>  <span class="c1"># noqa: PLC0415</span>
-        <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>  <span class="c1"># noqa: PLC0415</span>
 
         <span class="k">if</span> <span class="n">mpl_ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">matplotlib</span><span class="o">.</span><span class="n">style</span><span class="o">.</span><span class="n">use</span><span class="p">(</span><span class="s2">&quot;ggplot&quot;</span><span class="p">)</span>
@@ -458,7 +456,7 @@
             <span class="n">y</span><span class="o">=</span><span class="s2">&quot;KRW&quot;</span><span class="p">,</span>
             <span class="n">c</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
             <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
-            <span class="n">legend</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">legend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span>
             <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">,</span>
             <span class="n">linestyle</span><span class="o">=</span><span class="n">linestyle</span><span class="p">,</span>
@@ -471,7 +469,7 @@
             <span class="n">c</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
             <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
             <span class="n">label</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">legend</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">legend</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
             <span class="n">linewidth</span><span class="o">=</span><span class="n">linewidth</span><span class="p">,</span>
             <span class="n">linestyle</span><span class="o">=</span><span class="n">linestyle</span><span class="p">,</span>
             <span class="n">marker</span><span class="o">=</span><span class="n">marker</span><span class="p">,</span>

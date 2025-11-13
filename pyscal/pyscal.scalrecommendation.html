@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.scalrecommendation &mdash; pyscal 0.15.1 documentation</title>
+  <title>pyscal.scalrecommendation &mdash; pyscal 0.15.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=4befc426"></script>
+      <script src="../_static/documentation_options.js?v=7c174e4c"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
@@ -108,7 +108,7 @@
 <p>SCALrecommendation, container for low, base and high WaterOilGas objects</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pyscal.scalrecommendation.SCALrecommendation">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyscal.scalrecommendation.</span></span><span class="sig-name descname"><span class="pre">SCALrecommendation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">low</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/scalrecommendation.html#SCALrecommendation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.scalrecommendation.SCALrecommendation" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyscal.scalrecommendation.</span></span><span class="sig-name descname"><span class="pre">SCALrecommendation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">low</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">base</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">h</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.01</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/scalrecommendation.html#SCALrecommendation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.scalrecommendation.SCALrecommendation" title="Link to this definition"></a></dt>
 <dd><p>A SCAL recommendation consists of three OilWaterGas objects,
 tagged low, base and high.</p>
 <p>This container exists in order to to interpolation from -1 (low),
@@ -116,10 +116,10 @@ through 0 (base) and to 1 (high).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>low</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="pyscal.wateroilgas.html#pyscal.wateroilgas.WaterOilGas" title="pyscal.wateroilgas.WaterOilGas"><code class="xref py py-class docutils literal notranslate"><span class="pre">WaterOilGas</span></code></a>, <a class="reference internal" href="pyscal.gaswater.html#pyscal.gaswater.GasWater" title="pyscal.gaswater.GasWater"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasWater</span></code></a>]</span>) – An object representing the low case</p></li>
-<li><p><strong>base</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="pyscal.wateroilgas.html#pyscal.wateroilgas.WaterOilGas" title="pyscal.wateroilgas.WaterOilGas"><code class="xref py py-class docutils literal notranslate"><span class="pre">WaterOilGas</span></code></a>, <a class="reference internal" href="pyscal.gaswater.html#pyscal.gaswater.GasWater" title="pyscal.gaswater.GasWater"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasWater</span></code></a>]</span>) – An object representing the base case</p></li>
-<li><p><strong>high</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="pyscal.wateroilgas.html#pyscal.wateroilgas.WaterOilGas" title="pyscal.wateroilgas.WaterOilGas"><code class="xref py py-class docutils literal notranslate"><span class="pre">WaterOilGas</span></code></a>, <a class="reference internal" href="pyscal.gaswater.html#pyscal.gaswater.GasWater" title="pyscal.gaswater.GasWater"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasWater</span></code></a>]</span>) – An object representing the high case</p></li>
-<li><p><strong>tag</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – A string that describes the recommendation. Optional.</p></li>
+<li><p><strong>low</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="pyscal.wateroilgas.html#pyscal.wateroilgas.WaterOilGas" title="pyscal.wateroilgas.WaterOilGas"><code class="xref py py-class docutils literal notranslate"><span class="pre">WaterOilGas</span></code></a> | <a class="reference internal" href="pyscal.gaswater.html#pyscal.gaswater.GasWater" title="pyscal.gaswater.GasWater"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasWater</span></code></a></span>) – An object representing the low case</p></li>
+<li><p><strong>base</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="pyscal.wateroilgas.html#pyscal.wateroilgas.WaterOilGas" title="pyscal.wateroilgas.WaterOilGas"><code class="xref py py-class docutils literal notranslate"><span class="pre">WaterOilGas</span></code></a> | <a class="reference internal" href="pyscal.gaswater.html#pyscal.gaswater.GasWater" title="pyscal.gaswater.GasWater"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasWater</span></code></a></span>) – An object representing the base case</p></li>
+<li><p><strong>high</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="pyscal.wateroilgas.html#pyscal.wateroilgas.WaterOilGas" title="pyscal.wateroilgas.WaterOilGas"><code class="xref py py-class docutils literal notranslate"><span class="pre">WaterOilGas</span></code></a> | <a class="reference internal" href="pyscal.gaswater.html#pyscal.gaswater.GasWater" title="pyscal.gaswater.GasWater"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasWater</span></code></a></span>) – An object representing the high case</p></li>
+<li><p><strong>tag</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>) – A string that describes the recommendation. Optional.</p></li>
 </ul>
 </dd>
 </dl>
@@ -152,15 +152,15 @@ parametrize the interpolant in L,E,T parameter space, or Corey-space.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>parameter</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Between -1 and 1, inclusive. -1 reproduces low/
 pessimistic curve, 0 gives base, 1 gives high/optimistic.</p></li>
-<li><p><strong>parameter2</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span>) – If not None, used for the gas-oil interpolation,
+<li><p><strong>parameter2</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>) – If not None, used for the gas-oil interpolation,
 enables having interpolation uncorrelated for WaterOil and
 GasOil. Ignored for GasWater (no warning).</p></li>
-<li><p><strong>h</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span>) – Saturation step length in generated tables. Does not
+<li><p><strong>h</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>) – Saturation step length in generated tables. Does not
 need to be the same as the tables interpolation is done from.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="pyscal.wateroilgas.html#pyscal.wateroilgas.WaterOilGas" title="pyscal.wateroilgas.WaterOilGas"><code class="xref py py-class docutils literal notranslate"><span class="pre">WaterOilGas</span></code></a>, <a class="reference internal" href="pyscal.gaswater.html#pyscal.gaswater.GasWater" title="pyscal.gaswater.GasWater"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasWater</span></code></a>]</span></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="pyscal.wateroilgas.html#pyscal.wateroilgas.WaterOilGas" title="pyscal.wateroilgas.WaterOilGas"><code class="xref py py-class docutils literal notranslate"><span class="pre">WaterOilGas</span></code></a> | <a class="reference internal" href="pyscal.gaswater.html#pyscal.gaswater.GasWater" title="pyscal.gaswater.GasWater"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasWater</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>

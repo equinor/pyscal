@@ -6,17 +6,16 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal &mdash; pyscal 0.15.1 documentation</title>
+  <title>pyscal &mdash; pyscal 0.15.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=4befc426"></script>
+      <script src="../_static/documentation_options.js?v=7c174e4c"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -117,7 +116,7 @@ ERROR) to stdout and stderr, each log occurs in only one of the streams.
 :type module_name: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>
 :param module_name: A suggested name for the logger, usually __name__ should be
 :param supplied:
-:type args_dict: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>]]]</span>
+:type args_dict: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>] | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>
 :param args_dict: Dictionary with contents from the argparse namespace object
 :param containing only keys “output”:
 :param “verbose” and “debug”.:</p>
@@ -210,6 +209,9 @@ ERROR) to stdout and stderr, each log occurs in only one of the streams.
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="pyscal.plotting.html"><code class="docutils literal notranslate"><span class="pre">pyscal.plotting</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyscal.plotting.html#pyscal.plotting.FormattingKwargs"><code class="docutils literal notranslate"><span class="pre">FormattingKwargs</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyscal.plotting.html#pyscal.plotting.PlotConfig"><code class="docutils literal notranslate"><span class="pre">PlotConfig</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyscal.plotting.html#pyscal.plotting.PlotKwargs"><code class="docutils literal notranslate"><span class="pre">PlotKwargs</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pyscal.plotting.html#pyscal.plotting.format_cap_pressure_plot"><code class="docutils literal notranslate"><span class="pre">format_cap_pressure_plot()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pyscal.plotting.html#pyscal.plotting.format_gaswater_table"><code class="docutils literal notranslate"><span class="pre">format_gaswater_table()</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pyscal.plotting.html#pyscal.plotting.format_relperm_plot"><code class="docutils literal notranslate"><span class="pre">format_relperm_plot()</span></code></a></li>
@@ -271,6 +273,7 @@ ERROR) to stdout and stderr, each log occurs in only one of the streams.
 <li class="toctree-l4"><a class="reference internal" href="pyscal.utils.interpolation.html#pyscal.utils.interpolation.normalize_nonlinpart_go"><code class="docutils literal notranslate"><span class="pre">normalize_nonlinpart_go()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pyscal.utils.interpolation.html#pyscal.utils.interpolation.normalize_nonlinpart_wo"><code class="docutils literal notranslate"><span class="pre">normalize_nonlinpart_wo()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="pyscal.utils.interpolation.html#pyscal.utils.interpolation.normalize_pc"><code class="docutils literal notranslate"><span class="pre">normalize_pc()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyscal.utils.interpolation.html#pyscal.utils.interpolation.weighted_value"><code class="docutils literal notranslate"><span class="pre">weighted_value()</span></code></a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="pyscal.utils.monotonicity.html"><code class="docutils literal notranslate"><span class="pre">pyscal.utils.monotonicity</span></code></a><ul>
@@ -300,16 +303,6 @@ ERROR) to stdout and stderr, each log occurs in only one of the streams.
 <li class="toctree-l4"><a class="reference internal" href="pyscal.utils.string.html#pyscal.utils.string.df2str"><code class="docutils literal notranslate"><span class="pre">df2str()</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="pyscal.utils.testing.html"><code class="docutils literal notranslate"><span class="pre">pyscal.utils.testing</span></code></a><ul>
-<li class="toctree-l4"><a class="reference internal" href="pyscal.utils.testing.html#pyscal.utils.testing.check_linear_sections"><code class="docutils literal notranslate"><span class="pre">check_linear_sections()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="pyscal.utils.testing.html#pyscal.utils.testing.check_table"><code class="docutils literal notranslate"><span class="pre">check_table()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="pyscal.utils.testing.html#pyscal.utils.testing.float_df_checker"><code class="docutils literal notranslate"><span class="pre">float_df_checker()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="pyscal.utils.testing.html#pyscal.utils.testing.sat_table_str_ok"><code class="docutils literal notranslate"><span class="pre">sat_table_str_ok()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="pyscal.utils.testing.html#pyscal.utils.testing.series_decreasing"><code class="docutils literal notranslate"><span class="pre">series_decreasing()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="pyscal.utils.testing.html#pyscal.utils.testing.series_increasing"><code class="docutils literal notranslate"><span class="pre">series_increasing()</span></code></a></li>
-<li class="toctree-l4"><a class="reference internal" href="pyscal.utils.testing.html#pyscal.utils.testing.slow_hypothesis"><code class="docutils literal notranslate"><span class="pre">slow_hypothesis()</span></code></a></li>
-</ul>
-</li>
 </ul>
 </li>
 </ul>
@@ -320,6 +313,8 @@ ERROR) to stdout and stderr, each log occurs in only one of the streams.
 <li class="toctree-l3"><a class="reference internal" href="pyscal.version.html#pyscal.version.__version_tuple__"><code class="docutils literal notranslate"><span class="pre">__version_tuple__</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pyscal.version.html#pyscal.version.version"><code class="docutils literal notranslate"><span class="pre">version</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pyscal.version.html#pyscal.version.version_tuple"><code class="docutils literal notranslate"><span class="pre">version_tuple</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.version.html#pyscal.version.__commit_id__"><code class="docutils literal notranslate"><span class="pre">__commit_id__</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.version.html#pyscal.version.commit_id"><code class="docutils literal notranslate"><span class="pre">commit_id</span></code></a></li>
 </ul>
 </li>
 </ul>

@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.pyscalcli &mdash; pyscal 0.15.1 documentation</title>
+  <title>pyscal.pyscalcli &mdash; pyscal 0.15.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=4befc426"></script>
+      <script src="../../_static/documentation_options.js?v=7c174e4c"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -87,7 +87,6 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">traceback</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
@@ -315,10 +314,10 @@
     <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">debug</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;relperm.inc&quot;</span><span class="p">,</span>
-    <span class="n">delta_s</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">int_param_wo</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">int_param_go</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">sheet_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">delta_s</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">int_param_wo</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">int_param_go</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">sheet_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">slgof</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">family2</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">plot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -351,10 +350,10 @@
         <span class="vm">__name__</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;debug&quot;</span><span class="p">:</span> <span class="n">debug</span><span class="p">,</span> <span class="s2">&quot;verbose&quot;</span><span class="p">:</span> <span class="n">verbose</span><span class="p">,</span> <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="n">output</span><span class="p">}</span>
     <span class="p">)</span>
 
-    <span class="n">parametertable</span> <span class="o">=</span> <span class="n">load_relperm_df</span><span class="p">(</span><span class="n">parametertable</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="n">sheet_name</span><span class="p">)</span>
+    <span class="n">parametertable_df</span> <span class="o">=</span> <span class="n">load_relperm_df</span><span class="p">(</span><span class="n">parametertable</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="n">sheet_name</span><span class="p">)</span>
 
-    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parametertable</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Input data:</span><span class="se">\n</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">parametertable</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parametertable_df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Input data:</span><span class="se">\n</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">parametertable_df</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="n">int_param_go</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">int_param_wo</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Don&#39;t use int_param_go alone, only int_param_wo&quot;</span><span class="p">)</span>
@@ -362,18 +361,18 @@
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
             <span class="s2">&quot;SATNUM specific interpolation parameters are not supported in pyscalcli&quot;</span>
         <span class="p">)</span>
-    <span class="k">if</span> <span class="n">int_param_wo</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;CASE&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">parametertable</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">int_param_wo</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;CASE&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">parametertable_df</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="s2">&quot;Interpolation parameter provided but no CASE column in input data&quot;</span>
         <span class="p">)</span>
-    <span class="k">if</span> <span class="s2">&quot;SATNUM&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">parametertable</span><span class="p">:</span>
+    <span class="k">if</span> <span class="s2">&quot;SATNUM&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">parametertable_df</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;There is no column called SATNUM in the input data&quot;</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="s2">&quot;CASE&quot;</span> <span class="ow">in</span> <span class="n">parametertable</span><span class="p">:</span>
+    <span class="k">if</span> <span class="s2">&quot;CASE&quot;</span> <span class="ow">in</span> <span class="n">parametertable_df</span><span class="p">:</span>
         <span class="c1"># Then we should do interpolation</span>
         <span class="k">if</span> <span class="n">int_param_wo</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No interpolation parameters provided&quot;</span><span class="p">)</span>
-        <span class="n">scalrec_list</span> <span class="o">=</span> <span class="n">create_scal_recommendation_list</span><span class="p">(</span><span class="n">parametertable</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">delta_s</span><span class="p">)</span>
+        <span class="n">scalrec_list</span> <span class="o">=</span> <span class="n">create_scal_recommendation_list</span><span class="p">(</span><span class="n">parametertable_df</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">delta_s</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scalrec_list</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">SCALrecommendation</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">scalrec_list</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">WaterOilGas</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
@@ -390,7 +389,7 @@
             <span class="n">wog_list</span> <span class="o">=</span> <span class="n">scalrec_list</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">int_param_wo</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">delta_s</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">wog_list</span> <span class="o">=</span> <span class="n">create_pyscal_list</span><span class="p">(</span>
-            <span class="n">parametertable</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">delta_s</span>
+            <span class="n">parametertable_df</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">delta_s</span>
         <span class="p">)</span>  <span class="c1"># can be both water-oil, water-oil-gas, or gas-water</span>
 
     <span class="n">family</span> <span class="o">=</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">family2</span> <span class="ow">or</span> <span class="n">wog_list</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">==</span> <span class="n">GasWater</span> <span class="k">else</span> <span class="mi">1</span>
@@ -399,7 +398,7 @@
         <span class="nb">print</span><span class="p">(</span><span class="n">wog_list</span><span class="o">.</span><span class="n">build_eclipse_data</span><span class="p">(</span><span class="n">family</span><span class="o">=</span><span class="n">family</span><span class="p">,</span> <span class="n">slgof</span><span class="o">=</span><span class="n">slgof</span><span class="p">))</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">Path</span><span class="p">(</span><span class="n">output</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Output directory not found &#39;</span><span class="si">{</span><span class="n">Path</span><span class="p">(</span><span class="n">output</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Output directory not found &#39;</span><span class="si">{</span><span class="n">Path</span><span class="p">(</span><span class="n">output</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
             <span class="n">fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">wog_list</span><span class="o">.</span><span class="n">build_eclipse_data</span><span class="p">(</span><span class="n">family</span><span class="o">=</span><span class="n">family</span><span class="p">,</span> <span class="n">slgof</span><span class="o">=</span><span class="n">slgof</span><span class="p">))</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Written to &quot;</span> <span class="o">+</span> <span class="n">output</span><span class="p">)</span>

@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.pyscallist &mdash; pyscal 0.15.1 documentation</title>
+  <title>pyscal.pyscallist &mdash; pyscal 0.15.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=4befc426"></script>
+      <script src="../_static/documentation_options.js?v=7c174e4c"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
@@ -108,7 +108,7 @@
 <p>Container class for list of Pyscal objects</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="pyscal.pyscallist.PyscalList">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyscal.pyscallist.</span></span><span class="sig-name descname"><span class="pre">PyscalList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pyscal_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/pyscallist.html#PyscalList"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.pyscallist.PyscalList" title="Link to this definition"></a></dt>
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyscal.pyscallist.</span></span><span class="sig-name descname"><span class="pre">PyscalList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pyscal_list</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/pyscallist.html#PyscalList"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.pyscallist.PyscalList" title="Link to this definition"></a></dt>
 <dd><p>Container class for a list of WaterOilGas objects.</p>
 <p>Essentially this is a list of objects of equal type, and all
 being pyscal objects WaterOil, GasOil, WaterOilGas or SCALrecommendation</p>
@@ -191,7 +191,7 @@ and it will call SWOF on each element succesively.</p>
 <dd><p>Append a pyscal object to the list</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>pyscal_obj</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">WaterOil</span></code></a>, <a class="reference internal" href="pyscal.gasoil.html#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasOil</span></code></a>, <a class="reference internal" href="pyscal.gaswater.html#pyscal.gaswater.GasWater" title="pyscal.gaswater.GasWater"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasWater</span></code></a>, <a class="reference internal" href="pyscal.wateroilgas.html#pyscal.wateroilgas.WaterOilGas" title="pyscal.wateroilgas.WaterOilGas"><code class="xref py py-class docutils literal notranslate"><span class="pre">WaterOilGas</span></code></a>, <a class="reference internal" href="pyscal.scalrecommendation.html#pyscal.scalrecommendation.SCALrecommendation" title="pyscal.scalrecommendation.SCALrecommendation"><code class="xref py py-class docutils literal notranslate"><span class="pre">SCALrecommendation</span></code></a>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>)</p>
+<dd class="field-odd"><p><strong>pyscal_obj</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">WaterOil</span></code></a> | <a class="reference internal" href="pyscal.gasoil.html#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasOil</span></code></a> | <a class="reference internal" href="pyscal.gaswater.html#pyscal.gaswater.GasWater" title="pyscal.gaswater.GasWater"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasWater</span></code></a> | <a class="reference internal" href="pyscal.wateroilgas.html#pyscal.wateroilgas.WaterOilGas" title="pyscal.wateroilgas.WaterOilGas"><code class="xref py py-class docutils literal notranslate"><span class="pre">WaterOilGas</span></code></a> | <a class="reference internal" href="pyscal.scalrecommendation.html#pyscal.scalrecommendation.SCALrecommendation" title="pyscal.scalrecommendation.SCALrecommendation"><code class="xref py py-class docutils literal notranslate"><span class="pre">SCALrecommendation</span></code></a>] | <a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">WaterOil</span></code></a> | <a class="reference internal" href="pyscal.gasoil.html#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasOil</span></code></a> | <a class="reference internal" href="pyscal.gaswater.html#pyscal.gaswater.GasWater" title="pyscal.gaswater.GasWater"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasWater</span></code></a> | <a class="reference internal" href="pyscal.wateroilgas.html#pyscal.wateroilgas.WaterOilGas" title="pyscal.wateroilgas.WaterOilGas"><code class="xref py py-class docutils literal notranslate"><span class="pre">WaterOilGas</span></code></a> | <a class="reference internal" href="pyscal.scalrecommendation.html#pyscal.scalrecommendation.SCALrecommendation" title="pyscal.scalrecommendation.SCALrecommendation"><code class="xref py py-class docutils literal notranslate"><span class="pre">SCALrecommendation</span></code></a> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>)</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>ValueError</strong> – If the type of the incoming object does not
@@ -225,7 +225,7 @@ properties of family 1 or 2 type.</p>
 <dt class="sig sig-object py" id="pyscal.pyscallist.PyscalList.df">
 <span class="sig-name descname"><span class="pre">df</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/pyscallist.html#PyscalList.df"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.pyscallist.PyscalList.df" title="Link to this definition"></a></dt>
 <dd><p>Dump dataframes of generated relperm data</p>
-<p>Column names are compatible with ecl2df.satfunc. Always uppercase
+<p>Column names are compatible with res2df.satfunc. Always uppercase
 and capillary pressure is PCOW or PCOG (wateroil vs gasoil)</p>
 <p>If the PyscalList contains SCALrecommendations, the CASE column
 will contain the strings ‘pess’, ‘base’ and ‘opt’ (independent of
@@ -247,7 +247,7 @@ disk in calling code.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>filename</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span>) – Filename for the output to be given to Eclipse 100</p></li>
+<li><p><strong>filename</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>) – Filename for the output to be given to Eclipse 100</p></li>
 <li><p><strong>slgof</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Set to true of SLGOF is wanted instead of SGOF</p></li>
 </ul>
 </dd>
@@ -282,11 +282,11 @@ object to the chosen parameters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>int_params_wo</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]]</span>) – Interpolation parameters for wateroil, or for
+<li><p><strong>int_params_wo</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span>) – Interpolation parameters for wateroil, or for
 both. If list, separate parameter for each SATNUM. All
 numbers between -1 and 1 (inclusive).</p></li>
-<li><p><strong>int_params_go</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]], <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]</span>) – If specified, will be used for GasOil interpolation.</p></li>
-<li><p><strong>h</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>]</span>) – Saturation step-length</p></li>
+<li><p><strong>int_params_go</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>] | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>) – If specified, will be used for GasOil interpolation.</p></li>
+<li><p><strong>h</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code> | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>) – Saturation step-length</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -306,7 +306,7 @@ Pyscallist object. This depends on the Pyscaltype, and which family is
 requested</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</span></p>
 </dd>
 </dl>
 </dd></dl>

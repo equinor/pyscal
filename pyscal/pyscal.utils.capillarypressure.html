@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.utils.capillarypressure &mdash; pyscal 0.15.1 documentation</title>
+  <title>pyscal.utils.capillarypressure &mdash; pyscal 0.15.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=4befc426"></script>
+      <script src="../_static/documentation_options.js?v=7c174e4c"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
       <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
@@ -122,23 +122,20 @@
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sw</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – float, water saturation value to be used.
+<li><p><strong>sw</strong> – float, water saturation value to be used.
 Normalize when needed.</p></li>
-<li><p><strong>a</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – a coefficient</p></li>
-<li><p><strong>b</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – b coefficient</p></li>
-<li><p><strong>poro_ref</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Reference porosity for scaling to Pc, between 0 and 1</p></li>
-<li><p><strong>perm_ref</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Reference permeability for scaling to Pc, in milliDarcy</p></li>
-<li><p><strong>drho</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Density difference between water and oil, in SI units kg/m³.
+<li><p><strong>a</strong> – a coefficient</p></li>
+<li><p><strong>b</strong> – b coefficient</p></li>
+<li><p><strong>poro_ref</strong> – Reference porosity for scaling to Pc, between 0 and 1</p></li>
+<li><p><strong>perm_ref</strong> – Reference permeability for scaling to Pc, in milliDarcy</p></li>
+<li><p><strong>drho</strong> – Density difference between water and oil, in SI units kg/m³.
 Default value is 300</p></li>
-<li><p><strong>g</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Gravitational acceleration, in SI units m/s²,
+<li><p><strong>g</strong> – Gravitational acceleration, in SI units m/s²,
 default value is 9.81</p></li>
 </ul>
 </dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>capillary pressure, same type as swnpc input argument.</p>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>capillary pressure, same type as swnpc input argument.</p>
 </dd>
 </dl>
 </dd></dl>

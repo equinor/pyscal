@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.utils.capillarypressure &mdash; pyscal 0.15.1 documentation</title>
+  <title>pyscal.utils.capillarypressure &mdash; pyscal 0.15.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=4befc426"></script>
+      <script src="../../../_static/documentation_options.js?v=7c174e4c"></script>
       <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -82,7 +82,11 @@
   <h1>Source code for pyscal.utils.capillarypressure</h1><div class="highlight"><pre>
 <span></span><span class="sd">&quot;&quot;&quot;Support functions for capillary pressure&quot;&quot;&quot;</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
 <span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">pyscal.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">MAX_EXPONENT_PC</span>
 
@@ -90,15 +94,14 @@
 <div class="viewcode-block" id="simple_J">
 <a class="viewcode-back" href="../../../pyscal/pyscal.utils.capillarypressure.html#pyscal.utils.capillarypressure.simple_J">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">simple_J</span><span class="p">(</span>
-    <span class="c1"># sw: Union[float, Iterable[float]],</span>
-    <span class="n">sw</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">sw</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span>
     <span class="n">a</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">b</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">poro_ref</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">perm_ref</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">drho</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">g</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">9.81</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>  <span class="c1"># Union[float, Iterable[float]]:</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Calculate capillary pressure with bar as unit</span>
 
 <span class="sd">    RMS version:</span>
@@ -143,7 +146,9 @@
 
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_height_to_pc</span><span class="p">(</span><span class="n">height</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">drho</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">g</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_height_to_pc</span><span class="p">(</span>
+    <span class="n">height</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">drho</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">g</span><span class="p">:</span> <span class="nb">float</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;From height above free water level, multiplication</span>
 <span class="sd">    with density difference and gravity gives capillary pressure.</span>
 
@@ -158,7 +163,9 @@
     <span class="k">return</span> <span class="n">height</span> <span class="o">*</span> <span class="n">drho</span> <span class="o">/</span> <span class="mi">1000</span> <span class="o">*</span> <span class="n">g</span> <span class="o">/</span> <span class="mf">100.0</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_sw_to_simpleJ</span><span class="p">(</span><span class="n">sw</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_sw_to_simpleJ</span><span class="p">(</span>
+    <span class="n">sw</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">a</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">float</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a water saturation value to the associated J-value,</span>
 <span class="sd">    using RMS simple-J&quot;&quot;&quot;</span>
     <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="n">a</span><span class="p">)</span> <span class="o">*</span> <span class="n">sw</span> <span class="o">**</span> <span class="nb">float</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
@@ -170,7 +177,9 @@
     <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">pow</span><span class="p">(</span><span class="n">J</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">a</span><span class="p">),</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">b</span><span class="p">))</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_simpleJ_to_height</span><span class="p">(</span><span class="n">J</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">poro_ref</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">perm_ref</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_simpleJ_to_height</span><span class="p">(</span>
+    <span class="n">J</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">[</span><span class="nb">float</span><span class="p">],</span> <span class="n">poro_ref</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">perm_ref</span><span class="p">:</span> <span class="nb">float</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a J-function value to a height-value in meters</span>
 
 <span class="sd">    This scales the J-value with the inverse of characteristic</span>
@@ -186,7 +195,7 @@
     <span class="k">return</span> <span class="n">J</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">poro_ref</span><span class="p">)</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">perm_ref</span><span class="p">))</span>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_height_to_simpleJ</span><span class="p">(</span><span class="n">H</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">poro_ref</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">perm_ref</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_height_to_simpleJ</span><span class="p">(</span><span class="n">H</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">poro_ref</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">perm_ref</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a height value (in meters) to a corresponding J-function</span>
 
 <span class="sd">    This scales the J-value with the characteristic</span>

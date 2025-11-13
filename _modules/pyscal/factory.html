@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.factory &mdash; pyscal 0.15.1 documentation</title>
+  <title>pyscal.factory &mdash; pyscal 0.15.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=4befc426"></script>
+      <script src="../../_static/documentation_options.js?v=7c174e4c"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -85,8 +85,9 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">zipfile</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Iterable</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Iterable</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Set</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">cast</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">openpyxl</span>
@@ -108,7 +109,7 @@
 
 <div class="viewcode-block" id="slicedict">
 <a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.slicedict">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">slicedict</span><span class="p">(</span><span class="n">dct</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">keys</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">slicedict</span><span class="p">(</span><span class="n">dct</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span> <span class="n">keys</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Slice a dictionary for a set of keys.</span>
 <span class="sd">    Keys not existing will be ignored.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
@@ -214,10 +215,13 @@
 <span class="n">WOG_INIT</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;swirr&quot;</span><span class="p">,</span> <span class="s2">&quot;swl&quot;</span><span class="p">,</span> <span class="s2">&quot;swcr&quot;</span><span class="p">,</span> <span class="s2">&quot;sorw&quot;</span><span class="p">,</span> <span class="s2">&quot;socr&quot;</span><span class="p">,</span> <span class="s2">&quot;sorg&quot;</span><span class="p">,</span> <span class="s2">&quot;sgcr&quot;</span><span class="p">,</span> <span class="s2">&quot;h&quot;</span><span class="p">,</span> <span class="s2">&quot;tag&quot;</span><span class="p">]</span>
 
 
+<span class="n">EngineType</span> <span class="o">=</span> <span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;xlrd&quot;</span><span class="p">,</span> <span class="s2">&quot;openpyxl&quot;</span><span class="p">]</span>
+
+
 <div class="viewcode-block" id="create_water_oil">
 <a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.create_water_oil">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_water_oil</span><span class="p">(</span>
-    <span class="n">params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WaterOil</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a WaterOil object from a dictionary of parameters.</span>
 
@@ -260,7 +264,7 @@
     <span class="c1"># Allowing sending in NaN values, delete those keys.</span>
     <span class="n">params</span> <span class="o">=</span> <span class="n">filter_nan_from_dict</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
 
-    <span class="n">usedparams</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">usedparams</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
 
     <span class="c1"># Check if we should initialize swl from a swlheight parameter:</span>
     <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">WO_SWL_FROM_HEIGHT</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
@@ -280,20 +284,16 @@
             <span class="p">)</span>
     <span class="k">elif</span> <span class="nb">set</span><span class="p">(</span><span class="n">WO_SWLHEIGHT</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="p">(</span>
-                <span class="s2">&quot;Can&#39;t initialize from SWLHEIGHT without sufficient &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;simple-J parameters, needs all of: </span><span class="si">{</span><span class="n">WO_SWL_FROM_HEIGHT</span><span class="si">}</span><span class="s2">&quot;</span>
-            <span class="p">)</span>
+            <span class="s2">&quot;Can&#39;t initialize from SWLHEIGHT without sufficient &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;simple-J parameters, needs all of: </span><span class="si">{</span><span class="n">WO_SWL_FROM_HEIGHT</span><span class="si">}</span><span class="s2">&quot;</span>
         <span class="p">)</span>
 
     <span class="c1"># Should we have a swcr relative to swl?</span>
     <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">WO_SWCR_ADD</span><span class="p">)</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
         <span class="k">if</span> <span class="s2">&quot;swl&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="p">(</span>
-                    <span class="s2">&quot;If swcr should be relative to swl, &quot;</span>
-                    <span class="s2">&quot;both swcr_add and swl must be provided&quot;</span>
-                <span class="p">)</span>
+                <span class="s2">&quot;If swcr should be relative to swl, &quot;</span>
+                <span class="s2">&quot;both swcr_add and swl must be provided&quot;</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="s2">&quot;swcr&quot;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Do not provide both swcr and swcr_add at the same time&quot;</span><span class="p">)</span>
@@ -394,14 +394,12 @@
         <span class="n">wateroil</span><span class="o">.</span><span class="n">add_skjaeveland_pc</span><span class="p">(</span><span class="o">**</span><span class="n">params_skjaeveland_pc</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-            <span class="p">(</span>
-                <span class="s2">&quot;Missing or ambiguous parameters for capillary pressure in &quot;</span>
-                <span class="s2">&quot;WaterOil object. Using zero.&quot;</span>
-            <span class="p">)</span>
+            <span class="s2">&quot;Missing or ambiguous parameters for capillary pressure in &quot;</span>
+            <span class="s2">&quot;WaterOil object. Using zero.&quot;</span>
         <span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">wateroil</span><span class="o">.</span><span class="n">selfcheck</span><span class="p">():</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="p">(</span><span class="s2">&quot;Incomplete WaterOil object, some parameters missing to factory&quot;</span><span class="p">)</span>
+            <span class="s2">&quot;Incomplete WaterOil object, some parameters missing to factory&quot;</span>
         <span class="p">)</span>
     <span class="k">return</span> <span class="n">wateroil</span></div>
 
@@ -410,7 +408,7 @@
 <div class="viewcode-block" id="create_gas_oil">
 <a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.create_gas_oil">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_gas_oil</span><span class="p">(</span>
-    <span class="n">params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GasOil</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a GasOil object from a dictionary of parameters.</span>
 
@@ -449,7 +447,7 @@
     <span class="c1"># Allowing sending in NaN values, delete those keys.</span>
     <span class="n">params</span> <span class="o">=</span> <span class="n">filter_nan_from_dict</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
 
-    <span class="n">usedparams</span><span class="p">:</span> <span class="n">Set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">usedparams</span><span class="p">:</span> <span class="nb">set</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
     <span class="c1"># No requirements to the base objects, defaults are ok.</span>
     <span class="n">gasoil</span> <span class="o">=</span> <span class="n">GasOil</span><span class="p">(</span><span class="o">**</span><span class="n">slicedict</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">GO_INIT</span><span class="p">),</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">)</span>
     <span class="n">usedparams</span> <span class="o">=</span> <span class="n">usedparams</span><span class="o">.</span><span class="n">union</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">slicedict</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">GO_INIT</span><span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
@@ -497,9 +495,7 @@
     <span class="k">else</span><span class="p">:</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Missing or ambiguous parameters for oil curve in GasOil object&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">gasoil</span><span class="o">.</span><span class="n">selfcheck</span><span class="p">():</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="p">(</span><span class="s2">&quot;Incomplete GasOil object, some parameters missing to factory&quot;</span><span class="p">)</span>
-        <span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Incomplete GasOil object, some parameters missing to factory&quot;</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">gasoil</span></div>
 
@@ -508,7 +504,7 @@
 <div class="viewcode-block" id="create_water_oil_gas">
 <a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.create_water_oil_gas">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_water_oil_gas</span><span class="p">(</span>
-    <span class="n">params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WaterOilGas</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a WaterOilGas object from a dictionary of parameters</span>
 
@@ -532,7 +528,7 @@
     <span class="c1"># For case insensitiveness, all keys are converted to lower case:</span>
     <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span> <span class="n">value</span> <span class="k">for</span> <span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 
-    <span class="n">wateroil</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">WaterOil</span><span class="p">]</span>
+    <span class="n">wateroil</span><span class="p">:</span> <span class="n">WaterOil</span> <span class="o">|</span> <span class="kc">None</span>
     <span class="k">if</span> <span class="n">sufficient_water_oil_params</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">failhard</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="n">wateroil</span> <span class="o">=</span> <span class="n">create_water_oil</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -544,7 +540,7 @@
     <span class="k">if</span> <span class="s2">&quot;swl&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">params</span> <span class="ow">and</span> <span class="s2">&quot;swlheight&quot;</span> <span class="ow">in</span> <span class="n">params</span> <span class="ow">and</span> <span class="n">wateroil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">params</span><span class="p">[</span><span class="s2">&quot;swl&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wateroil</span><span class="o">.</span><span class="n">swl</span>
 
-    <span class="n">gasoil</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">GasOil</span><span class="p">]</span>
+    <span class="n">gasoil</span><span class="p">:</span> <span class="n">GasOil</span> <span class="o">|</span> <span class="kc">None</span>
     <span class="k">if</span> <span class="n">sufficient_gas_oil_params</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">failhard</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
         <span class="n">gasoil</span> <span class="o">=</span> <span class="n">create_gas_oil</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -567,7 +563,7 @@
 <div class="viewcode-block" id="create_gas_water">
 <a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.create_gas_water">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_gas_water</span><span class="p">(</span>
-    <span class="n">params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GasWater</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a GasWater object.</span>
 
@@ -612,9 +608,9 @@
 <div class="viewcode-block" id="create_scal_recommendation">
 <a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.create_scal_recommendation">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_scal_recommendation</span><span class="p">(</span>
-    <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span>
+    <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span>
     <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-    <span class="n">h</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">h</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SCALrecommendation</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -679,9 +675,9 @@
     <span class="n">gasoil</span> <span class="o">=</span> <span class="nb">all</span><span class="p">(</span><span class="n">sufficient_gas_oil_params</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">case</span><span class="p">])</span> <span class="k">for</span> <span class="n">case</span> <span class="ow">in</span> <span class="n">params</span><span class="p">)</span>
     <span class="n">wateroil</span> <span class="o">=</span> <span class="nb">all</span><span class="p">(</span><span class="n">sufficient_water_oil_params</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="n">case</span><span class="p">])</span> <span class="k">for</span> <span class="n">case</span> <span class="ow">in</span> <span class="n">params</span><span class="p">)</span>
 
-    <span class="n">wog_low</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">WaterOilGas</span><span class="p">,</span> <span class="n">GasWater</span><span class="p">]</span>
-    <span class="n">wog_base</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">WaterOilGas</span><span class="p">,</span> <span class="n">GasWater</span><span class="p">]</span>
-    <span class="n">wog_high</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">WaterOilGas</span><span class="p">,</span> <span class="n">GasWater</span><span class="p">]</span>
+    <span class="n">wog_low</span><span class="p">:</span> <span class="n">WaterOilGas</span> <span class="o">|</span> <span class="n">GasWater</span>
+    <span class="n">wog_base</span><span class="p">:</span> <span class="n">WaterOilGas</span> <span class="o">|</span> <span class="n">GasWater</span>
+    <span class="n">wog_high</span><span class="p">:</span> <span class="n">WaterOilGas</span> <span class="o">|</span> <span class="n">GasWater</span>
 
     <span class="k">if</span> <span class="n">wateroil</span> <span class="ow">or</span> <span class="n">gasoil</span><span class="p">:</span>
         <span class="k">try</span><span class="p">:</span>
@@ -723,7 +719,7 @@
 <div class="viewcode-block" id="load_relperm_df">
 <a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.load_relperm_df">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">load_relperm_df</span><span class="p">(</span>
-    <span class="n">inputfile</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span> <span class="n">sheet_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">inputfile</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">sheet_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Read CSV or XLSX from file and return scal/relperm data</span>
 <span class="sd">    a dataframe.</span>
@@ -758,7 +754,7 @@
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
                 <span class="s2">&quot;Sheet name only relevant for XLSX files, ignoring </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">sheet_name</span>
             <span class="p">)</span>
-        <span class="n">excel_engines</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;xls&quot;</span><span class="p">:</span> <span class="s2">&quot;xlrd&quot;</span><span class="p">,</span> <span class="s2">&quot;xlsx&quot;</span><span class="p">:</span> <span class="s2">&quot;openpyxl&quot;</span><span class="p">}</span>
+        <span class="n">excel_engines</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">EngineType</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;xls&quot;</span><span class="p">:</span> <span class="s2">&quot;xlrd&quot;</span><span class="p">,</span> <span class="s2">&quot;xlsx&quot;</span><span class="p">:</span> <span class="s2">&quot;openpyxl&quot;</span><span class="p">}</span>
         <span class="k">if</span> <span class="n">tabular_file_format</span> <span class="o">!=</span> <span class="s2">&quot;csv&quot;</span> <span class="ow">and</span> <span class="n">sheet_name</span><span class="p">:</span>
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">input_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span>
@@ -782,7 +778,7 @@
             <span class="p">)</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Parsed </span><span class="si">%s</span><span class="s2"> file </span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">tabular_file_format</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span> <span class="n">inputfile</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">inputfile</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">csvfile</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">inputfile</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">csvfile</span><span class="p">:</span>
                 <span class="k">try</span><span class="p">:</span>
                     <span class="n">delimiter</span> <span class="o">=</span> <span class="p">(</span>
                         <span class="n">csv</span><span class="o">.</span><span class="n">Sniffer</span><span class="p">()</span>
@@ -806,7 +802,7 @@
         <span class="n">input_df</span> <span class="o">=</span> <span class="n">inputfile</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">inputfile</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">Path</span><span class="p">(</span><span class="n">inputfile</span><span class="p">)</span><span class="o">.</span><span class="n">is_file</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">IOError</span><span class="p">(</span><span class="s2">&quot;File not found &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">inputfile</span><span class="p">))</span>
+            <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="s2">&quot;File not found &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">inputfile</span><span class="p">))</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unsupported argument &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">inputfile</span><span class="p">))</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span>
 
@@ -870,7 +866,7 @@
                 <span class="s2">&quot;Found not-a-number in the CASE column. This could be due &quot;</span>
                 <span class="s2">&quot;merged cells in XLSX, which is not supported.&quot;</span>
             <span class="p">)</span>
-        <span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;CASE&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">remap_validate_cases</span><span class="p">(</span><span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;CASE&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">())</span>
+        <span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;CASE&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">remap_validate_cases</span><span class="p">(</span><span class="n">input_df</span><span class="p">[</span><span class="s2">&quot;CASE&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">())</span>
 
     <span class="c1"># Add the SATNUM index to the TAG column</span>
     <span class="k">if</span> <span class="s2">&quot;TAG&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_df</span><span class="p">:</span>
@@ -887,7 +883,7 @@
         <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Fast mode is only available through the Python API&quot;</span><span class="p">)</span>
 
     <span class="c1"># Check that we are able to make something out of the first row:</span>
-    <span class="n">firstrow</span> <span class="o">=</span> <span class="n">input_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>
+    <span class="n">firstrow</span> <span class="o">=</span> <span class="n">input_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
     <span class="n">error</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="n">wo_ok</span> <span class="o">=</span> <span class="n">sufficient_water_oil_params</span><span class="p">(</span><span class="n">firstrow</span><span class="p">)</span>
     <span class="n">go_ok</span> <span class="o">=</span> <span class="n">sufficient_gas_oil_params</span><span class="p">(</span><span class="n">firstrow</span><span class="p">)</span>
@@ -909,7 +905,7 @@
 
 <div class="viewcode-block" id="alias_sgrw">
 <a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.alias_sgrw">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">alias_sgrw</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">alias_sgrw</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Allow sgrw as an alias for sorw by remapping a</span>
 <span class="sd">    sgrw value to a sorw value in an incoming dict.</span>
 
@@ -922,27 +918,26 @@
 <span class="sd">    Args:</span>
 <span class="sd">        params: Keys must be lower case.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">params_copy</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
     <span class="k">if</span> <span class="s2">&quot;sgrw&quot;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
         <span class="k">if</span> <span class="s2">&quot;sorw&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">params</span> <span class="ow">or</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;sorw&quot;</span><span class="p">]):</span>
-            <span class="n">params_copy</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
             <span class="n">params_copy</span><span class="p">[</span><span class="s2">&quot;sorw&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;sgrw&quot;</span><span class="p">]</span>
             <span class="k">del</span> <span class="n">params_copy</span><span class="p">[</span><span class="s2">&quot;sgrw&quot;</span><span class="p">]</span>
             <span class="k">return</span> <span class="n">params_copy</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;sgrw&quot;</span><span class="p">],</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;sorw&quot;</span><span class="p">]):</span>
-            <span class="n">params_copy</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
             <span class="k">del</span> <span class="n">params_copy</span><span class="p">[</span><span class="s2">&quot;sgrw&quot;</span><span class="p">]</span>
             <span class="k">return</span> <span class="n">params_copy</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
             <span class="sa">f</span><span class="s2">&quot;sgrw (</span><span class="si">{</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;sgrw&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">) must equal sorw (</span><span class="si">{</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;sorw&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">) &quot;</span>
             <span class="s2">&quot;when both are supplied to WaterOil.&quot;</span>
         <span class="p">)</span>
-    <span class="k">return</span> <span class="n">params</span></div>
+    <span class="k">return</span> <span class="n">params_copy</span></div>
 
 
 
 <div class="viewcode-block" id="remap_validate_cases">
 <a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.remap_validate_cases">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">remap_validate_cases</span><span class="p">(</span><span class="n">casevalues</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">remap_validate_cases</span><span class="p">(</span><span class="n">casevalues</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Remap values in the CASE column so that we can use aliases.</span>
 
 <span class="sd">    All values are first made lower case, then</span>
@@ -978,7 +973,7 @@
 <div class="viewcode-block" id="create_scal_recommendation_list">
 <a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.create_scal_recommendation_list">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_scal_recommendation_list</span><span class="p">(</span>
-    <span class="n">input_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">input_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PyscalList</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Requires SATNUM and CASE to be defined in the input data</span>
 
@@ -995,7 +990,7 @@
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span>
 
     <span class="n">scalinput</span> <span class="o">=</span> <span class="n">input_df</span><span class="o">.</span><span class="n">set_index</span><span class="p">([</span><span class="s2">&quot;SATNUM&quot;</span><span class="p">,</span> <span class="s2">&quot;CASE&quot;</span><span class="p">])</span>
-
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scalinput</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">MultiIndex</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">satnum</span> <span class="ow">in</span> <span class="n">scalinput</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">levels</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">():</span>
         <span class="c1"># load_relperm_df only validates the CASE column for all SATNUMs at</span>
         <span class="c1"># once, errors for particular SATNUMs are caught here.</span>
@@ -1019,8 +1014,8 @@
 <div class="viewcode-block" id="create_pyscal_list">
 <a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.create_pyscal_list">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_pyscal_list</span><span class="p">(</span>
-    <span class="n">relperm_params_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-<span class="p">):</span>
+    <span class="n">relperm_params_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PyscalList</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create WaterOilGas, WaterOil, GasOil or GasWater list</span>
 <span class="sd">    based on what is available</span>
 
@@ -1033,7 +1028,7 @@
 <span class="sd">    Returns:</span>
 <span class="sd">        PyscalList, consisting of either WaterOil, GasOil or WaterOilGas objects</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">params</span> <span class="o">=</span> <span class="n">relperm_params_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span>  <span class="c1"># first row</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">relperm_params_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="p">:]</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>  <span class="c1"># first row</span>
     <span class="n">water_oil</span> <span class="o">=</span> <span class="n">sufficient_water_oil_params</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
     <span class="n">gas_oil</span> <span class="o">=</span> <span class="n">sufficient_gas_oil_params</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
     <span class="n">gas_water</span> <span class="o">=</span> <span class="n">sufficient_gas_water_params</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
@@ -1053,7 +1048,7 @@
 <div class="viewcode-block" id="create_wateroilgas_list">
 <a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.create_wateroilgas_list">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_wateroilgas_list</span><span class="p">(</span>
-    <span class="n">relperm_params_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">relperm_params_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PyscalList</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a PyscalList with WaterOilGas objects from</span>
 <span class="sd">    a dataframe</span>
@@ -1074,7 +1069,8 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">wogl</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">create_water_oil_gas</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span><span class="p">))</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">AssertionError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="ne">TypeError</span><span class="p">)</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error for SATNUM </span><span class="si">{</span><span class="n">row_idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">cast</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">row_idx</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error for SATNUM </span><span class="si">{</span><span class="n">idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">err</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span>
     <span class="k">return</span> <span class="n">wogl</span></div>
 
 
@@ -1082,7 +1078,7 @@
 <div class="viewcode-block" id="create_wateroil_list">
 <a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.create_wateroil_list">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_wateroil_list</span><span class="p">(</span>
-    <span class="n">relperm_params_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">relperm_params_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PyscalList</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a PyscalList with WaterOil objects from</span>
 <span class="sd">    a dataframe</span>
@@ -1111,7 +1107,7 @@
 <div class="viewcode-block" id="create_gasoil_list">
 <a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.create_gasoil_list">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_gasoil_list</span><span class="p">(</span>
-    <span class="n">relperm_params_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">relperm_params_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PyscalList</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a PyscalList with GasOil objects from</span>
 <span class="sd">    a dataframe</span>
@@ -1140,7 +1136,7 @@
 <div class="viewcode-block" id="create_gaswater_list">
 <a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.create_gaswater_list">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">create_gaswater_list</span><span class="p">(</span>
-    <span class="n">relperm_params_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">relperm_params_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PyscalList</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create a PyscalList with WaterOilGas objects from</span>
 <span class="sd">    a dataframe, to be used for GasWater</span>
@@ -1193,7 +1189,7 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">create_water_oil</span><span class="p">(</span>
-        <span class="n">params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WaterOil</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
             <span class="s2">&quot;PyscalFactory.create_water_oil is deprecated. &quot;</span>
@@ -1204,7 +1200,7 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">create_gas_oil</span><span class="p">(</span>
-        <span class="n">params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GasOil</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
             <span class="s2">&quot;PyscalFactory.create_gas_oil is deprecated. &quot;</span>
@@ -1215,7 +1211,7 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">create_water_oil_gas</span><span class="p">(</span>
-        <span class="n">params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WaterOilGas</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
             <span class="s2">&quot;PyscalFactory.create_water_oil_gas is deprecated. &quot;</span>
@@ -1226,7 +1222,7 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">create_gas_water</span><span class="p">(</span>
-        <span class="n">params</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GasWater</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
             <span class="s2">&quot;PyscalFactory.create_gas_water is deprecated. &quot;</span>
@@ -1237,9 +1233,9 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">create_scal_recommendation</span><span class="p">(</span>
-        <span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span>
+        <span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]],</span>
         <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-        <span class="n">h</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">h</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SCALrecommendation</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
@@ -1251,7 +1247,7 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">load_relperm_df</span><span class="p">(</span>
-        <span class="n">inputfile</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">],</span> <span class="n">sheet_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">inputfile</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">sheet_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
             <span class="s2">&quot;PyscalFactory.load_relperm_df is deprecated. &quot;</span>
@@ -1261,7 +1257,7 @@
         <span class="k">return</span> <span class="n">load_relperm_df</span><span class="p">(</span><span class="n">inputfile</span><span class="p">,</span> <span class="n">sheet_name</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">alias_sgrw</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">alias_sgrw</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
             <span class="s2">&quot;PyscalFactory.alias_sgrw is deprecated. Please use alias_sgrw instead.&quot;</span><span class="p">,</span>
             <span class="ne">DeprecationWarning</span><span class="p">,</span>
@@ -1269,7 +1265,7 @@
         <span class="k">return</span> <span class="n">alias_sgrw</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
 
     <span class="nd">@staticmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">remap_validate_cases</span><span class="p">(</span><span class="n">casevalues</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">remap_validate_cases</span><span class="p">(</span><span class="n">casevalues</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
             <span class="s2">&quot;PyscalFactory.remap_validate_cases is deprecated. &quot;</span>
             <span class="s2">&quot;Please use remap_validate_cases instead.&quot;</span><span class="p">,</span>
@@ -1279,7 +1275,7 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">create_scal_recommendation_list</span><span class="p">(</span>
-        <span class="n">input_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">input_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PyscalList</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
             <span class="s2">&quot;PyscalFactory.create_scal_recommendation_list is deprecated. &quot;</span>
@@ -1290,8 +1286,8 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">create_pyscal_list</span><span class="p">(</span>
-        <span class="n">relperm_params_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
-    <span class="p">):</span>
+        <span class="n">relperm_params_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PyscalList</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
             <span class="s2">&quot;PyscalFactory.create_pyscal_list is deprecated. &quot;</span>
             <span class="s2">&quot;Please use create_pyscal_list instead.&quot;</span><span class="p">,</span>
@@ -1301,7 +1297,7 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">create_wateroilgas_list</span><span class="p">(</span>
-        <span class="n">relperm_params_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">relperm_params_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PyscalList</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
             <span class="s2">&quot;PyscalFactory.create_wateroilgas_list is deprecated. &quot;</span>
@@ -1312,7 +1308,7 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">create_wateroil_list</span><span class="p">(</span>
-        <span class="n">relperm_params_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">relperm_params_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PyscalList</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
             <span class="s2">&quot;PyscalFactory.create_wateroil_list is deprecated. &quot;</span>
@@ -1323,7 +1319,7 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">create_gasoil_list</span><span class="p">(</span>
-        <span class="n">relperm_params_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">relperm_params_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PyscalList</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
             <span class="s2">&quot;PyscalFactory.create_gasoil_list is deprecated. &quot;</span>
@@ -1334,7 +1330,7 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">create_gaswater_list</span><span class="p">(</span>
-        <span class="n">relperm_params_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">relperm_params_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">h</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">PyscalList</span><span class="p">:</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
             <span class="s2">&quot;PyscalFactory.create_gaswater_list is deprecated. &quot;</span>
@@ -1480,7 +1476,7 @@
 
 <div class="viewcode-block" id="infer_tabular_file_format">
 <a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.infer_tabular_file_format">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">infer_tabular_file_format</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">infer_tabular_file_format</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="n">Path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Determine the file format of a file containing tabular data,</span>
 <span class="sd">    distinguishes between csv, xls and xlsx</span>
 
@@ -1530,7 +1526,7 @@
 
 <div class="viewcode-block" id="check_deprecated">
 <a class="viewcode-back" href="../../pyscal/pyscal.factory.html#pyscal.factory.check_deprecated">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">check_deprecated</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_deprecated</span><span class="p">(</span><span class="n">params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Check for deprecated parameter names</span>
 
 <span class="sd">    Args:</span>

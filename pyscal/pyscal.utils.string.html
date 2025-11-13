@@ -6,20 +6,20 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.utils.string &mdash; pyscal 0.15.1 documentation</title>
+  <title>pyscal.utils.string &mdash; pyscal 0.15.2 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=4befc426"></script>
+      <script src="../_static/documentation_options.js?v=7c174e4c"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="pyscal.utils.testing" href="pyscal.utils.testing.html" />
+    <link rel="next" title="pyscal.version" href="pyscal.version.html" />
     <link rel="prev" title="pyscal.utils.relperm" href="pyscal.utils.relperm.html" /> 
 </head>
 
@@ -119,8 +119,11 @@
 Default is the Eclipse comment syntax ‘– ‘</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>string with newlines preserved, and where each line
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>string with newlines preserved, and where each line
 starts with the given prefix. Always ends with a newline.</p>
 </dd>
 </dl>
@@ -149,7 +152,7 @@ numerical robustness to the deviation.</p></li>
 <li><p><strong>roundlevel</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></span>) – To how many digits should we round prior to print.
 Recommended to be &gt; digits + 1, see test code.</p></li>
 <li><p><strong>header</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – If the dataframe column header should be included</p></li>
-<li><p><strong>monotonicity</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <a class="reference internal" href="pyscal.utils.monotonicity.html#pyscal.utils.monotonicity.MonotonicitySpec" title="pyscal.utils.monotonicity.MonotonicitySpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">MonotonicitySpec</span></code></a>]]</span>) – Column names in dframe are the keys, pointing
+<li><p><strong>monotonicity</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <a class="reference internal" href="pyscal.utils.monotonicity.html#pyscal.utils.monotonicity.MonotonicitySpec" title="pyscal.utils.monotonicity.MonotonicitySpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">MonotonicitySpec</span></code></a>] | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>) – Column names in dframe are the keys, pointing
 to a specification for monotonicity to be enforced.</p></li>
 </ul>
 </dd>
@@ -166,7 +169,7 @@ to a specification for monotonicity to be enforced.</p></li>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="pyscal.utils.relperm.html" class="btn btn-neutral float-left" title="pyscal.utils.relperm" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="pyscal.utils.testing.html" class="btn btn-neutral float-right" title="pyscal.utils.testing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="pyscal.version.html" class="btn btn-neutral float-right" title="pyscal.version" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
