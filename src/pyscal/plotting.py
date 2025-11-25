@@ -19,7 +19,12 @@ from typing import TypedDict, Unpack, cast
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from pyscal import GasOil, GasWater, PyscalList, WaterOil, WaterOilGas, getLogger_pyscal
+from .gasoil import GasOil
+from .gaswater import GasWater
+from .pyscal_logger import getLogger_pyscal
+from .pyscallist import PyscalList
+from .wateroil import WaterOil
+from .wateroilgas import WaterOilGas
 
 logger = getLogger_pyscal(__name__)
 

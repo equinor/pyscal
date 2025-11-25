@@ -8,14 +8,12 @@ from typing import TypeAlias
 
 import pandas as pd
 
-from pyscal import (
-    GasOil,
-    GasWater,
-    SCALrecommendation,
-    WaterOil,
-    WaterOilGas,
-    getLogger_pyscal,
-)
+from .gasoil import GasOil
+from .gaswater import GasWater
+from .pyscal_logger import getLogger_pyscal
+from .scalrecommendation import SCALrecommendation
+from .wateroil import WaterOil
+from .wateroilgas import WaterOilGas
 
 PyscalObjects: TypeAlias = (
     WaterOil | GasOil | GasWater | WaterOilGas | SCALrecommendation
