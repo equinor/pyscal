@@ -4,8 +4,10 @@ import copy
 
 import numpy as np
 
-from pyscal import GasWater, WaterOilGas, getLogger_pyscal
-from pyscal.utils.interpolation import interpolate_go, interpolate_wo
+from .gaswater import GasWater
+from .pyscal_logger import getLogger_pyscal
+from .utils.interpolation import interpolate_go, interpolate_wo
+from .wateroilgas import WaterOilGas
 
 logger = getLogger_pyscal(__name__)
 
