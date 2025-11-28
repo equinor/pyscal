@@ -7,7 +7,7 @@ import numpy as np
 import numpy.typing as npt
 import pandas as pd
 
-from pyscal.constants import EPSILON as epsilon
+from ..constants import EPSILON as epsilon
 
 logger = logging.getLogger(__name__)
 

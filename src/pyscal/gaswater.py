@@ -7,10 +7,9 @@ import matplotlib
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from pyscal import getLogger_pyscal
-from pyscal.utils.relperm import crosspoint
-
 from .gasoil import GasOil
+from .pyscal_logger import getLogger_pyscal
+from .utils.relperm import crosspoint
 from .wateroil import WaterOil
 
 logger = getLogger_pyscal(__name__)

@@ -6,7 +6,7 @@ import math
 
 import pandas as pd
 
-from pyscal.constants import MAX_EXPONENT_PC
+from ..constants import MAX_EXPONENT_PC
 
 
 def simple_J(

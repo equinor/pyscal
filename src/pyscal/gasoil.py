@@ -6,13 +6,14 @@ import numpy as np
 import pandas as pd
 from scipy.interpolate import PchipInterpolator
 
-import pyscal
-from pyscal.constants import EPSILON as epsilon
-from pyscal.constants import MAX_EXPONENT_KR, SWINTEGERS
-from pyscal.utils.relperm import crosspoint, estimate_diffjumppoint, truncate_zeroness
-from pyscal.utils.string import comment_formatter, df2str
+from .__version__ import __version__
+from .constants import EPSILON as epsilon
+from .constants import MAX_EXPONENT_KR, SWINTEGERS
+from .pyscal_logger import getLogger_pyscal
+from .utils.relperm import crosspoint, estimate_diffjumppoint, truncate_zeroness
+from .utils.string import comment_formatter, df2str
 
-logger = pyscal.getLogger_pyscal(__name__)
+logger = getLogger_pyscal(__name__)
 
 
 class GasOil:
@@ -779,7 +780,7 @@ class GasOil:
         if header:
             string += "SGOF\n"
         string += comment_formatter(self.tag)
-        string += "-- pyscal: " + str(pyscal.__version__) + "\n"
+        string += "-- pyscal: " + str(__version__) + "\n"
         if dataincommentrow:
             string += self.sgcomment
             string += self.krgcomment
@@ -852,7 +853,7 @@ class GasOil:
         if header:
             string += "SLGOF\n"
         string += comment_formatter(self.tag)
-        string += "-- pyscal: " + str(pyscal.__version__) + "\n"
+        string += "-- pyscal: " + str(__version__) + "\n"
         if dataincommentrow:
             string += self.sgcomment
             string += self.krgcomment
@@ -921,7 +922,7 @@ class GasOil:
         if header:
             string += "SGFN\n"
         string += comment_formatter(self.tag)
-        string += "-- pyscal: " + str(pyscal.__version__) + "\n"
+        string += "-- pyscal: " + str(__version__) + "\n"
         if dataincommentrow:
             if sgcomment is not None:
                 string += sgcomment
@@ -979,7 +980,7 @@ class GasOil:
         if header:
             string += "GOTABLE\n"
             string += "SG KRG KROG PC\n"
-        string += "! pyscal: " + str(pyscal.__version__) + "\n"
+        string += "! pyscal: " + str(__version__) + "\n"
         if dataincommentrow:
             string += self.sgcomment.replace("--", "!")
             string += self.krgcomment.replace("--", "!")

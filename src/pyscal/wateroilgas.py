@@ -3,14 +3,14 @@
 import numpy as np
 import pandas as pd
 
-import pyscal
-from pyscal.constants import SWINTEGERS
-from pyscal.utils.string import comment_formatter, df2str
-
+from .__version__ import __version__
+from .constants import SWINTEGERS
 from .gasoil import GasOil
+from .pyscal_logger import getLogger_pyscal
+from .utils.string import comment_formatter, df2str
 from .wateroil import WaterOil
 
-logger = pyscal.getLogger_pyscal(__name__)
+logger = getLogger_pyscal(__name__)
 
 
 class WaterOilGas:
@@ -181,7 +181,7 @@ class WaterOilGas:
         else:
             # Only print once if they are equal
             string += wo_tag
-        string += "-- pyscal: " + str(pyscal.__version__) + "\n"
+        string += "-- pyscal: " + str(__version__) + "\n"
         if dataincommentrow:
             string += self.wateroil.swcomment
             string += self.gasoil.sgcomment

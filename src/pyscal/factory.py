@@ -12,13 +12,12 @@ import openpyxl
 import pandas as pd
 import xlrd
 
-from pyscal import getLogger_pyscal
-from pyscal.utils import capillarypressure
-
 from .gasoil import GasOil
 from .gaswater import GasWater
+from .pyscal_logger import getLogger_pyscal
 from .pyscallist import PyscalList
 from .scalrecommendation import SCALrecommendation
+from .utils import capillarypressure
 from .wateroil import WaterOil
 from .wateroilgas import WaterOilGas
 

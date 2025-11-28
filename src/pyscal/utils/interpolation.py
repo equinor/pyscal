@@ -11,7 +11,8 @@ import numpy.typing as npt
 import pandas as pd
 from scipy.interpolate import interp1d
 
-from pyscal import GasOil, WaterOil
+from ..gasoil import GasOil
+from ..wateroil import WaterOil
 
 logger = logging.getLogger(__name__)
 

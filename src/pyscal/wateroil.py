@@ -10,14 +10,15 @@ import numpy as np
 import pandas as pd
 from scipy.interpolate import PchipInterpolator, interp1d
 
-import pyscal
-from pyscal.constants import EPSILON as epsilon
-from pyscal.constants import MAX_EXPONENT_KR, MAX_EXPONENT_PC, SWINTEGERS
-from pyscal.utils.capillarypressure import simple_J
-from pyscal.utils.relperm import crosspoint, estimate_diffjumppoint, truncate_zeroness
-from pyscal.utils.string import comment_formatter, df2str
+from .__version__ import __version__
+from .constants import EPSILON as epsilon
+from .constants import MAX_EXPONENT_KR, MAX_EXPONENT_PC, SWINTEGERS
+from .pyscal_logger import getLogger_pyscal
+from .utils.capillarypressure import simple_J
+from .utils.relperm import crosspoint, estimate_diffjumppoint, truncate_zeroness
+from .utils.string import comment_formatter, df2str
 
-logger = pyscal.getLogger_pyscal(__name__)
+logger = getLogger_pyscal(__name__)
 
 
 class WaterOil:
@@ -1193,7 +1194,7 @@ class WaterOil:
         if header:
             string += "SWOF\n"
         string += comment_formatter(self.tag)
-        string += "-- pyscal: " + str(pyscal.__version__) + "\n"
+        string += "-- pyscal: " + str(__version__) + "\n"
         if "PC" not in self.table.columns:
             self.table["PC"] = 0.0
             self.pccomment = "-- Zero capillary pressure\n"
@@ -1264,7 +1265,7 @@ class WaterOil:
         if header:
             string += "SWFN\n"
         string += comment_formatter(self.tag)
-        string += "-- pyscal: " + str(pyscal.__version__) + "\n"
+        string += "-- pyscal: " + str(__version__) + "\n"
         if dataincommentrow:
             if swcomment is not None:
                 string += swcomment
@@ -1307,7 +1308,7 @@ class WaterOil:
         if header:
             string += "WOTABLE\n"
             string += "SW KRW KROW PC\n"
-        string += "! pyscal: " + str(pyscal.__version__) + "\n"
+        string += "! pyscal: " + str(__version__) + "\n"
         if dataincommentrow:
             string += self.swcomment.replace("--", "!")
             string += self.krwcomment.replace("--", "!")
