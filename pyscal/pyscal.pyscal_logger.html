@@ -6,7 +6,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.utils.capillarypressure &mdash; pyscal 0.15.3 documentation</title>
+  <title>pyscal.pyscal_logger &mdash; pyscal 0.15.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
@@ -16,12 +16,11 @@
       <script src="../_static/documentation_options.js?v=d86fca55"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-      <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="pyscal.utils.interpolation" href="pyscal.utils.interpolation.html" />
-    <link rel="prev" title="pyscal.utils" href="pyscal.utils.html" /> 
+    <link rel="next" title="pyscal.pyscalcli" href="pyscal.pyscalcli.html" />
+    <link rel="prev" title="pyscal.plotting" href="pyscal.plotting.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -71,14 +70,14 @@
 <li class="toctree-l3"><a class="reference internal" href="pyscal.gasoil.html"><code class="docutils literal notranslate"><span class="pre">pyscal.gasoil</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pyscal.gaswater.html"><code class="docutils literal notranslate"><span class="pre">pyscal.gaswater</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pyscal.plotting.html"><code class="docutils literal notranslate"><span class="pre">pyscal.plotting</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="pyscal.pyscal_logger.html"><code class="docutils literal notranslate"><span class="pre">pyscal.pyscal_logger</span></code></a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#"><code class="docutils literal notranslate"><span class="pre">pyscal.pyscal_logger</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#pyscal.pyscal_logger.getLogger_pyscal"><code class="docutils literal notranslate"><span class="pre">getLogger_pyscal()</span></code></a></li>
+</ul>
+</li>
 <li class="toctree-l3"><a class="reference internal" href="pyscal.pyscalcli.html"><code class="docutils literal notranslate"><span class="pre">pyscal.pyscalcli</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pyscal.pyscallist.html"><code class="docutils literal notranslate"><span class="pre">pyscal.pyscallist</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pyscal.scalrecommendation.html"><code class="docutils literal notranslate"><span class="pre">pyscal.scalrecommendation</span></code></a></li>
-<li class="toctree-l3 current"><a class="reference internal" href="pyscal.utils.html"><code class="docutils literal notranslate"><span class="pre">pyscal.utils</span></code></a><ul class="current">
-<li class="toctree-l4 current"><a class="reference internal" href="pyscal.utils.html#submodules">Submodules</a></li>
-</ul>
-</li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.utils.html"><code class="docutils literal notranslate"><span class="pre">pyscal.utils</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pyscal.version.html"><code class="docutils literal notranslate"><span class="pre">pyscal.version</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pyscal.wateroil.html"><code class="docutils literal notranslate"><span class="pre">pyscal.wateroil</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pyscal.wateroilgas.html"><code class="docutils literal notranslate"><span class="pre">pyscal.wateroilgas</span></code></a></li>
@@ -106,10 +105,9 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="pyscal.html"><code class="docutils literal notranslate"><span class="pre">pyscal</span></code></a></li>
-          <li class="breadcrumb-item"><a href="pyscal.utils.html"><code class="docutils literal notranslate"><span class="pre">pyscal.utils</span></code></a></li>
-      <li class="breadcrumb-item active"><code class="docutils literal notranslate"><span class="pre">pyscal.utils.capillarypressure</span></code></li>
+      <li class="breadcrumb-item active"><code class="docutils literal notranslate"><span class="pre">pyscal.pyscal_logger</span></code></li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/pyscal/pyscal.utils.capillarypressure.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/pyscal/pyscal.pyscal_logger.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -117,64 +115,24 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-pyscal.utils.capillarypressure">
-<span id="pyscal-utils-capillarypressure"></span><h1><code class="docutils literal notranslate"><span class="pre">pyscal.utils.capillarypressure</span></code><a class="headerlink" href="#module-pyscal.utils.capillarypressure" title="Link to this heading"></a></h1>
-<p>Support functions for capillary pressure</p>
+  <section id="module-pyscal.pyscal_logger">
+<span id="pyscal-pyscal-logger"></span><h1><code class="docutils literal notranslate"><span class="pre">pyscal.pyscal_logger</span></code><a class="headerlink" href="#module-pyscal.pyscal_logger" title="Link to this heading"></a></h1>
 <dl class="py function">
-<dt class="sig sig-object py" id="pyscal.utils.capillarypressure.simple_J">
-<span class="sig-prename descclassname"><span class="pre">pyscal.utils.capillarypressure.</span></span><span class="sig-name descname"><span class="pre">simple_J</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poro_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perm_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drho</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">g</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">9.81</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/capillarypressure.html#simple_J"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.capillarypressure.simple_J" title="Link to this definition"></a></dt>
-<dd><p>Calculate capillary pressure with bar as unit</p>
-<p>RMS version:</p>
-<div class="math notranslate nohighlight">
-\[J = a S_w^b\]</div>
-<p><em>J</em> is not dimensionless in this equation.</p>
-<p>This is identical to the also seen formula</p>
-<div class="math notranslate nohighlight">
-\[J = 10^{b \log(S_w) + \log(a)}\]</div>
+<dt class="sig sig-object py" id="pyscal.pyscal_logger.getLogger_pyscal">
+<span class="sig-prename descclassname"><span class="pre">pyscal.pyscal_logger.</span></span><span class="sig-name descname"><span class="pre">getLogger_pyscal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">module_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'pyscal'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args_dict</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/pyscal_logger.html#getLogger_pyscal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.pyscal_logger.getLogger_pyscal" title="Link to this definition"></a></dt>
+<dd><p>Provide a custom logger for pyscal
+Logging output is by default split by logging levels (split between WARNING and
+ERROR) to stdout and stderr, each log occurs in only one of the streams.
+:type module_name: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>
+:param module_name: A suggested name for the logger, usually __name__ should be
+:param supplied:
+:type args_dict: <span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>] | <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span>
+:param args_dict: Dictionary with contents from the argparse namespace object
+:param containing only keys “output”:
+:param “verbose” and “debug”.:</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>sw</strong> – float, water saturation value to be used.
-Normalize when needed.</p></li>
-<li><p><strong>a</strong> – a coefficient</p></li>
-<li><p><strong>b</strong> – b coefficient</p></li>
-<li><p><strong>poro_ref</strong> – Reference porosity for scaling to Pc, between 0 and 1</p></li>
-<li><p><strong>perm_ref</strong> – Reference permeability for scaling to Pc, in milliDarcy</p></li>
-<li><p><strong>drho</strong> – Density difference between water and oil, in SI units kg/m³.
-Default value is 300</p></li>
-<li><p><strong>g</strong> – Gravitational acceleration, in SI units m/s²,
-default value is 9.81</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>capillary pressure, same type as swnpc input argument.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="pyscal.utils.capillarypressure.swl_from_height_simpleJ">
-<span class="sig-prename descclassname"><span class="pre">pyscal.utils.capillarypressure.</span></span><span class="sig-name descname"><span class="pre">swl_from_height_simpleJ</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">swlheight</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">swirr</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">poro_ref</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">perm_ref</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/utils/capillarypressure.html#swl_from_height_simpleJ"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.utils.capillarypressure.swl_from_height_simpleJ" title="Link to this definition"></a></dt>
-<dd><p>Calculate a swl value based on a height parameter.</p>
-<p>The height parameter is typically meters above free water level (FWL)</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>swlheight</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Height above free water level, in meters,
-where we want swl to be.</p></li>
-<li><p><strong>swirr</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Asymptotic irreducible water saturation. This is
-used to normalized the outputted swl.</p></li>
-<li><p><strong>a</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – a coefficient in RMS simplified J function</p></li>
-<li><p><strong>b</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – b coefficient in RMS simplified J function</p></li>
-<li><p><strong>poro_ref</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Reference porosity for scaling to Pc, between 0 and 1</p></li>
-<li><p><strong>perm_ref</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span>) – Reference permeability for scaling to Pc, in milliDarcy</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></span></p>
-</dd>
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A value that can be used for swl.</p>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">Logger</span></code></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -185,8 +143,8 @@ used to normalized the outputted swl.</p></li>
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="pyscal.utils.html" class="btn btn-neutral float-left" title="pyscal.utils" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="pyscal.utils.interpolation.html" class="btn btn-neutral float-right" title="pyscal.utils.interpolation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="pyscal.plotting.html" class="btn btn-neutral float-left" title="pyscal.plotting" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="pyscal.pyscalcli.html" class="btn btn-neutral float-right" title="pyscal.pyscalcli" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

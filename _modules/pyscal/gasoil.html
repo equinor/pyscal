@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.gasoil &mdash; pyscal 0.15.2 documentation</title>
+  <title>pyscal.gasoil &mdash; pyscal 0.15.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=7c174e4c"></script>
+      <script src="../../_static/documentation_options.js?v=d86fca55"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -69,7 +69,6 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
-          <li class="breadcrumb-item"><a href="../pyscal.html">pyscal</a></li>
       <li class="breadcrumb-item active">pyscal.gasoil</li>
       <li class="wy-breadcrumbs-aside">
       </li>
@@ -88,17 +87,18 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.interpolate</span><span class="w"> </span><span class="kn">import</span> <span class="n">PchipInterpolator</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">pyscal</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pyscal.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">EPSILON</span> <span class="k">as</span> <span class="n">epsilon</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pyscal.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">MAX_EXPONENT_KR</span><span class="p">,</span> <span class="n">SWINTEGERS</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pyscal.utils.relperm</span><span class="w"> </span><span class="kn">import</span> <span class="n">crosspoint</span><span class="p">,</span> <span class="n">estimate_diffjumppoint</span><span class="p">,</span> <span class="n">truncate_zeroness</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pyscal.utils.string</span><span class="w"> </span><span class="kn">import</span> <span class="n">comment_formatter</span><span class="p">,</span> <span class="n">df2str</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.__version__</span><span class="w"> </span><span class="kn">import</span> <span class="n">__version__</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">EPSILON</span> <span class="k">as</span> <span class="n">epsilon</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">MAX_EXPONENT_KR</span><span class="p">,</span> <span class="n">SWINTEGERS</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.pyscal_logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">getLogger_pyscal</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.utils.relperm</span><span class="w"> </span><span class="kn">import</span> <span class="n">crosspoint</span><span class="p">,</span> <span class="n">estimate_diffjumppoint</span><span class="p">,</span> <span class="n">truncate_zeroness</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.utils.string</span><span class="w"> </span><span class="kn">import</span> <span class="n">comment_formatter</span><span class="p">,</span> <span class="n">df2str</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">pyscal</span><span class="o">.</span><span class="n">getLogger_pyscal</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">getLogger_pyscal</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="GasOil">
-<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil">[docs]</a>
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.GasOil">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">GasOil</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Object to represent two-phase properties for gas and oil.</span>
 
@@ -289,7 +289,7 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="GasOil.update_sgcomment_and_sorg">
-<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.update_sgcomment_and_sorg">[docs]</a>
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.GasOil.update_sgcomment_and_sorg">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">update_sgcomment_and_sorg</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Recalculate sorg in case it has table data has been manipulated&quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sgcomment</span> <span class="o">=</span> <span class="p">(</span>
@@ -306,7 +306,7 @@
 
 
 <div class="viewcode-block" id="GasOil.add_fromtable">
-<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.add_fromtable">[docs]</a>
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.GasOil.add_fromtable">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_fromtable</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">dframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
@@ -451,7 +451,7 @@
 
 
 <div class="viewcode-block" id="GasOil.set_endpoints_linearpart_krg">
-<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.set_endpoints_linearpart_krg">[docs]</a>
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.GasOil.set_endpoints_linearpart_krg">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_endpoints_linearpart_krg</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">krgend</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">krgmax</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -503,7 +503,7 @@
 
 
 <div class="viewcode-block" id="GasOil.set_endpoints_linearpart_krog">
-<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.set_endpoints_linearpart_krog">[docs]</a>
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.GasOil.set_endpoints_linearpart_krog">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_endpoints_linearpart_krog</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">kroend</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
@@ -545,7 +545,7 @@
 
 
 <div class="viewcode-block" id="GasOil.add_corey_gas">
-<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.add_corey_gas">[docs]</a>
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.GasOil.add_corey_gas">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_corey_gas</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span> <span class="n">ng</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">krgend</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">krgmax</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
@@ -576,7 +576,7 @@
 
 
 <div class="viewcode-block" id="GasOil.add_corey_oil">
-<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.add_corey_oil">[docs]</a>
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.GasOil.add_corey_oil">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_corey_oil</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">nog</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span>
@@ -613,7 +613,7 @@
 
 
 <div class="viewcode-block" id="GasOil.add_LET_gas">
-<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.add_LET_gas">[docs]</a>
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.GasOil.add_LET_gas">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_LET_gas</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">l</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
@@ -670,7 +670,7 @@
 
 
 <div class="viewcode-block" id="GasOil.add_LET_oil">
-<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.add_LET_oil">[docs]</a>
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.GasOil.add_LET_oil">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_LET_oil</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">l</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
@@ -716,7 +716,7 @@
 
 
 <div class="viewcode-block" id="GasOil.estimate_sgro">
-<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.estimate_sgro">[docs]</a>
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.GasOil.estimate_sgro">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">estimate_sgro</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Estimate sgro of the current krog data</span>
 
@@ -739,7 +739,7 @@
 
 
 <div class="viewcode-block" id="GasOil.estimate_sorg">
-<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.estimate_sorg">[docs]</a>
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.GasOil.estimate_sorg">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">estimate_sorg</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Estimate sorg of the current krg or krog data.</span>
 
@@ -771,7 +771,7 @@
 
 
 <div class="viewcode-block" id="GasOil.estimate_sgcr">
-<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.estimate_sgcr">[docs]</a>
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.GasOil.estimate_sgcr">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">estimate_sgcr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Estimate sgcr of the current krog data.</span>
 
@@ -787,7 +787,7 @@
 
 
 <div class="viewcode-block" id="GasOil.crosspoint">
-<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.crosspoint">[docs]</a>
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.GasOil.crosspoint">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">crosspoint</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Locate and return the saturation point where krg = krog</span>
 
@@ -803,7 +803,7 @@
 
 
 <div class="viewcode-block" id="GasOil.selfcheck">
-<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.selfcheck">[docs]</a>
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.GasOil.selfcheck">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">selfcheck</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;SGOF&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Check validities of the data in the table.</span>
 
@@ -875,7 +875,7 @@
 
 
 <div class="viewcode-block" id="GasOil.SGOF">
-<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.SGOF">[docs]</a>
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.GasOil.SGOF">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">SGOF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Produce SGOF input for Eclipse reservoir simulator.</span>
@@ -904,7 +904,7 @@
         <span class="k">if</span> <span class="n">header</span><span class="p">:</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;SGOF</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">string</span> <span class="o">+=</span> <span class="n">comment_formatter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
-        <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;-- pyscal: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">pyscal</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;-- pyscal: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">__version__</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">if</span> <span class="n">dataincommentrow</span><span class="p">:</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sgcomment</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">krgcomment</span>
@@ -936,7 +936,7 @@
 
 
 <div class="viewcode-block" id="GasOil.slgof_df">
-<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.slgof_df">[docs]</a>
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.GasOil.slgof_df">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">slgof_df</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Slice out an SLGOF table.</span>
 
@@ -955,7 +955,7 @@
 
 
 <div class="viewcode-block" id="GasOil.SLGOF">
-<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.SLGOF">[docs]</a>
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.GasOil.SLGOF">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">SLGOF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Produce SLGOF input for Eclipse reservoir simulator.</span>
 
@@ -983,7 +983,7 @@
         <span class="k">if</span> <span class="n">header</span><span class="p">:</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;SLGOF</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">string</span> <span class="o">+=</span> <span class="n">comment_formatter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
-        <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;-- pyscal: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">pyscal</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;-- pyscal: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">__version__</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">if</span> <span class="n">dataincommentrow</span><span class="p">:</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sgcomment</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">krgcomment</span>
@@ -1014,7 +1014,7 @@
 
 
 <div class="viewcode-block" id="GasOil.SGFN">
-<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.SGFN">[docs]</a>
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.GasOil.SGFN">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">SGFN</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
@@ -1055,7 +1055,7 @@
         <span class="k">if</span> <span class="n">header</span><span class="p">:</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;SGFN</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="n">string</span> <span class="o">+=</span> <span class="n">comment_formatter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
-        <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;-- pyscal: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">pyscal</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;-- pyscal: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">__version__</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">if</span> <span class="n">dataincommentrow</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">sgcomment</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">string</span> <span class="o">+=</span> <span class="n">sgcomment</span>
@@ -1090,7 +1090,7 @@
 
 
 <div class="viewcode-block" id="GasOil.GOTABLE">
-<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.GOTABLE">[docs]</a>
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.GasOil.GOTABLE">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">GOTABLE</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Produce GOTABLE input for the Nexus reservoir simulator.</span>
@@ -1116,7 +1116,7 @@
         <span class="k">if</span> <span class="n">header</span><span class="p">:</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;GOTABLE</span><span class="se">\n</span><span class="s2">&quot;</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;SG KRG KROG PC</span><span class="se">\n</span><span class="s2">&quot;</span>
-        <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;! pyscal: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">pyscal</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;! pyscal: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">__version__</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">if</span> <span class="n">dataincommentrow</span><span class="p">:</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sgcomment</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="s2">&quot;!&quot;</span><span class="p">)</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">krgcomment</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="s2">&quot;!&quot;</span><span class="p">)</span>
@@ -1146,7 +1146,7 @@
 
 
 <div class="viewcode-block" id="GasOil.plotkrgkrog">
-<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.gasoil.GasOil.plotkrgkrog">[docs]</a>
+<a class="viewcode-back" href="../../pyscal/pyscal.gasoil.html#pyscal.GasOil.plotkrgkrog">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">plotkrgkrog</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">mpl_ax</span><span class="p">:</span> <span class="n">matplotlib</span><span class="o">.</span><span class="n">axes</span><span class="o">.</span><span class="n">Axes</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>

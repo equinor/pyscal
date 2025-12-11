@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.wateroilgas &mdash; pyscal 0.15.2 documentation</title>
+  <title>pyscal.wateroilgas &mdash; pyscal 0.15.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=7c174e4c"></script>
+      <script src="../../_static/documentation_options.js?v=d86fca55"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -69,7 +69,6 @@
   <ul class="wy-breadcrumbs">
       <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
           <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
-          <li class="breadcrumb-item"><a href="../pyscal.html">pyscal</a></li>
       <li class="breadcrumb-item active">pyscal.wateroilgas</li>
       <li class="wy-breadcrumbs-aside">
       </li>
@@ -85,18 +84,18 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
-<span class="kn">import</span><span class="w"> </span><span class="nn">pyscal</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pyscal.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">SWINTEGERS</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">pyscal.utils.string</span><span class="w"> </span><span class="kn">import</span> <span class="n">comment_formatter</span><span class="p">,</span> <span class="n">df2str</span>
-
+<span class="kn">from</span><span class="w"> </span><span class="nn">.__version__</span><span class="w"> </span><span class="kn">import</span> <span class="n">__version__</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">SWINTEGERS</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.gasoil</span><span class="w"> </span><span class="kn">import</span> <span class="n">GasOil</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.pyscal_logger</span><span class="w"> </span><span class="kn">import</span> <span class="n">getLogger_pyscal</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.utils.string</span><span class="w"> </span><span class="kn">import</span> <span class="n">comment_formatter</span><span class="p">,</span> <span class="n">df2str</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.wateroil</span><span class="w"> </span><span class="kn">import</span> <span class="n">WaterOil</span>
 
-<span class="n">logger</span> <span class="o">=</span> <span class="n">pyscal</span><span class="o">.</span><span class="n">getLogger_pyscal</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
+<span class="n">logger</span> <span class="o">=</span> <span class="n">getLogger_pyscal</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="WaterOilGas">
-<a class="viewcode-back" href="../../pyscal/pyscal.wateroilgas.html#pyscal.wateroilgas.WaterOilGas">[docs]</a>
+<a class="viewcode-back" href="../../pyscal/pyscal.wateroilgas.html#pyscal.WaterOilGas">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">WaterOilGas</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A representation of three-phase properties for oil-water-gas</span>
 
@@ -147,7 +146,7 @@
         <span class="p">)</span>
 
 <div class="viewcode-block" id="WaterOilGas.selfcheck">
-<a class="viewcode-back" href="../../pyscal/pyscal.wateroilgas.html#pyscal.wateroilgas.WaterOilGas.selfcheck">[docs]</a>
+<a class="viewcode-back" href="../../pyscal/pyscal.wateroilgas.html#pyscal.WaterOilGas.selfcheck">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">selfcheck</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Run selfcheck on both wateroil and gasoil.</span>
 
@@ -167,7 +166,7 @@
 
 
 <div class="viewcode-block" id="WaterOilGas.SWOF">
-<a class="viewcode-back" href="../../pyscal/pyscal.wateroilgas.html#pyscal.wateroilgas.WaterOilGas.SWOF">[docs]</a>
+<a class="viewcode-back" href="../../pyscal/pyscal.wateroilgas.html#pyscal.WaterOilGas.SWOF">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">SWOF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a SWOF string. Delegated to the wateroil object&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -180,7 +179,7 @@
 
 
 <div class="viewcode-block" id="WaterOilGas.SGOF">
-<a class="viewcode-back" href="../../pyscal/pyscal.wateroilgas.html#pyscal.wateroilgas.WaterOilGas.SGOF">[docs]</a>
+<a class="viewcode-back" href="../../pyscal/pyscal.wateroilgas.html#pyscal.WaterOilGas.SGOF">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">SGOF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a SGOF string. Delegated to the gasoil object.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -193,7 +192,7 @@
 
 
 <div class="viewcode-block" id="WaterOilGas.SLGOF">
-<a class="viewcode-back" href="../../pyscal/pyscal.wateroilgas.html#pyscal.wateroilgas.WaterOilGas.SLGOF">[docs]</a>
+<a class="viewcode-back" href="../../pyscal/pyscal.wateroilgas.html#pyscal.WaterOilGas.SLGOF">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">SLGOF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a SLGOF string. Delegated to the gasoil object.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -206,7 +205,7 @@
 
 
 <div class="viewcode-block" id="WaterOilGas.SGFN">
-<a class="viewcode-back" href="../../pyscal/pyscal.wateroilgas.html#pyscal.wateroilgas.WaterOilGas.SGFN">[docs]</a>
+<a class="viewcode-back" href="../../pyscal/pyscal.wateroilgas.html#pyscal.WaterOilGas.SGFN">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">SGFN</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a SGFN string. Delegated to the gasoil object.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -219,7 +218,7 @@
 
 
 <div class="viewcode-block" id="WaterOilGas.SWFN">
-<a class="viewcode-back" href="../../pyscal/pyscal.wateroilgas.html#pyscal.wateroilgas.WaterOilGas.SWFN">[docs]</a>
+<a class="viewcode-back" href="../../pyscal/pyscal.wateroilgas.html#pyscal.WaterOilGas.SWFN">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">SWFN</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a SWFN string. Delegated to the wateroil object.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -232,7 +231,7 @@
 
 
 <div class="viewcode-block" id="WaterOilGas.SOF3">
-<a class="viewcode-back" href="../../pyscal/pyscal.wateroilgas.html#pyscal.wateroilgas.WaterOilGas.SOF3">[docs]</a>
+<a class="viewcode-back" href="../../pyscal/pyscal.wateroilgas.html#pyscal.WaterOilGas.SOF3">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">SOF3</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a SOF3 string, combining data from the wateroil and</span>
 <span class="sd">        gasoil objects.</span>
@@ -285,7 +284,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Only print once if they are equal</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="n">wo_tag</span>
-        <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;-- pyscal: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">pyscal</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;-- pyscal: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">__version__</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
         <span class="k">if</span> <span class="n">dataincommentrow</span><span class="p">:</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">swcomment</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">sgcomment</span>
@@ -348,7 +347,7 @@
         <span class="k">return</span> <span class="s2">&quot;&quot;</span>
 
 <div class="viewcode-block" id="WaterOilGas.threephaseconsistency">
-<a class="viewcode-back" href="../../pyscal/pyscal.wateroilgas.html#pyscal.wateroilgas.WaterOilGas.threephaseconsistency">[docs]</a>
+<a class="viewcode-back" href="../../pyscal/pyscal.wateroilgas.html#pyscal.WaterOilGas.threephaseconsistency">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">threephaseconsistency</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform consistency checks on produced curves, similar</span>
 <span class="sd">        to what Eclipse does at startup.</span>

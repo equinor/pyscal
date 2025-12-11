@@ -13,11 +13,13 @@ Submodules
 
 .. toctree::
 
+   pyscal.__version__
    pyscal.constants
    pyscal.factory
    pyscal.gasoil
    pyscal.gaswater
    pyscal.plotting
+   pyscal.pyscal_logger
    pyscal.pyscalcli
    pyscal.pyscallist
    pyscal.scalrecommendation
@@ -27,3 +29,101 @@ Submodules
    pyscal.wateroilgas
 
 .. currentmodule:: pyscal
+
+
+Functions
+=========
+
+- :py:func:`getLogger_pyscal`:
+  Provide a custom logger for pyscal
+
+
+.. autofunction:: getLogger_pyscal
+
+
+Classes
+=======
+
+- :py:class:`GasOil`:
+  Object to represent two-phase properties for gas and oil.
+
+- :py:class:`GasWater`:
+  A representation of two-phase properties for gas-water
+
+- :py:class:`PyscalFactory`:
+  Class for implementing the factory pattern for Pyscal objects
+
+- :py:class:`PyscalList`:
+  Container class for a list of WaterOilGas objects.
+
+- :py:class:`SCALrecommendation`:
+  A SCAL recommendation consists of three OilWaterGas objects,
+
+- :py:class:`WaterOil`:
+  A representation of two-phase properties for oil-water.
+
+- :py:class:`WaterOilGas`:
+  A representation of three-phase properties for oil-water-gas
+
+
+.. autoclass:: GasOil
+   :members:
+
+   .. rubric:: Inheritance
+   .. inheritance-diagram:: GasOil
+      :parts: 1
+
+.. autoclass:: GasWater
+   :members:
+
+   .. rubric:: Inheritance
+   .. inheritance-diagram:: GasWater
+      :parts: 1
+
+.. autoclass:: PyscalFactory
+   :members:
+
+   .. rubric:: Inheritance
+   .. inheritance-diagram:: PyscalFactory
+      :parts: 1
+
+.. autoclass:: PyscalList
+   :members:
+
+   .. rubric:: Inheritance
+   .. inheritance-diagram:: PyscalList
+      :parts: 1
+
+.. autoclass:: SCALrecommendation
+   :members:
+
+   .. rubric:: Inheritance
+   .. inheritance-diagram:: SCALrecommendation
+      :parts: 1
+
+.. autoclass:: WaterOil
+   :members:
+
+   .. rubric:: Inheritance
+   .. inheritance-diagram:: WaterOil
+      :parts: 1
+
+.. autoclass:: WaterOilGas
+   :members:
+
+   .. rubric:: Inheritance
+   .. inheritance-diagram:: WaterOilGas
+      :parts: 1
+
+
+Variables
+=========
+
+- :py:data:`__version__`
+
+.. autodata:: __version__
+   :annotation:
+
+   .. code-block:: text
+
+      '0.15.3'

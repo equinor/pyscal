@@ -6,20 +6,20 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.plotting &mdash; pyscal 0.15.2 documentation</title>
+  <title>pyscal.plotting &mdash; pyscal 0.15.3 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=7c174e4c"></script>
+      <script src="../_static/documentation_options.js?v=d86fca55"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="pyscal.pyscalcli" href="pyscal.pyscalcli.html" />
+    <link rel="next" title="pyscal.pyscal_logger" href="pyscal.pyscal_logger.html" />
     <link rel="prev" title="pyscal.gaswater" href="pyscal.gaswater.html" /> 
 </head>
 
@@ -55,8 +55,16 @@
 <p class="caption" role="heading"><span class="caption-text">Python API</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="pyscal.html"><code class="docutils literal notranslate"><span class="pre">pyscal</span></code></a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="pyscal.html#pyscal.GasOil"><code class="docutils literal notranslate"><span class="pre">GasOil</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyscal.html#pyscal.GasWater"><code class="docutils literal notranslate"><span class="pre">GasWater</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyscal.html#pyscal.PyscalFactory"><code class="docutils literal notranslate"><span class="pre">PyscalFactory</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyscal.html#pyscal.PyscalList"><code class="docutils literal notranslate"><span class="pre">PyscalList</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyscal.html#pyscal.SCALrecommendation"><code class="docutils literal notranslate"><span class="pre">SCALrecommendation</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyscal.html#pyscal.WaterOil"><code class="docutils literal notranslate"><span class="pre">WaterOil</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyscal.html#pyscal.WaterOilGas"><code class="docutils literal notranslate"><span class="pre">WaterOilGas</span></code></a></li>
 <li class="toctree-l2"><a class="reference internal" href="pyscal.html#pyscal.getLogger_pyscal"><code class="docutils literal notranslate"><span class="pre">getLogger_pyscal()</span></code></a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="pyscal.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="pyscal.__version__.html"><code class="docutils literal notranslate"><span class="pre">pyscal.__version__</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pyscal.constants.html"><code class="docutils literal notranslate"><span class="pre">pyscal.constants</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pyscal.factory.html"><code class="docutils literal notranslate"><span class="pre">pyscal.factory</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pyscal.gasoil.html"><code class="docutils literal notranslate"><span class="pre">pyscal.gasoil</span></code></a></li>
@@ -80,6 +88,7 @@
 <li class="toctree-l4"><a class="reference internal" href="#pyscal.plotting.wog_plotter"><code class="docutils literal notranslate"><span class="pre">wog_plotter()</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="pyscal.pyscal_logger.html"><code class="docutils literal notranslate"><span class="pre">pyscal.pyscal_logger</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pyscal.pyscalcli.html"><code class="docutils literal notranslate"><span class="pre">pyscal.pyscalcli</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pyscal.pyscallist.html"><code class="docutils literal notranslate"><span class="pre">pyscal.pyscallist</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="pyscal.scalrecommendation.html"><code class="docutils literal notranslate"><span class="pre">pyscal.scalrecommendation</span></code></a></li>
@@ -89,6 +98,9 @@
 <li class="toctree-l3"><a class="reference internal" href="pyscal.wateroilgas.html"><code class="docutils literal notranslate"><span class="pre">pyscal.wateroilgas</span></code></a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="pyscal.html#functions">Functions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyscal.html#classes">Classes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyscal.html#variables">Variables</a></li>
 </ul>
 </li>
 </ul>
@@ -184,7 +196,7 @@ merge on index. Can’t join on “SW” due to potential floating-point number
 errors.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>model</strong> (<a class="reference internal" href="pyscal.gaswater.html#pyscal.gaswater.GasWater" title="pyscal.gaswater.GasWater"><em>GasWater</em></a>) – GasWater model</p>
+<dd class="field-odd"><p><strong>model</strong> (<a class="reference internal" href="pyscal.html#id21" title="pyscal.GasWater"><em>GasWater</em></a>) – GasWater model</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>saturation table with Sw, Sg, krg from the GasOil
@@ -258,7 +270,7 @@ instance, and krw and Pc from the WaterOil instance</p>
 “table” instance variable.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>model</strong> (<a class="reference internal" href="pyscal.gasoil.html#pyscal.gasoil.GasOil" title="pyscal.gasoil.GasOil"><em>GasOil</em></a>) – GasOil instance</p>
+<dd class="field-odd"><p><strong>model</strong> (<a class="reference internal" href="pyscal.html#id1" title="pyscal.GasOil"><em>GasOil</em></a>) – GasOil instance</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
@@ -274,7 +286,7 @@ required. Use the formatted table as an argument to the plotter function,
 instead of the “table” instance variable</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>model</strong> (<a class="reference internal" href="pyscal.gaswater.html#pyscal.gaswater.GasWater" title="pyscal.gaswater.GasWater"><em>GasWater</em></a>) – GasWater instance</p>
+<dd class="field-odd"><p><strong>model</strong> (<a class="reference internal" href="pyscal.html#id21" title="pyscal.GasWater"><em>GasWater</em></a>) – GasWater instance</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
@@ -344,7 +356,7 @@ required.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>models</strong> (<a class="reference internal" href="pyscal.pyscallist.html#pyscal.pyscallist.PyscalList" title="pyscal.pyscallist.PyscalList"><em>PyscalList</em></a>) – List of models</p></li>
+<li><p><strong>models</strong> (<a class="reference internal" href="pyscal.html#id42" title="pyscal.PyscalList"><em>PyscalList</em></a>) – List of models</p></li>
 <li><p><strong>pc</strong> (<em>bool</em><em>, </em><em>optional</em>) – Plot Pc flag. Defaults to False.</p></li>
 <li><p><strong>semilog</strong> (<em>bool</em><em>, </em><em>optional</em>) – Plot relperm with log y-axis. Defaults to</p></li>
 <li><p><strong>False.</strong></p></li>
@@ -384,7 +396,7 @@ required.</p>
 “table” instance variable.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>model</strong> (<a class="reference internal" href="pyscal.wateroil.html#pyscal.wateroil.WaterOil" title="pyscal.wateroil.WaterOil"><em>WaterOil</em></a>) – WaterOil instance</p>
+<dd class="field-odd"><p><strong>model</strong> (<a class="reference internal" href="pyscal.html#id59" title="pyscal.WaterOil"><em>WaterOil</em></a>) – WaterOil instance</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
@@ -400,7 +412,7 @@ required.</p>
 accessed, then the “table” instance variable.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>model</strong> (<a class="reference internal" href="pyscal.wateroilgas.html#pyscal.wateroilgas.WaterOilGas" title="pyscal.wateroilgas.WaterOilGas"><em>WaterOilGas</em></a>) – WaterOilGas instance</p>
+<dd class="field-odd"><p><strong>model</strong> (<a class="reference internal" href="pyscal.html#id83" title="pyscal.WaterOilGas"><em>WaterOilGas</em></a>) – WaterOilGas instance</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
 <dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
@@ -415,7 +427,7 @@ accessed, then the “table” instance variable.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="pyscal.gaswater.html" class="btn btn-neutral float-left" title="pyscal.gaswater" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="pyscal.pyscalcli.html" class="btn btn-neutral float-right" title="pyscal.pyscalcli" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="pyscal.pyscal_logger.html" class="btn btn-neutral float-right" title="pyscal.pyscal_logger" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
