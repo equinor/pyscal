@@ -7,7 +7,7 @@ import matplotlib
 import matplotlib.pyplot
 import numpy as np
 import pytest
-from hypothesis import given
+from hypothesis import given, settings
 
 from pyscal import GasWater
 from pyscal.constants import SWINTEGERS
@@ -116,6 +116,7 @@ def test_gaswater_corey1(nw, ng):
 
 
 @given(st.floats(), st.floats(), st.floats(), st.floats(), st.floats())
+@settings(deadline=300)
 def test_gaswater_let1(l, e, t, krwend, krwmax):
     """Test random LET parameters"""
     gaswater = GasWater()

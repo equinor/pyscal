@@ -117,13 +117,17 @@ module = ["pyscal.version", "matplotlib.*", "xlrd.*", "openpyxl.*"
 ignore_missing_imports = true
 
 
-[tool.pytest.ini_options]
+[tool.pytest]
 norecursedirs = [
     ".git",
+    "*.eggs",
+    ".hypothesis",
+    ".venv",
+    "build",
 ]
-xfail_strict = "True"
+strict_xfail = true
 
-addopts = "-ra --strict-markers --ignore=docs/conf.py --ignore=.eggs"
+addopts = ["-ra", "--strict-markers", "--ignore=docs/conf.py"]
 
 markers = [
     "integration: marks a test as an integration test",
