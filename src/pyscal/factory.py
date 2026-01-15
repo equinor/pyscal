@@ -133,7 +133,7 @@ EngineType = Literal["xlrd", "openpyxl"]
 
 
 def create_water_oil(
-    params: dict[str, float] | None = None, fast: bool = False
+    params: dict[str, float | str] | None = None, fast: bool = False
 ) -> WaterOil:
     """Create a WaterOil object from a dictionary of parameters.
 
@@ -182,14 +182,16 @@ def create_water_oil(
     if set(WO_SWL_FROM_HEIGHT).issubset(params):
         if "swl" in params:
             raise ValueError("Do not provide both swl and swlheight at the same time")
-        if params["swlheight"] <= 0:
+        if cast(float, params["swlheight"]) <= 0:
             raise ValueError("swlheight must be larger than zero")
         params_swl_from_height = slicedict(params, WO_SWL_FROM_HEIGHT)
         params["swl"] = capillarypressure.swl_from_height_simpleJ(
             **params_swl_from_height
         )
         logger.debug("Computed swl from swlwheight to %s", str(params["swl"]))
-        if "swcr" in params and params["swcr"] < params["swl"]:
+        if "swcr" in params and cast(float, params["swcr"]) < cast(
+            float, params["swl"]
+        ):
             raise ValueError(
                 f"Provided swcr={params['swcr']} is lower than "
                 f"computed swl={params['swl']}"
@@ -209,7 +211,9 @@ def create_water_oil(
             )
         if "swcr" in params:
             raise ValueError("Do not provide both swcr and swcr_add at the same time")
-        params["swcr"] = params["swl"] + params[WO_SWCR_ADD[0]]
+        params["swcr"] = cast(float, params["swl"]) + cast(
+            float, params[WO_SWCR_ADD[0]]
+        )
 
     # No requirements to the base objects, defaults are ok.
     wateroil = WaterOil(**alias_sgrw(slicedict(params, WO_INIT)), fast=fast)
@@ -317,7 +321,7 @@ def create_water_oil(
 
 
 def create_gas_oil(
-    params: dict[str, float] | None = None, fast: bool = False
+    params: dict[str, float | str] | None = None, fast: bool = False
 ) -> GasOil:
     """Create a GasOil object from a dictionary of parameters.
 
@@ -410,7 +414,7 @@ def create_gas_oil(
 
 
 def create_water_oil_gas(
-    params: dict[str, float] | None = None, fast: bool = False
+    params: dict[str, float | str] | None = None, fast: bool = False
 ) -> WaterOilGas:
     """Create a WaterOilGas object from a dictionary of parameters
 
@@ -466,7 +470,7 @@ def create_water_oil_gas(
 
 
 def create_gas_water(
-    params: dict[str, float] | None = None, fast: bool = False
+    params: dict[str, float | str] | None = None, fast: bool = False
 ) -> GasWater:
     """Create a GasWater object.
 
@@ -508,7 +512,7 @@ def create_gas_water(
 
 
 def create_scal_recommendation(
-    params: dict[str, dict[str, float]],
+    params: dict[str, dict[str, float | str]],
     tag: str = "",
     h: float | None = None,
     fast: bool = False,
@@ -949,7 +953,11 @@ def create_wateroilgas_list(
         if h is not None:
             params["h"] = h
         try:
-            wogl.append(create_water_oil_gas(params.to_dict(), fast=fast))
+            wogl.append(
+                create_water_oil_gas(
+                    cast(dict[str, float | str], params.to_dict()), fast=fast
+                )
+            )
         except (AssertionError, ValueError, TypeError) as err:
             idx = cast(int, row_idx)
             raise ValueError(f"Error for SATNUM {idx + 1}: {err}") from err
@@ -976,7 +984,11 @@ def create_wateroil_list(
         if h is not None:
             params["h"] = h
         try:
-            wol.append(create_water_oil(params.to_dict(), fast=fast))
+            wol.append(
+                create_water_oil(
+                    cast(dict[str, float | str], params.to_dict()), fast=fast
+                )
+            )
         except (AssertionError, ValueError, TypeError) as err:
             raise ValueError(f"Error for SATNUM {params['SATNUM']}: {err}") from err
     return wol
@@ -1002,7 +1014,11 @@ def create_gasoil_list(
         if h is not None:
             params["h"] = h
         try:
-            gol.append(create_gas_oil(params.to_dict(), fast=fast))
+            gol.append(
+                create_gas_oil(
+                    cast(dict[str, float | str], params.to_dict()), fast=fast
+                )
+            )
         except (AssertionError, ValueError, TypeError) as err:
             raise ValueError(f"Error for SATNUM {params['SATNUM']}: {err}") from err
     return gol
@@ -1028,7 +1044,11 @@ def create_gaswater_list(
         if h is not None:
             params["h"] = h
         try:
-            gwl.append(create_gas_water(params.to_dict(), fast=fast))
+            gwl.append(
+                create_gas_water(
+                    cast(dict[str, float | str], params.to_dict()), fast=fast
+                )
+            )
         except (AssertionError, ValueError, TypeError) as err:
             raise ValueError(f"Error for SATNUM {params['SATNUM']}: {err}") from err
     return gwl
@@ -1059,7 +1079,7 @@ class PyscalFactory:
 
     @staticmethod
     def create_water_oil(
-        params: dict[str, float] | None = None, fast: bool = False
+        params: dict[str, float | str] | None = None, fast: bool = False
     ) -> WaterOil:
         warnings.warn(
             "PyscalFactory.create_water_oil is deprecated. "
@@ -1070,7 +1090,7 @@ class PyscalFactory:
 
     @staticmethod
     def create_gas_oil(
-        params: dict[str, float] | None = None, fast: bool = False
+        params: dict[str, float | str] | None = None, fast: bool = False
     ) -> GasOil:
         warnings.warn(
             "PyscalFactory.create_gas_oil is deprecated. "
@@ -1081,7 +1101,7 @@ class PyscalFactory:
 
     @staticmethod
     def create_water_oil_gas(
-        params: dict[str, float] | None = None, fast: bool = False
+        params: dict[str, float | str] | None = None, fast: bool = False
     ) -> WaterOilGas:
         warnings.warn(
             "PyscalFactory.create_water_oil_gas is deprecated. "
@@ -1092,7 +1112,7 @@ class PyscalFactory:
 
     @staticmethod
     def create_gas_water(
-        params: dict[str, float] | None = None, fast: bool = False
+        params: dict[str, float | str] | None = None, fast: bool = False
     ) -> GasWater:
         warnings.warn(
             "PyscalFactory.create_gas_water is deprecated. "
@@ -1103,7 +1123,7 @@ class PyscalFactory:
 
     @staticmethod
     def create_scal_recommendation(
-        params: dict[str, dict[str, float]],
+        params: dict[str, dict[str, float | str]],
         tag: str = "",
         h: float | None = None,
         fast: bool = False,
