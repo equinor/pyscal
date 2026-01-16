@@ -25,16 +25,27 @@ concurrency:
 
 jobs:
   pyscal:
+    timeout-minutes: 30
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        python-version: ['3.11', '3.12', '3.13', '3.14']
-        os: [ "ubuntu-latest" ]
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
+        os: ["ubuntu-latest"]
+        pandas-version: [""]
         include:
           - os: "macos-latest"
             python-version: "3.13"
           - os: "windows-latest"
             python-version: "3.13"
+          - python-version: "3.13"
+            pandas-version: ">=2,<3"
+            os: "ubuntu-latest"
+          - python-version: "3.13"
+            pandas-version: ">=3.0.0"
+            os: "ubuntu-latest"
+        exclude:
+          - python-version: "3.13"
+            pandas-version: ""
 
     steps:
       - name: Checkout commit locally
@@ -64,6 +75,10 @@ jobs:
           # for extra tests
           uv pip install opm res2df
 
+      - name: Pin pandas version
+        if: matrix.pandas-version
+        run: uv pip install "pandas${{ matrix.pandas-version }}"
+
       - name: List all installed packages
         if: ${{ always() }}
         run: uv pip freeze
@@ -71,8 +86,8 @@ jobs:
       - name: Ruff check
         if: ${{ always() }}
         run: |
-          ruff check . 
-      
+          ruff check .
+
       - name: Ruff format
         if: ${{ always() }}
         run: |
