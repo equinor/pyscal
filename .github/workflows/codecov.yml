@@ -15,40 +15,41 @@ concurrency:
 jobs:
   coverage:
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
     strategy:
       matrix:
         os: [ubuntu-latest]
 
     steps:
-    - uses: actions/checkout@v6
+      - uses: actions/checkout@v6
 
-    - name: Setup Python
-      uses: actions/setup-python@v6
-      with:
-        python-version: "3.13"
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
 
-    - name: Install uv
-      uses: astral-sh/setup-uv@v7
-      with:
-        enable-cache: true
-        python-version: "3.13"
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+          python-version: "3.13"
 
-    - name: Install pyscal and test dependencies
-      run: |
-        uv pip install .[tests]
-        uv pip install opm res2df  # (extra packages for more tests)
+      - name: Install pyscal and test dependencies
+        run: |
+          uv pip install ".[tests]"
+          uv pip install opm res2df  # (extra packages for more tests)
 
-    - name: Generate coverage report
-      run: |
-        pytest --hypothesis-profile ci tests --disable-warnings --cov=pyscal --cov-report=xml --junitxml=junit.xml -o junit_family=legacy
+      - name: Generate coverage report
+        run: |
+          pytest --hypothesis-profile ci tests --disable-warnings --cov=pyscal --cov-report=xml --junitxml=junit.xml -o junit_family=legacy
 
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v5
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v5
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
 
-    - name: Upload test report to Codecov
-      if: ${{ !cancelled() }}
-      uses: codecov/test-results-action@v1
-      with:
-        token: ${{ secrets.CODECOV_TOKEN }}
+      - name: Upload test report to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
