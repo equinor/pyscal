@@ -175,6 +175,11 @@ def test_let_pc_pd():
     assert np.isclose(wateroil.table["PC"].min(), 0)
     # (everything is linear)
 
+    #Test for added threshold in the function
+    wateroil.add_LET_pc_pd(Lp=1, Ep=1, Tp=1, Lt=1, Et=1, Tt=1, Pcmax=10, Pct=5, Ftp=True)
+    assert np.isclose(wateroil.table["PC"].max(), 10)
+    assert np.isclose(wateroil.table["PC"].min(), 5)
+
     wateroil.add_LET_pc_pd(Lp=10, Ep=10, Tp=10, Lt=10, Et=10, Tt=10, Pcmax=10, Pct=5)
     assert np.isclose(wateroil.table["PC"].max(), 10)
     assert np.isclose(wateroil.table["PC"].min(), 0)
