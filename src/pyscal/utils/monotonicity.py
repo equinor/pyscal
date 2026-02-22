@@ -1,6 +1,7 @@
-"""Monotonocity support functions for pyscal"""
+"""Monotonicity support functions for pyscal"""
 
 import logging
+from decimal import ROUND_CEILING, ROUND_FLOOR, Decimal
 from typing import TypedDict
 
 import numpy as np
@@ -30,6 +31,40 @@ class MonotonicitySpec(TypedDict, total=False):
     allowzero: bool
     """If True, consecutive zeros will be allowes in an otherwise strictly
     monotonic column. Optional parameter."""
+
+
+def _quantize_to_fixed_point_int(
+    value: float, digits: int, rounding: str | None = None
+) -> int:
+    """Convert a IEEE754 floating point to an integer representation
+    for a specified accuracy.
+
+    Examples: f(0.01, 2) becomes 1, f(1.00, 2) becomes 100.
+
+    Decimal objects are used to guarantee that we are
+    snapping the floating points to the same values as we want
+    to see in the output, avoiding IEEE754 fallacies.
+
+    When enforcing monotonicity, rounding should be ceiling
+    for decreasing sequences, and floor for increasing sequences.
+    """
+    accuracy = Decimal(1).scaleb(-digits)
+    dec = Decimal(str(value)).quantize(accuracy, rounding=rounding)
+    return int(dec * 10**digits)
+
+
+def _format_fixed_point_int(fixed_point_int: int, digits: int) -> str:
+    """Convert integers that represent floating point number
+    to strings. Numbers will be zero-padded with to the
+    specified number of digits.
+
+    Examples:
+    f(100, 2) becomes "1.00" and f(1, 2) becomes "0.01"
+    """
+    scale = 10**digits
+    sign = "-" if fixed_point_int < 0 else ""
+    abs_quant_int = -fixed_point_int if fixed_point_int < 0 else fixed_point_int
+    return f"{sign}{abs_quant_int // scale}.{abs_quant_int % scale:0{digits}d}"
 
 
 def modify_dframe_monotonicity(
@@ -68,6 +103,9 @@ def modify_dframe_monotonicity(
         dframe: Data to modify.
         monotonicity: Keys are column names
         digits: Number of digits to ensure monotonicity for.
+
+    Returns a dataframe where monotonicity enforced columns have
+    a string datatype.
     """
     validate_monotonicity_arg(monotonicity, dframe.columns.to_list())
 
@@ -85,6 +123,8 @@ def modify_dframe_monotonicity(
         if dframe[col].dtype != np.float64:
             dframe[col] = dframe[col].astype(float)
 
+        assert "sign" in spec
+
         # Bail on clearly erroneous data:
         check_almost_monotone(dframe[col], digits, spec["sign"])
 
@@ -92,55 +132,54 @@ def modify_dframe_monotonicity(
 
     # Modify data for monotonicity:
     for col, spec in monotonicity.items():
-        accuracy = 1.0 / 10.0**digits - epsilon
-
         if "allowzero" in spec:
-            # Treat zero as an exception for strict monotonicity:
+            # Treat all-zero values as an exception for strict monotonicity:
             max_value = dframe[col].abs().max()
-            if max_value < accuracy and spec["allowzero"]:
+            if max_value < 1.0 / 10.0**digits - epsilon and spec["allowzero"]:
                 continue
 
-        constants = rows_to_be_fixed(dframe[col], spec, digits)
-        iterations = 0
-        sign = spec["sign"]
-        while constants.any():
-            iterations += 1
+        # Default rounding in Python is ROUND_HALF_EVEN, or "Bankers rounding".
+        # That rounding scheme is designed for summing numbers, not for
+        # strictly monotone sequences where it is safer to either always round
+        # up or down consistently
+        rounding: str = ROUND_FLOOR if spec["sign"] == 1 else ROUND_CEILING
 
-            assert iterations <= 2 * len(dframe[col]), (
-                "Too many iterations for monotonicity fix"
-            )
+        lower_fixed_int = upper_fixed_int = None
+        for boundary in ("lower", "upper"):
+            if spec.get(boundary) is not None:
+                boundary_value = spec.get(boundary)
+                assert isinstance(boundary_value, int | float)
+                if boundary == "lower":
+                    lower_fixed_int = _quantize_to_fixed_point_int(
+                        boundary_value, digits, rounding
+                    )
+                if boundary == "upper":
+                    upper_fixed_int = _quantize_to_fixed_point_int(
+                        boundary_value, digits, rounding
+                    )
 
-            dframe.loc[constants, col] = (
-                dframe.loc[constants, col] + sign / 10.0**digits - epsilon
-            )
+        monotone_floatstrings: list[str] = []
+        last_fixed_int: int | None = None
+        for boundary_value in dframe[col].to_numpy():
+            fixed_int = _quantize_to_fixed_point_int(boundary_value, digits, rounding)
 
-            # Ensure nonstrict monotonicity and clips after each modification:
-            dframe[col] = clip_accumulate(dframe[col], spec)
+            if last_fixed_int is not None and fixed_int not in (
+                lower_fixed_int,
+                upper_fixed_int,
+            ):
+                if spec["sign"] == 1:
+                    fixed_int = max(fixed_int, last_fixed_int + 1)
+                    if upper_fixed_int is not None:  # Clamp at upper limit
+                        fixed_int = min(fixed_int, upper_fixed_int)
+                else:
+                    fixed_int = min(fixed_int, last_fixed_int - 1)
+                    if lower_fixed_int is not None:  # Clamp at lower limit
+                        fixed_int = max(fixed_int, lower_fixed_int)
+            last_fixed_int = fixed_int
 
-            # Evaluate what is left to fix:
-            constants = rows_to_be_fixed(dframe[col], spec, digits)
+            monotone_floatstrings.append(_format_fixed_point_int(fixed_int, digits))
 
-        # Warn if more iterations than 5% of the rows
-        # (number of iterations do not necessarily correspond with
-        # number of changed rows)
-        if float(iterations) / float(len(dframe[col])) > 0.05:
-            logger.warning(
-                "Needed %s iterations on column %s of length %s",
-                str(iterations),
-                col,
-                str(len(dframe[col])),
-            )
-
-        # Assert that we have successfully managed to force monotonicity
-        allowance = 1.0 / 10.0**digits
-        if sign > 0:
-            assert not (dframe[col].round(digits).diff() < -allowance).any(), (  # type: ignore[operator]
-                "Not possible to make column monotonically increasing"
-            )
-        else:
-            assert not (dframe[col].round(digits).diff() > allowance).any(), (  # type: ignore[operator]
-                "Not possible to make column monotonically decreasing"
-            )
+        dframe[col] = monotone_floatstrings
     return dframe
 
 
@@ -199,38 +238,6 @@ def check_limits(
         raise ValueError(f"Values larger than upper limit in column {colname}")
     if "lower" in monotonicity and (series < monotonicity["lower"]).any():
         raise ValueError(f"Values smaller than lower limit in column {colname}")
-
-
-def rows_to_be_fixed(
-    series: pd.Series, monotonicity: MonotonicitySpec, digits: int
-) -> pd.Series:
-    """Compute boolean array of rows that must be modified
-
-    Args:
-        series:
-        monotonicity:
-        digits: Accuracy required, how many digits
-            that are to be printed, and to which we should relate
-            constancy to.
-    Returns:
-        boolean series.
-    """
-    if isinstance(series, (list, np.ndarray)):
-        series = pd.Series(series, dtype="float64")
-
-    # minus epsilon is critical to avoid being greedy
-    accuracy = 1.0 / 10.0**digits - epsilon
-    if monotonicity["sign"] > 0:
-        constants = series.round(digits + 1).diff() < accuracy  # type: ignore[operator]
-    else:
-        constants = series.round(digits + 1).diff() > -accuracy  # type: ignore[operator]
-
-    # Allow constants at the lower and upper limits.
-    if "upper" in monotonicity:
-        constants = constants & (series < (monotonicity["upper"] - accuracy))
-    if "lower" in monotonicity:
-        constants = constants & (series > (monotonicity["lower"] + accuracy))
-    return constants
 
 
 def check_almost_monotone(series: pd.Series, digits: int, sign: int) -> None:
