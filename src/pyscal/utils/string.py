@@ -12,7 +12,6 @@ logger = logging.getLogger(__name__)
 def df2str(
     dframe: pd.DataFrame,
     digits: int = 7,
-    roundlevel: int = 9,
     header: bool = False,
     monotonicity: dict[str, MonotonicitySpec] | None = None,
 ) -> str:
@@ -35,8 +34,6 @@ def df2str(
             It is not recommended to deviate from the default 7 uncritically
             for pyscal output, other code have to be tuned to ensure
             numerical robustness to the deviation.
-        roundlevel: To how many digits should we round prior to print.
-            Recommended to be > digits + 1, see test code.
         header: If the dataframe column header should be included
         monotonicity: Column names in dframe are the keys, pointing
             to a specification for monotonicity to be enforced.
@@ -46,9 +43,7 @@ def df2str(
     if monotonicity is not None:
         dframe = modify_dframe_monotonicity(dframe, monotonicity, digits)
 
-    return dframe.round(roundlevel).to_csv(
-        sep=" ", float_format=float_format, header=header, index=False
-    )
+    return dframe.to_csv(sep=" ", float_format=float_format, header=header, index=False)
 
 
 def comment_formatter(multiline: str, prefix: str = "-- ") -> str:

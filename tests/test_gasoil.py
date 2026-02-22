@@ -577,11 +577,12 @@ def test_roundoff():
     )
     gasoil.table["SGN"] = gasoil.table["SG"]
     gasoil.table["SON"] = 1 - gasoil.table["SG"]
-    # If this value (as string) occurs, then we are victim of floating point truncation
-    # in float_format=".7f":
-    assert "0.1952404" not in gasoil.SGOF()
-    assert "0.1952405" in gasoil.SGOF()
-    check_table(gasoil.table)  # This function allows this monotonicity hiccup.
+    number_lines = [
+        line for line in gasoil.SGOF().splitlines() if line[0] in ("0", "1")
+    ]
+    krog_series: list[str] = [line.split(" ")[2] for line in number_lines]
+    assert len(set(krog_series)) == len(number_lines), "KROG was not strictly monotone"
+    check_table(gasoil.table)
 
 
 @pytest.mark.parametrize(

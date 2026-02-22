@@ -1,20 +1,38 @@
 """Test module for monotonicity support functions in pyscal"""
 
-import os
 import math
+import os
+
 import numpy as np
 import pandas as pd
 import pytest
-from hypothesis import strategies as st, given
+from hypothesis import given
+from hypothesis import strategies as st
+
 from pyscal.utils.monotonicity import (
+    _format_fixed_point_int,
+    _quantize_to_fixed_point_int,
     check_almost_monotone,
     check_limits,
     clip_accumulate,
-    modify_dframe_monotonicity,
-    rows_to_be_fixed,
     validate_monotonicity_arg,
 )
 from pyscal.utils.string import df2str
+
+
+@given(st.floats(min_value=-10, max_value=10), st.integers(min_value=1, max_value=10))
+def test_floating_point_formatting_is_identical_to_python_up_to_10_digits(
+    float_value: float, digits: int
+):
+    fixed_point = _quantize_to_fixed_point_int(float_value, digits)
+    python_fmt_string = f"{float_value:.{digits}f}"
+    custom_fmt_string = _format_fixed_point_int(fixed_point, digits)
+    if (
+        custom_fmt_string == "0." + "0" * digits
+        and python_fmt_string == "-0." + "0" * digits
+    ):
+        return
+    assert custom_fmt_string == python_fmt_string
 
 
 @st.composite
@@ -72,7 +90,6 @@ def tricky_almost_monotone_series(draw, max_series_length: int = 100):
     return xs, decimals, sign
 
 
-@pytest.mark.xfail(reason="Monotonicity code has corner-case bugs")
 @given(tricky_almost_monotone_series())
 def test_df2str_yields_strictly_monotone(data):
     values, digits, sign = data
@@ -155,8 +172,7 @@ def test_df2str_monotone():
         (
             [0.02, 0.01, 0.01, 0.00, 0.00],
             {0: {"sign": -1}},
-            ["0.02", "0.01", "-0.00", "-0.01", "-0.02"],
-            #                 ^ this sign is optional, allowed when negative is allowed
+            ["0.02", "0.01", "0.00", "-0.01", "-0.02"],
         ),
         ([1.0, 1.0, 1.0], {0: {"sign": 1, "upper": 1}}, ["1.00", "1.00", "1.00"]),
         ([1, 1, 1], {0: {"sign": 1}}, ["1.00", "1.01", "1.02"]),
@@ -244,7 +260,9 @@ def test_df2str_nonstrict_monotonicity(series, monotonicity, expected):
         (
             [0.00, 0.0002, 0.01, 0.010001, 0.0100001, 0.01, 0.99, 1.0001, 1.00],
             {0: {"sign": 1, "lower": 0, "upper": 1}},
-            ["0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "1.0", "1.0", "1.0"],
+            ["0.0", "0.0", "0.0", "0.0", "0.0", "0.0", "0.9", "1.0", "1.0"],
+            # Element 6 is rounded down from 0.99 to 0.9 because rounding down
+            # is the correct thing to do for monotone increasing series.
         ),
         (
             [0.2, 0.1, 0.1, 0.0, 0.0],
@@ -254,8 +272,7 @@ def test_df2str_nonstrict_monotonicity(series, monotonicity, expected):
         (
             [0.2, 0.1, 0.1, 0.0, 0.0],
             {0: {"sign": -1}},
-            ["0.2", "0.1", "-0.0", "-0.1", "-0.2"],
-            #               ^ this sign is optional, allowed when negative is allowed
+            ["0.2", "0.1", "0.0", "-0.1", "-0.2"],
         ),
         ([1.0, 1.0, 1.0], {0: {"sign": 1, "upper": 1}}, ["1.0", "1.0", "1.0"]),
         ([1, 1, 1], {0: {"sign": 1}}, ["1.0", "1.1", "1.2"]),
@@ -267,7 +284,7 @@ def test_df2str_nonstrict_monotonicity(series, monotonicity, expected):
         (
             [1, 1, 0.5, 0.01, 0.01, 0, 0],
             {0: {"sign": -1, "lower": 0, "upper": 1}},
-            ["1.0", "1.0", "0.5", "0.0", "0.0", "0.0", "0.0"],
+            ["1.0", "1.0", "0.5", "0.1", "0.0", "0.0", "0.0"],
         ),
         (
             [0, 0, 0.1, 0.1, 0.5, 1, 1],
@@ -290,7 +307,7 @@ def test_df2str_nonstrict_monotonicity(series, monotonicity, expected):
                 "0.0",
                 "0.0",
                 "0.0",
-                "1.0",
+                "0.9",
                 "1.0",
                 "1.0",
                 "1.0",
@@ -390,29 +407,6 @@ def test_check_limits(series, monotonicity, colname, error_str):
 
 
 @pytest.mark.parametrize(
-    "series, monotonicity, digits, expected",
-    [
-        ([], {"sign": 1}, 0, []),
-        ([], {"sign": 1}, 2, []),
-        ([0], {"sign": 1}, 2, [False]),
-        ([0, 0.1], {"sign": 1}, 2, [False, False]),
-        ([0, 0.1], {"sign": 1}, 1, [False, False]),
-        ([0, 0.1], {"sign": 1}, 0, [False, True]),
-        ([0.1, 0], {"sign": -1}, 2, [False, False]),
-        ([0.1, 0], {"sign": -2}, 1, [False, False]),
-        ([0.1, 0], {"sign": -1}, 0, [False, True]),
-        # But this is allowed if at limits:
-        ([0, 0.1], {"sign": 2, "upper": 0.1}, 0, [False, False]),
-        ([0.1, 0], {"sign": -1, "lower": 0}, 0, [False, False]),
-    ],
-)
-def test_rows_to_be_fixed(series, monotonicity, digits, expected):
-    """Check that we can make a boolean array of which elements must be fixed for
-    monotonicity"""
-    assert (rows_to_be_fixed(series, monotonicity, digits) == expected).all()
-
-
-@pytest.mark.parametrize(
     "series, digits, sign, expected_error",
     [
         ([], 0, 1, None),
@@ -471,12 +465,3 @@ def test_validate_monotonicity_arg(monotonicity, dframe_colnames, error_str):
         assert error_str in str(err)
     else:
         validate_monotonicity_arg(monotonicity, dframe_colnames)
-
-
-def test_modify_dframe_monotonicity_many_iterations():
-    """This dataframe should be the worst kind scenario (?) in terms of how many
-    iterations are needed. This gives len(dframe) - 1 iterations, and the code
-    would bail (AssertionError) if we get to 2*len(dframe) iterations."""
-    modify_dframe_monotonicity(
-        pd.DataFrame({"SW": [0.1, 0.1, 0.1, 0.09]}), {"SW": {"sign": -1}}, 2
-    )
