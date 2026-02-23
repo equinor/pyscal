@@ -1,11 +1,11 @@
 """Test module for monotonicity support functions in pyscal"""
 
 import os
-
+import math
 import numpy as np
 import pandas as pd
 import pytest
-
+from hypothesis import strategies as st, given
 from pyscal.utils.monotonicity import (
     check_almost_monotone,
     check_limits,
@@ -15,6 +15,73 @@ from pyscal.utils.monotonicity import (
     validate_monotonicity_arg,
 )
 from pyscal.utils.string import df2str
+
+
+@st.composite
+def tricky_almost_monotone_series(draw, max_series_length: int = 100):
+    """
+    Generate a series that is intended to be strictly increasing in real numbers,
+    but has values concentrated around decimal rounding boundaries and includes
+    negatives.
+
+    Construction:
+      base_k is an integer tick index on a decimal grid (10^-d)
+      value is (base_k + offset) / 10^d
+    where offset is near +/- 0.5 tick (ties) plus tiny noise.
+    """
+    decimals: int = draw(st.integers(min_value=1, max_value=16))
+    series_length: int = draw(st.integers(min_value=2, max_value=max_series_length))
+    sign = draw(st.sampled_from([-1, 1]))
+
+    scale: int = 10**decimals
+
+    # Start somewhere near 0 in scaled-int space, allow negative region too.
+    start_k = draw(st.integers(min_value=-5 * scale, max_value=5 * scale))
+
+    # Strictly increasing or decreasing tick indices, but sometimes by only 1 tick.
+    steps = draw(
+        st.lists(
+            st.integers(min_value=1, max_value=3),
+            min_size=series_length,
+            max_size=series_length,
+        )
+    )
+    ks = []
+    k = start_k
+    for step in steps:
+        k += sign * step
+        ks.append(k)
+
+    # Offsets chosen to create "hard" rounding cases:
+    # near half-tick, plus tiny signed noise.
+    offsets = []
+    for _ in range(series_length):
+        center = draw(st.sampled_from([-0.5, 0.0, 0.5]))
+        noise = draw(
+            st.floats(
+                min_value=-1e-12, max_value=1e-12, allow_nan=False, allow_infinity=False
+            )
+        )
+        offsets.append(center + noise)
+
+    xs = [(k + off) / scale for k, off in zip(ks, offsets)]
+
+    # ensure all are finite
+    assert all(math.isfinite(x) for x in xs)
+
+    return xs, decimals, sign
+
+
+@pytest.mark.xfail(reason="Monotonicity code has corner-case bugs")
+@given(tricky_almost_monotone_series())
+def test_df2str_yields_strictly_monotone(data):
+    values, digits, sign = data
+    str_table = df2str(
+        pd.DataFrame(data=values), digits=digits, monotonicity={0: {"sign": sign}}
+    )
+    assert len(set(str_table.strip().split("\n"))) == len(values), (
+        "Printed numbers were not strictly monotone"
+    )
 
 
 def test_df2str_monotone():
