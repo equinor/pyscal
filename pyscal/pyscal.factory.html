@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.factory &mdash; pyscal 0.16.0 documentation</title>
+  <title>pyscal.factory &mdash; pyscal 0.17.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=7de89ed4"></script>
+      <script src="../_static/documentation_options.js?v=0c3dd48d"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
@@ -83,6 +83,8 @@
 <li class="toctree-l4"><a class="reference internal" href="#pyscal.factory.create_wateroilgas_list"><code class="docutils literal notranslate"><span class="pre">create_wateroilgas_list()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pyscal.factory.filter_nan_from_dict"><code class="docutils literal notranslate"><span class="pre">filter_nan_from_dict()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pyscal.factory.infer_tabular_file_format"><code class="docutils literal notranslate"><span class="pre">infer_tabular_file_format()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyscal.factory.kro_endpoint_go"><code class="docutils literal notranslate"><span class="pre">kro_endpoint_go()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#pyscal.factory.kro_endpoint_wo"><code class="docutils literal notranslate"><span class="pre">kro_endpoint_wo()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pyscal.factory.load_relperm_df"><code class="docutils literal notranslate"><span class="pre">load_relperm_df()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pyscal.factory.remap_validate_cases"><code class="docutils literal notranslate"><span class="pre">remap_validate_cases()</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="#pyscal.factory.slicedict"><code class="docutils literal notranslate"><span class="pre">slicedict()</span></code></a></li>
@@ -503,6 +505,56 @@ distinguishes between csv, xls and xlsx</p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>One of “csv”, “xlsx” or “xls”. Empty string if nothing found out.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyscal.factory.kro_endpoint_go">
+<span class="sig-prename descclassname"><span class="pre">pyscal.factory.</span></span><span class="sig-name descname"><span class="pre">kro_endpoint_go</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#kro_endpoint_go"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.kro_endpoint_go" title="Link to this definition"></a></dt>
+<dd><p>Normalize parameters to be used for creating a GasOil object:
+- If ‘krogend’ is present, rename it to ‘kroend’.
+- If both ‘krogend’ and ‘kroend’ are provided, use the ‘krogend’ value</p>
+<blockquote>
+<div><p>and log a warning.</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>Always remove ‘krowend’ if present (not relevant for GasOil).</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>params</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</span>) – Dictionary of parameters.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary of parameters.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>params</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="pyscal.factory.kro_endpoint_wo">
+<span class="sig-prename descclassname"><span class="pre">pyscal.factory.</span></span><span class="sig-name descname"><span class="pre">kro_endpoint_wo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#kro_endpoint_wo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.kro_endpoint_wo" title="Link to this definition"></a></dt>
+<dd><p>Normalize parameters to be used for creating a WaterOil object:
+- If ‘krowend’ is present, rename it to ‘kroend’.
+- If both ‘krowend’ and ‘kroend’ are provided, use the ‘krowend’ value</p>
+<blockquote>
+<div><p>and log a warning.</p>
+</div></blockquote>
+<ul class="simple">
+<li><p>Always remove ‘krogend’ if present (not relevant for WaterOil).</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>params</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</span>) – Dictionary of parameters.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary of parameters.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>params</p>
 </dd>
 </dl>
 </dd></dl>

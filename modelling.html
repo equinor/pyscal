@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Modelling of flooding processes &mdash; pyscal 0.16.0 documentation</title>
+  <title>Modelling of flooding processes &mdash; pyscal 0.17.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=7de89ed4"></script>
+      <script src="_static/documentation_options.js?v=0c3dd48d"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -51,11 +51,16 @@
 <li class="toctree-l2"><a class="reference internal" href="#water-injection-in-oil-field-idc2">Water injection in oil field (IDC2)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#gas-injection-or-solution-gas-drive-cdi2">Gas injection or solution gas drive (CDI2)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#dry-gas-field-invading-water-icd2">Dry gas field (invading water) (ICD2)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#wet-gas-condensate-field-oil-displacing-gas-cid2">Wet gas/condensate field, oil displacing gas (CID2)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#wet-gas-condensate-field-icd2-cid2-idc2">Wet gas/condensate field (ICD2, CID2, IDC2)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#water-displacing-gas-icd2">Water displacing gas (ICD2)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#oil-displacing-gas-cid2">Oil displacing gas (CID2)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#water-displacing-oil-idc2">Water displacing oil (IDC2)</a></li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="#co2-injection-gas-displacing-water-dci1">CO<sub>2</sub>-injection (gas displacing water, DCI1)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#co2-trapping-icd2">CO<sub>2</sub> trapping (ICD2)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#oil-paleo-zone-idc1">Oil paleo zone - IDC1</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#gas-paleo-zone-dci3">Gas paleo zone - DCI3</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#oil-paleo-zone-idc1">Oil paleo zone (IDC1)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gas-paleo-zone-dci3">Gas paleo zone (DCI3)</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="history.html">History</a></li>
@@ -261,9 +266,100 @@ higher than SWL.</p></td>
 </tbody>
 </table>
 </section>
-<section id="wet-gas-condensate-field-oil-displacing-gas-cid2">
-<h2>Wet gas/condensate field, oil displacing gas (CID2)<a class="headerlink" href="#wet-gas-condensate-field-oil-displacing-gas-cid2" title="Link to this heading"></a></h2>
-<a class="reference internal image-reference" href="_images/gasoil-cid2.png"><img alt="_images/gasoil-cid2.png" src="_images/gasoil-cid2.png" style="width: 600px;" />
+<section id="wet-gas-condensate-field-icd2-cid2-idc2">
+<h2>Wet gas/condensate field (ICD2, CID2, IDC2)<a class="headerlink" href="#wet-gas-condensate-field-icd2-cid2-idc2" title="Link to this heading"></a></h2>
+<p>This field scenario is for a three-phase reservoir simulation allowing for condensate
+dropout (oil displacing gas) in addition to water displacing both gas and oil.
+The figure below illustrates different regions and processes in a wet gas/condensate field.</p>
+<a class="reference internal image-reference" href="_images/wet-condensate_field_illustration.png"><img alt="_images/wet-condensate_field_illustration.png" src="_images/wet-condensate_field_illustration.png" style="width: 600px;" />
+</a>
+<p>The following processes are associated with the regions depicted in the figure above:</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 50.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Region</p></th>
+<th class="head"><p>Process</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>ICD2</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>ICD2 &amp; CID2</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>CID2 &amp; IDC2</p></td>
+</tr>
+</tbody>
+</table>
+<p>Three-phase consistency requirements:</p>
+<ul class="simple">
+<li><p><strong>SWL</strong>: The same input must be used for all three flow scenarios.</p></li>
+<li><p>The following relationships must hold: <strong>SGRW</strong> = <strong>SGCR</strong> = <strong>SGRO</strong> = <strong>SORW</strong></p></li>
+</ul>
+<p><strong>The processes are described in the following figures:</strong></p>
+<section id="water-displacing-gas-icd2">
+<h3>Water displacing gas (ICD2)<a class="headerlink" href="#water-displacing-gas-icd2" title="Link to this heading"></a></h3>
+<p>This is the main process for a gas/condensate field.</p>
+<a class="reference internal image-reference" href="_images/gaswater-condensate-icd2.png"><img alt="_images/gaswater-condensate-icd2.png" src="_images/gaswater-condensate-icd2.png" style="width: 600px;" />
+</a>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Pyscal</p></th>
+<th class="head"><p>Eclipse</p></th>
+<th class="head"><p>Comment</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SWL</p></td>
+<td><p>SWL</p></td>
+<td><p>Initial state</p></td>
+</tr>
+<tr class="row-odd"><td><p>SWCR</p></td>
+<td><p>SWCR</p></td>
+<td><p>Critical water, when water becomes mobile. Usually set epsilon
+higher than SWL.</p></td>
+</tr>
+<tr class="row-even"><td><p>SGRW</p></td>
+<td><p>SGCR</p></td>
+<td><p>Trapped gas/residual gas. SGCR must be set equal to SGRW</p></td>
+</tr>
+<tr class="row-odd"><td><p>SGL</p></td>
+<td><p>SGL</p></td>
+<td><p>Set to zero</p></td>
+</tr>
+<tr class="row-even"><td><p>KRGEND</p></td>
+<td><p>KRG</p></td>
+<td><p>Usually 1</p></td>
+</tr>
+<tr class="row-odd"><td></td>
+<td><p>KRGR</p></td>
+<td><p>Not to be used.</p></td>
+</tr>
+<tr class="row-even"><td><p>KRWEND</p></td>
+<td><p>KRWR</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>KRWMAX</p></td>
+<td><p>KRW</p></td>
+<td><p>Usually 1</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="oil-displacing-gas-cid2">
+<h3>Oil displacing gas (CID2)<a class="headerlink" href="#oil-displacing-gas-cid2" title="Link to this heading"></a></h3>
+<p>This is the process for condensate dropout.</p>
+<a class="reference internal image-reference" href="_images/gasoil-condensate-cid2.png"><img alt="_images/gasoil-condensate-cid2.png" src="_images/gasoil-condensate-cid2.png" style="width: 600px;" />
 </a>
 <table class="docutils align-default">
 <colgroup>
@@ -298,16 +394,65 @@ higher than SWL.</p></td>
 <td></td>
 <td><p>Not used. Leave defaulted at 1</p></td>
 </tr>
-<tr class="row-odd"><td><p>KROEND</p></td>
+<tr class="row-odd"><td><p>KROGEND</p></td>
 <td><p>KROR</p></td>
-<td><p>Kro at trapped gas</p></td>
+<td><p>Kro at trapped gas in a three-phase system</p></td>
 </tr>
 <tr class="row-even"><td><p>KROMAX</p></td>
 <td><p>KRO</p></td>
-<td></td>
+<td><p>Usually set to 1</p></td>
 </tr>
 </tbody>
 </table>
+</section>
+<section id="water-displacing-oil-idc2">
+<h3>Water displacing oil (IDC2)<a class="headerlink" href="#water-displacing-oil-idc2" title="Link to this heading"></a></h3>
+<a class="reference internal image-reference" href="_images/wateroil-condensate-idc2.png"><img alt="_images/wateroil-condensate-idc2.png" src="_images/wateroil-condensate-idc2.png" style="width: 600px;" />
+</a>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Pyscal</p></th>
+<th class="head"><p>Eclipse</p></th>
+<th class="head"><p>Comment</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>SWL</p></td>
+<td><p>SWL</p></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><p>SWCR</p></td>
+<td><p>SWCR</p></td>
+<td><p>Critical water. Equal to SWL or SWL + 0.01 if this improves simulation performance</p></td>
+</tr>
+<tr class="row-even"><td><p>SORW</p></td>
+<td><p>SOWCR</p></td>
+<td><p>Residual oil</p></td>
+</tr>
+<tr class="row-odd"><td><p>KROWEND</p></td>
+<td><p>KRO</p></td>
+<td><p>kro &#64; SWL in in a three-phase system</p></td>
+</tr>
+<tr class="row-even"><td></td>
+<td><p>KRORW</p></td>
+<td><p>Not used in Pyscal (kro &#64; SWCR)</p></td>
+</tr>
+<tr class="row-odd"><td><p>KRWEND</p></td>
+<td><p>KRWR</p></td>
+<td><p>krw &#64; SORW</p></td>
+</tr>
+<tr class="row-even"><td><p>KRWMAX</p></td>
+<td><p>KRW</p></td>
+<td><p>Usually set to 1</p></td>
+</tr>
+</tbody>
+</table>
+</section>
 </section>
 <section id="co2-injection-gas-displacing-water-dci1">
 <h2>CO<sub>2</sub>-injection (gas displacing water, DCI1)<a class="headerlink" href="#co2-injection-gas-displacing-water-dci1" title="Link to this heading"></a></h2>
@@ -399,7 +544,7 @@ higher than SWL.</p></td>
 </table>
 </section>
 <section id="oil-paleo-zone-idc1">
-<h2>Oil paleo zone - IDC1<a class="headerlink" href="#oil-paleo-zone-idc1" title="Link to this heading"></a></h2>
+<h2>Oil paleo zone (IDC1)<a class="headerlink" href="#oil-paleo-zone-idc1" title="Link to this heading"></a></h2>
 <p>In an oil paleo zone, the saturation starts at <cite>sorw</cite>. <cite>socr</cite> (critical oil
 saturation) must be larger than <cite>sorw</cite>. The <cite>swcr</cite> parameter is to be
 interpreted as residual water.</p>
@@ -446,7 +591,7 @@ interpreted as residual water.</p>
 </table>
 </section>
 <section id="gas-paleo-zone-dci3">
-<h2>Gas paleo zone - DCI3<a class="headerlink" href="#gas-paleo-zone-dci3" title="Link to this heading"></a></h2>
+<h2>Gas paleo zone (DCI3)<a class="headerlink" href="#gas-paleo-zone-dci3" title="Link to this heading"></a></h2>
 <a class="reference internal image-reference" href="_images/gaswater-paleogas-dci3.png"><img alt="_images/gaswater-paleogas-dci3.png" src="_images/gaswater-paleogas-dci3.png" style="width: 600px;" />
 </a>
 <table class="docutils align-default">
