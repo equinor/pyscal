@@ -688,10 +688,10 @@ def test_factory_wateroilgas_krowgend():
     sat_table_str_ok(sgof)
     assert "Corey krg" in sgof
     assert "Corey krog" in sgof
-    assert "kroend=0.7" in sgof
+    assert "kroend=0.5" in sgof
     assert "Corey krw" in swof
     assert "Corey krow" in swof
-    assert "kroend=0.6" in swof
+    assert "kroend=0.5" in swof
     assert "krogend" not in swof
     assert "krowend" not in sgof
 
@@ -717,12 +717,12 @@ def test_factory_wateroilgas_warning(caplog):
         )
         assert (
             "Both 'krowend'=0.6 and 'kroend'=0.5 were provided; "
-            "using the 'krowend' value for WaterOil construction."
+            "using the 'kroend' value for WaterOil construction."
         ) in caplog.text
 
         assert (
             "Both 'krogend'=0.7 and 'kroend'=0.5 were provided; "
-            "using the 'krogend' value for GasOil construction."
+            "using the 'kroend' value for GasOil construction."
         ) in caplog.text
 
 
