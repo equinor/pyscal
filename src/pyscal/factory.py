@@ -1424,9 +1424,11 @@ def check_deprecated(params: dict[str, Any]) -> None:
 def kro_endpoint_wo(params: dict[str, Any]) -> dict[str, Any]:
     """
     Normalize parameters to be used for creating a WaterOil object:
-    - If 'krowend' is present, rename it to 'kroend'.
-    - If both 'krowend' and 'kroend' are provided, use the 'krowend' value
-      and log a warning.
+    - If only 'krowend' is present and not NaN, map it to 'kroend'.
+    - If both 'krowend' and 'kroend' are present, treat NaN as missing for
+    endpoint selection; when both are valid, legacy 'kroend' is prioritized.
+    - Log a warning only when both are present and both are not NaN.
+    - Always remove 'krowend'.
     - Always remove 'krogend' if present (not relevant for WaterOil).
 
     Args:
@@ -1438,17 +1440,28 @@ def kro_endpoint_wo(params: dict[str, Any]) -> dict[str, Any]:
     params_copy = params.copy()
 
     if "krowend" in params_copy:
+        krowend = params_copy["krowend"]
+        krowend_valid = not pd.isna(krowend)
         if "kroend" in params_copy:
-            logger.warning(
-                "Both 'krowend'=%r and 'kroend'=%r were provided; using the "
-                "'krowend' value for WaterOil construction.",
-                params_copy["krowend"],
-                params_copy["kroend"],
-            )
-        # Overwrite any existing 'kroend' with the 'krowend' value, then drop 'krowend'
-        params_copy["kroend"] = params_copy.pop("krowend")
+            kroend = params_copy["kroend"]
+            kroend_valid = not pd.isna(kroend)
 
-    # Remove GasOil key if it sneaks in
+            if kroend_valid and krowend_valid:
+                logger.warning(
+                    "Both 'krowend'=%r and 'kroend'=%r were provided; using the "
+                    "'kroend' value for WaterOil construction.",
+                    krowend,
+                    kroend,
+                )
+            elif not kroend_valid and krowend_valid:
+                params_copy["kroend"] = krowend
+        elif krowend_valid:
+            # Rename 'krowend' to 'kroend'
+            params_copy["kroend"] = krowend
+
+        # Drop 'krowend' to avoid confusion
+        params_copy.pop("krowend", None)
+
     params_copy.pop("krogend", None)
 
     return params_copy
@@ -1457,9 +1470,11 @@ def kro_endpoint_wo(params: dict[str, Any]) -> dict[str, Any]:
 def kro_endpoint_go(params: dict[str, Any]) -> dict[str, Any]:
     """
     Normalize parameters to be used for creating a GasOil object:
-    - If 'krogend' is present, rename it to 'kroend'.
-    - If both 'krogend' and 'kroend' are provided, use the 'krogend' value
-      and log a warning.
+    - If only 'krogend' is present and not NaN, map it to 'kroend'.
+    - If both 'krogend' and 'kroend' are present, treat NaN as missing for
+    endpoint selection; when both are valid, legacy 'kroend' is prioritized.
+    - Log a warning only when both are present and both are not NaN.
+    - Always remove 'krogend'.
     - Always remove 'krowend' if present (not relevant for GasOil).
 
     Args:
@@ -1471,17 +1486,28 @@ def kro_endpoint_go(params: dict[str, Any]) -> dict[str, Any]:
     params_copy = params.copy()
 
     if "krogend" in params_copy:
+        krogend = params_copy["krogend"]
+        krogend_valid = not pd.isna(krogend)
         if "kroend" in params_copy:
-            logger.warning(
-                "Both 'krogend'=%r and 'kroend'=%r were provided; using the "
-                "'krogend' value for GasOil construction.",
-                params_copy["krogend"],
-                params_copy["kroend"],
-            )
-        # Overwrite any existing 'kroend' with the 'krowend' value, then drop 'krowend'
-        params_copy["kroend"] = params_copy.pop("krogend")
+            kroend = params_copy["kroend"]
+            kroend_valid = not pd.isna(kroend)
 
-    # Remove WaterOil key if it sneaks in
+            if kroend_valid and krogend_valid:
+                logger.warning(
+                    "Both 'krogend'=%r and 'kroend'=%r were provided; using the "
+                    "'kroend' value for GasOil construction.",
+                    krogend,
+                    kroend,
+                )
+            elif not kroend_valid and krogend_valid:
+                params_copy["kroend"] = krogend
+        elif krogend_valid:
+            # Rename 'krogend' to 'kroend'
+            params_copy["kroend"] = krogend
+
+        # Drop 'krogend' to avoid confusion
+        params_copy.pop("krogend", None)
+
     params_copy.pop("krowend", None)
 
     return params_copy
