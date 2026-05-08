@@ -1425,7 +1425,7 @@ def kro_endpoint_wo(params: dict[str, Any]) -> dict[str, Any]:
     """
     Normalize parameters to be used for creating a WaterOil object:
     - If 'krowend' is present, rename it to 'kroend'.
-    - If both 'krowend' and 'kroend' are provided, use the 'krowend' value
+    - If both 'krowend' and 'kroend' are provided, use the 'kroend' value
       and log a warning.
     - Always remove 'krogend' if present (not relevant for WaterOil).
 
@@ -1457,7 +1457,7 @@ def kro_endpoint_go(params: dict[str, Any]) -> dict[str, Any]:
     """
     Normalize parameters to be used for creating a GasOil object:
     - If 'krogend' is present, rename it to 'kroend'.
-    - If both 'krogend' and 'kroend' are provided, use the 'krogend' value
+    - If both 'krogend' and 'kroend' are provided, use the 'kroend' value
       and log a warning.
     - Always remove 'krowend' if present (not relevant for GasOil).
 
