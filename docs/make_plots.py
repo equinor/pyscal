@@ -450,8 +450,8 @@ def make_gasoil_condensate_cid2(show: bool = True) -> None:
     sorg = 0.15
     krgend = 1
     krgmax = 1
-    krowend = 0.8
     krogend = 0.8
+    kroend = krogend
     kromax = 1
     krgendanchor = ""
     nw = 2
@@ -464,8 +464,9 @@ def make_gasoil_condensate_cid2(show: bool = True) -> None:
             "now": now,
             "ng": ng,
             "nog": nog,
-            "krowend": krowend,
-            "krogend": krogend,
+            # "krowend": krowend,
+            # "krogend": krogend,
+            "kroend": kroend,
             "kromax": kromax,
             "krgend": krgend,
             "krgmax": krgmax,
@@ -562,6 +563,7 @@ def make_wateroil_condensate_idc2(show: bool = True) -> None:
     krwend = 0.8
     krwmax = 1
     krowend = 0.85
+    kroend = krowend
     kromax = 1
     nw = 4
     now = 1.8
@@ -573,7 +575,7 @@ def make_wateroil_condensate_idc2(show: bool = True) -> None:
             "now": now,
             "ng": ng,
             "nog": nog,
-            "krowend": krowend,
+            "kroend": kroend,
             "kromax": kromax,
             "krwend": krwend,
             "swl": swl,

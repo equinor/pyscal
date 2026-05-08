@@ -1437,19 +1437,15 @@ def kro_endpoint_wo(params: dict[str, Any]) -> dict[str, Any]:
     """
     params_copy = params.copy()
 
-    if "krowend" in params_copy:
-        if "kroend" in params_copy:
-            logger.warning(
-                "Both 'krowend'=%r and 'kroend'=%r were provided; using the "
-                "'kroend' value for WaterOil construction.",
-                params_copy["krowend"],
-                params_copy["kroend"],
-            )
-            # Overwrite any existing 'krowend' with the 'kroend' value
-            params_copy["krowend"] = params_copy["kroend"]
-        else:
-            # Rename 'krowend' to 'kroend'
-            params_copy["kroend"] = params_copy["krowend"]
+    if "krowend" in params_copy and "kroend" in params_copy:
+        logger.warning(
+            "Both 'krowend'=%r and 'kroend'=%r were provided; using the "
+            "'kroend' value for WaterOil construction.",
+            params_copy["krowend"],
+            params_copy["kroend"],
+        )
+        # Overwrite any existing 'krowend' with the 'kroend' value
+        params_copy["krowend"] = params_copy["kroend"]
 
     # Remove GasOil key if it sneaks in
     params_copy.pop("krogend", None)
@@ -1473,19 +1469,15 @@ def kro_endpoint_go(params: dict[str, Any]) -> dict[str, Any]:
     """
     params_copy = params.copy()
 
-    if "krogend" in params_copy:
-        if "kroend" in params_copy:
-            logger.warning(
-                "Both 'krogend'=%r and 'kroend'=%r were provided; using the "
-                "'kroend' value for GasOil construction.",
-                params_copy["krogend"],
-                params_copy["kroend"],
-            )
-            # Overwrite any existing 'krogend' with the 'kroend' value
-            params_copy["krogend"] = params_copy["kroend"]
-        else:
-            # Rename 'krogend' to 'kroend'
-            params_copy["kroend"] = params_copy["krogend"]
+    if "krogend" in params_copy and "kroend" in params_copy:
+        logger.warning(
+            "Both 'krogend'=%r and 'kroend'=%r were provided; using the "
+            "'kroend' value for GasOil construction.",
+            params_copy["krogend"],
+            params_copy["kroend"],
+        )
+        # Overwrite any existing 'krogend' with the 'kroend' value
+        params_copy["krogend"] = params_copy["kroend"]
 
     # Remove WaterOil key if it sneaks in
     params_copy.pop("krowend", None)
