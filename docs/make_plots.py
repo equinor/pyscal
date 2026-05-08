@@ -464,8 +464,6 @@ def make_gasoil_condensate_cid2(show: bool = True) -> None:
             "now": now,
             "ng": ng,
             "nog": nog,
-            # "krowend": krowend,
-            # "krogend": krogend,
             "kroend": kroend,
             "kromax": kromax,
             "krgend": krgend,
