@@ -83,15 +83,10 @@ jobs:
         if: ${{ always() }}
         run: uv pip freeze
 
-      - name: Ruff check
+      - name: Linting using pre-commit
         if: ${{ always() }}
         run: |
-          ruff check .
-
-      - name: Ruff format
-        if: ${{ always() }}
-        run: |
-          ruff format . --check
+          pre-commit run --all-files --show-diff-on-failure
 
       - name: Check typing with mypy
         if: ${{ always() }}
@@ -103,11 +98,6 @@ jobs:
         run: |
           python -c "import pyscal"
           pytest -n auto --strict-markers --hypothesis-profile ci tests/
-
-      - name: Syntax check documentation
-        if: ${{ always() }}
-        run: |
-          rstcheck -r docs
 
       - name: Install font (xkcd) for documentation
         if: ${{ matrix.os == 'ubuntu-latest' && matrix.python-version == env.DEFAULT_PYTHON_VERSION }}

@@ -47,14 +47,13 @@ dependencies = [
 
 [project.optional-dependencies]
 tests = [
-    "ruff",
+    "pre-commit",
     "mypy",
     "hypothesis",
     "pytest",
     "pytest-cov",
     "pytest-mock",
     "pytest-xdist",
-    "rstcheck",
     "pandas-stubs",
     "scipy-stubs",
 ]
@@ -121,6 +120,7 @@ ignore = [
     "PLR0911",  # Too many return statements
     "PLR0912",  # Too many branches
     "PLR0913",  # Too many arguments
+    "PLR0917",  # Too many positional arguments
     "PLR0915",  # Too many statements
 ]
 
