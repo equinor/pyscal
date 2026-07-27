@@ -33,6 +33,7 @@ Create pull request
         source ~/venv/pyscal/bin/activate
         pip install -U pip
         pip install -e ".[tests,docs]"
+        pre-commit install
   
 4. Run the tests to ensure everything works:
 
@@ -49,12 +50,12 @@ Create pull request
 Now you can make your changes locally.
 
 6. When you're done making changes, check that your changes pass ruff, mypy and the
-   tests:
+   tests. Ruff runs automatically on ``git commit`` via pre-commit, or run it
+   manually with:
 
   .. code-block:: bash
-  
-        ruff check .
-        ruff format .
+
+        pre-commit run --all-files
         mypy src/pyscal
         pytest -n auto
 
