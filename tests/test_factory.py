@@ -663,12 +663,46 @@ def test_factory_wateroilgas_krowgend():
     """
     Test normalize krowend and krogend to kroend and put into
     create_water_oil and create_oil_gas, respectively
-    Normalize WaterOil parameters to be used for creating a
-    WaterOil(look into swof) object:
     - If 'krowend' is present, rename it to 'kroend'.
-    - If both 'krowend' and 'kroend' are provided, use the 'krowend' value
-      and log a warning.
-    - Always remove 'krogend' if present (not relevant for WaterOil).
+    - If 'krogend' is present, rename it to 'kroend'.
+    - Always remove 'krowend' and 'krogend' if present
+    (not relevant for WaterOil/GasOil).
+    """
+
+    wog = create_water_oil_gas(
+        {
+            "nw": 2,
+            "now": 3,
+            "ng": 1,
+            "nog": 2.5,
+            "krowend": 0.6,
+            "krogend": 0.7,
+        }
+    )
+    swof = wog.SWOF()
+    sgof = wog.SGOF()
+    sat_table_str_ok(swof)
+    sat_table_str_ok(sgof)
+    assert "Corey krg" in sgof
+    assert "Corey krog" in sgof
+    assert "kroend=0.7" in sgof
+    assert "Corey krw" in swof
+    assert "Corey krow" in swof
+    assert "kroend=0.6" in swof
+    assert "krowend" not in swof
+    assert "krogend" not in swof
+    assert "krogend" not in sgof
+    assert "krowend" not in sgof
+
+    check_table(wog.gasoil.table)
+    check_table(wog.wateroil.table)
+
+
+def test_factory_swap_krowgend():
+    """
+    Test prioritize kroend over krowend and krogend.
+    Always remove 'krowend' and 'krogend' if present
+    (not relevant for WaterOil/GasOil).
     """
 
     wog = create_water_oil_gas(
@@ -688,11 +722,13 @@ def test_factory_wateroilgas_krowgend():
     sat_table_str_ok(sgof)
     assert "Corey krg" in sgof
     assert "Corey krog" in sgof
-    assert "kroend=0.7" in sgof
+    assert "kroend=0.5" in sgof
     assert "Corey krw" in swof
     assert "Corey krow" in swof
-    assert "kroend=0.6" in swof
+    assert "kroend=0.5" in swof
+    assert "krowend" not in swof
     assert "krogend" not in swof
+    assert "krogend" not in sgof
     assert "krowend" not in sgof
 
     check_table(wog.gasoil.table)
@@ -717,13 +753,73 @@ def test_factory_wateroilgas_warning(caplog):
         )
         assert (
             "Both 'krowend'=0.6 and 'kroend'=0.5 were provided; "
-            "using the 'krowend' value for WaterOil construction."
+            "using the 'kroend' value for WaterOil construction."
         ) in caplog.text
 
         assert (
             "Both 'krogend'=0.7 and 'kroend'=0.5 were provided; "
-            "using the 'krogend' value for GasOil construction."
+            "using the 'kroend' value for GasOil construction."
         ) in caplog.text
+
+
+def test_factory_wateroilgas_nan_kroend(caplog):
+    """If kroend is NaN, valid phase-specific keys should be used without warning."""
+    with caplog.at_level(logging.WARNING):
+        wog = create_water_oil_gas(
+            {
+                "nw": 2,
+                "now": 3,
+                "ng": 1,
+                "nog": 2.5,
+                "krowend": 0.6,
+                "krogend": 0.7,
+                "kroend": np.nan,
+            }
+        )
+
+    swof = wog.SWOF()
+    sgof = wog.SGOF()
+    sat_table_str_ok(swof)
+    sat_table_str_ok(sgof)
+
+    assert "kroend=0.6" in swof
+    assert "kroend=0.7" in sgof
+    assert "krowend" not in swof
+    assert "krogend" not in swof
+    assert "krowend" not in sgof
+    assert "krogend" not in sgof
+    assert "Both 'krowend'" not in caplog.text
+    assert "Both 'krogend'" not in caplog.text
+
+
+def test_factory_wateroilgas_nan_legacy_keeps_valid_kroend(caplog):
+    """If phase-specific keys are NaN, valid kroend should be kept without warning."""
+    with caplog.at_level(logging.WARNING):
+        wog = create_water_oil_gas(
+            {
+                "nw": 2,
+                "now": 3,
+                "ng": 1,
+                "nog": 2.5,
+                "krowend": np.nan,
+                "krogend": np.nan,
+                "kroend": 0.5,
+            }
+        )
+
+    swof = wog.SWOF()
+    sgof = wog.SGOF()
+    sat_table_str_ok(swof)
+    sat_table_str_ok(sgof)
+
+    assert "kroend=0.5" in swof
+    assert "kroend=0.5" in sgof
+    assert "krowend" not in swof
+    assert "krogend" not in swof
+    assert "krowend" not in sgof
+    assert "krogend" not in sgof
+    assert "Both 'krowend'" not in caplog.text
+    assert "Both 'krogend'" not in caplog.text
 
 
 def test_factory_wateroilgas_wo():
