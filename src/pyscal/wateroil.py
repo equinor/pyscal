@@ -929,11 +929,14 @@ class WaterOil:
         Tt: float,
         Pcmax: float,
         Pct: float,
+        Ftp: Optional[bool] = False,
     ) -> None:
         """Add a primary drainage LET capillary pressure curve.
 
         Docs: https://wiki.equinor.com/wiki/index.php/Res:The_LET_correlation_for_capillary_pressure
 
+        It includes a welldefined threshold pressure Pct if required, and Ftp is a flag that is either True or False defining whether a
+        threshold pressure should be used or not. 
         Note that Pc where Sw > 1 - sorw will appear linear because
         there are no saturation points in that interval.
         """
@@ -945,16 +948,24 @@ class WaterOil:
         assert epsilon < Tt < MAX_EXPONENT_PC
         assert Pct <= Pcmax
 
+        # swnpc is a normalized saturation, but normalized with
+        # respect to swirr, not to swl (the swirr here is sometimes
+        # called 'swirra' - asymptotic swirr)
+        # LET Pc is provides and finite Pc value, thus swirr does not fit into the concept
+        # swnpc is generated upon object initialization, but overwritten
+        # here and normalized with respect to swl
+        self.table["SWNPC"] = (self.table["SW"] - self.swl) / (1 - self.swl)
+ 
         # The "forced part"
         self.table["Ffpcow"] = (1 - self.table["SWNPC"]) ** Lp / (
             (1 - self.table["SWNPC"]) ** Lp + Ep * self.table["SWNPC"] ** Tp
         )
 
         # The gradual rise part:
-        self.table["Ftpcow"] = self.table["SWNPC"] ** Lt / (
+        self.table["Ftpcow"] = (1-Ftp)*self.table["SWNPC"] ** Lt / (
             self.table["SWNPC"] ** Lt + Et * (1 - self.table["SWNPC"]) ** Tt
         )
-
+        
         # Putting it together:
         self.table["PC"] = (
             (Pcmax - Pct) * self.table["Ffpcow"] - Pct * self.table["Ftpcow"] + Pct
@@ -966,7 +977,7 @@ class WaterOil:
             "-- LET correlation for primary drainage Pc;\n"
             f"-- Lp={Lp:g}, Ep={Ep:g}, Tp={Tp:g}, "
             f"Lt={Lt:g}, Et={Et:g}, Tt={Tt:g}, "
-            f"Pcmax={Pcmax:g}, Pct={Pct:g}\n"
+            f"Pcmax={Pcmax:g}, Pct={Pct:g}, Ftp={Ftp}\n"
         )
 
     def add_LET_pc_imb(
