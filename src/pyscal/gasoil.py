@@ -280,7 +280,10 @@ class GasOil:
         if 0 < swlfrominput - self.swl < epsilon:
             # Perturb max sg in incoming dataframe when we are this close,
             # or we will get into floating trouble when interpolating.
-            dframe.loc[dframe[sgcolname].idxmax(), sgcolname] += swlfrominput - self.swl
+            max_sg_index = dframe[sgcolname].idxmax()
+            dframe.loc[dframe.index == max_sg_index, sgcolname] += (
+                swlfrominput - self.swl
+            )
 
         if krgcolname in dframe:
             if not (dframe[krgcolname].diff().dropna() > -epsilon).all():  # type: ignore[operator]
