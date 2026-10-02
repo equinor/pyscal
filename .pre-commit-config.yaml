@@ -3,12 +3,12 @@
 # Bump the rev here (e.g. via `pre-commit autoupdate`) to upgrade ruff.
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.16.0
+    rev: v0.16.2
     hooks:
       - id: ruff-check
       - id: ruff-format
   - repo: https://github.com/rstcheck/rstcheck
-    rev: v6.2.5
+    rev: v6.3.0
     hooks:
       - id: rstcheck
         # Scope to docs/ to match the previous CI `rstcheck -r docs`.
