@@ -201,9 +201,18 @@ users when input is written in a different context, like an Excel
 spreadsheet.
 
 Also bear in mind that some API parameter names are ambiguous in the context of
-the factory. ``kroend`` makes sense for ``WaterOil.add_corey_oil()`` but
-is ambiguous in the factory where both water-oil and gas-oil are accounted for.
-In the factory the names ``krowend`` and ``krogend`` must be used.
+the factory and type of a modelled system.
+For wet gas/condensate modelling (ICD2/CID2/IDC2), the intended inputs are the
+phase-specific endpoints: use ``krowend`` for the water-oil branch and
+``krogend`` for the gas-oil branch. This keeps the phase meaning explicit and
+aligns with the condensate workflow described in the modelling section.
+Outside wet gas/condensate modelling, ``kroend`` is the normal and unambiguous
+endpoint key. In those cases where ``kroend = krowend = krogend``, using
+``kroend`` is sufficient. ``kroend`` is unambiguous and applies
+directly to the oil branch methods for phase-pair specific classes such as
+``WaterOil.add_corey_oil()`` and ``GasOil.add_corey_oil()``.
+In short: use phase-specific keys when modelling wet gas/condensate behavior;
+otherwise use ``kroend``.
 
 Similarly for the LET parameters, where `l` is valid for the low-level
 functions, while in the factory context you must state `Lo`, `Lw`, `Lg` or `Log`
