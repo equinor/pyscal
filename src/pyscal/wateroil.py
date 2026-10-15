@@ -222,6 +222,9 @@ class WaterOil:
         self.krwcomment = ""
         self.krowcomment = ""
         self.pccomment = ""
+        self.krw_params: dict[str, float] = {}
+        self.krow_params: dict[str, float] = {}
+        self.pc_params: dict[str, float] = {}
 
         logger.debug(
             "Initialized WaterOil with %s saturation points", str(len(self.table))
@@ -309,6 +312,7 @@ class WaterOil:
         else:
             sorw = 0
         if krwcolname in dframe:
+            self.krw_params = {}
             assert -epsilon <= sorw <= 1 + epsilon
             if dframe[krwcolname].max() > 1.0:
                 raise ValueError("KRW is above 1 in incoming table")
@@ -357,6 +361,7 @@ class WaterOil:
             self.swcr = self.estimate_swcr()
 
         if krowcolname in dframe:
+            self.krow_params = {}
             if socr is None:
                 socr = float(dframe[swcolname].max()) - estimate_diffjumppoint(
                     dframe, xcol=swcolname, ycol=krowcolname, side="right"
@@ -406,6 +411,7 @@ class WaterOil:
             self.socr = socr
             self.krowcomment = "-- krow from tabular input" + krowcomment + "\n"
         if pccolname in dframe:
+            self.pc_params = {}
             # Incoming dataframe must cover the range:
             if dframe[swcolname].min() > self.table["SW"].min():
                 raise ValueError("Too large swl for pc interpolation")
@@ -462,6 +468,7 @@ class WaterOil:
 
         if not krwmax:
             krwmax = 1
+        self.krw_params = {"nw": nw, "krwend": krwend, "krwmax": krwmax}
         self.krwcomment = (
             f"-- Corey krw, nw={nw:g}, krwend={krwend:g}, krwmax={krwmax:g}\n"
         )
@@ -572,6 +579,13 @@ class WaterOil:
 
         if not krwmax:
             krwmax = 1
+        self.krw_params = {
+            "Lw": l,
+            "Ew": e,
+            "Tw": t,
+            "krwend": krwend,
+            "krwmax": krwmax,
+        }
         self.krwcomment = (
             f"-- LET krw, l={l:g}, e={e:g}, t={t:g}, "
             f"krwend={krwend:g}, krwmax={krwmax:g}\n"
@@ -613,6 +627,7 @@ class WaterOil:
 
         self.set_endpoints_linearpart_krow(kroend)
 
+        self.krow_params = {"Low": l, "Eow": e, "Tow": t, "krowend": kroend}
         self.krowcomment = (
             f"-- LET krow, l={l:g}, e={e:g}, t={t:g}, kroend={kroend:g}\n"
         )
@@ -638,6 +653,7 @@ class WaterOil:
 
         self.set_endpoints_linearpart_krow(kroend)
 
+        self.krow_params = {"now": now, "krowend": kroend}
         self.krowcomment = f"-- Corey krow, now={now:g}, kroend={kroend:g}\n"
 
     def add_simple_J(
@@ -705,6 +721,14 @@ class WaterOil:
         self.table["PC"] = simple_J(
             self.table["SWNPC"], a, b, poro_ref, perm_ref, drho, g
         )
+        self.pc_params = {
+            "a": a,
+            "b": b,
+            "poro_ref": poro_ref,
+            "perm_ref": perm_ref,
+            "drho": drho,
+            "g": g,
+        }
         self.pccomment = (
             "-- Simplified J-function for Pc; rms version, in bar\n--   "
             f"a={a:g}, b={b:g}, poro_ref={poro_ref:g}, perm_ref={perm_ref:g} mD,"
@@ -777,6 +801,14 @@ class WaterOil:
         # Use the other variant of this function for actual computation
         self.add_simple_J(rms_a, rms_b, poro_ref, perm_ref, drho, g)
 
+        self.pc_params = {
+            "a_petro": a,
+            "b_petro": b,
+            "poro_ref": poro_ref,
+            "perm_ref": perm_ref,
+            "drho": drho,
+            "g": g,
+        }
         self.pccomment = (
             "-- Simplified J-function for Pc, petrophysical version, in bar \n--   "
             f"a={a:g}, b={b:g}, poro_ref={poro_ref:g}, perm_ref={perm_ref:g} mD, "
@@ -843,6 +875,13 @@ class WaterOil:
         tmp = tmp / math.sqrt(perm_sq_meters / poro)
         tmp = tmp * sigma_costau / 1000  # Converting mN/m to N/m
         self.table["PC"] = tmp * pascal_to_bar
+        self.pc_params = {
+            "a": a,
+            "b": b,
+            "poro": poro,
+            "perm": perm,
+            "sigma_costau": sigma_costau,
+        }
         self.pccomment = (
             "-- Capillary pressure from normalized J-function, in bar\n"
             f"-- a={a:g}, b={b:g}, poro={poro:g}, perm={perm:g} mD, "
@@ -894,6 +933,14 @@ class WaterOil:
         if swr >= 1 - sor:
             raise ValueError("swr (swirr) must be less than 1 - sor")
 
+        self.pc_params = {
+            "cw": cw,
+            "co": co,
+            "aw": aw,
+            "ao": ao,
+            "swr": swr,
+            "sor": sor,
+        }
         self.pccomment = (
             "-- Skjæveland correlation for Pc;\n"
             f"-- cw={cw:g}, co={co:g}, aw={aw:g}, ao={ao:g}, swr={swr:g}, sor={sor:g}\n"
@@ -962,6 +1009,16 @@ class WaterOil:
 
         # Special handling of the interval [0,swirr]
         self.table.loc[self.table["SWN"] < epsilon, "PC"] = Pcmax
+        self.pc_params = {
+            "Lp": Lp,
+            "Ep": Ep,
+            "Tp": Tp,
+            "Lt": Lt,
+            "Et": Et,
+            "Tt": Tt,
+            "Pcmax": Pcmax,
+            "Pct": Pct,
+        }
         self.pccomment = (
             "-- LET correlation for primary drainage Pc;\n"
             f"-- Lp={Lp:g}, Ep={Ep:g}, Tp={Tp:g}, "
@@ -1019,6 +1076,17 @@ class WaterOil:
         self.table.loc[self.table["SWNPCO"] < epsilon, "PC"] = Pcmax
         # and [1-sorw,1]
         self.table.loc[self.table["SWNPCO"] > 1 - epsilon, "PC"] = Pcmin
+        self.pc_params = {
+            "Ls": Ls,
+            "Es": Es,
+            "Ts": Ts,
+            "Lf": Lf,
+            "Ef": Ef,
+            "Tf": Tf,
+            "Pcmax": Pcmax,
+            "Pcmin": Pcmin,
+            "Pct": Pct,
+        }
         self.pccomment = (
             "-- LET correlation for imbibition Pc;\n"
             f"-- Ls={Ls:g}, Es={Es:g}, Ts={Ts:g}, "

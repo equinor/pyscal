@@ -38,6 +38,14 @@ Example use with CSV input for one SATNUM:
     $ # Run pyscal on example input:
     $ pyscal relperminput.csv --delta_s 0.2 -o relperm.inc
     Written to relperm.inc
+    Written parameters to pyscal-params.csv
+
+By default, pyscal writes a CSV file named ``pyscal-params.csv`` in the current
+directory. Use ``--export_params <filename>`` to choose a different filename.
+The CSV contains one row per SATNUM and the parameters printed in the output
+header, including the water-oil and gas-oil interpolation parameters when
+interpolation is used. Capillary-pressure parameters are prefixed with
+``pcow_`` or ``pcog_`` to distinguish water-oil from gas-oil values.
 
 Exactly the same table in an XLSX file would give identical results. The output
 from the pyscal command above will look like:
