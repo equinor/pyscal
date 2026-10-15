@@ -21,6 +21,9 @@ from pyscal.factory import (
     create_scal_recommendation_list,
     load_relperm_df,
 )
+from pyscal.gasoil import GasOil
+from pyscal.pyscallist import PyscalList
+from pyscal.wateroil import WaterOil
 
 EPILOG = """
 The parameter file should contain a table with at least the column
@@ -102,6 +105,11 @@ def get_parser() -> argparse.ArgumentParser:
         "--output",
         default="relperm.inc",
         help="Name of Eclipse include file to produce",
+    )
+    parser.add_argument(
+        "--export_params",
+        default="pyscal-params.csv",
+        help="Export curve parameters to a CSV file (default: %(default)s)",
     )
     parser.add_argument(
         "--delta_s",
@@ -203,6 +211,7 @@ def main() -> None:
             verbose=args.verbose,
             debug=args.debug,
             output=args.output,
+            export_params=args.export_params,
             delta_s=args.delta_s,
             int_param_wo=args.int_param_wo,
             int_param_go=args.int_param_go,
@@ -234,6 +243,8 @@ def pyscal_main(
     plot_pc: bool = False,
     plot_semilog: bool = False,
     plot_outdir: str = "./",
+    *,
+    export_params: str = "pyscal-params.csv",
 ) -> None:
     """A "main()" method not relying on argparse. This can be used
     for testing, and also by an ERT forward model, e.g.
@@ -244,6 +255,7 @@ def pyscal_main(
         verbose: verbose or not
         debug: debug mode or not
         output: Output filename
+        export_params: CSV filename for curve parameters
         delta_s: Saturation step-length
         int_param_wo: Interpolation parameter for wateroil
         int_param_go: Interpolation parameter for gasoil
@@ -304,6 +316,24 @@ def pyscal_main(
 
     family = 2 if family2 or wog_list.pyscaltype == GasWater else 1
 
+    export_path = Path(export_params)
+    if not export_path.parent.exists():
+        raise OSError(f"Output directory not found '{export_path.parent}'")
+    protected_paths = [Path(parametertable)]
+    if output != "-":
+        protected_paths.append(Path(output))
+    for protected_path in protected_paths:
+        same_path = export_path.resolve() == protected_path.resolve()
+        same_file = (
+            export_path.exists()
+            and protected_path.exists()
+            and export_path.samefile(protected_path)
+        )
+        if same_path or same_file:
+            raise ValueError(
+                "Parameter export path must differ from input and output paths"
+            )
+
     if output == "-":
         print(wog_list.build_eclipse_data(family=family, slgof=slgof))
     else:
@@ -313,5 +343,139 @@ def pyscal_main(
             fh.write(wog_list.build_eclipse_data(family=family, slgof=slgof))
         print("Written to " + output)
 
+    export_int_param_go = int_param_go
+    if wog_list.pyscaltype == GasWater:
+        export_int_param_go = None
+    elif wog_list.pyscaltype == WaterOilGas and export_int_param_go is None:
+        export_int_param_go = int_param_wo
+    _params_df(wog_list, int_param_wo, export_int_param_go).to_csv(
+        export_path, index=False
+    )
+    print(
+        "Written parameters to " + str(export_path),
+        file=sys.stderr if output == "-" else sys.stdout,
+    )
+
     if plot:
         plotting.plotter(wog_list, plot_pc, plot_semilog, plot_outdir)
+
+
+def _params_df(
+    wog_list: PyscalList,
+    int_param_wo: float | None = None,
+    int_param_go: float | None = None,
+) -> pd.DataFrame:
+    """Return structured header parameters in one row per SATNUM."""
+    rows = []
+
+    def without_interpolation_prefix(tag: str | None) -> str:
+        if tag is None:
+            return ""
+        if tag.startswith("SCAL recommendation interpolation to "):
+            return tag.partition("\n")[2]
+        return tag
+
+    for satnum, obj in enumerate(wog_list.pyscal_list, start=1):
+        if (
+            isinstance(obj, WaterOilGas)
+            and obj.wateroil is not None
+            and obj.gasoil is not None
+        ):
+            wateroil_tag = without_interpolation_prefix(obj.wateroil.tag)
+            gasoil_tag = without_interpolation_prefix(obj.gasoil.tag)
+            tag = (
+                wateroil_tag
+                if wateroil_tag == gasoil_tag
+                else wateroil_tag + " " + gasoil_tag
+            )
+        else:
+            tag = without_interpolation_prefix(obj.tag)
+
+        gas_water = isinstance(obj, GasWater)
+        if isinstance(obj, (GasWater, WaterOilGas)):
+            wateroil, gasoil = obj.wateroil, obj.gasoil
+        elif isinstance(obj, WaterOil):
+            wateroil, gasoil = obj, None
+        elif isinstance(obj, GasOil):
+            wateroil, gasoil = None, obj
+        else:
+            raise TypeError(f"Unexpected pyscal object: {type(obj)}")
+
+        row: dict[str, object] = {
+            "SATNUM": satnum,
+            "TAG": tag,
+            "int_param_wo": int_param_wo,
+            "int_param_go": int_param_go if gasoil is not None else None,
+        }
+        if wateroil is not None:
+            row.update(
+                swirr=wateroil.swirr,
+                swl=wateroil.swl,
+                swcr=wateroil.swcr,
+                **wateroil.krw_params,
+                **{f"pcow_{key}": value for key, value in wateroil.pc_params.items()},
+            )
+            row["sgrw" if gas_water else "sorw"] = wateroil.sorw
+            if not gas_water:
+                row.update(wateroil.krow_params)
+                if wateroil.socr > wateroil.sorw:
+                    row["socr"] = wateroil.socr
+            if (
+                not obj.fast
+                and {"KRW", "KROW"}.issubset(wateroil.table.columns)
+                and not gas_water
+            ):
+                row["krw_krow_crosspoint"] = round(wateroil.crosspoint(), 5)
+        if gasoil is not None:
+            row.update(
+                sgcr=gasoil.sgcr,
+                sgro=gasoil.sgro,
+                **gasoil.krg_params,
+                **{f"pcog_{key}": value for key, value in gasoil.pc_params.items()},
+            )
+            if wateroil is None:
+                row.update(swirr=gasoil.swirr, swl=gasoil.swl)
+            if not gas_water:
+                row.update(
+                    sorg=gasoil.sorg,
+                    krgendanchor=gasoil.krgendanchor,
+                    **gasoil.krog_params,
+                )
+            if (
+                not obj.fast
+                and {"KRG", "KROG"}.issubset(gasoil.table.columns)
+                and not gas_water
+            ):
+                row["krg_krog_crosspoint"] = round(gasoil.crosspoint(), 5)
+        if (
+            gas_water
+            and isinstance(obj, GasWater)
+            and wateroil is not None
+            and gasoil is not None
+        ):
+            row["sgcr"] = gasoil.sgcr
+            row["krgmax"] = gasoil.krg_params.get("krgmax")
+            if (
+                not obj.fast
+                and {"KRW"}.issubset(wateroil.table)
+                and {"KRG"}.issubset(gasoil.table)
+            ):
+                crosspoint = obj.crosspoint()
+                if crosspoint is not None:
+                    row["krw_krg_crosspoint"] = round(crosspoint, 5)
+        if (
+            wateroil is not None
+            and gasoil is not None
+            and (wateroil.swirr != gasoil.swirr or wateroil.swl != gasoil.swl)
+        ):
+            row.pop("swirr", None)
+            row.pop("swl", None)
+            row.update(
+                swirr_wo=wateroil.swirr,
+                swl_wo=wateroil.swl,
+                swirr_go=gasoil.swirr,
+                swl_go=gasoil.swl,
+            )
+        rows.append(row)
+
+    return pd.DataFrame(rows)

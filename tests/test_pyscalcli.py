@@ -281,6 +281,8 @@ def test_pyscalcli_let_pd_and_imb(capsys, mocker):
     assert "SGOF" in captured.out
     assert "LET correlation for primary drainage Pc" in captured.out
     assert "LET correlation for imbibition Pc" in captured.out
+    assert "Written parameters to " not in captured.out
+    assert "Written parameters to " in captured.err
 
 
 def test_pyscalcli_pc_skjaeveland(capsys, mocker):
@@ -297,6 +299,267 @@ def test_pyscalcli_pc_skjaeveland(capsys, mocker):
     assert "SWOF" in captured.out
     assert "SGOF" in captured.out
     assert "Skjæveland correlation for Pc" in captured.out
+
+
+def _run_pyscal_cli(mocker, *args):
+    mocker.patch("sys.argv", ["pyscal", *(str(arg) for arg in args)])
+    pyscalcli.main()
+
+
+def test_pyscalcli_export_params(tmp_path, mocker):
+    """Export the values from the generated header, one row per SATNUM."""
+    relperm_file = (
+        Path(__file__).absolute().parent / "data/pyscal_config_simple_let_hyst.csv"
+    )
+    params_file = tmp_path / "endpoints.csv"
+    output_file = tmp_path / "relperm.inc"
+    _run_pyscal_cli(
+        mocker, relperm_file, "-o", output_file, "--export_params", params_file
+    )
+
+    params = pd.read_csv(params_file)
+    assert params["SATNUM"].tolist() == [1, 2]
+    assert params["swl"].tolist() == pytest.approx([0.0205601, 0.0205601])
+    assert params["TAG"].str.strip().tolist() == ["SATNUM 1", "SATNUM 2"]
+    assert params.loc[0, ["Lw", "Low", "Lg", "Log", "pcow_Pcmax"]].tolist() == (
+        pytest.approx([2.6, 3.7, 2.4, 3.9, 15])
+    )
+    assert params[["int_param_wo", "int_param_go"]].isna().all().all()
+    assert f"sw={params.loc[0, 'krw_krow_crosspoint']:.5f}" in output_file.read_text()
+
+
+def test_pyscalcli_exports_params_by_default(tmp_path, mocker, monkeypatch):
+    relperm_file = Path(__file__).absolute().parent / "data/relperm-input-example.xlsx"
+    monkeypatch.chdir(tmp_path)
+    _run_pyscal_cli(mocker, relperm_file, "--output", tmp_path / "relperm.inc")
+    assert (tmp_path / "pyscal-params.csv").exists()
+
+
+def test_pyscalcli_exports_gasoil_saturation_endpoints(tmp_path, mocker):
+    input_file = tmp_path / "gasoil.csv"
+    pd.DataFrame(
+        columns=["SATNUM", "swirr", "swl", "sgcr", "sorg", "ng", "nog"],
+        data=[[1, 0.02, 0.1, 0.05, 0.1, 2, 3]],
+    ).to_csv(input_file, index=False)
+    params_file = tmp_path / "gasoil-params.csv"
+
+    _run_pyscal_cli(
+        mocker,
+        input_file,
+        "--export_params",
+        params_file,
+        "-o",
+        tmp_path / "gasoil.inc",
+    )
+
+    params = pd.read_csv(params_file)
+    assert params.loc[0, ["swirr", "swl"]].tolist() == pytest.approx([0.02, 0.1])
+
+
+@pytest.mark.parametrize("collision", ["input", "output"])
+def test_pyscalcli_rejects_export_path_collisions(tmp_path, collision):
+    input_file = Path(__file__).absolute().parent / "data/relperm-input-example.xlsx"
+    output_file = tmp_path / "relperm.inc"
+    export_file = input_file if collision == "input" else output_file
+    input_contents = input_file.read_bytes()
+
+    with pytest.raises(ValueError, match="must differ from input and output paths"):
+        pyscalcli.pyscal_main(
+            str(input_file),
+            output=str(output_file),
+            export_params=str(export_file),
+        )
+
+    assert input_file.read_bytes() == input_contents
+    assert not output_file.exists()
+
+
+@pytest.mark.parametrize("collision", ["input", "output"])
+def test_pyscalcli_rejects_hard_link_export_collisions(tmp_path, collision):
+    source_file = Path(__file__).absolute().parent / "data/relperm-input-example.xlsx"
+    input_file = tmp_path / "input.xlsx"
+    input_file.write_bytes(source_file.read_bytes())
+    output_file = tmp_path / "relperm.inc"
+    protected_file = input_file if collision == "input" else output_file
+    if collision == "output":
+        output_file.write_text("existing output")
+    export_file = tmp_path / "params.csv"
+    try:
+        export_file.hardlink_to(protected_file)
+    except OSError as err:
+        pytest.skip(f"Hard links are unavailable: {err}")
+    protected_contents = protected_file.read_bytes()
+
+    with pytest.raises(ValueError, match="must differ from input and output paths"):
+        pyscalcli.pyscal_main(
+            str(input_file),
+            output=str(output_file),
+            export_params=str(export_file),
+        )
+
+    assert protected_file.read_bytes() == protected_contents
+
+
+def test_pyscalcli_exports_separate_scal_saturation_endpoints(tmp_path, mocker):
+    input_file = tmp_path / "scal.csv"
+    pd.DataFrame(
+        columns=[
+            "SATNUM",
+            "CASE",
+            "swirr",
+            "swl",
+            "swcr",
+            "sorw",
+            "sgcr",
+            "sorg",
+            "sgro",
+            "nw",
+            "now",
+            "ng",
+            "nog",
+        ],
+        data=[
+            [1, "low", 0.05, 0.1, 0.15, 0.1, 0.05, 0.1, 0, 2, 2, 2, 2],
+            [1, "base", 0.05, 0.1, 0.15, 0.1, 0.05, 0.1, 0, 2, 2, 2, 2],
+            [1, "high", 0.05, 0.3, 0.15, 0.1, 0.05, 0.1, 0, 2, 2, 2, 2],
+        ],
+    ).to_csv(input_file, index=False)
+    params_file = tmp_path / "scal-params.csv"
+
+    _run_pyscal_cli(
+        mocker,
+        input_file,
+        "--int_param_wo",
+        "0",
+        "--int_param_go",
+        "1",
+        "--export_params",
+        params_file,
+        "-o",
+        tmp_path / "scal.inc",
+    )
+
+    params = pd.read_csv(params_file)
+    assert params.loc[0, ["swl_wo", "swl_go"]].tolist() == pytest.approx([0.1, 0.3])
+    assert params.loc[0, ["swirr_wo", "swirr_go"]].tolist() == pytest.approx(
+        [0.05, 0.05]
+    )
+    assert "swl" not in params and "swirr" not in params
+
+
+def test_pyscalcli_exports_petrophysical_j_parameter_names(tmp_path, mocker):
+    input_file = tmp_path / "petrophysical-j.csv"
+    pd.DataFrame(
+        columns=[
+            "SATNUM",
+            "swl",
+            "nw",
+            "now",
+            "a_petro",
+            "b_petro",
+            "poro_ref",
+            "perm_ref",
+            "drho",
+        ],
+        data=[[1, 0.1, 2, 3, 2, -1, 0.2, 100, 200]],
+    ).to_csv(input_file, index=False)
+    params_file = tmp_path / "petrophysical-j-params.csv"
+
+    _run_pyscal_cli(
+        mocker, input_file, "--export_params", params_file, "-o", tmp_path / "j.inc"
+    )
+
+    params = pd.read_csv(params_file)
+    assert params.loc[0, ["pcow_a_petro", "pcow_b_petro"]].tolist() == pytest.approx(
+        [2, -1]
+    )
+
+
+def test_pyscalcli_export_params_gaswater_and_scal(tmp_path, mocker):
+    """Export GasWater endpoints and the interpolated SCAL recommendation."""
+    gaswater_file = tmp_path / "gaswater.csv"
+    pd.DataFrame(
+        columns=["SATNUM", "swl", "sgl", "sgrw", "sgcr", "nw", "ng"],
+        data=[[1, 0.1, 0.02, 0.05, 0.03, 2, 3]],
+    ).to_csv(gaswater_file, index=False)
+    params_file = tmp_path / "gaswater-params.csv"
+    _run_pyscal_cli(
+        mocker,
+        gaswater_file,
+        "--export_params",
+        params_file,
+        "-o",
+        tmp_path / "gaswater.inc",
+    )
+    gaswater_export = pd.read_csv(params_file)
+    gaswater_params = gaswater_export.iloc[0]
+    assert gaswater_params[["sgrw", "nw", "ng"]].tolist() == pytest.approx([0.05, 2, 3])
+    assert not {"krgendanchor", "sgl"} & set(gaswater_export.columns)
+
+    gaswater_scal_file = tmp_path / "gaswater-scal.csv"
+    pd.DataFrame(
+        columns=["SATNUM", "CASE", "swl", "sgl", "sgrw", "sgcr", "nw", "ng"],
+        data=[
+            [1, "low", 0.1, 0.02, 0.05, 0.03, 2, 3],
+            [1, "base", 0.1, 0.02, 0.05, 0.03, 2, 3],
+            [1, "high", 0.1, 0.02, 0.05, 0.03, 2, 3],
+        ],
+    ).to_csv(gaswater_scal_file, index=False)
+    gaswater_scal_params = tmp_path / "gaswater-scal-params.csv"
+    _run_pyscal_cli(
+        mocker,
+        gaswater_scal_file,
+        "--int_param_wo",
+        "-0.5",
+        "--int_param_go",
+        "0.25",
+        "--export_params",
+        gaswater_scal_params,
+        "-o",
+        tmp_path / "gaswater-scal.inc",
+    )
+    assert pd.read_csv(gaswater_scal_params)["int_param_go"].isna().all()
+
+    scal_file = Path(__file__).absolute().parent / "data/scal-pc-input-example.xlsx"
+    scal_params_file = tmp_path / "scal-params.csv"
+    _run_pyscal_cli(
+        mocker,
+        scal_file,
+        "--int_param_wo",
+        "0",
+        "--int_param_go",
+        "0.25",
+        "--export_params",
+        scal_params_file,
+        "-o",
+        tmp_path / "scal.inc",
+    )
+    scal_params = pd.read_csv(scal_params_file)
+    assert scal_params["swl_wo"].tolist() == pytest.approx([0.12, 0.16, 0.13])
+    assert scal_params["Lw"].tolist() == pytest.approx([2.53, 2.63, 2.81])
+    assert scal_params[["int_param_wo", "int_param_go"]].iloc[0].tolist() == [
+        0,
+        0.25,
+    ]
+    assert (
+        not scal_params["TAG"].str.contains("SCAL recommendation interpolation").any()
+    )
+
+    fallback_params_file = tmp_path / "scal-default-go-params.csv"
+    _run_pyscal_cli(
+        mocker,
+        scal_file,
+        "--int_param_wo",
+        "-0.25",
+        "--export_params",
+        fallback_params_file,
+        "-o",
+        tmp_path / "scal-default-go.inc",
+    )
+    fallback_params = pd.read_csv(fallback_params_file)
+    assert (
+        fallback_params.loc[0, "int_param_wo"] == fallback_params.loc[0, "int_param_go"]
+    )
 
 
 def test_pyscalcli_exception_catching(capsys, mocker):

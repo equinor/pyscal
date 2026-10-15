@@ -200,6 +200,9 @@ class GasOil:
         self.krgcomment = ""
         self.krogcomment = ""
         self.pccomment = ""
+        self.krg_params: dict[str, float] = {}
+        self.krog_params: dict[str, float] = {}
+        self.pc_params: dict[str, float] = {}
 
         logger.debug(
             "Initialized GasOil with %s saturation points", str(len(self.table))
@@ -286,6 +289,7 @@ class GasOil:
             )
 
         if krgcolname in dframe:
+            self.krg_params = {}
             if not (dframe[krgcolname].diff().dropna() > -epsilon).all():  # type: ignore[operator]
                 raise ValueError("Incoming krg not increasing")
             if dframe[krgcolname].max() > 1.0:
@@ -303,6 +307,7 @@ class GasOil:
             self.krgcomment = "-- krg from tabular input" + krgcomment + "\n"
             self.sgcr = self.estimate_sgcr()
         if krogcolname in dframe:
+            self.krog_params = {}
             if not (dframe[krogcolname].diff().dropna() < epsilon).all():  # type: ignore[operator]
                 raise ValueError("Incoming krog not decreasing")
             if dframe[krogcolname].max() > 1.0:
@@ -336,6 +341,7 @@ class GasOil:
             else:
                 self.sgro = sgro_estimate
         if pccolname in dframe:
+            self.pc_params = {}
             # Incoming dataframe must cover the range:
             if dframe[sgcolname].max() < self.table["SG"].max():
                 raise ValueError(
@@ -476,6 +482,7 @@ class GasOil:
 
         if not krgmax:
             krgmax = 1
+        self.krg_params = {"ng": ng, "krgend": krgend, "krgmax": krgmax}
         self.krgcomment = (
             f"-- Corey krg, ng={ng:g}, krgend={krgend:g}, krgmax={krgmax:g}\n"
         )
@@ -509,6 +516,9 @@ class GasOil:
 
         self.set_endpoints_linearpart_krog(kroend, kromax)
 
+        self.krog_params = {"nog": nog, "krogend": kroend}
+        if kromax is not None:
+            self.krog_params["krogmax"] = kromax
         self.krogcomment = f"-- Corey krog, nog={nog:g}, kroend={kroend:g}"
         if kromax is not None:
             self.krogcomment += f", kromax={kromax:g}"
@@ -563,6 +573,13 @@ class GasOil:
 
         if not krgmax:
             krgmax = 1
+        self.krg_params = {
+            "Lg": l,
+            "Eg": e,
+            "Tg": t,
+            "krgend": krgend,
+            "krgmax": krgmax,
+        }
         self.krgcomment = (
             f"-- LET krg, l={l:g}, e={e:g}, t={t:g}, "
             f"krgend={krgend:g}, krgmax={krgmax:g}\n"
@@ -606,6 +623,9 @@ class GasOil:
 
         self.set_endpoints_linearpart_krog(kroend, kromax)
 
+        self.krog_params = {"Log": l, "Eog": e, "Tog": t, "krogend": kroend}
+        if kromax is not None:
+            self.krog_params["krogmax"] = kromax
         self.krogcomment = f"-- LET krog, l={l:g}, e={e:g}, t={t:g}, kroend={kroend:g}"
         if kromax is not None:
             self.krogcomment += f", kromax={kromax:g}"
