@@ -405,7 +405,7 @@ def _params_df(
             "SATNUM": satnum,
             "TAG": tag,
             "int_param_wo": int_param_wo,
-            "int_param_go": int_param_go,
+            "int_param_go": int_param_go if gasoil is not None else None,
         }
         if wateroil is not None:
             row.update(
