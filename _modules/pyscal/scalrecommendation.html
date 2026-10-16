@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.scalrecommendation &mdash; pyscal 0.17.0 documentation</title>
+  <title>pyscal.scalrecommendation &mdash; pyscal 0.18.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=0c3dd48d"></script>
+      <script src="../../_static/documentation_options.js?v=ba2e7b09"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -79,7 +79,7 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pyscal.scalrecommendation</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;SCALrecommendation, container for low, base and high WaterOilGas objects&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""SCALrecommendation, container for low, base and high WaterOilGas objects"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
 
@@ -96,7 +96,7 @@
 <div class="viewcode-block" id="SCALrecommendation">
 <a class="viewcode-back" href="../../pyscal/pyscal.scalrecommendation.html#pyscal.SCALrecommendation">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SCALrecommendation</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A SCAL recommendation consists of three OilWaterGas objects,</span>
+<span class="w">    </span><span class="sd">"""A SCAL recommendation consists of three OilWaterGas objects,</span>
 <span class="sd">    tagged low, base and high.</span>
 
 <span class="sd">    This container exists in order to to interpolation from -1 (low),</span>
@@ -107,7 +107,7 @@
 <span class="sd">        base: An object representing the base case</span>
 <span class="sd">        high: An object representing the high case</span>
 <span class="sd">        tag: A string that describes the recommendation. Optional.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -117,7 +117,7 @@
         <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">h</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set up a SCAL recommendation curve set from WaterOilGas objects</span>
+<span class="w">        </span><span class="sd">"""Set up a SCAL recommendation curve set from WaterOilGas objects</span>
 
 <span class="sd">        Arguments:</span>
 <span class="sd">            low: low case</span>
@@ -125,7 +125,7 @@
 <span class="sd">            high: high case</span>
 <span class="sd">            tag: Describes the recommendation. This string will be used</span>
 <span class="sd">                as tag strings for the interpolants.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">h</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">tag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">tag</span>
@@ -153,7 +153,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">high</span> <span class="o">=</span> <span class="n">high</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">GasWater</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Wrong arguments to SCALrecommendation&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Wrong arguments to SCALrecommendation"</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
         <span class="k">if</span> <span class="nb">all</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">fast</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">fast</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">fast</span><span class="p">]):</span>
@@ -161,9 +161,9 @@
         <span class="k">elif</span> <span class="nb">any</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">fast</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">fast</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">fast</span><span class="p">]):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">fast</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">fast</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">fast</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">fast</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;One or more of the low/base/high objects are set to be run in &quot;</span>
-                <span class="s2">&quot;fast mode, but not all. Fast mode set to false in all objects. &quot;</span>
-                <span class="s2">&quot;Code is run in normal mode.&quot;</span>
+                <span class="s2">"One or more of the low/base/high objects are set to be run in "</span>
+                <span class="s2">"fast mode, but not all. Fast mode set to false in all objects. "</span>
+                <span class="s2">"Code is run in normal mode."</span>
             <span class="p">)</span>
 
     <span class="c1"># User should add capillary pressure explicitly by calling add**</span>
@@ -180,8 +180,8 @@
         <span class="n">drho</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">300.0</span><span class="p">,</span>
         <span class="n">g</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">9.81</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add (identical) simplified J-function to all water-oil</span>
-<span class="sd">        curves in the SCAL recommendation set&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Add (identical) simplified J-function to all water-oil</span>
+<span class="sd">        curves in the SCAL recommendation set"""</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">wateroil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">wateroil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">wateroil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
@@ -204,7 +204,7 @@
         <span class="n">parameter2</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">h</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">WaterOilGas</span> <span class="o">|</span> <span class="n">GasWater</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Interpolate between low, base and high</span>
+<span class="w">        </span><span class="sd">"""Interpolate between low, base and high</span>
 
 <span class="sd">        Endpoints are located for input curves, and interpolated</span>
 <span class="sd">        individually. Interpolation for the nonlinear part</span>
@@ -225,7 +225,7 @@
 <span class="sd">                GasOil. Ignored for GasWater (no warning).</span>
 <span class="sd">            h: Saturation step length in generated tables. Does not</span>
 <span class="sd">                need to be the same as the tables interpolation is done from.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">gasparameter</span> <span class="o">=</span> <span class="n">parameter2</span> <span class="k">if</span> <span class="n">parameter2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">parameter</span>
 
@@ -252,9 +252,9 @@
 
         <span class="k">if</span> <span class="n">parameter2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">do_gasoil</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;parameter2 is meaningless for water-oil only&quot;</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"parameter2 is meaningless for water-oil only"</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">do_gaswater</span><span class="p">:</span>
-                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;parameter2 is meaningless for gas-water&quot;</span><span class="p">)</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"parameter2 is meaningless for gas-water"</span><span class="p">)</span>
 
         <span class="c1"># Initialize wateroil and gasoil curves to be filled with</span>
         <span class="c1"># interpolated curves:</span>
@@ -278,20 +278,20 @@
             <span class="n">tags</span> <span class="o">=</span> <span class="n">tags</span><span class="o">.</span><span class="n">union</span><span class="p">(</span>
                 <span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">tag</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">tag</span><span class="p">}</span>
             <span class="p">)</span>
-        <span class="n">tagstring</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tags</span><span class="p">)</span>
+        <span class="n">tagstring</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tags</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">do_gaswater</span><span class="p">:</span>
             <span class="n">interpolant</span> <span class="o">=</span> <span class="n">GasWater</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">tagstring</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">interpolant</span> <span class="o">=</span> <span class="n">WaterOilGas</span><span class="p">(</span><span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">tagstring</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">do_wateroil</span> <span class="ow">or</span> <span class="n">do_gaswater</span><span class="p">:</span>
-            <span class="n">tag</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;SCAL recommendation interpolation to </span><span class="si">{</span><span class="n">parameter</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">tagstring</span>
+            <span class="n">tag</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"SCAL recommendation interpolation to </span><span class="si">{</span><span class="n">parameter</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="n">tagstring</span>
             <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">wateroil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
             <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">wateroil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
             <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">wateroil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
             <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="sa">f</span><span class="s2">&quot;Interpolation parameter must be in [-1,1], got </span><span class="si">{</span><span class="n">parameter</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">"Interpolation parameter must be in [-1,1], got </span><span class="si">{</span><span class="n">parameter</span><span class="si">}</span><span class="s2">"</span>
                 <span class="p">)</span>
             <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">):</span>
                 <span class="n">interpolant</span><span class="o">.</span><span class="n">wateroil</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">wateroil</span><span class="p">)</span>
@@ -325,11 +325,11 @@
             <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">low</span><span class="o">.</span><span class="n">gasoil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
             <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">gasoil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
             <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">high</span><span class="o">.</span><span class="n">gasoil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
-            <span class="n">tag</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;SCAL recommendation interpolation to </span><span class="si">{</span><span class="n">gasparameter</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">tagstring</span>
+            <span class="n">tag</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"SCAL recommendation interpolation to </span><span class="si">{</span><span class="n">gasparameter</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="n">tagstring</span>
             <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">gasparameter</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;Interpolation parameter for gas must &quot;</span>
-                    <span class="sa">f</span><span class="s2">&quot;be in [-1,1], got </span><span class="si">{</span><span class="n">gasparameter</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="s2">"Interpolation parameter for gas must "</span>
+                    <span class="sa">f</span><span class="s2">"be in [-1,1], got </span><span class="si">{</span><span class="n">gasparameter</span><span class="si">}</span><span class="s2">"</span>
                 <span class="p">)</span>
             <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">gasparameter</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">):</span>
                 <span class="n">interpolant</span><span class="o">.</span><span class="n">gasoil</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base</span><span class="o">.</span><span class="n">gasoil</span><span class="p">)</span>

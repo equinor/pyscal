@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.utils.monotonicity &mdash; pyscal 0.17.0 documentation</title>
+  <title>pyscal.utils.monotonicity &mdash; pyscal 0.18.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=0c3dd48d"></script>
+      <script src="../_static/documentation_options.js?v=ba2e7b09"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
@@ -182,7 +182,7 @@ when everything is ok.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>series</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>] | <code class="xref py py-class docutils literal notranslate"><span class="pre">Series</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">floating</span></code>]]</span>) – Vector of numbers to check</p></li>
+<li><p><strong>series</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>] | <code class="xref py py-class docutils literal notranslate"><span class="pre">Series</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">GenericAlias</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">floating</span></code>]</span>) – Vector of numbers to check</p></li>
 <li><p><strong>monotonicity</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#pyscal.utils.monotonicity.MonotonicitySpec" title="pyscal.utils.monotonicity.MonotonicitySpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">MonotonicitySpec</span></code></a></span>)</p></li>
 <li><p><strong>colname</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></span>) – Optional string for a column name that will be
 included in any error message.</p></li>
@@ -202,12 +202,12 @@ optionally clip at lower and upper limits.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>series</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>] | <code class="xref py py-class docutils literal notranslate"><span class="pre">Series</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">floating</span></code>]]</span>) – Vector of numbers to modify</p></li>
+<li><p><strong>series</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>] | <code class="xref py py-class docutils literal notranslate"><span class="pre">Series</span></code> | <code class="xref py py-class docutils literal notranslate"><span class="pre">GenericAlias</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">floating</span></code>]</span>) – Vector of numbers to modify</p></li>
 <li><p><strong>monotonicity</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#pyscal.utils.monotonicity.MonotonicitySpec" title="pyscal.utils.monotonicity.MonotonicitySpec"><code class="xref py py-class docutils literal notranslate"><span class="pre">MonotonicitySpec</span></code></a></span>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">...</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">dtype</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">floating</span></code>]]</span></p>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">GenericAlias</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">floating</span></code>]</span></p>
 </dd>
 <dt class="field-odd">Returns<span class="colon">:</span></dt>
 <dd class="field-odd"><p>np.array, copy of original.</p>

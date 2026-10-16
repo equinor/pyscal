@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.pyscalcli &mdash; pyscal 0.17.0 documentation</title>
+  <title>pyscal.pyscalcli &mdash; pyscal 0.18.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=0c3dd48d"></script>
+      <script src="../../_static/documentation_options.js?v=ba2e7b09"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -79,7 +79,7 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pyscal.pyscalcli</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Command line tool for pyscal&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Command line tool for pyscal"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">argparse</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">io</span>
@@ -102,167 +102,175 @@
     <span class="n">create_scal_recommendation_list</span><span class="p">,</span>
     <span class="n">load_relperm_df</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyscal.gasoil</span><span class="w"> </span><span class="kn">import</span> <span class="n">GasOil</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyscal.pyscallist</span><span class="w"> </span><span class="kn">import</span> <span class="n">PyscalList</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pyscal.wateroil</span><span class="w"> </span><span class="kn">import</span> <span class="n">WaterOil</span>
 
-<span class="n">EPILOG</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="n">EPILOG</span> <span class="o">=</span> <span class="s2">"""</span>
 <span class="s2">The parameter file should contain a table with at least the column</span>
 <span class="s2">SATNUM, containing only consecutive integers starting at 1. Each row</span>
 <span class="s2">provides the data for the corresponding SATNUM. Comments are put in a</span>
 <span class="s2">column called TAG or COMMENT. Column headers are case insensitive.</span>
 
-<span class="s2">Saturation endpoints are put in columns &#39;swirr&#39;, &#39;swl&#39;, &#39;swcr&#39;, &#39;sorw&#39;,</span>
-<span class="s2">&#39;sgcr&#39; and &#39;sorg&#39;. Relative permeability endpoints are put in columns</span>
-<span class="s2">&#39;krwend&#39;, &#39;krwmax&#39;, &#39;krowend&#39;, &#39;krogend&#39;, &#39;krgend&#39; and &#39;krgmax&#39;.</span>
+<span class="s2">Saturation endpoints are put in columns 'swirr', 'swl', 'swcr', 'sorw',</span>
+<span class="s2">'sgcr' and 'sorg'. Relative permeability endpoints are put in columns</span>
+<span class="s2">'krwend', 'krwmax', 'krowend', 'krogend', 'krgend' and 'krgmax'.</span>
 <span class="s2">These columns are optional and are defaulted to 0 or 1.</span>
 
 <span class="s2">Corey or LET parametrization are based on presence of the columns</span>
-<span class="s2">&#39;Nw&#39;, &#39;Now&#39;, &#39;Nog&#39;, &#39;Ng&#39;, &#39;Lw&#39;, &#39;Ew&#39;, &#39;Tw&#39;, &#39;Low&#39;, &#39;Eow&#39;, &#39;Tow&#39;,</span>
-<span class="s2">&#39;Log&#39;, &#39;Eog&#39;, &#39;Tog&#39;, &#39;Lg&#39;, &#39;Eg&#39;, &#39;Tg&#39;.</span>
+<span class="s2">'Nw', 'Now', 'Nog', 'Ng', 'Lw', 'Ew', 'Tw', 'Low', 'Eow', 'Tow',</span>
+<span class="s2">'Log', 'Eog', 'Tog', 'Lg', 'Eg', 'Tg'.</span>
 
-<span class="s2">Simple J-function for capillary pressure (&quot;RMS&quot; version) is used if the columns</span>
-<span class="s2">&#39;a&#39;, &#39;b&#39;, &#39;poro_ref&#39;, &#39;perm_ref&#39; and &#39;drho&#39; are found. If you provide</span>
-<span class="s2">&#39;a_petro&#39;, or &#39;b_petro&#39;, the petrophysical formulation of the simple J-function</span>
-<span class="s2">is used. Check API for exact formulas. Normalized J-function is used if &#39;a&#39;,</span>
-<span class="s2">&#39;b&#39;, &#39;poro&#39;, &#39;perm&#39; and &#39;sigma_costau&#39; is provided.</span>
+<span class="s2">Simple J-function for capillary pressure ("RMS" version) is used if the columns</span>
+<span class="s2">'a', 'b', 'poro_ref', 'perm_ref' and 'drho' are found. If you provide</span>
+<span class="s2">'a_petro', or 'b_petro', the petrophysical formulation of the simple J-function</span>
+<span class="s2">is used. Check API for exact formulas. Normalized J-function is used if 'a',</span>
+<span class="s2">'b', 'poro', 'perm' and 'sigma_costau' is provided.</span>
 
 <span class="s2">Primary drainage and imbibition capillary pressure with LET parametrization are</span>
-<span class="s2">based on presence of the columnns &#39;Lp&#39;, &#39;Ep&#39;, &#39;Tp&#39;,&#39;Lt&#39;, &#39;Et&#39;, &#39;Tt&#39;, &#39;Pcmax&#39;, &#39;Pct&#39; and</span>
-<span class="s2">&#39;Ls&#39;, &#39;Es&#39;, &#39;Ts&#39;, &#39;Lf&#39;, &#39;Ef&#39;, &#39;Tf&#39;, &#39;Pcmax&#39;, &#39;Pct&#39;, &#39;Pcmin&#39; respectively.</span>
+<span class="s2">based on presence of the columnns 'Lp', 'Ep', 'Tp','Lt', 'Et', 'Tt', 'Pcmax', 'Pct' and</span>
+<span class="s2">'Ls', 'Es', 'Ts', 'Lf', 'Ef', 'Tf', 'Pcmax', 'Pct', 'Pcmin' respectively.</span>
 
 <span class="s2">Capillary pressure from the Skjæveland correlation is based on the on the presence</span>
-<span class="s2">of the columns &#39;cw&#39;, &#39;co&#39;, &#39;aw&#39;, &#39;ao&#39;.</span>
+<span class="s2">of the columns 'cw', 'co', 'aw', 'ao'.</span>
 
 <span class="s2">For SCAL recommendations, there should be exactly three rows for each SATNUM,</span>
-<span class="s2">tagged with the strings &#39;low&#39;, &#39;base&#39; and &#39;high&#39; in the column &#39;CASE&#39;</span>
+<span class="s2">tagged with the strings 'low', 'base' and 'high' in the column 'CASE'</span>
 
-<span class="s2">When interpolating in a SCAL recommendation, &#39;int_param_wo&#39; is the main parameter</span>
+<span class="s2">When interpolating in a SCAL recommendation, 'int_param_wo' is the main parameter</span>
 <span class="s2">that is used for water-oil, gas-oil and gas-water, and for all SATNUMs if nothing</span>
 <span class="s2">more is provided. Provide int_param_go in addition if separate interpolation</span>
 <span class="s2">for WaterOil and GasOil is needed.</span>
-<span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">"""</span>
 
 
 <div class="viewcode-block" id="get_parser">
 <a class="viewcode-back" href="../../pyscal/pyscal.pyscalcli.html#pyscal.pyscalcli.get_parser">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_parser</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Construct the argparse parser for the command line script.</span>
+<span class="w">    </span><span class="sd">"""Construct the argparse parser for the command line script.</span>
 
 <span class="sd">    Returns:</span>
 <span class="sd">        argparse.Parser</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
-        <span class="n">prog</span><span class="o">=</span><span class="s2">&quot;pyscal&quot;</span><span class="p">,</span>
+        <span class="n">prog</span><span class="o">=</span><span class="s2">"pyscal"</span><span class="p">,</span>
         <span class="n">description</span><span class="o">=</span><span class="p">(</span>
-            <span class="s2">&quot;pyscal (&quot;</span> <span class="o">+</span> <span class="n">__version__</span> <span class="o">+</span> <span class="s2">&quot;) is a tool to create Eclipse include &quot;</span>
-            <span class="s2">&quot;files for relative permeability input from tabulated parameters.&quot;</span>
+            <span class="s2">"pyscal ("</span> <span class="o">+</span> <span class="n">__version__</span> <span class="o">+</span> <span class="s2">") is a tool to create Eclipse include "</span>
+            <span class="s2">"files for relative permeability input from tabulated parameters."</span>
         <span class="p">),</span>
         <span class="n">epilog</span><span class="o">=</span><span class="n">EPILOG</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;parametertable&quot;</span><span class="p">,</span>
+        <span class="s2">"parametertable"</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="p">(</span>
-            <span class="s2">&quot;CSV or XLSX file with Corey or LET parameters for relperms. &quot;</span>
-            <span class="s2">&quot;One SATNUM pr row.&quot;</span>
+            <span class="s2">"CSV or XLSX file with Corey or LET parameters for relperms. "</span>
+            <span class="s2">"One SATNUM pr row."</span>
         <span class="p">),</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;-v&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;--verbose&quot;</span><span class="p">,</span>
-        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Print informational messages while processing input&quot;</span><span class="p">,</span>
+        <span class="s2">"-v"</span><span class="p">,</span>
+        <span class="s2">"--verbose"</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Print informational messages while processing input"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--debug&quot;</span><span class="p">,</span>
-        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Print debug information&quot;</span><span class="p">,</span>
+        <span class="s2">"--debug"</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Print debug information"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--version&quot;</span><span class="p">,</span>
-        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;version&quot;</span><span class="p">,</span>
-        <span class="n">version</span><span class="o">=</span><span class="s2">&quot;</span><span class="si">%(prog)s</span><span class="s2"> (version &quot;</span> <span class="o">+</span> <span class="n">__version__</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span><span class="p">,</span>
+        <span class="s2">"--version"</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">"version"</span><span class="p">,</span>
+        <span class="n">version</span><span class="o">=</span><span class="s2">"</span><span class="si">%(prog)s</span><span class="s2"> (version "</span> <span class="o">+</span> <span class="n">__version__</span> <span class="o">+</span> <span class="s2">")"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;-o&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;--output&quot;</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;relperm.inc&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Name of Eclipse include file to produce&quot;</span><span class="p">,</span>
+        <span class="s2">"-o"</span><span class="p">,</span>
+        <span class="s2">"--output"</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">"relperm.inc"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Name of Eclipse include file to produce"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--delta_s&quot;</span><span class="p">,</span>
+        <span class="s2">"--export_params"</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">"pyscal-params.csv"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Export curve parameters to a CSV file (default: </span><span class="si">%(default)s</span><span class="s2">)"</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"--delta_s"</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Saturation table step-length for sw/sg. Default 0.01&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Saturation table step-length for sw/sg. Default 0.01"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--int_param_wo&quot;</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
-            <span class="s2">&quot;Interpolation parameter for water-oil, needed if the parametertable &quot;</span>
-            <span class="s2">&quot;contains pess/low, base and opt/high for each SATNUM. &quot;</span>
-            <span class="s2">&quot;The parameter will be used for all SATNUMs and must be &quot;</span>
-            <span class="s2">&quot;between -1 and 1. Also used for GasWater.&quot;</span>
-        <span class="p">),</span>
-    <span class="p">)</span>
-    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--int_param_go&quot;</span><span class="p">,</span>
+        <span class="s2">"--int_param_wo"</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="p">(</span>
-            <span class="s2">&quot;Interpolation parameter for gas-oil. &quot;</span>
-            <span class="s2">&quot;If not provided, the water-oil interpolation parameter will be used &quot;</span>
-            <span class="s2">&quot;as default. Do not use for GasWater.&quot;</span>
+            <span class="s2">"Interpolation parameter for water-oil, needed if the parametertable "</span>
+            <span class="s2">"contains pess/low, base and opt/high for each SATNUM. "</span>
+            <span class="s2">"The parameter will be used for all SATNUMs and must be "</span>
+            <span class="s2">"between -1 and 1. Also used for GasWater."</span>
         <span class="p">),</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--sheet_name&quot;</span><span class="p">,</span>
+        <span class="s2">"--int_param_go"</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="nb">type</span><span class="o">=</span><span class="nb">float</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span>
+            <span class="s2">"Interpolation parameter for gas-oil. "</span>
+            <span class="s2">"If not provided, the water-oil interpolation parameter will be used "</span>
+            <span class="s2">"as default. Do not use for GasWater."</span>
+        <span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
+        <span class="s2">"--sheet_name"</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Sheet name if reading XLSX file. Defaults to first sheet&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Sheet name if reading XLSX file. Defaults to first sheet"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--slgof&quot;</span><span class="p">,</span>
-        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="s2">"--slgof"</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;If using family 1 keywords, use SLGOF instead of SGOF&quot;</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"If using family 1 keywords, use SLGOF instead of SGOF"</span><span class="p">,</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--family2&quot;</span><span class="p">,</span>
-        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="s2">"--family2"</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="p">(</span>
-            <span class="s2">&quot;Output family 2 keywords, SWFN, SGFN and SOF3/SOF2. &quot;</span>
-            <span class="s2">&quot;Family 1 (SWOF + SGOF) is written if this is not set.  &quot;</span>
-            <span class="s2">&quot;Implicit for gas-water input.&quot;</span>
+            <span class="s2">"Output family 2 keywords, SWFN, SGFN and SOF3/SOF2. "</span>
+            <span class="s2">"Family 1 (SWOF + SGOF) is written if this is not set.  "</span>
+            <span class="s2">"Implicit for gas-water input."</span>
         <span class="p">),</span>
     <span class="p">)</span>
 
     <span class="c1"># Plotting arguments</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--plot&quot;</span><span class="p">,</span>
-        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="s2">"--plot"</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;Make and save relative permeability figures.&quot;</span><span class="p">),</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">"Make and save relative permeability figures."</span><span class="p">),</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--plot_pc&quot;</span><span class="p">,</span>
-        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="s2">"--plot_pc"</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;Make and save capillary pressure figures.&quot;</span><span class="p">),</span>
+        <span class="n">help</span><span class="o">=</span><span class="p">(</span><span class="s2">"Make and save capillary pressure figures."</span><span class="p">),</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--plot_semilog&quot;</span><span class="p">,</span>
-        <span class="n">action</span><span class="o">=</span><span class="s2">&quot;store_true&quot;</span><span class="p">,</span>
+        <span class="s2">"--plot_semilog"</span><span class="p">,</span>
+        <span class="n">action</span><span class="o">=</span><span class="s2">"store_true"</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">help</span><span class="o">=</span><span class="p">(</span>
-            <span class="s2">&quot;Plot relative permeability figures with log y-axis.&quot;</span>
-            <span class="s2">&quot;Run both with and without this flag to plot&quot;</span>
-            <span class="s2">&quot;both linear and semi-log relperm plots.&quot;</span>
+            <span class="s2">"Plot relative permeability figures with log y-axis."</span>
+            <span class="s2">"Run both with and without this flag to plot"</span>
+            <span class="s2">"both linear and semi-log relperm plots."</span>
         <span class="p">),</span>
     <span class="p">)</span>
     <span class="n">parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s2">&quot;--plot_outdir&quot;</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="s2">&quot;./&quot;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s2">&quot;Directory where the plot output figures will be saved.&quot;</span><span class="p">,</span>
+        <span class="s2">"--plot_outdir"</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s2">"./"</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s2">"Directory where the plot output figures will be saved."</span><span class="p">,</span>
     <span class="p">)</span>
 
     <span class="k">return</span> <span class="n">parser</span></div>
@@ -272,16 +280,16 @@
 <div class="viewcode-block" id="main">
 <a class="viewcode-back" href="../../pyscal/pyscal.pyscalcli.html#pyscal.pyscalcli.main">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Endpoint for pyscals command line utility.</span>
+<span class="w">    </span><span class="sd">"""Endpoint for pyscals command line utility.</span>
 
-<span class="sd">    Translates from argparse API to Pyscal&#39;s Python API&quot;&quot;&quot;</span>
+<span class="sd">    Translates from argparse API to Pyscal's Python API"""</span>
     <span class="n">parser</span> <span class="o">=</span> <span class="n">get_parser</span><span class="p">()</span>
     <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">TextIOWrapper</span><span class="p">):</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">reconfigure</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">reconfigure</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">"UTF-8"</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span> <span class="n">io</span><span class="o">.</span><span class="n">TextIOWrapper</span><span class="p">):</span>
-        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">reconfigure</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">reconfigure</span><span class="p">(</span><span class="n">encoding</span><span class="o">=</span><span class="s2">"UTF-8"</span><span class="p">)</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">pyscal_main</span><span class="p">(</span>
@@ -289,6 +297,7 @@
             <span class="n">verbose</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
             <span class="n">debug</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">debug</span><span class="p">,</span>
             <span class="n">output</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">output</span><span class="p">,</span>
+            <span class="n">export_params</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">export_params</span><span class="p">,</span>
             <span class="n">delta_s</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">delta_s</span><span class="p">,</span>
             <span class="n">int_param_wo</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">int_param_wo</span><span class="p">,</span>
             <span class="n">int_param_go</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">int_param_go</span><span class="p">,</span>
@@ -301,7 +310,7 @@
             <span class="n">plot_outdir</span><span class="o">=</span><span class="n">args</span><span class="o">.</span><span class="n">plot_outdir</span><span class="p">,</span>
         <span class="p">)</span>
     <span class="k">except</span> <span class="p">(</span><span class="ne">OSError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_tb</span><span class="p">(</span><span class="n">err</span><span class="o">.</span><span class="n">__traceback__</span><span class="p">)))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">""</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">traceback</span><span class="o">.</span><span class="n">format_tb</span><span class="p">(</span><span class="n">err</span><span class="o">.</span><span class="n">__traceback__</span><span class="p">)))</span>
         <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">err</span><span class="p">))</span></div>
 
 
@@ -312,7 +321,7 @@
     <span class="n">parametertable</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
     <span class="n">verbose</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">debug</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;relperm.inc&quot;</span><span class="p">,</span>
+    <span class="n">output</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"relperm.inc"</span><span class="p">,</span>
     <span class="n">delta_s</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">int_param_wo</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">int_param_go</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
@@ -322,9 +331,11 @@
     <span class="n">plot</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">plot_pc</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="n">plot_semilog</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="n">plot_outdir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;./&quot;</span><span class="p">,</span>
+    <span class="n">plot_outdir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"./"</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">export_params</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"pyscal-params.csv"</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A &quot;main()&quot; method not relying on argparse. This can be used</span>
+<span class="w">    </span><span class="sd">"""A "main()" method not relying on argparse. This can be used</span>
 <span class="sd">    for testing, and also by an ERT forward model, e.g.</span>
 <span class="sd">    in semeio (github.com/equinor/semeio)</span>
 
@@ -333,6 +344,7 @@
 <span class="sd">        verbose: verbose or not</span>
 <span class="sd">        debug: debug mode or not</span>
 <span class="sd">        output: Output filename</span>
+<span class="sd">        export_params: CSV filename for curve parameters</span>
 <span class="sd">        delta_s: Saturation step-length</span>
 <span class="sd">        int_param_wo: Interpolation parameter for wateroil</span>
 <span class="sd">        int_param_go: Interpolation parameter for gasoil</span>
@@ -343,46 +355,46 @@
 <span class="sd">        plot_pc: Plot capillary pressure curves in addition to relperm curves</span>
 <span class="sd">        plot_semilog: Plot relative permeability figures with log y-axis</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="n">logger</span> <span class="o">=</span> <span class="n">getLogger_pyscal</span><span class="p">(</span>
-        <span class="vm">__name__</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;debug&quot;</span><span class="p">:</span> <span class="n">debug</span><span class="p">,</span> <span class="s2">&quot;verbose&quot;</span><span class="p">:</span> <span class="n">verbose</span><span class="p">,</span> <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="n">output</span><span class="p">}</span>
+        <span class="vm">__name__</span><span class="p">,</span> <span class="p">{</span><span class="s2">"debug"</span><span class="p">:</span> <span class="n">debug</span><span class="p">,</span> <span class="s2">"verbose"</span><span class="p">:</span> <span class="n">verbose</span><span class="p">,</span> <span class="s2">"output"</span><span class="p">:</span> <span class="n">output</span><span class="p">}</span>
     <span class="p">)</span>
 
     <span class="n">parametertable_df</span> <span class="o">=</span> <span class="n">load_relperm_df</span><span class="p">(</span><span class="n">parametertable</span><span class="p">,</span> <span class="n">sheet_name</span><span class="o">=</span><span class="n">sheet_name</span><span class="p">)</span>
 
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parametertable_df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span>
-    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;Input data:</span><span class="se">\n</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">parametertable_df</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+    <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">"Input data:</span><span class="se">\n</span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span> <span class="n">parametertable_df</span><span class="o">.</span><span class="n">to_string</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="n">int_param_go</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">int_param_wo</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Don&#39;t use int_param_go alone, only int_param_wo&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Don't use int_param_go alone, only int_param_wo"</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">int_param_wo</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">int_param_go</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-            <span class="s2">&quot;SATNUM specific interpolation parameters are not supported in pyscalcli&quot;</span>
+            <span class="s2">"SATNUM specific interpolation parameters are not supported in pyscalcli"</span>
         <span class="p">)</span>
-    <span class="k">if</span> <span class="n">int_param_wo</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">&quot;CASE&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">parametertable_df</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">int_param_wo</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s2">"CASE"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">parametertable_df</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s2">&quot;Interpolation parameter provided but no CASE column in input data&quot;</span>
+            <span class="s2">"Interpolation parameter provided but no CASE column in input data"</span>
         <span class="p">)</span>
-    <span class="k">if</span> <span class="s2">&quot;SATNUM&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">parametertable_df</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;There is no column called SATNUM in the input data&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s2">"SATNUM"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">parametertable_df</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"There is no column called SATNUM in the input data"</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="s2">&quot;CASE&quot;</span> <span class="ow">in</span> <span class="n">parametertable_df</span><span class="p">:</span>
+    <span class="k">if</span> <span class="s2">"CASE"</span> <span class="ow">in</span> <span class="n">parametertable_df</span><span class="p">:</span>
         <span class="c1"># Then we should do interpolation</span>
         <span class="k">if</span> <span class="n">int_param_wo</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No interpolation parameters provided&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"No interpolation parameters provided"</span><span class="p">)</span>
         <span class="n">scalrec_list</span> <span class="o">=</span> <span class="n">create_scal_recommendation_list</span><span class="p">(</span><span class="n">parametertable_df</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">delta_s</span><span class="p">)</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">scalrec_list</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">SCALrecommendation</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">scalrec_list</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">WaterOilGas</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="s2">&quot;Interpolating, wateroil=</span><span class="si">%s</span><span class="s2">, gasoil=</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="s2">"Interpolating, wateroil=</span><span class="si">%s</span><span class="s2">, gasoil=</span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span>
                 <span class="nb">str</span><span class="p">(</span><span class="n">int_param_wo</span><span class="p">),</span>
                 <span class="nb">str</span><span class="p">(</span><span class="n">int_param_go</span><span class="p">),</span>
             <span class="p">)</span>
             <span class="n">wog_list</span> <span class="o">=</span> <span class="n">scalrec_list</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">int_param_wo</span><span class="p">,</span> <span class="n">int_param_go</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">delta_s</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">scalrec_list</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="n">GasWater</span><span class="p">:</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-                <span class="s2">&quot;Interpolating, gaswater=</span><span class="si">%s</span><span class="s2">&quot;</span><span class="p">,</span>
+                <span class="s2">"Interpolating, gaswater=</span><span class="si">%s</span><span class="s2">"</span><span class="p">,</span>
                 <span class="nb">str</span><span class="p">(</span><span class="n">int_param_wo</span><span class="p">),</span>
             <span class="p">)</span>
             <span class="n">wog_list</span> <span class="o">=</span> <span class="n">scalrec_list</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">int_param_wo</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">delta_s</span><span class="p">)</span>
@@ -393,18 +405,170 @@
 
     <span class="n">family</span> <span class="o">=</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">family2</span> <span class="ow">or</span> <span class="n">wog_list</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">==</span> <span class="n">GasWater</span> <span class="k">else</span> <span class="mi">1</span>
 
-    <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">&quot;-&quot;</span><span class="p">:</span>
+    <span class="n">export_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">export_params</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">export_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+        <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Output directory not found '</span><span class="si">{</span><span class="n">export_path</span><span class="o">.</span><span class="n">parent</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
+    <span class="n">protected_paths</span> <span class="o">=</span> <span class="p">[</span><span class="n">Path</span><span class="p">(</span><span class="n">parametertable</span><span class="p">)]</span>
+    <span class="k">if</span> <span class="n">output</span> <span class="o">!=</span> <span class="s2">"-"</span><span class="p">:</span>
+        <span class="n">protected_paths</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="n">output</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">protected_path</span> <span class="ow">in</span> <span class="n">protected_paths</span><span class="p">:</span>
+        <span class="n">same_path</span> <span class="o">=</span> <span class="n">export_path</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span> <span class="o">==</span> <span class="n">protected_path</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span>
+        <span class="n">same_file</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">export_path</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+            <span class="ow">and</span> <span class="n">protected_path</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span>
+            <span class="ow">and</span> <span class="n">export_path</span><span class="o">.</span><span class="n">samefile</span><span class="p">(</span><span class="n">protected_path</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">same_path</span> <span class="ow">or</span> <span class="n">same_file</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"Parameter export path must differ from input and output paths"</span>
+            <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">"-"</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">wog_list</span><span class="o">.</span><span class="n">build_eclipse_data</span><span class="p">(</span><span class="n">family</span><span class="o">=</span><span class="n">family</span><span class="p">,</span> <span class="n">slgof</span><span class="o">=</span><span class="n">slgof</span><span class="p">))</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">Path</span><span class="p">(</span><span class="n">output</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Output directory not found &#39;</span><span class="si">{</span><span class="n">Path</span><span class="p">(</span><span class="n">output</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
-        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">OSError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Output directory not found '</span><span class="si">{</span><span class="n">Path</span><span class="p">(</span><span class="n">output</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">"utf-8"</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
             <span class="n">fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">wog_list</span><span class="o">.</span><span class="n">build_eclipse_data</span><span class="p">(</span><span class="n">family</span><span class="o">=</span><span class="n">family</span><span class="p">,</span> <span class="n">slgof</span><span class="o">=</span><span class="n">slgof</span><span class="p">))</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Written to &quot;</span> <span class="o">+</span> <span class="n">output</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Written to "</span> <span class="o">+</span> <span class="n">output</span><span class="p">)</span>
+
+    <span class="n">export_int_param_go</span> <span class="o">=</span> <span class="n">int_param_go</span>
+    <span class="k">if</span> <span class="n">wog_list</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">==</span> <span class="n">GasWater</span><span class="p">:</span>
+        <span class="n">export_int_param_go</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">elif</span> <span class="n">wog_list</span><span class="o">.</span><span class="n">pyscaltype</span> <span class="o">==</span> <span class="n">WaterOilGas</span> <span class="ow">and</span> <span class="n">export_int_param_go</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">export_int_param_go</span> <span class="o">=</span> <span class="n">int_param_wo</span>
+    <span class="n">_params_df</span><span class="p">(</span><span class="n">wog_list</span><span class="p">,</span> <span class="n">int_param_wo</span><span class="p">,</span> <span class="n">export_int_param_go</span><span class="p">)</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span>
+        <span class="n">export_path</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">False</span>
+    <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span>
+        <span class="s2">"Written parameters to "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">export_path</span><span class="p">),</span>
+        <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span> <span class="k">if</span> <span class="n">output</span> <span class="o">==</span> <span class="s2">"-"</span> <span class="k">else</span> <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="p">,</span>
+    <span class="p">)</span>
 
     <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
         <span class="n">plotting</span><span class="o">.</span><span class="n">plotter</span><span class="p">(</span><span class="n">wog_list</span><span class="p">,</span> <span class="n">plot_pc</span><span class="p">,</span> <span class="n">plot_semilog</span><span class="p">,</span> <span class="n">plot_outdir</span><span class="p">)</span></div>
 
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_params_df</span><span class="p">(</span>
+    <span class="n">wog_list</span><span class="p">:</span> <span class="n">PyscalList</span><span class="p">,</span>
+    <span class="n">int_param_wo</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">int_param_go</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Return structured header parameters in one row per SATNUM."""</span>
+    <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">without_interpolation_prefix</span><span class="p">(</span><span class="n">tag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">tag</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">""</span>
+        <span class="k">if</span> <span class="n">tag</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"SCAL recommendation interpolation to "</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">tag</span><span class="o">.</span><span class="n">partition</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">tag</span>
+
+    <span class="k">for</span> <span class="n">satnum</span><span class="p">,</span> <span class="n">obj</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">wog_list</span><span class="o">.</span><span class="n">pyscal_list</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">WaterOilGas</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="n">obj</span><span class="o">.</span><span class="n">wateroil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">and</span> <span class="n">obj</span><span class="o">.</span><span class="n">gasoil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">):</span>
+            <span class="n">wateroil_tag</span> <span class="o">=</span> <span class="n">without_interpolation_prefix</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
+            <span class="n">gasoil_tag</span> <span class="o">=</span> <span class="n">without_interpolation_prefix</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
+            <span class="n">tag</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">wateroil_tag</span>
+                <span class="k">if</span> <span class="n">wateroil_tag</span> <span class="o">==</span> <span class="n">gasoil_tag</span>
+                <span class="k">else</span> <span class="n">wateroil_tag</span> <span class="o">+</span> <span class="s2">" "</span> <span class="o">+</span> <span class="n">gasoil_tag</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">tag</span> <span class="o">=</span> <span class="n">without_interpolation_prefix</span><span class="p">(</span><span class="n">obj</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
+
+        <span class="n">gas_water</span> <span class="o">=</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">GasWater</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="p">(</span><span class="n">GasWater</span><span class="p">,</span> <span class="n">WaterOilGas</span><span class="p">)):</span>
+            <span class="n">wateroil</span><span class="p">,</span> <span class="n">gasoil</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">wateroil</span><span class="p">,</span> <span class="n">obj</span><span class="o">.</span><span class="n">gasoil</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">WaterOil</span><span class="p">):</span>
+            <span class="n">wateroil</span><span class="p">,</span> <span class="n">gasoil</span> <span class="o">=</span> <span class="n">obj</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">GasOil</span><span class="p">):</span>
+            <span class="n">wateroil</span><span class="p">,</span> <span class="n">gasoil</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">obj</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unexpected pyscal object: </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+        <span class="n">row</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">object</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"SATNUM"</span><span class="p">:</span> <span class="n">satnum</span><span class="p">,</span>
+            <span class="s2">"TAG"</span><span class="p">:</span> <span class="n">tag</span><span class="p">,</span>
+            <span class="s2">"int_param_wo"</span><span class="p">:</span> <span class="n">int_param_wo</span><span class="p">,</span>
+            <span class="s2">"int_param_go"</span><span class="p">:</span> <span class="n">int_param_go</span> <span class="k">if</span> <span class="n">gasoil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="n">wateroil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="n">swirr</span><span class="o">=</span><span class="n">wateroil</span><span class="o">.</span><span class="n">swirr</span><span class="p">,</span>
+                <span class="n">swl</span><span class="o">=</span><span class="n">wateroil</span><span class="o">.</span><span class="n">swl</span><span class="p">,</span>
+                <span class="n">swcr</span><span class="o">=</span><span class="n">wateroil</span><span class="o">.</span><span class="n">swcr</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">wateroil</span><span class="o">.</span><span class="n">krw_params</span><span class="p">,</span>
+                <span class="o">**</span><span class="p">{</span><span class="sa">f</span><span class="s2">"pcow_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">"</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">wateroil</span><span class="o">.</span><span class="n">pc_params</span><span class="o">.</span><span class="n">items</span><span class="p">()},</span>
+            <span class="p">)</span>
+            <span class="n">row</span><span class="p">[</span><span class="s2">"sgrw"</span> <span class="k">if</span> <span class="n">gas_water</span> <span class="k">else</span> <span class="s2">"sorw"</span><span class="p">]</span> <span class="o">=</span> <span class="n">wateroil</span><span class="o">.</span><span class="n">sorw</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">gas_water</span><span class="p">:</span>
+                <span class="n">row</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">wateroil</span><span class="o">.</span><span class="n">krow_params</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">wateroil</span><span class="o">.</span><span class="n">socr</span> <span class="o">&gt;</span> <span class="n">wateroil</span><span class="o">.</span><span class="n">sorw</span><span class="p">:</span>
+                    <span class="n">row</span><span class="p">[</span><span class="s2">"socr"</span><span class="p">]</span> <span class="o">=</span> <span class="n">wateroil</span><span class="o">.</span><span class="n">socr</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="ow">not</span> <span class="n">obj</span><span class="o">.</span><span class="n">fast</span>
+                <span class="ow">and</span> <span class="p">{</span><span class="s2">"KRW"</span><span class="p">,</span> <span class="s2">"KROW"</span><span class="p">}</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="ow">not</span> <span class="n">gas_water</span>
+            <span class="p">):</span>
+                <span class="n">row</span><span class="p">[</span><span class="s2">"krw_krow_crosspoint"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">wateroil</span><span class="o">.</span><span class="n">crosspoint</span><span class="p">(),</span> <span class="mi">5</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">gasoil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="n">sgcr</span><span class="o">=</span><span class="n">gasoil</span><span class="o">.</span><span class="n">sgcr</span><span class="p">,</span>
+                <span class="n">sgro</span><span class="o">=</span><span class="n">gasoil</span><span class="o">.</span><span class="n">sgro</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">gasoil</span><span class="o">.</span><span class="n">krg_params</span><span class="p">,</span>
+                <span class="o">**</span><span class="p">{</span><span class="sa">f</span><span class="s2">"pcog_</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">"</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">gasoil</span><span class="o">.</span><span class="n">pc_params</span><span class="o">.</span><span class="n">items</span><span class="p">()},</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">wateroil</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">row</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">swirr</span><span class="o">=</span><span class="n">gasoil</span><span class="o">.</span><span class="n">swirr</span><span class="p">,</span> <span class="n">swl</span><span class="o">=</span><span class="n">gasoil</span><span class="o">.</span><span class="n">swl</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">gas_water</span><span class="p">:</span>
+                <span class="n">row</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                    <span class="n">sorg</span><span class="o">=</span><span class="n">gasoil</span><span class="o">.</span><span class="n">sorg</span><span class="p">,</span>
+                    <span class="n">krgendanchor</span><span class="o">=</span><span class="n">gasoil</span><span class="o">.</span><span class="n">krgendanchor</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">gasoil</span><span class="o">.</span><span class="n">krog_params</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="ow">not</span> <span class="n">obj</span><span class="o">.</span><span class="n">fast</span>
+                <span class="ow">and</span> <span class="p">{</span><span class="s2">"KRG"</span><span class="p">,</span> <span class="s2">"KROG"</span><span class="p">}</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="ow">not</span> <span class="n">gas_water</span>
+            <span class="p">):</span>
+                <span class="n">row</span><span class="p">[</span><span class="s2">"krg_krog_crosspoint"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">gasoil</span><span class="o">.</span><span class="n">crosspoint</span><span class="p">(),</span> <span class="mi">5</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">gas_water</span>
+            <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">GasWater</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="n">wateroil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">and</span> <span class="n">gasoil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">):</span>
+            <span class="n">row</span><span class="p">[</span><span class="s2">"sgcr"</span><span class="p">]</span> <span class="o">=</span> <span class="n">gasoil</span><span class="o">.</span><span class="n">sgcr</span>
+            <span class="n">row</span><span class="p">[</span><span class="s2">"krgmax"</span><span class="p">]</span> <span class="o">=</span> <span class="n">gasoil</span><span class="o">.</span><span class="n">krg_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"krgmax"</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="ow">not</span> <span class="n">obj</span><span class="o">.</span><span class="n">fast</span>
+                <span class="ow">and</span> <span class="p">{</span><span class="s2">"KRW"</span><span class="p">}</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="p">{</span><span class="s2">"KRG"</span><span class="p">}</span><span class="o">.</span><span class="n">issubset</span><span class="p">(</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">)</span>
+            <span class="p">):</span>
+                <span class="n">crosspoint</span> <span class="o">=</span> <span class="n">obj</span><span class="o">.</span><span class="n">crosspoint</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">crosspoint</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">row</span><span class="p">[</span><span class="s2">"krw_krg_crosspoint"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">crosspoint</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">wateroil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">and</span> <span class="n">gasoil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="n">wateroil</span><span class="o">.</span><span class="n">swirr</span> <span class="o">!=</span> <span class="n">gasoil</span><span class="o">.</span><span class="n">swirr</span> <span class="ow">or</span> <span class="n">wateroil</span><span class="o">.</span><span class="n">swl</span> <span class="o">!=</span> <span class="n">gasoil</span><span class="o">.</span><span class="n">swl</span><span class="p">)</span>
+        <span class="p">):</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"swirr"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"swl"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">row</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+                <span class="n">swirr_wo</span><span class="o">=</span><span class="n">wateroil</span><span class="o">.</span><span class="n">swirr</span><span class="p">,</span>
+                <span class="n">swl_wo</span><span class="o">=</span><span class="n">wateroil</span><span class="o">.</span><span class="n">swl</span><span class="p">,</span>
+                <span class="n">swirr_go</span><span class="o">=</span><span class="n">gasoil</span><span class="o">.</span><span class="n">swirr</span><span class="p">,</span>
+                <span class="n">swl_go</span><span class="o">=</span><span class="n">gasoil</span><span class="o">.</span><span class="n">swl</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span>
 </pre></div>
 
            </div>

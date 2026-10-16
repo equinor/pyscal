@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Introduction to pyscal &mdash; pyscal 0.17.0 documentation</title>
+  <title>Introduction to pyscal &mdash; pyscal 0.18.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=0c3dd48d"></script>
+      <script src="_static/documentation_options.js?v=ba2e7b09"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -116,8 +116,15 @@ data in the table.</p>
 <span class="gp">$ </span><span class="c1"># Run pyscal on example input:</span>
 <span class="gp">$ </span>pyscal<span class="w"> </span>relperminput.csv<span class="w"> </span>--delta_s<span class="w"> </span><span class="m">0</span>.2<span class="w"> </span>-o<span class="w"> </span>relperm.inc
 <span class="go">Written to relperm.inc</span>
+<span class="go">Written parameters to pyscal-params.csv</span>
 </pre></div>
 </div>
+<p>By default, pyscal writes a CSV file named <code class="docutils literal notranslate"><span class="pre">pyscal-params.csv</span></code> in the current
+directory. Use <code class="docutils literal notranslate"><span class="pre">--export_params</span> <span class="pre">&lt;filename&gt;</span></code> to choose a different filename.
+The CSV contains one row per SATNUM and the parameters printed in the output
+header, including the water-oil and gas-oil interpolation parameters when
+interpolation is used. Capillary-pressure parameters are prefixed with
+<code class="docutils literal notranslate"><span class="pre">pcow_</span></code> or <code class="docutils literal notranslate"><span class="pre">pcog_</span></code> to distinguish water-oil from gas-oil values.</p>
 <p>Exactly the same table in an XLSX file would give identical results. The output
 from the pyscal command above will look like:</p>
 <div class="highlight-console notranslate"><div class="highlight"><pre><span></span><span class="gp">$ </span>cat<span class="w"> </span>relperm.inc

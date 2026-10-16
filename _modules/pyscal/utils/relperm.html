@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.utils.relperm &mdash; pyscal 0.17.0 documentation</title>
+  <title>pyscal.utils.relperm &mdash; pyscal 0.18.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
 
   
       <script src="../../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../../_static/documentation_options.js?v=0c3dd48d"></script>
+      <script src="../../../_static/documentation_options.js?v=ba2e7b09"></script>
       <script src="../../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../../_static/js/theme.js"></script>
@@ -79,7 +79,7 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pyscal.utils.relperm</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Utility functions for computations on relative permeability curves&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Utility functions for computations on relative permeability curves"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
 
@@ -97,14 +97,14 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">truncate_zeroness</span><span class="p">(</span>
     <span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
     <span class="n">zeronesslimit</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">/</span> <span class="n">SWINTEGERS</span><span class="p">,</span>
-    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
     <span class="n">log</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check a value for closeness to zero, and return as zero if below</span>
-<span class="sd">    a given limit, if not return the value&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Check a value for closeness to zero, and return as zero if below</span>
+<span class="sd">    a given limit, if not return the value"""</span>
     <span class="k">if</span> <span class="n">value</span> <span class="o">&lt;</span> <span class="n">zeronesslimit</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">log</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">):</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> was close to zero, truncated to 0&quot;</span><span class="p">)</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> was close to zero, truncated to 0"</span><span class="p">)</span>
         <span class="k">return</span> <span class="mf">0.0</span>
     <span class="k">return</span> <span class="n">value</span></div>
 
@@ -113,7 +113,7 @@
 <div class="viewcode-block" id="crosspoint">
 <a class="viewcode-back" href="../../../pyscal/pyscal.utils.relperm.html#pyscal.utils.relperm.crosspoint">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">crosspoint</span><span class="p">(</span><span class="n">dframe</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span> <span class="n">satcol</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">kr1col</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">kr2col</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Locate the saturation value (crosspoint) where kr1col == kr2col</span>
+<span class="w">    </span><span class="sd">"""Locate the saturation value (crosspoint) where kr1col == kr2col</span>
 
 <span class="sd">    Args:</span>
 <span class="sd">        dframe: Dataframe with at least three columns</span>
@@ -125,31 +125,31 @@
 <span class="sd">        The saturation value (interpolated) where kr1col == kr2col, when krXcol</span>
 <span class="sd">        is linearly interpolated as a function of the saturation values. In case</span>
 <span class="sd">        of errors, the function will return the value -1</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">dframe</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
         <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
 
     <span class="n">cross_dframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">dframe</span><span class="p">[[</span><span class="n">satcol</span><span class="p">,</span> <span class="n">kr1col</span><span class="p">,</span> <span class="n">kr2col</span><span class="p">]])</span>
 
     <span class="k">if</span> <span class="n">cross_dframe</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;nan in input to crosspoint()&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"nan in input to crosspoint()"</span><span class="p">)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">cross_dframe</span><span class="p">))</span>
         <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
 
-    <span class="n">cross_dframe</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">&quot;krdiff&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cross_dframe</span><span class="p">[</span><span class="n">kr1col</span><span class="p">]</span> <span class="o">-</span> <span class="n">cross_dframe</span><span class="p">[</span><span class="n">kr2col</span><span class="p">]</span>
+    <span class="n">cross_dframe</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="s2">"krdiff"</span><span class="p">]</span> <span class="o">=</span> <span class="n">cross_dframe</span><span class="p">[</span><span class="n">kr1col</span><span class="p">]</span> <span class="o">-</span> <span class="n">cross_dframe</span><span class="p">[</span><span class="n">kr2col</span><span class="p">]</span>
 
     <span class="c1"># Add a zero value for the difference column, and interpolate</span>
     <span class="c1"># the saturation column to the zero value</span>
-    <span class="n">zerodf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">cross_dframe</span><span class="p">)],</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;krdiff&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">})</span>
-    <span class="n">cross_dframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">cross_dframe</span><span class="p">,</span> <span class="n">zerodf</span><span class="p">],</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;krdiff&quot;</span><span class="p">)</span>
+    <span class="n">zerodf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">cross_dframe</span><span class="p">)],</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s2">"krdiff"</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">})</span>
+    <span class="n">cross_dframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">cross_dframe</span><span class="p">,</span> <span class="n">zerodf</span><span class="p">],</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">"krdiff"</span><span class="p">)</span>
 
-    <span class="n">cross_dframe</span> <span class="o">=</span> <span class="n">cross_dframe</span><span class="p">[</span><span class="o">~</span><span class="n">cross_dframe</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">duplicated</span><span class="p">(</span><span class="n">keep</span><span class="o">=</span><span class="s2">&quot;first&quot;</span><span class="p">)]</span>
+    <span class="n">cross_dframe</span> <span class="o">=</span> <span class="n">cross_dframe</span><span class="p">[</span><span class="o">~</span><span class="n">cross_dframe</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">duplicated</span><span class="p">(</span><span class="n">keep</span><span class="o">=</span><span class="s2">"first"</span><span class="p">)]</span>
 
     <span class="k">if</span> <span class="n">cross_dframe</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="n">cross_dframe</span> <span class="o">=</span> <span class="n">cross_dframe</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;slinear&quot;</span><span class="p">)</span>
+        <span class="n">cross_dframe</span> <span class="o">=</span> <span class="n">cross_dframe</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">"slinear"</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">cross_dframe</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Could not compute crosspoint)&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"Could not compute crosspoint)"</span><span class="p">)</span>
         <span class="n">logger</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">cross_dframe</span><span class="p">))</span>
         <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
 
@@ -163,14 +163,14 @@
     <span class="n">table</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
     <span class="n">xcol</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="n">ycol</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-    <span class="n">side</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;right&quot;</span><span class="p">,</span>
+    <span class="n">side</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"right"</span><span class="p">,</span>
 <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Estimate the point where the y-data jumps from being linear</span>
+<span class="w">    </span><span class="sd">"""Estimate the point where the y-data jumps from being linear</span>
 <span class="sd">    in x to being nonlinear, or where it shift from one linear domain</span>
 <span class="sd">    to another (for a piecewise linear function)</span>
 
-<span class="sd">    If xcol is sw, and ycol is krw, and side is &#39;right&#39;, this</span>
-<span class="sd">    will typically estimate sorw for you. If side is &#39;left&#39; it will</span>
+<span class="sd">    If xcol is sw, and ycol is krw, and side is 'right', this</span>
+<span class="sd">    will typically estimate sorw for you. If side is 'left' it will</span>
 <span class="sd">    give you swcr.</span>
 
 <span class="sd">    Args:</span>
@@ -179,12 +179,12 @@
 <span class="sd">            None (default) the first column in table will be used.</span>
 <span class="sd">        ycol: The name of the column in table containing y-data.</span>
 <span class="sd">            If None (default) the second column in the table will be used.</span>
-<span class="sd">        side: Must be &#39;left&#39; or &#39;right&#39;. Decides whether to look from</span>
+<span class="sd">        side: Must be 'left' or 'right'. Decides whether to look from</span>
 <span class="sd">            the right side of the x-interval or from the left side for the</span>
 <span class="sd">            linear domain.</span>
 <span class="sd">    Returns:</span>
 <span class="sd">        The x value where the start-linear domain ends.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">xcol</span><span class="p">:</span>
         <span class="n">xcol</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -193,40 +193,40 @@
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">ycol</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">xcol</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">side</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;side cannot be None, use left or right&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"side cannot be None, use left or right"</span><span class="p">)</span>
     <span class="n">side</span> <span class="o">=</span> <span class="n">side</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-    <span class="k">assert</span> <span class="n">side</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;left&quot;</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">]</span>
+    <span class="k">assert</span> <span class="n">side</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"left"</span><span class="p">,</span> <span class="s2">"right"</span><span class="p">]</span>
 
     <span class="c1"># Compute the derivative:</span>
-    <span class="n">table</span><span class="p">[</span><span class="s2">&quot;_deriv&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="n">ycol</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span> <span class="o">/</span> <span class="n">table</span><span class="p">[</span><span class="n">xcol</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span>  <span class="c1"># type: ignore[operator]</span>
+    <span class="n">table</span><span class="p">[</span><span class="s2">"_deriv"</span><span class="p">]</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="n">ycol</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span> <span class="o">/</span> <span class="n">table</span><span class="p">[</span><span class="n">xcol</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span>  <span class="c1"># type: ignore[operator]</span>
     <span class="c1"># The first becomes NaN, extrapolate from the second row:</span>
-    <span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;_deriv&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;_deriv&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="s2">"_deriv"</span><span class="p">]</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="s2">"_deriv"</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
     <span class="c1"># Pick the derivative at the first or last segment:</span>
-    <span class="n">iloc</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;left&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;right&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">}</span>
-    <span class="n">lin_a</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;_deriv&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">iloc</span><span class="p">[</span><span class="n">side</span><span class="p">]]</span>
+    <span class="n">iloc</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"left"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"right"</span><span class="p">:</span> <span class="o">-</span><span class="mi">1</span><span class="p">}</span>
+    <span class="n">lin_a</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="s2">"_deriv"</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">iloc</span><span class="p">[</span><span class="n">side</span><span class="p">]]</span>
 
     <span class="c1"># Make a linear extrapolation from the last segment, starting at max x</span>
-    <span class="n">table</span><span class="p">[</span><span class="s2">&quot;_linear&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="n">xcol</span><span class="p">]</span> <span class="o">-</span> <span class="n">table</span><span class="p">[</span><span class="n">xcol</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">iloc</span><span class="p">[</span><span class="n">side</span><span class="p">]])</span> <span class="o">*</span> <span class="n">lin_a</span> <span class="o">+</span> <span class="n">table</span><span class="p">[</span>
+    <span class="n">table</span><span class="p">[</span><span class="s2">"_linear"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="n">xcol</span><span class="p">]</span> <span class="o">-</span> <span class="n">table</span><span class="p">[</span><span class="n">xcol</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">iloc</span><span class="p">[</span><span class="n">side</span><span class="p">]])</span> <span class="o">*</span> <span class="n">lin_a</span> <span class="o">+</span> <span class="n">table</span><span class="p">[</span>
         <span class="n">ycol</span>
     <span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">iloc</span><span class="p">[</span><span class="n">side</span><span class="p">]]</span>
-    <span class="k">assert</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;_linear&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()[</span><span class="n">iloc</span><span class="p">[</span><span class="n">side</span><span class="p">]]</span> <span class="o">==</span> <span class="n">table</span><span class="p">[</span><span class="n">ycol</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()[</span><span class="n">iloc</span><span class="p">[</span><span class="n">side</span><span class="p">]]</span>
+    <span class="k">assert</span> <span class="n">table</span><span class="p">[</span><span class="s2">"_linear"</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()[</span><span class="n">iloc</span><span class="p">[</span><span class="n">side</span><span class="p">]]</span> <span class="o">==</span> <span class="n">table</span><span class="p">[</span><span class="n">ycol</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()[</span><span class="n">iloc</span><span class="p">[</span><span class="n">side</span><span class="p">]]</span>
 
     <span class="c1"># Compute how much krw deviates from the linear krw:</span>
-    <span class="n">table</span><span class="p">[</span><span class="s2">&quot;_lindev&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="n">ycol</span><span class="p">]</span> <span class="o">-</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;_linear&quot;</span><span class="p">])</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span>
+    <span class="n">table</span><span class="p">[</span><span class="s2">"_lindev"</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="n">ycol</span><span class="p">]</span> <span class="o">-</span> <span class="n">table</span><span class="p">[</span><span class="s2">"_linear"</span><span class="p">])</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span>
 
     <span class="c1"># Use the cumulative sum to determine the onset of non-zero deviation</span>
     <span class="c1"># starting from sw=1:</span>
-    <span class="n">table</span><span class="p">[</span><span class="s2">&quot;_lindevcumsum&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;_lindev&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
+    <span class="n">table</span><span class="p">[</span><span class="s2">"_lindevcumsum"</span><span class="p">]</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="s2">"_lindev"</span><span class="p">]</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
 
-    <span class="k">if</span> <span class="n">side</span> <span class="o">==</span> <span class="s2">&quot;right&quot;</span><span class="p">:</span>
-        <span class="n">maxcumsum</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;_lindevcumsum&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
-        <span class="n">linearpart</span> <span class="o">=</span> <span class="n">table</span><span class="p">[(</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;_lindevcumsum&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">maxcumsum</span><span class="p">)</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">side</span> <span class="o">==</span> <span class="s2">"right"</span><span class="p">:</span>
+        <span class="n">maxcumsum</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="s2">"_lindevcumsum"</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="n">linearpart</span> <span class="o">=</span> <span class="n">table</span><span class="p">[(</span><span class="n">table</span><span class="p">[</span><span class="s2">"_lindevcumsum"</span><span class="p">]</span> <span class="o">-</span> <span class="n">maxcumsum</span><span class="p">)</span><span class="o">.</span><span class="n">abs</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">linearpart</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">xcol</span><span class="p">]</span>
 
-    <span class="n">linearpart</span> <span class="o">=</span> <span class="n">table</span><span class="p">[(</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;_lindevcumsum&quot;</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">)]</span>
+    <span class="n">linearpart</span> <span class="o">=</span> <span class="n">table</span><span class="p">[(</span><span class="n">table</span><span class="p">[</span><span class="s2">"_lindevcumsum"</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">)]</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">linearpart</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="n">linearpart</span> <span class="o">=</span> <span class="n">table</span><span class="p">[(</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;_lindevcumsum&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">)]</span>
+        <span class="n">linearpart</span> <span class="o">=</span> <span class="n">table</span><span class="p">[(</span><span class="n">table</span><span class="p">[</span><span class="s2">"_lindevcumsum"</span><span class="p">]</span><span class="o">.</span><span class="n">shift</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">epsilon</span><span class="p">)]</span>
     <span class="k">return</span> <span class="n">linearpart</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="n">xcol</span><span class="p">]</span></div>
 
 </pre></div>

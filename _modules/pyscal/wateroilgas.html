@@ -5,14 +5,14 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.wateroilgas &mdash; pyscal 0.17.0 documentation</title>
+  <title>pyscal.wateroilgas &mdash; pyscal 0.18.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
 
   
       <script src="../../_static/jquery.js?v=5d32c60e"></script>
       <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../../_static/documentation_options.js?v=0c3dd48d"></script>
+      <script src="../../_static/documentation_options.js?v=ba2e7b09"></script>
       <script src="../../_static/doctools.js?v=9bcbadda"></script>
       <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../../_static/js/theme.js"></script>
@@ -79,7 +79,7 @@
            <div itemprop="articleBody">
              
   <h1>Source code for pyscal.wateroilgas</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Container object for one WaterOil and one GasOil object&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Container object for one WaterOil and one GasOil object"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
@@ -97,12 +97,12 @@
 <div class="viewcode-block" id="WaterOilGas">
 <a class="viewcode-back" href="../../pyscal/pyscal.wateroilgas.html#pyscal.WaterOilGas">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">WaterOilGas</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;A representation of three-phase properties for oil-water-gas</span>
+<span class="w">    </span><span class="sd">"""A representation of three-phase properties for oil-water-gas</span>
 
 <span class="sd">    Use one object for each satnum.</span>
 
 <span class="sd">    One WaterOil and one GasOil object will be created, with compatible</span>
-<span class="sd">    saturation ranges. Access the class members &#39;wateroil&#39; and &#39;gasoil&#39;</span>
+<span class="sd">    saturation ranges. Access the class members 'wateroil' and 'gasoil'</span>
 <span class="sd">    directly to add curves.</span>
 
 <span class="sd">    All arguments to the initializer can be defaulted, and all are zero except</span>
@@ -122,7 +122,7 @@
 <span class="sd">        tag: Optional text that will be included as comments.</span>
 <span class="sd">        fast: Set to True if you prefer speed over robustness. Not recommended,</span>
 <span class="sd">            pyscal will not guarantee valid output in this mode.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -133,10 +133,10 @@
         <span class="n">sorg</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
         <span class="n">sgcr</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
         <span class="n">h</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-        <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">tag</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span>
         <span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets up the saturation range for three phases&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Sets up the saturation range for three phases"""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">fast</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="p">:</span> <span class="n">WaterOil</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="n">WaterOil</span><span class="p">(</span>
             <span class="n">swirr</span><span class="o">=</span><span class="n">swirr</span><span class="p">,</span> <span class="n">swl</span><span class="o">=</span><span class="n">swl</span><span class="p">,</span> <span class="n">swcr</span><span class="o">=</span><span class="n">swcr</span><span class="p">,</span> <span class="n">sorw</span><span class="o">=</span><span class="n">sorw</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">tag</span><span class="p">,</span> <span class="n">fast</span><span class="o">=</span><span class="n">fast</span>
@@ -148,134 +148,134 @@
 <div class="viewcode-block" id="WaterOilGas.selfcheck">
 <a class="viewcode-back" href="../../pyscal/pyscal.wateroilgas.html#pyscal.WaterOilGas.selfcheck">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">selfcheck</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run selfcheck on both wateroil and gasoil.</span>
+<span class="w">        </span><span class="sd">"""Run selfcheck on both wateroil and gasoil.</span>
 
 <span class="sd">        Returns true only if both passes if both are present.</span>
 
 <span class="sd">        If only wateroil or gasoil is present (the other</span>
 <span class="sd">        being None, only the relevant is checked.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">selfcheck</span><span class="p">()</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">selfcheck</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">selfcheck</span><span class="p">()</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">selfcheck</span><span class="p">()</span>
-        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Both wateroil and gasoil are None in WaterOilGas&quot;</span><span class="p">)</span>
+        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"Both wateroil and gasoil are None in WaterOilGas"</span><span class="p">)</span>
         <span class="k">return</span> <span class="kc">False</span></div>
 
 
 <div class="viewcode-block" id="WaterOilGas.SWOF">
 <a class="viewcode-back" href="../../pyscal/pyscal.wateroilgas.html#pyscal.WaterOilGas.SWOF">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">SWOF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a SWOF string. Delegated to the wateroil object&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return a SWOF string. Delegated to the wateroil object"""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;No WaterOil object in this WaterOilGas object&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
-        <span class="k">if</span> <span class="s2">&quot;KRW&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span> <span class="ow">or</span> <span class="s2">&quot;KROW&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Missing KRW/KROW curves in WaterOilGas object&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"No WaterOil object in this WaterOilGas object"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">""</span>
+        <span class="k">if</span> <span class="s2">"KRW"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span> <span class="ow">or</span> <span class="s2">"KROW"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"Missing KRW/KROW curves in WaterOilGas object"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">SWOF</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="WaterOilGas.SGOF">
 <a class="viewcode-back" href="../../pyscal/pyscal.wateroilgas.html#pyscal.WaterOilGas.SGOF">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">SGOF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a SGOF string. Delegated to the gasoil object.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return a SGOF string. Delegated to the gasoil object."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;No GasOil object in this WaterOilGas object&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
-        <span class="k">if</span> <span class="s2">&quot;KRG&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span> <span class="ow">or</span> <span class="s2">&quot;KROG&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Missing KRG/KROG curves in WaterOilGas object&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"No GasOil object in this WaterOilGas object"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">""</span>
+        <span class="k">if</span> <span class="s2">"KRG"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span> <span class="ow">or</span> <span class="s2">"KROG"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"Missing KRG/KROG curves in WaterOilGas object"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">SGOF</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="WaterOilGas.SLGOF">
 <a class="viewcode-back" href="../../pyscal/pyscal.wateroilgas.html#pyscal.WaterOilGas.SLGOF">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">SLGOF</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a SLGOF string. Delegated to the gasoil object.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return a SLGOF string. Delegated to the gasoil object."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;No GasOil object in this WaterOilGas object&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
-        <span class="k">if</span> <span class="s2">&quot;KRG&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span> <span class="ow">or</span> <span class="s2">&quot;KROG&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Missing KRG/KROG in WaterOilGas object&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"No GasOil object in this WaterOilGas object"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">""</span>
+        <span class="k">if</span> <span class="s2">"KRG"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span> <span class="ow">or</span> <span class="s2">"KROG"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"Missing KRG/KROG in WaterOilGas object"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">SLGOF</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="WaterOilGas.SGFN">
 <a class="viewcode-back" href="../../pyscal/pyscal.wateroilgas.html#pyscal.WaterOilGas.SGFN">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">SGFN</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a SGFN string. Delegated to the gasoil object.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return a SGFN string. Delegated to the gasoil object."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;No GasOil object in this WaterOilGas object&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
-        <span class="k">if</span> <span class="s2">&quot;KRG&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Missing KRG in WaterOilGas object&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"No GasOil object in this WaterOilGas object"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">""</span>
+        <span class="k">if</span> <span class="s2">"KRG"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"Missing KRG in WaterOilGas object"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">SGFN</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="WaterOilGas.SWFN">
 <a class="viewcode-back" href="../../pyscal/pyscal.wateroilgas.html#pyscal.WaterOilGas.SWFN">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">SWFN</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a SWFN string. Delegated to the wateroil object.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return a SWFN string. Delegated to the wateroil object."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;No WaterOil object in this WaterOilGas object&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
-        <span class="k">if</span> <span class="s2">&quot;KRW&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Missing KRW in WaterOilGas object&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"No WaterOil object in this WaterOilGas object"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">""</span>
+        <span class="k">if</span> <span class="s2">"KRW"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"Missing KRW in WaterOilGas object"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">SWFN</span><span class="p">(</span><span class="n">header</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="WaterOilGas.SOF3">
 <a class="viewcode-back" href="../../pyscal/pyscal.wateroilgas.html#pyscal.WaterOilGas.SOF3">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">SOF3</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">header</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dataincommentrow</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a SOF3 string, combining data from the wateroil and</span>
+<span class="w">        </span><span class="sd">"""Return a SOF3 string, combining data from the wateroil and</span>
 <span class="sd">        gasoil objects.</span>
 
 <span class="sd">        So - the oil saturation ranges from 0 to 1-swl. The saturation points</span>
 <span class="sd">        from the WaterOil object is used to generate these</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
-            <span class="s2">&quot;KROW&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span> <span class="ow">or</span> <span class="s2">&quot;KROG&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span>
+            <span class="s2">"KROW"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span> <span class="ow">or</span> <span class="s2">"KROG"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span>
         <span class="p">):</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">&quot;Both WaterOil and GasOil krow/krog is needed for SOF3&quot;</span><span class="p">)</span>
-            <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s2">"Both WaterOil and GasOil krow/krog is needed for SOF3"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="s2">""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">threephaseconsistency</span><span class="p">()</span>
 
         <span class="c1"># Copy of the wateroil data:</span>
-        <span class="n">table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;SW&quot;</span><span class="p">,</span> <span class="s2">&quot;KROW&quot;</span><span class="p">]])</span>
-        <span class="n">table</span><span class="p">[</span><span class="s2">&quot;SO&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">"SW"</span><span class="p">,</span> <span class="s2">"KROW"</span><span class="p">]])</span>
+        <span class="n">table</span><span class="p">[</span><span class="s2">"SO"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">table</span><span class="p">[</span><span class="s2">"SW"</span><span class="p">]</span>
 
         <span class="c1"># Copy of the gasoil data:</span>
-        <span class="n">gastable</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">&quot;SG&quot;</span><span class="p">,</span> <span class="s2">&quot;KROG&quot;</span><span class="p">]])</span>
-        <span class="n">gastable</span><span class="p">[</span><span class="s2">&quot;SO&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">gastable</span><span class="p">[</span><span class="s2">&quot;SG&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">swl</span>
+        <span class="n">gastable</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">[[</span><span class="s2">"SG"</span><span class="p">,</span> <span class="s2">"KROG"</span><span class="p">]])</span>
+        <span class="n">gastable</span><span class="p">[</span><span class="s2">"SO"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">gastable</span><span class="p">[</span><span class="s2">"SG"</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">swl</span>
 
         <span class="c1"># Merge WaterOil and GasOil on oil saturation, interpolate for</span>
         <span class="c1"># missing data (potentially different sg- and sw-grids)</span>
         <span class="n">sof3table</span> <span class="o">=</span> <span class="p">(</span>
             <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">table</span><span class="p">,</span> <span class="n">gastable</span><span class="p">],</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-            <span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">&quot;SO&quot;</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">"SO"</span><span class="p">)</span>
             <span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
-            <span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">&quot;slinear&quot;</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s2">"slinear"</span><span class="p">)</span>
             <span class="o">.</span><span class="n">ffill</span><span class="p">()</span>
             <span class="o">.</span><span class="n">bfill</span><span class="p">()</span>
             <span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
         <span class="p">)</span>
-        <span class="n">sof3table</span><span class="p">[</span><span class="s2">&quot;soint&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">round</span><span class="p">,</span> <span class="n">sof3table</span><span class="p">[</span><span class="s2">&quot;SO&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">SWINTEGERS</span><span class="p">))</span>
-        <span class="n">sof3table</span> <span class="o">=</span> <span class="n">sof3table</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="s2">&quot;soint&quot;</span><span class="p">)</span>
+        <span class="n">sof3table</span><span class="p">[</span><span class="s2">"soint"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">round</span><span class="p">,</span> <span class="n">sof3table</span><span class="p">[</span><span class="s2">"SO"</span><span class="p">]</span> <span class="o">*</span> <span class="n">SWINTEGERS</span><span class="p">))</span>
+        <span class="n">sof3table</span> <span class="o">=</span> <span class="n">sof3table</span><span class="o">.</span><span class="n">drop_duplicates</span><span class="p">(</span><span class="s2">"soint"</span><span class="p">)</span>
 
-        <span class="c1"># The &#39;so&#39; column has been calculated from floating point numbers</span>
+        <span class="c1"># The 'so' column has been calculated from floating point numbers</span>
         <span class="c1"># and the zero value easily becomes a negative zero, circumvent this:</span>
-        <span class="n">zerorow</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">sof3table</span><span class="p">[</span><span class="s2">&quot;SO&quot;</span><span class="p">],</span> <span class="mf">0.0</span><span class="p">)</span>
-        <span class="n">sof3table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">zerorow</span><span class="p">,</span> <span class="s2">&quot;SO&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">sof3table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">zerorow</span><span class="p">,</span> <span class="s2">&quot;SO&quot;</span><span class="p">])</span>
+        <span class="n">zerorow</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">sof3table</span><span class="p">[</span><span class="s2">"SO"</span><span class="p">],</span> <span class="mf">0.0</span><span class="p">)</span>
+        <span class="n">sof3table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">zerorow</span><span class="p">,</span> <span class="s2">"SO"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">sof3table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">zerorow</span><span class="p">,</span> <span class="s2">"SO"</span><span class="p">])</span>
 
-        <span class="n">string</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+        <span class="n">string</span> <span class="o">=</span> <span class="s2">""</span>
         <span class="k">if</span> <span class="n">header</span><span class="p">:</span>
-            <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;SOF3</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">string</span> <span class="o">+=</span> <span class="s2">"SOF3</span><span class="se">\n</span><span class="s2">"</span>
         <span class="n">wo_tag</span> <span class="o">=</span> <span class="n">comment_formatter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
         <span class="n">go_tag</span> <span class="o">=</span> <span class="n">comment_formatter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">tag</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">wo_tag</span> <span class="o">!=</span> <span class="n">go_tag</span><span class="p">:</span>
@@ -284,7 +284,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Only print once if they are equal</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="n">wo_tag</span>
-        <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;-- pyscal: &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">__version__</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="s2">"-- pyscal: "</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">__version__</span><span class="p">)</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
         <span class="k">if</span> <span class="n">dataincommentrow</span><span class="p">:</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">swcomment</span>
             <span class="n">string</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">sgcomment</span>
@@ -293,72 +293,72 @@
 
         <span class="n">width</span> <span class="o">=</span> <span class="mi">10</span>
         <span class="n">string</span> <span class="o">+=</span> <span class="p">(</span>
-            <span class="s2">&quot;-- &quot;</span>
-            <span class="o">+</span> <span class="s2">&quot;SO&quot;</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">width</span> <span class="o">-</span> <span class="mi">3</span><span class="p">)</span>
-            <span class="o">+</span> <span class="s2">&quot;KROW&quot;</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>
-            <span class="o">+</span> <span class="s2">&quot;KROG&quot;</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>
-            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">"-- "</span>
+            <span class="o">+</span> <span class="s2">"SO"</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">width</span> <span class="o">-</span> <span class="mi">3</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">"KROW"</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">"KROG"</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">width</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
         <span class="p">)</span>
-        <span class="n">string</span> <span class="o">+=</span> <span class="n">df2str</span><span class="p">(</span><span class="n">sof3table</span><span class="p">[[</span><span class="s2">&quot;SO&quot;</span><span class="p">,</span> <span class="s2">&quot;KROW&quot;</span><span class="p">,</span> <span class="s2">&quot;KROG&quot;</span><span class="p">]])</span>
-        <span class="n">string</span> <span class="o">+=</span> <span class="s2">&quot;/</span><span class="se">\n</span><span class="s2">&quot;</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="n">df2str</span><span class="p">(</span><span class="n">sof3table</span><span class="p">[[</span><span class="s2">"SO"</span><span class="p">,</span> <span class="s2">"KROW"</span><span class="p">,</span> <span class="s2">"KROG"</span><span class="p">]])</span>
+        <span class="n">string</span> <span class="o">+=</span> <span class="s2">"/</span><span class="se">\n</span><span class="s2">"</span>
         <span class="k">return</span> <span class="n">string</span></div>
 
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">swirr</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the swirr used for the WaterOil object&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Get the swirr used for the WaterOil object"""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;wateroil is None in WaterOilGas object&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"wateroil is None in WaterOilGas object"</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">swirr</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">swl</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the swl used for the WaterOil object&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Get the swl used for the WaterOil object"""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;wateroil is None in WaterOilGas object&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"wateroil is None in WaterOilGas object"</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">swl</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">sorg</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the sorg used in the GasOil object&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Get the sorg used in the GasOil object"""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;gasoil is None in WaterOilGas object&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"gasoil is None in WaterOilGas object"</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">sorg</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">sorw</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the sorw used for the WaterOil object&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Get the sorw used for the WaterOil object"""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;wateroil is None in WaterOilGas object&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"wateroil is None in WaterOilGas object"</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">sorw</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">tag</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the tag, a combination of the tags in WaterOil</span>
-<span class="sd">        and GasOil only if they are different&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Get the tag, a combination of the tags in WaterOil</span>
+<span class="sd">        and GasOil only if they are different"""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">tag</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">tag</span><span class="p">:</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">tag</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">tag</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">tag</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">tag</span> <span class="o">+</span> <span class="s2">" "</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">tag</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">tag</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">tag</span>
-        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">""</span>
 
 <div class="viewcode-block" id="WaterOilGas.threephaseconsistency">
 <a class="viewcode-back" href="../../pyscal/pyscal.wateroilgas.html#pyscal.WaterOilGas.threephaseconsistency">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">threephaseconsistency</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform consistency checks on produced curves, similar</span>
+<span class="w">        </span><span class="sd">"""Perform consistency checks on produced curves, similar</span>
 <span class="sd">        to what Eclipse does at startup.</span>
 
 <span class="sd">        If any (likely) errors are found, these are printed</span>
 <span class="sd">        as warnings and this function returns False.</span>
 
-<span class="sd">        &quot;Errors&quot; from this function should be treated as</span>
+<span class="sd">        "Errors" from this function should be treated as</span>
 <span class="sd">        warnings, as false positives from this function should</span>
 <span class="sd">        not have breaking consequences.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># Eclipse errors:</span>
 
@@ -374,20 +374,20 @@
 
         <span class="n">wog_is_ok</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROW&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">"KROW"</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">"KROG"</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
         <span class="p">):</span>
             <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
-                <span class="s2">&quot;Eclipse will fail, max(KROW)=</span><span class="si">%g</span><span class="s2"> is not equal to max(KROG)=</span><span class="si">%g</span><span class="s2">&quot;</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROW&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;KROG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span>
+                <span class="s2">"Eclipse will fail, max(KROW)=</span><span class="si">%g</span><span class="s2"> is not equal to max(KROG)=</span><span class="si">%g</span><span class="s2">"</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">"KROW"</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">"KROG"</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span>
             <span class="p">)</span>
             <span class="n">wog_is_ok</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="c1"># 2: Inconsistent end points in saturation table 1 the maximum</span>
         <span class="c1"># gas saturation (0.91) plus the connate water saturation</span>
         <span class="c1"># (0.10) must not exceed 1.0</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SG&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;SW&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
-            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Eclipse will fail, max(SG) + swl &gt; 1.0&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gasoil</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">"SG"</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">wateroil</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="s2">"SW"</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">"Eclipse will fail, max(SG) + swl &gt; 1.0"</span><span class="p">)</span>
             <span class="n">wog_is_ok</span> <span class="o">=</span> <span class="kc">False</span>
 
         <span class="c1"># 3: Warning: Consistency problem for gas phase endpoint (krgr &gt; krg)</span>

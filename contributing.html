@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Contributing to pyscal &mdash; pyscal 0.17.0 documentation</title>
+  <title>Contributing to pyscal &mdash; pyscal 0.18.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=9edc463e" />
 
   
       <script src="_static/jquery.js?v=5d32c60e"></script>
       <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="_static/documentation_options.js?v=0c3dd48d"></script>
+      <script src="_static/documentation_options.js?v=ba2e7b09"></script>
       <script src="_static/doctools.js?v=9bcbadda"></script>
       <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="_static/js/theme.js"></script>
@@ -118,7 +118,8 @@ git<span class="w"> </span>remote<span class="w"> </span>-v
 <div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>~/venv/pyscal
 <span class="nb">source</span><span class="w"> </span>~/venv/pyscal/bin/activate
 pip<span class="w"> </span>install<span class="w"> </span>-U<span class="w"> </span>pip
-pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[tests,docs]&quot;</span>
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">".[tests,docs]"</span>
+pre-commit<span class="w"> </span>install
 </pre></div>
 </div>
 </div></blockquote>
@@ -141,11 +142,11 @@ pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </s
 <p>Now you can make your changes locally.</p>
 <ol class="arabic simple" start="6">
 <li><p>When you’re done making changes, check that your changes pass ruff, mypy and the
-tests:</p></li>
+tests. Ruff runs automatically on <code class="docutils literal notranslate"><span class="pre">git</span> <span class="pre">commit</span></code> via pre-commit, or run it
+manually with:</p></li>
 </ol>
 <blockquote>
-<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ruff<span class="w"> </span>check<span class="w"> </span>.
-ruff<span class="w"> </span>format<span class="w"> </span>.
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pre-commit<span class="w"> </span>run<span class="w"> </span>--all-files
 mypy<span class="w"> </span>src/pyscal
 pytest<span class="w"> </span>-n<span class="w"> </span>auto
 </pre></div>
@@ -167,7 +168,7 @@ increase pylint score.</p>
 </ol>
 <blockquote>
 <div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>add<span class="w"> </span>file1.py<span class="w"> </span>file2.py
-git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Add some feature&quot;</span>
+git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">"Add some feature"</span>
 git<span class="w"> </span>push<span class="w"> </span>origin<span class="w"> </span>name-of-your-bugfix-or-feature
 </pre></div>
 </div>

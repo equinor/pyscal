@@ -6,14 +6,14 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>pyscal.factory &mdash; pyscal 0.17.0 documentation</title>
+  <title>pyscal.factory &mdash; pyscal 0.18.0 documentation</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
 
   
       <script src="../_static/jquery.js?v=5d32c60e"></script>
       <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-      <script src="../_static/documentation_options.js?v=0c3dd48d"></script>
+      <script src="../_static/documentation_options.js?v=ba2e7b09"></script>
       <script src="../_static/doctools.js?v=9bcbadda"></script>
       <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
     <script src="../_static/js/theme.js"></script>
@@ -513,14 +513,12 @@ distinguishes between csv, xls and xlsx</p>
 <dt class="sig sig-object py" id="pyscal.factory.kro_endpoint_go">
 <span class="sig-prename descclassname"><span class="pre">pyscal.factory.</span></span><span class="sig-name descname"><span class="pre">kro_endpoint_go</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#kro_endpoint_go"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.kro_endpoint_go" title="Link to this definition"></a></dt>
 <dd><p>Normalize parameters to be used for creating a GasOil object:
-- If ‘krogend’ is present, rename it to ‘kroend’.
-- If both ‘krogend’ and ‘kroend’ are provided, use the ‘krogend’ value</p>
-<blockquote>
-<div><p>and log a warning.</p>
-</div></blockquote>
-<ul class="simple">
-<li><p>Always remove ‘krowend’ if present (not relevant for GasOil).</p></li>
-</ul>
+- If only ‘krogend’ is present and not NaN, map it to ‘kroend’.
+- If both ‘krogend’ and ‘kroend’ are present, treat NaN as missing for
+endpoint selection; when both are valid, legacy ‘kroend’ is prioritized.
+- Log a warning only when both are present and both are not NaN.
+- Always remove ‘krogend’.
+- Always remove ‘krowend’ if present (not relevant for GasOil).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>params</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</span>) – Dictionary of parameters.</p>
@@ -538,14 +536,12 @@ distinguishes between csv, xls and xlsx</p>
 <dt class="sig sig-object py" id="pyscal.factory.kro_endpoint_wo">
 <span class="sig-prename descclassname"><span class="pre">pyscal.factory.</span></span><span class="sig-name descname"><span class="pre">kro_endpoint_wo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyscal/factory.html#kro_endpoint_wo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#pyscal.factory.kro_endpoint_wo" title="Link to this definition"></a></dt>
 <dd><p>Normalize parameters to be used for creating a WaterOil object:
-- If ‘krowend’ is present, rename it to ‘kroend’.
-- If both ‘krowend’ and ‘kroend’ are provided, use the ‘krowend’ value</p>
-<blockquote>
-<div><p>and log a warning.</p>
-</div></blockquote>
-<ul class="simple">
-<li><p>Always remove ‘krogend’ if present (not relevant for WaterOil).</p></li>
-</ul>
+- If only ‘krowend’ is present and not NaN, map it to ‘kroend’.
+- If both ‘krowend’ and ‘kroend’ are present, treat NaN as missing for
+endpoint selection; when both are valid, legacy ‘kroend’ is prioritized.
+- Log a warning only when both are present and both are not NaN.
+- Always remove ‘krowend’.
+- Always remove ‘krogend’ if present (not relevant for WaterOil).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>params</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Any</span></code>]</span>) – Dictionary of parameters.</p>
