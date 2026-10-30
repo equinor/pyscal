@@ -69,7 +69,15 @@ Gas-Oil
 ^^^^^^^
 
 For GasOil, there is an option of where to anchor ``krgend``, shown in the following figure.
-The red curve is the default, where ``krgendanchor=="sorg"``, and the pink is the other choice.
+The red curve is the default, where ``krgendanchor="sorg"`` anchors ``krgend``
+at ``Sg = 1 - SWL - SORG``. This is suitable when gas saturation increases.
+The pink curve uses ``krgendanchor="swl"``, which anchors ``krgend`` at
+``Sg = 1 - SWL`` independently of ``SORG``. Use this for gas-condensate models
+where gas saturation decreases, so cases with different residual oil saturations
+share the same gas endpoint. With the default ``krgend=1``, all such cases reach
+``KRG=1`` at ``Sg = 1 - SWL`` in both SGOF and SGFN tables.
+The legacy empty anchor (``krgendanchor=""`` or ``None``) behaves like ``"swl"``.
+``krgmax`` is only used with the ``"sorg"`` anchor.
 
 .. image:: images/gasoil-endpoints.png
     :width: 600

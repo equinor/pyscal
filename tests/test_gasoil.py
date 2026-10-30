@@ -11,8 +11,9 @@ import pandas as pd
 import pytest
 from hypothesis import given
 
-from pyscal import GasOil
+from pyscal import GasOil, GasWater
 from pyscal.constants import MAX_EXPONENT_KR, SWINTEGERS
+from pyscal.factory import create_gas_oil
 from pyscal.utils.relperm import truncate_zeroness
 from tests.utils import (
     check_linear_sections,
@@ -614,3 +615,69 @@ def test_selfcheck(columnname, errorvalues):
     assert gasoil.SGOF() == ""
     if columnname != "KROG":
         assert gasoil.SGFN() == ""
+
+
+@pytest.mark.parametrize("sorg", [0.0, 0.1, 0.3])
+@pytest.mark.parametrize("swl, sgcr", [(0.0, 0.0), (0.2, 0.05)])
+@pytest.mark.parametrize("gas_params", [{"ng": 2}, {"lg": 2, "eg": 3, "tg": 1.5}])
+def test_swl_anchor_condensate(sorg, swl, sgcr, gas_params, caplog):
+    """Condensate cases share a gas curve regardless of residual oil."""
+    gasoil = create_gas_oil(
+        dict(
+            swl=swl,
+            sgcr=sgcr,
+            sgro=sgcr,
+            sorg=sorg,
+            krgendanchor="swl",
+            nog=2,
+            **gas_params,
+        )
+    )
+    assert gasoil.krgendanchor == "swl"
+    assert not caplog.records
+    assert gasoil.table["SG"].iloc[-1] == pytest.approx(1 - swl)
+    assert gasoil.table["KRG"].iloc[-1] == pytest.approx(1)
+    assert (gasoil.table.loc[gasoil.table["SG"] <= sgcr, "KRG"] == 0).all()
+    assert np.isfinite(gasoil.table[["KRG", "KROG"]]).all().all()
+    assert gasoil.table["KRG"].between(0, 1).all()
+    assert (gasoil.table["KRG"].diff().dropna() >= 0).all()
+    if sorg:
+        assert float_df_checker(gasoil.table, "SG", 1 - swl - sorg, "KROG", 0)
+        assert (
+            gasoil.table.loc[
+                np.isclose(gasoil.table["SG"], 1 - swl - sorg), "KRG"
+            ].iloc[0]
+            < 1
+        )
+
+    gaswater = GasWater(swl=swl, sgcr=sgcr)
+    gaswater.add_corey_water()
+    if "ng" in gas_params:
+        gaswater.add_corey_gas(ng=gas_params["ng"])
+    else:
+        gaswater.add_LET_gas(gas_params["lg"], gas_params["eg"], gas_params["tg"])
+    # Both output formats must retain the physical endpoint and the same gas curve.
+    for output in (gasoil.SGOF(), gasoil.SGFN(), gaswater.SGFN()):
+        sat_table_str_ok(output)
+        rows = [
+            line.split()
+            for line in output.splitlines()
+            if line.strip() and line.strip()[0].isdigit()
+        ]
+        assert float(rows[-1][0]) == pytest.approx(1 - swl)
+        assert float(rows[-1][1]) == pytest.approx(1)
+    assert np.allclose(
+        gasoil.table["KRG"],
+        np.interp(
+            gasoil.table["SG"],
+            gaswater.gasoil.table["SG"],
+            gaswater.gasoil.table["KRG"],
+        ),
+    )
+
+
+@pytest.mark.parametrize("anchor", ["sorg", "swl", "", None, "bogus"])
+def test_krgendanchor_empty_saturation_range(anchor):
+    """SWL anchoring retains endpoint validation, including legacy aliases."""
+    with pytest.raises(ValueError, match="No saturation range left for gas curve"):
+        GasOil(swl=0.3, sgcr=0.8, sorg=0.1, krgendanchor=anchor)

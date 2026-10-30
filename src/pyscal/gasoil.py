@@ -29,9 +29,9 @@ class GasOil:
 
     No support (yet) to add capillary pressure.
 
-    krgend is by default anchored both to `1-swl-sorg`, but can be set to
-    anchor to `1-swl` instead. If the krgendanchor argument is something
-    else than the string `sorg`, it will be anchored to `1-swl`.
+    krgend is by default anchored to `1-swl-sorg`. Set
+    `krgendanchor="swl"` to anchor to `1-swl`, independently of sorg,
+    for gas-condensate modelling. The legacy empty anchor has the same behavior.
 
     Arguments:
         swirr: Absolute minimal water saturation at infinite capillary
@@ -46,10 +46,10 @@ class GasOil:
         sgro: Residual gas, for use in gas-condensate modelling. Used
             as an endpoint for parametrized oil curve. Must be zero or equal
             to sgcr for compatibility with Eclipse three-point scaling.
-        krgendanchor: Set to `sorg` (default) or something else, where to
+        krgendanchor: Set to `sorg` (default) or `swl`, where to
             anchor `krgend`. If `sorg`, then the normalized gas
             saturation will be equal to 1 at `1 - swl - sorg`,
-            if not, it will be 1 at `1 - swl`. If `sorg` is zero
+            if `swl`, it will be 1 at `1 - swl`. If `sorg` is zero
             it does not matter. krgmax is only relevant when this anchor is sorg.
         h: Saturation step-length in the outputted table.
         tag: Optional string identifier, only used in comments.
@@ -124,7 +124,7 @@ class GasOil:
         else:
             self.sgl = 0.0
 
-        if krgendanchor in ["sorg", ""]:
+        if krgendanchor in ["sorg", "swl", ""]:
             self.krgendanchor = krgendanchor
         else:
             logger.warning("Unknown krgendanchor %s, ignored", str(krgendanchor))
@@ -139,7 +139,7 @@ class GasOil:
             raise ValueError(
                 "No saturation range left for gas curve between endpoints, check input"
             )
-        if self.krgendanchor == "" and not 1 - self.swl - self.sgcr > 0:
+        if self.krgendanchor != "sorg" and not 1 - self.swl - self.sgcr > 0:
             raise ValueError(
                 "No saturation range left for gas curve between endpoints, check input"
             )
