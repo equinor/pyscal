@@ -13,6 +13,7 @@ Relative permeability/SCAL support in reservoir simulation.
    installation
    usage
    modelling
+   critical_saturation
    history
    contributing
 
